@@ -1,0 +1,1495 @@
+<Configuration>
+  <SettingsComponent>
+    <string />
+    <integer />
+    <boolean>
+      <setting name="livetemplates.csharp.usevar">True</setting>
+      <setting name="SolutionAnalysisEnabled">True</setting>
+    </boolean>
+  </SettingsComponent>
+  <RecentFiles>
+    <RecentFiles>
+      <File id="43DD2B25-6D1D-4ECD-9193-C60535FD75F1/d:Forms/f:CompareForm.resx" caret="379" fromTop="0" />
+      <File id="43DD2B25-6D1D-4ECD-9193-C60535FD75F1/d:Forms/f:ErrorForm.resx" caret="2067" fromTop="19" />
+      <File id="43DD2B25-6D1D-4ECD-9193-C60535FD75F1/d:Forms/f:UploadForm.cs" caret="125" fromTop="4" />
+      <File id="43DD2B25-6D1D-4ECD-9193-C60535FD75F1/d:Forms/f:ErrorForm.cs" caret="549" fromTop="22" />
+      <File id="43DD2B25-6D1D-4ECD-9193-C60535FD75F1/d:Forms/f:MainForm.cs" caret="154" fromTop="6" />
+      <File id="43DD2B25-6D1D-4ECD-9193-C60535FD75F1/f:RenderingSettings.cs" caret="2999" fromTop="1" />
+      <File id="43DD2B25-6D1D-4ECD-9193-C60535FD75F1/f:ComponentManager.cs" caret="2879" fromTop="19" />
+      <File id="43DD2B25-6D1D-4ECD-9193-C60535FD75F1/f:Matrix.cs" caret="815" fromTop="11" />
+      <File id="43DD2B25-6D1D-4ECD-9193-C60535FD75F1/d:Forms/f:CompareForm.cs" caret="791" fromTop="23" />
+      <File id="43DD2B25-6D1D-4ECD-9193-C60535FD75F1/d:Forms/f:ReplayViewer.cs" caret="9657" fromTop="23" />
+      <File id="43DD2B25-6D1D-4ECD-9193-C60535FD75F1/d:EditorTools/f:PictureTool.cs" caret="2531" fromTop="5" />
+      <File id="43DD2B25-6D1D-4ECD-9193-C60535FD75F1/f:LevelGenerator.cs" caret="0" fromTop="0" />
+      <File id="43DD2B25-6D1D-4ECD-9193-C60535FD75F1/d:Forms/f:ReplayManager.cs" caret="17122" fromTop="20" />
+      <File id="43DD2B25-6D1D-4ECD-9193-C60535FD75F1/f:Replay.cs" caret="83" fromTop="0" />
+      <File id="43DD2B25-6D1D-4ECD-9193-C60535FD75F1/f:Player.cs" caret="70" fromTop="0" />
+      <File id="43DD2B25-6D1D-4ECD-9193-C60535FD75F1/f:ElmaRenderer.cs" caret="71874" fromTop="0" />
+      <File id="43DD2B25-6D1D-4ECD-9193-C60535FD75F1/d:Forms/f:PictureForm.cs" caret="478" fromTop="17" />
+      <File id="43DD2B25-6D1D-4ECD-9193-C60535FD75F1/f:Main.cs" caret="855" fromTop="23" />
+      <File id="43DD2B25-6D1D-4ECD-9193-C60535FD75F1/f:Utils.cs" caret="7832" fromTop="18" />
+      <File id="43DD2B25-6D1D-4ECD-9193-C60535FD75F1/f:Geometry.cs" caret="9750" fromTop="221" />
+      <File id="43DD2B25-6D1D-4ECD-9193-C60535FD75F1/d:EditorTools/f:CutConnectTool.cs" caret="3615" fromTop="10" />
+      <File id="43DD2B25-6D1D-4ECD-9193-C60535FD75F1/f:Polygon.cs" caret="25844" fromTop="11" />
+      <File id="43DD2B25-6D1D-4ECD-9193-C60535FD75F1/f:Constants.cs" caret="1075" fromTop="23" />
+      <File id="43DD2B25-6D1D-4ECD-9193-C60535FD75F1/d:EditorTools/f:SelectionTool.cs" caret="7236" fromTop="9" />
+      <File id="43DD2B25-6D1D-4ECD-9193-C60535FD75F1/d:EditorTools/f:TransformTool.cs" caret="9518" fromTop="9" />
+      <File id="43DD2B25-6D1D-4ECD-9193-C60535FD75F1/d:Forms/f:ConfigForm.Designer.cs" caret="1535" fromTop="41" />
+      <File id="43DD2B25-6D1D-4ECD-9193-C60535FD75F1/d:Forms/f:ConfigForm.cs" caret="2083" fromTop="8" />
+      <File id="43DD2B25-6D1D-4ECD-9193-C60535FD75F1/f:ElmanagerSettings.cs" caret="1870" fromTop="6" />
+      <File id="43DD2B25-6D1D-4ECD-9193-C60535FD75F1/f:Level.cs" caret="12034" fromTop="21" />
+      <File id="43DD2B25-6D1D-4ECD-9193-C60535FD75F1/d:Forms/f:LevelEditor.cs" caret="3639" fromTop="14" />
+    </RecentFiles>
+    <RecentEdits>
+      <File id="43DD2B25-6D1D-4ECD-9193-C60535FD75F1/f:Polygon.cs" caret="28517" fromTop="25" />
+      <File id="43DD2B25-6D1D-4ECD-9193-C60535FD75F1/d:EditorTools/f:TransformTool.cs" caret="6226" fromTop="21" />
+      <File id="43DD2B25-6D1D-4ECD-9193-C60535FD75F1/d:EditorTools/f:TransformTool.cs" caret="1172" fromTop="19" />
+      <File id="43DD2B25-6D1D-4ECD-9193-C60535FD75F1/d:Forms/f:LevelEditor.cs" caret="58231" fromTop="29" />
+      <File id="43DD2B25-6D1D-4ECD-9193-C60535FD75F1/d:Forms/f:LevelEditor.cs" caret="58231" fromTop="1411" />
+      <File id="43DD2B25-6D1D-4ECD-9193-C60535FD75F1/d:Forms/f:LevelEditor.cs" caret="10744" fromTop="24" />
+      <File id="43DD2B25-6D1D-4ECD-9193-C60535FD75F1/f:Utils.cs" caret="7959" fromTop="21" />
+      <File id="43DD2B25-6D1D-4ECD-9193-C60535FD75F1/d:Forms/f:LevelEditor.cs" caret="10516" fromTop="21" />
+      <File id="43DD2B25-6D1D-4ECD-9193-C60535FD75F1/d:Forms/f:LevelEditor.cs" caret="10862" fromTop="29" />
+      <File id="43DD2B25-6D1D-4ECD-9193-C60535FD75F1/d:EditorTools/f:SelectionTool.cs" caret="8091" fromTop="24" />
+      <File id="43DD2B25-6D1D-4ECD-9193-C60535FD75F1/d:EditorTools/f:SelectionTool.cs" caret="7386" fromTop="13" />
+      <File id="43DD2B25-6D1D-4ECD-9193-C60535FD75F1/d:EditorTools/f:TransformTool.cs" caret="8826" fromTop="20" />
+      <File id="43DD2B25-6D1D-4ECD-9193-C60535FD75F1/d:EditorTools/f:TransformTool.cs" caret="9837" fromTop="21" />
+      <File id="43DD2B25-6D1D-4ECD-9193-C60535FD75F1/d:EditorTools/f:TransformTool.cs" caret="7858" fromTop="23" />
+      <File id="43DD2B25-6D1D-4ECD-9193-C60535FD75F1/d:EditorTools/f:TransformTool.cs" caret="7839" fromTop="21" />
+      <File id="43DD2B25-6D1D-4ECD-9193-C60535FD75F1/d:Forms/f:ConfigForm.cs" caret="7762" fromTop="22" />
+      <File id="43DD2B25-6D1D-4ECD-9193-C60535FD75F1/d:Forms/f:ConfigForm.Designer.cs" caret="36323" fromTop="31" />
+      <File id="43DD2B25-6D1D-4ECD-9193-C60535FD75F1/d:Forms/f:ConfigForm.Designer.cs" caret="40904" fromTop="22" />
+      <File id="43DD2B25-6D1D-4ECD-9193-C60535FD75F1/d:Forms/f:ConfigForm.cs" caret="17036" fromTop="7" />
+      <File id="43DD2B25-6D1D-4ECD-9193-C60535FD75F1/f:ElmanagerSettings.cs" caret="2582" fromTop="22" />
+      <File id="43DD2B25-6D1D-4ECD-9193-C60535FD75F1/d:Forms/f:ConfigForm.cs" caret="14964" fromTop="22" />
+      <File id="43DD2B25-6D1D-4ECD-9193-C60535FD75F1/d:Forms/f:ConfigForm.cs" caret="2744" fromTop="15" />
+      <File id="43DD2B25-6D1D-4ECD-9193-C60535FD75F1/f:ElmanagerSettings.cs" caret="2298" fromTop="16" />
+      <File id="43DD2B25-6D1D-4ECD-9193-C60535FD75F1/d:Forms/f:LevelEditor.cs" caret="43463" fromTop="27" />
+      <File id="43DD2B25-6D1D-4ECD-9193-C60535FD75F1/d:Forms/f:LevelEditor.cs" caret="42399" fromTop="10" />
+      <File id="43DD2B25-6D1D-4ECD-9193-C60535FD75F1/d:Forms/f:LevelEditor.cs" caret="43463" fromTop="27" />
+      <File id="43DD2B25-6D1D-4ECD-9193-C60535FD75F1/d:Forms/f:LevelEditor.cs" caret="43463" fromTop="23" />
+      <File id="43DD2B25-6D1D-4ECD-9193-C60535FD75F1/d:Forms/f:LevelEditor.cs" caret="43463" fromTop="22" />
+      <File id="43DD2B25-6D1D-4ECD-9193-C60535FD75F1/d:Forms/f:LevelEditor.cs" caret="42152" fromTop="4" />
+      <File id="43DD2B25-6D1D-4ECD-9193-C60535FD75F1/d:Forms/f:LevelEditor.cs" caret="4199" fromTop="23" />
+    </RecentEdits>
+  </RecentFiles>
+  <NAntValidationSettings>
+    <NAntPath value="" />
+  </NAntValidationSettings>
+  <UnitTestRunner>
+    <EnableUnitTesting>False</EnableUnitTesting>
+    <Providers />
+  </UnitTestRunner>
+  <UnitTestRunnerNUnit>
+    <NUnitInstallDir IsNull="False" />
+    <UseAddins>Never</UseAddins>
+  </UnitTestRunnerNUnit>
+  <CompletionStatisticsManager>
+    <ItemStatistics item="Default">
+      <Item value="LevFilenameMatcher" priority="1" />
+      <Item value="FilenameMatcher" priority="1" />
+      <Item value="Date" priority="1" />
+      <Item value="r" priority="6" />
+      <Item value="Time" priority="1" />
+      <Item value="Size" priority="8" />
+      <Item value="SearchPattern" priority="0" />
+      <Item value="object" priority="4" />
+      <Item value="EventArgs`0" priority="1" />
+      <Item value="OptionBox" priority="4" />
+      <Item value="OptionButton2" priority="4" />
+      <Item value="Math`0" priority="14" />
+      <Item value="OptionButton1" priority="7" />
+      <Item value="Point" priority="2" />
+      <Item value="OptionButton3" priority="2" />
+      <Item value="Height" priority="3" />
+      <Item value="Width" priority="3" />
+      <Item value="new" priority="45" />
+      <Item value="int" priority="25" />
+      <Item value="public" priority="12" />
+      <Item value="PropertyGrid`0" priority="0" />
+      <Item value="void" priority="23" />
+      <Item value="GetChildAtPointSkip`0" priority="0" />
+      <Item value="return" priority="54" />
+      <Item value="switch" priority="2" />
+      <Item value="value" priority="2" />
+      <Item value="case" priority="5" />
+      <Item value="default" priority="4" />
+      <Item value="true" priority="18" />
+      <Item value="break" priority="5" />
+      <Item value="string" priority="25" />
+      <Item value="DefaultValueAttribute`0" priority="0" />
+      <Item value="Resized`0" priority="0" />
+      <Item value="SearchParameters`0" priority="0" />
+      <Item value="searchParams" priority="3" />
+      <Item value="private" priority="46" />
+      <Item value="TriSelect`0" priority="1" />
+      <Item value="select" priority="0" />
+      <Item value="RSearchOption`0" priority="2" />
+      <Item value="intExtSelect" priority="0" />
+      <Item value="AcrossLev" priority="0" />
+      <Item value="GetSearchParamFromOption`0" priority="2" />
+      <Item value="elmaAcrossSelect" priority="0" />
+      <Item value="Bound&lt;DateTime&gt;" priority="0" />
+      <Item value="minDateTime" priority="0" />
+      <Item value="maxDateTime" priority="0" />
+      <Item value="Regex" priority="3" />
+      <Item value="searchPattern" priority="0" />
+      <Item value="Finished" priority="0" />
+      <Item value="finishedSelect" priority="0" />
+      <Item value="LevExists" priority="0" />
+      <Item value="WrongLev" priority="0" />
+      <Item value="MultiPlayer" priority="0" />
+      <Item value="singleMultiSelect" priority="0" />
+      <Item value="P1Bounds" priority="1" />
+      <Item value="PlayerBounds" priority="1" />
+      <Item value="Bound&lt;int&gt;" priority="6" />
+      <Item value="minFileSizeBox" priority="1" />
+      <Item value="Double`0" priority="1" />
+      <Item value="maxFileSizeBox" priority="0" />
+      <Item value="Bound&lt;double&gt;" priority="0" />
+      <Item value="TimeMin" priority="0" />
+      <Item value="TimeMax" priority="0" />
+      <Item value="fastestSlowestSelect" priority="0" />
+      <Item value="Apples" priority="0" />
+      <Item value="P1ApplesMin" priority="0" />
+      <Item value="P1ApplesMax" priority="0" />
+      <Item value="GroundTouches" priority="0" />
+      <Item value="P1GTMin" priority="0" />
+      <Item value="P1GTMax" priority="0" />
+      <Item value="LeftVolts" priority="0" />
+      <Item value="P1LVMin" priority="0" />
+      <Item value="P1LVMax" priority="0" />
+      <Item value="RightVolts" priority="0" />
+      <Item value="P1RVMin" priority="0" />
+      <Item value="P1RVMax" priority="0" />
+      <Item value="SuperVolts" priority="0" />
+      <Item value="P1SVMin" priority="0" />
+      <Item value="P1SVMax" priority="0" />
+      <Item value="P1TurnsMin" priority="0" />
+      <Item value="P1TurnsMax" priority="0" />
+      <Item value="Bound" priority="0" />
+      <Item value="p1Gt" priority="0" />
+      <Item value="p1Lv" priority="0" />
+      <Item value="p1Rv" priority="0" />
+      <Item value="p1Sv" priority="0" />
+      <Item value="p1Turns" priority="0" />
+      <Item value="searchOnlyMissingLev" priority="0" />
+      <Item value="False" priority="0" />
+      <Item value="searchOnlyWrongLev" priority="0" />
+      <Item value="bool" priority="15" />
+      <Item value="RegexOptions`0" priority="0" />
+      <Item value="levFilenameMatcher" priority="0" />
+      <Item value="String`0" priority="0" />
+      <Item value="internal" priority="37" />
+      <Item value="continue" priority="3" />
+      <Item value="DrawCircle`0" priority="0" />
+      <Item value="v" priority="2" />
+      <Item value="radius" priority="0" />
+      <Item value="circleColor" priority="0" />
+      <Item value="DrawObject`0" priority="0" />
+      <Item value="picture" priority="2" />
+      <Item value="V" priority="1" />
+      <Item value="double" priority="21" />
+      <Item value="IODescriptionAttribute`0" priority="3" />
+      <Item value="replayMembers" priority="0" />
+      <Item value="i" priority="4" />
+      <Item value="IList" priority="0" />
+      <Item value="CustomAttributeData`0" priority="1" />
+      <Item value="foreach" priority="14" />
+      <Item value="test" priority="0" />
+      <Item value="x" priority="18" />
+      <Item value="DescriptionAttribute`0" priority="1" />
+      <Item value="strToAdd" priority="0" />
+      <Item value="throw" priority="0" />
+      <Item value="Exception" priority="0" />
+      <Item value="Replay`0" priority="3" />
+      <Item value="replays" priority="0" />
+      <Item value="LevEditorName" priority="0" />
+      <Item value="Path" priority="2" />
+      <Item value="FileName" priority="1" />
+      <Item value="static" priority="14" />
+      <Item value="struct" priority="0" />
+      <Item value="GeneralSettings`0" priority="0" />
+      <Item value="ReplayManagerSettings`0" priority="0" />
+      <Item value="LevelEditorSettings`0" priority="0" />
+      <Item value="Color`0" priority="5" />
+      <Item value="ReplayViewerSettings`0" priority="0" />
+      <Item value="Point`0" priority="0" />
+      <Item value="GeneralSettings" priority="0" />
+      <Item value="LevelEditorSettings" priority="0" />
+      <Item value="ReplayManagerSettings" priority="0" />
+      <Item value="ReplayViewerSettings" priority="0" />
+      <Item value="CircleDrawingAccuracy" priority="0" />
+      <Item value="s" priority="1" />
+      <Item value="ObjectCenters" priority="0" />
+      <Item value="accuracy" priority="1" />
+      <Item value="Settings" priority="5" />
+      <Item value="DrawPoint`0" priority="0" />
+      <Item value="using" priority="1" />
+      <Item value="class" priority="1" />
+      <Item value="ToolStripMenuItem`0" priority="0" />
+      <Item value="ToolStripMenuItemMod`0" priority="0" />
+      <Item value="MouseDown" priority="0" />
+      <Item value="PreventClose`0" priority="0" />
+      <Item value="ToolStripDropDownClosingEventArgs`0" priority="0" />
+      <Item value="this" priority="8" />
+      <Item value="SelectionFilterToolStripMenuItem" priority="0" />
+      <Item value="applesToolStripMenuItem" priority="0" />
+      <Item value="supervoltsToolStripMenuItem" priority="0" />
+      <Item value="leftVoltsToolStripMenuItem" priority="0" />
+      <Item value="rightVoltsToolStripMenuItem" priority="0" />
+      <Item value="turnsToolStripMenuItem" priority="0" />
+      <Item value="groundtouchesToolStripMenuItem" priority="0" />
+      <Item value="sender" priority="4" />
+      <Item value="null" priority="2" />
+      <Item value="contextMenuStrip1" priority="1" />
+      <Item value="toolStripItem" priority="0" />
+      <Item value="ToolStripItem`0" priority="0" />
+      <Item value="toolStripMenuItem" priority="0" />
+      <Item value="UpdateEventsLists`0" priority="0" />
+      <Item value="TimeBox" priority="0" />
+      <Item value="TextBoxKeyPress`0" priority="1" />
+      <Item value="Keys`0" priority="0" />
+      <Item value="DisplayDevice`0" priority="5" />
+      <Item value="resolution" priority="0" />
+      <Item value="ResolutionBox" priority="1" />
+      <Item value="_renderer" priority="8" />
+      <Item value="PlayBackSpeed" priority="0" />
+      <Item value="newSpeed" priority="0" />
+      <Item value="playBackToolTip" priority="0" />
+      <Item value="PlaybackBar" priority="0" />
+      <Item value="speed" priority="0" />
+      <Item value="_currentMask" priority="1" />
+      <Item value="Vector`0" priority="17" />
+      <Item value="_originalPosition" priority="0" />
+      <Item value="NearestPolygon" priority="2" />
+      <Item value="nearestVertexIndex" priority="1" />
+      <Item value="Keyboard`0" priority="0" />
+      <Item value="key" priority="0" />
+      <Item value="Key`0" priority="0" />
+      <Item value="_lockingLines" priority="2" />
+      <Item value="false" priority="17" />
+      <Item value="if" priority="31" />
+      <Item value="Geometry`0" priority="5" />
+      <Item value="DistanceFromLine`0" priority="0" />
+      <Item value="a" priority="1" />
+      <Item value="b" priority="1" />
+      <Item value="px" priority="1" />
+      <Item value="Vector" priority="7" />
+      <Item value="ax" priority="0" />
+      <Item value="aMinusBx" priority="0" />
+      <Item value="ay" priority="0" />
+      <Item value="aMinusBy" priority="0" />
+      <Item value="OrthogonalProjection`0" priority="0" />
+      <Item value="_originalIndex" priority="1" />
+      <Item value="delta" priority="2" />
+      <Item value="else" priority="20" />
+      <Item value="p" priority="4" />
+      <Item value="_originalCenter" priority="1" />
+      <Item value="_originalNext" priority="0" />
+      <Item value="GFXContext" priority="1" />
+      <Item value="ShowDriverPath" priority="0" />
+      <Item value="CtrlWindowInfo" priority="2" />
+      <Item value="Utilities`0" priority="12" />
+      <Item value="Startup" priority="0" />
+      <Item value="ThisStartupNewInstance`0" priority="0" />
+      <Item value="protected" priority="1" />
+      <Item value="override" priority="1" />
+      <Item value="Startup`0" priority="1" />
+      <Item value="CommandLineArgs" priority="0" />
+      <Item value="MainForm" priority="3" />
+      <Item value="m" priority="2" />
+      <Item value="ShutdownMode`0" priority="0" />
+      <Item value="ShutdownStyle" priority="0" />
+      <Item value="AfterAllFormsClose" priority="0" />
+      <Item value="Thread`0" priority="10" />
+      <Item value="Thread" priority="2" />
+      <Item value="Application`0" priority="11" />
+      <Item value="MainForm`0" priority="3" />
+      <Item value="ApartmentState`0" priority="2" />
+      <Item value="t" priority="5" />
+      <Item value="SaveFileDialog1" priority="2" />
+      <Item value="global" priority="3" />
+      <Item value="Global`0" priority="10" />
+      <Item value="MessageBox`0" priority="1" />
+      <Item value="YesNo" priority="0" />
+      <Item value="Question" priority="0" />
+      <Item value="Button1" priority="0" />
+      <Item value="DialogResult" priority="0" />
+      <Item value="ApplicationSettings" priority="0" />
+      <Item value="e" priority="1" />
+      <Item value="UserClosing" priority="0" />
+      <Item value="Close`0" priority="0" />
+      <Item value="System" priority="11" />
+      <Item value="Diagnostics" priority="1" />
+      <Item value="Process`0" priority="3" />
+      <Item value="ReadOnlyCollection" priority="1" />
+      <Item value="Task`0" priority="1" />
+      <Item value="Lev" priority="20" />
+      <Item value="polygon" priority="2" />
+      <Item value="GrassFilter" priority="0" />
+      <Item value="GroundFilter" priority="0" />
+      <Item value="KillerFilter" priority="1" />
+      <Item value="levelObject" priority="2" />
+      <Item value="Apple" priority="0" />
+      <Item value="AppleFilter" priority="1" />
+      <Item value="Level`0" priority="17" />
+      <Item value="FlowerFilter" priority="0" />
+      <Item value="texture" priority="18" />
+      <Item value="TextureFilter" priority="1" />
+      <Item value="PictureFilter" priority="1" />
+      <Item value="Mark" priority="1" />
+      <Item value="mask" priority="11" />
+      <Item value="Renderer" priority="1" />
+      <Item value="FormatException`0" priority="0" />
+      <Item value="form" priority="2" />
+      <Item value="ListBindingConverter`0" priority="0" />
+      <Item value="Form`0" priority="1" />
+      <Item value="List&lt;Form&gt;" priority="0" />
+      <Item value="_windows" priority="3" />
+      <Item value="FormClosed`0" priority="0" />
+      <Item value="List" priority="3" />
+      <Item value="List&lt;Task&gt;" priority="0" />
+      <Item value="_tasks" priority="0" />
+      <Item value="while" priority="2" />
+      <Item value="Threading" priority="1" />
+      <Item value="ComponentManager`0" priority="6" />
+      <Item value="LevExtension" priority="1" />
+      <Item value="StringComparison`0" priority="0" />
+      <Item value="Launch`0" priority="0" />
+      <Item value="LevelEditor`0" priority="3" />
+      <Item value="args" priority="2" />
+      <Item value="OrdinalIgnoreCase" priority="1" />
+      <Item value="ReplayManager`0" priority="1" />
+      <Item value="rp" priority="1" />
+      <Item value="ReplayViewer`0" priority="0" />
+      <Item value="ReplayViewer" priority="0" />
+      <Item value="OpenTK" priority="0" />
+      <Item value="Graphics" priority="3" />
+      <Item value="OpenGL" priority="2" />
+      <Item value="GL`0" priority="8" />
+      <Item value="IWin32Window`0" priority="0" />
+      <Item value="window" priority="0" />
+      <Item value="Platform" priority="0" />
+      <Item value="levPath" priority="2" />
+      <Item value="ThreadStart`0" priority="1" />
+      <Item value="PreProcessControlState`0" priority="0" />
+      <Item value="ProcessThread`0" priority="0" />
+      <Item value="for" priority="2" />
+      <Item value="in" priority="4" />
+      <Item value="outer" priority="0" />
+      <Item value="alive" priority="0" />
+      <Item value="Terminated" priority="0" />
+      <Item value="_threads" priority="2" />
+      <Item value="List&lt;Thread&gt;" priority="0" />
+      <Item value="ThreadPool`0" priority="0" />
+      <Item value="asrt" priority="0" />
+      <Item value="Players" priority="1" />
+      <Item value="CurrentTime" priority="0" />
+      <Item value="Modified" priority="2" />
+      <Item value="Warning" priority="0" />
+      <Item value="Yes" priority="0" />
+      <Item value="MessageBoxButtons`0" priority="0" />
+      <Item value="_config" priority="1" />
+      <Item value="ConfigForm`0" priority="0" />
+      <Item value="ConfigForm" priority="0" />
+      <Item value="Frame`0" priority="1" />
+      <Item value="Direction`0" priority="1" />
+      <Item value="direction" priority="1" />
+      <Item value="BikeRotation" priority="0" />
+      <Item value="bikeRotation" priority="2" />
+      <Item value="Direction" priority="0" />
+      <Item value="GlobalBody" priority="0" />
+      <Item value="globalBody" priority="0" />
+      <Item value="Head" priority="0" />
+      <Item value="head" priority="0" />
+      <Item value="LeftWheel" priority="0" />
+      <Item value="leftWheel" priority="0" />
+      <Item value="LeftWheelRotation" priority="0" />
+      <Item value="leftWheelRotation" priority="4" />
+      <Item value="RightWheel" priority="0" />
+      <Item value="rightWheel" priority="0" />
+      <Item value="RightWheelRotation" priority="0" />
+      <Item value="rightWheelRotation" priority="1" />
+      <Item value="HeadLineEndPoint" priority="0" />
+      <Item value="headLineEndPoint" priority="0" />
+      <Item value="xDiff" priority="0" />
+      <Item value="leftWheelx" priority="7" />
+      <Item value="leftWheely" priority="8" />
+      <Item value="distance" priority="3" />
+      <Item value="wheelXpos" priority="0" />
+      <Item value="wheelYpos" priority="0" />
+      <Item value="rightWheelx" priority="1" />
+      <Item value="rightWheely" priority="1" />
+      <Item value="k" priority="0" />
+      <Item value="isright" priority="2" />
+      <Item value="f" priority="0" />
+      <Item value="DrawPlayer`0" priority="1" />
+      <Item value="player" priority="12" />
+      <Item value="isActive" priority="1" />
+      <Item value="const" priority="1" />
+      <Item value="Left" priority="0" />
+      <Item value="DrawDummyPlayer`0" priority="0" />
+      <Item value="DrawPlayerFrames`0" priority="0" />
+      <Item value="headX" priority="0" />
+      <Item value="headY" priority="0" />
+      <Item value="ActivePlayerColor" priority="0" />
+      <Item value="InActivePlayerColor" priority="0" />
+      <Item value="AdjustForGrid`0" priority="2" />
+      <Item value="CurrentPos" priority="3" />
+      <Item value="sizeXBox" priority="2" />
+      <Item value="ViewerBox" priority="4" />
+      <Item value="ChangeSize`0" priority="0" />
+      <Item value="y" priority="1" />
+      <Item value="WebClient" priority="0" />
+      <Item value="wc" priority="3" />
+      <Item value="Net" priority="0" />
+      <Item value="Xml" priority="2" />
+      <Item value="XmlDocument`0" priority="1" />
+      <Item value="html" priority="2" />
+      <Item value="XmlElement`0" priority="0" />
+      <Item value="name" priority="0" />
+      <Item value="reader2" priority="1" />
+      <Item value="NameValueCollection" priority="0" />
+      <Item value="nvc" priority="2" />
+      <Item value="stream2" priority="0" />
+      <Item value="response" priority="6" />
+      <Item value="wr" priority="1" />
+      <Item value="IO" priority="6" />
+      <Item value="File`0" priority="1" />
+      <Item value="NoReplaysSelected" priority="0" />
+      <Item value="VisualBasic" priority="1" />
+      <Item value="Interaction`0" priority="0" />
+      <Item value="UploadForm`0" priority="0" />
+      <Item value="UploadForm" priority="0" />
+      <Item value="u" priority="0" />
+      <Item value="RList" priority="1" />
+      <Item value="GetSelectedReplay`0" priority="1" />
+      <Item value="label1" priority="0" />
+      <Item value="textBox1" priority="1" />
+      <Item value="Packaging" priority="0" />
+      <Item value="Path`0" priority="5" />
+      <Item value="ThreadExceptionDialog`0" priority="0" />
+      <Item value="Show`0" priority="0" />
+      <Item value="Refresh`0" priority="1" />
+      <Item value="BeginInvoke`0" priority="0" />
+      <Item value="file" priority="9" />
+      <Item value="selectedTime" priority="2" />
+      <Item value="var" priority="15" />
+      <Item value="snapToGridButton" priority="0" />
+      <Item value="AutoGrassThickness" priority="0" />
+      <Item value="TitleBox" priority="3" />
+      <Item value="suggestion" priority="0" />
+      <Item value="UpdateSelectionInfo`0" priority="0" />
+      <Item value="ZoomFillxMax" priority="0" />
+      <Item value="ZoomFillxMin" priority="0" />
+      <Item value="ZoomFillyMax" priority="0" />
+      <Item value="ZoomFillyMin" priority="0" />
+      <Item value="Mask`0" priority="0" />
+      <Item value="Texture`0" priority="1" />
+      <Item value="copiedTextures" priority="0" />
+      <Item value="Texture" priority="4" />
+      <Item value="copiedTexture" priority="0" />
+      <Item value="_currentTexture" priority="3" />
+      <Item value="ZoomLevel" priority="7" />
+      <Item value="EnableCap`0" priority="0" />
+      <Item value="xMax" priority="0" />
+      <Item value="xMin" priority="1" />
+      <Item value="Properties" priority="0" />
+      <Item value="GetPName`0" priority="0" />
+      <Item value="ResetViewport`0" priority="0" />
+      <Item value="out" priority="0" />
+      <Item value="yMax" priority="0" />
+      <Item value="ClippingType`0" priority="0" />
+      <Item value="Clipping" priority="0" />
+      <Item value="clipping" priority="3" />
+      <Item value="Distance" priority="0" />
+      <Item value="maskHeight" priority="1" />
+      <Item value="MaskHeight" priority="0" />
+      <Item value="MaskName" priority="0" />
+      <Item value="maskName" priority="0" />
+      <Item value="Position" priority="1" />
+      <Item value="position" priority="2" />
+      <Item value="MaskId" priority="0" />
+      <Item value="maskId" priority="0" />
+      <Item value="MaskWidth" priority="0" />
+      <Item value="maskWidth" priority="0" />
+      <Item value="PicForm" priority="1" />
+      <Item value="image" priority="3" />
+      <Item value="textureImage" priority="4" />
+      <Item value="ElmaRenderer`0" priority="2" />
+      <Item value="z" priority="6" />
+      <Item value="maskImage" priority="0" />
+      <Item value="X" priority="0" />
+      <Item value="copiedPicture" priority="0" />
+      <Item value="Picture`0" priority="0" />
+      <Item value="Picture" priority="0" />
+      <Item value="_currentPicture" priority="5" />
+      <Item value="LevelObject`0" priority="2" />
+      <Item value="LevelObject" priority="0" />
+      <Item value="AnimationNumber" priority="0" />
+      <Item value="o" priority="6" />
+      <Item value="AppleType" priority="0" />
+      <Item value="Type" priority="0" />
+      <Item value="interface" priority="0" />
+      <Item value="Matrix`0" priority="0" />
+      <Item value="Serializable" priority="0" />
+      <Item value="versionLabel" priority="0" />
+      <Item value="VersionDay" priority="0" />
+      <Item value="VersionMonth" priority="0" />
+      <Item value="VersionYear" priority="0" />
+      <Item value="DateTime`0" priority="0" />
+      <Item value="year" priority="0" />
+      <Item value="month" priority="0" />
+      <Item value="day" priority="0" />
+      <Item value="TextureName" priority="0" />
+      <Item value="LevEditor" priority="4" />
+      <Item value="picCount" priority="1" />
+      <Item value="depth" priority="3" />
+      <Item value="PicturesInBackground" priority="1" />
+      <Item value="BikeDistance" priority="0" />
+      <Item value="SetTexture`0" priority="0" />
+      <Item value="SetPicture`0" priority="0" />
+      <Item value="pictureImage" priority="0" />
+      <Item value="selected" priority="0" />
+      <Item value="vc_attributes" priority="0" />
+      <Item value="_hasFocus" priority="0" />
+      <Item value="RenderingSettings`0" priority="2" />
+      <Item value="SettingsGrid" priority="0" />
+      <Item value="PropertyValueChangedEventArgs`0" priority="0" />
+      <Item value="_settings" priority="0" />
+      <Item value="RenderingSettings" priority="0" />
+      <Item value="settingsForm" priority="0" />
+      <Item value="_zooming" priority="1" />
+      <Item value="Control`0" priority="0" />
+      <Item value="MousePosition" priority="0" />
+      <Item value="_lastMouseX" priority="0" />
+      <Item value="CenterX" priority="3" />
+      <Item value="toolStripProgressBar1" priority="0" />
+      <Item value="bringToFrontToolStripMenuItem" priority="0" />
+      <Item value="_currentObjectIndex" priority="0" />
+      <Item value="_selectedPictureIndex" priority="0" />
+      <Item value="_selectedObjectIndex" priority="1" />
+      <Item value="obj" priority="0" />
+      <Item value="VisiblePlayerIndices" priority="2" />
+      <Item value="MultiSpy" priority="1" />
+      <Item value="xmin" priority="2" />
+      <Item value="xmax" priority="0" />
+      <Item value="ymax" priority="0" />
+      <Item value="CenterY" priority="0" />
+      <Item value="AspectRatio" priority="2" />
+      <Item value="multiSpyBox" priority="2" />
+      <Item value="RenderingOptionsChanged`0" priority="0" />
+      <Item value="FollowDriver" priority="0" />
+      <Item value="ActivePlayerIndices" priority="0" />
+      <Item value="byte" priority="1" />
+      <Item value="Player" priority="0" />
+      <Item value="_rawData" priority="2" />
+      <Item value="rec" priority="0" />
+      <Item value="_player2" priority="0" />
+      <Item value="p2" priority="0" />
+      <Item value="Player1" priority="6" />
+      <Item value="IsMulti" priority="1" />
+      <Item value="Player2" priority="1" />
+      <Item value="playerEvent" priority="1" />
+      <Item value="weirdTimes" priority="1" />
+      <Item value="Replay" priority="0" />
+      <Item value="outfile" priority="0" />
+      <Item value="tooExactTimes" priority="1" />
+      <Item value="Player`0" priority="0" />
+      <Item value="time" priority="2" />
+      <Item value="okTime" priority="0" />
+      <Item value="impsyEventCount" priority="1" />
+      <Item value="cheated" priority="2" />
+      <Item value="Directory`0" priority="2" />
+      <Item value="Debug`0" priority="2" />
+      <Item value="StreamWriter`0" priority="1" />
+      <Item value="StreamWriter" priority="0" />
+      <Item value="selectedRp" priority="0" />
+      <Item value="_playingInitialized" priority="0" />
+      <Item value="killerObjectCount" priority="0" />
+      <Item value="_anythingMoved" priority="0" />
+      <Item value="Object`0" priority="1" />
+      <Item value="Polygons" priority="2" />
+      <Item value="Objects" priority="0" />
+      <Item value="AppleTypes`0" priority="0" />
+      <Item value="ObjectType`0" priority="0" />
+      <Item value="IsObjectInsideGround`0" priority="0" />
+      <Item value="_errorPoints" priority="2" />
+      <Item value="errObjs" priority="0" />
+      <Item value="errObj" priority="0" />
+      <Item value="DrawRectangle`0" priority="0" />
+      <Item value="side" priority="0" />
+      <Item value="namespace" priority="0" />
+      <Item value="topologyList" priority="5" />
+      <Item value="items" priority="3" />
+      <Item value="ItemChangedEventArgs`0" priority="0" />
+      <Item value="MaximumVertexCount" priority="0" />
+      <Item value="VertexCount" priority="0" />
+      <Item value="StatusStrip2" priority="0" />
+      <Item value="levelFile" priority="1" />
+      <Item value="LevelFilename" priority="0" />
+      <Item value="Level" priority="0" />
+      <Item value="SkyTexture" priority="2" />
+      <Item value="try" priority="1" />
+      <Item value="Exception`0" priority="1" />
+      <Item value="Text" priority="4" />
+      <Item value="ValueAsDouble" priority="0" />
+      <Item value="Func" priority="3" />
+      <Item value="_validate" priority="3" />
+      <Item value="TextBoxMod`0" priority="1" />
+      <Item value="IsInputValid`0" priority="1" />
+      <Item value="BackColor" priority="0" />
+      <Item value="TextChanged" priority="0" />
+      <Item value="ValidateInput`0" priority="0" />
+      <Item value="val" priority="0" />
+      <Item value="regex" priority="1" />
+      <Item value="SystemColors`0" priority="1" />
+      <Item value="_regExValidator" priority="0" />
+      <Item value="_parseInput" priority="3" />
+      <Item value="_defaultValue" priority="0" />
+      <Item value="GenericTextBox" priority="1" />
+      <Item value="NumericTextBox`0" priority="6" />
+      <Item value="base" priority="1" />
+      <Item value="SetValidator`0" priority="0" />
+      <Item value="Microsoft" priority="0" />
+      <Item value="Information`0" priority="0" />
+      <Item value="SetParser`0" priority="1" />
+      <Item value="DefaultValue" priority="0" />
+      <Item value="catch" priority="1" />
+      <Item value="parser" priority="0" />
+      <Item value="OverflowException`0" priority="1" />
+      <Item value="Value" priority="0" />
+      <Item value="Elmanager" priority="4" />
+      <Item value="Forms" priority="0" />
+      <Item value="CustomControls" priority="5" />
+      <Item value="TextBox1" priority="0" />
+      <Item value="T`0" priority="0" />
+      <Item value="typeof" priority="0" />
+      <Item value="viewerSizeXBox" priority="3" />
+      <Item value="viewerSizeYBox" priority="1" />
+      <Item value="Resize" priority="0" />
+      <Item value="ViewerResized`0" priority="1" />
+      <Item value="MouseClickZoomBox" priority="0" />
+      <Item value="MouseWheelZoomBox" priority="0" />
+      <Item value="HasTooLargePolygons" priority="0" />
+      <Item value="HasTooManyObjects" priority="0" />
+      <Item value="HasTooManyPolygons" priority="0" />
+      <Item value="HasTooManyVertices" priority="0" />
+      <Item value="HeadTouchesGround" priority="0" />
+      <Item value="TooTall" priority="0" />
+      <Item value="TooWide" priority="0" />
+      <Item value="GetIntersectionPoints`0" priority="0" />
+      <Item value="FileStream`0" priority="0" />
+      <Item value="CreateNew" priority="0" />
+      <Item value="TextRenderer`0" priority="0" />
+      <Item value="width" priority="0" />
+      <Item value="firstReplay" priority="0" />
+      <Item value="savePath" priority="2" />
+      <Item value="_path" priority="1" />
+      <Item value="_fileName" priority="1" />
+    </ItemStatistics>
+    <ItemStatistics item="Qualified:System.Text.RegularExpressions.Regex">
+      <Item value="Matches`0" priority="0" />
+      <Item value="IsMatch`0" priority="4" />
+      <Item value="Match`0" priority="1" />
+      <Item value="GetGroupNames`0" priority="0" />
+      <Item value="Options" priority="0" />
+      <Item value="ToString`0" priority="0" />
+    </ItemStatistics>
+    <ItemStatistics item="Qualified:Elmanager.Replay">
+      <Item value="Level" priority="0" />
+      <Item value="FileName" priority="29" />
+      <Item value="DateModified" priority="0" />
+      <Item value="Time" priority="0" />
+      <Item value="Size" priority="0" />
+      <Item value="IsMulti" priority="0" />
+      <Item value="LevelFilename" priority="2" />
+      <Item value="Path" priority="0" />
+      <Item value="InitializeFrameData`0" priority="3" />
+      <Item value="IsCheated`0" priority="2" />
+      <Item value="Player1" priority="1" />
+    </ItemStatistics>
+    <ItemStatistics item="Qualified:Elmanager.Bound`1">
+      <Item value="Accepts`0" priority="2" />
+    </ItemStatistics>
+    <ItemStatistics item="Qualified:System.Windows.Forms.GroupBox">
+      <Item value="Size" priority="2" />
+      <Item value="Width" priority="1" />
+      <Item value="Height" priority="1" />
+    </ItemStatistics>
+    <ItemStatistics item="Qualified:System.Windows.Forms.RadioButton">
+      <Item value="Location" priority="6" />
+      <Item value="Width" priority="4" />
+      <Item value="Height" priority="0" />
+      <Item value="Checked" priority="1" />
+      <Item value="Text" priority="1" />
+    </ItemStatistics>
+    <ItemStatistics item="Qualified:@System.Math">
+      <Item value="Max`0" priority="9" />
+      <Item value="Pow`0" priority="0" />
+      <Item value="Min`0" priority="1" />
+      <Item value="Round`0" priority="5" />
+    </ItemStatistics>
+    <ItemStatistics item="Qualified:System.Drawing.Point">
+      <Item value="X" priority="9" />
+    </ItemStatistics>
+    <ItemStatistics item="Qualified:Elmanager.SearchParameters">
+      <Item value="InternalRec" priority="0" />
+      <Item value="Matches`0" priority="0" />
+      <Item value="LevExists" priority="0" />
+      <Item value="WrongLev" priority="0" />
+      <Item value="ResetOptions`0" priority="0" />
+    </ItemStatistics>
+    <ItemStatistics item="Qualified:Elmanager.TriSelect">
+      <Item value="SelectedOption" priority="1" />
+    </ItemStatistics>
+    <ItemStatistics item="Qualified:@Elmanager.RSearchOption">
+      <Item value="True" priority="2" />
+      <Item value="Dontcare" priority="2" />
+      <Item value="toar" priority="0" />
+    </ItemStatistics>
+    <ItemStatistics item="Qualified:System.Windows.Forms.DateTimePicker">
+      <Item value="Value" priority="1" />
+    </ItemStatistics>
+    <ItemStatistics item="Qualified:System.Windows.Forms.TextBox">
+      <Item value="Text" priority="33" />
+      <Item value="TextChanged" priority="0" />
+    </ItemStatistics>
+    <ItemStatistics item="Qualified:@System.Double">
+      <Item value="Parse`0" priority="4" />
+    </ItemStatistics>
+    <ItemStatistics item="Qualified:@System.Text.RegularExpressions.RegexOptions">
+      <Item value="IgnoreCase" priority="0" />
+    </ItemStatistics>
+    <ItemStatistics item="Qualified:@System.String">
+      <Item value="Empty" priority="0" />
+    </ItemStatistics>
+    <ItemStatistics item="Qualified:Elmanager.Vector">
+      <Item value="X" priority="37" />
+      <Item value="Y" priority="5" />
+      <Item value="Mark" priority="0" />
+      <Item value="Select`0" priority="2" />
+      <Item value="Clone`0" priority="8" />
+      <Item value="Length" priority="0" />
+    </ItemStatistics>
+    <ItemStatistics item="Qualified:System.Reflection.MemberInfo">
+      <Item value="Name" priority="0" />
+      <Item value="GetCustomAttributesData`0" priority="0" />
+      <Item value="GetCustomAttributes`0" priority="1" />
+    </ItemStatistics>
+    <ItemStatistics item="Qualified:System.Reflection.CustomAttributeData">
+      <Item value="ToString`0" priority="0" />
+    </ItemStatistics>
+    <ItemStatistics item="Qualified:System.ComponentModel.DescriptionAttribute">
+      <Item value="Description" priority="0" />
+    </ItemStatistics>
+    <ItemStatistics item="Qualified:BrightIdeasSoftware.OLVColumn">
+      <Item value="Text" priority="0" />
+    </ItemStatistics>
+    <ItemStatistics item="Qualified:System.Double">
+      <Item value="ToTimeString`0" priority="3" />
+      <Item value="ToString`0" priority="1" />
+    </ItemStatistics>
+    <ItemStatistics item="Qualified:Elmanager.Level">
+      <Item value="FileName" priority="1" />
+      <Item value="Polygons" priority="0" />
+      <Item value="Objects" priority="7" />
+      <Item value="Textures" priority="6" />
+      <Item value="Pictures" priority="2" />
+      <Item value="Top10" priority="1" />
+      <Item value="GetApplesAndFlowersInsideGround`0" priority="0" />
+      <Item value="VertexCount" priority="0" />
+      <Item value="Clone`0" priority="2" />
+      <Item value="PictureCount" priority="1" />
+      <Item value="Path" priority="26" />
+    </ItemStatistics>
+    <ItemStatistics item="Qualified:@System.IO.Path">
+      <Item value="GetFileNameWithoutExtension`0" priority="2" />
+      <Item value="Combine`0" priority="0" />
+      <Item value="GetFileName`0" priority="30" />
+      <Item value="GetDirectoryName`0" priority="0" />
+    </ItemStatistics>
+    <ItemStatistics item="Qualified:@System.Drawing.Color">
+      <Item value="Yellow" priority="0" />
+      <Item value="Blue" priority="1" />
+      <Item value="Green" priority="0" />
+      <Item value="White" priority="0" />
+      <Item value="Red" priority="28" />
+      <Item value="Black" priority="26" />
+    </ItemStatistics>
+    <ItemStatistics item="Qualified:Elmanager.ApplicationSettings+ReplayViewerSettings">
+      <Item value="Size" priority="0" />
+      <Item value="MultiSpy" priority="2" />
+    </ItemStatistics>
+    <ItemStatistics item="Qualified:Elmanager.RenderingSettings">
+      <Item value="CircleDrawingAccuracy" priority="1" />
+      <Item value="ObjectCenters" priority="1" />
+      <Item value="StartColor" priority="1" />
+      <Item value="ShowPictureFrames" priority="0" />
+      <Item value="ShowPictures" priority="0" />
+      <Item value="ShowTextures" priority="0" />
+      <Item value="Clone`0" priority="2" />
+    </ItemStatistics>
+    <ItemStatistics item="Qualified:System.Windows.Forms.ToolStripMenuItem">
+      <Item value="ShowDropDown`0" priority="0" />
+      <Item value="CheckedChanged" priority="0" />
+      <Item value="Visible" priority="0" />
+    </ItemStatistics>
+    <ItemStatistics item="Qualified:System.Windows.Forms.ContextMenuStrip">
+      <Item value="Show`0" priority="0" />
+      <Item value="Items" priority="1" />
+    </ItemStatistics>
+    <ItemStatistics item="Qualified:System.Object">
+      <Item value="Equals`0" priority="2" />
+    </ItemStatistics>
+    <ItemStatistics item="Qualified:@System.Windows.Forms.Keys">
+      <Item value="Enter" priority="0" />
+    </ItemStatistics>
+    <ItemStatistics item="Qualified:Elmanager.ComboBoxMod">
+      <Item value="SelectedItem" priority="0" />
+      <Item value="SelectedIndex" priority="0" />
+      <Item value="Items" priority="0" />
+    </ItemStatistics>
+    <ItemStatistics item="Qualified:@OpenTK.DisplayDevice">
+      <Item value="Default" priority="7" />
+      <Item value="AvailableDisplays" priority="0" />
+    </ItemStatistics>
+    <ItemStatistics item="Qualified:OpenTK.DisplayDevice">
+      <Item value="AvailableResolutions" priority="0" />
+      <Item value="SelectResolution`0" priority="2" />
+      <Item value="Width" priority="0" />
+      <Item value="Height" priority="0" />
+      <Item value="BitsPerPixel" priority="0" />
+      <Item value="RefreshRate" priority="0" />
+    </ItemStatistics>
+    <ItemStatistics item="Qualified:OpenTK.DisplayResolution">
+      <Item value="Equals`0" priority="0" />
+    </ItemStatistics>
+    <ItemStatistics item="Qualified:System.Windows.Forms.ComboBox+ObjectCollection">
+      <Item value="Count" priority="0" />
+    </ItemStatistics>
+    <ItemStatistics item="Qualified:System.Windows.Forms.ToolTip">
+      <Item value="SetToolTip`0" priority="0" />
+    </ItemStatistics>
+    <ItemStatistics item="Qualified:Elmanager.Level+Mask">
+      <Item value="Position" priority="7" />
+      <Item value="Width" priority="4" />
+      <Item value="Height" priority="8" />
+    </ItemStatistics>
+    <ItemStatistics item="Qualified:@System.Windows.Input.Keyboard">
+      <Item value="IsKeyDown`0" priority="0" />
+    </ItemStatistics>
+    <ItemStatistics item="Qualified:@System.Windows.Input.Key">
+      <Item value="LeftShift" priority="0" />
+    </ItemStatistics>
+    <ItemStatistics item="Qualified:@Elmanager.Geometry">
+      <Item value="DistanceFromSegment`0" priority="1" />
+      <Item value="OrthogonalProjection`0" priority="0" />
+      <Item value="VectorMark`0" priority="2" />
+    </ItemStatistics>
+    <ItemStatistics item="Qualified:OpenTK.Graphics.GraphicsContext">
+      <Item value="MakeCurrent`0" priority="1" />
+    </ItemStatistics>
+    <ItemStatistics item="Qualified:@Elmanager.Utilities">
+      <Item value="ShowError`0" priority="35" />
+      <Item value="HttpUploadFile`0" priority="1" />
+      <Item value="GetLevelFiles`0" priority="0" />
+      <Item value="StringToTime`0" priority="0" />
+      <Item value="CompareStrings`0" priority="28" />
+      <Item value="AddShieldToButton`0" priority="26" />
+    </ItemStatistics>
+    <ItemStatistics item="Qualified:System.Collections.ObjectModel.ReadOnlyCollection`1">
+      <Item value="Count" priority="1" />
+    </ItemStatistics>
+    <ItemStatistics item="Qualified:Elmanager.MainForm">
+      <Item value="Show`0" priority="2" />
+    </ItemStatistics>
+    <ItemStatistics item="Qualified:System.Threading.Thread">
+      <Item value="Start`0" priority="3" />
+      <Item value="SetApartmentState`0" priority="2" />
+      <Item value="Join`0" priority="0" />
+      <Item value="IsAlive" priority="0" />
+    </ItemStatistics>
+    <ItemStatistics item="Qualified:@System.Windows.Forms.Application">
+      <Item value="Run`0" priority="3" />
+      <Item value="DoEvents`0" priority="2" />
+      <Item value="Exit`0" priority="1" />
+      <Item value="StartupPath" priority="0" />
+      <Item value="ExecutablePath" priority="26" />
+    </ItemStatistics>
+    <ItemStatistics item="Qualified:@Microsoft.VisualBasic.ApplicationServices.ShutdownMode">
+      <Item value="AfterMainFormCloses" priority="0" />
+    </ItemStatistics>
+    <ItemStatistics item="Qualified:@System.Threading.ApartmentState">
+      <Item value="STA" priority="3" />
+    </ItemStatistics>
+    <ItemStatistics item="Qualified:System.Windows.Forms.SaveFileDialog">
+      <Item value="InitialDirectory" priority="0" />
+      <Item value="FileName" priority="1" />
+    </ItemStatistics>
+    <ItemStatistics item="Qualified:@Elmanager.Global">
+      <Item value="AppSettings" priority="33" />
+      <Item value="DegToRad" priority="0" />
+      <Item value="Version" priority="0" />
+      <Item value="VersionYear" priority="0" />
+      <Item value="VersionMonth" priority="0" />
+      <Item value="VersionDay" priority="0" />
+      <Item value="BuildDate" priority="80" />
+    </ItemStatistics>
+    <ItemStatistics item="Qualified:Elmanager.ApplicationSettings">
+      <Item value="LevelEditor" priority="2" />
+      <Item value="General" priority="1" />
+      <Item value="Save`0" priority="0" />
+      <Item value="ReplayManager" priority="0" />
+    </ItemStatistics>
+    <ItemStatistics item="Qualified:Elmanager.ApplicationSettings+GeneralSettings">
+      <Item value="LevelDirectory" priority="0" />
+      <Item value="ReplayDirectory" priority="0" />
+    </ItemStatistics>
+    <ItemStatistics item="Qualified:@System.Windows.Forms.MessageBox">
+      <Item value="Show`0" priority="55" />
+    </ItemStatistics>
+    <ItemStatistics item="Qualified:System.Windows.Forms.DialogResult">
+      <Item value="Yes" priority="0" />
+    </ItemStatistics>
+    <ItemStatistics item="Qualified:System.Windows.Forms.FormClosingEventArgs">
+      <Item value="CloseReason" priority="0" />
+    </ItemStatistics>
+    <ItemStatistics item="Qualified:@System.Threading.Thread">
+      <Item value="CurrentThread" priority="2" />
+      <Item value="GetDomain`0" priority="1" />
+      <Item value="Sleep`0" priority="3" />
+    </ItemStatistics>
+    <ItemStatistics item="Qualified:System.AppDomain">
+      <Item value="ActivationContext" priority="0" />
+    </ItemStatistics>
+    <ItemStatistics item="Qualified:System.ActivationContext">
+      <Item value="Identity" priority="0" />
+    </ItemStatistics>
+    <ItemStatistics item="Qualified:@System.Diagnostics.Process">
+      <Item value="GetCurrentProcess`0" priority="3" />
+    </ItemStatistics>
+    <ItemStatistics item="Qualified:System.Diagnostics.Process">
+      <Item value="Threads" priority="3" />
+      <Item value="StartInfo" priority="80" />
+    </ItemStatistics>
+    <ItemStatistics item="Qualified:System.Diagnostics.ProcessThreadCollection">
+      <Item value="Count" priority="1" />
+      <Item value="GetEnumerator`0" priority="0" />
+    </ItemStatistics>
+    <ItemStatistics item="Qualified:@System.Threading.Tasks.Task">
+      <Item value="Factory" priority="4" />
+      <Item value="WaitAll`0" priority="0" />
+    </ItemStatistics>
+    <ItemStatistics item="Qualified:System.Threading.Tasks.TaskFactory">
+      <Item value="StartNew`1" priority="2" />
+    </ItemStatistics>
+    <ItemStatistics item="Qualified:Elmanager.Polygon">
+      <Item value="MarkVectorsAs`0" priority="0" />
+      <Item value="IsGrass" priority="2" />
+      <Item value="DistanceFromPoint`0" priority="0" />
+      <Item value="AreaHasPoint`0" priority="0" />
+      <Item value="Count" priority="54" />
+    </ItemStatistics>
+    <ItemStatistics item="Qualified:@Elmanager.Geometry+VectorMark">
+      <Item value="Selected" priority="2" />
+    </ItemStatistics>
+    <ItemStatistics item="Qualified:Elmanager.Level+LevelObject">
+      <Item value="Type" priority="2" />
+      <Item value="Position" priority="11" />
+      <Item value="AnimationNumber" priority="0" />
+      <Item value="AppleType" priority="0" />
+      <Item value="Clone`0" priority="0" />
+    </ItemStatistics>
+    <ItemStatistics item="Qualified:@Elmanager.Level">
+      <Item value="ObjectType`0" priority="1" />
+      <Item value="GlobalBodyDifferenceFromLeftWheelX" priority="0" />
+      <Item value="GlobalBodyDifferenceFromLeftWheelY" priority="0" />
+      <Item value="RightWheelDifferenceFromLeftWheelX" priority="1" />
+      <Item value="HeadDifferenceFromLeftWheelX" priority="1" />
+      <Item value="HeadDifferenceFromLeftWheelY" priority="1" />
+      <Item value="Mask`0" priority="1" />
+      <Item value="Texture`0" priority="4" />
+      <Item value="MaximumVertexCount" priority="0" />
+    </ItemStatistics>
+    <ItemStatistics item="Qualified:@Elmanager.Level+ObjectType">
+      <Item value="Apple" priority="2" />
+    </ItemStatistics>
+    <ItemStatistics item="Qualified:Elmanager.Level+Texture">
+      <Item value="Masks" priority="0" />
+      <Item value="Mask" priority="8" />
+      <Item value="AspectRatio" priority="9" />
+      <Item value="Width" priority="2" />
+      <Item value="Height" priority="0" />
+      <Item value="Clone`0" priority="4" />
+      <Item value="MaskWidth" priority="0" />
+      <Item value="MaskHeight" priority="0" />
+      <Item value="IsPicture`0" priority="0" />
+      <Item value="TextureName" priority="0" />
+      <Item value="Name" priority="0" />
+      <Item value="IsPicture" priority="11" />
+      <Item value="SetTexture`0" priority="0" />
+    </ItemStatistics>
+    <ItemStatistics item="Qualified:Elmanager.Level+Picture">
+      <Item value="Position" priority="1" />
+      <Item value="Clone`0" priority="7" />
+    </ItemStatistics>
+    <ItemStatistics item="Qualified:Elmanager.ElmaRenderer">
+      <Item value="RedrawScene`0" priority="3" />
+      <Item value="MaxTime" priority="1" />
+      <Item value="UpdateSettings`0" priority="1" />
+      <Item value="ZoomLevel" priority="0" />
+      <Item value="DrawSceneDefault`0" priority="0" />
+    </ItemStatistics>
+    <ItemStatistics item="Qualified:System.Collections.Generic.List`1">
+      <Item value="Add`0" priority="9" />
+      <Item value="Remove`0" priority="2" />
+      <Item value="Count" priority="15" />
+      <Item value="ForEach`0" priority="1" />
+      <Item value="AddRange`0" priority="0" />
+      <Item value="RemoveAt`0" priority="0" />
+      <Item value="Insert`0" priority="4" />
+      <Item value="Select`2" priority="0" />
+      <Item value="FindAll`0" priority="0" />
+      <Item value="Clear`0" priority="0" />
+      <Item value="Sum`1" priority="0" />
+      <Item value="First`1" priority="1" />
+      <Item value="Min`1" priority="26" />
+      <Item value="LongCount`1" priority="22" />
+      <Item value="Count`1" priority="22" />
+      <Item value="Max`1" priority="26" />
+    </ItemStatistics>
+    <ItemStatistics item="Qualified:System.Windows.Forms.Form">
+      <Item value="FormClosed" priority="0" />
+    </ItemStatistics>
+    <ItemStatistics item="Qualified:@Elmanager.ComponentManager">
+      <Item value="Launch`0" priority="2" />
+      <Item value="LaunchReplayManager`0" priority="0" />
+      <Item value="WaitAllThreads`0" priority="0" />
+      <Item value="ShowConfiguration`0" priority="2" />
+    </ItemStatistics>
+    <ItemStatistics item="Qualified:Microsoft.VisualBasic.ApplicationServices.StartupNextInstanceEventArgs">
+      <Item value="CommandLine" priority="4" />
+    </ItemStatistics>
+    <ItemStatistics item="Qualified:System.String">
+      <Item value="EndsWith`0" priority="2" />
+      <Item value="CompareTo`0" priority="0" />
+      <Item value="Plural`0" priority="26" />
+      <Item value="StartsWith`0" priority="26" />
+      <Item value="Substring`0" priority="26" />
+      <Item value="Length" priority="27" />
+    </ItemStatistics>
+    <ItemStatistics item="Qualified:@System.StringComparison">
+      <Item value="OrdinalIgnoreCase" priority="27" />
+    </ItemStatistics>
+    <ItemStatistics item="Qualified:System.Diagnostics.ProcessThread">
+      <Item value="ThreadState" priority="0" />
+    </ItemStatistics>
+    <ItemStatistics item="Qualified:@System.Diagnostics.ThreadState">
+      <Item value="Terminated" priority="0" />
+    </ItemStatistics>
+    <ItemStatistics item="Qualified:Elmanager.Replay+Player">
+      <Item value="CurrentTime" priority="0" />
+    </ItemStatistics>
+    <ItemStatistics item="Qualified:Elmanager.Level+LevelTop10">
+      <Item value="SinglePlayer" priority="0" />
+      <Item value="MultiPlayer" priority="0" />
+      <Item value="IsEmpty" priority="0" />
+    </ItemStatistics>
+    <ItemStatistics item="Qualified:@System.Windows.Forms.MessageBoxButtons">
+      <Item value="YesNo" priority="0" />
+    </ItemStatistics>
+    <ItemStatistics item="Qualified:Elmanager.ConfigForm">
+      <Item value="ShowDialog`0" priority="0" />
+    </ItemStatistics>
+    <ItemStatistics item="Qualified:Elmanager.Player">
+      <Item value="LeftWheelX" priority="1" />
+      <Item value="RightWheelY" priority="1" />
+      <Item value="GlobalBodyX" priority="1" />
+      <Item value="GlobalBodyY" priority="0" />
+      <Item value="LeftWheelY" priority="0" />
+      <Item value="RightWheelX" priority="0" />
+      <Item value="LeftWheelRotation" priority="0" />
+      <Item value="RightWheelRotation" priority="0" />
+      <Item value="HeadX" priority="0" />
+      <Item value="HeadY" priority="0" />
+      <Item value="BikeRotation" priority="0" />
+      <Item value="Dir" priority="0" />
+      <Item value="ArmRotation" priority="0" />
+      <Item value="GetFrameData`0" priority="1" />
+      <Item value="Events" priority="5" />
+      <Item value="IsCheated" priority="1" />
+      <Item value="InitializeForPlaying`0" priority="0" />
+    </ItemStatistics>
+    <ItemStatistics item="Qualified:@OpenTK.Graphics.OpenGL.GL">
+      <Item value="Scale`0" priority="1" />
+      <Item value="Enable`0" priority="0" />
+      <Item value="Scissor`0" priority="0" />
+      <Item value="GetInteger`0" priority="0" />
+      <Item value="PushMatrix`0" priority="0" />
+      <Item value="PopMatrix`0" priority="0" />
+      <Item value="LoadIdentity`0" priority="0" />
+    </ItemStatistics>
+    <ItemStatistics item="Qualified:System.Windows.Forms.Panel">
+      <Item value="Width" priority="1" />
+      <Item value="Height" priority="0" />
+      <Item value="Location" priority="2" />
+    </ItemStatistics>
+    <ItemStatistics item="Qualified:System.Int32">
+      <Item value="ToString`0" priority="56" />
+    </ItemStatistics>
+    <ItemStatistics item="Qualified:@System.Int32">
+      <Item value="Parse`0" priority="29" />
+      <Item value="TryParse`0" priority="0" />
+    </ItemStatistics>
+    <ItemStatistics item="Qualified:System.Net.WebClient">
+      <Item value="UploadFile`0" priority="0" />
+      <Item value="Headers" priority="0" />
+    </ItemStatistics>
+    <ItemStatistics item="Qualified:System.Xml.XmlDocument">
+      <Item value="LoadXml`0" priority="0" />
+      <Item value="GetElementById`0" priority="0" />
+    </ItemStatistics>
+    <ItemStatistics item="Qualified:System.IO.StreamReader">
+      <Item value="ReadToEnd`0" priority="0" />
+      <Item value="Close`0" priority="0" />
+    </ItemStatistics>
+    <ItemStatistics item="Qualified:System.Collections.Specialized.NameValueCollection">
+      <Item value="Add`0" priority="0" />
+    </ItemStatistics>
+    <ItemStatistics item="Qualified:System.IO.Stream">
+      <Item value="Close`0" priority="0" />
+    </ItemStatistics>
+    <ItemStatistics item="Qualified:System.Net.HttpWebRequest">
+      <Item value="ToString`0" priority="0" />
+    </ItemStatistics>
+    <ItemStatistics item="Qualified:@System.IO.File">
+      <Item value="WriteAllText`0" priority="0" />
+    </ItemStatistics>
+    <ItemStatistics item="Qualified:@Microsoft.VisualBasic.Interaction">
+      <Item value="Choose`0" priority="0" />
+    </ItemStatistics>
+    <ItemStatistics item="Qualified:Elmanager.UploadForm">
+      <Item value="Show`0" priority="0" />
+      <Item value="UploadToZworqy`0" priority="0" />
+      <Item value="UploadTok10X`0" priority="0" />
+    </ItemStatistics>
+    <ItemStatistics item="Qualified:System.Windows.Forms.Label">
+      <Item value="Text" priority="55" />
+      <Item value="Refresh`0" priority="26" />
+    </ItemStatistics>
+    <ItemStatistics item="Qualified:@System.Text.RegularExpressions.Regex">
+      <Item value="Escape`0" priority="0" />
+    </ItemStatistics>
+    <ItemStatistics item="Qualified:System.Text.RegularExpressions.Match">
+      <Item value="Groups" priority="0" />
+    </ItemStatistics>
+    <ItemStatistics item="Qualified:System.Text.RegularExpressions.Group">
+      <Item value="Value" priority="0" />
+    </ItemStatistics>
+    <ItemStatistics item="Qualified:Elmanager.ApplicationSettings+LevelEditorSettings">
+      <Item value="SnapToGrid" priority="0" />
+      <Item value="AutoGrassThickness" priority="0" />
+    </ItemStatistics>
+    <ItemStatistics item="Qualified:System.Windows.Forms.ToolStripButton">
+      <Item value="Checked" priority="0" />
+    </ItemStatistics>
+    <ItemStatistics item="Qualified:System.Windows.Forms.ToolStripTextBox">
+      <Item value="Text" priority="1" />
+      <Item value="Font" priority="0" />
+      <Item value="Width" priority="0" />
+    </ItemStatistics>
+    <ItemStatistics item="Qualified:Elmanager.PictureForm">
+      <Item value="Texture" priority="0" />
+      <Item value="Clipping" priority="0" />
+      <Item value="Distance" priority="0" />
+      <Item value="TextureSelected" priority="0" />
+    </ItemStatistics>
+    <ItemStatistics item="Qualified:@OpenTK.Graphics.OpenGL.EnableCap">
+      <Item value="ScissorTest" priority="0" />
+    </ItemStatistics>
+    <ItemStatistics item="Qualified:@OpenTK.Graphics.OpenGL.GetPName">
+      <Item value="Viewport" priority="0" />
+    </ItemStatistics>
+    <ItemStatistics item="Qualified:Elmanager.ElmaRenderer+DrawableImage">
+      <Item value="Width" priority="3" />
+      <Item value="Height" priority="1" />
+      <Item value="Name" priority="1" />
+      <Item value="TextureIdentifier" priority="3" />
+      <Item value="AspectRatio" priority="0" />
+    </ItemStatistics>
+    <ItemStatistics item="Qualified:@Elmanager.ElmaRenderer">
+      <Item value="DrawableImage`0" priority="1" />
+      <Item value="ObjectRadius" priority="0" />
+    </ItemStatistics>
+    <ItemStatistics item="Qualified:Elmanager.Level+LevelFilePicture">
+      <Item value="Position" priority="0" />
+      <Item value="Distance" priority="0" />
+      <Item value="Clipping" priority="0" />
+    </ItemStatistics>
+    <ItemStatistics item="Qualified:Elmanager.Level+LevelFileTexture">
+      <Item value="Clipping" priority="0" />
+      <Item value="Distance" priority="0" />
+      <Item value="Position" priority="0" />
+      <Item value="MaskName" priority="1" />
+    </ItemStatistics>
+    <ItemStatistics item="Qualified:System.DateTime">
+      <Item value="ToShortDateString`0" priority="0" />
+      <Item value="ToLongDateString`0" priority="0" />
+      <Item value="ToString`0" priority="53" />
+      <Item value="Date" priority="377" />
+    </ItemStatistics>
+    <ItemStatistics item="Qualified:@Elmanager.Lgr+ImageType">
+      <Item value="Texture" priority="0" />
+    </ItemStatistics>
+    <ItemStatistics item="Qualified:Elmanager.LevelEditor">
+      <Item value="PicForm" priority="0" />
+      <Item value="PictureFilter" priority="1" />
+      <Item value="TextureFilter" priority="1" />
+    </ItemStatistics>
+    <ItemStatistics item="Qualified:@OpenTK.Graphics.OpenGL.DepthFunction">
+      <Item value="Greater" priority="2" />
+    </ItemStatistics>
+    <ItemStatistics item="Qualified:System.Windows.Forms.PropertyGrid">
+      <Item value="PropertyValueChanged" priority="0" />
+    </ItemStatistics>
+    <ItemStatistics item="Qualified:Elmanager.RenderingSettingsForm">
+      <Item value="Changed" priority="0" />
+    </ItemStatistics>
+    <ItemStatistics item="Qualified:@System.Windows.Forms.Control">
+      <Item value="MousePosition" priority="0" />
+    </ItemStatistics>
+    <ItemStatistics item="Qualified:System.Windows.Forms.ToolStripProgressBar">
+      <Item value="ProgressBar" priority="0" />
+      <Item value="Margin" priority="26" />
+      <Item value="Value" priority="26" />
+      <Item value="PerformStep`0" priority="26" />
+    </ItemStatistics>
+    <ItemStatistics item="Qualified:System.Windows.Forms.CheckBox">
+      <Item value="CheckedChanged" priority="0" />
+      <Item value="Checked" priority="1" />
+    </ItemStatistics>
+    <ItemStatistics item="Qualified:Elmanager.PlayerEvent">
+      <Item value="Time" priority="6" />
+      <Item value="ToString`0" priority="0" />
+    </ItemStatistics>
+    <ItemStatistics item="Qualified:System.IO.StreamWriter">
+      <Item value="NewLine" priority="0" />
+      <Item value="WriteLine`0" priority="5" />
+      <Item value="Write`0" priority="0" />
+      <Item value="Close`0" priority="1" />
+    </ItemStatistics>
+    <ItemStatistics item="Qualified:@Elmanager.Player">
+      <Item value="TimeConst" priority="1" />
+    </ItemStatistics>
+    <ItemStatistics item="Qualified:@System.IO.Directory">
+      <Item value="GetFiles`0" priority="1" />
+    </ItemStatistics>
+    <ItemStatistics item="Qualified:@System.Diagnostics.Debug">
+      <Item value="WriteLine`0" priority="2" />
+      <Item value="AutoFlush" priority="0" />
+    </ItemStatistics>
+    <ItemStatistics item="Qualified:BrightIdeasSoftware.ObjectListView">
+      <Item value="SelectedObject" priority="0" />
+      <Item value="CellEditActivation" priority="27" />
+      <Item value="SelectedObjects" priority="22" />
+    </ItemStatistics>
+    <ItemStatistics item="Qualified:System.Collections.IList">
+      <Item value="Count" priority="27" />
+    </ItemStatistics>
+    <ItemStatistics item="Qualified:Elmanager.Level+Object">
+      <Item value="Position" priority="2" />
+      <Item value="Type" priority="1" />
+    </ItemStatistics>
+    <ItemStatistics item="Qualified:System.Windows.Forms.ToolStripDropDownButton">
+      <Item value="DropDownItems" priority="2" />
+      <Item value="Text" priority="1" />
+      <Item value="ForeColor" priority="26" />
+      <Item value="Font" priority="81" />
+    </ItemStatistics>
+    <ItemStatistics item="Qualified:System.Windows.Forms.ToolStripItemCollection">
+      <Item value="Add`0" priority="0" />
+      <Item value="Clear`0" priority="1" />
+      <Item value="Count" priority="55" />
+    </ItemStatistics>
+    <ItemStatistics item="Qualified:System.Windows.Forms.ToolStripItem">
+      <Item value="ToString`0" priority="0" />
+    </ItemStatistics>
+    <ItemStatistics item="Qualified:System.Windows.Forms.StatusStrip">
+      <Item value="Refresh`0" priority="54" />
+    </ItemStatistics>
+    <ItemStatistics item="Qualified:@Microsoft.VisualBasic.Information">
+      <Item value="IsNumeric`0" priority="1" />
+    </ItemStatistics>
+    <ItemStatistics item="Qualified:Elmanager.CustomControls.NumericTextBox">
+      <Item value="Value" priority="0" />
+      <Item value="ValueAsInt" priority="59" />
+      <Item value="Text" priority="0" />
+      <Item value="Equals`0" priority="0" />
+    </ItemStatistics>
+    <ItemStatistics item="Qualified:@System.Windows.Forms.TextRenderer">
+      <Item value="MeasureText`0" priority="0" />
+    </ItemStatistics>
+    <ItemStatistics item="Qualified:System.Drawing.Size">
+      <Item value="Width" priority="0" />
+    </ItemStatistics>
+    <ItemStatistics item="CSharpCodeCompletionContext">
+      <Item value="RList" priority="63" />
+      <Item value="ObjectListView`0" priority="31" />
+      <Item value="statusLabel" priority="95" />
+      <Item value="StatusStrip1" priority="63" />
+      <Item value="MessageBox`0" priority="31" />
+      <Item value="output" priority="31" />
+      <Item value="Application`0" priority="31" />
+      <Item value="BcmSetshield" priority="31" />
+      <Item value="button1" priority="31" />
+      <Item value="Utilities`0" priority="63" />
+      <Item value="Path" priority="31" />
+      <Item value="IODescriptionAttribute`0" priority="31" />
+      <Item value="System" priority="155" />
+      <Item value="IO" priority="26" />
+      <Item value="Path`0" priority="26" />
+      <Item value="levelFile" priority="31" />
+      <Item value="LevelFilename" priority="31" />
+      <Item value="var" priority="95" />
+      <Item value="Xml" priority="26" />
+      <Item value="Serialization" priority="105" />
+      <Item value="XmlSerializer" priority="25" />
+      <Item value="ApplicationSettings`0" priority="95" />
+      <Item value="GetType`0" priority="31" />
+      <Item value="typeof" priority="31" />
+      <Item value="test" priority="31" />
+      <Item value="appSettingsFile" priority="26" />
+      <Item value="Runtime" priority="80" />
+      <Item value="Formatters" priority="79" />
+      <Item value="Binary" priority="52" />
+      <Item value="BinaryFormatter" priority="55" />
+      <Item value="binFormatter" priority="63" />
+      <Item value="BinaryFormatter`0" priority="26" />
+      <Item value="FormatterTypeStyle`0" priority="26" />
+      <Item value="versionLabel" priority="31" />
+      <Item value="buildDate" priority="63" />
+      <Item value="internal" priority="95" />
+      <Item value="static" priority="95" />
+      <Item value="DateTime`0" priority="31" />
+      <Item value="Global`0" priority="159" />
+      <Item value="Constants`0" priority="31" />
+      <Item value="finally" priority="31" />
+      <Item value="ToolStripProgressBar1" priority="127" />
+      <Item value="GenerateDataBase`0" priority="96" />
+      <Item value="delegate" priority="31" />
+      <Item value="void" priority="31" />
+      <Item value="Generate" priority="29" />
+      <Item value="Action" priority="29" />
+      <Item value="AsyncCallback" priority="28" />
+      <Item value="label9" priority="31" />
+      <Item value="IAsyncResult`0" priority="33" />
+      <Item value="Label1" priority="31" />
+      <Item value="return" priority="159" />
+      <Item value="Lev" priority="31" />
+      <Item value="double" priority="31" />
+      <Item value="Vector`0" priority="31" />
+      <Item value="Vertices" priority="31" />
+      <Item value="x" priority="31" />
+      <Item value="foreach" priority="31" />
+      <Item value="if" priority="31" />
+      <Item value="polygon" priority="63" />
+      <Item value="null" priority="31" />
+      <Item value="_Busy" priority="31" />
+      <Item value="false" priority="31" />
+      <Item value="true" priority="31" />
+      <Item value="topologyList" priority="95" />
+      <Item value="Color`0" priority="31" />
+      <Item value="Font" priority="28" />
+      <Item value="FontStyle`0" priority="31" />
+      <Item value="string" priority="95" />
+      <Item value="int" priority="95" />
+      <Item value="count" priority="31" />
+      <Item value="str" priority="63" />
+      <Item value="items" priority="63" />
+      <Item value="c" priority="31" />
+      <Item value="_transformPolygonIndex" priority="31" />
+      <Item value="else" priority="63" />
+      <Item value="transformMatrix" priority="31" />
+      <Item value="p" priority="31" />
+      <Item value="center" priority="31" />
+      <Item value="v" priority="31" />
+      <Item value="digitAmountBox" priority="127" />
+      <Item value="NumericTextBox" priority="29" />
+      <Item value="NumericTextBox`0" priority="31" />
+      <Item value="digitAmount" priority="63" />
+      <Item value="Utils`0" priority="31" />
+      <Item value="filenameStart" priority="95" />
+      <Item value="CultureInfoConverter`0" priority="31" />
+      <Item value="StringComparison`0" priority="31" />
+      <Item value="highestNumber" priority="31" />
+      <Item value="catch" priority="31" />
+      <Item value="FormatException`0" priority="31" />
+      <Item value="levelNumber" priority="32" />
+      <Item value="isNum" priority="31" />
+      <Item value="try" priority="31" />
+      <Item value="ChangeToDefaultCursor`0" priority="26" />
+    </ItemStatistics>
+    <ItemStatistics item="Qualified:@BrightIdeasSoftware.ObjectListView">
+      <Item value="CellEditActivateMode`0" priority="26" />
+    </ItemStatistics>
+    <ItemStatistics item="Qualified:@BrightIdeasSoftware.ObjectListView+CellEditActivateMode">
+      <Item value="F2Only" priority="26" />
+      <Item value="None" priority="27" />
+    </ItemStatistics>
+    <ItemStatistics item="Qualified:@Microsoft.VisualBasic.FileIO.UIOption">
+      <Item value="AllDialogs" priority="27" />
+      <Item value="OnlyErrorDialogs" priority="22" />
+    </ItemStatistics>
+    <ItemStatistics item="Qualified:System.Windows.Forms.ToolStripStatusLabel">
+      <Item value="Text" priority="26" />
+    </ItemStatistics>
+    <ItemStatistics item="Qualified:System.Diagnostics.ProcessStartInfo">
+      <Item value="Verb" priority="26" />
+      <Item value="Arguments" priority="26" />
+    </ItemStatistics>
+    <ItemStatistics item="Qualified:@System.Runtime.InteropServices.RuntimeEnvironment">
+      <Item value="FromGlobalAccessCache`0" priority="22" />
+      <Item value="GetRuntimeDirectory`0" priority="27" />
+    </ItemStatistics>
+    <ItemStatistics item="Qualified:System.Xml.Serialization.XmlSerializer">
+      <Item value="Serialize`0" priority="26" />
+    </ItemStatistics>
+    <ItemStatistics item="Qualified:System.Runtime.Serialization.Formatters.Binary.BinaryFormatter">
+      <Item value="TypeFormat" priority="26" />
+      <Item value="Context" priority="26" />
+    </ItemStatistics>
+    <ItemStatistics item="Qualified:@System.Runtime.Serialization.Formatters.FormatterTypeStyle">
+      <Item value="TypesAlways" priority="26" />
+    </ItemStatistics>
+    <ItemStatistics item="Qualified:@Elmanager.Constants">
+      <Item value="Version" priority="26" />
+    </ItemStatistics>
+    <ItemStatistics item="Qualified:System.IO.MemoryStream">
+      <Item value="Close`0" priority="26" />
+    </ItemStatistics>
+    <ItemStatistics item="Qualified:System.Action">
+      <Item value="BeginInvoke`0" priority="26" />
+    </ItemStatistics>
+    <ItemStatistics item="Qualified:System.Drawing.Font">
+      <Item value="Bold" priority="26" />
+    </ItemStatistics>
+    <ItemStatistics item="Qualified:@System.Drawing.FontStyle">
+      <Item value="Bold" priority="54" />
+      <Item value="Regular" priority="50" />
+    </ItemStatistics>
+    <ItemStatistics item="Qualified:Elmanager.Matrix">
+      <Item value="Translate`0" priority="26" />
+    </ItemStatistics>
+    <ItemStatistics item="Qualified:@Elmanager.Utils">
+      <Item value="ShowError`0" priority="26" />
+    </ItemStatistics>
+    <ItemStatistics item="Qualified:Elmanager.ElmanagerSettings">
+      <Item value="LevelEditor" priority="26" />
+    </ItemStatistics>
+    <ItemStatistics item="Qualified:Elmanager.ElmanagerSettings+LevelEditorSettings">
+      <Item value="MinDigitAmount" priority="26" />
+    </ItemStatistics>
+  </CompletionStatisticsManager>
+</Configuration>
