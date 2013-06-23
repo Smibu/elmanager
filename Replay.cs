@@ -121,7 +121,7 @@ namespace Elmanager
                         var levelStream = new FileStream(levelFile, FileMode.Open, FileAccess.Read);
                         levelStream.Seek(3, SeekOrigin.Begin);
                         //Check also the version of the level
-                        if (levelStream.Length >= 900)
+                        if (levelStream.Length > 0)
                         {
                             if (levelStream.ReadByte() == 49)
                                 //If Level(3) = 49, it is Elma lev, otherwise (when 48) Across lev
