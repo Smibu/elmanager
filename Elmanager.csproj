@@ -287,6 +287,7 @@
     <Compile Include="EditorTools\PipeTool.cs" />
     <Compile Include="EditorTools\PolyOpTool.cs" />
     <Compile Include="Player.cs" />
+    <Compile Include="PolygonException.cs" />
     <Compile Include="RenderingSettings.cs" />
     <Compile Include="PCX.cs" />
     <Compile Include="EditorTools\PictureTool.cs" />

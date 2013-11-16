@@ -421,6 +421,10 @@ namespace Elmanager
 
         internal List<Polygon> PolygonOperationWith(Polygon p, PolygonOperationType type)
         {
+            if (!IsSimple || !p.IsSimple)
+            {
+                throw new PolygonException("Both polygons must be non-self-intersecting.");
+            }
             if (!IsCounterClockwise)
                 ChangeOrientation();
             if ((!p.IsCounterClockwise) ^ (type == PolygonOperationType.Difference))
@@ -543,11 +547,7 @@ namespace Elmanager
                     k++;
                 }
             }
-            results.Add(merged);
-            results.Add(clip);
-            merged.UpdateDecomposition();
-            clip.UpdateDecomposition();
-            return results;
+            throw new PolygonException("The polygons do not intersect.");
         }
 
         internal int IndexOf(Vector v)

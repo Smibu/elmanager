@@ -91,10 +91,17 @@ namespace Elmanager.EditorTools
                             if (!NearestPolygon.Equals(_firstPolygon))
                             {
                                 MarkAllAs(Geometry.VectorMark.None);
-                                Lev.Polygons.Remove(_firstPolygon);
-                                Lev.Polygons.Remove(NearestPolygon);
-                                Lev.Polygons.AddRange(NearestPolygon.PolygonOperationWith(_firstPolygon, _currentOpType));
-                                LevEditor.Modified = true;
+                                try
+                                {
+                                    Lev.Polygons.AddRange(NearestPolygon.PolygonOperationWith(_firstPolygon, _currentOpType));
+                                    Lev.Polygons.Remove(_firstPolygon);
+                                    Lev.Polygons.Remove(NearestPolygon);
+                                    LevEditor.Modified = true;
+                                }
+                                catch (PolygonException e)
+                                {
+                                    Utils.ShowError(e.Message);
+                                }
                                 FirstSelected = false;
                                 ResetPolygonMarks();
                                 Renderer.RedrawScene();
@@ -126,11 +133,11 @@ namespace Elmanager.EditorTools
             }
         }
 
-        public void MouseMove(Vector P)
+        public void MouseMove(Vector p)
         {
-            CurrentPos = P;
+            CurrentPos = p;
             ResetHighlight();
-            int nearestVertex = GetNearestVertexIndex(P);
+            int nearestVertex = GetNearestVertexIndex(p);
             if (nearestVertex >= -1)
             {
                 ChangeCursorToHand();
