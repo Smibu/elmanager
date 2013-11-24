@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.ComponentModel;
 using System.Drawing;
 using System.IO;
+using System.Linq;
 using System.Windows.Forms;
 using Elmanager.CustomControls;
 using Elmanager.EditorTools;
@@ -328,7 +329,7 @@ namespace Elmanager.Forms
                     {
                         z.Mark = Geometry.VectorMark.None;
                         copy.Add(new Vector(z.X + Global.AppSettings.LevelEditor.RenderingSettings.GridSize,
-                                            z.Y + Global.AppSettings.LevelEditor.RenderingSettings.GridSize));
+                            z.Y + Global.AppSettings.LevelEditor.RenderingSettings.GridSize));
                     }
                 }
                 if (copy.Count > 2)
@@ -347,7 +348,7 @@ namespace Elmanager.Forms
                         new Level.Object(
                             x.Position +
                             new Vector(Global.AppSettings.LevelEditor.RenderingSettings.GridSize,
-                                       Global.AppSettings.LevelEditor.RenderingSettings.GridSize), x.Type, x.AppleType,
+                                Global.AppSettings.LevelEditor.RenderingSettings.GridSize), x.Type, x.AppleType,
                             x.AnimationNumber));
                 }
             }
@@ -429,16 +430,16 @@ namespace Elmanager.Forms
                 {
                     case Geometry.VectorMark.Selected:
                         Renderer.DrawRectangle(z.X, z.Y, z.X + t.Width, z.Y + t.Height,
-                                               Global.AppSettings.LevelEditor.SelectionColor);
+                            Global.AppSettings.LevelEditor.SelectionColor);
                         break;
                     case Geometry.VectorMark.Highlight:
                         Renderer.DrawRectangle(z.X, z.Y, z.X + t.Width, z.Y + t.Height,
-                                               Global.AppSettings.LevelEditor.HighlightColor);
+                            Global.AppSettings.LevelEditor.HighlightColor);
                         break;
                 }
             }
             foreach (Vector x in _errorPoints)
-                Renderer.DrawSquare(x, Renderer.ZoomLevel/25, Color.Red);
+                Renderer.DrawSquare(x, Renderer.ZoomLevel / 25, Color.Red);
         }
 
         private void CutButtonChanged(object sender, EventArgs e)
@@ -552,14 +553,14 @@ namespace Elmanager.Forms
         {
             Point mousePosNoTr = EditorControl.PointToClient(MousePosition);
             var mousePos = new Vector
-                               {
-                                   X =
-                                       Renderer.XMin +
-                                       mousePosNoTr.X*(Renderer.XMax - Renderer.XMin)/EditorControl.Width,
-                                   Y =
-                                       Renderer.YMax -
-                                       mousePosNoTr.Y*(Renderer.YMax - Renderer.YMin)/EditorControl.Height
-                               };
+                           {
+                               X =
+                                   Renderer.XMin +
+                                   mousePosNoTr.X * (Renderer.XMax - Renderer.XMin) / EditorControl.Width,
+                               Y =
+                                   Renderer.YMax -
+                                   mousePosNoTr.Y * (Renderer.YMax - Renderer.YMin) / EditorControl.Height
+                           };
             return mousePos;
         }
 
@@ -567,14 +568,14 @@ namespace Elmanager.Forms
         {
             Point mousePosNoTr = EditorControl.PointToClient(MousePosition);
             var mousePos = new Vector
-                               {
-                                   X =
-                                       Renderer.XMin +
-                                       mousePosNoTr.X*(Renderer.XMax - Renderer.XMin)/EditorControl.Width,
-                                   Y =
-                                       -Renderer.YMax +
-                                       mousePosNoTr.Y*(Renderer.YMax - Renderer.YMin)/EditorControl.Height
-                               };
+                           {
+                               X =
+                                   Renderer.XMin +
+                                   mousePosNoTr.X * (Renderer.XMax - Renderer.XMin) / EditorControl.Width,
+                               Y =
+                                   -Renderer.YMax +
+                                   mousePosNoTr.Y * (Renderer.YMax - Renderer.YMin) / EditorControl.Height
+                           };
             return mousePos;
         }
 
@@ -590,16 +591,30 @@ namespace Elmanager.Forms
         private void HandleGravityMenu(object sender, EventArgs e)
         {
             Level.Object currApple = Lev.Objects[_selectedObjectIndex];
+            Level.AppleTypes chosenAppleType;
             if (sender.Equals(GravityNoneMenuItem))
-                currApple.AppleType = Level.AppleTypes.Normal;
+                chosenAppleType = Level.AppleTypes.Normal;
             else if (sender.Equals(GravityUpMenuItem))
-                currApple.AppleType = Level.AppleTypes.GravityUp;
+                chosenAppleType = Level.AppleTypes.GravityUp;
             else if (sender.Equals(GravityDownMenuItem))
-                currApple.AppleType = Level.AppleTypes.GravityDown;
+                chosenAppleType = Level.AppleTypes.GravityDown;
             else if (sender.Equals(GravityLeftMenuItem))
-                currApple.AppleType = Level.AppleTypes.GravityLeft;
-            else if (sender.Equals(GravityRightMenuItem))
-                currApple.AppleType = Level.AppleTypes.GravityRight;
+                chosenAppleType = Level.AppleTypes.GravityLeft;
+            else
+                chosenAppleType = Level.AppleTypes.GravityRight;
+
+            if (currApple.Position.Mark == Geometry.VectorMark.Selected)
+            {
+                Lev.Objects.Where(
+                    obj => obj.Position.Mark == Geometry.VectorMark.Selected && obj.Type == Level.ObjectType.Apple)
+                    .ToList()
+                    .ForEach(apple => apple.AppleType = chosenAppleType);
+            }
+            else
+            {
+                currApple.AppleType = chosenAppleType;
+            }
+
             Modified = true;
         }
 
@@ -615,13 +630,13 @@ namespace Elmanager.Forms
             UpdateLabels();
             Renderer.CustomRendering = CustomRendering;
             Tools = new IEditorTool[]
-                        {
-                            new SelectionTool(this), new VertexTool(this), new DrawTool(this), new ObjectTool(this),
-                            new PipeTool(this), new ZoomTool(this), new EllipseTool(this), new PolyOpTool(this),
-                            new FrameTool(this), new SmoothenTool(this), new CutConnectTool(this),
-                            new AutoGrassTool(this),
-                            new TransformTool(this), new PictureTool(this)
-                        };
+                    {
+                        new SelectionTool(this), new VertexTool(this), new DrawTool(this), new ObjectTool(this),
+                        new PipeTool(this), new ZoomTool(this), new EllipseTool(this), new PolyOpTool(this),
+                        new FrameTool(this), new SmoothenTool(this), new CutConnectTool(this),
+                        new AutoGrassTool(this),
+                        new TransformTool(this), new PictureTool(this)
+                    };
             CurrentTool = Tools[0];
             CurrentTool.Activate();
             SetupEventHandlers();
@@ -708,7 +723,7 @@ namespace Elmanager.Forms
                     Lev.SkyTextureName = SkyComboBox.SelectedItem.ToString();
                 if (Global.AppSettings.LevelEditor.RenderingSettings.DefaultGroundAndSky)
                     Utils.ShowError("Default ground and sky is enabled, so you won\'t see this change in editor.",
-                                    "Warning", MessageBoxIcon.Exclamation);
+                        "Warning", MessageBoxIcon.Exclamation);
                 Renderer.UpdateGroundAndSky(Global.AppSettings.LevelEditor.RenderingSettings.DefaultGroundAndSky);
                 Renderer.RedrawScene();
             }
@@ -833,9 +848,9 @@ namespace Elmanager.Forms
             if (_draggingScreen)
             {
                 Vector z = GetMouseCoordinates();
-                Renderer.CenterX = _moveStartPosition.X - (_moveStartPosition.X - (Renderer.XMax + Renderer.XMin)/2) -
+                Renderer.CenterX = _moveStartPosition.X - (_moveStartPosition.X - (Renderer.XMax + Renderer.XMin) / 2) -
                                    (z.X - _moveStartPosition.X);
-                Renderer.CenterY = _moveStartPosition.Y - (_moveStartPosition.Y - (Renderer.YMax + Renderer.YMin)/2) -
+                Renderer.CenterY = _moveStartPosition.Y - (_moveStartPosition.Y - (Renderer.YMax + Renderer.YMin) / 2) -
                                    (z.Y - _moveStartPosition.Y);
                 Renderer.RedrawScene();
             }
@@ -855,7 +870,7 @@ namespace Elmanager.Forms
 
         private void MouseWheelZoom2(long delta)
         {
-            Renderer.Zoom(GetMouseCoordinates(), delta > 0, 1 - MouseWheelStep/100.0);
+            Renderer.Zoom(GetMouseCoordinates(), delta > 0, 1 - MouseWheelStep / 100.0);
         }
 
         private void MoveFocus(object sender, EventArgs e)
@@ -897,10 +912,10 @@ namespace Elmanager.Forms
             string oldLgr = Global.AppSettings.LevelEditor.RenderingSettings.LgrFile;
             var rSettings = new RenderingSettingsForm(Global.AppSettings.LevelEditor.RenderingSettings);
             rSettings.Changed += x =>
-                                     {
-                                         Renderer.UpdateSettings(x);
-                                         Renderer.RedrawScene();
-                                     };
+                                 {
+                                     Renderer.UpdateSettings(x);
+                                     Renderer.RedrawScene();
+                                 };
             rSettings.ShowDialog();
             AfterSettingsClosed(oldLgr);
         }
@@ -936,7 +951,7 @@ namespace Elmanager.Forms
                 else
                 {
                     selected.SetPicture(Renderer.DrawableImageFromName(PicForm.Picture.Name), position, PicForm.Distance,
-                                        PicForm.Clipping);
+                        PicForm.Clipping);
                 }
                 Modified = true;
                 Renderer.RedrawScene();
@@ -998,7 +1013,7 @@ namespace Elmanager.Forms
             {
                 switch (
                     MessageBox.Show("Level has been modified. Do you want to save changes?", LevEditorName,
-                                    MessageBoxButtons.YesNoCancel))
+                        MessageBoxButtons.YesNoCancel))
                 {
                     case DialogResult.Yes:
                         SaveLevel();
@@ -1104,7 +1119,7 @@ namespace Elmanager.Forms
             {
                 if (Lev.Top10.IsEmpty ||
                     MessageBox.Show("This level has times in top 10. Do you still want to save the level?", "Warning",
-                                    MessageBoxButtons.YesNo, MessageBoxIcon.Warning) == DialogResult.Yes)
+                        MessageBoxButtons.YesNo, MessageBoxIcon.Warning) == DialogResult.Yes)
                 {
                     if (Global.AppSettings.LevelEditor.CheckTopologyWhenSaving)
                         CheckTopologyAndUpdate();
@@ -1193,11 +1208,11 @@ namespace Elmanager.Forms
             Lev =
                 new Level(
                     Polygon.Rectangle(new Vector(), Global.AppSettings.LevelEditor.InitialWidth,
-                                      Global.AppSettings.LevelEditor.InitialHeight),
-                    new Vector(Global.AppSettings.LevelEditor.InitialWidth/2,
-                               Global.AppSettings.LevelEditor.InitialHeight/2),
-                    new Vector(Global.AppSettings.LevelEditor.InitialWidth*3/4,
-                               Global.AppSettings.LevelEditor.InitialHeight/2));
+                        Global.AppSettings.LevelEditor.InitialHeight),
+                    new Vector(Global.AppSettings.LevelEditor.InitialWidth / 2,
+                        Global.AppSettings.LevelEditor.InitialHeight / 2),
+                    new Vector(Global.AppSettings.LevelEditor.InitialWidth * 3 / 4,
+                        Global.AppSettings.LevelEditor.InitialHeight / 2));
             SetDefaultLevelTitle();
         }
 
@@ -1411,6 +1426,11 @@ namespace Elmanager.Forms
         {
             int width = TextRenderer.MeasureText(TitleBox.Text, TitleBox.Font).Width;
             TitleBox.Width = Math.Max(width, 120);
+        }
+
+        public void PreserveSelection()
+        {
+            _history[_historyIndex] = Lev.Clone();
         }
     }
 }

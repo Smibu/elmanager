@@ -164,10 +164,10 @@ namespace Elmanager
             get { return _gridSize; }
             set
             {
-                if (value >= 0.1 && value <= 10.0)
+                if (value > 0)
                     _gridSize = value;
                 else
-                    throw (new ArgumentException("Grid size must be in range 0.1 through 10!"));
+                    throw (new ArgumentException("Grid size must be greater than 0!"));
             }
         }
 

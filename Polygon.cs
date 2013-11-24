@@ -34,7 +34,7 @@ namespace Elmanager
             : this()
         {
             foreach (Vector x in p.Vertices)
-                Vertices.Add(x);
+                Vertices.Add(x.Clone());
             Mark = PolygonMark.None;
             IsGrass = p.IsGrass;
             Decomposition = p.Decomposition;
@@ -267,29 +267,23 @@ namespace Elmanager
 
         internal int GetNearestVertexIndex(Vector p)
         {
-            double smallest = (Vertices[0] - p).Length;
+            double smallest = (Vertices[0] - p).LengthSquared;
             int smallestIndex = 0;
-            double current;
-            int c = Vertices.Count - 1;
-            for (int i = 0; i < c; i++)
+            for (int i = 1; i < Vertices.Count; i++)
             {
-                current = Geometry.DistanceFromSegment(Vertices[i].X, Vertices[i].Y, Vertices[i + 1].X,
-                                                       Vertices[i + 1].Y, p.X, p.Y);
+                double current = (Vertices[i] - p).LengthSquared;
                 if (current < smallest)
                 {
                     smallest = current;
-                    smallestIndex = ((Vertices[i] - p).LengthSquared < (Vertices[i + 1] - p).LengthSquared)
-                                        ? i
-                                        : i + 1;
+                    smallestIndex = i;
                 }
             }
-            current = Geometry.DistanceFromSegment(Vertices[c].X, Vertices[c].Y, Vertices[0].X, Vertices[0].Y, p.X,
-                                                   p.Y);
-            if (current < smallest)
-            {
-                smallestIndex = ((Vertices[c] - p).LengthSquared < (Vertices[0] - p).LengthSquared) ? c : 0;
-            }
             return smallestIndex;
+        }
+
+        internal double GetNearestVertexDistance(Vector p)
+        {
+            return Math.Sqrt(Vertices.Select(t => (t - p).LengthSquared).Min());
         }
 
         internal int GetNearestSegmentIndex(Vector p)
@@ -807,6 +801,11 @@ namespace Elmanager
             if ((object) isect != null)
                 isects.Add(isect);
             return isects;
+        }
+
+        public Polygon Clone()
+        {
+            return new Polygon(this);
         }
     }
 }

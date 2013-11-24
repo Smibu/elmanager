@@ -113,6 +113,7 @@ namespace Elmanager.EditorTools
                                 if (!Keyboard.IsKeyDown(Key.LeftCtrl))
                                     MarkAllAs(Geometry.VectorMark.None);
                                 NearestPolygon.MarkVectorsAs(Geometry.VectorMark.Selected);
+                                LevEditor.PreserveSelection();
                             }
                         }
                         Renderer.RedrawScene();
@@ -124,7 +125,10 @@ namespace Elmanager.EditorTools
                     else
                     {
                         if (!Keyboard.IsKeyDown(Key.LeftCtrl))
+                        {
                             MarkAllAs(Geometry.VectorMark.None);
+                            LevEditor.PreserveSelection();
+                        }
                         _selectionStartPoint = p;
                         RectSelecting = true;
                         Renderer.RedrawScene();
@@ -260,6 +264,7 @@ namespace Elmanager.EditorTools
                         MarkSelectedInArea(z.Position, selectionxMin, selectionxMax, selectionyMin, selectionyMax);
                 }
                 LevEditor.UpdateSelectionInfo();
+                LevEditor.PreserveSelection();
             }
             else if (Moving)
             {
@@ -312,6 +317,7 @@ namespace Elmanager.EditorTools
                 if (v.Mark == Geometry.VectorMark.Selected)
                     Moving = true;
             }
+            LevEditor.PreserveSelection();
             AdjustForGrid(CurrentPos);
             _moveStartPosition = CurrentPos;
             Renderer.RedrawScene();

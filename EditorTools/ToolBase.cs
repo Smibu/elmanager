@@ -7,10 +7,10 @@ namespace Elmanager.EditorTools
 {
     internal class ToolBase : IEditorToolBase
     {
-        internal Polygon NearestPolygon;
         protected Vector CurrentPos;
         private Control EditorControl;
         protected LevelEditor LevEditor;
+        internal Polygon NearestPolygon;
         protected ElmaRenderer Renderer;
         protected bool _Busy;
 
@@ -21,14 +21,14 @@ namespace Elmanager.EditorTools
             EditorControl = editor.EditorControl;
         }
 
-        public bool Busy
-        {
-            get { return _Busy; }
-        }
-
         protected Level Lev
         {
             get { return LevEditor.Lev; }
+        }
+
+        public bool Busy
+        {
+            get { return _Busy; }
         }
 
         internal int GetNearestObjectIndex(Vector p)
@@ -51,7 +51,7 @@ namespace Elmanager.EditorTools
                 Vector v1 = p - new Vector(z.X + Level.RightWheelDifferenceFromLeftWheelX, z.Y);
                 Vector v2 = p -
                             new Vector(z.X + Level.HeadDifferenceFromLeftWheelX,
-                                       z.Y + Level.HeadDifferenceFromLeftWheelY);
+                                z.Y + Level.HeadDifferenceFromLeftWheelY);
                 if (v1.LengthSquared < smallest)
                 {
                     smallest = v1.LengthSquared;
@@ -89,13 +89,19 @@ namespace Elmanager.EditorTools
             foreach (Polygon x in Lev.Polygons)
             {
                 if (((x.IsGrass && LevEditor.GrassFilter) || (!x.IsGrass && LevEditor.GroundFilter)) &&
+                    x.GetNearestVertexDistance(p) < Renderer.ZoomLevel * Global.AppSettings.LevelEditor.CaptureRadius)
+                {
+                    NearestPolygon = x;
+                    return x.GetNearestVertexIndex(p);
+                }
+            }
+
+            foreach (Polygon x in Lev.Polygons)
+            {
+                if (((x.IsGrass && LevEditor.GrassFilter) || (!x.IsGrass && LevEditor.GroundFilter)) &&
                     x.DistanceFromPoint(p) < Renderer.ZoomLevel * Global.AppSettings.LevelEditor.CaptureRadius)
                 {
-                    int index = x.GetNearestVertexIndex(p);
                     NearestPolygon = x;
-                    if ((x.Vertices[index] - p).Length <
-                        Renderer.ZoomLevel * Global.AppSettings.LevelEditor.CaptureRadius)
-                        return index;
                     return -1; //Indicates that mouse was near an edge but not vertex
                 }
             }
@@ -136,18 +142,14 @@ namespace Elmanager.EditorTools
             if (Math.Abs(x) > Global.AppSettings.LevelEditor.RenderingSettings.GridSize / 2)
             {
                 x -= Global.AppSettings.LevelEditor.RenderingSettings.GridSize * Math.Sign(x);
-                p.X -= x - 0;
             }
-            else
-                p.X -= x - 0;
+            p.X -= x;
             double y = p.Y % Global.AppSettings.LevelEditor.RenderingSettings.GridSize;
             if (Math.Abs(y) > Global.AppSettings.LevelEditor.RenderingSettings.GridSize / 2)
             {
                 y -= Global.AppSettings.LevelEditor.RenderingSettings.GridSize * Math.Sign(y);
-                p.Y -= y - 0;
             }
-            else
-                p.Y -= y - 0;
+            p.Y -= y;
         }
 
         protected void ChangeCursorToHand()

@@ -22,25 +22,26 @@ namespace Elmanager
         private const int EndOfDataMagicNumber = 0x67103A;
         private const int EndOfFileMagicNumber = 0x845D52;
 
-        internal static readonly string[] InternalTitles = {
-                                                               "Warm Up", "Flat Track", "Twin Peaks", "Over and Under",
-                                                               "Uphill Battle", "Long Haul", "Hi Flyer", "Tag",
-                                                               "Tunnel Terror", "The Steppes", "Gravity Ride",
-                                                               "Islands in the Sky", "Hill Legend", "Loop-de-Loop",
-                                                               "Serpents Tale", "New Wave", "Labyrinth", "Spiral",
-                                                               "Turnaround", "Upside Down", "Hangman", "Slalom",
-                                                               "Quick Round", "Ramp Frenzy", "Precarious", "Circuitous",
-                                                               "Shelf Life", "Bounce Back", "Headbanger", "Pipe",
-                                                               "Animal Farm", "Steep Corner", "Zig-Zag", "Bumpy Journey"
-                                                               ,
-                                                               "Labyrinth Pro", "Fruit in the Den", "Jaws", "Curvaceous"
-                                                               ,
-                                                               "Haircut", "Double Trouble", "Framework", "Enduro",
-                                                               "He He",
-                                                               "Freefall", "Sink", "Bowling", "Enigma", "Downhill",
-                                                               "What the Heck", "Expert System", "Tricks Abound",
-                                                               "Hang Tight", "Hooked", "Apple Harvest", "More Levels"
-                                                           };
+        internal static readonly string[] InternalTitles =
+        {
+            "Warm Up", "Flat Track", "Twin Peaks", "Over and Under",
+            "Uphill Battle", "Long Haul", "Hi Flyer", "Tag",
+            "Tunnel Terror", "The Steppes", "Gravity Ride",
+            "Islands in the Sky", "Hill Legend", "Loop-de-Loop",
+            "Serpents Tale", "New Wave", "Labyrinth", "Spiral",
+            "Turnaround", "Upside Down", "Hangman", "Slalom",
+            "Quick Round", "Ramp Frenzy", "Precarious", "Circuitous",
+            "Shelf Life", "Bounce Back", "Headbanger", "Pipe",
+            "Animal Farm", "Steep Corner", "Zig-Zag", "Bumpy Journey"
+            ,
+            "Labyrinth Pro", "Fruit in the Den", "Jaws", "Curvaceous"
+            ,
+            "Haircut", "Double Trouble", "Framework", "Enduro",
+            "He He",
+            "Freefall", "Sink", "Bowling", "Enigma", "Downhill",
+            "What the Heck", "Expert System", "Tricks Abound",
+            "Hang Tight", "Hooked", "Apple Harvest", "More Levels"
+        };
 
         internal bool AcrossLevel;
         internal bool AllPicturesFound = true;
@@ -175,17 +176,17 @@ namespace Elmanager
                 {
                     if (level[sp] == 0)
                         _textureData.Add(new LevelFileTexture(Utils.ReadNullTerminatedString(level, sp + 10, 10),
-                                                              Utils.ReadNullTerminatedString(level, sp + 20, 10),
-                                                              new Vector(BitConverter.ToDouble(level, sp + 30),
-                                                                         BitConverter.ToDouble(level, sp + 38)),
-                                                              BitConverter.ToInt32(level, sp + 46),
-                                                              ((ClippingType) (BitConverter.ToInt32(level, sp + 50)))));
+                            Utils.ReadNullTerminatedString(level, sp + 20, 10),
+                            new Vector(BitConverter.ToDouble(level, sp + 30),
+                                BitConverter.ToDouble(level, sp + 38)),
+                            BitConverter.ToInt32(level, sp + 46),
+                            ((ClippingType) (BitConverter.ToInt32(level, sp + 50)))));
                     else
                         _textureData.Add(new LevelFileTexture(Utils.ReadNullTerminatedString(level, sp, 10), null,
-                                                              new Vector(BitConverter.ToDouble(level, sp + 30),
-                                                                         BitConverter.ToDouble(level, sp + 38)),
-                                                              BitConverter.ToInt32(level, sp + 46),
-                                                              ((ClippingType) (BitConverter.ToInt32(level, sp + 50)))));
+                            new Vector(BitConverter.ToDouble(level, sp + 30),
+                                BitConverter.ToDouble(level, sp + 38)),
+                            BitConverter.ToInt32(level, sp + 46),
+                            ((ClippingType) (BitConverter.ToInt32(level, sp + 50)))));
                     sp += 54;
                 }
             }
@@ -208,7 +209,7 @@ namespace Elmanager
             foreach (Object x in lev.Objects)
                 Objects.Add(x.Clone());
             foreach (Polygon x in lev.Polygons)
-                Polygons.Add(new Polygon(x));
+                Polygons.Add(x.Clone());
             XMin = lev.XMin;
             XMax = lev.XMax;
             YMin = lev.YMin;
@@ -323,11 +324,11 @@ namespace Elmanager
             get
             {
                 Vector head = (from x in Objects
-                               where x.Type == ObjectType.Start
-                               select
-                                   new Vector(x.Position.X + HeadDifferenceFromLeftWheelX,
-                                              x.Position.Y + HeadDifferenceFromLeftWheelY)).FirstOrDefault();
-                return Polygons.Any(x => x.DistanceFromPoint(head) < Constants.HeadRadius);
+                    where x.Type == ObjectType.Start
+                    select
+                        new Vector(x.Position.X + HeadDifferenceFromLeftWheelX,
+                            x.Position.Y + HeadDifferenceFromLeftWheelY)).FirstOrDefault();
+                return Polygons.Where(poly => !poly.IsGrass).Any(x => x.DistanceFromPoint(head) < Constants.HeadRadius);
             }
         }
 
@@ -632,9 +633,9 @@ namespace Elmanager
         }
 
         /// <summary>
-        ///   This method should only be called once (when loading level).
+        ///     This method should only be called once (when loading level).
         /// </summary>
-        /// <param name = "lgrImages"></param>
+        /// <param name="lgrImages"></param>
         internal void UpdateImages(IEnumerable<ElmaRenderer.DrawableImage> lgrImages)
         {
             Pictures = new List<Picture>();
@@ -706,8 +707,8 @@ namespace Elmanager
             var list = new List<Top10Entry>();
             for (int j = 0; j < level[startIndex]; j++)
                 list.Add(new Top10Entry(Utils.ReadNullTerminatedString(level, startIndex + 44 + j * 15, 15),
-                                        Utils.ReadNullTerminatedString(level, startIndex + 194 + j * 15, 15),
-                                        BitConverter.ToInt32(level, startIndex + 4 + j * 4)));
+                    Utils.ReadNullTerminatedString(level, startIndex + 194 + j * 15, 15),
+                    BitConverter.ToInt32(level, startIndex + 4 + j * 4)));
             return list;
         }
 
@@ -717,8 +718,8 @@ namespace Elmanager
             foreach (Picture x in Pictures)
             {
                 _textureData.Add(x.IsPicture
-                                     ? new LevelFileTexture(x.Name, null, x.Position, x.Distance, x.Clipping)
-                                     : new LevelFileTexture(x.TextureName, x.Name, x.Position, x.Distance, x.Clipping));
+                    ? new LevelFileTexture(x.Name, null, x.Position, x.Distance, x.Clipping)
+                    : new LevelFileTexture(x.TextureName, x.Name, x.Position, x.Distance, x.Clipping));
             }
         }
 
@@ -880,13 +881,13 @@ namespace Elmanager
             internal double Width;
 
             internal Picture(ClippingType clipping, int distance, Vector position, ElmaRenderer.DrawableImage texture,
-                             ElmaRenderer.DrawableImage mask)
+                ElmaRenderer.DrawableImage mask)
             {
                 SetTexture(clipping, distance, position, texture, mask);
             }
 
             internal Picture(ElmaRenderer.DrawableImage pictureImage, Vector position, int distance,
-                             ClippingType clipping)
+                ClippingType clipping)
             {
                 SetPicture(pictureImage, position, distance, clipping);
             }
@@ -922,7 +923,7 @@ namespace Elmanager
             }
 
             internal void SetPicture(ElmaRenderer.DrawableImage pictureImage, Vector position, int distance,
-                                     ClippingType clipping)
+                ClippingType clipping)
             {
                 Position = position;
                 Id = pictureImage.TextureIdentifier;
@@ -938,7 +939,7 @@ namespace Elmanager
             }
 
             internal void SetTexture(ClippingType clipping, int distance, Vector position,
-                                     ElmaRenderer.DrawableImage texture, ElmaRenderer.DrawableImage mask)
+                ElmaRenderer.DrawableImage texture, ElmaRenderer.DrawableImage mask)
             {
                 Clipping = clipping;
                 Distance = distance;
