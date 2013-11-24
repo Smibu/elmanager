@@ -90,67 +90,34 @@ namespace Elmanager
             if (_scrollInProgress)
                 return;
             _scrollInProgress = true;
-            Stopwatch upTimer = new Stopwatch();
-            Stopwatch downTimer = new Stopwatch();
-            Stopwatch leftTimer = new Stopwatch();
-            Stopwatch rightTimer = new Stopwatch();
-            double startUpValue = renderer.CenterY;
-            double startDownValue = renderer.CenterY;
-            double startLeftValue = renderer.CenterX;
-            double startRightValue = renderer.CenterX;
-            upTimer.Start();
-            downTimer.Start();
-            leftTimer.Start();
-            rightTimer.Start();
+            var timer = new Stopwatch();
+            timer.Start();
+            long lastTime = timer.ElapsedMilliseconds;
             while (Keyboard.IsKeyDown(Key.Up) || Keyboard.IsKeyDown(Key.Down) || Keyboard.IsKeyDown(Key.Left) ||
                    Keyboard.IsKeyDown(Key.Right))
             {
+                long timeDelta = timer.ElapsedMilliseconds - lastTime;
                 if (Keyboard.IsKeyDown(Key.Up))
                 {
-                    renderer.CenterY = startUpValue + upTimer.ElapsedMilliseconds / 200.0 * renderer.ZoomLevel;
-                    renderer.RedrawScene();
-                }
-                else
-                {
-                    upTimer.Restart();
-                    startUpValue = renderer.CenterY;
+                    renderer.CenterY += timeDelta / 200.0 * renderer.ZoomLevel;
                 }
                 if (Keyboard.IsKeyDown(Key.Down))
                 {
-                    renderer.CenterY = startDownValue - downTimer.ElapsedMilliseconds / 200.0 * renderer.ZoomLevel;
-                    renderer.RedrawScene();
-                }
-                else
-                {
-                    downTimer.Restart();
-                    startDownValue = renderer.CenterY;
+                    renderer.CenterY -= timeDelta / 200.0 * renderer.ZoomLevel;
                 }
                 if (Keyboard.IsKeyDown(Key.Right))
                 {
-                    renderer.CenterX = startRightValue + rightTimer.ElapsedMilliseconds / 200.0 * renderer.ZoomLevel;
-                    renderer.RedrawScene();
-                }
-                else
-                {
-                    rightTimer.Restart();
-                    startRightValue = renderer.CenterX;
+                    renderer.CenterX += timeDelta / 200.0 * renderer.ZoomLevel;
                 }
                 if (Keyboard.IsKeyDown(Key.Left))
                 {
-                    renderer.CenterX = startLeftValue - leftTimer.ElapsedMilliseconds / 200.0 * renderer.ZoomLevel;
-                    renderer.RedrawScene();
+                    renderer.CenterX -= timeDelta / 200.0 * renderer.ZoomLevel;
                 }
-                else
-                {
-                    leftTimer.Restart();
-                    startLeftValue = renderer.CenterX;
-                }
+                lastTime = timer.ElapsedMilliseconds;
+                renderer.RedrawScene();
                 Application.DoEvents();
             }
-            upTimer.Stop();
-            leftTimer.Stop();
-            rightTimer.Stop();
-            downTimer.Stop();
+            timer.Stop();
             _scrollInProgress = false;
         }
 
