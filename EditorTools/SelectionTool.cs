@@ -278,7 +278,7 @@ namespace Elmanager.EditorTools
 
         public void UpdateHelp()
         {
-            LevEditor.InfoLabel.Text = "Left mouse button: select level elements.";
+            LevEditor.InfoLabel.Text = "Left mouse button: select level elements; Left Shift: Bend edge";
         }
 
         private static void MarkSelectedInArea(Vector z, double selectionxMin, double selectionxMax,

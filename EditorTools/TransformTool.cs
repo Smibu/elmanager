@@ -258,7 +258,7 @@ namespace Elmanager.EditorTools
 
         public void UpdateHelp()
         {
-            LevEditor.InfoLabel.Text = "Press Space to end transforming.";
+            LevEditor.InfoLabel.Text = "Space: done; Left Ctrl: rotate only; Left Shift: resize only";
         }
 
         private void EndTransforming()

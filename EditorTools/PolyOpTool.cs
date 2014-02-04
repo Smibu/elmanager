@@ -47,6 +47,10 @@ namespace Elmanager.EditorTools
                     LevEditor.InfoLabel.Text = "(This mode is not yet implemented.)";
                     break;
             }
+            if (!FirstSelected)
+            {
+                LevEditor.InfoLabel.Text += " Space: Change mode.";
+            }
         }
 
         public void ExtraRendering()

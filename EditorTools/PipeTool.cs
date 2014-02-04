@@ -202,15 +202,13 @@ namespace Elmanager.EditorTools
             switch (_pipeMode)
             {
                 case PipeMode.NoApples:
-                    LevEditor.InfoLabel.Text += "Mode: No apples - Pipe radius: " + _pipeRadius.ToString("F2");
+                    LevEditor.InfoLabel.Text += string.Format("Mode: No apples - Pipe radius: {0:F2} (adjust with +/-)", _pipeRadius);
                     break;
                 case PipeMode.ApplesDistance:
-                    LevEditor.InfoLabel.Text += "Mode: Apples (distance: " + _appleDistance.ToString("F2") +
-                                                ") - Pipe radius: " + _pipeRadius.ToString("F2");
+                    LevEditor.InfoLabel.Text += string.Format("Mode: Apples (distance: {0:F2} (adjust with Ctrl + +/-)) - Pipe radius: {1:F2} (adjust with +/-)", _appleDistance, _pipeRadius);
                     break;
                 case PipeMode.ApplesAmount:
-                    LevEditor.InfoLabel.Text += "Mode: " + _appleAmount + " apples - Pipe radius: " +
-                                                _pipeRadius.ToString("F2");
+                    LevEditor.InfoLabel.Text += string.Format("Mode: {0} apples - Pipe radius: {1:F2} (adjust with +/-)", _appleAmount, _pipeRadius);
                     break;
             }
         }

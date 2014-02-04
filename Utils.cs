@@ -8,6 +8,7 @@ using System.Net;
 using System.Runtime.InteropServices;
 using System.Runtime.Serialization.Formatters.Binary;
 using System.Text;
+using System.Threading;
 using System.Windows.Forms;
 using System.Windows.Input;
 using Elmanager.Forms;
@@ -115,6 +116,7 @@ namespace Elmanager
                 }
                 lastTime = timer.ElapsedMilliseconds;
                 renderer.RedrawScene();
+                Thread.Sleep(1);
                 Application.DoEvents();
             }
             timer.Stop();

@@ -274,8 +274,8 @@ namespace Elmanager.Forms
                 if (c == 0)
                 {
                     topologyList.Text = "No problems.";
-                    topologyList.ForeColor = Color.Black;
-                    topologyList.Font = new Font(topologyList.Font, FontStyle.Regular);
+                    ResetTopologyListStyle();
+                    
                 }
                 else
                 {
@@ -286,6 +286,12 @@ namespace Elmanager.Forms
             }
             else
                 topologyList.Text = "Cannot check topology while editing is in progress!";
+        }
+
+        private void ResetTopologyListStyle()
+        {
+            topologyList.ForeColor = Color.Black;
+            topologyList.Font = new Font(topologyList.Font, FontStyle.Regular);
         }
 
         private void CheckTopologyAndUpdate(object sender = null, EventArgs e = null)
@@ -655,6 +661,11 @@ namespace Elmanager.Forms
             Modified = false;
             CurrentTool.InActivate();
             CurrentTool.Activate();
+
+            topologyList.Text = string.Empty;
+            ResetTopologyListStyle();
+
+            _errorPoints.Clear();
         }
 
         private void KeyHandlerDown(object sender, KeyEventArgs e)
@@ -1099,6 +1110,7 @@ namespace Elmanager.Forms
                 UpdateLabels();
                 UpdateButtons();
                 Modified = false;
+                Global.LevelFiles.Add(SaveFileDialog1.FileName);
             }
         }
 
