@@ -27,122 +27,137 @@
 		//Do not modify it using the code editor.
 		private void InitializeComponent()
 			{
-                System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(MainForm));
-                this.rmButton = new System.Windows.Forms.Button();
-                this.levelEditorButton = new System.Windows.Forms.Button();
-                this.titleLabel = new System.Windows.Forms.Label();
-                this.byLabel = new System.Windows.Forms.Label();
-                this.versionLabel = new System.Windows.Forms.Label();
-                this.homePageLabel = new System.Windows.Forms.LinkLabel();
-                this.configButton = new System.Windows.Forms.Button();
-                this.SuspendLayout();
-                // 
-                // rmButton
-                // 
-                this.rmButton.Anchor = ((System.Windows.Forms.AnchorStyles) (((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
-                            | System.Windows.Forms.AnchorStyles.Right)));
-                this.rmButton.Location = new System.Drawing.Point(87, 122);
-                this.rmButton.Name = "rmButton";
-                this.rmButton.Size = new System.Drawing.Size(138, 23);
-                this.rmButton.TabIndex = 1;
-                this.rmButton.Text = "Replay manager";
-                this.rmButton.UseVisualStyleBackColor = true;
-                this.rmButton.Click += new System.EventHandler(this.OpenReplayManager);
-                // 
-                // levelEditorButton
-                // 
-                this.levelEditorButton.Anchor = ((System.Windows.Forms.AnchorStyles) (((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
-                            | System.Windows.Forms.AnchorStyles.Right)));
-                this.levelEditorButton.Location = new System.Drawing.Point(87, 151);
-                this.levelEditorButton.Name = "levelEditorButton";
-                this.levelEditorButton.Size = new System.Drawing.Size(138, 23);
-                this.levelEditorButton.TabIndex = 2;
-                this.levelEditorButton.Text = "SLE";
-                this.levelEditorButton.UseVisualStyleBackColor = true;
-                this.levelEditorButton.Click += new System.EventHandler(this.OpenLevelEditor);
-                // 
-                // titleLabel
-                // 
-                this.titleLabel.Anchor = ((System.Windows.Forms.AnchorStyles) (((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
-                            | System.Windows.Forms.AnchorStyles.Right)));
-                this.titleLabel.Font = new System.Drawing.Font("Arial Rounded MT Bold", 36F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte) (0)));
-                this.titleLabel.ForeColor = System.Drawing.SystemColors.ControlText;
-                this.titleLabel.Location = new System.Drawing.Point(12, 9);
-                this.titleLabel.Name = "titleLabel";
-                this.titleLabel.Size = new System.Drawing.Size(288, 55);
-                this.titleLabel.TabIndex = 3;
-                this.titleLabel.Text = "Elmanager";
-                this.titleLabel.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
-                // 
-                // byLabel
-                // 
-                this.byLabel.Anchor = ((System.Windows.Forms.AnchorStyles) (((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
-                            | System.Windows.Forms.AnchorStyles.Right)));
-                this.byLabel.Font = new System.Drawing.Font("Arial Rounded MT Bold", 20.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte) (0)));
-                this.byLabel.ForeColor = System.Drawing.SystemColors.ControlText;
-                this.byLabel.Location = new System.Drawing.Point(12, 229);
-                this.byLabel.Name = "byLabel";
-                this.byLabel.Size = new System.Drawing.Size(288, 32);
-                this.byLabel.TabIndex = 4;
-                this.byLabel.Text = "by Smibu";
-                this.byLabel.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
-                // 
-                // versionLabel
-                // 
-                this.versionLabel.Anchor = ((System.Windows.Forms.AnchorStyles) (((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
-                            | System.Windows.Forms.AnchorStyles.Right)));
-                this.versionLabel.Location = new System.Drawing.Point(12, 76);
-                this.versionLabel.Name = "versionLabel";
-                this.versionLabel.Size = new System.Drawing.Size(288, 13);
-                this.versionLabel.TabIndex = 5;
-                this.versionLabel.Text = "Version";
-                this.versionLabel.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
-                // 
-                // homePageLabel
-                // 
-                this.homePageLabel.Anchor = ((System.Windows.Forms.AnchorStyles) (((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
-                            | System.Windows.Forms.AnchorStyles.Right)));
-                this.homePageLabel.Location = new System.Drawing.Point(12, 98);
-                this.homePageLabel.Name = "homePageLabel";
-                this.homePageLabel.Size = new System.Drawing.Size(288, 13);
-                this.homePageLabel.TabIndex = 6;
-                this.homePageLabel.TabStop = true;
-                this.homePageLabel.Text = "http://users.jyu.fi/~mikkalle/Elma";
-                this.homePageLabel.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
-                this.homePageLabel.LinkClicked += new System.Windows.Forms.LinkLabelLinkClickedEventHandler(this.HomePageClicked);
-                // 
-                // configButton
-                // 
-                this.configButton.Anchor = ((System.Windows.Forms.AnchorStyles) (((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
-                            | System.Windows.Forms.AnchorStyles.Right)));
-                this.configButton.Location = new System.Drawing.Point(87, 180);
-                this.configButton.Name = "configButton";
-                this.configButton.Size = new System.Drawing.Size(138, 23);
-                this.configButton.TabIndex = 7;
-                this.configButton.Text = "Configuration";
-                this.configButton.UseVisualStyleBackColor = true;
-                this.configButton.Click += new System.EventHandler(this.ConfigButtonClick);
-                // 
-                // MainForm
-                // 
-                this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
-                this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-                this.ClientSize = new System.Drawing.Size(312, 265);
-                this.Controls.Add(this.configButton);
-                this.Controls.Add(this.homePageLabel);
-                this.Controls.Add(this.versionLabel);
-                this.Controls.Add(this.byLabel);
-                this.Controls.Add(this.titleLabel);
-                this.Controls.Add(this.levelEditorButton);
-                this.Controls.Add(this.rmButton);
-                this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedSingle;
-                this.Icon = ((System.Drawing.Icon) (resources.GetObject("$this.Icon")));
-                this.MaximizeBox = false;
-                this.Name = "MainForm";
-                this.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;
-                this.Text = "Elmanager";
-                this.Load += new System.EventHandler(this.StartUp);
-                this.ResumeLayout(false);
+            System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(MainForm));
+            this.rmButton = new System.Windows.Forms.Button();
+            this.levelEditorButton = new System.Windows.Forms.Button();
+            this.titleLabel = new System.Windows.Forms.Label();
+            this.byLabel = new System.Windows.Forms.Label();
+            this.versionLabel = new System.Windows.Forms.Label();
+            this.homePageLabel = new System.Windows.Forms.LinkLabel();
+            this.configButton = new System.Windows.Forms.Button();
+            this.linkLabel1 = new System.Windows.Forms.LinkLabel();
+            this.SuspendLayout();
+            // 
+            // rmButton
+            // 
+            this.rmButton.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+            this.rmButton.Location = new System.Drawing.Point(87, 146);
+            this.rmButton.Name = "rmButton";
+            this.rmButton.Size = new System.Drawing.Size(138, 23);
+            this.rmButton.TabIndex = 1;
+            this.rmButton.Text = "Replay manager";
+            this.rmButton.UseVisualStyleBackColor = true;
+            this.rmButton.Click += new System.EventHandler(this.OpenReplayManager);
+            // 
+            // levelEditorButton
+            // 
+            this.levelEditorButton.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+            this.levelEditorButton.Location = new System.Drawing.Point(87, 175);
+            this.levelEditorButton.Name = "levelEditorButton";
+            this.levelEditorButton.Size = new System.Drawing.Size(138, 23);
+            this.levelEditorButton.TabIndex = 2;
+            this.levelEditorButton.Text = "SLE";
+            this.levelEditorButton.UseVisualStyleBackColor = true;
+            this.levelEditorButton.Click += new System.EventHandler(this.OpenLevelEditor);
+            // 
+            // titleLabel
+            // 
+            this.titleLabel.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+            this.titleLabel.Font = new System.Drawing.Font("Arial Rounded MT Bold", 36F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.titleLabel.ForeColor = System.Drawing.SystemColors.ControlText;
+            this.titleLabel.Location = new System.Drawing.Point(12, 0);
+            this.titleLabel.Name = "titleLabel";
+            this.titleLabel.Size = new System.Drawing.Size(288, 55);
+            this.titleLabel.TabIndex = 3;
+            this.titleLabel.Text = "Elmanager";
+            this.titleLabel.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
+            // 
+            // byLabel
+            // 
+            this.byLabel.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+            this.byLabel.Location = new System.Drawing.Point(12, 55);
+            this.byLabel.Name = "byLabel";
+            this.byLabel.Size = new System.Drawing.Size(288, 13);
+            this.byLabel.TabIndex = 4;
+            this.byLabel.Text = "by Smibu";
+            this.byLabel.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
+            // 
+            // versionLabel
+            // 
+            this.versionLabel.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+            this.versionLabel.Location = new System.Drawing.Point(12, 94);
+            this.versionLabel.Name = "versionLabel";
+            this.versionLabel.Size = new System.Drawing.Size(288, 13);
+            this.versionLabel.TabIndex = 5;
+            this.versionLabel.Text = "Version";
+            this.versionLabel.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
+            // 
+            // homePageLabel
+            // 
+            this.homePageLabel.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+            this.homePageLabel.Location = new System.Drawing.Point(12, 122);
+            this.homePageLabel.Name = "homePageLabel";
+            this.homePageLabel.Size = new System.Drawing.Size(288, 13);
+            this.homePageLabel.TabIndex = 6;
+            this.homePageLabel.TabStop = true;
+            this.homePageLabel.Text = "http://users.jyu.fi/~mikkalle/Elma";
+            this.homePageLabel.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
+            this.homePageLabel.LinkClicked += new System.Windows.Forms.LinkLabelLinkClickedEventHandler(this.HomePageClicked);
+            // 
+            // configButton
+            // 
+            this.configButton.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+            this.configButton.Location = new System.Drawing.Point(87, 204);
+            this.configButton.Name = "configButton";
+            this.configButton.Size = new System.Drawing.Size(138, 23);
+            this.configButton.TabIndex = 7;
+            this.configButton.Text = "Configuration";
+            this.configButton.UseVisualStyleBackColor = true;
+            this.configButton.Click += new System.EventHandler(this.ConfigButtonClick);
+            // 
+            // linkLabel1
+            // 
+            this.linkLabel1.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
+            this.linkLabel1.AutoSize = true;
+            this.linkLabel1.LinkArea = new System.Windows.Forms.LinkArea(33, 6);
+            this.linkLabel1.Location = new System.Drawing.Point(52, 239);
+            this.linkLabel1.Name = "linkLabel1";
+            this.linkLabel1.Size = new System.Drawing.Size(209, 17);
+            this.linkLabel1.TabIndex = 9;
+            this.linkLabel1.TabStop = true;
+            this.linkLabel1.Text = "Testing && SLE toolbar graphics: Mawane";
+            this.linkLabel1.UseCompatibleTextRendering = true;
+            this.linkLabel1.LinkClicked += new System.Windows.Forms.LinkLabelLinkClickedEventHandler(this.LinkLabel1LinkClicked);
+            // 
+            // MainForm
+            // 
+            this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
+            this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
+            this.ClientSize = new System.Drawing.Size(312, 265);
+            this.Controls.Add(this.linkLabel1);
+            this.Controls.Add(this.configButton);
+            this.Controls.Add(this.homePageLabel);
+            this.Controls.Add(this.versionLabel);
+            this.Controls.Add(this.byLabel);
+            this.Controls.Add(this.titleLabel);
+            this.Controls.Add(this.levelEditorButton);
+            this.Controls.Add(this.rmButton);
+            this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedSingle;
+            this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
+            this.MaximizeBox = false;
+            this.Name = "MainForm";
+            this.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;
+            this.Text = "Elmanager";
+            this.Load += new System.EventHandler(this.StartUp);
+            this.ResumeLayout(false);
+            this.PerformLayout();
 
 		}
 		internal System.Windows.Forms.Button rmButton;
@@ -151,7 +166,8 @@
 		internal System.Windows.Forms.Label byLabel;
 		internal System.Windows.Forms.Label versionLabel;
 		internal System.Windows.Forms.LinkLabel homePageLabel;
-		internal System.Windows.Forms.Button configButton;
+        internal System.Windows.Forms.Button configButton;
+        private System.Windows.Forms.LinkLabel linkLabel1;
 	}
 	
 }

@@ -54,7 +54,11 @@ namespace Elmanager.Forms
             Marshal.FreeHGlobal(z);
             Font elmaFont = new Font(Global.ElmaFonts.Families[0], 36, FontStyle.Bold);
             titleLabel.Font = elmaFont;
-            byLabel.Font = new Font(Global.ElmaFonts.Families[0], 20.25f, FontStyle.Bold);
+        }
+
+        private void LinkLabel1LinkClicked(object sender, LinkLabelLinkClickedEventArgs e)
+        {
+            Process.Start("http://mawane.webs.com/");
         }
     }
 }
