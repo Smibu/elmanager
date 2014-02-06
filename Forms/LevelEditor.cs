@@ -746,9 +746,9 @@ namespace Elmanager.Forms
             Renderer.Lev = Lev;
             Lev.DecomposeGroundPolygons();
             Renderer.UpdateZoomFillBounds();
-            Renderer.RedrawScene();
             UpdateUndoRedo();
             UpdateSelectionInfo();
+            CheckTopologyAndUpdate();
         }
 
         private void Mirror(object sender, EventArgs e)
