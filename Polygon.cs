@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Drawing;
 using System.Linq;
+using System.Threading;
 using GeoLib;
 
 namespace Elmanager
@@ -427,13 +428,16 @@ namespace Elmanager
                 throw new PolygonException("Both polygons must be non-self-intersecting.");
             }
 
-            var poly1 = new C2DPolygon(Vertices.Select(vertex => new C2DPoint(vertex.X, vertex.Y)).ToList(), false);
-            var poly2 = new C2DPolygon(p.Vertices.Select(vertex => new C2DPoint(vertex.X, vertex.Y)).ToList(), false);
+            var poly1 = new C2DPolygon(Vertices.Select(vertex => new C2DPoint(vertex.X, vertex.Y)).ToList(), true);
+            var poly2 = new C2DPolygon(p.Vertices.Select(vertex => new C2DPoint(vertex.X, vertex.Y)).ToList(), true);
             var polyOpResult = new List<C2DHoledPolyBase>();
-            var opt = new CGrid {DegenerateHandling = CGrid.eDegenerateHandling.DynamicGrid};
+            CGrid opt;
             var resultpolys = new List<Polygon>();
+            int loopCount = 0;
             do
             {
+                poly1 = Interlocked.Exchange(ref poly2, poly1);
+                opt = new CGrid { DegenerateHandling = CGrid.eDegenerateHandling.RandomPerturbation };
                 polyOpResult.Clear();
                 if (type == PolygonOperationType.Merge)
                 {
@@ -441,8 +445,9 @@ namespace Elmanager
                 }
                 else
                 {
-                    poly2.GetNonOverlaps(poly1, polyOpResult, opt);
+                    poly1.GetNonOverlaps(poly2, polyOpResult, opt);
                 }
+                loopCount++;
                 resultpolys.Clear();
                 foreach (var c2DHoledPolyBase in polyOpResult)
                 {
@@ -453,7 +458,7 @@ namespace Elmanager
                     }
                     resultpolys.Add(resultPoly);
                 }
-            } while (opt.DegenerateErrors != 0);
+            } while (opt.DegenerateErrors != 0 && loopCount < 5);
 
             if (resultpolys.Count == 0)
             {
