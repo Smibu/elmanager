@@ -1,9 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Drawing;
 using System.Linq;
-using System.Threading;
-using GeoLib;
 
 namespace Elmanager
 {
@@ -133,7 +130,7 @@ namespace Elmanager
                         if (i == 0 && j == Vertices.Count - 1)
                             continue;
                         if (Geometry.SegmentsIntersect(Vertices[i], Vertices[i + 1], Vertices[j],
-                            Vertices[(j + 1) % Vertices.Count]))
+                                                       Vertices[(j + 1) % Vertices.Count]))
                             return false;
                     }
                 }
@@ -146,25 +143,20 @@ namespace Elmanager
             Decomposition = Geometry.Triangulate(this);
         }
 
-        internal PointF[] ToPointFArray()
-        {
-            return Vertices.Select(vertex => new PointF((float) vertex.X, (float) vertex.Y)).ToArray();
-        }
-
         internal static Polygon Square(Vector lowerLeftCorner, double side)
         {
             return new Polygon(new Vector(lowerLeftCorner.X, lowerLeftCorner.Y),
-                new Vector(lowerLeftCorner.X + side, lowerLeftCorner.Y),
-                new Vector(lowerLeftCorner.X + side, lowerLeftCorner.Y + side),
-                new Vector(lowerLeftCorner.X, lowerLeftCorner.Y + side));
+                               new Vector(lowerLeftCorner.X + side, lowerLeftCorner.Y),
+                               new Vector(lowerLeftCorner.X + side, lowerLeftCorner.Y + side),
+                               new Vector(lowerLeftCorner.X, lowerLeftCorner.Y + side));
         }
 
         internal static Polygon Rectangle(Vector lowerLeftCorner, double width, double height)
         {
             return new Polygon(new Vector(lowerLeftCorner.X, lowerLeftCorner.Y),
-                new Vector(lowerLeftCorner.X + width, lowerLeftCorner.Y),
-                new Vector(lowerLeftCorner.X + width, lowerLeftCorner.Y + height),
-                new Vector(lowerLeftCorner.X, lowerLeftCorner.Y + height));
+                               new Vector(lowerLeftCorner.X + width, lowerLeftCorner.Y),
+                               new Vector(lowerLeftCorner.X + width, lowerLeftCorner.Y + height),
+                               new Vector(lowerLeftCorner.X, lowerLeftCorner.Y + height));
         }
 
         internal static Polygon Ellipse(Vector mid, double a, double b, double angle, int steps)
@@ -180,7 +172,7 @@ namespace Elmanager
                 double sinAlpha = Math.Sin(alpha);
                 double cosAlpha = Math.Cos(alpha);
                 p.Add(new Vector(mid.X + a * cosAlpha * cosBeta - b * sinAlpha * sinBeta,
-                    mid.Y + a * cosAlpha * sinBeta + b * sinAlpha * cosBeta));
+                                 mid.Y + a * cosAlpha * sinBeta + b * sinAlpha * cosBeta));
                 i += 360.0 / steps;
             }
             p.UpdateDecomposition();
@@ -226,6 +218,11 @@ namespace Elmanager
             return Vertices.Contains(p);
         }
 
+        internal void Move(Vector delta)
+        {
+            Vertices.ForEach(vertex => { vertex.X += delta.X; vertex.Y += delta.Y; });
+        }
+
         internal double DistanceFromPoint(Vector p)
         {
             double smallest = Math.Sqrt(Math.Pow((Vertices[0].X - p.X), 2) + Math.Pow((Vertices[0].Y - p.Y), 2));
@@ -234,12 +231,12 @@ namespace Elmanager
             for (int i = 0; i < c; i++)
             {
                 current = Geometry.DistanceFromSegment(Vertices[i].X, Vertices[i].Y, Vertices[i + 1].X,
-                    Vertices[i + 1].Y, p.X, p.Y);
+                                                       Vertices[i + 1].Y, p.X, p.Y);
                 if (current < smallest)
                     smallest = current;
             }
             current = Geometry.DistanceFromSegment(Vertices[c].X, Vertices[c].Y, Vertices[0].X, Vertices[0].Y, p.X,
-                p.Y);
+                                                   p.Y);
             if (current < smallest)
                 smallest = current;
             return smallest;
@@ -297,14 +294,14 @@ namespace Elmanager
         internal int GetNearestSegmentIndex(Vector p)
         {
             double smallest = Geometry.DistanceFromSegment(Vertices[0].X, Vertices[0].Y, Vertices[1].X,
-                Vertices[1].Y, p.X, p.Y);
+                                                           Vertices[1].Y, p.X, p.Y);
             int smallestIndex = 0;
             double current;
             int c = Vertices.Count - 1;
             for (int i = 1; i < c; i++)
             {
                 current = Geometry.DistanceFromSegment(Vertices[i].X, Vertices[i].Y, Vertices[i + 1].X,
-                    Vertices[i + 1].Y, p.X, p.Y);
+                                                       Vertices[i + 1].Y, p.X, p.Y);
                 if (current < smallest)
                 {
                     smallest = current;
@@ -312,7 +309,7 @@ namespace Elmanager
                 }
             }
             current = Geometry.DistanceFromSegment(Vertices[c].X, Vertices[c].Y, Vertices[0].X, Vertices[0].Y, p.X,
-                p.Y);
+                                                   p.Y);
             if (current < smallest)
             {
                 smallestIndex = c;
@@ -327,7 +324,7 @@ namespace Elmanager
             {
                 if (
                     Geometry.DistanceFromSegment(Vertices[i].X, Vertices[i].Y, Vertices[i + 1].X, Vertices[i + 1].Y,
-                        p.X, p.Y) < delta)
+                                                 p.X, p.Y) < delta)
                 {
                     Insert(i + 1, p);
                     return;
@@ -347,7 +344,7 @@ namespace Elmanager
             for (int i = 0; i < p.Vertices.Count; i++)
             {
                 for (int j = 0; j < Vertices.Count; j++)
-                    if (Geometry.IsEdgeIntersection(p[i], p[i + 1], this[j], this[j + 1]))
+                    if (Geometry.IsEdgeIntersection(p[i], p[i + 1], this[j], this[j+1]))
                         return true;
             }
             return false;
@@ -374,7 +371,7 @@ namespace Elmanager
                     }
                     if (j < 3)
                         continue;
-                    if (this[i - 1].Mark != Geometry.VectorMark.Selected)
+                    if (this[i-1].Mark != Geometry.VectorMark.Selected)
                         smoothPoly.Add(this[i].Clone());
                 }
                 Vector startPoint = this[i] + (this[i + 1] - this[i]) * vertexOffset;
@@ -427,46 +424,136 @@ namespace Elmanager
             {
                 throw new PolygonException("Both polygons must be non-self-intersecting.");
             }
-
-            var poly1 = new C2DPolygon(Vertices.Select(vertex => new C2DPoint(vertex.X, vertex.Y)).ToList(), true);
-            var poly2 = new C2DPolygon(p.Vertices.Select(vertex => new C2DPoint(vertex.X, vertex.Y)).ToList(), true);
-            var polyOpResult = new List<C2DHoledPolyBase>();
-            CGrid opt;
-            var resultpolys = new List<Polygon>();
-            int loopCount = 0;
-            do
-            {
-                poly1 = Interlocked.Exchange(ref poly2, poly1);
-                opt = new CGrid { DegenerateHandling = CGrid.eDegenerateHandling.RandomPerturbation };
-                polyOpResult.Clear();
-                if (type == PolygonOperationType.Merge)
-                {
-                    poly1.GetUnion(poly2, polyOpResult, opt);
-                }
-                else
-                {
-                    poly1.GetNonOverlaps(poly2, polyOpResult, opt);
-                }
-                loopCount++;
-                resultpolys.Clear();
-                foreach (var c2DHoledPolyBase in polyOpResult)
-                {
-                    var resultPoly = new Polygon();
-                    foreach (var dHoledPolyBase in c2DHoledPolyBase.Rim.Lines)
-                    {
-                        resultPoly.Add(new Vector(dHoledPolyBase.GetPointFrom().x, dHoledPolyBase.GetPointFrom().y));
-                    }
-                    resultpolys.Add(resultPoly);
-                }
-            } while (opt.DegenerateErrors != 0 && loopCount < 5);
-
-            if (resultpolys.Count == 0)
-            {
+            if (!IsCounterClockwise)
+                ChangeOrientation();
+            if ((!p.IsCounterClockwise) ^ (type == PolygonOperationType.Difference))
+                p.ChangeOrientation();
+            var merged = new Polygon(p);
+            var pClone = new Polygon(p);
+            var clip = new Polygon(this);
+            var results = new List<Polygon>();
+            if (!merged.IntersectsWith(clip))
                 throw new PolygonException("The polygons do not intersect.");
+
+            while (merged.HasEdgeIntersectionsWith(clip))
+            {
+                merged.Move(new Vector(0.000001, 0.000001));
+                pClone.Move(new Vector(0.000001, 0.000001));
             }
-            foreach (var x in resultpolys)
-                x.UpdateDecomposition();
-            return resultpolys;
+                
+
+            results.Add(new Polygon());
+            Vector.MarkDefault = Geometry.VectorMark.Selected;
+            for (int i = 0; i < p.Vertices.Count; i++)
+            {
+                for (int j = 0; j < Vertices.Count; j++)
+                {
+                    Vector isectPoint = Geometry.GetIntersectionPoint(pClone[i], pClone[i + 1], this[j], this[j + 1]);
+                    if ((object) isectPoint != null)
+                    {
+                        merged.InsertIntersection(isectPoint, 0.00000001);
+                        clip.InsertIntersection(isectPoint, 0.00000001);
+                    }
+                }
+            }
+            Vector.MarkDefault = Geometry.VectorMark.None;
+            int k = 0;
+            Polygon currentPolygon = merged;
+            Polygon notCurrentPolygon = clip;
+            bool ready = false;
+            while (true)
+            {
+                //Search for intersection
+                while (currentPolygon[k].Mark != Geometry.VectorMark.Selected)
+                {
+                    k++;
+                    k = k % currentPolygon.Vertices.Count;
+                }
+                //Is this inbound intersection
+                int j = notCurrentPolygon.Vertices.IndexOf(currentPolygon.Vertices[k]);
+                if (Geometry.IsInboundIntersection(currentPolygon[k - 1], currentPolygon[k + 1],
+                    notCurrentPolygon[j - 1], notCurrentPolygon[j + 1]))
+                {
+                    k--;
+                    if (k == -1)
+                        k = currentPolygon.Vertices.Count - 1;
+                    while (currentPolygon[k].Mark != Geometry.VectorMark.Selected)
+                    {
+                        k--;
+                        if (k == -1)
+                            k = currentPolygon.Vertices.Count - 1;
+                    }
+                    k++;
+                    while (true)
+                    {
+                        k = k % currentPolygon.Vertices.Count;
+                        //Now we are at the first vertex
+                        while (currentPolygon[k].Mark != Geometry.VectorMark.Selected)
+                        {
+                            if (currentPolygon[k].Mark == Geometry.VectorMark.None)
+                            {
+                                results[results.Count - 1].Add(currentPolygon[k]);
+                                currentPolygon.Vertices[k % currentPolygon.Count].Mark =
+                                    Geometry.VectorMark.Highlight;
+                            }
+                            else
+                            {
+                                //Check if there are unexplored vertices
+                                int i;
+                                for (i = 0; i < currentPolygon.Vertices.Count; i++)
+                                    if (currentPolygon.Vertices[i].Mark == Geometry.VectorMark.Selected)
+                                        break;
+                                if (i < currentPolygon.Vertices.Count)
+                                {
+                                    k = i;
+                                    results.Add(new Polygon());
+                                    goto endOfWhileLoop;
+                                }
+                                for (i = 0; i < notCurrentPolygon.Vertices.Count; i++)
+                                    if (notCurrentPolygon.Vertices[i].Mark == Geometry.VectorMark.Selected)
+                                        break;
+                                if (i < notCurrentPolygon.Vertices.Count)
+                                {
+                                    k = i;
+                                    results.Add(new Polygon());
+                                    currentPolygon = clip;
+                                    notCurrentPolygon = merged;
+                                    goto endOfWhileLoop;
+                                }
+                                ready = true;
+                                goto endOfWhileLoop;
+                            }
+                            k++;
+                        }
+                        k = k % currentPolygon.Vertices.Count;
+                        results[results.Count - 1].Add(currentPolygon.Vertices[k]); //Add the intersection point
+                        int g = notCurrentPolygon.IndexOf(currentPolygon.Vertices[k]);
+                        currentPolygon.Vertices[k].Mark = Geometry.VectorMark.Visited; //Mark as visited
+                        notCurrentPolygon.Vertices[g].Mark = Geometry.VectorMark.Visited; //Mark as visited
+                        //Switch to the other polygon
+                        if (currentPolygon.Equals(merged))
+                        {
+                            currentPolygon = clip;
+                            notCurrentPolygon = merged;
+                        }
+                        else
+                        {
+                            currentPolygon = merged;
+                            notCurrentPolygon = clip;
+                        }
+                        k = g + 1;
+                    }
+                    endOfWhileLoop:
+                    if (ready)
+                    {
+                        foreach (Polygon x in results)
+                            x.UpdateDecomposition();
+                        return results;
+                    }
+                    continue;
+                }
+                k++;
+            }
         }
 
         internal int IndexOf(Vector v)
@@ -493,12 +580,12 @@ namespace Elmanager
             }
             return
                 new Polygon(new List<Vector>
-                            {
-                                new Vector(xMin, yMin),
-                                new Vector(xMax, yMin),
-                                new Vector(xMax, yMax),
-                                new Vector(xMin, yMax)
-                            });
+                                {
+                                    new Vector(xMin, yMin),
+                                    new Vector(xMax, yMin),
+                                    new Vector(xMax, yMax),
+                                    new Vector(xMin, yMax)
+                                });
         }
 
         internal void ChangeOrientation()
@@ -615,8 +702,7 @@ namespace Elmanager
                     {
                         Vector cutVector = clone[k + 1] - clone[k - 1];
                         cutVector /= cutVector.Length;
-                        cutVector *= cutRadius /
-                                     Math.Sin(Math.Abs(cutVector.AngleBetween(v2 - v1)) * Constants.DegToRad);
+                        cutVector *= cutRadius / Math.Sin(Math.Abs(cutVector.AngleBetween(v2 - v1)) * Constants.DegToRad);
                         double distance1 = (clone[k + 1] - clone[k]).Length;
                         double distance2 = (clone[k] - clone[k - 1]).Length;
                         if (cutVector.Length > Math.Min(distance1, distance2))
@@ -687,7 +773,7 @@ namespace Elmanager
                     if (i == 0 && j == Vertices.Count - 1)
                         continue;
                     Vector isectPoint = Geometry.GetIntersectionPoint(Vertices[i], Vertices[i + 1], Vertices[j],
-                        Vertices[(j + 1) % Vertices.Count]);
+                                                                      Vertices[(j + 1) % Vertices.Count]);
                     if ((object) isectPoint != null)
                         isects.Add(isectPoint);
                 }
@@ -706,7 +792,7 @@ namespace Elmanager
                 for (j = 0; j <= p.Vertices.Count - 2; j++)
                 {
                     isect = Geometry.GetIntersectionPoint(Vertices[i], Vertices[i + 1], p.Vertices[j],
-                        p.Vertices[j + 1]);
+                                                          p.Vertices[j + 1]);
                     if ((object) isect != null)
                         isects.Add(isect);
                 }

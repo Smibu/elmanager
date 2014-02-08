@@ -27,6 +27,7 @@
 		//Do not modify it using the code editor.
 		private void InitializeComponent()
 			{
+            this.components = new System.ComponentModel.Container();
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(MainForm));
             this.rmButton = new System.Windows.Forms.Button();
             this.levelEditorButton = new System.Windows.Forms.Button();
@@ -36,6 +37,7 @@
             this.homePageLabel = new System.Windows.Forms.LinkLabel();
             this.configButton = new System.Windows.Forms.Button();
             this.linkLabel1 = new System.Windows.Forms.LinkLabel();
+            this.toolTip1 = new System.Windows.Forms.ToolTip(this.components);
             this.SuspendLayout();
             // 
             // rmButton
@@ -133,8 +135,16 @@
             this.linkLabel1.TabIndex = 9;
             this.linkLabel1.TabStop = true;
             this.linkLabel1.Text = "Testing && SLE toolbar graphics: Mawane";
+            this.toolTip1.SetToolTip(this.linkLabel1, "mailto:mawane@hotmail.com");
             this.linkLabel1.UseCompatibleTextRendering = true;
             this.linkLabel1.LinkClicked += new System.Windows.Forms.LinkLabelLinkClickedEventHandler(this.LinkLabel1LinkClicked);
+            // 
+            // toolTip1
+            // 
+            this.toolTip1.AutoPopDelay = 50000;
+            this.toolTip1.InitialDelay = 1;
+            this.toolTip1.ReshowDelay = 100;
+            this.toolTip1.UseFading = false;
             // 
             // MainForm
             // 
@@ -168,6 +178,7 @@
 		internal System.Windows.Forms.LinkLabel homePageLabel;
         internal System.Windows.Forms.Button configButton;
         private System.Windows.Forms.LinkLabel linkLabel1;
+        private System.Windows.Forms.ToolTip toolTip1;
 	}
 	
 }

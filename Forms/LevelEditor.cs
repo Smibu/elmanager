@@ -279,7 +279,14 @@ namespace Elmanager.Forms
                 }
                 else
                 {
-                    topologyList.Text = c + " problems were found!";
+                    if (c > 1)
+                    {
+                        topologyList.Text = c + " problems were found!";
+                    }
+                    else
+                    {
+                        topologyList.Text = "1 problem was found!";
+                    }
                     topologyList.ForeColor = Color.Red;
                     topologyList.Font = new Font(topologyList.Font, FontStyle.Bold);
                 }
@@ -1104,7 +1111,15 @@ namespace Elmanager.Forms
                 {
                     Lev.Title = Path.GetFileNameWithoutExtension(SaveFileDialog1.FileName);
                 }
-                Lev.Save(SaveFileDialog1.FileName);
+                try
+                {
+                    Lev.Save(SaveFileDialog1.FileName);
+                }
+                catch (UnauthorizedAccessException ex)
+                {
+                    Utils.ShowError("Error when saving level: " + ex.Message);
+                    return;
+                }
                 _savePath = SaveFileDialog1.FileName;
                 UpdateCurrLevDirFiles();
                 UpdateLabels();
@@ -1135,9 +1150,16 @@ namespace Elmanager.Forms
                 {
                     if (Global.AppSettings.LevelEditor.CheckTopologyWhenSaving)
                         CheckTopologyAndUpdate();
-                    Lev.Save(_savePath);
-                    Modified = false;
-                    UpdateLabels();
+                    try
+                    {
+                        Lev.Save(_savePath);
+                        Modified = false;
+                        UpdateLabels();
+                    }
+                    catch (UnauthorizedAccessException ex)
+                    {
+                        Utils.ShowError("Error when saving level: " + ex.Message);
+                    }
                 }
             }
             CurrentTool.Activate();

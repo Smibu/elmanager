@@ -261,6 +261,11 @@ namespace Elmanager
             get { return System.IO.Path.GetFileNameWithoutExtension(_fileName); }
         }
 
+        internal int PolygonCount
+        {
+            get { return Polygons.Count; }
+        }
+
         internal int GrassPolygonCount
         {
             get { return Polygons.Count(x => x.IsGrass); }

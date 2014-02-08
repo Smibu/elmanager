@@ -29,94 +29,101 @@ namespace Elmanager.Forms
 		//Do not modify it using the code editor.
 		private void InitializeComponent()
 			{
-                System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(LevelPropertiesForm));
-                this.PropertiesLabel = new System.Windows.Forms.Label();
-                this.Label2 = new System.Windows.Forms.Label();
-                this.Label3 = new System.Windows.Forms.Label();
-                this.OKButton = new System.Windows.Forms.Button();
-                this.SinglePlayerTimesBox = new System.Windows.Forms.TextBox();
-                this.MultiPlayerTimesBox = new System.Windows.Forms.TextBox();
-                this.SuspendLayout();
-                // 
-                // PropertiesLabel
-                // 
-                this.PropertiesLabel.AutoSize = true;
-                this.PropertiesLabel.BorderStyle = System.Windows.Forms.BorderStyle.Fixed3D;
-                this.PropertiesLabel.Location = new System.Drawing.Point(12, 9);
-                this.PropertiesLabel.Name = "PropertiesLabel";
-                this.PropertiesLabel.Size = new System.Drawing.Size(55, 15);
-                this.PropertiesLabel.TabIndex = 0;
-                this.PropertiesLabel.Text = "Polygons:";
-                // 
-                // Label2
-                // 
-                this.Label2.AutoSize = true;
-                this.Label2.Location = new System.Drawing.Point(203, 9);
-                this.Label2.Name = "Label2";
-                this.Label2.Size = new System.Drawing.Size(91, 13);
-                this.Label2.TabIndex = 1;
-                this.Label2.Text = "Singleplayer times";
-                // 
-                // Label3
-                // 
-                this.Label3.AutoSize = true;
-                this.Label3.Location = new System.Drawing.Point(447, 9);
-                this.Label3.Name = "Label3";
-                this.Label3.Size = new System.Drawing.Size(84, 13);
-                this.Label3.TabIndex = 3;
-                this.Label3.Text = "Multiplayer times";
-                // 
-                // OKButton
-                // 
-                this.OKButton.DialogResult = System.Windows.Forms.DialogResult.Cancel;
-                this.OKButton.Location = new System.Drawing.Point(278, 173);
-                this.OKButton.Name = "OKButton";
-                this.OKButton.Size = new System.Drawing.Size(75, 23);
-                this.OKButton.TabIndex = 5;
-                this.OKButton.Text = "OK";
-                this.OKButton.UseVisualStyleBackColor = true;
-                this.OKButton.Click += new System.EventHandler(this.OkButtonClick);
-                // 
-                // SinglePlayerTimesBox
-                // 
-                this.SinglePlayerTimesBox.Font = new System.Drawing.Font("Lucida Console", 9F);
-                this.SinglePlayerTimesBox.Location = new System.Drawing.Point(156, 29);
-                this.SinglePlayerTimesBox.Multiline = true;
-                this.SinglePlayerTimesBox.Name = "SinglePlayerTimesBox";
-                this.SinglePlayerTimesBox.ReadOnly = true;
-                this.SinglePlayerTimesBox.Size = new System.Drawing.Size(182, 138);
-                this.SinglePlayerTimesBox.TabIndex = 6;
-                // 
-                // MultiPlayerTimesBox
-                // 
-                this.MultiPlayerTimesBox.Font = new System.Drawing.Font("Lucida Console", 9F);
-                this.MultiPlayerTimesBox.Location = new System.Drawing.Point(360, 29);
-                this.MultiPlayerTimesBox.Multiline = true;
-                this.MultiPlayerTimesBox.Name = "MultiPlayerTimesBox";
-                this.MultiPlayerTimesBox.ReadOnly = true;
-                this.MultiPlayerTimesBox.Size = new System.Drawing.Size(258, 138);
-                this.MultiPlayerTimesBox.TabIndex = 7;
-                // 
-                // LevelPropertiesForm
-                // 
-                this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
-                this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-                this.CancelButton = this.OKButton;
-                this.ClientSize = new System.Drawing.Size(630, 208);
-                this.Controls.Add(this.MultiPlayerTimesBox);
-                this.Controls.Add(this.SinglePlayerTimesBox);
-                this.Controls.Add(this.OKButton);
-                this.Controls.Add(this.Label3);
-                this.Controls.Add(this.Label2);
-                this.Controls.Add(this.PropertiesLabel);
-                this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedToolWindow;
-                this.Name = "LevelPropertiesForm";
-                this.Text = "Level properties";
-                this.ResumeLayout(false);
-                this.PerformLayout();
+            this.PropertiesLabel = new System.Windows.Forms.TextBox();
+            this.Label2 = new System.Windows.Forms.Label();
+            this.Label3 = new System.Windows.Forms.Label();
+            this.OKButton = new System.Windows.Forms.Button();
+            this.SinglePlayerTimesBox = new System.Windows.Forms.TextBox();
+            this.MultiPlayerTimesBox = new System.Windows.Forms.TextBox();
+            this.SuspendLayout();
+            // 
+            // PropertiesLabel
+            // 
+            this.PropertiesLabel.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+            | System.Windows.Forms.AnchorStyles.Left)));
+            this.PropertiesLabel.Location = new System.Drawing.Point(12, 9);
+            this.PropertiesLabel.Multiline = true;
+            this.PropertiesLabel.Name = "PropertiesLabel";
+            this.PropertiesLabel.ReadOnly = true;
+            this.PropertiesLabel.Size = new System.Drawing.Size(138, 191);
+            this.PropertiesLabel.TabIndex = 0;
+            // 
+            // Label2
+            // 
+            this.Label2.AutoSize = true;
+            this.Label2.Location = new System.Drawing.Point(203, 9);
+            this.Label2.Name = "Label2";
+            this.Label2.Size = new System.Drawing.Size(91, 13);
+            this.Label2.TabIndex = 1;
+            this.Label2.Text = "Singleplayer times";
+            // 
+            // Label3
+            // 
+            this.Label3.AutoSize = true;
+            this.Label3.Location = new System.Drawing.Point(447, 9);
+            this.Label3.Name = "Label3";
+            this.Label3.Size = new System.Drawing.Size(84, 13);
+            this.Label3.TabIndex = 3;
+            this.Label3.Text = "Multiplayer times";
+            // 
+            // OKButton
+            // 
+            this.OKButton.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+            this.OKButton.DialogResult = System.Windows.Forms.DialogResult.Cancel;
+            this.OKButton.Location = new System.Drawing.Point(278, 177);
+            this.OKButton.Name = "OKButton";
+            this.OKButton.Size = new System.Drawing.Size(87, 23);
+            this.OKButton.TabIndex = 5;
+            this.OKButton.Text = "OK";
+            this.OKButton.UseVisualStyleBackColor = true;
+            this.OKButton.Click += new System.EventHandler(this.OkButtonClick);
+            // 
+            // SinglePlayerTimesBox
+            // 
+            this.SinglePlayerTimesBox.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+            | System.Windows.Forms.AnchorStyles.Left)));
+            this.SinglePlayerTimesBox.Font = new System.Drawing.Font("Lucida Console", 9F);
+            this.SinglePlayerTimesBox.Location = new System.Drawing.Point(156, 29);
+            this.SinglePlayerTimesBox.Multiline = true;
+            this.SinglePlayerTimesBox.Name = "SinglePlayerTimesBox";
+            this.SinglePlayerTimesBox.ReadOnly = true;
+            this.SinglePlayerTimesBox.Size = new System.Drawing.Size(182, 142);
+            this.SinglePlayerTimesBox.TabIndex = 6;
+            // 
+            // MultiPlayerTimesBox
+            // 
+            this.MultiPlayerTimesBox.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+            | System.Windows.Forms.AnchorStyles.Left)));
+            this.MultiPlayerTimesBox.Font = new System.Drawing.Font("Lucida Console", 9F);
+            this.MultiPlayerTimesBox.Location = new System.Drawing.Point(360, 29);
+            this.MultiPlayerTimesBox.Multiline = true;
+            this.MultiPlayerTimesBox.Name = "MultiPlayerTimesBox";
+            this.MultiPlayerTimesBox.ReadOnly = true;
+            this.MultiPlayerTimesBox.Size = new System.Drawing.Size(258, 142);
+            this.MultiPlayerTimesBox.TabIndex = 7;
+            // 
+            // LevelPropertiesForm
+            // 
+            this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
+            this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
+            this.CancelButton = this.OKButton;
+            this.ClientSize = new System.Drawing.Size(642, 212);
+            this.Controls.Add(this.MultiPlayerTimesBox);
+            this.Controls.Add(this.SinglePlayerTimesBox);
+            this.Controls.Add(this.OKButton);
+            this.Controls.Add(this.Label3);
+            this.Controls.Add(this.Label2);
+            this.Controls.Add(this.PropertiesLabel);
+            this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedToolWindow;
+            this.Name = "LevelPropertiesForm";
+            this.Text = "Level properties";
+            this.Shown += new System.EventHandler(this.LevelPropertiesForm_Shown);
+            this.ResumeLayout(false);
+            this.PerformLayout();
 
 		}
-		internal System.Windows.Forms.Label PropertiesLabel;
+        internal System.Windows.Forms.TextBox PropertiesLabel;
         internal System.Windows.Forms.Label Label2;
 		internal System.Windows.Forms.Label Label3;
 		internal System.Windows.Forms.Button OKButton;

@@ -58,7 +58,7 @@ namespace Elmanager.Forms
 
         private void LinkLabel1LinkClicked(object sender, LinkLabelLinkClickedEventArgs e)
         {
-            Process.Start("http://mawane.webs.com/");
+            Process.Start("mailto:mawane@hotmail.com");
         }
     }
 }

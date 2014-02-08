@@ -14,7 +14,7 @@ namespace Elmanager.Forms
                 Text = "Level properties - " + _level.Path;
             else
                 Text = "Level properties - New";
-            PropertiesLabel.Text = "Polygons: " + _level.Polygons.Count + "\r\n" +
+            PropertiesLabel.Text = "Polygons: " + _level.PolygonCount + "\r\n" +
                                    "Vertices: " + _level.VertexCount + "\r\n" +
                                    "Ground polygons: " + _level.GroundPolygonCount + "\r\n" +
                                    "Ground vertices: " + _level.GroundVertexCount + "\r\n" +
@@ -47,6 +47,11 @@ namespace Elmanager.Forms
         private void OkButtonClick(object sender, EventArgs e)
         {
             Close();
+        }
+
+        private void LevelPropertiesForm_Shown(object sender, EventArgs e)
+        {
+            OKButton.Focus();
         }
     }
 }
