@@ -1073,11 +1073,10 @@ namespace Elmanager.Forms
         private void SaveAs(object sender = null, EventArgs e = null)
         {
             string suggestion = string.Empty;
+            if (Global.LevelFiles == null)
+                Global.LevelFiles = Utils.GetLevelFiles();
             if (Global.AppSettings.LevelEditor.UseFilenameSuggestion)
             {
-                if (Global.LevelFiles == null)
-                    Global.LevelFiles = Utils.GetLevelFiles();
-
                 var filenameStart = Global.AppSettings.LevelEditor.BaseFilename;
                 int highestNumber = 0;
                 foreach (string levelFile in Global.LevelFiles)
