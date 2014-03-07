@@ -33,6 +33,7 @@
             this.textBox1 = new System.Windows.Forms.TextBox();
             this.downloadButton = new System.Windows.Forms.Button();
             this.notYetButton = new System.Windows.Forms.Button();
+            this.label2 = new System.Windows.Forms.Label();
             this.SuspendLayout();
             // 
             // label1
@@ -55,39 +56,49 @@
             this.textBox1.Name = "textBox1";
             this.textBox1.ReadOnly = true;
             this.textBox1.ScrollBars = System.Windows.Forms.ScrollBars.Both;
-            this.textBox1.Size = new System.Drawing.Size(384, 271);
+            this.textBox1.Size = new System.Drawing.Size(384, 268);
             this.textBox1.TabIndex = 1;
             this.textBox1.WordWrap = false;
             // 
             // downloadButton
             // 
             this.downloadButton.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
-            this.downloadButton.Location = new System.Drawing.Point(12, 302);
+            this.downloadButton.Location = new System.Drawing.Point(12, 321);
             this.downloadButton.Name = "downloadButton";
-            this.downloadButton.Size = new System.Drawing.Size(75, 23);
+            this.downloadButton.Size = new System.Drawing.Size(108, 23);
             this.downloadButton.TabIndex = 2;
             this.downloadButton.Text = "Download";
             this.downloadButton.UseVisualStyleBackColor = true;
-            this.downloadButton.Click += new System.EventHandler(this.button1_Click);
+            this.downloadButton.Click += new System.EventHandler(this.DownloadButtonClick);
             // 
             // notYetButton
             // 
             this.notYetButton.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
             this.notYetButton.DialogResult = System.Windows.Forms.DialogResult.Cancel;
-            this.notYetButton.Location = new System.Drawing.Point(93, 302);
+            this.notYetButton.Location = new System.Drawing.Point(126, 321);
             this.notYetButton.Name = "notYetButton";
-            this.notYetButton.Size = new System.Drawing.Size(75, 23);
+            this.notYetButton.Size = new System.Drawing.Size(108, 23);
             this.notYetButton.TabIndex = 3;
             this.notYetButton.Text = "Not yet";
             this.notYetButton.UseVisualStyleBackColor = true;
             this.notYetButton.Click += new System.EventHandler(this.button2_Click);
+            // 
+            // label2
+            // 
+            this.label2.AutoSize = true;
+            this.label2.Location = new System.Drawing.Point(9, 296);
+            this.label2.Name = "label2";
+            this.label2.Size = new System.Drawing.Size(316, 13);
+            this.label2.TabIndex = 4;
+            this.label2.Text = "Note: Elmanager will automatically exit if you choose to download.";
             // 
             // NewVersionForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.CancelButton = this.notYetButton;
-            this.ClientSize = new System.Drawing.Size(408, 337);
+            this.ClientSize = new System.Drawing.Size(408, 356);
+            this.Controls.Add(this.label2);
             this.Controls.Add(this.notYetButton);
             this.Controls.Add(this.downloadButton);
             this.Controls.Add(this.textBox1);
@@ -107,5 +118,6 @@
         private System.Windows.Forms.TextBox textBox1;
         private System.Windows.Forms.Button downloadButton;
         private System.Windows.Forms.Button notYetButton;
+        private System.Windows.Forms.Label label2;
     }
 }

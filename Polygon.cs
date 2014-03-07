@@ -165,15 +165,14 @@ namespace Elmanager
             double beta = -angle * Constants.DegToRad;
             double sinBeta = Math.Sin(beta);
             double cosBeta = Math.Cos(beta);
-            double i = 0;
-            while (i < 360)
+            for (int i = 0; i < steps; i++)
             {
-                double alpha = i * Constants.DegToRad;
+                double currentAngle = i * 360.0 / steps;
+                double alpha = currentAngle * Constants.DegToRad;
                 double sinAlpha = Math.Sin(alpha);
                 double cosAlpha = Math.Cos(alpha);
                 p.Add(new Vector(mid.X + a * cosAlpha * cosBeta - b * sinAlpha * sinBeta,
                                  mid.Y + a * cosAlpha * sinBeta + b * sinAlpha * cosBeta));
-                i += 360.0 / steps;
             }
             p.UpdateDecomposition();
             return p;

@@ -11,7 +11,7 @@ namespace Elmanager.Forms
             InitializeComponent();
         }
 
-        public void LoadChangelog()
+        private void LoadChangelog()
         {
             var wc = new WebClient();
             string changelog = wc.DownloadString(Constants.ChangelogUri).Replace("\n", "\r\n");
@@ -24,10 +24,13 @@ namespace Elmanager.Forms
             downloadButton.Select();
         }
 
-        private void button1_Click(object sender, EventArgs e)
+        private void DownloadButtonClick(object sender, EventArgs e)
         {
+            downloadButton.Text = "Downloading...";
+            downloadButton.Enabled = false;
+            downloadButton.Refresh();
             Utils.DownloadAndOpenFile(Constants.ProgramUri, Application.StartupPath + "\\Elmanager.zip");
-            Close();
+            Environment.Exit(0);
         }
 
         private void button2_Click(object sender, EventArgs e)
