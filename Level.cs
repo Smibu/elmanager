@@ -370,12 +370,12 @@ namespace Elmanager
 
         internal bool TooTall
         {
-            get { return YMax - YMin > MaximumSize; }
+            get { return YMax - YMin >= MaximumSize; }
         }
 
         internal bool TooWide
         {
-            get { return XMax - XMin > MaximumSize; }
+            get { return XMax - XMin >= MaximumSize; }
         }
 
         internal int VertexCount

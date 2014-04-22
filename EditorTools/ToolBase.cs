@@ -86,14 +86,27 @@ namespace Elmanager.EditorTools
 
         internal int GetNearestVertexIndex(Vector p)
         {
+            bool nearestVertexFound = false;
+            int nearestIndex = -1;
             foreach (Polygon x in Lev.Polygons)
             {
                 if (((x.IsGrass && LevEditor.GrassFilter) || (!x.IsGrass && LevEditor.GroundFilter)) &&
                     x.GetNearestVertexDistance(p) < Renderer.ZoomLevel * Global.AppSettings.LevelEditor.CaptureRadius)
                 {
                     NearestPolygon = x;
-                    return x.GetNearestVertexIndex(p);
+                    nearestIndex = x.GetNearestVertexIndex(p);
+                    nearestVertexFound = true;
+
+                    //prefer selected vectors
+                    if (x[nearestIndex].Mark == Geometry.VectorMark.Selected)
+                    {
+                        return nearestIndex;
+                    }
                 }
+            }
+            if (nearestVertexFound)
+            {
+                return nearestIndex;
             }
 
             foreach (Polygon x in Lev.Polygons)

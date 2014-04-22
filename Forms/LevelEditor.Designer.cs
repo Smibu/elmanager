@@ -44,6 +44,7 @@ namespace Elmanager.Forms
             this.DeleteSelectedMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.MirrorLevelToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.UndoToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.toolStripMenuItem1 = new System.Windows.Forms.ToolStripMenuItem();
             this.RedoToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.ToolStripSeparator8 = new System.Windows.Forms.ToolStripSeparator();
             this.ZoomFillToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
@@ -239,6 +240,7 @@ namespace Elmanager.Forms
             this.MirrorLevelToolStripMenuItem,
             this.UndoToolStripMenuItem,
             this.RedoToolStripMenuItem,
+            this.toolStripMenuItem1,
             this.ToolStripSeparator8,
             this.ZoomFillToolStripMenuItem,
             this.CheckTopologyMenuItem,
@@ -296,6 +298,14 @@ namespace Elmanager.Forms
             this.UndoToolStripMenuItem.Size = new System.Drawing.Size(182, 22);
             this.UndoToolStripMenuItem.Text = "Undo";
             this.UndoToolStripMenuItem.Click += new System.EventHandler(this.Undo);
+            // 
+            // toolStripMenuItem1
+            // 
+            this.toolStripMenuItem1.Name = "toolStripMenuItem1";
+            this.toolStripMenuItem1.ShortcutKeys = ((System.Windows.Forms.Keys)((System.Windows.Forms.Keys.Control | System.Windows.Forms.Keys.C)));
+            this.toolStripMenuItem1.Size = new System.Drawing.Size(182, 22);
+            this.toolStripMenuItem1.Text = "Copy";
+            this.toolStripMenuItem1.Click += new System.EventHandler(this.CopyMenuItemClick);
             // 
             // RedoToolStripMenuItem
             // 
@@ -1508,6 +1518,7 @@ namespace Elmanager.Forms
         private ToolStripMenuItem bringToFrontToolStripMenuItem;
         private ToolStripMenuItem sendToBackToolStripMenuItem;
         private ToolStripDropDownButton topologyList;
+        private ToolStripMenuItem toolStripMenuItem1;
 	}
 	
 }
