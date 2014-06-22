@@ -3,6 +3,9 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Text;
+using GeoAPI.Geometries;
+using NetTopologySuite.Geometries;
+using NetTopologySuite.Operation.Valid;
 
 namespace Elmanager
 {
@@ -458,18 +461,28 @@ namespace Elmanager
         internal List<Vector> GetIntersectionPoints()
         {
             var isects = new List<Vector>();
-            for (int i = 0; i < Polygons.Count; i++)
+            var f = GeometryFactory.Floating;
+            var ipolys = new List<IPolygon>();
+            foreach (var p in this.Polygons.Where(poly => !poly.IsGrass))
             {
-                Polygon x = Polygons[i];
-                if (x.IsGrass)
-                    continue;
-                isects.AddRange(x.GetSelfInterSections());
-                for (int j = i + 1; j < Polygons.Count; j++)
+                var verts = p.Vertices.Select(v => new Coordinate(v.X, v.Y));
+                var ring = verts.ToList();
+                ring.Add(verts.First());
+                var ipoly = f.CreatePolygon(f.CreateLinearRing(ring.ToArray()));
+                ipolys.Add(ipoly);
+                if (!ipoly.IsValid)
                 {
-                    Polygon z = Polygons[j];
-                    if (z.IsGrass)
-                        continue;
-                    isects.AddRange(x.GetIntersectionsWith(z));
+                    var validOp = new IsValidOp(ipoly).ValidationError.Coordinate;
+                    isects.Add(new Vector(validOp.X, validOp.Y));
+                }
+            }
+            var multipoly = f.CreateMultiPolygon(ipolys.ToArray());
+            if (!multipoly.IsValid)
+            {
+                var validOp = new IsValidOp(multipoly).ValidationError;
+                if (validOp.Message == "Self-intersection")
+                {
+                    isects.Add(new Vector(validOp.Coordinate.X, validOp.Coordinate.Y));
                 }
             }
             return isects;

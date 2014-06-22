@@ -237,6 +237,7 @@ namespace Elmanager.Forms
             if (!CurrentTool.Busy)
             {
                 items.Clear();
+                ResetTopologyListStyle();
                 topologyList.Text = "Checking topology...";
                 StatusStrip2.Refresh();
                 _errorPoints.Clear();
@@ -261,7 +262,7 @@ namespace Elmanager.Forms
 
                 _errorPoints = Lev.GetIntersectionPoints();
                 if (_errorPoints.Count > 0)
-                    items.Add("There are " + _errorPoints.Count + " intersections in the level.");
+                    items.Add("There are intersections in the level.");
 
                 var errObjs = Lev.GetApplesAndFlowersInsideGround();
                 if (errObjs.Count > 0)
@@ -393,6 +394,7 @@ namespace Elmanager.Forms
         private void CustomRendering()
         {
             CurrentTool.ExtraRendering();
+            double zoom = Renderer.ZoomLevel / 50;
             foreach (Polygon x in Lev.Polygons)
             {
                 switch (x.Mark)
@@ -408,12 +410,13 @@ namespace Elmanager.Forms
                         Renderer.DrawPolygon(x, Color.Red);
                         break;
                 }
+                
                 foreach (Vector z in x.Vertices)
                 {
                     switch (z.Mark)
                     {
                         case Geometry.VectorMark.Selected:
-                            Renderer.DrawPoint(z, Global.AppSettings.LevelEditor.SelectionColor);
+                            Renderer.DrawEquilateralTriangle(z, zoom, Global.AppSettings.LevelEditor.SelectionColor);
                             break;
                         case Geometry.VectorMark.Highlight:
                             if (Global.AppSettings.LevelEditor.UseHighlight)
@@ -428,7 +431,7 @@ namespace Elmanager.Forms
                 switch (z.Mark)
                 {
                     case Geometry.VectorMark.Selected:
-                        Renderer.DrawPoint(z, Global.AppSettings.LevelEditor.SelectionColor);
+                        Renderer.DrawEquilateralTriangle(z, zoom, Global.AppSettings.LevelEditor.SelectionColor);
                         break;
                     case Geometry.VectorMark.Highlight:
                         if (Global.AppSettings.LevelEditor.UseHighlight)

@@ -1,5 +1,11 @@
 using System;
 using System.Collections.Generic;
+using System.Linq;
+using GeoAPI.Geometries;
+using NetTopologySuite.Geometries;
+using NetTopologySuite.Triangulate;
+using TriangleNet;
+using TriangleNet.Geometry;
 
 namespace Elmanager
 {
@@ -361,7 +367,7 @@ namespace Elmanager
             }
         }
 
-        internal static void Triangulate(ref List<Polygon> polygons)
+        private static void Triangulate(ref List<Polygon> polygons)
         {
             for (int i = 0; i < polygons.Count; i++)
             {
@@ -395,12 +401,54 @@ namespace Elmanager
 
         internal static Vector[][] Triangulate(Polygon polygon)
         {
-            var triangulatedPoly = new List<Polygon> {new Polygon(polygon)};
-            Triangulate(ref triangulatedPoly);
-            var triangulatedPolyArray = new Vector[triangulatedPoly.Count][];
-            for (int i = 0; i < triangulatedPoly.Count; i++)
-                triangulatedPolyArray[i] = triangulatedPoly[i].Vertices.ToArray();
-            return triangulatedPolyArray;
+            int count = polygon.Count;
+            var geometry = new InputGeometry(count);
+            foreach (var v in polygon.Vertices)
+            {
+                geometry.AddPoint(v.X, v.Y);
+            }
+
+            //Avoiding stack overflow bug in Triangle.NET in a degenerate case
+            if (geometry.Bounds.Width + geometry.Bounds.Height == 0)
+            {
+                return new Vector[0][];
+            }
+
+            for (int i = 0; i < count; i++)
+            {
+                geometry.AddSegment(i, (i + 1) % count);
+            }
+
+            var mesh = new Mesh();
+            mesh.Triangulate(geometry);
+            var triangulation = new Vector[mesh.Triangles.Count][];
+            int j = 0;
+            foreach (var t in mesh.Triangles)
+            {
+                triangulation[j] = new Vector[] { t.GetVertex(0), t.GetVertex(1), t.GetVertex(2) };
+                j++;
+            }
+            return triangulation;
+
+            //var builder = new ConformingDelaunayTriangulationBuilder();
+            //var f = GeometryFactory.Floating;
+            //var vertices = polygon.Vertices.Select(v => new Coordinate(v.X, v.Y)).ToList();
+            //var g = f.CreateMultiPoint(vertices.ToArray());
+            //builder.SetSites(g);
+            //var cvertices = polygon.Vertices.Select(v => new Coordinate(v.X, v.Y)).ToList();
+            //cvertices.Add(cvertices.First());
+            //var constraints = f.CreatePolygon(cvertices.ToArray());
+            //builder.Constraints = constraints;
+            //var triangles = builder.GetTriangles(f); //throws exception for some reason
+            //var triangulation = new Vector[triangles.Count][];
+            //int j = 0;
+            //foreach (var triangle in triangles.Geometries)
+            //{
+            //    var coords = triangle.Coordinates;
+            //    triangulation[j] = new Vector[]{coords[0], coords[1], coords[2]};
+            //    j++;
+            //}
+            //return triangulation;
         }
 
         /// <summary>

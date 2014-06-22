@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 
 namespace Elmanager
 {
@@ -65,6 +66,16 @@ namespace Elmanager
         internal double LengthSquared
         {
             get { return X * X + Y * Y; }
+        }
+
+        public static implicit operator Vector(TriangleNet.Data.Vertex v)
+        {
+            return new Vector(v.X, v.Y);
+        }
+
+        public static implicit operator Vector(GeoAPI.Geometries.Coordinate v)
+        {
+            return new Vector(v.X, v.Y);
         }
 
         public static Vector operator +(Vector vector1, Vector vector2)

@@ -752,10 +752,10 @@ namespace Elmanager
             if (Settings.ShowVertices)
             {
                 GL.Color4(Settings.VertexColor);
-                GL.Begin(BeginMode.Points);
+                GL.Begin(BeginMode.Triangles);
                 foreach (Polygon x in Lev.Polygons)
                     foreach (Vector z in x.Vertices)
-                        GL.Vertex3(z.X, z.Y, 0);
+                        DrawEquilateralTriangle(z, _ZoomLevel / 50, Color.Red);
                 GL.End();
             }
             if (CustomRendering != null)
@@ -788,6 +788,17 @@ namespace Elmanager
         internal void DrawSquare(Vector v, double side, Color color)
         {
             DrawRectangle(v.X - side, v.Y - side, v.X + side, v.Y + side, color);
+        }
+
+        internal void DrawEquilateralTriangle(Vector center, double side, Color color)
+        {
+            double factor = 1/(Math.Sqrt(3)*2);
+            GL.Begin(BeginMode.Triangles);
+            GL.Color3(color);
+            GL.Vertex3(center.X + side / 2, center.Y - side * factor, 0);
+            GL.Vertex3(center.X, center.Y + side / Math.Sqrt(3), 0);
+            GL.Vertex3(center.X - side / 2, center.Y - side * factor, 0);
+            GL.End();
         }
 
         internal DrawableImage DrawableImageFromName(string name)
