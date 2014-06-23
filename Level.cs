@@ -445,7 +445,7 @@ namespace Elmanager
 
         internal void DecomposeGroundPolygons()
         {
-            foreach (Polygon x in Polygons.Where(x => !x.IsGrass))
+            foreach (Polygon x in Polygons)
             {
                 x.UpdateDecomposition();
             }

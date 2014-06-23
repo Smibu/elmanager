@@ -141,6 +141,21 @@ namespace Elmanager
         internal void UpdateDecomposition()
         {
             Decomposition = Geometry.Triangulate(this);
+            if (IsGrass)
+            {
+                double longest = Math.Abs(Vertices[Vertices.Count - 1].X - Vertices[0].X);
+                int longestIndex = Vertices.Count - 1;
+                for (int i = 0; i < Vertices.Count - 1; i++)
+                {
+                    double current = Math.Abs(Vertices[i].X - Vertices[i + 1].X);
+                    if (current > longest)
+                    {
+                        longest = current;
+                        longestIndex = i;
+                    }
+                }
+                SetBeginPoint(longestIndex + 1);
+            }
         }
 
         internal static Polygon Square(Vector lowerLeftCorner, double side)
@@ -234,10 +249,13 @@ namespace Elmanager
                 if (current < smallest)
                     smallest = current;
             }
-            current = Geometry.DistanceFromSegment(Vertices[c].X, Vertices[c].Y, Vertices[0].X, Vertices[0].Y, p.X,
-                                                   p.Y);
-            if (current < smallest)
-                smallest = current;
+            if (!IsGrass)
+            {
+                current = Geometry.DistanceFromSegment(Vertices[c].X, Vertices[c].Y, Vertices[0].X, Vertices[0].Y, p.X,
+                    p.Y);
+                if (current < smallest)
+                    smallest = current;
+            }
             return smallest;
         }
 

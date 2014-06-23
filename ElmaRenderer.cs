@@ -726,7 +726,9 @@ namespace Elmanager
                 if (x.IsGrass)
                 {
                     if (Settings.ShowGrassEdges)
-                        DrawPolygon(x, Settings.GrassEdgeColor);
+                    {
+                        DrawLineStrip(x, Settings.GrassEdgeColor);
+                    }
                 }
                 else if (Settings.ShowGroundEdges)
                     DrawPolygon(x, Settings.GroundEdgeColor);

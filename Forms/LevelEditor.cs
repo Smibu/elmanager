@@ -401,7 +401,10 @@ namespace Elmanager.Forms
                 {
                     case PolygonMark.Highlight:
                         if (Global.AppSettings.LevelEditor.UseHighlight)
-                            Renderer.DrawPolygon(x, Global.AppSettings.LevelEditor.HighlightColor);
+                            if (x.IsGrass)
+                                Renderer.DrawLineStrip(x, Global.AppSettings.LevelEditor.HighlightColor);
+                            else
+                                Renderer.DrawPolygon(x, Global.AppSettings.LevelEditor.HighlightColor);
                         break;
                     case PolygonMark.Selected:
                         Renderer.DrawPolygon(x, Color.Red);
