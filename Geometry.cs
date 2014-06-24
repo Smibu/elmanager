@@ -420,7 +420,14 @@ namespace Elmanager
             }
 
             var mesh = new Mesh();
-            mesh.Triangulate(geometry);
+            try
+            {
+                mesh.Triangulate(geometry);
+            }
+            catch (Exception) //if the polygon is degenerate in some way, an exception might be thrown
+            {
+                return new Vector[0][];
+            }
             var triangulation = new Vector[mesh.Triangles.Count][];
             int j = 0;
             foreach (var t in mesh.Triangles)
