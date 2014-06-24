@@ -87,22 +87,40 @@ namespace Elmanager.EditorTools
         internal int GetNearestVertexIndex(Vector p)
         {
             bool nearestVertexFound = false;
+            bool nearestSelectedVertexFound = false;
             int nearestIndex = -1;
-            foreach (Polygon x in Lev.Polygons)
+            int nearestSelectedIndex = -1;
+            double smallestDistance = double.MaxValue;
+            double smallestSelectedDistance = double.MaxValue;
+            Polygon nearestSelectedPolygon = null;
+            foreach (Polygon poly in Lev.Polygons)
             {
-                if (((x.IsGrass && LevEditor.GrassFilter) || (!x.IsGrass && LevEditor.GroundFilter)) &&
-                    x.GetNearestVertexDistance(p) < Renderer.ZoomLevel * Global.AppSettings.LevelEditor.CaptureRadius)
+                double currentDistance;
+                if (((poly.IsGrass && LevEditor.GrassFilter) || (!poly.IsGrass && LevEditor.GroundFilter)) &&
+                    (currentDistance = poly.GetNearestVertexDistance(p)) < Renderer.ZoomLevel * Global.AppSettings.LevelEditor.CaptureRadius)
                 {
-                    NearestPolygon = x;
-                    nearestIndex = x.GetNearestVertexIndex(p);
-                    nearestVertexFound = true;
-
-                    //prefer selected vectors
-                    if (x[nearestIndex].Mark == Geometry.VectorMark.Selected)
+                    int currentIndex = poly.GetNearestVertexIndex(p);
+                    if (currentDistance < smallestDistance)
                     {
-                        return nearestIndex;
+                        NearestPolygon = poly;
+                        nearestIndex = currentIndex;
+                        nearestVertexFound = true;
+                        smallestDistance = currentDistance;
+                    }
+                    //prefer selected vectors
+                    if (poly[currentIndex].Mark == Geometry.VectorMark.Selected && currentDistance < smallestSelectedDistance)
+                    {
+                        nearestSelectedPolygon = poly;
+                        nearestSelectedIndex = currentIndex;
+                        nearestSelectedVertexFound = true;
+                        smallestSelectedDistance = currentDistance;
                     }
                 }
+            }
+            if (nearestSelectedVertexFound)
+            {
+                NearestPolygon = nearestSelectedPolygon;
+                return nearestSelectedIndex;
             }
             if (nearestVertexFound)
             {
