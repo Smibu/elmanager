@@ -103,6 +103,7 @@ namespace Elmanager.EditorTools
                             MarkAllAs(Geometry.VectorMark.None);
                             p.Mark = Geometry.VectorMark.Selected;
                             NearestPolygon.Insert(nearestSegmentIndex + 1, p);
+                            LevEditor.Modified = true;
                         }
                         else
                         {
