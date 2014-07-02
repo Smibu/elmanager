@@ -1,11 +1,5 @@
 using System;
 using System.Collections.Generic;
-using System.Linq;
-using GeoAPI.Geometries;
-using NetTopologySuite.Geometries;
-using NetTopologySuite.Triangulate;
-using TriangleNet;
-using TriangleNet.Geometry;
 
 namespace Elmanager
 {
@@ -320,142 +314,50 @@ namespace Elmanager
             return (a && b && c) || (!(a || b || c));
         }
 
-        internal static void FindDiagonal(Polygon poly, out int firstDiagonal, out int secondDiagonal)
+        private static void FindDiagonal(Polygon poly, out int firstDiagonal, out int secondDiagonal)
         {
-            int close1 = 0;
-            int close2 = -1;
-            int close3 = -1;
+            int closestIndex = 0;
+            double closest = poly.Vertices[0].X;
             int countMinus1 = poly.Count - 1;
             var v = poly.Vertices;
-            for (int i = 1; i <= countMinus1; i++) //Find 3 leftmost vertices
+            for (int i = 1; i <= countMinus1; i++)
             {
-                double x = v[i].X;
-                if (x < v[close1].X)
+                if (v[i].X < closest)
                 {
-                    close3 = close2;
-                    close2 = close1;
-                    close1 = i;
+                    closestIndex = i;
+                    closest = v[closestIndex].X;
                 }
-                else if (close2 == -1 || x < v[close2].X)
-                {
-                    close3 = close2;
-                    close2 = i;
-                }
-                else if (close3 == -1 || x < v[close3].X)
-                    close3 = i;
             }
-            int diff12 = Math.Abs(close1 - close2);
-            int diff13 = Math.Abs(close1 - close3);
-            if (diff12 == countMinus1)
-                diff12 = 1;
-            if (diff13 == countMinus1)
-                diff13 = 1;
-            if (diff12 == 1 && diff13 == 1)
-            {
-                firstDiagonal = close2;
-                secondDiagonal = close3;
-            }
-            else
-            {
-                firstDiagonal = close1;
-                if (diff12 == 1)
-                    secondDiagonal = close3;
-                else if (diff13 == 1)
-                    secondDiagonal = close2;
-                else
-                    secondDiagonal = (v[close2].X < v[close3].X) ? close2 : close3;
-            }
+            firstDiagonal = closestIndex;
+            secondDiagonal = (closestIndex + 2);
         }
 
-        private static void Triangulate(ref List<Polygon> polygons)
+        internal static void Triangulate(List<Polygon> polygons)
         {
             for (int i = 0; i < polygons.Count; i++)
             {
                 Polygon poly = polygons[i];
                 if (poly.Count == 3)
                     continue;
-                int firstDiagonal, secondDiagonal;
-                FindDiagonal(poly, out firstDiagonal, out secondDiagonal);
+                int firstDiagonal = 0;
+                int secondDiagonal = 2;
                 var newPoly = new Polygon();
-                if (firstDiagonal > secondDiagonal)
-                {
-                    for (int j = firstDiagonal; j < poly.Count; j++)
-                        newPoly.Add(poly.Vertices[j]);
-                    for (int j = 0; j <= secondDiagonal; j++)
-                        newPoly.Add(poly.Vertices[j]);
-                    if (firstDiagonal + 1 < poly.Count)
-                        poly.RemoveRange(firstDiagonal + 1, poly.Count - firstDiagonal - 1);
-                    poly.RemoveRange(0, secondDiagonal);
-                }
-                else
-                {
-                    for (int j = firstDiagonal; j <= secondDiagonal; j++)
-                        newPoly.Add(poly.Vertices[j]);
-                    poly.RemoveRange(firstDiagonal + 1, secondDiagonal - firstDiagonal - 1);
-                }
-                if (newPoly.Count > 3 || SignedArea(newPoly, 0, 1, 2) != 0.0)
-                    polygons.Add(newPoly);
-                Triangulate(ref polygons);
+                for (int j = firstDiagonal; j <= secondDiagonal; j++)
+                    newPoly.Add(poly.Vertices[j]);
+                poly.RemoveRange(firstDiagonal + 1, secondDiagonal - firstDiagonal - 1);
+                polygons.Add(newPoly);
+                i -= 1;
             }
         }
 
         internal static Vector[][] Triangulate(Polygon polygon)
         {
-            int count = polygon.Count;
-            var geometry = new InputGeometry(count);
-            foreach (var v in polygon.Vertices)
-            {
-                geometry.AddPoint(v.X, v.Y);
-            }
-
-            //Avoiding stack overflow bug in Triangle.NET in a degenerate case
-            if (geometry.Bounds.Width + geometry.Bounds.Height == 0)
-            {
-                return new Vector[0][];
-            }
-
-            for (int i = 0; i < count; i++)
-            {
-                geometry.AddSegment(i, (i + 1) % count);
-            }
-
-            var mesh = new Mesh();
-            try
-            {
-                mesh.Triangulate(geometry);
-            }
-            catch (Exception) //if the polygon is degenerate in some way, an exception might be thrown
-            {
-                return new Vector[0][];
-            }
-            var triangulation = new Vector[mesh.Triangles.Count][];
-            int j = 0;
-            foreach (var t in mesh.Triangles)
-            {
-                triangulation[j] = new Vector[] { t.GetVertex(0), t.GetVertex(1), t.GetVertex(2) };
-                j++;
-            }
-            return triangulation;
-
-            //var builder = new ConformingDelaunayTriangulationBuilder();
-            //var f = GeometryFactory.Floating;
-            //var vertices = polygon.Vertices.Select(v => new Coordinate(v.X, v.Y)).ToList();
-            //var g = f.CreateMultiPoint(vertices.ToArray());
-            //builder.SetSites(g);
-            //var cvertices = polygon.Vertices.Select(v => new Coordinate(v.X, v.Y)).ToList();
-            //cvertices.Add(cvertices.First());
-            //var constraints = f.CreatePolygon(cvertices.ToArray());
-            //builder.Constraints = constraints;
-            //var triangles = builder.GetTriangles(f); //throws exception for some reason
-            //var triangulation = new Vector[triangles.Count][];
-            //int j = 0;
-            //foreach (var triangle in triangles.Geometries)
-            //{
-            //    var coords = triangle.Coordinates;
-            //    triangulation[j] = new Vector[]{coords[0], coords[1], coords[2]};
-            //    j++;
-            //}
-            //return triangulation;
+            var triangulatedPoly = new List<Polygon> {new Polygon(polygon)};
+            Triangulate(triangulatedPoly);
+            var triangulatedPolyArray = new Vector[triangulatedPoly.Count][];
+            for (int i = 0; i < triangulatedPoly.Count; i++)
+                triangulatedPolyArray[i] = triangulatedPoly[i].Vertices.ToArray();
+            return triangulatedPolyArray;
         }
 
         /// <summary>
