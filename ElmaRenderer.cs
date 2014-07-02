@@ -1927,5 +1927,15 @@ namespace Elmanager
                 WheelNumber = wheelNumber;
             }
         }
+
+        public void DrawDashLine(double x1, double y1, double x2, double y2, Color color)
+        {
+            GL.Enable(EnableCap.LineStipple);
+            GL.LineWidth(1);
+            GL.LineStipple(1, unchecked((short)(0xAAAA)));
+            DrawLine(x1, y1, x2, y2, color);
+            GL.Disable(EnableCap.LineStipple);
+            GL.LineWidth(Settings.LineWidth);
+        }
     }
 }
