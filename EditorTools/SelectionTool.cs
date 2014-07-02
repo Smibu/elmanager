@@ -19,7 +19,23 @@ namespace Elmanager.EditorTools
         private Vector _moveStartPosition;
         private bool _moving;
         private bool _rectSelecting;
+        private bool _freeSelecting;
+        private Polygon _selectionPoly;
+
+        private bool FreeSelecting
+        {
+            get { return _freeSelecting; }
+            set
+            {
+                _freeSelecting = value;
+                UpdateBusy();
+            }
+        }
+
+        //private bool _freeSelectionMode;
         private Vector _selectionStartPoint;
+        private double _mouseTrip;
+        private Vector _lastMousePosition;
 
         internal SelectionTool(LevelEditor editor)
             : base(editor)
@@ -56,6 +72,8 @@ namespace Elmanager.EditorTools
         {
             if (RectSelecting)
                 Renderer.DrawRectangle(_selectionStartPoint, CurrentPos, Color.Blue);
+            else if (FreeSelecting)
+                Renderer.DrawPolygon(_selectionPoly, Color.Blue);
         }
 
         public void InActivate()
@@ -130,8 +148,20 @@ namespace Elmanager.EditorTools
                             MarkAllAs(Geometry.VectorMark.None);
                             LevEditor.PreserveSelection();
                         }
-                        _selectionStartPoint = p;
-                        RectSelecting = true;
+                        if (Keyboard.IsKeyDown(Key.LeftShift))
+                        {
+                            FreeSelecting = true;
+                            _selectionPoly = new Polygon();
+                            _selectionPoly.Add(CurrentPos);
+                            _mouseTrip = 0;
+                            _lastMousePosition = CurrentPos;
+                        }
+                        else
+                        {
+                            _selectionStartPoint = p;
+                            RectSelecting = true;
+                        }
+
                         Renderer.RedrawScene();
                     }
                     LevEditor.UpdateSelectionInfo();
@@ -152,8 +182,11 @@ namespace Elmanager.EditorTools
                 AdjustForGrid(p);
                 if (_lockingLines)
                 {
-                    p = Geometry.OrthogonalProjection(_lockCenter, Geometry.DistanceFromLine(_lockCenter, _lockNext, p) <
-                                                                   Geometry.DistanceFromLine(_lockCenter, _lockPrev, p) ? _lockNext : _lockPrev, p);
+                    p = Geometry.OrthogonalProjection(_lockCenter,
+                        Geometry.DistanceFromLine(_lockCenter, _lockNext, p) <
+                        Geometry.DistanceFromLine(_lockCenter, _lockPrev, p)
+                            ? _lockNext
+                            : _lockPrev, p);
                 }
                 Vector delta = p - _moveStartPosition;
                 if (delta.Length > 0)
@@ -182,6 +215,18 @@ namespace Elmanager.EditorTools
                 Vector.MarkDefault = 0;
                 _moveStartPosition = p;
             }
+            else if (FreeSelecting)
+            {
+                _mouseTrip += (p - _lastMousePosition).Length;
+                _lastMousePosition = p;
+                double step = 0.02 * Renderer.ZoomLevel;
+                if (_mouseTrip > step)
+                {
+                    while (!(_mouseTrip < step))
+                        _mouseTrip -= step;
+                    _selectionPoly.Add(p);
+                }
+            }
             else if (!Busy)
             {
                 ResetHighlight();
@@ -202,7 +247,8 @@ namespace Elmanager.EditorTools
                     if (b.Mark == Geometry.VectorMark.None)
                         b.Mark = Geometry.VectorMark.Highlight;
                     LevEditor.HighlightLabel.Text = NearestPolygon.IsGrass ? "Grass" : "Ground";
-                    LevEditor.HighlightLabel.Text += " polygon, vertex " + (nearestVertex + 1) + " of " + NearestPolygon.Count + " vertices";
+                    LevEditor.HighlightLabel.Text += " polygon, vertex " + (nearestVertex + 1) + " of " +
+                                                     NearestPolygon.Count + " vertices";
                 }
                 else if (nearestObject >= 0)
                 {
@@ -235,19 +281,31 @@ namespace Elmanager.EditorTools
 
         public void MouseUp(MouseEventArgs mouseData)
         {
-            if (RectSelecting)
+            if (RectSelecting || FreeSelecting)
             {
-                RectSelecting = false;
-                double selectionxMin = Math.Min(CurrentPos.X, _selectionStartPoint.X);
-                double selectionxMax = Math.Max(CurrentPos.X, _selectionStartPoint.X);
-                double selectionyMax = Math.Max(CurrentPos.Y, _selectionStartPoint.Y);
-                double selectionyMin = Math.Min(CurrentPos.Y, _selectionStartPoint.Y);
+                
+                double selectionxMin = 0;
+                double selectionxMax = 0;
+                double selectionyMax = 0;
+                double selectionyMin = 0;
+                if (RectSelecting)
+                {
+                    selectionxMin = Math.Min(CurrentPos.X, _selectionStartPoint.X);
+                    selectionxMax = Math.Max(CurrentPos.X, _selectionStartPoint.X);
+                    selectionyMax = Math.Max(CurrentPos.Y, _selectionStartPoint.Y);
+                    selectionyMin = Math.Min(CurrentPos.Y, _selectionStartPoint.Y);
+                }
                 foreach (Polygon x in Lev.Polygons)
                 {
                     if ((x.IsGrass && LevEditor.GrassFilter) || (!x.IsGrass && LevEditor.GroundFilter))
                     {
                         foreach (Vector t in x.Vertices)
-                            MarkSelectedInArea(t, selectionxMin, selectionxMax, selectionyMin, selectionyMax);
+                            if (RectSelecting)
+                                MarkSelectedInArea(t, selectionxMin, selectionxMax, selectionyMin, selectionyMax);
+                            else
+                            {
+                                MarkSelectedInArea(t, _selectionPoly);
+                            }
                     }
                 }
                 foreach (Level.Object t in Lev.Objects)
@@ -256,16 +314,28 @@ namespace Elmanager.EditorTools
                     if (type == Level.ObjectType.Start || (type == Level.ObjectType.Apple && LevEditor.AppleFilter) ||
                         (type == Level.ObjectType.Killer && LevEditor.KillerFilter) ||
                         (type == Level.ObjectType.Flower && LevEditor.FlowerFilter))
-                        MarkSelectedInArea(t.Position, selectionxMin, selectionxMax, selectionyMin,
-                                           selectionyMax);
+                        if (RectSelecting)
+                            MarkSelectedInArea(t.Position, selectionxMin, selectionxMax, selectionyMin,
+                                selectionyMax);
+                        else
+                        {
+                            MarkSelectedInArea(t.Position, _selectionPoly);
+                        }
                 }
                 foreach (Level.Picture z in Lev.Pictures)
                 {
                     if ((z.IsPicture && LevEditor.PictureFilter) || (!z.IsPicture && LevEditor.TextureFilter))
-                        MarkSelectedInArea(z.Position, selectionxMin, selectionxMax, selectionyMin, selectionyMax);
+                        if (RectSelecting)
+                            MarkSelectedInArea(z.Position, selectionxMin, selectionxMax, selectionyMin, selectionyMax);
+                        else
+                        {
+                            MarkSelectedInArea(z.Position, _selectionPoly);
+                        }
                 }
                 LevEditor.UpdateSelectionInfo();
                 LevEditor.PreserveSelection();
+                RectSelecting = false;
+                FreeSelecting = false;
             }
             else if (Moving)
             {
@@ -277,13 +347,31 @@ namespace Elmanager.EditorTools
             Renderer.RedrawScene();
         }
 
+        private static void MarkSelectedInArea(Vector z, Polygon selectionPoly)
+        {
+            if (selectionPoly.AreaHasPoint(z))
+            {
+                switch (z.Mark)
+                {
+                    case Geometry.VectorMark.None:
+                        z.Mark = Geometry.VectorMark.Selected;
+                        break;
+                    case Geometry.VectorMark.Selected:
+                        z.Mark = Geometry.VectorMark.None;
+                        break;
+                }
+            }
+            else if (!Keyboard.IsKeyDown(Key.LeftCtrl))
+                z.Mark = Geometry.VectorMark.None;
+        }
+
         public void UpdateHelp()
         {
             LevEditor.InfoLabel.Text = "Left mouse button: select level elements; Left Shift: Bend edge";
         }
 
         private static void MarkSelectedInArea(Vector z, double selectionxMin, double selectionxMax,
-                                               double selectionyMin, double selectionyMax)
+            double selectionyMin, double selectionyMax)
         {
             if (z.X < selectionxMax && z.X > selectionxMin && z.Y < selectionyMax && z.Y > selectionyMin)
             {
@@ -313,8 +401,8 @@ namespace Elmanager.EditorTools
             else
             {
                 v.Mark = v.Mark != Geometry.VectorMark.Selected
-                             ? Geometry.VectorMark.Selected
-                             : Geometry.VectorMark.None;
+                    ? Geometry.VectorMark.Selected
+                    : Geometry.VectorMark.None;
                 if (v.Mark == Geometry.VectorMark.Selected)
                     Moving = true;
             }
@@ -378,7 +466,7 @@ namespace Elmanager.EditorTools
 
         private void UpdateBusy()
         {
-            _Busy = RectSelecting || Moving;
+            _Busy = RectSelecting || FreeSelecting || Moving;
         }
     }
 }
