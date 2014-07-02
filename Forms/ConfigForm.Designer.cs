@@ -62,6 +62,7 @@ namespace Elmanager.Forms
             this.SearchLevSubDirsBox = new System.Windows.Forms.CheckBox();
             this.ShowReplayListGridBox = new System.Windows.Forms.CheckBox();
             this.LevelEditorPage = new System.Windows.Forms.TabPage();
+            this.numberFormatBox = new System.Windows.Forms.TextBox();
             this.RenderingSettingsButton = new System.Windows.Forms.Button();
             this.GroupBox1 = new System.Windows.Forms.GroupBox();
             this.SelectionPanel = new System.Windows.Forms.Panel();
@@ -90,7 +91,8 @@ namespace Elmanager.Forms
             this.Label1 = new System.Windows.Forms.Label();
             this.WarnAboutOldDBBox = new System.Windows.Forms.CheckBox();
             this.ColorDialog1 = new System.Windows.Forms.ColorDialog();
-            this.numberFormatBox = new System.Windows.Forms.TextBox();
+            this.crosshairPanel = new System.Windows.Forms.Panel();
+            this.label9 = new System.Windows.Forms.Label();
             this.TabControl1.SuspendLayout();
             this.GeneralPage.SuspendLayout();
             this.RMPage.SuspendLayout();
@@ -229,7 +231,7 @@ namespace Elmanager.Forms
             this.TabControl1.Location = new System.Drawing.Point(0, 0);
             this.TabControl1.Name = "TabControl1";
             this.TabControl1.SelectedIndex = 0;
-            this.TabControl1.Size = new System.Drawing.Size(604, 297);
+            this.TabControl1.Size = new System.Drawing.Size(604, 336);
             this.TabControl1.TabIndex = 55;
             // 
             // GeneralPage
@@ -251,7 +253,7 @@ namespace Elmanager.Forms
             this.GeneralPage.Location = new System.Drawing.Point(4, 22);
             this.GeneralPage.Name = "GeneralPage";
             this.GeneralPage.Padding = new System.Windows.Forms.Padding(3);
-            this.GeneralPage.Size = new System.Drawing.Size(596, 271);
+            this.GeneralPage.Size = new System.Drawing.Size(596, 310);
             this.GeneralPage.TabIndex = 0;
             this.GeneralPage.Text = "General";
             // 
@@ -267,8 +269,9 @@ namespace Elmanager.Forms
             // 
             // resetButton
             // 
+            this.resetButton.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
             this.resetButton.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.resetButton.Location = new System.Drawing.Point(8, 237);
+            this.resetButton.Location = new System.Drawing.Point(8, 276);
             this.resetButton.Name = "resetButton";
             this.resetButton.Size = new System.Drawing.Size(161, 23);
             this.resetButton.TabIndex = 53;
@@ -423,14 +426,22 @@ namespace Elmanager.Forms
             this.LevelEditorPage.Controls.Add(this.Label6);
             this.LevelEditorPage.Location = new System.Drawing.Point(4, 22);
             this.LevelEditorPage.Name = "LevelEditorPage";
-            this.LevelEditorPage.Size = new System.Drawing.Size(596, 271);
+            this.LevelEditorPage.Size = new System.Drawing.Size(596, 310);
             this.LevelEditorPage.TabIndex = 4;
             this.LevelEditorPage.Text = "SLE";
             this.LevelEditorPage.UseVisualStyleBackColor = true;
             // 
+            // numberFormatBox
+            // 
+            this.numberFormatBox.Location = new System.Drawing.Point(339, 120);
+            this.numberFormatBox.Name = "numberFormatBox";
+            this.numberFormatBox.Size = new System.Drawing.Size(100, 20);
+            this.numberFormatBox.TabIndex = 28;
+            // 
             // RenderingSettingsButton
             // 
-            this.RenderingSettingsButton.Location = new System.Drawing.Point(235, 225);
+            this.RenderingSettingsButton.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
+            this.RenderingSettingsButton.Location = new System.Drawing.Point(229, 275);
             this.RenderingSettingsButton.Name = "RenderingSettingsButton";
             this.RenderingSettingsButton.Size = new System.Drawing.Size(114, 23);
             this.RenderingSettingsButton.TabIndex = 27;
@@ -440,13 +451,17 @@ namespace Elmanager.Forms
             // 
             // GroupBox1
             // 
+            this.GroupBox1.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+            | System.Windows.Forms.AnchorStyles.Left)));
+            this.GroupBox1.Controls.Add(this.crosshairPanel);
+            this.GroupBox1.Controls.Add(this.label9);
             this.GroupBox1.Controls.Add(this.SelectionPanel);
             this.GroupBox1.Controls.Add(this.Label15);
             this.GroupBox1.Controls.Add(this.Label17);
             this.GroupBox1.Controls.Add(this.HighlightPanel);
             this.GroupBox1.Location = new System.Drawing.Point(11, 207);
             this.GroupBox1.Name = "GroupBox1";
-            this.GroupBox1.Size = new System.Drawing.Size(207, 52);
+            this.GroupBox1.Size = new System.Drawing.Size(207, 91);
             this.GroupBox1.TabIndex = 26;
             this.GroupBox1.TabStop = false;
             this.GroupBox1.Text = "Colors";
@@ -695,18 +710,30 @@ namespace Elmanager.Forms
             // 
             this.ColorDialog1.FullOpen = true;
             // 
-            // numberFormatBox
+            // crosshairPanel
             // 
-            this.numberFormatBox.Location = new System.Drawing.Point(339, 120);
-            this.numberFormatBox.Name = "numberFormatBox";
-            this.numberFormatBox.Size = new System.Drawing.Size(100, 20);
-            this.numberFormatBox.TabIndex = 28;
+            this.crosshairPanel.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
+            this.crosshairPanel.Cursor = System.Windows.Forms.Cursors.Hand;
+            this.crosshairPanel.Location = new System.Drawing.Point(12, 57);
+            this.crosshairPanel.Name = "crosshairPanel";
+            this.crosshairPanel.Size = new System.Drawing.Size(20, 20);
+            this.crosshairPanel.TabIndex = 9;
+            this.crosshairPanel.Click += new System.EventHandler(this.PanelClick);
+            // 
+            // label9
+            // 
+            this.label9.AutoSize = true;
+            this.label9.Location = new System.Drawing.Point(38, 61);
+            this.label9.Name = "label9";
+            this.label9.Size = new System.Drawing.Size(50, 13);
+            this.label9.TabIndex = 10;
+            this.label9.Text = "Crosshair";
             // 
             // ConfigForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(604, 297);
+            this.ClientSize = new System.Drawing.Size(604, 336);
             this.Controls.Add(this.TabControl1);
             this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedSingle;
             this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
@@ -788,6 +815,8 @@ namespace Elmanager.Forms
         private Button generateNativeImageButton;
         internal Label Label1;
         private TextBox numberFormatBox;
+        internal Panel crosshairPanel;
+        internal Label label9;
 	}
 	
 }

@@ -70,6 +70,7 @@ namespace Elmanager
             public bool CheckTopologyWhenSaving;
             public string DefaultTitle = "New level";
             public double DrawStep = 1.0;
+            public Color CrosshairColor = Color.Blue;
             public Color HighlightColor = Color.Yellow;
             public double InitialHeight = 50.0;
             public double InitialWidth = 50.0;
@@ -81,6 +82,7 @@ namespace Elmanager
             public Color SelectionColor = Color.Blue;
             public Size Size = new Size(800, 600);
             public bool SnapToGrid;
+            public bool ShowCrossHair = false;
             public bool UseFilenameForTitle;
             public bool UseFilenameSuggestion;
             public bool UseHighlight = true;

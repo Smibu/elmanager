@@ -44,8 +44,8 @@ namespace Elmanager.Forms
             this.DeleteSelectedMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.MirrorLevelToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.UndoToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.toolStripMenuItem1 = new System.Windows.Forms.ToolStripMenuItem();
             this.RedoToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.toolStripMenuItem1 = new System.Windows.Forms.ToolStripMenuItem();
             this.ToolStripSeparator8 = new System.Windows.Forms.ToolStripSeparator();
             this.ZoomFillToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.CheckTopologyMenuItem = new System.Windows.Forms.ToolStripMenuItem();
@@ -106,6 +106,7 @@ namespace Elmanager.Forms
             this.ToolStrip2 = new System.Windows.Forms.ToolStrip();
             this.ShowGridButton = new System.Windows.Forms.ToolStripButton();
             this.snapToGridButton = new System.Windows.Forms.ToolStripButton();
+            this.showCrossHairButton = new System.Windows.Forms.ToolStripButton();
             this.ShowGrassEdgesButton = new System.Windows.Forms.ToolStripButton();
             this.ShowGroundEdgesButton = new System.Windows.Forms.ToolStripButton();
             this.ShowVerticesButton = new System.Windows.Forms.ToolStripButton();
@@ -299,14 +300,6 @@ namespace Elmanager.Forms
             this.UndoToolStripMenuItem.Text = "Undo";
             this.UndoToolStripMenuItem.Click += new System.EventHandler(this.Undo);
             // 
-            // toolStripMenuItem1
-            // 
-            this.toolStripMenuItem1.Name = "toolStripMenuItem1";
-            this.toolStripMenuItem1.ShortcutKeys = ((System.Windows.Forms.Keys)((System.Windows.Forms.Keys.Control | System.Windows.Forms.Keys.C)));
-            this.toolStripMenuItem1.Size = new System.Drawing.Size(182, 22);
-            this.toolStripMenuItem1.Text = "Copy";
-            this.toolStripMenuItem1.Click += new System.EventHandler(this.CopyMenuItemClick);
-            // 
             // RedoToolStripMenuItem
             // 
             this.RedoToolStripMenuItem.Image = global::My.Resources.Resources.Redo;
@@ -316,6 +309,14 @@ namespace Elmanager.Forms
             this.RedoToolStripMenuItem.Size = new System.Drawing.Size(182, 22);
             this.RedoToolStripMenuItem.Text = "Redo";
             this.RedoToolStripMenuItem.Click += new System.EventHandler(this.Redo);
+            // 
+            // toolStripMenuItem1
+            // 
+            this.toolStripMenuItem1.Name = "toolStripMenuItem1";
+            this.toolStripMenuItem1.ShortcutKeys = ((System.Windows.Forms.Keys)((System.Windows.Forms.Keys.Control | System.Windows.Forms.Keys.C)));
+            this.toolStripMenuItem1.Size = new System.Drawing.Size(182, 22);
+            this.toolStripMenuItem1.Text = "Copy";
+            this.toolStripMenuItem1.Click += new System.EventHandler(this.CopyMenuItemClick);
             // 
             // ToolStripSeparator8
             // 
@@ -839,6 +840,7 @@ namespace Elmanager.Forms
             this.ToolStrip2.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.ShowGridButton,
             this.snapToGridButton,
+            this.showCrossHairButton,
             this.ShowGrassEdgesButton,
             this.ShowGroundEdgesButton,
             this.ShowVerticesButton,
@@ -855,7 +857,7 @@ namespace Elmanager.Forms
             this.ToolStrip2.LayoutStyle = System.Windows.Forms.ToolStripLayoutStyle.HorizontalStackWithOverflow;
             this.ToolStrip2.Location = new System.Drawing.Point(3, 39);
             this.ToolStrip2.Name = "ToolStrip2";
-            this.ToolStrip2.Size = new System.Drawing.Size(543, 39);
+            this.ToolStrip2.Size = new System.Drawing.Size(610, 39);
             this.ToolStrip2.TabIndex = 15;
             // 
             // ShowGridButton
@@ -877,6 +879,16 @@ namespace Elmanager.Forms
             this.snapToGridButton.Name = "snapToGridButton";
             this.snapToGridButton.Size = new System.Drawing.Size(36, 36);
             this.snapToGridButton.Text = "Snap to grid";
+            // 
+            // showCrossHairButton
+            // 
+            this.showCrossHairButton.CheckOnClick = true;
+            this.showCrossHairButton.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
+            this.showCrossHairButton.Image = global::My.Resources.Resources.Crosshair2;
+            this.showCrossHairButton.ImageTransparentColor = System.Drawing.Color.Magenta;
+            this.showCrossHairButton.Name = "showCrossHairButton";
+            this.showCrossHairButton.Size = new System.Drawing.Size(36, 36);
+            this.showCrossHairButton.Text = "Show crosshair";
             // 
             // ShowGrassEdgesButton
             // 
@@ -1519,6 +1531,7 @@ namespace Elmanager.Forms
         private ToolStripMenuItem sendToBackToolStripMenuItem;
         private ToolStripDropDownButton topologyList;
         private ToolStripMenuItem toolStripMenuItem1;
+        private ToolStripButton showCrossHairButton;
 	}
 	
 }

@@ -7,6 +7,7 @@ using System.Linq;
 using System.Windows.Forms;
 using Elmanager.CustomControls;
 using Elmanager.EditorTools;
+using OpenTK.Graphics.OpenGL;
 
 namespace Elmanager.Forms
 {
@@ -395,6 +396,14 @@ namespace Elmanager.Forms
         {
             CurrentTool.ExtraRendering();
             double zoom = Renderer.ZoomLevel / 50;
+            if (Global.AppSettings.LevelEditor.ShowCrossHair)
+            {
+                var mouse = GetMouseCoordinatesFixed();
+                Renderer.DrawDashLine(Renderer.XMin, mouse.Y, Renderer.XMax,
+                    mouse.Y, Global.AppSettings.LevelEditor.CrosshairColor);
+                Renderer.DrawDashLine(mouse.X, -Renderer.YMax, mouse.X,
+                    -Renderer.YMin, Global.AppSettings.LevelEditor.CrosshairColor);
+            }
             foreach (Polygon x in Lev.Polygons)
             {
                 switch (x.Mark)
@@ -1273,6 +1282,7 @@ namespace Elmanager.Forms
             settings.SkyTextureEnabled = ShowSkyTextureButton.Checked;
             settings.ZoomTextures = ZoomTexturesButton.Checked;
             Global.AppSettings.LevelEditor.SnapToGrid = snapToGridButton.Checked;
+            Global.AppSettings.LevelEditor.ShowCrossHair = showCrossHairButton.Checked;
             Renderer.UpdateSettings(settings);
             Renderer.RedrawScene();
         }
@@ -1359,6 +1369,7 @@ namespace Elmanager.Forms
             ShowSkyTextureButton.Checked = settings.SkyTextureEnabled;
             ZoomTexturesButton.Checked = settings.ZoomTextures;
             snapToGridButton.Checked = Global.AppSettings.LevelEditor.SnapToGrid;
+            showCrossHairButton.Checked = Global.AppSettings.LevelEditor.ShowCrossHair;
             PreviousButton.Enabled = CurrLevDirExists();
             NextButton.Enabled = PreviousButton.Enabled;
             previousLevelToolStripMenuItem.Enabled = PreviousButton.Enabled;

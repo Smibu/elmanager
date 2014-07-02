@@ -49,6 +49,7 @@ namespace Elmanager.Forms
             CheckForUpdatesBox.Checked = Global.AppSettings.General.CheckForUpdatesOnStartup;
             HighlightPanel.BackColor = Global.AppSettings.LevelEditor.HighlightColor;
             SelectionPanel.BackColor = Global.AppSettings.LevelEditor.SelectionColor;
+            crosshairPanel.BackColor = Global.AppSettings.LevelEditor.CrosshairColor;
             FilenameSuggestionBoxCheckedChanged(null, null);
             SameAsFilenameBoxCheckedChanged(null, null);
         }
@@ -318,6 +319,7 @@ namespace Elmanager.Forms
             }
             Global.AppSettings.LevelEditor.HighlightColor = HighlightPanel.BackColor;
             Global.AppSettings.LevelEditor.SelectionColor = SelectionPanel.BackColor;
+            Global.AppSettings.LevelEditor.CrosshairColor = crosshairPanel.BackColor;
             try
             {
                 Global.AppSettings.LevelEditor.CaptureRadius = double.Parse(CaptureRadiusBox.Text);

@@ -452,6 +452,7 @@
     <None Include="Icons\Exit.png" />
     <None Include="Icons\Delete.png" />
     <None Include="Icons\Edges.png" />
+    <Content Include="Icons\Crosshair2.png" />
     <Content Include="Icons\Elma.ico" />
   </ItemGroup>
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
