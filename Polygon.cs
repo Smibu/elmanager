@@ -369,6 +369,10 @@ namespace Elmanager
 
         internal Polygon Smoothen(int steps, double vertexOffset, bool onlySelected) //0.5 <= VertexOffset <= 1.0
         {
+            if (Math.Abs(vertexOffset - 1.0) < 0.000001)
+            {
+                return this.Clone();
+            }
             var smoothPoly = new Polygon();
             for (int i = 0; i < Vertices.Count; i++)
             {
