@@ -140,7 +140,7 @@ namespace Elmanager
 
         internal void UpdateDecomposition()
         {
-            Decomposition = Geometry.Triangulate(this);
+            Decomposition = Geometry.Decompose(this);
             if (IsGrass)
             {
                 double longest = Math.Abs(Vertices[Vertices.Count - 1].X - Vertices[0].X);

@@ -314,25 +314,7 @@ namespace Elmanager
             return (a && b && c) || (!(a || b || c));
         }
 
-        private static void FindDiagonal(Polygon poly, out int firstDiagonal, out int secondDiagonal)
-        {
-            int closestIndex = 0;
-            double closest = poly.Vertices[0].X;
-            int countMinus1 = poly.Count - 1;
-            var v = poly.Vertices;
-            for (int i = 1; i <= countMinus1; i++)
-            {
-                if (v[i].X < closest)
-                {
-                    closestIndex = i;
-                    closest = v[closestIndex].X;
-                }
-            }
-            firstDiagonal = closestIndex;
-            secondDiagonal = (closestIndex + 2);
-        }
-
-        internal static void Triangulate(List<Polygon> polygons)
+        internal static void Decompose(List<Polygon> polygons)
         {
             for (int i = 0; i < polygons.Count; i++)
             {
@@ -350,10 +332,10 @@ namespace Elmanager
             }
         }
 
-        internal static Vector[][] Triangulate(Polygon polygon)
+        internal static Vector[][] Decompose(Polygon polygon)
         {
             var triangulatedPoly = new List<Polygon> {new Polygon(polygon)};
-            Triangulate(triangulatedPoly);
+            Decompose(triangulatedPoly);
             var triangulatedPolyArray = new Vector[triangulatedPoly.Count][];
             for (int i = 0; i < triangulatedPoly.Count; i++)
                 triangulatedPolyArray[i] = triangulatedPoly[i].Vertices.ToArray();
