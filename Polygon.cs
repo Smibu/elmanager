@@ -367,7 +367,7 @@ namespace Elmanager
             return false;
         }
 
-        internal Polygon Smoothen(int steps, double vertexOffset, bool onlySelected) //0.5 < VertexOffset < 1.0
+        internal Polygon Smoothen(int steps, double vertexOffset, bool onlySelected) //0.5 <= VertexOffset <= 1.0
         {
             var smoothPoly = new Polygon();
             for (int i = 0; i < Vertices.Count; i++)
@@ -394,11 +394,18 @@ namespace Elmanager
                 Vector startPoint = this[i] + (this[i + 1] - this[i]) * vertexOffset;
                 Vector endPoint = this[i + 1] + (this[i + 2] - this[i + 1]) * (1.0 - vertexOffset);
                 Vector midPoint = this[i + 1];
-                for (int j = 0; j < steps; j++)
+
+                int numPoints = steps;
+                if (Math.Abs(vertexOffset - 0.5) < 0.000001 && (!onlySelected || (this[i + 3].Mark == Geometry.VectorMark.Selected)))
+                {
+                    numPoints--;
+                }
+
+                for (int j = 0; j < numPoints; j++)
                 {
                     double t = j / (double) (steps - 1);
-                    smoothPoly.Add(Math.Pow((1 - t), 2) * startPoint + 2 * (1 - t) * t * midPoint +
-                                   Math.Pow(t, 2) * endPoint);
+                    smoothPoly.Add((1 - t) * (1 - t) * startPoint + 2 * (1 - t) * t * midPoint +
+                                   t * t * endPoint);
                 }
             }
             return smoothPoly;

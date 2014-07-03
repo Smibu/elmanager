@@ -15,7 +15,7 @@ namespace Elmanager.EditorTools
         private bool _smoothAll;
         private List<Polygon> _smoothPolys;
         private int _smoothSteps = 3;
-        private double _smoothVertexOffset = 0.7;
+        private int _smoothVertexOffset = 70;
         private bool _smoothing;
         private bool _unsmooth;
         private double _unsmoothAngle = 10;
@@ -64,8 +64,8 @@ namespace Elmanager.EditorTools
                         {
                             if (Keyboard.IsKeyDown(Key.LeftCtrl))
                             {
-                                if (_smoothVertexOffset < 0.95)
-                                    _smoothVertexOffset += 0.05;
+                                if (_smoothVertexOffset < 100)
+                                    _smoothVertexOffset += 1;
                             }
                             else
                             {
@@ -92,8 +92,8 @@ namespace Elmanager.EditorTools
                         {
                             if (Keyboard.IsKeyDown(Key.LeftCtrl))
                             {
-                                if (_smoothVertexOffset > 0.55)
-                                    _smoothVertexOffset -= 0.05;
+                                if (_smoothVertexOffset > 50)
+                                    _smoothVertexOffset -= 1;
                             }
                             else
                             {
@@ -218,7 +218,7 @@ namespace Elmanager.EditorTools
             {
                 LevEditor.InfoLabel.Text = "Left click: apply; right click: cancel; (Ctrl) + +/-: adjust parameters.";
                 if (!_unsmooth)
-                    LevEditor.InfoLabel.Text += " (" + _smoothSteps + ", " + _smoothVertexOffset.ToString("F2") + ")";
+                    LevEditor.InfoLabel.Text += " (" + _smoothSteps + ", " + (_smoothVertexOffset / 100.0).ToString("F2") + ")";
                 else
                     LevEditor.InfoLabel.Text += " (" + _unsmoothLength.ToString("F2") + ", " +
                                                 _unsmoothAngle.ToString("F2") + ")";
@@ -252,7 +252,7 @@ namespace Elmanager.EditorTools
                 foreach (Polygon x in Lev.Polygons.Where(IsSmoothable))
                 {
                     _smoothPolys.Add(!_unsmooth
-                                         ? x.Smoothen(_smoothSteps, _smoothVertexOffset, true)
+                                         ? x.Smoothen(_smoothSteps, _smoothVertexOffset / 100.0, true)
                                          : x.Unsmoothen(_unsmoothAngle, _unsmoothLength, true));
                 }
             }
@@ -260,7 +260,7 @@ namespace Elmanager.EditorTools
             {
                 _smoothPolys.Add(_unsmooth
                                      ? _currentPolygon.Unsmoothen(_unsmoothAngle, _unsmoothLength, false)
-                                     : _currentPolygon.Smoothen(_smoothSteps, _smoothVertexOffset, false));
+                                     : _currentPolygon.Smoothen(_smoothSteps, _smoothVertexOffset / 100.0, false));
             }
             Renderer.RedrawScene();
         }
