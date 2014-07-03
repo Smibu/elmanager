@@ -7,7 +7,6 @@ using System.Linq;
 using System.Windows.Forms;
 using Elmanager.CustomControls;
 using Elmanager.EditorTools;
-using OpenTK.Graphics.OpenGL;
 
 namespace Elmanager.Forms
 {
