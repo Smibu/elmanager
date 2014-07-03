@@ -160,10 +160,6 @@
     <Reference Include="System.Design" />
     <Reference Include="System.Drawing" />
     <Reference Include="System.Windows.Forms" />
-    <Reference Include="Triangle, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\Triangle.dll</HintPath>
-    </Reference>
     <Reference Include="WindowsBase">
       <Private>False</Private>
     </Reference>
