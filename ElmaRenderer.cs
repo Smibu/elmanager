@@ -74,7 +74,9 @@ namespace Elmanager
         private bool Disposed;
         private bool DrawInActiveAsTransparent;
         private bool DrawOnlyPlayerFrames;
-        private List<DrawableImage> DrawableImages;
+
+        public List<DrawableImage> DrawableImages { get; set; }
+
         private int FlowerPic;
         private bool FollowDriver;
         private double FrameStep = 0.02;

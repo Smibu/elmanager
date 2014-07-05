@@ -1489,7 +1489,12 @@ namespace Elmanager.Forms
             OpenFileDialog1.Multiselect = true;
             if (OpenFileDialog1.ShowDialog() == DialogResult.OK)
             {
-                OpenFileDialog1.FileNames.ToList().ForEach(file => Lev.Import(new Level(file)));
+                OpenFileDialog1.FileNames.ToList().ForEach(file =>
+                {
+                    var lev = new Level(file);
+                    lev.UpdateImages(Renderer.DrawableImages);
+                    Lev.Import(lev);
+                });
                 Modified = true;
                 Renderer.UpdateZoomFillBounds();
                 Renderer.ZoomFill();
@@ -1500,7 +1505,7 @@ namespace Elmanager.Forms
         {
             if (saveAsPictureDialog.ShowDialog() == DialogResult.OK)
                 ElmaRenderer.GetSnapShot(EditorControl.Width, EditorControl.Height).Save(saveAsPictureDialog.FileName,
-                                                                                 ImageFormat.Png);
+                    ImageFormat.Png);
         }
     }
 }
