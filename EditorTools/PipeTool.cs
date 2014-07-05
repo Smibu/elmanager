@@ -19,6 +19,7 @@ namespace Elmanager.EditorTools
         private Polygon _pipe;
         private PipeMode _pipeMode = PipeMode.NoApples;
         private double _pipeRadius = 1.0;
+        private const double PipeStep = 0.02;
         private Polygon _pipeline;
 
         public enum PipeMode
@@ -76,8 +77,12 @@ namespace Elmanager.EditorTools
 
         public void KeyDown(KeyEventArgs key)
         {
+            double radiusStep = PipeStep;
             switch (key.KeyCode)
             {
+                case Constants.IncreaseBig:
+                    radiusStep *= 10;
+                    goto case Constants.Increase;
                 case Constants.Increase:
                     if (Keyboard.IsKeyDown(Key.LeftCtrl))
                     {
@@ -95,8 +100,11 @@ namespace Elmanager.EditorTools
                         }
                     }
                     else
-                        _pipeRadius += 0.05;
+                        _pipeRadius += radiusStep;
                     break;
+                case Constants.DecreaseBig:
+                    radiusStep *= 10;
+                    goto case Constants.Decrease;
                 case Constants.Decrease:
                     if (Keyboard.IsKeyDown(Key.LeftCtrl))
                     {
@@ -115,8 +123,8 @@ namespace Elmanager.EditorTools
                                 break;
                         }
                     }
-                    else if (_pipeRadius > 0.05)
-                        _pipeRadius -= 0.05;
+                    else if (_pipeRadius > radiusStep)
+                        _pipeRadius -= radiusStep;
                     break;
                 case Keys.Space:
                     switch (_pipeMode)
@@ -199,16 +207,17 @@ namespace Elmanager.EditorTools
         public void UpdateHelp()
         {
             LevEditor.InfoLabel.Text = "Space: change mode - ";
+            const string help = "(adjust with +/- or Page Up/Down)";
             switch (_pipeMode)
             {
                 case PipeMode.NoApples:
-                    LevEditor.InfoLabel.Text += string.Format("Mode: No apples - Pipe radius: {0:F2} (adjust with +/-)", _pipeRadius);
+                    LevEditor.InfoLabel.Text += string.Format("Mode: No apples - Pipe radius: {0:F2} {1}", _pipeRadius, help);
                     break;
                 case PipeMode.ApplesDistance:
-                    LevEditor.InfoLabel.Text += string.Format("Mode: Apples (distance: {0:F2} (adjust with Ctrl + +/-)) - Pipe radius: {1:F2} (adjust with +/-)", _appleDistance, _pipeRadius);
+                    LevEditor.InfoLabel.Text += string.Format("Mode: Apples (distance: {0:F2} (adjust with Ctrl + +/-)) - Pipe radius: {1:F2} {2}", _appleDistance, _pipeRadius, help);
                     break;
                 case PipeMode.ApplesAmount:
-                    LevEditor.InfoLabel.Text += string.Format("Mode: {0} apples - Pipe radius: {1:F2} (adjust with +/-)", _appleAmount, _pipeRadius);
+                    LevEditor.InfoLabel.Text += string.Format("Mode: {0} apples - Pipe radius: {1:F2} {2}", _appleAmount, _pipeRadius, help);
                     break;
             }
         }

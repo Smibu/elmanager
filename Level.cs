@@ -463,7 +463,7 @@ namespace Elmanager
             var isects = new List<Vector>();
             var f = GeometryFactory.Floating;
             var ipolys = new List<IPolygon>();
-            foreach (var p in this.Polygons.Where(poly => !poly.IsGrass))
+            foreach (var p in Polygons.Where(poly => !poly.IsGrass))
             {
                 var verts = p.Vertices.Select(v => new Coordinate(v.X, v.Y));
                 var ring = verts.ToList();
@@ -486,6 +486,31 @@ namespace Elmanager
                 }
             }
             return isects;
+        }
+
+        internal void Import(Level other)
+        {
+            UpdateBounds();
+            other.UpdateBounds();
+            
+            double xDiff = XMax - other.XMin + 5;
+            double yDiff = YMax - other.YMax;
+
+            var diffV = new Vector(xDiff, yDiff);
+
+            other.Polygons.ForEach(poly => poly.Move(diffV));
+            other.Objects.ForEach(obj => obj.Position += diffV);
+            other.Objects.RemoveAll(obj => obj.Type == ObjectType.Start);
+            other.Pictures.ForEach(pic => pic.Position += diffV);
+            other.DecomposeGroundPolygons();
+
+            Polygons.AddRange(other.Polygons);
+            Objects.AddRange(other.Objects);
+            Pictures.AddRange(other.Pictures);
+
+            SaveImages();
+
+            UpdateBounds();
         }
 
         internal bool IsObjectInsideGround(Object o)
@@ -658,16 +683,16 @@ namespace Elmanager
         {
             Pictures = new List<Picture>();
             AllPicturesFound = true;
-            foreach (LevelFileTexture x in _textureData)
+            foreach (LevelFileTexture fileTexture in _textureData)
             {
                 bool pictureFound = false;
-                if (x.MaskName == null)
+                if (fileTexture.MaskName == null)
                 {
                     foreach (ElmaRenderer.DrawableImage z in lgrImages)
                     {
-                        if (z.Type == Lgr.ImageType.Picture && x.Name == z.Name)
+                        if (z.Type == Lgr.ImageType.Picture && fileTexture.Name == z.Name)
                         {
-                            Pictures.Add(new Picture(z, x.Position, x.Distance, x.Clipping));
+                            Pictures.Add(new Picture(z, fileTexture.Position, fileTexture.Distance, fileTexture.Clipping));
                             pictureFound = true;
                             break;
                         }
@@ -677,14 +702,14 @@ namespace Elmanager
                 {
                     foreach (ElmaRenderer.DrawableImage texture in lgrImages)
                     {
-                        if (texture.Type == Lgr.ImageType.Texture && x.Name == texture.Name)
+                        if (texture.Type == Lgr.ImageType.Texture && fileTexture.Name == texture.Name)
                         {
                             pictureFound = true;
                             foreach (ElmaRenderer.DrawableImage mask in lgrImages)
                             {
-                                if (mask.Type == Lgr.ImageType.Mask && mask.Name == x.MaskName)
+                                if (mask.Type == Lgr.ImageType.Mask && mask.Name == fileTexture.MaskName)
                                 {
-                                    Pictures.Add(new Picture(x.Clipping, x.Distance, x.Position, texture, mask));
+                                    Pictures.Add(new Picture(fileTexture.Clipping, fileTexture.Distance, fileTexture.Position, texture, mask));
                                     break;
                                 }
                             }

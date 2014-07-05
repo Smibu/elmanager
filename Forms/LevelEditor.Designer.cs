@@ -37,6 +37,7 @@ namespace Elmanager.Forms
             this.OpenToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.SaveToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.SaveAsToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.saveAsPictureToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.ExitToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.ActionsMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.QuickGrassToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
@@ -55,6 +56,7 @@ namespace Elmanager.Forms
             this.nextLevelToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.toolStripSeparator11 = new System.Windows.Forms.ToolStripSeparator();
             this.selectAllToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.importLevelsToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.SelectionFilterToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.EnableAllToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.DisableAllToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
@@ -151,6 +153,7 @@ namespace Elmanager.Forms
             this.DrawButton = new Elmanager.CustomControls.RadioButtonMod();
             this.VertexButton = new Elmanager.CustomControls.RadioButtonMod();
             this.SelectButton = new Elmanager.CustomControls.RadioButtonMod();
+            this.saveAsPictureDialog = new System.Windows.Forms.SaveFileDialog();
             this.MenuStrip1.SuspendLayout();
             this.StatusStrip1.SuspendLayout();
             this.ToolStripPanel1.SuspendLayout();
@@ -183,6 +186,7 @@ namespace Elmanager.Forms
             this.OpenToolStripMenuItem,
             this.SaveToolStripMenuItem,
             this.SaveAsToolStripMenuItem,
+            this.saveAsPictureToolStripMenuItem,
             this.ExitToolStripMenuItem});
             this.FileToolStripMenuItem.Name = "FileToolStripMenuItem";
             this.FileToolStripMenuItem.Size = new System.Drawing.Size(35, 20);
@@ -193,7 +197,7 @@ namespace Elmanager.Forms
             this.NewToolStripMenuItem.Image = global::My.Resources.Resources.New16;
             this.NewToolStripMenuItem.Name = "NewToolStripMenuItem";
             this.NewToolStripMenuItem.ShortcutKeys = ((System.Windows.Forms.Keys)((System.Windows.Forms.Keys.Control | System.Windows.Forms.Keys.N)));
-            this.NewToolStripMenuItem.Size = new System.Drawing.Size(136, 22);
+            this.NewToolStripMenuItem.Size = new System.Drawing.Size(157, 22);
             this.NewToolStripMenuItem.Text = "New";
             this.NewToolStripMenuItem.Click += new System.EventHandler(this.NewLevel);
             // 
@@ -202,7 +206,7 @@ namespace Elmanager.Forms
             this.OpenToolStripMenuItem.Image = global::My.Resources.Resources.Open;
             this.OpenToolStripMenuItem.Name = "OpenToolStripMenuItem";
             this.OpenToolStripMenuItem.ShortcutKeys = ((System.Windows.Forms.Keys)((System.Windows.Forms.Keys.Control | System.Windows.Forms.Keys.O)));
-            this.OpenToolStripMenuItem.Size = new System.Drawing.Size(136, 22);
+            this.OpenToolStripMenuItem.Size = new System.Drawing.Size(157, 22);
             this.OpenToolStripMenuItem.Text = "Open";
             this.OpenToolStripMenuItem.Click += new System.EventHandler(this.OpenToolStripMenuItemClick);
             // 
@@ -212,7 +216,7 @@ namespace Elmanager.Forms
             this.SaveToolStripMenuItem.Image = global::My.Resources.Resources.Save;
             this.SaveToolStripMenuItem.Name = "SaveToolStripMenuItem";
             this.SaveToolStripMenuItem.ShortcutKeys = ((System.Windows.Forms.Keys)((System.Windows.Forms.Keys.Control | System.Windows.Forms.Keys.S)));
-            this.SaveToolStripMenuItem.Size = new System.Drawing.Size(136, 22);
+            this.SaveToolStripMenuItem.Size = new System.Drawing.Size(157, 22);
             this.SaveToolStripMenuItem.Text = "Save";
             this.SaveToolStripMenuItem.Click += new System.EventHandler(this.SaveLevel);
             // 
@@ -220,15 +224,22 @@ namespace Elmanager.Forms
             // 
             this.SaveAsToolStripMenuItem.Image = global::My.Resources.Resources.SaveAs16;
             this.SaveAsToolStripMenuItem.Name = "SaveAsToolStripMenuItem";
-            this.SaveAsToolStripMenuItem.Size = new System.Drawing.Size(136, 22);
+            this.SaveAsToolStripMenuItem.Size = new System.Drawing.Size(157, 22);
             this.SaveAsToolStripMenuItem.Text = "Save as...";
             this.SaveAsToolStripMenuItem.Click += new System.EventHandler(this.SaveAs);
+            // 
+            // saveAsPictureToolStripMenuItem
+            // 
+            this.saveAsPictureToolStripMenuItem.Name = "saveAsPictureToolStripMenuItem";
+            this.saveAsPictureToolStripMenuItem.Size = new System.Drawing.Size(157, 22);
+            this.saveAsPictureToolStripMenuItem.Text = "Save as picture...";
+            this.saveAsPictureToolStripMenuItem.Click += new System.EventHandler(this.saveAsPictureToolStripMenuItem_Click);
             // 
             // ExitToolStripMenuItem
             // 
             this.ExitToolStripMenuItem.Image = global::My.Resources.Resources.Exit16;
             this.ExitToolStripMenuItem.Name = "ExitToolStripMenuItem";
-            this.ExitToolStripMenuItem.Size = new System.Drawing.Size(136, 22);
+            this.ExitToolStripMenuItem.Size = new System.Drawing.Size(157, 22);
             this.ExitToolStripMenuItem.Text = "Exit";
             this.ExitToolStripMenuItem.Click += new System.EventHandler(this.ExitToolStripMenuItemClick);
             // 
@@ -250,7 +261,8 @@ namespace Elmanager.Forms
             this.previousLevelToolStripMenuItem,
             this.nextLevelToolStripMenuItem,
             this.toolStripSeparator11,
-            this.selectAllToolStripMenuItem});
+            this.selectAllToolStripMenuItem,
+            this.importLevelsToolStripMenuItem});
             this.ActionsMenuItem.Name = "ActionsMenuItem";
             this.ActionsMenuItem.Size = new System.Drawing.Size(45, 20);
             this.ActionsMenuItem.Text = "Tools";
@@ -260,7 +272,7 @@ namespace Elmanager.Forms
             this.QuickGrassToolStripMenuItem.Image = global::My.Resources.Resources.GrassAll;
             this.QuickGrassToolStripMenuItem.Name = "QuickGrassToolStripMenuItem";
             this.QuickGrassToolStripMenuItem.ShortcutKeys = ((System.Windows.Forms.Keys)((System.Windows.Forms.Keys.Control | System.Windows.Forms.Keys.G)));
-            this.QuickGrassToolStripMenuItem.Size = new System.Drawing.Size(182, 22);
+            this.QuickGrassToolStripMenuItem.Size = new System.Drawing.Size(183, 22);
             this.QuickGrassToolStripMenuItem.Text = "QuickGrass";
             this.QuickGrassToolStripMenuItem.Click += new System.EventHandler(this.QuickGrassToolStripMenuItemClick);
             // 
@@ -269,7 +281,7 @@ namespace Elmanager.Forms
             this.DeleteAllGrassToolStripMenuItem.Image = global::My.Resources.Resources.GrassDelete;
             this.DeleteAllGrassToolStripMenuItem.Name = "DeleteAllGrassToolStripMenuItem";
             this.DeleteAllGrassToolStripMenuItem.ShortcutKeys = ((System.Windows.Forms.Keys)((System.Windows.Forms.Keys.Control | System.Windows.Forms.Keys.D)));
-            this.DeleteAllGrassToolStripMenuItem.Size = new System.Drawing.Size(182, 22);
+            this.DeleteAllGrassToolStripMenuItem.Size = new System.Drawing.Size(183, 22);
             this.DeleteAllGrassToolStripMenuItem.Text = "Delete all grass";
             this.DeleteAllGrassToolStripMenuItem.Click += new System.EventHandler(this.DeleteAllGrassToolStripMenuItemClick);
             // 
@@ -278,7 +290,7 @@ namespace Elmanager.Forms
             this.DeleteSelectedMenuItem.Image = global::My.Resources.Resources.Delete;
             this.DeleteSelectedMenuItem.Name = "DeleteSelectedMenuItem";
             this.DeleteSelectedMenuItem.ShortcutKeys = System.Windows.Forms.Keys.Delete;
-            this.DeleteSelectedMenuItem.Size = new System.Drawing.Size(182, 22);
+            this.DeleteSelectedMenuItem.Size = new System.Drawing.Size(183, 22);
             this.DeleteSelectedMenuItem.Text = "Delete selected";
             this.DeleteSelectedMenuItem.Click += new System.EventHandler(this.DeleteSelected);
             // 
@@ -287,7 +299,7 @@ namespace Elmanager.Forms
             this.MirrorLevelToolStripMenuItem.Image = global::My.Resources.Resources.Mirror16;
             this.MirrorLevelToolStripMenuItem.Name = "MirrorLevelToolStripMenuItem";
             this.MirrorLevelToolStripMenuItem.ShortcutKeys = ((System.Windows.Forms.Keys)((System.Windows.Forms.Keys.Control | System.Windows.Forms.Keys.M)));
-            this.MirrorLevelToolStripMenuItem.Size = new System.Drawing.Size(182, 22);
+            this.MirrorLevelToolStripMenuItem.Size = new System.Drawing.Size(183, 22);
             this.MirrorLevelToolStripMenuItem.Text = "Mirror level";
             this.MirrorLevelToolStripMenuItem.Click += new System.EventHandler(this.Mirror);
             // 
@@ -296,7 +308,7 @@ namespace Elmanager.Forms
             this.UndoToolStripMenuItem.Image = global::My.Resources.Resources.Undo;
             this.UndoToolStripMenuItem.Name = "UndoToolStripMenuItem";
             this.UndoToolStripMenuItem.ShortcutKeys = ((System.Windows.Forms.Keys)((System.Windows.Forms.Keys.Control | System.Windows.Forms.Keys.Z)));
-            this.UndoToolStripMenuItem.Size = new System.Drawing.Size(182, 22);
+            this.UndoToolStripMenuItem.Size = new System.Drawing.Size(183, 22);
             this.UndoToolStripMenuItem.Text = "Undo";
             this.UndoToolStripMenuItem.Click += new System.EventHandler(this.Undo);
             // 
@@ -306,7 +318,7 @@ namespace Elmanager.Forms
             this.RedoToolStripMenuItem.Name = "RedoToolStripMenuItem";
             this.RedoToolStripMenuItem.ShortcutKeyDisplayString = "";
             this.RedoToolStripMenuItem.ShortcutKeys = ((System.Windows.Forms.Keys)((System.Windows.Forms.Keys.Control | System.Windows.Forms.Keys.Y)));
-            this.RedoToolStripMenuItem.Size = new System.Drawing.Size(182, 22);
+            this.RedoToolStripMenuItem.Size = new System.Drawing.Size(183, 22);
             this.RedoToolStripMenuItem.Text = "Redo";
             this.RedoToolStripMenuItem.Click += new System.EventHandler(this.Redo);
             // 
@@ -314,21 +326,21 @@ namespace Elmanager.Forms
             // 
             this.toolStripMenuItem1.Name = "toolStripMenuItem1";
             this.toolStripMenuItem1.ShortcutKeys = ((System.Windows.Forms.Keys)((System.Windows.Forms.Keys.Control | System.Windows.Forms.Keys.C)));
-            this.toolStripMenuItem1.Size = new System.Drawing.Size(182, 22);
+            this.toolStripMenuItem1.Size = new System.Drawing.Size(183, 22);
             this.toolStripMenuItem1.Text = "Copy";
             this.toolStripMenuItem1.Click += new System.EventHandler(this.CopyMenuItemClick);
             // 
             // ToolStripSeparator8
             // 
             this.ToolStripSeparator8.Name = "ToolStripSeparator8";
-            this.ToolStripSeparator8.Size = new System.Drawing.Size(179, 6);
+            this.ToolStripSeparator8.Size = new System.Drawing.Size(180, 6);
             // 
             // ZoomFillToolStripMenuItem
             // 
             this.ZoomFillToolStripMenuItem.Image = global::My.Resources.Resources.ZoomFill16;
             this.ZoomFillToolStripMenuItem.Name = "ZoomFillToolStripMenuItem";
             this.ZoomFillToolStripMenuItem.ShortcutKeys = System.Windows.Forms.Keys.F5;
-            this.ZoomFillToolStripMenuItem.Size = new System.Drawing.Size(182, 22);
+            this.ZoomFillToolStripMenuItem.Size = new System.Drawing.Size(183, 22);
             this.ZoomFillToolStripMenuItem.Text = "Zoom fill";
             this.ZoomFillToolStripMenuItem.Click += new System.EventHandler(this.ZoomFillToolStripMenuItemClick);
             // 
@@ -337,7 +349,7 @@ namespace Elmanager.Forms
             this.CheckTopologyMenuItem.Image = global::My.Resources.Resources.Topology;
             this.CheckTopologyMenuItem.Name = "CheckTopologyMenuItem";
             this.CheckTopologyMenuItem.ShortcutKeys = System.Windows.Forms.Keys.F6;
-            this.CheckTopologyMenuItem.Size = new System.Drawing.Size(182, 22);
+            this.CheckTopologyMenuItem.Size = new System.Drawing.Size(183, 22);
             this.CheckTopologyMenuItem.Text = "Check topology";
             this.CheckTopologyMenuItem.Click += new System.EventHandler(this.CheckTopologyAndUpdate);
             // 
@@ -345,21 +357,21 @@ namespace Elmanager.Forms
             // 
             this.LevelPropertiesToolStripMenuItem.Name = "LevelPropertiesToolStripMenuItem";
             this.LevelPropertiesToolStripMenuItem.ShortcutKeys = System.Windows.Forms.Keys.F4;
-            this.LevelPropertiesToolStripMenuItem.Size = new System.Drawing.Size(182, 22);
+            this.LevelPropertiesToolStripMenuItem.Size = new System.Drawing.Size(183, 22);
             this.LevelPropertiesToolStripMenuItem.Text = "Level properties";
             this.LevelPropertiesToolStripMenuItem.Click += new System.EventHandler(this.LevelPropertiesToolStripMenuItemClick);
             // 
             // toolStripSeparator10
             // 
             this.toolStripSeparator10.Name = "toolStripSeparator10";
-            this.toolStripSeparator10.Size = new System.Drawing.Size(179, 6);
+            this.toolStripSeparator10.Size = new System.Drawing.Size(180, 6);
             // 
             // previousLevelToolStripMenuItem
             // 
             this.previousLevelToolStripMenuItem.Image = global::My.Resources.Resources.Previous;
             this.previousLevelToolStripMenuItem.Name = "previousLevelToolStripMenuItem";
             this.previousLevelToolStripMenuItem.ShortcutKeys = System.Windows.Forms.Keys.F2;
-            this.previousLevelToolStripMenuItem.Size = new System.Drawing.Size(182, 22);
+            this.previousLevelToolStripMenuItem.Size = new System.Drawing.Size(183, 22);
             this.previousLevelToolStripMenuItem.Text = "Previous level";
             // 
             // nextLevelToolStripMenuItem
@@ -367,21 +379,29 @@ namespace Elmanager.Forms
             this.nextLevelToolStripMenuItem.Image = global::My.Resources.Resources.Next;
             this.nextLevelToolStripMenuItem.Name = "nextLevelToolStripMenuItem";
             this.nextLevelToolStripMenuItem.ShortcutKeys = System.Windows.Forms.Keys.F3;
-            this.nextLevelToolStripMenuItem.Size = new System.Drawing.Size(182, 22);
+            this.nextLevelToolStripMenuItem.Size = new System.Drawing.Size(183, 22);
             this.nextLevelToolStripMenuItem.Text = "Next Level";
             // 
             // toolStripSeparator11
             // 
             this.toolStripSeparator11.Name = "toolStripSeparator11";
-            this.toolStripSeparator11.Size = new System.Drawing.Size(179, 6);
+            this.toolStripSeparator11.Size = new System.Drawing.Size(180, 6);
             // 
             // selectAllToolStripMenuItem
             // 
             this.selectAllToolStripMenuItem.Name = "selectAllToolStripMenuItem";
             this.selectAllToolStripMenuItem.ShortcutKeys = ((System.Windows.Forms.Keys)((System.Windows.Forms.Keys.Control | System.Windows.Forms.Keys.A)));
-            this.selectAllToolStripMenuItem.Size = new System.Drawing.Size(182, 22);
+            this.selectAllToolStripMenuItem.Size = new System.Drawing.Size(183, 22);
             this.selectAllToolStripMenuItem.Text = "Select all";
             this.selectAllToolStripMenuItem.Click += new System.EventHandler(this.SelectAllToolStripMenuItemClick);
+            // 
+            // importLevelsToolStripMenuItem
+            // 
+            this.importLevelsToolStripMenuItem.Name = "importLevelsToolStripMenuItem";
+            this.importLevelsToolStripMenuItem.ShortcutKeys = ((System.Windows.Forms.Keys)((System.Windows.Forms.Keys.Control | System.Windows.Forms.Keys.V)));
+            this.importLevelsToolStripMenuItem.Size = new System.Drawing.Size(183, 22);
+            this.importLevelsToolStripMenuItem.Text = "Import level(s)...";
+            this.importLevelsToolStripMenuItem.Click += new System.EventHandler(this.importLevelsToolStripMenuItem_Click);
             // 
             // SelectionFilterToolStripMenuItem
             // 
@@ -857,7 +877,7 @@ namespace Elmanager.Forms
             this.ToolStrip2.LayoutStyle = System.Windows.Forms.ToolStripLayoutStyle.HorizontalStackWithOverflow;
             this.ToolStrip2.Location = new System.Drawing.Point(3, 39);
             this.ToolStrip2.Name = "ToolStrip2";
-            this.ToolStrip2.Size = new System.Drawing.Size(610, 39);
+            this.ToolStrip2.Size = new System.Drawing.Size(579, 39);
             this.ToolStrip2.TabIndex = 15;
             // 
             // ShowGridButton
@@ -1373,6 +1393,12 @@ namespace Elmanager.Forms
             this.SelectButton.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
             this.SelectButton.UseVisualStyleBackColor = true;
             // 
+            // saveAsPictureDialog
+            // 
+            this.saveAsPictureDialog.DefaultExt = "png";
+            this.saveAsPictureDialog.FileName = "Untitled";
+            this.saveAsPictureDialog.Filter = "Portable Network Graphics (*.png)|*.png";
+            // 
             // LevelEditor
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -1532,6 +1558,9 @@ namespace Elmanager.Forms
         private ToolStripDropDownButton topologyList;
         private ToolStripMenuItem toolStripMenuItem1;
         private ToolStripButton showCrossHairButton;
+        private ToolStripMenuItem importLevelsToolStripMenuItem;
+        private ToolStripMenuItem saveAsPictureToolStripMenuItem;
+        private SaveFileDialog saveAsPictureDialog;
 	}
 	
 }

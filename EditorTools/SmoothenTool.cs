@@ -69,8 +69,7 @@ namespace Elmanager.EditorTools
                             }
                             else
                             {
-                                if (_smoothSteps < 20)
-                                    _smoothSteps++;
+                                _smoothSteps++;
                             }
                         }
                         else
@@ -218,7 +217,8 @@ namespace Elmanager.EditorTools
             {
                 LevEditor.InfoLabel.Text = "Left click: apply; right click: cancel; (Ctrl) + +/-: adjust parameters.";
                 if (!_unsmooth)
-                    LevEditor.InfoLabel.Text += " (" + _smoothSteps + ", " + (_smoothVertexOffset / 100.0).ToString("F2") + ")";
+                    LevEditor.InfoLabel.Text += " (" + _smoothSteps + ", " + (_smoothVertexOffset/100.0).ToString("F2") +
+                                                ")";
                 else
                     LevEditor.InfoLabel.Text += " (" + _unsmoothLength.ToString("F2") + ", " +
                                                 _unsmoothAngle.ToString("F2") + ")";
@@ -252,15 +252,15 @@ namespace Elmanager.EditorTools
                 foreach (Polygon x in Lev.Polygons.Where(IsSmoothable))
                 {
                     _smoothPolys.Add(!_unsmooth
-                                         ? x.Smoothen(_smoothSteps, _smoothVertexOffset / 100.0, true)
-                                         : x.Unsmoothen(_unsmoothAngle, _unsmoothLength, true));
+                        ? x.Smoothen(_smoothSteps, _smoothVertexOffset/100.0, true)
+                        : x.Unsmoothen(_unsmoothAngle, _unsmoothLength, true));
                 }
             }
             else
             {
                 _smoothPolys.Add(_unsmooth
-                                     ? _currentPolygon.Unsmoothen(_unsmoothAngle, _unsmoothLength, false)
-                                     : _currentPolygon.Smoothen(_smoothSteps, _smoothVertexOffset / 100.0, false));
+                    ? _currentPolygon.Unsmoothen(_unsmoothAngle, _unsmoothLength, false)
+                    : _currentPolygon.Smoothen(_smoothSteps, _smoothVertexOffset/100.0, false));
             }
             Renderer.RedrawScene();
         }
