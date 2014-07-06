@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using System.Drawing;
 using System.Linq;
@@ -15,7 +16,7 @@ namespace Elmanager.EditorTools
         private bool _smoothAll;
         private List<Polygon> _smoothPolys;
         private int _smoothSteps = 3;
-        private int _smoothVertexOffset = 70;
+        private int _smoothVertexOffset = 50;
         private bool _smoothing;
         private bool _unsmooth;
         private double _unsmoothAngle = 10;
@@ -37,6 +38,10 @@ namespace Elmanager.EditorTools
 
         public void Activate()
         {
+            _smoothSteps = Math.Max(Global.AppSettings.LevelEditor.SmoothSteps, 3);
+            _smoothVertexOffset = Math.Max(Global.AppSettings.LevelEditor.SmoothVertexOffset, 50);
+            _unsmoothAngle = Math.Max(Global.AppSettings.LevelEditor.UnsmoothAngle, 1);
+            _unsmoothLength = Math.Max(Global.AppSettings.LevelEditor.UnsmoothLength, 0.1);
             UpdateHelp();
             Renderer.RedrawScene();
         }
@@ -50,6 +55,10 @@ namespace Elmanager.EditorTools
 
         public void InActivate()
         {
+            Global.AppSettings.LevelEditor.SmoothSteps = _smoothSteps;
+            Global.AppSettings.LevelEditor.SmoothVertexOffset = _smoothVertexOffset;
+            Global.AppSettings.LevelEditor.UnsmoothAngle = _unsmoothAngle;
+            Global.AppSettings.LevelEditor.UnsmoothLength = _unsmoothLength;
             CancelSmoothing();
         }
 

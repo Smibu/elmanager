@@ -319,7 +319,7 @@ namespace Elmanager
             for (int i = 0; i < polygons.Count; i++)
             {
                 Polygon poly = polygons[i];
-                if (poly.Count == 3)
+                if (poly.Count <= 3)
                     continue;
                 int firstDiagonal = 0;
                 int secondDiagonal = 2;

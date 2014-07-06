@@ -320,6 +320,10 @@ namespace Elmanager.Forms
         {
             if (!PromptToSaveIfModified())
                 e.Cancel = true;
+            else
+            {
+                CurrentTool.InActivate();
+            }
             if (WindowState == FormWindowState.Normal)
             {
                 Global.AppSettings.LevelEditor.Size = Size;

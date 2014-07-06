@@ -31,6 +31,7 @@ namespace Elmanager.EditorTools
 
         public void Activate()
         {
+            _frameRadius = Global.AppSettings.LevelEditor.FrameRadius;
             UpdateHelp();
             Renderer.AdditionalPolys = ExtraPolygons;
             Renderer.RedrawScene();
@@ -52,6 +53,7 @@ namespace Elmanager.EditorTools
 
         public void InActivate()
         {
+            Global.AppSettings.LevelEditor.FrameRadius = _frameRadius;
             Renderer.AdditionalPolys = null;
             if (!Framing) return;
             CancelFraming();

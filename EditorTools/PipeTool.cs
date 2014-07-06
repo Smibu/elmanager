@@ -46,6 +46,7 @@ namespace Elmanager.EditorTools
 
         public void Activate()
         {
+            _pipeRadius = Global.AppSettings.LevelEditor.PipeRadius;
             UpdateHelp();
             Renderer.AdditionalPolys = ExtraPolys;
             Renderer.RedrawScene();
@@ -73,6 +74,7 @@ namespace Elmanager.EditorTools
         {
             CreatingPipe = false;
             Renderer.AdditionalPolys = null;
+            Global.AppSettings.LevelEditor.PipeRadius = _pipeRadius;
         }
 
         public void KeyDown(KeyEventArgs key)

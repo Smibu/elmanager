@@ -31,6 +31,7 @@ namespace Elmanager.EditorTools
 
         public void Activate()
         {
+            _ellipseSteps = Math.Max(Global.AppSettings.LevelEditor.EllipseSteps, 3);
             UpdateHelp();
             Renderer.AdditionalPolys = ExtraPolys;
             Renderer.RedrawScene();
@@ -45,6 +46,7 @@ namespace Elmanager.EditorTools
 
         public void InActivate()
         {
+            Global.AppSettings.LevelEditor.EllipseSteps = _ellipseSteps;
             if (!CreatingEllipse) return;
             CreatingEllipse = false;
             Renderer.RedrawScene();
