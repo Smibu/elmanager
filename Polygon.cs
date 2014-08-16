@@ -123,6 +123,14 @@ namespace Elmanager
         {
             get
             {
+                for (int i = 0; i < Vertices.Count; i++)
+                {
+                    if (Vertices[i] == Vertices[(i + 1) % Vertices.Count])
+                    {
+                        return false;
+                    }
+                }
+
                 for (int i = 0; i <= Vertices.Count - 2; i++)
                 {
                     for (int j = i + 2; j < Vertices.Count; j++)
