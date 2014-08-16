@@ -62,6 +62,7 @@ namespace Elmanager.EditorTools
             switch (mouseData.Button)
             {
                 case MouseButtons.Left:
+                    AdjustForGrid(CurrentPos);
                     if (!StartSelected)
                     {
                         StartSelected = true;
@@ -86,6 +87,7 @@ namespace Elmanager.EditorTools
         public void MouseMove(Vector p)
         {
             CurrentPos = p;
+            AdjustForGrid(CurrentPos);
             if (StartSelected)
                 Renderer.RedrawScene();
         }
