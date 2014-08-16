@@ -773,7 +773,10 @@ namespace Elmanager.Forms
             Renderer.UpdateZoomFillBounds();
             UpdateUndoRedo();
             UpdateSelectionInfo();
-            CheckTopologyAndUpdate();
+            topologyList.DropDownItems.Clear();
+            topologyList.Text = "";
+            _errorPoints.Clear();
+            Renderer.RedrawScene();
         }
 
         private void Mirror(object sender, EventArgs e)
