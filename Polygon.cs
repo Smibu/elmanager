@@ -146,10 +146,10 @@ namespace Elmanager
             }
         }
 
-        internal void UpdateDecomposition()
+        internal void UpdateDecomposition(bool updateGrass = true)
         {
             Decomposition = Geometry.Decompose(this);
-            if (IsGrass)
+            if (updateGrass && IsGrass)
             {
                 double longest = Math.Abs(Vertices[Vertices.Count - 1].X - Vertices[0].X);
                 int longestIndex = Vertices.Count - 1;

@@ -614,8 +614,7 @@ namespace Elmanager.Forms
         {
             ToolBase.NearestPolygon.IsGrass = GrassMenuItem.Checked;
             Modified = true;
-            if (!ToolBase.NearestPolygon.IsGrass)
-                ToolBase.NearestPolygon.UpdateDecomposition();
+            ToolBase.NearestPolygon.UpdateDecomposition();
             Renderer.RedrawScene();
         }
 

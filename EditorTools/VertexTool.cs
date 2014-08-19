@@ -68,7 +68,7 @@ namespace Elmanager.EditorTools
                 _currentPolygon.Add(old);
                 _currentPolygon.Add(CurrentPos);
             }
-            _currentPolygon.UpdateDecomposition();
+            _currentPolygon.UpdateDecomposition(false);
             Renderer.RedrawScene();
         }
 
@@ -108,7 +108,7 @@ namespace Elmanager.EditorTools
                         if (_currentPolygon.Count == 3)
                         {
                             Lev.Polygons.Add(_currentPolygon);
-                            _currentPolygon.UpdateDecomposition();
+                            _currentPolygon.UpdateDecomposition(false);
                         }
                     }
                     Renderer.RedrawScene();
@@ -127,7 +127,7 @@ namespace Elmanager.EditorTools
                 AdjustForGrid(CurrentPos);
                 _currentPolygon.Vertices[_currentPolygon.Count - 1] = p;
                 if (_currentPolygon.Count > 2)
-                    _currentPolygon.UpdateDecomposition();
+                    _currentPolygon.UpdateDecomposition(false);
             }
             else
             {
