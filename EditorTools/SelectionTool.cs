@@ -130,10 +130,23 @@ namespace Elmanager.EditorTools
                                   NearestPolygon[nearestSegmentIndex + 1].Mark == Geometry.VectorMark.Selected))
                             {
                                 if (!Keyboard.IsKeyDown(Key.LeftCtrl))
+                                {
                                     MarkAllAs(Geometry.VectorMark.None);
-                                NearestPolygon.MarkVectorsAs(Geometry.VectorMark.Selected);
-                                LevEditor.PreserveSelection();
+                                    NearestPolygon.MarkVectorsAs(Geometry.VectorMark.Selected);
+                                }
                             }
+                            if (Keyboard.IsKeyDown(Key.LeftCtrl))
+                            {
+                                if (NearestPolygon.Vertices.TrueForAll(v => v.Mark == Geometry.VectorMark.Selected))
+                                {
+                                    NearestPolygon.MarkVectorsAs(Geometry.VectorMark.None);
+                                }
+                                else
+                                {
+                                    NearestPolygon.MarkVectorsAs(Geometry.VectorMark.Selected);
+                                }
+                            }
+                            LevEditor.PreserveSelection();
                         }
                         Renderer.RedrawScene();
                     }
