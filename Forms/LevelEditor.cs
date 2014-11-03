@@ -35,6 +35,7 @@ namespace Elmanager.Forms
         private Lgr _editorLgr;
         private List<Vector> _errorPoints = new List<Vector>();
         private int _historyIndex;
+        private int _savedIndex;
         private string _loadedLevFilesDir;
         private int _lockCoord;
         private bool _lockMouseX;
@@ -90,20 +91,7 @@ namespace Elmanager.Forms
         internal bool Modified
         {
             get { return _modified; }
-            set
-            {
-                _modified = value;
-                SaveButton.Enabled = value;
-                SaveToolStripMenuItem.Enabled = value;
-                if (value)
-                {
-                    Lev.UpdateBounds();
-                    AddToHistory();
-                    if (Global.AppSettings.LevelEditor.CheckTopologyDynamically)
-                        CheckTopology();
-                    Renderer.UpdateZoomFillBounds();
-                }
-            }
+            set { SetModified(value); }
         }
 
         private int SelectedElementCount
@@ -128,6 +116,22 @@ namespace Elmanager.Forms
                 CurrentTool.InActivate();
                 CurrentTool = Tools[12];
                 CurrentTool.Activate();
+            }
+        }
+
+        internal void SetModified(bool value, bool updateHistory = true)
+        {
+            _modified = value;
+            SaveButton.Enabled = value;
+            SaveToolStripMenuItem.Enabled = value;
+            if (value)
+            {
+                Lev.UpdateBounds();
+                if (updateHistory)
+                    AddToHistory();
+                if (Global.AppSettings.LevelEditor.CheckTopologyDynamically)
+                    CheckTopology();
+                Renderer.UpdateZoomFillBounds();
             }
         }
 
@@ -313,6 +317,7 @@ namespace Elmanager.Forms
             _history.Clear();
             _history.Add(Lev.Clone());
             _historyIndex = 0;
+            _savedIndex = 0;
             UpdateUndoRedo();
         }
 
@@ -717,6 +722,9 @@ namespace Elmanager.Forms
                         _lockCoord = MousePosition.Y;
                     }
                     break;
+                case Keys.Delete:
+                    DeleteSelected(null, null);
+                    break;
             }
         }
 
@@ -776,6 +784,7 @@ namespace Elmanager.Forms
             topologyList.Text = "";
             _errorPoints.Clear();
             Renderer.RedrawScene();
+            SetModified(_savedIndex != _historyIndex, false);
         }
 
         private void Mirror(object sender, EventArgs e)
@@ -1134,6 +1143,9 @@ namespace Elmanager.Forms
                 try
                 {
                     Lev.Save(SaveFileDialog1.FileName);
+                    Modified = false;
+                    Global.LevelFiles.Add(SaveFileDialog1.FileName);
+                    _savedIndex = _historyIndex;
                 }
                 catch (UnauthorizedAccessException ex)
                 {
@@ -1144,8 +1156,6 @@ namespace Elmanager.Forms
                 UpdateCurrLevDirFiles();
                 UpdateLabels();
                 UpdateButtons();
-                Modified = false;
-                Global.LevelFiles.Add(SaveFileDialog1.FileName);
             }
         }
 
@@ -1174,6 +1184,7 @@ namespace Elmanager.Forms
                     {
                         Lev.Save(_savePath);
                         Modified = false;
+                        _savedIndex = _historyIndex;
                         UpdateLabels();
                     }
                     catch (UnauthorizedAccessException ex)

@@ -289,7 +289,6 @@ namespace Elmanager.Forms
             // 
             this.DeleteSelectedMenuItem.Image = global::My.Resources.Resources.Delete;
             this.DeleteSelectedMenuItem.Name = "DeleteSelectedMenuItem";
-            this.DeleteSelectedMenuItem.ShortcutKeys = System.Windows.Forms.Keys.Delete;
             this.DeleteSelectedMenuItem.Size = new System.Drawing.Size(183, 22);
             this.DeleteSelectedMenuItem.Text = "Delete selected";
             this.DeleteSelectedMenuItem.Click += new System.EventHandler(this.DeleteSelected);
