@@ -587,7 +587,7 @@ namespace Elmanager.Forms
         private void ViewerSizeBoxKeyUp(object sender, KeyEventArgs e)
         {
             Resize -= ViewerResized;
-            Size = new Size(viewerSizeXBox.ValueAsInt + 16 + ViewerBox.Location.X, viewerSizeYBox.ValueAsInt + 36);
+            ClientSize = new Size(viewerSizeXBox.ValueAsInt + ViewerBox.Location.X, viewerSizeYBox.ValueAsInt);
             ViewerResized();
             Resize += ViewerResized;
         }
