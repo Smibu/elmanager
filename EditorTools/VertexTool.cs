@@ -8,7 +8,7 @@ namespace Elmanager.EditorTools
     {
         private bool _creatingVertex;
         private Polygon _currentPolygon;
-        private bool _edgeClicked;
+        private int nearestSegmentIndex = -1;
 
         internal VertexTool(LevelEditor editor)
             : base(editor)
@@ -43,6 +43,13 @@ namespace Elmanager.EditorTools
         {
             if (CreatingVertex)
                 Renderer.DrawLine(_currentPolygon.GetLastVertex(), _currentPolygon.Vertices[0], Color.Red);
+            else
+            {
+                if (Global.AppSettings.LevelEditor.UseHighlight && nearestSegmentIndex >= 0)
+                {
+                    Renderer.DrawLine(NearestPolygon[nearestSegmentIndex], NearestPolygon[nearestSegmentIndex + 1], Color.Yellow);
+                }
+            }
         }
 
         public void InActivate()
@@ -53,21 +60,9 @@ namespace Elmanager.EditorTools
         public void KeyDown(KeyEventArgs key)
         {
             if (key.KeyCode != Keys.Space || !CreatingVertex) return;
-            if (_edgeClicked)
-            {
-                _currentPolygon.RemoveLastVertex();
-                _currentPolygon.ChangeOrientation();
-                _currentPolygon.Add(CurrentPos);
-            }
-            else
-            {
-                _currentPolygon.RemoveLastVertex();
-                Vector old = _currentPolygon.GetLastVertex();
-                _currentPolygon.RemoveLastVertex();
-                _currentPolygon.ChangeOrientation();
-                _currentPolygon.Add(old);
-                _currentPolygon.Add(CurrentPos);
-            }
+            _currentPolygon.RemoveLastVertex();
+            _currentPolygon.ChangeOrientation();
+            _currentPolygon.Add(CurrentPos);
             _currentPolygon.UpdateDecomposition(false);
             Renderer.RedrawScene();
         }
@@ -82,22 +77,13 @@ namespace Elmanager.EditorTools
                         CreatingVertex = true;
                         int nearestIndex = GetNearestVertexIndex(CurrentPos);
                         AdjustForGrid(CurrentPos);
-                        if (nearestIndex >= 0)
-                        {
-                            _currentPolygon = NearestPolygon;
-                            _currentPolygon.SetBeginPoint(nearestIndex + 1);
-                            _currentPolygon.Add(CurrentPos);
-                            ChangeToDefaultCursor();
-                            _edgeClicked = false;
-                        }
-                        else if (nearestIndex == -1)
+                        if (nearestIndex >= -1)
                         {
                             int nearestSegmentIndex = NearestPolygon.GetNearestSegmentIndex(CurrentPos);
                             _currentPolygon = NearestPolygon;
                             _currentPolygon.SetBeginPoint(nearestSegmentIndex + 1);
                             _currentPolygon.Add(CurrentPos);
                             ChangeToDefaultCursor();
-                            _edgeClicked = true;
                         }
                         else
                             _currentPolygon = new Polygon(CurrentPos, CurrentPos);
@@ -133,15 +119,16 @@ namespace Elmanager.EditorTools
             {
                 ResetHighlight();
                 int nearestVertex = GetNearestVertexIndex(p);
-                if (nearestVertex >= 0)
+                if (nearestVertex >= -1)
                 {
-                    NearestPolygon.Vertices[nearestVertex].Mark = Geometry.VectorMark.Highlight;
+                    nearestSegmentIndex = NearestPolygon.GetNearestSegmentIndex(p);
                     ChangeCursorToHand();
                 }
-                else if (nearestVertex == -1)
-                    ChangeCursorToHand();
                 else
+                {
                     ChangeToDefaultCursor();
+                    nearestSegmentIndex = -1;
+                }
             }
             Renderer.RedrawScene();
         }
