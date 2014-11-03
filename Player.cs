@@ -171,6 +171,7 @@ namespace Elmanager
                         {
                             Finished = BitConverter.ToDouble(rec, sp - 32) == BitConverter.ToDouble(rec, sp);
                             Time = BitConverter.ToDouble(rec, sp - 32) * TimeConst;
+                            Time = Math.Floor(Time * 1000) / 1000;
                         }
                     }
                 }
@@ -184,6 +185,7 @@ namespace Elmanager
                     else
                         Finished = true;
                     Time = BitConverter.ToDouble(rec, sp) * TimeConst;
+                    Time = Math.Floor(Time * 1000) / 1000;
                 }
             }
             if ((!Finished && !FakeFinish) || Time == 0)

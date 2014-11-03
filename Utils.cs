@@ -364,7 +364,7 @@ namespace Elmanager
         /// <returns></returns>
         internal static string ToTimeString(this double time, int digits = 3)
         {
-            double T = Math.Abs(Math.Round(time, 3));
+            double T = Math.Abs(time);
             StringBuilder timeStr = new StringBuilder(9);
             int minutes = (int) Math.Floor(T / 60);
             int hours = (int) Math.Floor(T / 3600);
