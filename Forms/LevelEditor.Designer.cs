@@ -218,7 +218,7 @@ namespace Elmanager.Forms
             this.SaveToolStripMenuItem.ShortcutKeys = ((System.Windows.Forms.Keys)((System.Windows.Forms.Keys.Control | System.Windows.Forms.Keys.S)));
             this.SaveToolStripMenuItem.Size = new System.Drawing.Size(157, 22);
             this.SaveToolStripMenuItem.Text = "Save";
-            this.SaveToolStripMenuItem.Click += new System.EventHandler(this.SaveLevel);
+            this.SaveToolStripMenuItem.Click += new System.EventHandler(this.SaveClicked);
             // 
             // SaveAsToolStripMenuItem
             // 
@@ -683,7 +683,7 @@ namespace Elmanager.Forms
             this.SaveButton.Name = "SaveButton";
             this.SaveButton.Size = new System.Drawing.Size(36, 36);
             this.SaveButton.Text = "Save";
-            this.SaveButton.Click += new System.EventHandler(this.SaveLevel);
+            this.SaveButton.Click += new System.EventHandler(this.SaveClicked);
             // 
             // SaveAsButton
             // 

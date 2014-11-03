@@ -41,6 +41,7 @@ namespace Elmanager.Forms
         private bool _lockMouseX;
         private bool _lockMouseY;
         private bool _modified;
+        private bool _fromScratch;
         private Vector _moveStartPosition;
         private string _savePath;
         private int _selectedObjectCount;
@@ -54,9 +55,16 @@ namespace Elmanager.Forms
         internal LevelEditor(string levPath)
         {
             InitializeComponent();
+            TryLoadLevel(levPath);
+            Initialize();
+        }
+
+        private void TryLoadLevel(string levPath)
+        {
             try
             {
                 Lev = new Level(levPath);
+                _fromScratch = false;
             }
             catch (Exception ex)
             {
@@ -64,7 +72,6 @@ namespace Elmanager.Forms
                                 ex.Message);
                 SetBlankLevel();
             }
-            Initialize();
         }
 
         internal LevelEditor()
@@ -72,16 +79,7 @@ namespace Elmanager.Forms
             InitializeComponent();
             if (Global.AppSettings.LevelEditor.LastLevel != null)
             {
-                try
-                {
-                    Lev = new Level(Global.AppSettings.LevelEditor.LastLevel);
-                }
-                catch (Exception ex)
-                {
-                    Utils.ShowError("Error occurred when loading last level file " +
-                                    Global.AppSettings.LevelEditor.LastLevel + ". Exception text: " + ex.Message);
-                    SetBlankLevel();
-                }
+                TryLoadLevel(Global.AppSettings.LevelEditor.LastLevel);
             }
             else
                 SetBlankLevel();
@@ -179,6 +177,10 @@ namespace Elmanager.Forms
             }
             _history.Add(Lev.Clone());
             _historyIndex++;
+            if (_historyIndex <= _savedIndex)
+            {
+                _savedIndex = -1;
+            }
             UpdateUndoRedo();
         }
 
@@ -317,7 +319,7 @@ namespace Elmanager.Forms
             _history.Clear();
             _history.Add(Lev.Clone());
             _historyIndex = 0;
-            _savedIndex = 0;
+            _savedIndex = -1;
             UpdateUndoRedo();
         }
 
@@ -676,6 +678,8 @@ namespace Elmanager.Forms
             CurrentTool.Activate();
             SetupEventHandlers();
             _savePath = Lev.Path;
+            if (Global.LevelFiles == null)
+                Global.LevelFiles = Utils.GetLevelFiles();
         }
 
         private void InitializeLevel()
@@ -1064,7 +1068,7 @@ namespace Elmanager.Forms
                         MessageBoxButtons.YesNoCancel))
                 {
                     case DialogResult.Yes:
-                        SaveLevel();
+                        SaveClicked();
                         break;
                     case DialogResult.Cancel:
                         return false;
@@ -1103,8 +1107,6 @@ namespace Elmanager.Forms
         private void SaveAs(object sender = null, EventArgs e = null)
         {
             string suggestion = string.Empty;
-            if (Global.LevelFiles == null)
-                Global.LevelFiles = Utils.GetLevelFiles();
             if (Global.AppSettings.LevelEditor.UseFilenameSuggestion)
             {
                 var filenameStart = Global.AppSettings.LevelEditor.BaseFilename;
@@ -1134,32 +1136,20 @@ namespace Elmanager.Forms
             SaveFileDialog1.InitialDirectory = Global.AppSettings.General.LevelDirectory;
             if (SaveFileDialog1.ShowDialog() == DialogResult.OK)
             {
-                if (Global.AppSettings.LevelEditor.CheckTopologyWhenSaving)
-                    CheckTopologyAndUpdate();
-                if (Global.AppSettings.LevelEditor.UseFilenameForTitle)
-                {
-                    Lev.Title = Path.GetFileNameWithoutExtension(SaveFileDialog1.FileName);
-                }
-                try
-                {
-                    Lev.Save(SaveFileDialog1.FileName);
-                    Modified = false;
-                    Global.LevelFiles.Add(SaveFileDialog1.FileName);
-                    _savedIndex = _historyIndex;
-                }
-                catch (UnauthorizedAccessException ex)
-                {
-                    Utils.ShowError("Error when saving level: " + ex.Message);
-                    return;
-                }
                 _savePath = SaveFileDialog1.FileName;
-                UpdateCurrLevDirFiles();
-                UpdateLabels();
-                UpdateButtons();
+                SaveLevel();
             }
         }
 
-        private void SaveLevel(object sender = null, EventArgs e = null)
+        private void SaveClicked(object sender = null, EventArgs e = null)
+        {
+            if (_savePath == null)
+                SaveAs();
+            else
+                SaveLevel();
+        }
+
+        private void SaveLevel()
         {
             Lev.Title = TitleBox.Text;
             Lev.LgrFile = LGRBox.Text;
@@ -1170,27 +1160,33 @@ namespace Elmanager.Forms
             if (Lev.SkyTextureName == "")
                 Lev.SkyTextureName = "sky";
             CurrentTool.InActivate();
-            if (_savePath == null)
-                SaveAs();
-            else
+            if (Lev.Top10.IsEmpty ||
+                MessageBox.Show("This level has times in top 10. Do you still want to save the level?", "Warning",
+                    MessageBoxButtons.YesNo, MessageBoxIcon.Warning) == DialogResult.Yes)
             {
-                if (Lev.Top10.IsEmpty ||
-                    MessageBox.Show("This level has times in top 10. Do you still want to save the level?", "Warning",
-                        MessageBoxButtons.YesNo, MessageBoxIcon.Warning) == DialogResult.Yes)
+                if (Global.AppSettings.LevelEditor.CheckTopologyWhenSaving)
+                    CheckTopologyAndUpdate();
+                if (Global.AppSettings.LevelEditor.UseFilenameForTitle && _fromScratch)
                 {
-                    if (Global.AppSettings.LevelEditor.CheckTopologyWhenSaving)
-                        CheckTopologyAndUpdate();
-                    try
+                    Lev.Title = Path.GetFileNameWithoutExtension(SaveFileDialog1.FileName);
+                }
+                try
+                {
+                    Lev.Save(_savePath);
+                    Modified = false;
+                    _savedIndex = _historyIndex;
+                    _fromScratch = false;
+                    if (!Global.LevelFiles.Contains(_savePath))
                     {
-                        Lev.Save(_savePath);
-                        Modified = false;
-                        _savedIndex = _historyIndex;
-                        UpdateLabels();
+                        Global.LevelFiles.Add(_savePath);
+                        UpdateCurrLevDirFiles();
                     }
-                    catch (UnauthorizedAccessException ex)
-                    {
-                        Utils.ShowError("Error when saving level: " + ex.Message);
-                    }
+                    UpdateLabels();
+                    UpdateButtons();
+                }
+                catch (UnauthorizedAccessException ex)
+                {
+                    Utils.ShowError("Error when saving level: " + ex.Message);
                 }
             }
             CurrentTool.Activate();
@@ -1279,6 +1275,7 @@ namespace Elmanager.Forms
                     new Vector(Global.AppSettings.LevelEditor.InitialWidth*3/4,
                         Global.AppSettings.LevelEditor.InitialHeight/2));
             SetDefaultLevelTitle();
+            _fromScratch = true;
         }
 
         private void SettingChanged(object sender, EventArgs e)
