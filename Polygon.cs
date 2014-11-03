@@ -765,6 +765,7 @@ namespace Elmanager
                     }
                     k++;
                 }
+                result.ForEach(p => p.IsGrass = IsGrass);
                 return result.Any(polygon => polygon.Count < 3) ? null : result;
             }
             return null;
