@@ -214,6 +214,11 @@ namespace Elmanager
             get { return Math.Max(ZoomFillxMax - ZoomFillxMin, ZoomFillyMax - ZoomFillyMin); }
         }
 
+        internal bool LgrGraphicsLoaded
+        {
+            get { return LGRGraphicsLoaded; }
+        }
+
         public void Dispose()
         {
             Dispose(true);
@@ -468,7 +473,7 @@ namespace Elmanager
             if (Settings.ShowGround)
             {
                 const double depth = zFar - (zFar - zNear) * GroundDepth;
-                if (Settings.GroundTextureEnabled && LGRGraphicsLoaded)
+                if (Settings.GroundTextureEnabled && LgrGraphicsLoaded)
                 {
                     GL.BindTexture(TextureTarget.Texture2D, GroundTexture.TextureIdentifier);
                     double gtW = GroundTexture.Width;
@@ -527,7 +532,7 @@ namespace Elmanager
                 }
             }
             GL.StencilFunc(StencilFunction.Equal, SkyStencil, StencilMask);
-            if (Settings.SkyTextureEnabled && LGRGraphicsLoaded)
+            if (Settings.SkyTextureEnabled && LgrGraphicsLoaded)
             {
                 const double depth = zFar - (zFar - zNear) * SkyDepth;
                 GL.BindTexture(TextureTarget.Texture2D, SkyTexture.TextureIdentifier);
@@ -580,7 +585,7 @@ namespace Elmanager
             }
             GL.Scale(1.0, -1.0, 1.0);
             GL.Enable(EnableCap.AlphaTest);
-            if (LGRGraphicsLoaded)
+            if (LgrGraphicsLoaded)
             {
                 GL.DepthFunc(DepthFunction.Greater);
                 GL.Enable(EnableCap.ScissorTest);
@@ -675,7 +680,7 @@ namespace Elmanager
             GL.Scale(1.0, -1.0, 1.0);
             DrawPlayers(ActivePlayerIndices, VisiblePlayerIndices);
             GL.Scale(1.0, -1.0, 1.0);
-            if (Settings.ShowObjects && LGRGraphicsLoaded) //BUG Drawing order should be: 1. killers, 2. apples, 3. flowers.
+            if (Settings.ShowObjects && LgrGraphicsLoaded) //BUG Drawing order should be: 1. killers, 2. apples, 3. flowers.
             {
                 double depth = PicturesInBackground ? 0 : 0.5 * (zFar - zNear) + zNear;
                 foreach (var x in Lev.Objects)
@@ -1004,7 +1009,7 @@ namespace Elmanager
         internal void UpdateGroundAndSky(bool useDefault)
         {
             Settings.DefaultGroundAndSky = useDefault;
-            if (!LGRGraphicsLoaded) return;
+            if (!LgrGraphicsLoaded) return;
             foreach (DrawableImage x in DrawableImages)
             {
                 if (useDefault)
@@ -1446,7 +1451,7 @@ namespace Elmanager
             double distance = ((PicturesInBackground ? 1 : BikeDistance) - Utils.BooleanToInteger(isActive)) /
                               1000.0 * (zFar - zNear) + zNear;
             bool isright = direction == Direction.Right;
-            if (!DrawOnlyPlayerFrames && LGRGraphicsLoaded)
+            if (!DrawOnlyPlayerFrames && LgrGraphicsLoaded)
             {
                 double rotation = bikeRotation * Constants.DegToRad;
                 double rotationCos = Math.Cos(rotation);

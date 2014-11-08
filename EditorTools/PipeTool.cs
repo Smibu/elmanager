@@ -64,7 +64,7 @@ namespace Elmanager.EditorTools
                     if (Global.AppSettings.LevelEditor.RenderingSettings.ShowObjectFrames)
                         Renderer.DrawCircle(x.Position, ElmaRenderer.ObjectRadius,
                                             Global.AppSettings.LevelEditor.RenderingSettings.AppleColor);
-                    if (Global.AppSettings.LevelEditor.RenderingSettings.ShowObjects)
+                    if (Renderer.LgrGraphicsLoaded && Global.AppSettings.LevelEditor.RenderingSettings.ShowObjects)
                         Renderer.DrawApple(x.Position);
                 }
             }
