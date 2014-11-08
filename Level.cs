@@ -64,6 +64,11 @@ namespace Elmanager
         private List<LevelFileTexture> _textureData = new List<LevelFileTexture>();
         private string _title = "New level";
 
+        internal Level()
+        {
+            
+        }
+
         internal Level(Polygon startPolygon, Vector startPosition, Vector exitPosition)
         {
             Polygons.Add(startPolygon);
@@ -72,7 +77,7 @@ namespace Elmanager
             UpdateBounds();
         }
 
-        internal Level(string levelPath)
+        internal void LoadFromPath(string levelPath)
         {
             byte[] level = File.ReadAllBytes(levelPath);
             Path = levelPath;
@@ -197,8 +202,17 @@ namespace Elmanager
             {
                 sp += 4; //Skip end of data magic number
                 CryptTop10(level, sp);
-                Top10.SinglePlayer = ReadTop10Part(level, sp);
-                Top10.MultiPlayer = ReadTop10Part(level, sp + 344);
+                try
+                {
+                    Top10.SinglePlayer = ReadTop10Part(level, sp);
+                    Top10.MultiPlayer = ReadTop10Part(level, sp + 344);
+                }
+                catch (IndexOutOfRangeException)
+                {
+                    Top10.SinglePlayer = new List<Top10Entry>();
+                    Top10.MultiPlayer = new List<Top10Entry>();
+                    throw new LevelException("Top 10 list is corrupted. The list will be cleared if you save the level.");
+                }
             }
             UpdateBounds();
         }

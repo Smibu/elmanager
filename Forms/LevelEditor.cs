@@ -63,8 +63,13 @@ namespace Elmanager.Forms
         {
             try
             {
-                Lev = new Level(levPath);
+                Lev = new Level();
+                Lev.LoadFromPath(levPath);
                 _fromScratch = false;
+            }
+            catch (LevelException ex)
+            {
+                Utils.ShowError("Error occurred while parsing level file: " + ex.Message, "Warning", MessageBoxIcon.Exclamation);
             }
             catch (Exception ex)
             {
@@ -954,7 +959,7 @@ namespace Elmanager.Forms
         {
             if (!PromptToSaveIfModified())
                 return;
-            Lev = new Level(path);
+            TryLoadLevel(path);
             InitializeLevel();
         }
 
@@ -1505,7 +1510,17 @@ namespace Elmanager.Forms
             {
                 OpenFileDialog1.FileNames.ToList().ForEach(file =>
                 {
-                    var lev = new Level(file);
+                    var lev = new Level();
+                    try
+                    {
+                        lev.LoadFromPath(file);
+                    }
+                    catch (LevelException exception)
+                    {
+                        Utils.ShowError(string.Format("Imported level {0} with errors: {1}", file, exception.Message),
+                            "Warning",
+                            MessageBoxIcon.Exclamation);
+                    }
                     lev.UpdateImages(Renderer.DrawableImages);
                     Lev.Import(lev);
                 });

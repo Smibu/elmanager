@@ -65,7 +65,11 @@ namespace Elmanager
             Internals = new Level[55];
             for (int i = 0; i < 55; i++)
             {
-                var lev = new Level(levfiles[i]) {Path = null, Title = "", Pictures = null};
+                var lev = new Level();
+                lev.LoadFromPath(levfiles[i]);
+                lev.Path = null;
+                lev.Title = "";
+                lev.Pictures = null;
                 Internals[i] = lev;
             }
             var ms = new FileStream("e:\\intres.dat", FileMode.Create);

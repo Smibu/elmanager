@@ -174,7 +174,9 @@ namespace Elmanager
                     }
                     return Global.Internals[InternalIndex - 1];
                 }
-                return new Level(LevelPath);
+                var lev = new Level();
+                lev.LoadFromPath(LevelPath);
+                return lev;
             }
             throw (new FileNotFoundException("The level file does not exist!", LevelFilename));
         }
