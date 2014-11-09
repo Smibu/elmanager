@@ -827,11 +827,14 @@ namespace Elmanager.Forms
                         TransformMenuItem.Visible = false;
                         bringToFrontToolStripMenuItem.Visible = false;
                         sendToBackToolStripMenuItem.Visible = false;
+                        convertToToolStripMenuItem.Visible = false;
                         ChangeToDefaultCursor();
                         if (SelectedElementCount > 0)
                         {
                             CopyMenuItem.Visible = true;
                             DeleteMenuItem.Visible = true;
+                            convertToToolStripMenuItem.Visible = true;
+                            picturesConvertItem.Visible = _editorLgr != null;
                         }
                         TransformMenuItem.Visible = SelectedElementCount > 1;
                         _selectedObjectIndex = nearestObjectIndex;
@@ -1535,6 +1538,79 @@ namespace Elmanager.Forms
             if (saveAsPictureDialog.ShowDialog() == DialogResult.OK)
                 ElmaRenderer.GetSnapShot(EditorControl.Width, EditorControl.Height).Save(saveAsPictureDialog.FileName,
                     ImageFormat.Png);
+        }
+
+        private void ConvertClicked(object sender, EventArgs e)
+        {
+            var selectedVertices = Lev.Polygons.SelectMany(p => p.Vertices.Where(v => v.Mark == Geometry.VectorMark.Selected)).ToList();
+            selectedVertices.AddRange(
+                Lev.Objects.Where(v => v.Position.Mark == Geometry.VectorMark.Selected && v.Type != Level.ObjectType.Start).Select(o => o.Position));
+            selectedVertices.AddRange(
+                Lev.Pictures.Where(v => v.Position.Mark == Geometry.VectorMark.Selected).Select(p => p.Position));
+
+            Action removeSelected = () =>
+            {
+                var first = Lev.Polygons.First().Clone();
+                Lev.Polygons.ForEach(p => p.Vertices.RemoveAll(v => v.Mark == Geometry.VectorMark.Selected));
+                Lev.Polygons.RemoveAll(p => p.Count < 3);
+                if (Lev.Polygons.Count == 0)
+                {
+                    Lev.Polygons.Add(first);
+                }
+
+                Lev.Objects.RemoveAll(
+                    o => o.Position.Mark == Geometry.VectorMark.Selected && o.Type != Level.ObjectType.Start);
+                Lev.Pictures.RemoveAll(p => p.Position.Mark == Geometry.VectorMark.Selected);
+            };
+            var objType = Level.ObjectType.Apple;
+            if (sender.Equals(applesConvertItem))
+            {
+                // default
+            }
+            else if (sender.Equals(killersConvertItem))
+            {
+                objType = Level.ObjectType.Killer;
+            }
+            else if (sender.Equals(flowersConvertItem))
+            {
+                objType = Level.ObjectType.Flower;
+            }
+            else
+            {
+                // handle picture
+                PicForm.ShowDialog();
+                if (PicForm.OkButtonPressed)
+                {
+                    removeSelected();
+                    foreach (var selectedVertex in selectedVertices)
+                    {
+                        if (PicForm.TextureSelected)
+                        {
+                            Lev.Pictures.Add(new Level.Picture(PicForm.Clipping, PicForm.Distance,
+                                selectedVertex,
+                                Renderer.DrawableImageFromName(PicForm.Texture.Name),
+                                Renderer.DrawableImageFromName(PicForm.Mask.Name)));
+                        }
+                        else
+                        {
+                            Lev.Pictures.Add(new Level.Picture(Renderer.DrawableImageFromName(PicForm.Picture.Name),
+                                selectedVertex, PicForm.Distance,
+                                PicForm.Clipping));
+                        }
+                    }
+                }
+                Modified = true;
+                return;
+            }
+
+            removeSelected();
+
+            foreach (var selectedVertex in selectedVertices)
+            {
+                var obj = new Level.Object(selectedVertex, objType, Level.AppleTypes.Normal, 0);
+                Lev.Objects.Add(obj);
+            }
+            Modified = true;
         }
     }
 }

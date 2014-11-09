@@ -139,6 +139,11 @@ namespace Elmanager.Forms
             this.PicturePropertiesMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.bringToFrontToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.sendToBackToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.convertToToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.applesConvertItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.killersConvertItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.flowersConvertItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.picturesConvertItem = new System.Windows.Forms.ToolStripMenuItem();
             this.ToolPanel = new Elmanager.CustomControls.PanelMod();
             this.PictureButton = new Elmanager.CustomControls.RadioButtonMod();
             this.AutoGrassButton = new Elmanager.CustomControls.RadioButtonMod();
@@ -1102,9 +1107,10 @@ namespace Elmanager.Forms
             this.GravityRightMenuItem,
             this.PicturePropertiesMenuItem,
             this.bringToFrontToolStripMenuItem,
-            this.sendToBackToolStripMenuItem});
+            this.sendToBackToolStripMenuItem,
+            this.convertToToolStripMenuItem});
             this.EditorMenuStrip.Name = "SelectedMenuStrip";
-            this.EditorMenuStrip.Size = new System.Drawing.Size(168, 268);
+            this.EditorMenuStrip.Size = new System.Drawing.Size(168, 290);
             // 
             // CopyMenuItem
             // 
@@ -1197,6 +1203,45 @@ namespace Elmanager.Forms
             this.sendToBackToolStripMenuItem.Size = new System.Drawing.Size(167, 22);
             this.sendToBackToolStripMenuItem.Text = "Send to back";
             this.sendToBackToolStripMenuItem.Click += new System.EventHandler(this.SendToBackToolStripMenuItemClick);
+            // 
+            // convertToToolStripMenuItem
+            // 
+            this.convertToToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.applesConvertItem,
+            this.killersConvertItem,
+            this.flowersConvertItem,
+            this.picturesConvertItem});
+            this.convertToToolStripMenuItem.Name = "convertToToolStripMenuItem";
+            this.convertToToolStripMenuItem.Size = new System.Drawing.Size(167, 22);
+            this.convertToToolStripMenuItem.Text = "Convert to";
+            // 
+            // applesConvertItem
+            // 
+            this.applesConvertItem.Name = "applesConvertItem";
+            this.applesConvertItem.Size = new System.Drawing.Size(152, 22);
+            this.applesConvertItem.Text = "Apples";
+            this.applesConvertItem.Click += new System.EventHandler(this.ConvertClicked);
+            // 
+            // killersConvertItem
+            // 
+            this.killersConvertItem.Name = "killersConvertItem";
+            this.killersConvertItem.Size = new System.Drawing.Size(152, 22);
+            this.killersConvertItem.Text = "Killers";
+            this.killersConvertItem.Click += new System.EventHandler(this.ConvertClicked);
+            // 
+            // flowersConvertItem
+            // 
+            this.flowersConvertItem.Name = "flowersConvertItem";
+            this.flowersConvertItem.Size = new System.Drawing.Size(152, 22);
+            this.flowersConvertItem.Text = "Flowers";
+            this.flowersConvertItem.Click += new System.EventHandler(this.ConvertClicked);
+            // 
+            // picturesConvertItem
+            // 
+            this.picturesConvertItem.Name = "picturesConvertItem";
+            this.picturesConvertItem.Size = new System.Drawing.Size(152, 22);
+            this.picturesConvertItem.Text = "Pictures";
+            this.picturesConvertItem.Click += new System.EventHandler(this.ConvertClicked);
             // 
             // ToolPanel
             // 
@@ -1560,6 +1605,11 @@ namespace Elmanager.Forms
         private ToolStripMenuItem importLevelsToolStripMenuItem;
         private ToolStripMenuItem saveAsPictureToolStripMenuItem;
         private SaveFileDialog saveAsPictureDialog;
+        private ToolStripMenuItem convertToToolStripMenuItem;
+        private ToolStripMenuItem applesConvertItem;
+        private ToolStripMenuItem killersConvertItem;
+        private ToolStripMenuItem flowersConvertItem;
+        private ToolStripMenuItem picturesConvertItem;
 	}
 	
 }
