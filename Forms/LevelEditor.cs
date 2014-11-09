@@ -1025,6 +1025,11 @@ namespace Elmanager.Forms
 
                     if ((PicForm.TextureSelected && !PicForm.MultipleTexturesSelected))
                     {
+                        if (selected.IsPicture)
+                        {
+                            // need to set proper mask; otherwise the mask name will be picture name
+                            mask = Renderer.DrawableImageFromName(_editorLgr.ListedImages.Where(i => i.Type == Lgr.ImageType.Mask).First().Name);
+                        }
                         selected.SetTexture(clipping, distance, position, texture,
                             mask);
                     }
