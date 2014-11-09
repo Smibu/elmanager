@@ -67,8 +67,8 @@ namespace Elmanager.Forms
         {
             get
             {
-                return MultipleClippingSelected || MultipleDistanceSelected || MultipleMaskSelected ||
-                       MultiplePicturesSelected || MultipleTexturesSelected;
+                return MultipleClippingSelected || MultipleDistanceSelected || (MultipleMaskSelected && TextureSelected) ||
+                       (MultiplePicturesSelected && !TextureSelected) || (MultipleTexturesSelected && TextureSelected);
             }
         }
 
