@@ -1,12 +1,14 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.ComponentModel;
 using System.Drawing;
-using Microsoft.VisualBasic;
+using System.Windows.Forms;
 
 namespace Elmanager.Forms
 {
     partial class PictureForm
     {
+        private const string _multipleValues = "<multiple values>";
         internal Level.ClippingType Clipping;
         internal int Distance;
         internal Lgr.LgrImage Mask;
@@ -29,6 +31,47 @@ namespace Elmanager.Forms
             TextureButtonCheckedChanged();
         }
 
+        internal bool AllowMultiple { get; set; }
+
+        internal bool MultiplePicturesSelected
+        {
+            get { return PictureComboBox.SelectedItem.ToString() == _multipleValues; }
+        }
+
+        internal bool MultipleTexturesSelected
+        {
+            get { return TextureComboBox.SelectedItem.ToString() == _multipleValues; }
+        }
+
+        internal bool MultipleMaskSelected
+        {
+            get { return MaskComboBox.SelectedItem.ToString() == _multipleValues; }
+        }
+
+        internal bool MultipleDistanceSelected
+        {
+            get { return DistanceBox.Text == _multipleValues; }
+        }
+
+        internal bool MultipleClippingSelected
+        {
+            get
+            {
+                if (ClippingComboBox.SelectedItem == null)
+                    return false;
+                return ClippingComboBox.SelectedItem.ToString() == _multipleValues;
+            }
+        }
+
+        internal bool AnyMultipleSelected
+        {
+            get
+            {
+                return MultipleClippingSelected || MultipleDistanceSelected || MultipleMaskSelected ||
+                       MultiplePicturesSelected || MultipleTexturesSelected;
+            }
+        }
+
         private void UpdatePictureLists()
         {
             TextureComboBox.SelectedIndexChanged -= TextureComboBoxSelectedIndexChanged;
@@ -37,6 +80,10 @@ namespace Elmanager.Forms
             MaskComboBox.Items.Clear();
             PictureComboBox.Items.Clear();
             TextureComboBox.Items.Clear();
+            ClippingComboBox.Items.Clear();
+            ClippingComboBox.Items.Add("Unclipped");
+            ClippingComboBox.Items.Add("Ground");
+            ClippingComboBox.Items.Add("Sky");
             foreach (Lgr.ListedImage x in _currentLgr.ListedImages)
             {
                 if (x.Name[0] != 'q')
@@ -55,19 +102,27 @@ namespace Elmanager.Forms
                     }
                 }
             }
-            if (MaskComboBox.Items.Count > 0)
-                MaskComboBox.SelectedIndex = 0;
-            if (PictureComboBox.Items.Count > 0)
+            foreach (var c in new[] { MaskComboBox, PictureComboBox, TextureComboBox, ClippingComboBox })
             {
-                PictureComboBox.SelectedIndex = 0;
+                c.Items.Add(_multipleValues);
+            }
+            if (MaskItemCount > 1)
+                MaskComboBox.SelectedIndex = 1;
+            else
+            {
+                MaskComboBox.Enabled = false;
+            }
+            if (PictureItemCount > 1)
+            {
+                PictureComboBox.SelectedIndex = 1;
                 PictureButton.Enabled = true;
             }
             else
                 PictureButton.Enabled = false;
-            if (TextureComboBox.Items.Count > 0)
+            if (TextureItemCount > 1)
             {
-                TextureComboBox.SelectedIndex = 0;
-                TextureButton.Enabled = MaskComboBox.Items.Count > 0;
+                TextureComboBox.SelectedIndex = 1;
+                TextureButton.Enabled = MaskComboBox.Items.Count > 1;
             }
             else
                 TextureButton.Enabled = false;
@@ -78,6 +133,11 @@ namespace Elmanager.Forms
             TextureComboBox.SelectedIndexChanged += TextureComboBoxSelectedIndexChanged;
             PictureComboBox.SelectedIndexChanged += PictureComboBoxSelectedIndexChanged;
             TextureButton.CheckedChanged += TextureButtonCheckedChanged;
+        }
+
+        private static bool IsMultipleSelected(ComboBox c)
+        {
+            return c.SelectedItem.ToString() == _multipleValues;
         }
 
         internal void SelectTexture(Level.Picture picture)
@@ -93,44 +153,132 @@ namespace Elmanager.Forms
                 MaskComboBox.SelectedItem = picture.Name;
             }
 
-            
-
             DistanceBox.Text = picture.Distance.ToString();
             ClippingComboBox.SelectedIndex = (int) (picture.Clipping);
         }
 
+        internal void SelectMultiple(List<Level.Picture> pictures)
+        {
+            if (pictures.TrueForAll(p => p.IsPicture))
+            {
+                PictureButton.Checked = true;
+                if (pictures.TrueForAll(p => p.Name == pictures[0].Name))
+                {
+                    PictureComboBox.SelectedItem = pictures[0].Name;
+                }
+                else
+                {
+                    PictureComboBox.SelectedItem = _multipleValues;
+                }
+            }
+            else if (pictures.TrueForAll(p => !p.IsPicture))
+            {
+                TextureButton.Checked = true;
+                if (pictures.TrueForAll(p => p.TextureName == pictures[0].TextureName))
+                {
+                    TextureComboBox.SelectedItem = pictures[0].TextureName;
+                }
+                else
+                {
+                    TextureComboBox.SelectedItem = _multipleValues;
+                }
+
+                if (pictures.TrueForAll(p => p.Name == pictures[0].Name))
+                {
+                    MaskComboBox.SelectedItem = pictures[0].Name;
+                }
+                else
+                {
+                    TextureComboBox.SelectedItem = _multipleValues;
+                }
+            }
+            else
+            {
+                PictureComboBox.SelectedItem = _multipleValues;
+                TextureComboBox.SelectedItem = _multipleValues;
+                MaskComboBox.SelectedItem = _multipleValues;
+                PictureButton.Checked = false;
+                TextureButton.Checked = false;
+            }
+
+            if (pictures.TrueForAll(p => p.Distance == pictures[0].Distance))
+            {
+                DistanceBox.Text = pictures[0].Distance.ToString();
+            }
+            else
+            {
+                DistanceBox.Text = _multipleValues;
+            }
+
+            if (pictures.TrueForAll(p => p.Clipping == pictures[0].Clipping))
+            {
+                ClippingComboBox.SelectedIndex = (int)(pictures[0].Clipping);
+            }
+            else
+            {
+                ClippingComboBox.SelectedItem = _multipleValues;
+            }
+        }
+
         private void PictureComboBoxSelectedIndexChanged(object sender = null, EventArgs e = null)
         {
-            if (PictureComboBox.Items.Count > 0)
+            if (PictureItemCount > 0 && !IsMultipleSelected(PictureComboBox))
             {
                 Lgr.LgrImage selectedPicture = _currentLgr.ImageFromName(PictureComboBox.SelectedItem.ToString());
-                DistanceBox.Text = selectedPicture.Distance.ToString();
-                ClippingComboBox.SelectedIndex = (int) (selectedPicture.ClippingType);
+                if (!MultipleDistanceSelected)
+                {
+                    DistanceBox.Text = selectedPicture.Distance.ToString();
+                }
+                if (!MultipleClippingSelected)
+                {
+                    ClippingComboBox.SelectedIndex = (int) (selectedPicture.ClippingType);
+                }
                 UpdatePicture(selectedPicture.Bmp);
             }
         }
 
+        private int PictureItemCount
+        {
+            get { return PictureComboBox.Items.Count; }
+        }
+
         private void TextureComboBoxSelectedIndexChanged(object sender = null, EventArgs e = null)
         {
-            if (TextureComboBox.Items.Count > 0)
+            if (TextureItemCount > 0 && !IsMultipleSelected(TextureComboBox))
             {
                 Lgr.LgrImage selectedTexture = _currentLgr.ImageFromName(TextureComboBox.SelectedItem.ToString());
-                DistanceBox.Text = selectedTexture.Distance.ToString();
-                ClippingComboBox.SelectedIndex = (int) (selectedTexture.ClippingType);
+                if (!MultipleDistanceSelected)
+                {
+                    DistanceBox.Text = selectedTexture.Distance.ToString();
+                }
+                if (!MultipleClippingSelected)
+                {
+                    ClippingComboBox.SelectedIndex = (int) (selectedTexture.ClippingType);
+                }
                 UpdatePicture(selectedTexture.Bmp);
             }
         }
 
+        private int TextureItemCount
+        {
+            get { return TextureComboBox.Items.Count; }
+        }
+
         private void TextureButtonCheckedChanged(object sender = null, EventArgs e = null)
         {
-            MaskComboBox.Enabled = TextureButton.Checked && MaskComboBox.Items.Count > 0;
-            TextureComboBox.Enabled = TextureButton.Checked && TextureComboBox.Items.Count > 0 &&
-                                      MaskComboBox.Items.Count > 0;
-            PictureComboBox.Enabled = !TextureButton.Checked && PictureComboBox.Items.Count > 0;
+            MaskComboBox.Enabled = TextureButton.Checked && MaskItemCount > 0;
+            TextureComboBox.Enabled = TextureButton.Checked && TextureItemCount > 0 &&
+                                      MaskItemCount > 0;
+            PictureComboBox.Enabled = !TextureButton.Checked && PictureItemCount > 0;
             if (TextureComboBox.Enabled)
                 TextureComboBoxSelectedIndexChanged();
             else
                 PictureComboBoxSelectedIndexChanged();
+        }
+
+        private int MaskItemCount
+        {
+            get { return MaskComboBox.Items.Count; }
         }
 
         private void UpdatePicture(Image bmp)
@@ -159,8 +307,14 @@ namespace Elmanager.Forms
             OkButtonPressed = sender.Equals(OKButton);
             if (OkButtonPressed)
             {
-                if (Information.IsNumeric(DistanceBox.Text))
+                TextureSelected = TextureButton.Checked;
+                if (!AllowMultiple)
                 {
+                    if (AnyMultipleSelected)
+                    {
+                        Utils.ShowError("You cannot select multiple values at this point.");
+                        return;
+                    }
                     try
                     {
                         Distance = int.Parse(DistanceBox.Text);
@@ -170,7 +324,6 @@ namespace Elmanager.Forms
                             Picture = _currentLgr.ImageFromName(PictureComboBox.SelectedItem.ToString());
                             Texture = _currentLgr.ImageFromName(TextureComboBox.SelectedItem.ToString());
                             Mask = _currentLgr.ImageFromName(MaskComboBox.SelectedItem.ToString());
-                            TextureSelected = TextureButton.Checked;
                             Close();
                         }
                         else
@@ -182,7 +335,38 @@ namespace Elmanager.Forms
                     }
                 }
                 else
-                    DistanceError();
+                {
+                    if (!MultiplePicturesSelected)
+                    {
+                        Picture = _currentLgr.ImageFromName(PictureComboBox.SelectedItem.ToString());
+                    }
+                    if (!MultipleTexturesSelected)
+                    {
+                        Texture = _currentLgr.ImageFromName(TextureComboBox.SelectedItem.ToString());
+                    }
+                    if (!MultipleMaskSelected)
+                    {
+                        Mask = _currentLgr.ImageFromName(MaskComboBox.SelectedItem.ToString());
+                    }
+                    if (!MultipleClippingSelected)
+                    {
+                        Clipping = (Level.ClippingType)ClippingComboBox.SelectedIndex;
+                    }
+                    if (!MultipleDistanceSelected)
+                    {
+                        try
+                        {
+                            Distance = int.Parse(DistanceBox.Text);
+                        }
+                        catch (FormatException)
+                        {
+                            DistanceError();
+                            return;
+                        }
+                    }
+                    Close();
+                }
+                
             }
             else
                 Close();

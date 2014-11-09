@@ -995,24 +995,61 @@ namespace Elmanager.Forms
 
         private void PicturePropertiesToolStripMenuItemClick(object sender, EventArgs e)
         {
-            PicForm.SelectTexture(Lev.Pictures[_selectedPictureIndex]);
+            var selectedPics = Lev.Pictures.Where(p => p.Position.Mark == Geometry.VectorMark.Selected).ToList();
+            if (selectedPics.Count > 0)
+            {
+                PicForm.AllowMultiple = true;
+                PicForm.SelectMultiple(selectedPics);
+            }
+            else
+            {
+                PicForm.AllowMultiple = false;
+                selectedPics = new List<Level.Picture> {Lev.Pictures[_selectedPictureIndex]};
+                PicForm.SelectTexture(Lev.Pictures[_selectedPictureIndex]);    
+            }
+            
             PicForm.ShowDialog();
             if (PicForm.OkButtonPressed)
             {
-                Vector position = Lev.Pictures[_selectedPictureIndex].Position;
-                Level.Picture selected = Lev.Pictures[_selectedPictureIndex];
+                foreach (var selected in selectedPics)
+                {
+                    var clipping = PicForm.MultipleClippingSelected ? selected.Clipping : PicForm.Clipping;
+                    var distance = PicForm.MultipleDistanceSelected ? selected.Distance : PicForm.Distance;
+                    var mask = PicForm.MultipleMaskSelected ? Renderer.DrawableImageFromName(selected.Name)
+                                                            : Renderer.DrawableImageFromName(PicForm.Mask.Name);
+                    var position = selected.Position;
+                    var texture = PicForm.MultipleTexturesSelected ? Renderer.DrawableImageFromName(selected.TextureName)
+                                                            : Renderer.DrawableImageFromName(PicForm.Texture.Name);
+                    var picture = PicForm.MultiplePicturesSelected ? Renderer.DrawableImageFromName(selected.Name)
+                                                            : Renderer.DrawableImageFromName(PicForm.Picture.Name);
 
-                if (PicForm.TextureSelected)
-                {
-                    var maskImage = Renderer.DrawableImageFromName(PicForm.Mask.Name);
-                    var textureImage = Renderer.DrawableImageFromName(PicForm.Texture.Name);
-                    selected.SetTexture(PicForm.Clipping, PicForm.Distance, position, textureImage, maskImage);
+                    if ((PicForm.TextureSelected && !PicForm.MultipleTexturesSelected))
+                    {
+                        selected.SetTexture(clipping, distance, position, texture,
+                            mask);
+                    }
+                    else if ((!PicForm.TextureSelected && !PicForm.MultiplePicturesSelected))
+                    {
+                        selected.SetPicture(picture, position,
+                            distance,
+                            clipping);
+                    }
+                    else
+                    {
+                        if (selected.IsPicture)
+                        {
+                            selected.SetPicture(picture, position,
+                                distance,
+                                clipping);    
+                        }
+                        else
+                        {
+                            selected.SetTexture(clipping, distance, position, texture,
+                                mask);    
+                        }
+                    }
                 }
-                else
-                {
-                    selected.SetPicture(Renderer.DrawableImageFromName(PicForm.Picture.Name), position, PicForm.Distance,
-                        PicForm.Clipping);
-                }
+
                 Modified = true;
                 Renderer.RedrawScene();
             }
@@ -1578,6 +1615,7 @@ namespace Elmanager.Forms
             else
             {
                 // handle picture
+                PicForm.AllowMultiple = false;
                 PicForm.ShowDialog();
                 if (PicForm.OkButtonPressed)
                 {

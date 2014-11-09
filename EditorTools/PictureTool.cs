@@ -99,6 +99,7 @@ namespace Elmanager.EditorTools
         private void FirstTimeDialog()
         {
             LevEditor.PicForm.Location = Control.MousePosition;
+            LevEditor.PicForm.AllowMultiple = false;
             LevEditor.PicForm.ShowDialog();
             if (LevEditor.PicForm.OkButtonPressed)
             {

@@ -179,10 +179,6 @@
             // 
             this.ClippingComboBox.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
             this.ClippingComboBox.FormattingEnabled = true;
-            this.ClippingComboBox.Items.AddRange(new object[] {
-            "Unclipped",
-            "Ground",
-            "Sky"});
             this.ClippingComboBox.Location = new System.Drawing.Point(82, 123);
             this.ClippingComboBox.Name = "ClippingComboBox";
             this.ClippingComboBox.Size = new System.Drawing.Size(121, 21);
