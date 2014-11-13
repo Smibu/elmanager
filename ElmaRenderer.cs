@@ -760,12 +760,9 @@ namespace Elmanager
 
             if (Settings.ShowVertices)
             {
-                GL.Color4(Settings.VertexColor);
-                GL.Begin(BeginMode.Triangles);
                 foreach (Polygon x in Lev.Polygons)
                     foreach (Vector z in x.Vertices)
                         DrawEquilateralTriangle(z, _ZoomLevel / 50, Color.Red);
-                GL.End();
             }
             if (CustomRendering != null)
                 CustomRendering();
@@ -802,8 +799,8 @@ namespace Elmanager
         internal void DrawEquilateralTriangle(Vector center, double side, Color color)
         {
             double factor = 1/(Math.Sqrt(3)*2);
-            GL.Begin(BeginMode.Triangles);
             GL.Color3(color);
+            GL.Begin(BeginMode.Triangles);
             GL.Vertex3(center.X + side / 2, center.Y - side * factor, 0);
             GL.Vertex3(center.X, center.Y + side / Math.Sqrt(3), 0);
             GL.Vertex3(center.X - side / 2, center.Y - side * factor, 0);
