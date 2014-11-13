@@ -6,6 +6,17 @@ namespace Elmanager
     [Serializable]
     internal class Vector
     {
+        public override int GetHashCode()
+        {
+            unchecked
+            {
+                int hashCode = 1;
+                hashCode = (hashCode*397) ^ X.GetHashCode();
+                hashCode = (hashCode*397) ^ Y.GetHashCode();
+                return hashCode;
+            }
+        }
+
         internal static Geometry.VectorMark MarkDefault = Geometry.VectorMark.None;
         internal Geometry.VectorMark Mark;
         internal double X;
@@ -68,6 +79,19 @@ namespace Elmanager
             get { return X * X + Y * Y; }
         }
 
+        public override bool Equals(object obj)
+        {
+            if (ReferenceEquals(null, obj)) return false;
+            if (ReferenceEquals(this, obj)) return true;
+            if (obj.GetType() != this.GetType()) return false;
+            return Equals((Vector) obj);
+        }
+
+        protected bool Equals(Vector p)
+        {
+            return X.Equals(p.X) && Y.Equals(p.Y);
+        }
+
         public static implicit operator Vector(GeoAPI.Geometries.Coordinate v)
         {
             return new Vector(v.X, v.Y);
@@ -85,7 +109,7 @@ namespace Elmanager
 
         public static bool operator ==(Vector vector1, Vector vector2)
         {
-            return (vector1.X == vector2.X) && (vector1.Y == vector2.Y);
+            return vector1.Equals(vector2);
         }
 
         public static bool operator !=(Vector vector1, Vector vector2)

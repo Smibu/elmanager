@@ -499,6 +499,12 @@ namespace Elmanager
                     isects.Add(new Vector(validOp.Coordinate.X, validOp.Coordinate.Y));
                 }
             }
+
+            var vectors = Polygons.SelectMany(p => p.Vertices);
+            var query = vectors.GroupBy(x => x)
+                          .Where(g => g.Count() > 1)
+                          .Select(y => y.Key);
+            isects.AddRange(query);
             return isects;
         }
 
