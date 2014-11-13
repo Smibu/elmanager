@@ -342,64 +342,6 @@ namespace Elmanager
             return triangulatedPolyArray;
         }
 
-        /// <summary>
-        ///   Determines whether the given point is inside the triangle defined by the three vectors.
-        /// </summary>
-        /// <param name = "v1">First vertex of the triangle.</param>
-        /// <param name = "v2">Second vertex of the triangle.</param>
-        /// <param name = "v3">Third vertex of the triangle.</param>
-        /// <param name = "p">The point.</param>
-        /// <returns></returns>
-        internal static bool PointInTriangle(Vector v1, Vector v2, Vector v3, Vector p)
-        {
-            bool isInside = false;
-            if (p == v1 || p == v2 || p == v3)
-                return false;
-            double x = p.X;
-            double y = p.Y;
-            double x1 = v1.X;
-            double y1 = v1.Y;
-            double x2 = v2.X;
-            double y2 = v2.Y;
-            double x3 = v3.X;
-            double y3 = v3.Y;
-            double k;
-            if (!(y1 <= y ^ y2 > y))
-            {
-                if (x1 <= x && x2 <= x)
-                    isInside = true;
-                else if (!(x1 <= x ^ x2 > x))
-                {
-                    k = (y2 - y1) / (x2 - x1);
-                    if (!(y < k * (x - x1) + y1 ^ k > 0))
-                        isInside = true;
-                }
-            }
-            if (!(y2 <= y ^ y3 > y))
-            {
-                if (x2 <= x && x3 <= x)
-                    isInside = !isInside;
-                else if (!(x2 <= x ^ x3 > x))
-                {
-                    k = (y3 - y2) / (x3 - x2);
-                    if (!(y < k * (x - x2) + y2 ^ k > 0))
-                        isInside = !isInside;
-                }
-            }
-            if (!(y3 <= y ^ y1 > y))
-            {
-                if (x3 <= x && x1 <= x)
-                    isInside = !isInside;
-                else if (!(x3 <= x ^ x1 > x))
-                {
-                    k = (y1 - y3) / (x1 - x3);
-                    if (!(y < k * (x - x3) + y3 ^ k > 0))
-                        isInside = !isInside;
-                }
-            }
-            return isInside;
-        }
-
         #endregion
 
         #region Nested type: VectorMark
