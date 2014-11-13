@@ -141,15 +141,17 @@ namespace Elmanager.EditorTools
         {
             EndTransforming();
             _Busy = false;
-            LevEditor.SelectButton.Select();
-            LevEditor.CurrentTool = LevEditor.Tools[0];
-            LevEditor.CurrentTool.Activate();
         }
 
         public void KeyDown(KeyEventArgs key)
         {
             if (key.KeyCode == Keys.Space)
+            {
                 InActivate();
+                LevEditor.SelectButton.Select();
+                LevEditor.CurrentTool = LevEditor.Tools[0];
+                LevEditor.CurrentTool.Activate();
+            }
         }
 
         public void MouseDown(MouseEventArgs mouseData)

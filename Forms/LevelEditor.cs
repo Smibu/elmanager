@@ -119,6 +119,13 @@ namespace Elmanager.Forms
                 CurrentTool.InActivate();
                 CurrentTool = Tools[12];
                 CurrentTool.Activate();
+                
+                // if not busy, there's nothing to transform
+                if (!CurrentTool.Busy)
+                {
+                    CurrentTool = Tools[0];
+                    CurrentTool.Activate();   
+                }
             }
         }
 
