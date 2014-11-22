@@ -1,14 +1,18 @@
 using System.Drawing;
 using System.Windows.Forms;
 using Elmanager.Forms;
+using Key = System.Windows.Input.Key;
+using Keyboard = System.Windows.Input.Keyboard;
 
 namespace Elmanager.EditorTools
 {
     internal class VertexTool : ToolBase, IEditorTool
     {
         private bool _creatingVertex;
+        private bool _creatingRectangle;
         private Polygon _currentPolygon;
         private int nearestSegmentIndex = -1;
+        private Vector _rectangleStart;
 
         internal VertexTool(LevelEditor editor)
             : base(editor)
@@ -21,7 +25,15 @@ namespace Elmanager.EditorTools
             set
             {
                 _creatingVertex = value;
-                _Busy = value;
+                _Busy = _creatingVertex || _creatingRectangle;
+            }
+        }
+
+        private bool CreatingRectangle
+        {
+            get { return _creatingRectangle; }
+            set { _creatingRectangle = value; 
+                _Busy = _creatingVertex || _creatingRectangle; 
             }
         }
 
@@ -43,6 +55,11 @@ namespace Elmanager.EditorTools
         {
             if (CreatingVertex)
                 Renderer.DrawLine(_currentPolygon.GetLastVertex(), _currentPolygon.Vertices[0], Color.Red);
+            else if (CreatingRectangle)
+            {
+                AdjustForGrid(CurrentPos);
+                Renderer.DrawRectangle(_rectangleStart, CurrentPos, Color.Blue);
+            }
             else
             {
                 if (Global.AppSettings.LevelEditor.UseHighlight && nearestSegmentIndex >= 0)
@@ -72,21 +89,38 @@ namespace Elmanager.EditorTools
             switch (mouseData.Button)
             {
                 case MouseButtons.Left:
+                    int nearestIndex = GetNearestVertexIndex(CurrentPos);
+                    AdjustForGrid(CurrentPos);
+                    if (CreatingRectangle)
+                    {
+                        CreatingRectangle = false;
+                        var rect = Polygon.Rectangle(_rectangleStart, CurrentPos);
+                        Lev.Polygons.Add(rect);
+                        rect.UpdateDecomposition();
+                        LevEditor.Modified = true;
+                        return;
+                    }
                     if (!CreatingVertex)
                     {
-                        CreatingVertex = true;
-                        int nearestIndex = GetNearestVertexIndex(CurrentPos);
-                        AdjustForGrid(CurrentPos);
-                        if (nearestIndex >= -1)
+                        if (Keyboard.IsKeyDown(Key.LeftShift))
                         {
-                            int nearestSegmentIndex = NearestPolygon.GetNearestSegmentIndex(CurrentPos);
-                            _currentPolygon = NearestPolygon;
-                            _currentPolygon.SetBeginPoint(nearestSegmentIndex + 1);
-                            _currentPolygon.Add(CurrentPos);
-                            ChangeToDefaultCursor();
+                            CreatingRectangle = true;
+                            _rectangleStart = CurrentPos;
                         }
                         else
-                            _currentPolygon = new Polygon(CurrentPos, CurrentPos);
+                        {
+                            CreatingVertex = true;
+                            if (nearestIndex >= -1)
+                            {
+                                nearestSegmentIndex = NearestPolygon.GetNearestSegmentIndex(CurrentPos);
+                                _currentPolygon = NearestPolygon;
+                                _currentPolygon.SetBeginPoint(nearestSegmentIndex + 1);
+                                _currentPolygon.Add(CurrentPos);
+                                ChangeToDefaultCursor();
+                            }
+                            else
+                                _currentPolygon = new Polygon(CurrentPos, CurrentPos);
+                        }
                     }
                     else
                     {
@@ -115,7 +149,7 @@ namespace Elmanager.EditorTools
                 if (_currentPolygon.Count > 2)
                     _currentPolygon.UpdateDecomposition(false);
             }
-            else
+            else if(!CreatingRectangle)
             {
                 ResetHighlight();
                 int nearestVertex = GetNearestVertexIndex(p);
@@ -161,6 +195,10 @@ namespace Elmanager.EditorTools
                 else
                     Lev.Polygons.Remove(_currentPolygon);
                 Renderer.RedrawScene();
+            }
+            else if (CreatingRectangle)
+            {
+                CreatingRectangle = false;
             }
         }
     }

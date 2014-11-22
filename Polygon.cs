@@ -856,5 +856,10 @@ namespace Elmanager
         {
             return new Polygon(this);
         }
+
+        public static Polygon Rectangle(Vector corner1, Vector corner2)
+        {
+            return new Polygon(corner1, new Vector(corner2.X, corner1.Y), corner2, new Vector(corner1.X, corner2.Y));
+        }
     }
 }
