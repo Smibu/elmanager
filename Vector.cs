@@ -92,6 +92,19 @@ namespace Elmanager
             return X.Equals(p.X) && Y.Equals(p.Y);
         }
 
+        public void Transform(Matrix m)
+        {
+            var transformed = this*m;
+            X = transformed.X;
+            Y = transformed.Y;
+        }
+
+        public void SetPosition(Vector v)
+        {
+            X = v.X;
+            Y = v.Y;
+        }
+
         public static implicit operator Vector(GeoAPI.Geometries.Coordinate v)
         {
             return new Vector(v.X, v.Y);

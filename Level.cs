@@ -551,33 +551,72 @@ namespace Elmanager
             return clipping % 2 == 0;
         }
 
-        internal void Mirror()
+        internal void MirrorAll()
         {
             Matrix mirrorMatrix = Matrix.Identity;
             mirrorMatrix.Translate(-(XMax + XMin) / 2, -(YMax + YMin) / 2);
             mirrorMatrix.Scale(-1.0, 1.0);
             mirrorMatrix.Translate((XMax + XMin) / 2, (YMax + YMin) / 2);
+            Mirror(mirrorMatrix, v => true);
+        }
+
+        internal void MirrorSelected()
+        {
+            double xMin = double.PositiveInfinity;
+            double xMax = double.NegativeInfinity;
+            double yMin = double.PositiveInfinity;
+            double yMax = double.NegativeInfinity;
+            foreach (Polygon x in Polygons.Where(p => p.Vertices.Any(v => v.Mark == Geometry.VectorMark.Selected)))
+            {
+                xMin = Math.Min(xMin, x.Vertices.Where(v => v.Mark == Geometry.VectorMark.Selected).Select(v => v.X).Min());
+                xMax = Math.Max(xMax, x.Vertices.Where(v => v.Mark == Geometry.VectorMark.Selected).Select(v => v.X).Max());
+                yMax = Math.Max(yMax, x.Vertices.Where(v => v.Mark == Geometry.VectorMark.Selected).Select(v => v.Y).Max());
+                yMin = Math.Min(yMin, x.Vertices.Where(v => v.Mark == Geometry.VectorMark.Selected).Select(v => v.Y).Min());
+            }
+            foreach (Object x in Objects.Where(o => o.Position.Mark == Geometry.VectorMark.Selected))
+            {
+                xMin = Math.Min(xMin, x.Position.X);
+                xMax = Math.Max(xMax, x.Position.X);
+                yMax = Math.Max(yMax, x.Position.Y);
+                yMin = Math.Min(yMin, x.Position.Y);
+            }
+            foreach (Picture x in Pictures.Where(p => p.Position.Mark == Geometry.VectorMark.Selected))
+            {
+                xMin = Math.Min(xMin, x.Position.X);
+                xMax = Math.Max(xMax, x.Position.X + x.Width);
+                yMax = Math.Max(yMax, x.Position.Y + x.Height);
+                yMin = Math.Min(yMin, x.Position.Y);
+            }
+            Matrix mirrorMatrix = Matrix.Identity;
+            mirrorMatrix.Translate(-(xMax + xMin) / 2, -(yMax + yMin) / 2);
+            mirrorMatrix.Scale(-1.0, 1.0);
+            mirrorMatrix.Translate((xMax + xMin) / 2, (yMax + yMin) / 2);
+            Mirror(mirrorMatrix, v => v.Mark == Geometry.VectorMark.Selected);
+        }
+
+        internal void Mirror(Matrix mirrorMatrix, Func<Vector, bool> selector)
+        {
             foreach (Polygon x in Polygons)
             {
-                for (int i = 0; i < x.Count; i++)
-                    x.Vertices[i] = x.Vertices[i] * mirrorMatrix;
+                foreach (Vector t in x.Vertices.Where(selector))
+                    t.Transform(mirrorMatrix);
                 x.UpdateDecomposition();
             }
-            foreach (Object t in Objects)
+            foreach (Object t in Objects.Where(o => selector(o.Position)))
             {
                 Vector z = t.Position;
                 if (t.Type == ObjectType.Start)
                 {
                     var fix = new Vector(RightWheelDifferenceFromLeftWheelX / 2, 0);
-                    t.Position = (z + fix) * mirrorMatrix - fix;
+                    t.Position.SetPosition((z + fix) * mirrorMatrix - fix);
                 }
                 else
-                    t.Position = z * mirrorMatrix;
+                    t.Position.Transform(mirrorMatrix);
             }
-            foreach (Picture z in Pictures)
+            foreach (Picture z in Pictures.Where(p => selector(p.Position)))
             {
                 var fix = new Vector(z.Width / 2, 0);
-                z.Position = (z.Position + fix) * mirrorMatrix - fix;
+                z.Position.SetPosition((z.Position + fix) * mirrorMatrix - fix);
             }
         }
 

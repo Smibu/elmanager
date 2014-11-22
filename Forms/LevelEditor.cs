@@ -178,6 +178,7 @@ namespace Elmanager.Forms
             SelectionLabel.Text = "Selected " + _selectedVerticeCount + " vertices of " + _selectedPolygonCount +
                                   " polygons, " + _selectedObjectCount + " objects, " + _selectedPictureCount +
                                   " pictures, " + _selectedTextureCount + " textures.";
+            MirrorLevelToolStripMenuItem.Enabled = SelectedElementCount >= 2;
         }
 
         private void AddToHistory()
@@ -805,7 +806,7 @@ namespace Elmanager.Forms
 
         private void Mirror(object sender, EventArgs e)
         {
-            Lev.Mirror();
+            Lev.MirrorSelected();
             Modified = true;
             Renderer.RedrawScene();
         }

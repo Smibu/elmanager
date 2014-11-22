@@ -304,7 +304,7 @@ namespace Elmanager.Forms
             this.MirrorLevelToolStripMenuItem.Name = "MirrorLevelToolStripMenuItem";
             this.MirrorLevelToolStripMenuItem.ShortcutKeys = ((System.Windows.Forms.Keys)((System.Windows.Forms.Keys.Control | System.Windows.Forms.Keys.M)));
             this.MirrorLevelToolStripMenuItem.Size = new System.Drawing.Size(183, 22);
-            this.MirrorLevelToolStripMenuItem.Text = "Mirror level";
+            this.MirrorLevelToolStripMenuItem.Text = "Mirror selected";
             this.MirrorLevelToolStripMenuItem.Click += new System.EventHandler(this.Mirror);
             // 
             // UndoToolStripMenuItem
@@ -1218,28 +1218,28 @@ namespace Elmanager.Forms
             // applesConvertItem
             // 
             this.applesConvertItem.Name = "applesConvertItem";
-            this.applesConvertItem.Size = new System.Drawing.Size(152, 22);
+            this.applesConvertItem.Size = new System.Drawing.Size(116, 22);
             this.applesConvertItem.Text = "Apples";
             this.applesConvertItem.Click += new System.EventHandler(this.ConvertClicked);
             // 
             // killersConvertItem
             // 
             this.killersConvertItem.Name = "killersConvertItem";
-            this.killersConvertItem.Size = new System.Drawing.Size(152, 22);
+            this.killersConvertItem.Size = new System.Drawing.Size(116, 22);
             this.killersConvertItem.Text = "Killers";
             this.killersConvertItem.Click += new System.EventHandler(this.ConvertClicked);
             // 
             // flowersConvertItem
             // 
             this.flowersConvertItem.Name = "flowersConvertItem";
-            this.flowersConvertItem.Size = new System.Drawing.Size(152, 22);
+            this.flowersConvertItem.Size = new System.Drawing.Size(116, 22);
             this.flowersConvertItem.Text = "Flowers";
             this.flowersConvertItem.Click += new System.EventHandler(this.ConvertClicked);
             // 
             // picturesConvertItem
             // 
             this.picturesConvertItem.Name = "picturesConvertItem";
-            this.picturesConvertItem.Size = new System.Drawing.Size(152, 22);
+            this.picturesConvertItem.Size = new System.Drawing.Size(116, 22);
             this.picturesConvertItem.Text = "Pictures";
             this.picturesConvertItem.Click += new System.EventHandler(this.ConvertClicked);
             // 
