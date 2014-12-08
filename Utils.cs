@@ -337,7 +337,6 @@ namespace Elmanager
         internal static void ShowError(string text, string caption = "Error", MessageBoxIcon icon = MessageBoxIcon.Hand)
         {
             MessageBox.Show(text, caption, MessageBoxButtons.OK, icon, MessageBoxDefaultButton.Button1, 0, false);
-            return;
         }
 
         internal static string SizeToString(object x)
