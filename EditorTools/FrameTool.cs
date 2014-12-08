@@ -27,8 +27,6 @@ namespace Elmanager.EditorTools
             }
         }
 
-        #region IEditorTool Members
-
         public void Activate()
         {
             _frameRadius = Global.AppSettings.LevelEditor.FrameRadius;
@@ -144,8 +142,6 @@ namespace Elmanager.EditorTools
         public void MouseUp(MouseEventArgs mouseData)
         {
         }
-
-        #endregion
 
         private void ExtraPolygons()
         {

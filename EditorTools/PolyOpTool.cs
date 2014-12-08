@@ -24,8 +24,6 @@ namespace Elmanager.EditorTools
             }
         }
 
-        #region IEditorTool Members
-
         public void Activate()
         {
             UpdateHelp();
@@ -162,7 +160,5 @@ namespace Elmanager.EditorTools
         public void MouseUp(MouseEventArgs mouseData)
         {
         }
-
-        #endregion
     }
 }

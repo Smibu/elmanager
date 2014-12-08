@@ -292,8 +292,6 @@ namespace Elmanager
             return OrthogonalProjection(a.X, a.Y, b.X, b.Y, p.X, p.Y);
         }
 
-        #region TriangulationSubroutines
-
         internal static double SignedArea(Polygon poly, int i, int j, int k)
         {
             double result = (poly.Vertices[j].X - poly.Vertices[i].X) * (poly.Vertices[k].Y - poly.Vertices[i].Y) -
@@ -342,10 +340,6 @@ namespace Elmanager
             return triangulatedPolyArray;
         }
 
-        #endregion
-
-        #region Nested type: VectorMark
-
         internal enum VectorMark
         {
             None = 0,
@@ -353,7 +347,5 @@ namespace Elmanager
             Highlight = 2,
             Visited = 3
         }
-
-        #endregion
     }
 }

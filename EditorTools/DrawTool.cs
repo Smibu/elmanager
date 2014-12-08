@@ -26,8 +26,6 @@ namespace Elmanager.EditorTools
             }
         }
 
-        #region IEditorTool Members
-
         public void Activate()
         {
             UpdateHelp();
@@ -104,7 +102,5 @@ namespace Elmanager.EditorTools
             }
             Renderer.RedrawScene();
         }
-
-        #endregion
     }
 }
