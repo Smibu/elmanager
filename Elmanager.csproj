@@ -284,9 +284,7 @@
     <Compile Include="Geometry.cs" />
     <Compile Include="EditorTools\IEditorTool.cs" />
     <Compile Include="EditorTools\IEditorToolBase.cs" />
-    <Compile Include="ILevelElement.cs" />
     <Compile Include="LevelException.cs" />
-    <Compile Include="LevelGenerator.cs" />
     <Compile Include="Matrix.cs" />
     <Compile Include="ElmaRenderer.cs" />
     <Compile Include="Level.cs" />
