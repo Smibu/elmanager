@@ -1,8 +1,9 @@
 using System.Drawing;
 using System.Windows.Forms;
+using System.Windows.Input;
 using Elmanager.Forms;
-using Key = System.Windows.Input.Key;
-using Keyboard = System.Windows.Input.Keyboard;
+using KeyEventArgs = System.Windows.Forms.KeyEventArgs;
+using MouseEventArgs = System.Windows.Forms.MouseEventArgs;
 
 namespace Elmanager.EditorTools
 {

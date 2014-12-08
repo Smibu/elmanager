@@ -1,5 +1,5 @@
 ﻿using System;
-using System.Collections.Generic;
+using GeoAPI.Geometries;
 
 namespace Elmanager
 {
@@ -105,7 +105,7 @@ namespace Elmanager
             Y = v.Y;
         }
 
-        public static implicit operator Vector(GeoAPI.Geometries.Coordinate v)
+        public static implicit operator Vector(Coordinate v)
         {
             return new Vector(v.X, v.Y);
         }
