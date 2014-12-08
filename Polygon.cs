@@ -379,7 +379,7 @@ namespace Elmanager
         {
             if (Math.Abs(vertexOffset - 1.0) < 0.000001)
             {
-                return this.Clone();
+                return Clone();
             }
             var smoothPoly = new Polygon();
             for (int i = 0; i < Vertices.Count; i++)

@@ -1294,7 +1294,7 @@ namespace Elmanager
                                            BikePicYFacingRight * Math.Cos(-BikePicRotationConst * Constants.DegToRad);
             Settings = settings.Clone();
             AspectRatio = renderingTarget.Width / (double) renderingTarget.Height;
-            CtrlWindowInfo = OpenTK.Platform.Utilities.CreateWindowsWindowInfo(renderingTarget.Handle);
+            CtrlWindowInfo = Utilities.CreateWindowsWindowInfo(renderingTarget.Handle);
             InitializeOpengl();
             DrawableImages = new List<DrawableImage>();
             if (File.Exists(Settings.LgrFile))
