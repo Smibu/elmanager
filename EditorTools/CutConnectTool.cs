@@ -8,7 +8,6 @@ namespace Elmanager.EditorTools
 {
     internal class CutConnectTool : ToolBase, IEditorTool
     {
-        private bool _connecting;
         private Vector _start;
         private bool _startSelected;
 
@@ -45,16 +44,7 @@ namespace Elmanager.EditorTools
 
         public void KeyDown(KeyEventArgs key)
         {
-            switch (key.KeyCode)
-            {
-                case Keys.Space:
-                    if (!StartSelected)
-                    {
-                        _connecting = !_connecting;
-                        UpdateHelp();
-                    }
-                    break;
-            }
+
         }
 
         public void MouseDown(MouseEventArgs mouseData)
@@ -70,9 +60,7 @@ namespace Elmanager.EditorTools
                     }
                     else
                     {
-                        if (_connecting)
-                            TryConnect(_start, CurrentPos);
-                        else
+                        if (!TryConnect(_start, CurrentPos))
                             Cut(_start, CurrentPos);
                     }
                     break;
@@ -102,18 +90,9 @@ namespace Elmanager.EditorTools
 
         public void UpdateHelp()
         {
-            if (_connecting)
-            {
-                LevEditor.InfoLabel.Text = StartSelected
-                                               ? "Left mouse button: select second vertex of the connection edge."
-                                               : "Left mouse button: select first vertex of the connection edge.";
-            }
-            else
-            {
-                LevEditor.InfoLabel.Text = StartSelected
-                                               ? "Left mouse button: select second vertex of the cutting edge."
-                                               : "Left mouse button: select first vertex of the cutting edge.";
-            }
+            LevEditor.InfoLabel.Text = StartSelected
+                ? "Left mouse button: set second vertex of the cut/connection edge."
+                : "Left mouse button: set first vertex of the cut/connection edge.";
         }
 
         private void Cut(Vector v1, Vector v2)
@@ -136,11 +115,12 @@ namespace Elmanager.EditorTools
                 LevEditor.Modified = true;
         }
 
-        private void TryConnect(Vector v1, Vector v2)
+        private bool TryConnect(Vector v1, Vector v2)
         {
             MarkAllAs(Geometry.VectorMark.None);
             List<Polygon> intersectingPolygons =
                 Lev.Polygons.Where(x => !x.IsGrass && x.IntersectsWith(v1, v2)).ToList();
+            bool anythingConnected = false;
             if (intersectingPolygons.Count == 2)
             {
                 Polygon connected = Geometry.Connect(intersectingPolygons[0], intersectingPolygons[1], _start,
@@ -151,10 +131,12 @@ namespace Elmanager.EditorTools
                     Lev.Polygons.Remove(intersectingPolygons[1]);
                     Lev.Polygons.Add(connected);
                     LevEditor.Modified = true;
+                    anythingConnected = true;
                 }
             }
             StartSelected = false;
             Renderer.RedrawScene();
+            return anythingConnected;
         }
     }
 }
