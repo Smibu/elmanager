@@ -9,19 +9,22 @@ namespace Elmanager.Forms
     {
         public event Action<TextToolOptions> EnteredTextChanged = delegate { };
         private Font _font;
+        private const double LineHeightFactor = 500.0;
 
         public Prompt()
         {
             InitializeComponent();
             textBox.TextChanged += (sender, e) => EnteredTextChanged(Result);
             smoothnessBar.ValueChanged += (sender, e) => EnteredTextChanged(Result);
+            lineHeightBar.ValueChanged += (sender, e) => EnteredTextChanged(Result);
         }
 
-        public static TextToolOptions? ShowDefault(TextToolOptions currentFont, Action<TextToolOptions> handler)
+        public static TextToolOptions? ShowDefault(TextToolOptions options, Action<TextToolOptions> handler)
         {
             var prompt = new Prompt();
+            prompt.Result = options;
             prompt.EnteredTextChanged += handler;
-            prompt.Result = currentFont;
+            prompt.EnteredTextChanged(prompt.Result);
             if (prompt.ShowDialog() == DialogResult.OK)
                 return prompt.Result;
             return null;
@@ -35,7 +38,8 @@ namespace Elmanager.Forms
                 {
                     Font = _font,
                     Text = textBox.Text,
-                    Smoothness = Math.Pow(1.1, -smoothnessBar.Value)
+                    Smoothness = Math.Pow(1.1, -smoothnessBar.Value),
+                    LineHeight = lineHeightBar.Value/LineHeightFactor
                 };
             }
             set
@@ -43,6 +47,7 @@ namespace Elmanager.Forms
                 _font = value.Font;
                 textBox.Text = value.Text;
                 smoothnessBar.Value = (int) Math.Round(Math.Log(1/value.Smoothness)/Math.Log(1.1));
+                lineHeightBar.Value = (int) Math.Round(value.LineHeight*LineHeightFactor);
                 EnteredTextChanged(Result);
             }
         }
@@ -61,7 +66,12 @@ namespace Elmanager.Forms
 
         private void fontButton_Click(object sender, EventArgs e)
         {
-            var dialog = new FontDialog {Font = _font, FontMustExist = true, ShowEffects = true};
+            var dialog = new FontDialog
+            {
+                Font = _font,
+                FontMustExist = true,
+                ShowEffects = true
+            };
             if (dialog.ShowDialog() == DialogResult.OK)
             {
                 _font = dialog.Font;

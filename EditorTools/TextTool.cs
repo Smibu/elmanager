@@ -1,7 +1,10 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Drawing;
+using System.Globalization;
 using System.Linq;
+using System.Windows;
 using System.Windows.Forms;
 using System.Windows.Markup;
 using System.Windows.Media;
@@ -18,7 +21,8 @@ namespace Elmanager.EditorTools
         {
             Font = new Font(new FontFamily("Arial Unicode MS"), 8.0f),
             Smoothness = 0.03,
-            Text = ""
+            Text = "Type text here!",
+            LineHeight = 1
         };
 
         private List<Polygon> _currentTextPolygons;
@@ -93,8 +97,6 @@ namespace Elmanager.EditorTools
         {
             if (_writing)
             {
-                Renderer.DrawLine(CurrentPos, CurrentPos + new Vector(1, 0), Color.Blue);
-
                 _currentTextPolygons.ForEach(p => Renderer.DrawPolygon(p, Color.Blue));
             }
         }
@@ -112,74 +114,60 @@ namespace Elmanager.EditorTools
             var fontfamily = new System.Windows.Media.FontFamily(options.Font.FontFamily.Name);
 
             var typeface = fontfamily.GetTypefaces().First();
+            var synonymMap = new Dictionary<string, string> {{"Italic", "Oblique"}, {"Demibold", "Bold"}};
             foreach (var familyTypeface in fontfamily.GetTypefaces())
             {
                 var faceName = familyTypeface.FaceNames[XmlLanguage.GetLanguage("en-US")];
-                var styleName = options.Font.Style.ToString().Replace(",", "");
+                var styleName =
+                    options.Font.Style.ToString()
+                        .Replace(",", "")
+                        .Replace("Underline", "")
+                        .Replace("Strikeout", "")
+                        .Trim();
+
                 if (faceName == styleName)
                 {
                     typeface = familyTypeface;
                     break;
                 }
-                if (faceName == styleName.Replace("Italic", "Oblique"))
+                if (synonymMap.Any(v => faceName == styleName.Replace(v.Key, v.Value)))
                 {
                     typeface = familyTypeface;
                     break;
                 }
             }
 
-            var polys = new List<Polygon>();
-
-            GlyphTypeface glyphTypeface;
-            var success = typeface.TryGetGlyphTypeface(out glyphTypeface);
-            if (success)
+            var decorations = new TextDecorationCollection();
+            if (options.Font.Strikeout)
             {
-                const double size = 1;
-                const double lineHeight = size;
-                double ypos = 0;
-                foreach (var line in options.Text.Split(new[] {"\r\n"}, StringSplitOptions.None))
-                {
-                    if (line != "")
-                    {
-                        Func<char, ushort> charToGlyphIndex = c =>
-                        {
-                            ushort index;
-                            if (glyphTypeface.CharacterToGlyphMap.TryGetValue(c, out index))
-                                return index;
-                            return glyphTypeface.CharacterToGlyphMap[' '];
-                        };
-                        var glyphRun = new GlyphRun(glyphTypeface,
-                            0,
-                            false,
-                            size,
-                            line.Select(charToGlyphIndex).ToList(),
-                            new Point(),
-                            line.Select(c => glyphTypeface.AdvanceWidths[charToGlyphIndex(c)]*size)
-                                .ToList(),
-                            null, null, null, null, null, null);
-                        var poly = glyphRun.BuildGeometry().GetOutlinedPathGeometry()
-                            .GetFlattenedPathGeometry(options.Smoothness, ToleranceType.Absolute);
-                        foreach (var figure in poly.Figures)
-                        {
-                            var polygon = new Polygon();
-                            foreach (
-                                var point in
-                                    figure.Segments.Select(segment => segment as PolyLineSegment)
-                                        .SelectMany(polysegment => polysegment.Points))
-                            {
-                                polygon.Add(new Vector(point.X + offset.X, point.Y + offset.Y + ypos,
-                                    Geometry.VectorMark.Selected));
-                            }
-                            polygon.UpdateDecomposition();
-                            polys.Add(polygon);
-                        }
-                    }
-                    ypos += lineHeight;
-                }
+                decorations.Add(TextDecorations.Strikethrough);
             }
-            else
+            if (options.Font.Underline)
             {
-                Utils.ShowError("Failed to get GlyphTypeface for this Typeface, sorry. Try some other font.");
+                decorations.Add(TextDecorations.Underline);
+            }
+
+            var polys = new List<Polygon>();
+            const double size = 1;
+            var formattedText = new FormattedText(options.Text, CultureInfo.CurrentCulture,
+                System.Windows.FlowDirection.LeftToRight, typeface, size, System.Windows.Media.Brushes.Black);
+            formattedText.LineHeight = options.LineHeight;
+            formattedText.SetTextDecorations(decorations);
+            var poly = formattedText.BuildGeometry(new Point(0, 0)).GetOutlinedPathGeometry()
+                .GetFlattenedPathGeometry(options.Smoothness, ToleranceType.Absolute);
+            foreach (var figure in poly.Figures)
+            {
+                var polygon = new Polygon();
+                foreach (
+                    var point in
+                        figure.Segments.Select(segment => segment as PolyLineSegment)
+                            .SelectMany(polysegment => polysegment.Points))
+                {
+                    polygon.Add(new Vector(point.X + offset.X, point.Y + offset.Y,
+                        Geometry.VectorMark.Selected));
+                }
+                polygon.UpdateDecomposition();
+                polys.Add(polygon);
             }
             return polys;
         }
