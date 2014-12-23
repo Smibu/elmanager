@@ -157,8 +157,7 @@ namespace Elmanager.EditorTools
                             line.Select(c => glyphTypeface.AdvanceWidths[charToGlyphIndex(c)]*size)
                                 .ToList(),
                             null, null, null, null, null, null);
-                        var geom = glyphRun.BuildGeometry();
-                        var poly = geom.GetOutlinedPathGeometry()
+                        var poly = glyphRun.BuildGeometry().GetOutlinedPathGeometry()
                             .GetFlattenedPathGeometry(options.Smoothness, ToleranceType.Absolute);
                         foreach (var figure in poly.Figures)
                         {
