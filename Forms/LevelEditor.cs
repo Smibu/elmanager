@@ -681,11 +681,21 @@ namespace Elmanager.Forms
             Renderer.CustomRendering = CustomRendering;
             Tools = new IEditorTool[]
             {
-                new SelectionTool(this), new VertexTool(this), new DrawTool(this), new ObjectTool(this),
-                new PipeTool(this), new ZoomTool(this), new EllipseTool(this), new PolyOpTool(this),
-                new FrameTool(this), new SmoothenTool(this), new CutConnectTool(this),
+                new SelectionTool(this),
+                new VertexTool(this),
+                new DrawTool(this),
+                new ObjectTool(this),
+                new PipeTool(this),
+                new ZoomTool(this),
+                new EllipseTool(this),
+                new PolyOpTool(this),
+                new FrameTool(this),
+                new SmoothenTool(this),
+                new CutConnectTool(this),
                 new AutoGrassTool(this),
-                new TransformTool(this), new PictureTool(this)
+                new TransformTool(this),
+                new PictureTool(this),
+                new TextTool(this)
             };
             CurrentTool = Tools[0];
             CurrentTool.Activate();
@@ -1662,6 +1672,14 @@ namespace Elmanager.Forms
                 Lev.Objects.Add(obj);
             }
             Modified = true;
+        }
+
+        private void TextButton_CheckedChanged(object sender, EventArgs e)
+        {
+            if (TextButton.Checked)
+            {
+                ChangeToolTo(14);
+            }
         }
     }
 }

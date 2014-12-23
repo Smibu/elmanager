@@ -157,9 +157,11 @@
     <Reference Include="System.Core">
       <RequiredTargetFramework>3.5</RequiredTargetFramework>
     </Reference>
+    <Reference Include="System.Data" />
     <Reference Include="System.Design" />
     <Reference Include="System.Drawing" />
     <Reference Include="System.Windows.Forms" />
+    <Reference Include="System.Xml" />
     <Reference Include="WindowsBase">
       <Private>False</Private>
     </Reference>
@@ -167,6 +169,8 @@
   <ItemGroup>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="EditorTools\TextTool.cs" />
+    <Compile Include="EditorTools\TextToolOptions.cs" />
     <Compile Include="ElmanagerSettings.cs" />
     <Compile Include="ComponentManager.cs" />
     <Compile Include="Constants.cs" />
@@ -250,6 +254,12 @@
     </Compile>
     <Compile Include="Forms\PictureForm.Designer.cs">
       <DependentUpon>PictureForm.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Forms\Prompt.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Forms\Prompt.Designer.cs">
+      <DependentUpon>Prompt.cs</DependentUpon>
     </Compile>
     <Compile Include="Forms\RenameForm.cs">
       <SubType>Form</SubType>
@@ -344,6 +354,9 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Forms\PictureForm.resx">
       <DependentUpon>PictureForm.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Forms\Prompt.resx">
+      <DependentUpon>Prompt.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="Forms\RenameForm.resx">
       <DependentUpon>RenameForm.cs</DependentUpon>

@@ -159,6 +159,7 @@ namespace Elmanager.Forms
             this.VertexButton = new Elmanager.CustomControls.RadioButtonMod();
             this.SelectButton = new Elmanager.CustomControls.RadioButtonMod();
             this.saveAsPictureDialog = new System.Windows.Forms.SaveFileDialog();
+            this.TextButton = new Elmanager.CustomControls.RadioButtonMod();
             this.MenuStrip1.SuspendLayout();
             this.StatusStrip1.SuspendLayout();
             this.ToolStripPanel1.SuspendLayout();
@@ -538,7 +539,7 @@ namespace Elmanager.Forms
             this.EditorControl.Dock = System.Windows.Forms.DockStyle.Fill;
             this.EditorControl.Location = new System.Drawing.Point(84, 126);
             this.EditorControl.Name = "EditorControl";
-            this.EditorControl.Size = new System.Drawing.Size(845, 306);
+            this.EditorControl.Size = new System.Drawing.Size(845, 329);
             this.EditorControl.TabIndex = 2;
             this.EditorControl.DragDrop += new System.Windows.Forms.DragEventHandler(this.LevelDropped);
             this.EditorControl.DragEnter += new System.Windows.Forms.DragEventHandler(this.StartingDrop);
@@ -558,7 +559,7 @@ namespace Elmanager.Forms
             this.CoordinateLabel,
             this.SelectionLabel,
             this.HighlightLabel});
-            this.StatusStrip1.Location = new System.Drawing.Point(0, 432);
+            this.StatusStrip1.Location = new System.Drawing.Point(0, 455);
             this.StatusStrip1.Name = "StatusStrip1";
             this.StatusStrip1.ShowItemToolTips = true;
             this.StatusStrip1.Size = new System.Drawing.Size(929, 24);
@@ -1246,6 +1247,7 @@ namespace Elmanager.Forms
             // ToolPanel
             // 
             this.ToolPanel.AutoScroll = true;
+            this.ToolPanel.Controls.Add(this.TextButton);
             this.ToolPanel.Controls.Add(this.PictureButton);
             this.ToolPanel.Controls.Add(this.AutoGrassButton);
             this.ToolPanel.Controls.Add(this.CutConnectButton);
@@ -1262,7 +1264,7 @@ namespace Elmanager.Forms
             this.ToolPanel.Dock = System.Windows.Forms.DockStyle.Left;
             this.ToolPanel.Location = new System.Drawing.Point(0, 126);
             this.ToolPanel.Name = "ToolPanel";
-            this.ToolPanel.Size = new System.Drawing.Size(84, 306);
+            this.ToolPanel.Size = new System.Drawing.Size(84, 329);
             this.ToolPanel.TabIndex = 3;
             this.ToolPanel.Text = "Tools";
             // 
@@ -1443,11 +1445,25 @@ namespace Elmanager.Forms
             this.saveAsPictureDialog.FileName = "Untitled";
             this.saveAsPictureDialog.Filter = "Portable Network Graphics (*.png)|*.png";
             // 
+            // TextButton
+            // 
+            this.TextButton.Appearance = System.Windows.Forms.Appearance.Button;
+            this.TextButton.AutoSize = true;
+            this.TextButton.Dock = System.Windows.Forms.DockStyle.Top;
+            this.TextButton.Location = new System.Drawing.Point(0, 299);
+            this.TextButton.Name = "TextButton";
+            this.TextButton.Size = new System.Drawing.Size(84, 23);
+            this.TextButton.TabIndex = 16;
+            this.TextButton.Text = "&Text";
+            this.TextButton.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
+            this.TextButton.UseVisualStyleBackColor = true;
+            this.TextButton.CheckedChanged += new System.EventHandler(this.TextButton_CheckedChanged);
+            // 
             // LevelEditor
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(929, 456);
+            this.ClientSize = new System.Drawing.Size(929, 479);
             this.Controls.Add(this.EditorControl);
             this.Controls.Add(this.ToolPanel);
             this.Controls.Add(this.StatusStrip1);
@@ -1610,6 +1626,7 @@ namespace Elmanager.Forms
         private ToolStripMenuItem killersConvertItem;
         private ToolStripMenuItem flowersConvertItem;
         private ToolStripMenuItem picturesConvertItem;
+        internal RadioButtonMod TextButton;
 	}
 	
 }
