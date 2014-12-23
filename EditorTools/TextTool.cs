@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Diagnostics;
 using System.Drawing;
 using System.Globalization;
 using System.Linq;
@@ -9,7 +8,9 @@ using System.Windows.Forms;
 using System.Windows.Markup;
 using System.Windows.Media;
 using Elmanager.Forms;
+using Brushes = System.Windows.Media.Brushes;
 using Color = System.Drawing.Color;
+using FlowDirection = System.Windows.FlowDirection;
 using FontFamily = System.Drawing.FontFamily;
 using Point = System.Windows.Point;
 
@@ -107,6 +108,7 @@ namespace Elmanager.EditorTools
 
         public void Activate()
         {
+            UpdateHelp();
         }
 
         private List<Polygon> RenderString(TextToolOptions options, Vector offset)
@@ -150,8 +152,10 @@ namespace Elmanager.EditorTools
             var polys = new List<Polygon>();
             const double size = 1;
             var formattedText = new FormattedText(options.Text, CultureInfo.CurrentCulture,
-                System.Windows.FlowDirection.LeftToRight, typeface, size, System.Windows.Media.Brushes.Black);
-            formattedText.LineHeight = options.LineHeight;
+                FlowDirection.LeftToRight, typeface, size, Brushes.Black)
+            {
+                LineHeight = options.LineHeight
+            };
             formattedText.SetTextDecorations(decorations);
             var poly = formattedText.BuildGeometry(new Point(0, 0)).GetOutlinedPathGeometry()
                 .GetFlattenedPathGeometry(options.Smoothness, ToleranceType.Absolute);
@@ -174,6 +178,7 @@ namespace Elmanager.EditorTools
 
         public void UpdateHelp()
         {
+            LevEditor.InfoLabel.Text = "Left mouse button: open text input dialog.";
         }
     }
 }
