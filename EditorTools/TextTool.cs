@@ -150,14 +150,15 @@ namespace Elmanager.EditorTools
             }
 
             var polys = new List<Polygon>();
-            const double size = 1;
+            const double sizeFactor = 0.1;
             var formattedText = new FormattedText(options.Text, CultureInfo.CurrentCulture,
-                FlowDirection.LeftToRight, typeface, size, Brushes.Black)
+                FlowDirection.LeftToRight, typeface, options.Font.SizeInPoints*sizeFactor, Brushes.Black)
             {
-                LineHeight = options.LineHeight
+                LineHeight = options.LineHeight*options.Font.SizeInPoints*sizeFactor
             };
             formattedText.SetTextDecorations(decorations);
-            var poly = formattedText.BuildGeometry(new Point(0, 0)).GetOutlinedPathGeometry()
+            var poly = formattedText.BuildGeometry(new Point(0, 0))
+                .GetOutlinedPathGeometry(0.025, ToleranceType.Absolute)
                 .GetFlattenedPathGeometry(options.Smoothness, ToleranceType.Absolute);
             foreach (var figure in poly.Figures)
             {

@@ -70,13 +70,21 @@ namespace Elmanager.Forms
             {
                 Font = _font,
                 FontMustExist = true,
-                ShowEffects = true
+                ShowEffects = true,
+                MinSize = 1,
+                ShowApply = true
+            };
+            dialog.Apply += (s, ev) =>
+            {
+                var r = Result;
+                r.Font = dialog.Font;
+                EnteredTextChanged(r);
             };
             if (dialog.ShowDialog() == DialogResult.OK)
             {
                 _font = dialog.Font;
-                EnteredTextChanged(Result);
             }
+            EnteredTextChanged(Result);
         }
 
         private void Prompt_KeyDown(object sender, KeyEventArgs e)
