@@ -255,11 +255,11 @@
     <Compile Include="Forms\PictureForm.Designer.cs">
       <DependentUpon>PictureForm.cs</DependentUpon>
     </Compile>
-    <Compile Include="Forms\Prompt.cs">
+    <Compile Include="Forms\TextToolForm.cs">
       <SubType>Form</SubType>
     </Compile>
-    <Compile Include="Forms\Prompt.Designer.cs">
-      <DependentUpon>Prompt.cs</DependentUpon>
+    <Compile Include="Forms\TextToolForm.Designer.cs">
+      <DependentUpon>TextToolForm.cs</DependentUpon>
     </Compile>
     <Compile Include="Forms\RenameForm.cs">
       <SubType>Form</SubType>
@@ -355,8 +355,8 @@
     <EmbeddedResource Include="Forms\PictureForm.resx">
       <DependentUpon>PictureForm.cs</DependentUpon>
     </EmbeddedResource>
-    <EmbeddedResource Include="Forms\Prompt.resx">
-      <DependentUpon>Prompt.cs</DependentUpon>
+    <EmbeddedResource Include="Forms\TextToolForm.resx">
+      <DependentUpon>TextToolForm.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="Forms\RenameForm.resx">
       <DependentUpon>RenameForm.cs</DependentUpon>

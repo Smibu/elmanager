@@ -41,7 +41,7 @@ namespace Elmanager.EditorTools
                     _writing = true;
                     _currentTextPolygons = new List<Polygon>();
                     Renderer.RedrawScene();
-                    var result = Prompt.ShowDefault(_currentOptions, HandleChange);
+                    var result = TextToolForm.ShowDefault(_currentOptions, HandleChange);
                     _writing = false;
                     if (result.HasValue)
                     {

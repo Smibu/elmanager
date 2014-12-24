@@ -5,23 +5,24 @@ using Elmanager.EditorTools;
 
 namespace Elmanager.Forms
 {
-    public partial class Prompt : Form
+    public partial class TextToolForm : Form
     {
         public event Action<TextToolOptions> EnteredTextChanged = delegate { };
         private Font _font;
         private const double LineHeightFactor = 500.0;
 
-        public Prompt()
+        public TextToolForm()
         {
             InitializeComponent();
-            textBox.TextChanged += (sender, e) => EnteredTextChanged(Result);
-            smoothnessBar.ValueChanged += (sender, e) => EnteredTextChanged(Result);
-            lineHeightBar.ValueChanged += (sender, e) => EnteredTextChanged(Result);
+            EventHandler handleChange = (sender, e) => EnteredTextChanged(Result);
+            textBox.TextChanged += handleChange;
+            smoothnessBar.ValueChanged += handleChange;
+            lineHeightBar.ValueChanged += handleChange;
         }
 
         public static TextToolOptions? ShowDefault(TextToolOptions options, Action<TextToolOptions> handler)
         {
-            var prompt = new Prompt();
+            var prompt = new TextToolForm();
             prompt.Result = options;
             prompt.EnteredTextChanged += handler;
             prompt.EnteredTextChanged(prompt.Result);
