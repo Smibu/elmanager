@@ -20,7 +20,7 @@ namespace Elmanager.EditorTools
     {
         private TextToolOptions _currentOptions = new TextToolOptions
         {
-            Font = new Font(new FontFamily("Arial Unicode MS"), 8.0f),
+            Font = new Font(new FontFamily("Arial Unicode MS"), 9.0f),
             Smoothness = 0.03,
             Text = "Type text here!",
             LineHeight = 1
@@ -158,7 +158,7 @@ namespace Elmanager.EditorTools
             };
             formattedText.SetTextDecorations(decorations);
             var poly = formattedText.BuildGeometry(new Point(0, 0))
-                .GetOutlinedPathGeometry(0.025, ToleranceType.Absolute)
+                .GetOutlinedPathGeometry(0.005, ToleranceType.Absolute)
                 .GetFlattenedPathGeometry(options.Smoothness, ToleranceType.Absolute);
             foreach (var figure in poly.Figures)
             {
