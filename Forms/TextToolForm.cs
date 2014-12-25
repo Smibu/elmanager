@@ -10,6 +10,7 @@ namespace Elmanager.Forms
     {
         public event Action<TextToolOptions> EnteredTextChanged = delegate { };
         private Font _font;
+        private string _fontStyleName = "";
         private const double LineHeightFactor = 500.0;
 
         public TextToolForm()
@@ -41,7 +42,8 @@ namespace Elmanager.Forms
                     Font = _font,
                     Text = textBox.Text,
                     Smoothness = Math.Pow(1.1, -smoothnessBar.Value),
-                    LineHeight = lineHeightBar.Value/LineHeightFactor
+                    LineHeight = lineHeightBar.Value/LineHeightFactor,
+                    FontStyleName = _fontStyleName
                 };
             }
             set
@@ -79,11 +81,13 @@ namespace Elmanager.Forms
             {
                 var r = Result;
                 r.Font = dialog.Font;
+                r.FontStyleName = dialog.FontStyleName;
                 EnteredTextChanged(r);
             };
             if (dialog.ShowDialog() == DialogResult.OK)
             {
                 _font = dialog.Font;
+                _fontStyleName = dialog.FontStyleName;
             }
             EnteredTextChanged(Result);
         }

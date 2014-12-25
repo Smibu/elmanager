@@ -8,5 +8,6 @@ namespace Elmanager.EditorTools
         public Font Font;
         public double Smoothness;
         public double LineHeight;
+        public string FontStyleName;
     }
 }

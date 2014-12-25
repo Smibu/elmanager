@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Drawing;
 using System.Globalization;
 using System.Linq;
@@ -20,7 +21,7 @@ namespace Elmanager.EditorTools
     {
         private TextToolOptions _currentOptions = new TextToolOptions
         {
-            Font = new Font(new FontFamily("Arial Unicode MS"), 9.0f),
+            Font = new Font(new FontFamily("Arial"), 9.0f),
             Smoothness = 0.03,
             Text = "Type text here!",
             LineHeight = 1
@@ -28,6 +29,13 @@ namespace Elmanager.EditorTools
 
         private List<Polygon> _currentTextPolygons;
         private bool _writing;
+        private static readonly Dictionary<string, string> EmptySynonymMap = new Dictionary<string, string>();
+
+        private static readonly Dictionary<string, string> SynonymMap = new Dictionary<string, string>
+        {
+            {"Italic", "Oblique"},
+            {"Demibold", "Bold"}
+        };
 
         internal TextTool(LevelEditor editor) : base(editor)
         {
@@ -111,33 +119,12 @@ namespace Elmanager.EditorTools
             UpdateHelp();
         }
 
-        private List<Polygon> RenderString(TextToolOptions options, Vector offset)
+        private static List<Polygon> RenderString(TextToolOptions options, Vector offset)
         {
             var fontfamily = new System.Windows.Media.FontFamily(options.Font.FontFamily.Name);
 
-            var typeface = fontfamily.GetTypefaces().First();
-            var synonymMap = new Dictionary<string, string> {{"Italic", "Oblique"}, {"Demibold", "Bold"}};
-            foreach (var familyTypeface in fontfamily.GetTypefaces())
-            {
-                var faceName = familyTypeface.FaceNames[XmlLanguage.GetLanguage("en-US")];
-                var styleName =
-                    options.Font.Style.ToString()
-                        .Replace(",", "")
-                        .Replace("Underline", "")
-                        .Replace("Strikeout", "")
-                        .Trim();
-
-                if (faceName == styleName)
-                {
-                    typeface = familyTypeface;
-                    break;
-                }
-                if (synonymMap.Any(v => faceName == styleName.Replace(v.Key, v.Value)))
-                {
-                    typeface = familyTypeface;
-                    break;
-                }
-            }
+            var typeface = FindTypeface(options, fontfamily, EmptySynonymMap) ??
+                           FindTypeface(options, fontfamily, SynonymMap) ?? fontfamily.GetTypefaces().First();
 
             var decorations = new TextDecorationCollection();
             if (options.Font.Strikeout)
@@ -151,7 +138,7 @@ namespace Elmanager.EditorTools
 
             var polys = new List<Polygon>();
             const double sizeFactor = 0.1;
-            var formattedText = new FormattedText(options.Text, CultureInfo.CurrentCulture,
+            var formattedText = new FormattedText(options.Text, CultureInfo.InvariantCulture,
                 FlowDirection.LeftToRight, typeface, options.Font.SizeInPoints*sizeFactor, Brushes.Black)
             {
                 LineHeight = options.LineHeight*options.Font.SizeInPoints*sizeFactor
@@ -175,6 +162,46 @@ namespace Elmanager.EditorTools
                 polys.Add(polygon);
             }
             return polys;
+        }
+
+        private static Typeface FindTypeface(TextToolOptions options, System.Windows.Media.FontFamily fontfamily,
+            Dictionary<string, string> synonymMap)
+        {
+            Typeface typeface = null;
+            foreach (var familyTypeface in fontfamily.GetTypefaces())
+            {
+                var faceName = familyTypeface.FaceNames[XmlLanguage.GetLanguage("en-US")];
+                
+                var styleName =
+                    options.Font.Style.ToString()
+                        .Replace(",", "")
+                        .Replace("Underline", "")
+                        .Replace("Strikeout", "")
+                        .Trim();
+                var fixedStyleName = familyTypeface.Weight + " " + familyTypeface.Style;
+                
+                if (familyTypeface.Style.ToString() == styleName)
+                {
+                    typeface = familyTypeface;
+                    break;
+                }
+                if (fixedStyleName == options.FontStyleName)
+                {
+                    typeface = familyTypeface;
+                    break;
+                }
+                if (fixedStyleName == options.FontStyleName.Replace(faceName, "").Trim())
+                {
+                    typeface = familyTypeface;
+                    break;
+                }
+                if (synonymMap.Any(v => faceName == styleName.Replace(v.Key, v.Value)))
+                {
+                    typeface = familyTypeface;
+                    break;
+                }
+            }
+            return typeface;
         }
 
         public void UpdateHelp()
