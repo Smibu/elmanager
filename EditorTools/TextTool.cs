@@ -61,6 +61,7 @@ namespace Elmanager.EditorTools
                         {
                             LevEditor.Modified = true;
                         }
+                        LevEditor.UpdateSelectionInfo();
                     }
                     Renderer.RedrawScene();
                     break;
