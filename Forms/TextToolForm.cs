@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Drawing;
 using System.Windows.Forms;
+using Elmanager.CustomControls;
 using Elmanager.EditorTools;
 
 namespace Elmanager.Forms
@@ -67,13 +68,12 @@ namespace Elmanager.Forms
 
         private void fontButton_Click(object sender, EventArgs e)
         {
-            var dialog = new FontDialog
+            var dialog = new FontDialogMod
             {
                 Font = _font,
                 FontMustExist = true,
                 ShowEffects = true,
-                MinSize = 1,
-                ShowApply = true
+                MinSize = 1
             };
             dialog.Apply += (s, ev) =>
             {

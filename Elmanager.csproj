@@ -169,6 +169,9 @@
   <ItemGroup>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="CustomControls\FontDialogMod.cs">
+      <SubType>Component</SubType>
+    </Compile>
     <Compile Include="EditorTools\TextTool.cs" />
     <Compile Include="EditorTools\TextToolOptions.cs" />
     <Compile Include="ElmanagerSettings.cs" />
