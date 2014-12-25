@@ -18,7 +18,7 @@ namespace Elmanager.CustomControls
         private static extern bool PostMessage(IntPtr hWnd, int wMsg, IntPtr wParam, IntPtr lParam);
 
         [DllImport("user32.dll", SetLastError = true)]
-        static extern uint GetDlgItemText(IntPtr hDlg, int nIDDlgItem,
+        private static extern uint GetDlgItemText(IntPtr hDlg, int nIDDlgItem,
            [Out] StringBuilder lpString, int nMaxCount);
 
         public FontDialogMod()
