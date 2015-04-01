@@ -749,7 +749,7 @@ namespace Elmanager
                 {
                     foreach (ElmaRenderer.DrawableImage z in lgrImages)
                     {
-                        if (z.Type == Lgr.ImageType.Picture && fileTexture.Name == z.Name)
+                        if (z.Type == Lgr.ImageType.Picture && fileTexture.Name.Equals(z.Name, StringComparison.InvariantCultureIgnoreCase))
                         {
                             Pictures.Add(new Picture(z, fileTexture.Position, fileTexture.Distance, fileTexture.Clipping));
                             pictureFound = true;
@@ -761,12 +761,12 @@ namespace Elmanager
                 {
                     foreach (ElmaRenderer.DrawableImage texture in lgrImages)
                     {
-                        if (texture.Type == Lgr.ImageType.Texture && fileTexture.Name == texture.Name)
+                        if (texture.Type == Lgr.ImageType.Texture && fileTexture.Name.Equals(texture.Name, StringComparison.InvariantCultureIgnoreCase))
                         {
                             pictureFound = true;
                             foreach (ElmaRenderer.DrawableImage mask in lgrImages)
                             {
-                                if (mask.Type == Lgr.ImageType.Mask && mask.Name == fileTexture.MaskName)
+                                if (mask.Type == Lgr.ImageType.Mask && mask.Name.Equals(fileTexture.MaskName, StringComparison.InvariantCultureIgnoreCase))
                                 {
                                     Pictures.Add(new Picture(fileTexture.Clipping, fileTexture.Distance, fileTexture.Position, texture, mask));
                                     break;
