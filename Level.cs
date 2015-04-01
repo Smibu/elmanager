@@ -163,7 +163,7 @@ namespace Elmanager
                 }
                 else
                     sp += 20;
-                var objectToAdd = new Object(new Vector(x, y), objectType, appleType, animNum);
+                var objectToAdd = new Object(new Vector(x, y), objectType, appleType, animNum + 1);
                 Objects.Add(objectToAdd);
                 if (objectType == ObjectType.Apple)
                     Apples.Add(objectToAdd);
@@ -673,7 +673,7 @@ namespace Elmanager
                 levelFile.AddRange(BitConverter.GetBytes(x.Position.Y));
                 levelFile.AddRange(BitConverter.GetBytes((int) x.Type));
                 levelFile.AddRange(BitConverter.GetBytes((int) x.AppleType));
-                levelFile.AddRange(BitConverter.GetBytes(x.AnimationNumber));
+                levelFile.AddRange(BitConverter.GetBytes(x.AnimationNumber - 1));
             }
             levelFile.AddRange(BitConverter.GetBytes(_textureData.Count + 0.2345672));
             foreach (LevelFileTexture x in _textureData)

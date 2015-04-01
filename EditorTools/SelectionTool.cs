@@ -84,8 +84,47 @@ namespace Elmanager.EditorTools
 
         public void KeyDown(KeyEventArgs key)
         {
-            if (key.KeyCode == Keys.Space)
-                LevEditor.TransformMenuItemClick();
+            switch (key.KeyCode)
+            {
+                case Keys.Space:
+                    LevEditor.TransformMenuItemClick();
+                    break;
+                case Keys.D1:
+                    UpdateAnimNumbers(1);
+                    break;
+                case Keys.D2:
+                    UpdateAnimNumbers(2);
+                    break;
+                case Keys.D3:
+                    UpdateAnimNumbers(3);
+                    break;
+                case Keys.D4:
+                    UpdateAnimNumbers(4);
+                    break;
+                case Keys.D5:
+                    UpdateAnimNumbers(5);
+                    break;
+                case Keys.D6:
+                    UpdateAnimNumbers(6);
+                    break;
+                case Keys.D7:
+                    UpdateAnimNumbers(7);
+                    break;
+                case Keys.D8:
+                    UpdateAnimNumbers(8);
+                    break;
+                case Keys.D9:
+                    UpdateAnimNumbers(9);
+                    break;
+            }
+        }
+
+        private void UpdateAnimNumbers(int animNum)
+        {
+            Lev.Objects.Where(obj => obj.Type == Level.ObjectType.Apple && obj.Position.Mark == Geometry.VectorMark.Selected)
+                .ToList().ForEach(obj => obj.AnimationNumber = animNum);
+            Renderer.RedrawScene();
+            ShowObjectInfo(GetNearestObjectIndex(CurrentPos));
         }
 
         public void MouseDown(MouseEventArgs mouseData)
@@ -427,28 +466,34 @@ namespace Elmanager.EditorTools
 
         private void ShowObjectInfo(int currentObjectIndex)
         {
+            if (currentObjectIndex < 0)
+            {
+                return;
+            }
             Level.Object currObj = Lev.Objects[currentObjectIndex];
             switch (currObj.Type)
             {
                 case Level.ObjectType.Apple:
+                    LevEditor.HighlightLabel.Text = "Apple: ";
                     switch (currObj.AppleType)
                     {
                         case Level.AppleTypes.Normal:
-                            LevEditor.HighlightLabel.Text = "Apple: Normal";
+                            LevEditor.HighlightLabel.Text += "Normal";
                             break;
                         case Level.AppleTypes.GravityUp:
-                            LevEditor.HighlightLabel.Text = "Apple: Gravity up";
+                            LevEditor.HighlightLabel.Text += "Gravity up";
                             break;
                         case Level.AppleTypes.GravityDown:
-                            LevEditor.HighlightLabel.Text = "Apple: Gravity down";
+                            LevEditor.HighlightLabel.Text += "Gravity down";
                             break;
                         case Level.AppleTypes.GravityLeft:
-                            LevEditor.HighlightLabel.Text = "Apple: Gravity left";
+                            LevEditor.HighlightLabel.Text += "Gravity left";
                             break;
                         case Level.AppleTypes.GravityRight:
-                            LevEditor.HighlightLabel.Text = "Apple: Gravity right";
+                            LevEditor.HighlightLabel.Text += "Gravity right";
                             break;
                     }
+                    LevEditor.HighlightLabel.Text += ", animation number: " + currObj.AnimationNumber;
                     break;
                 case Level.ObjectType.Killer:
                     LevEditor.HighlightLabel.Text = "Killer";

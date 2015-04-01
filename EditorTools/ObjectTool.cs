@@ -7,6 +7,7 @@ namespace Elmanager.EditorTools
     {
         private Level.ObjectType _currentObjectType = Level.ObjectType.Apple;
         private bool _hasFocus;
+        private int _animNum = 1;
 
         internal ObjectTool(LevelEditor editor)
             : base(editor)
@@ -49,7 +50,7 @@ namespace Elmanager.EditorTools
                     Renderer.DrawKiller(CurrentPos);
                     break;
                 case Level.ObjectType.Apple:
-                    Renderer.DrawApple(CurrentPos);
+                    Renderer.DrawApple(CurrentPos, _animNum);
                     break;
                 case Level.ObjectType.Flower:
                     Renderer.DrawFlower(CurrentPos);
@@ -63,27 +64,65 @@ namespace Elmanager.EditorTools
 
         public void KeyDown(KeyEventArgs key)
         {
-            if (key.KeyCode != Keys.Space) return;
-            switch (_currentObjectType)
+            var somethingHappened = true;
+            switch (key.KeyCode)
             {
-                case Level.ObjectType.Apple:
-                    _currentObjectType = Level.ObjectType.Killer;
+                case Keys.Space:
+                    switch (_currentObjectType)
+                    {
+                        case Level.ObjectType.Apple:
+                            _currentObjectType = Level.ObjectType.Killer;
+                            break;
+                        case Level.ObjectType.Killer:
+                            _currentObjectType = Level.ObjectType.Flower;
+                            break;
+                        case Level.ObjectType.Flower:
+                            _currentObjectType = Level.ObjectType.Apple;
+                            break;
+                    }
+                    UpdateHelp();
                     break;
-                case Level.ObjectType.Killer:
-                    _currentObjectType = Level.ObjectType.Flower;
+                case Keys.D1:
+                    _animNum = 1;
                     break;
-                case Level.ObjectType.Flower:
-                    _currentObjectType = Level.ObjectType.Apple;
+                case Keys.D2:
+                    _animNum = 2;
+                    break;
+                case Keys.D3:
+                    _animNum = 3;
+                    break;
+                case Keys.D4:
+                    _animNum = 4;
+                    break;
+                case Keys.D5:
+                    _animNum = 5;
+                    break;
+                case Keys.D6:
+                    _animNum = 6;
+                    break;
+                case Keys.D7:
+                    _animNum = 7;
+                    break;
+                case Keys.D8:
+                    _animNum = 8;
+                    break;
+                case Keys.D9:
+                    _animNum = 9;
+                    break;
+                default:
+                    somethingHappened = false;
                     break;
             }
-            UpdateHelp();
-            Renderer.RedrawScene();
+            if (somethingHappened)
+            {
+                Renderer.RedrawScene();
+            }
         }
 
         public void MouseDown(MouseEventArgs mouseData)
         {
             if (mouseData.Button != MouseButtons.Left) return;
-            Lev.Objects.Add(new Level.Object(CurrentPos, _currentObjectType, Level.AppleTypes.Normal, 0));
+            Lev.Objects.Add(new Level.Object(CurrentPos, _currentObjectType, Level.AppleTypes.Normal, _animNum));
             LevEditor.Modified = true;
         }
 

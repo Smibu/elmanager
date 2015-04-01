@@ -60,7 +60,7 @@ namespace Elmanager
         private readonly int[] _viewPort = new int[4];
         private static bool _smoothZoomInProgress;
         private Color ActivePlayerColor;
-        private int ApplePic;
+        private Dictionary<int, int> ApplePics = new Dictionary<int, int>();
         private int ArmPic;
         private double AspectRatio;
         private int BikePic;
@@ -236,11 +236,17 @@ namespace Elmanager
             return snapShotBmp;
         }
 
-        internal void DrawApple(Vector v)
+        private int GetApple(int animNum)
+        {
+            int apple;
+            return ApplePics.TryGetValue(animNum, out apple) ? apple : ApplePics[1];
+        }
+
+        internal void DrawApple(Vector v, int animNum = 1)
         {
             GL.Enable(EnableCap.Texture2D);
             GL.Enable(EnableCap.AlphaTest);
-            DrawObject(ApplePic, v);
+            DrawObject(GetApple(animNum), v);
             GL.Disable(EnableCap.Texture2D);
             GL.Disable(EnableCap.AlphaTest);
         }
@@ -695,7 +701,7 @@ namespace Elmanager
                             break;
                         case Level.ObjectType.Apple:
                             if (WrongLevVersion || ActivePlayerIndices.Count == 0)
-                                DrawObject(ApplePic, x.Position, depth);
+                                DrawObject(GetApple(x.AnimationNumber), x.Position, depth);
                             break;
                         case Level.ObjectType.Start:
                             if (!HideStartObject)
@@ -715,10 +721,10 @@ namespace Elmanager
                     for (int j = i; j < CurrentPlayerAppleEvents.Count(); j++)
                     {
                         Level.Object z = Lev.Apples[CurrentPlayerAppleEvents[j].Info];
-                        DrawObject(ApplePic, z.Position);
+                        DrawObject(GetApple(z.AnimationNumber), z.Position);
                     }
                     foreach (Level.Object x in NotTakenApples)
-                        DrawObject(ApplePic, x.Position);
+                        DrawObject(GetApple(x.AnimationNumber), x.Position);
                 }
             }
             DisableCaps();
@@ -1308,7 +1314,11 @@ namespace Elmanager
             if (OpenGLInitialized)
             {
                 GL.DeleteTexture(WheelPic);
-                GL.DeleteTexture(ApplePic);
+                foreach (var apple in ApplePics.Values)
+                {
+                    GL.DeleteTexture(apple);
+                }
+                ApplePics.Clear();
                 GL.DeleteTexture(HeadPic);
                 GL.DeleteTexture(KillerPic);
                 GL.DeleteTexture(FlowerPic);
@@ -1749,6 +1759,7 @@ namespace Elmanager
                 Utils.ShowError("Error occurred when loading LGR file! Reason:\r\n\r\n" + ex.Message);
                 return;
             }
+            var firstFrameRect = new Rectangle(0, 0, 40, 40);
             foreach (Lgr.LgrImage x in CurrentLgr.LgrImages)
             {
                 switch (x.Name)
@@ -1778,29 +1789,22 @@ namespace Elmanager
                         ArmPic = LoadTexture(x, RotateFlipType.RotateNoneFlipX);
                         break;
                     case "qexit":
-                        FlowerPic = LoadTexture(x, new Rectangle(0, 0, 40, 40));
+                        FlowerPic = LoadTexture(x, firstFrameRect);
                         break;
                     case "qfood1":
-                        ApplePic = LoadTexture(x, new Rectangle(0, 0, 40, 40));
-                        break;
                     case "qfood2":
-                        break;
                     case "qfood3":
-                        break;
                     case "qfood4":
-                        break;
                     case "qfood5":
-                        break;
                     case "qfood6":
-                        break;
                     case "qfood7":
-                        break;
                     case "qfood8":
-                        break;
                     case "qfood9":
+                        int animNum = int.Parse(x.Name[5].ToString());
+                        ApplePics[animNum] = LoadTexture(x, firstFrameRect);
                         break;
                     case "qkiller":
-                        KillerPic = LoadTexture(x, new Rectangle(0, 0, 40, 40));
+                        KillerPic = LoadTexture(x, firstFrameRect);
                         break;
                     case "q1susp1":
                         Suspensions[0] = new Suspension(LoadTexture(x, RotateFlipType.RotateNoneFlipY), -0.5, 0.35,
