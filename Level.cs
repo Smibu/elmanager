@@ -364,14 +364,14 @@ namespace Elmanager
             get { return Objects.Count(x => x.Type == ObjectType.Killer); }
         }
 
-        internal int MaskCount
+        internal int TextureCount
         {
-            get { return Pictures.Count; }
+            get { return Pictures.Count(texture => !texture.IsPicture); }
         }
 
         internal int PictureCount
         {
-            get { return Pictures.Count(texture => !texture.IsPicture); }
+            get { return Pictures.Count(texture => texture.IsPicture); }
         }
 
         internal string Title

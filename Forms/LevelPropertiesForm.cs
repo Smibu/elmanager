@@ -25,7 +25,7 @@ namespace Elmanager.Forms
                                    "Killers: " + _level.KillerObjectCount + "\r\n" +
                                    "Flowers: " + _level.ExitObjectCount + "\r\n" +
                                    "Pictures: " + _level.PictureCount + "\r\n" +
-                                   "Textures: " + _level.MaskCount + "\r\n" + 
+                                   "Textures: " + _level.TextureCount + "\r\n" + 
                                    "Width: " + _level.Width.ToString("F3") + "\r\n" +
                                    "Height: " + _level.Height.ToString("F3") + "\r\n";
             SinglePlayerTimesBox.Text = "";
