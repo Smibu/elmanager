@@ -137,6 +137,10 @@ namespace Elmanager.Forms
 
         private static bool IsMultipleSelected(ComboBox c)
         {
+            if (c.SelectedItem == null)
+            {
+                return false;
+            }
             return c.SelectedItem.ToString() == _multipleValues;
         }
 
@@ -222,7 +226,7 @@ namespace Elmanager.Forms
 
         private void PictureComboBoxSelectedIndexChanged(object sender = null, EventArgs e = null)
         {
-            if (PictureItemCount > 0 && !IsMultipleSelected(PictureComboBox))
+            if (PictureItemCount > 0 && !IsNothingSelected(PictureComboBox) && !IsMultipleSelected(PictureComboBox))
             {
                 Lgr.LgrImage selectedPicture = _currentLgr.ImageFromName(PictureComboBox.SelectedItem.ToString());
                 if (!MultipleDistanceSelected)
@@ -237,6 +241,11 @@ namespace Elmanager.Forms
             }
         }
 
+        private bool IsNothingSelected(ComboBox comboBox)
+        {
+            return comboBox.SelectedItem == null;
+        }
+
         private int PictureItemCount
         {
             get { return PictureComboBox.Items.Count; }
@@ -244,7 +253,7 @@ namespace Elmanager.Forms
 
         private void TextureComboBoxSelectedIndexChanged(object sender = null, EventArgs e = null)
         {
-            if (TextureItemCount > 0 && !IsMultipleSelected(TextureComboBox))
+            if (TextureItemCount > 0 && !IsNothingSelected(TextureComboBox) && !IsMultipleSelected(TextureComboBox))
             {
                 Lgr.LgrImage selectedTexture = _currentLgr.ImageFromName(TextureComboBox.SelectedItem.ToString());
                 if (!MultipleDistanceSelected)
