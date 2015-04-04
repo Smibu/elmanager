@@ -51,6 +51,7 @@ namespace Elmanager.Forms
         private int _selectedPolygonCount;
         private int _selectedTextureCount;
         private int _selectedVerticeCount;
+        private bool _pictureToolAvailable;
 
         internal LevelEditor(string levPath)
         {
@@ -1008,7 +1009,17 @@ namespace Elmanager.Forms
         private void PictureButtonChanged(object sender, EventArgs e)
         {
             if (PictureButton.Checked)
-                ChangeToolTo(13);
+            {
+                if (!_pictureToolAvailable)
+                {
+                    Utils.ShowError("You need to select LGR file from settings before you can use picture tool.", "Note", MessageBoxIcon.Information);
+                    SelectButton.Checked = true;
+                }
+                else
+                {
+                    ChangeToolTo(13);    
+                }
+            }
         }
 
         private void PicturePropertiesToolStripMenuItemClick(object sender, EventArgs e)
@@ -1490,7 +1501,7 @@ namespace Elmanager.Forms
             if (File.Exists(Global.AppSettings.LevelEditor.RenderingSettings.LgrFile) && Renderer.CurrentLgr != null)
             {
                 _editorLgr = Renderer.CurrentLgr;
-                PictureButton.Enabled = true;
+                _pictureToolAvailable = true;
                 PicturePropertiesMenuItem.Enabled = true;
                 SkyComboBox.Enabled = true;
                 GroundComboBox.Enabled = true;
@@ -1512,7 +1523,7 @@ namespace Elmanager.Forms
             }
             else
             {
-                PictureButton.Enabled = false;
+                _pictureToolAvailable = false;
                 PicturePropertiesMenuItem.Enabled = false;
                 SkyComboBox.Enabled = false;
                 GroundComboBox.Enabled = false;
