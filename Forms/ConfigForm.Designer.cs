@@ -65,12 +65,12 @@ namespace Elmanager.Forms
             this.numberFormatBox = new System.Windows.Forms.TextBox();
             this.RenderingSettingsButton = new System.Windows.Forms.Button();
             this.GroupBox1 = new System.Windows.Forms.GroupBox();
+            this.crosshairPanel = new System.Windows.Forms.Panel();
+            this.label9 = new System.Windows.Forms.Label();
             this.SelectionPanel = new System.Windows.Forms.Panel();
             this.Label15 = new System.Windows.Forms.Label();
             this.Label17 = new System.Windows.Forms.Label();
             this.HighlightPanel = new System.Windows.Forms.Panel();
-            this.AutograssThicknessBox = new System.Windows.Forms.TextBox();
-            this.Label23 = new System.Windows.Forms.Label();
             this.SameAsFilenameBox = new System.Windows.Forms.CheckBox();
             this.DefaultTitleBox = new System.Windows.Forms.TextBox();
             this.Label20 = new System.Windows.Forms.Label();
@@ -91,8 +91,6 @@ namespace Elmanager.Forms
             this.Label1 = new System.Windows.Forms.Label();
             this.WarnAboutOldDBBox = new System.Windows.Forms.CheckBox();
             this.ColorDialog1 = new System.Windows.Forms.ColorDialog();
-            this.crosshairPanel = new System.Windows.Forms.Panel();
-            this.label9 = new System.Windows.Forms.Label();
             this.TabControl1.SuspendLayout();
             this.GeneralPage.SuspendLayout();
             this.RMPage.SuspendLayout();
@@ -336,7 +334,7 @@ namespace Elmanager.Forms
             this.RMPage.Controls.Add(this.ShowReplayListGridBox);
             this.RMPage.Location = new System.Drawing.Point(4, 22);
             this.RMPage.Name = "RMPage";
-            this.RMPage.Size = new System.Drawing.Size(596, 271);
+            this.RMPage.Size = new System.Drawing.Size(596, 310);
             this.RMPage.TabIndex = 3;
             this.RMPage.Text = "Replay manager";
             this.RMPage.UseVisualStyleBackColor = true;
@@ -406,8 +404,6 @@ namespace Elmanager.Forms
             this.LevelEditorPage.Controls.Add(this.numberFormatBox);
             this.LevelEditorPage.Controls.Add(this.RenderingSettingsButton);
             this.LevelEditorPage.Controls.Add(this.GroupBox1);
-            this.LevelEditorPage.Controls.Add(this.AutograssThicknessBox);
-            this.LevelEditorPage.Controls.Add(this.Label23);
             this.LevelEditorPage.Controls.Add(this.SameAsFilenameBox);
             this.LevelEditorPage.Controls.Add(this.DefaultTitleBox);
             this.LevelEditorPage.Controls.Add(this.Label20);
@@ -466,6 +462,25 @@ namespace Elmanager.Forms
             this.GroupBox1.TabStop = false;
             this.GroupBox1.Text = "Colors";
             // 
+            // crosshairPanel
+            // 
+            this.crosshairPanel.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
+            this.crosshairPanel.Cursor = System.Windows.Forms.Cursors.Hand;
+            this.crosshairPanel.Location = new System.Drawing.Point(12, 57);
+            this.crosshairPanel.Name = "crosshairPanel";
+            this.crosshairPanel.Size = new System.Drawing.Size(20, 20);
+            this.crosshairPanel.TabIndex = 9;
+            this.crosshairPanel.Click += new System.EventHandler(this.PanelClick);
+            // 
+            // label9
+            // 
+            this.label9.AutoSize = true;
+            this.label9.Location = new System.Drawing.Point(38, 61);
+            this.label9.Name = "label9";
+            this.label9.Size = new System.Drawing.Size(50, 13);
+            this.label9.TabIndex = 10;
+            this.label9.Text = "Crosshair";
+            // 
             // SelectionPanel
             // 
             this.SelectionPanel.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
@@ -503,22 +518,6 @@ namespace Elmanager.Forms
             this.HighlightPanel.Size = new System.Drawing.Size(20, 20);
             this.HighlightPanel.TabIndex = 2;
             this.HighlightPanel.Click += new System.EventHandler(this.PanelClick);
-            // 
-            // AutograssThicknessBox
-            // 
-            this.AutograssThicknessBox.Location = new System.Drawing.Point(120, 172);
-            this.AutograssThicknessBox.Name = "AutograssThicknessBox";
-            this.AutograssThicknessBox.Size = new System.Drawing.Size(100, 20);
-            this.AutograssThicknessBox.TabIndex = 25;
-            // 
-            // Label23
-            // 
-            this.Label23.AutoSize = true;
-            this.Label23.Location = new System.Drawing.Point(9, 175);
-            this.Label23.Name = "Label23";
-            this.Label23.Size = new System.Drawing.Size(105, 13);
-            this.Label23.TabIndex = 24;
-            this.Label23.Text = "Autograss thickness:";
             // 
             // SameAsFilenameBox
             // 
@@ -681,7 +680,7 @@ namespace Elmanager.Forms
             this.DatabasePage.Location = new System.Drawing.Point(4, 22);
             this.DatabasePage.Name = "DatabasePage";
             this.DatabasePage.Padding = new System.Windows.Forms.Padding(3);
-            this.DatabasePage.Size = new System.Drawing.Size(596, 271);
+            this.DatabasePage.Size = new System.Drawing.Size(596, 310);
             this.DatabasePage.TabIndex = 1;
             this.DatabasePage.Text = "Databases";
             // 
@@ -709,25 +708,6 @@ namespace Elmanager.Forms
             // ColorDialog1
             // 
             this.ColorDialog1.FullOpen = true;
-            // 
-            // crosshairPanel
-            // 
-            this.crosshairPanel.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
-            this.crosshairPanel.Cursor = System.Windows.Forms.Cursors.Hand;
-            this.crosshairPanel.Location = new System.Drawing.Point(12, 57);
-            this.crosshairPanel.Name = "crosshairPanel";
-            this.crosshairPanel.Size = new System.Drawing.Size(20, 20);
-            this.crosshairPanel.TabIndex = 9;
-            this.crosshairPanel.Click += new System.EventHandler(this.PanelClick);
-            // 
-            // label9
-            // 
-            this.label9.AutoSize = true;
-            this.label9.Location = new System.Drawing.Point(38, 61);
-            this.label9.Name = "label9";
-            this.label9.Size = new System.Drawing.Size(50, 13);
-            this.label9.TabIndex = 10;
-            this.label9.Text = "Crosshair";
             // 
             // ConfigForm
             // 
@@ -802,8 +782,6 @@ namespace Elmanager.Forms
 		internal System.Windows.Forms.CheckBox SameAsFilenameBox;
 		internal System.Windows.Forms.TextBox DefaultTitleBox;
         internal System.Windows.Forms.Label Label20;
-		internal System.Windows.Forms.TextBox AutograssThicknessBox;
-		internal System.Windows.Forms.Label Label23;
 		internal System.Windows.Forms.CheckBox CheckForUpdatesBox;
 		internal System.Windows.Forms.GroupBox GroupBox1;
 		internal System.Windows.Forms.Button RenderingSettingsButton;

@@ -35,7 +35,6 @@ namespace Elmanager.Forms
             InitialWidthBox.Text = Global.AppSettings.LevelEditor.InitialWidth.ToString();
             InitialHeightBox.Text = Global.AppSettings.LevelEditor.InitialHeight.ToString();
             CaptureRadiusBox.Text = Global.AppSettings.LevelEditor.CaptureRadius.ToString();
-            AutograssThicknessBox.Text = Global.AppSettings.LevelEditor.AutoGrassThickness.ToString();
             CheckTopologyWhenSavingBox.Checked = Global.AppSettings.LevelEditor.CheckTopologyWhenSaving;
             DynamicCheckTopologyBox.Checked = Global.AppSettings.LevelEditor.CheckTopologyDynamically;
             CheckBox6.Enabled = File.Exists(Global.AppSettings.ReplayManager.DbFile);
@@ -305,18 +304,6 @@ namespace Elmanager.Forms
             Global.AppSettings.LevelEditor.NumberFormat = numberFormatBox.Text;
             Global.AppSettings.LevelEditor.DefaultTitle = DefaultTitleBox.Text;
             Global.AppSettings.General.CheckForUpdatesOnStartup = CheckForUpdatesBox.Checked;
-            try
-            {
-                double newThickness = double.Parse(AutograssThicknessBox.Text);
-                if (newThickness > 0.0 && newThickness <= 1.0)
-                    Global.AppSettings.LevelEditor.AutoGrassThickness = newThickness;
-                else
-                    Utils.ShowError("Auto grass thickness must be greater than 0 and less than or equal to 1!");
-            }
-            catch (FormatException)
-            {
-                Utils.ShowError("Auto grass thickness value was in an incorrect format!");
-            }
             Global.AppSettings.LevelEditor.HighlightColor = HighlightPanel.BackColor;
             Global.AppSettings.LevelEditor.SelectionColor = SelectionPanel.BackColor;
             Global.AppSettings.LevelEditor.CrosshairColor = crosshairPanel.BackColor;

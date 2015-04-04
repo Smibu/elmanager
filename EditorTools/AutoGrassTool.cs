@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Drawing;
 using System.Windows.Forms;
 using Elmanager.Forms;
 
@@ -11,6 +12,7 @@ namespace Elmanager.EditorTools
         private const double MaximumGrassAngle = 60.0;
         private bool _autoGrassPolygonSelected;
         private Polygon _currentPolygon;
+        private List<Polygon> _currentAutograssPolys;
 
         internal AutoGrassTool(LevelEditor editor)
             : base(editor)
@@ -43,6 +45,10 @@ namespace Elmanager.EditorTools
 
         public void ExtraRendering()
         {
+            if (_autoGrassPolygonSelected)
+            {
+                _currentAutograssPolys.ForEach(poly => Renderer.DrawLineStrip(poly, Color.Red));
+            }
         }
 
         public void InActivate()
@@ -52,6 +58,30 @@ namespace Elmanager.EditorTools
 
         public void KeyDown(KeyEventArgs key)
         {
+            if (AutoGrassPolygonSelected)
+            {
+                var changed = true;
+                switch (key.KeyCode)
+                {
+                    case Constants.Increase:
+                        Global.AppSettings.LevelEditor.AutoGrassThickness += 0.025;
+                        break;
+                    case Constants.Decrease:
+                        if (Global.AppSettings.LevelEditor.AutoGrassThickness > 0.025)
+                            Global.AppSettings.LevelEditor.AutoGrassThickness -= 0.025;
+                        break;
+                    default:
+                        changed = false;
+                        break;
+                }
+                if (changed)
+                {
+                    _currentAutograssPolys = AutoGrass(_currentPolygon);
+                    UpdateHelp();
+                    Renderer.RedrawScene();
+                }
+                
+            }
         }
 
         public void MouseDown(MouseEventArgs mouseData)
@@ -65,13 +95,12 @@ namespace Elmanager.EditorTools
                         if (nearestVertexIndex >= -1 && !NearestPolygon.IsGrass)
                         {
                             _currentPolygon = NearestPolygon;
-                            _currentPolygon.Mark = PolygonMark.Selected;
+                            _currentAutograssPolys = AutoGrass(_currentPolygon);
                             AutoGrassPolygonSelected = true;
                         }
                     }
                     else
                     {
-                        _currentPolygon.Mark = PolygonMark.None;
                         Lev.Polygons.AddRange(AutoGrass(_currentPolygon));
                         AutoGrassPolygonSelected = false;
                         LevEditor.Modified = true;
@@ -119,7 +148,8 @@ namespace Elmanager.EditorTools
         public void UpdateHelp()
         {
             LevEditor.InfoLabel.Text = AutoGrassPolygonSelected
-                                           ? "Left mouse button: apply AutoGrass, right mouse button: cancel."
+                                           ? "Left mouse: apply AutoGrass, right mouse: cancel. Thickness: "
+                                           + Global.AppSettings.LevelEditor.AutoGrassThickness.ToString("F3")
                                            : "Click the ground polygon to create grass polygon for.";
         }
 
