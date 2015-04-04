@@ -35,13 +35,16 @@ namespace Elmanager.EditorTools
         {
             int index = -1;
             double smallest = double.MaxValue;
+            var appleFilter = LevEditor.EffectiveAppleFilter;
+            var killerFilter = LevEditor.EffectiveKillerFilter;
+            var flowerFilter = LevEditor.EffectiveFlowerFilter;
             for (int i = 0; i < Lev.Objects.Count; i++)
             {
                 Vector z = Lev.Objects[i].Position;
                 Level.ObjectType type = Lev.Objects[i].Type;
-                if (((type == Level.ObjectType.Apple && LevEditor.AppleFilter) ||
-                     (type == Level.ObjectType.Killer && LevEditor.KillerFilter) ||
-                     (type == Level.ObjectType.Flower && LevEditor.FlowerFilter) || type == Level.ObjectType.Start) &&
+                if (((type == Level.ObjectType.Apple && appleFilter) ||
+                     (type == Level.ObjectType.Killer && killerFilter) ||
+                     (type == Level.ObjectType.Flower && flowerFilter) || type == Level.ObjectType.Start) &&
                     (p - z).LengthSquared < smallest)
                 {
                     smallest = (p - z).LengthSquared;
@@ -69,10 +72,12 @@ namespace Elmanager.EditorTools
 
         internal int GetNearestPictureIndex(Vector p)
         {
+            var pictureFilter = LevEditor.EffectivePictureFilter;
+            var textureFilter = LevEditor.EffectiveTextureFilter;
             for (int j = 0; j < Lev.Pictures.Count; j++)
             {
                 Level.Picture z = Lev.Pictures[j];
-                if ((z.IsPicture && LevEditor.PictureFilter) || (!z.IsPicture && LevEditor.TextureFilter))
+                if ((z.IsPicture && pictureFilter) || (!z.IsPicture && textureFilter))
                 {
                     if (p.X > z.Position.X && p.X < z.Position.X + z.Width && p.Y > z.Position.Y &&
                         p.Y < z.Position.Y + z.Height)
@@ -93,10 +98,12 @@ namespace Elmanager.EditorTools
             double smallestDistance = double.MaxValue;
             double smallestSelectedDistance = double.MaxValue;
             Polygon nearestSelectedPolygon = null;
+            var grassFilter = LevEditor.EffectiveGrassFilter;
+            var groundFilter = LevEditor.EffectiveGroundFilter;
             foreach (Polygon poly in Lev.Polygons)
             {
                 double currentDistance;
-                if (((poly.IsGrass && LevEditor.GrassFilter) || (!poly.IsGrass && LevEditor.GroundFilter)) &&
+                if (((poly.IsGrass && grassFilter) || (!poly.IsGrass && groundFilter)) &&
                     (currentDistance = poly.GetNearestVertexDistance(p)) < Renderer.ZoomLevel * Global.AppSettings.LevelEditor.CaptureRadius)
                 {
                     int currentIndex = poly.GetNearestVertexIndex(p);
@@ -129,7 +136,7 @@ namespace Elmanager.EditorTools
 
             foreach (Polygon x in Lev.Polygons)
             {
-                if (((x.IsGrass && LevEditor.GrassFilter) || (!x.IsGrass && LevEditor.GroundFilter)) &&
+                if (((x.IsGrass && grassFilter) || (!x.IsGrass && groundFilter)) &&
                     x.DistanceFromPoint(p) < Renderer.ZoomLevel * Global.AppSettings.LevelEditor.CaptureRadius)
                 {
                     NearestPolygon = x;

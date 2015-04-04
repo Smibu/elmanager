@@ -347,9 +347,16 @@ namespace Elmanager.EditorTools
                     selectionyMax = Math.Max(CurrentPos.Y, _selectionStartPoint.Y);
                     selectionyMin = Math.Min(CurrentPos.Y, _selectionStartPoint.Y);
                 }
+                var grassFilter = LevEditor.EffectiveGrassFilter;
+                var groundFilter = LevEditor.EffectiveGroundFilter;
+                var appleFilter = LevEditor.EffectiveAppleFilter;
+                var killerFilter = LevEditor.EffectiveKillerFilter;
+                var flowerFilter = LevEditor.EffectiveFlowerFilter;
+                var pictureFilter = LevEditor.EffectivePictureFilter;
+                var textureFilter = LevEditor.EffectiveTextureFilter;
                 foreach (Polygon x in Lev.Polygons)
                 {
-                    if ((x.IsGrass && LevEditor.GrassFilter) || (!x.IsGrass && LevEditor.GroundFilter))
+                    if ((x.IsGrass && grassFilter) || (!x.IsGrass && groundFilter))
                     {
                         foreach (Vector t in x.Vertices)
                             if (RectSelecting)
@@ -363,9 +370,9 @@ namespace Elmanager.EditorTools
                 foreach (Level.Object t in Lev.Objects)
                 {
                     Level.ObjectType type = t.Type;
-                    if (type == Level.ObjectType.Start || (type == Level.ObjectType.Apple && LevEditor.AppleFilter) ||
-                        (type == Level.ObjectType.Killer && LevEditor.KillerFilter) ||
-                        (type == Level.ObjectType.Flower && LevEditor.FlowerFilter))
+                    if (type == Level.ObjectType.Start || (type == Level.ObjectType.Apple && appleFilter) ||
+                        (type == Level.ObjectType.Killer && killerFilter) ||
+                        (type == Level.ObjectType.Flower && flowerFilter))
                         if (RectSelecting)
                             MarkSelectedInArea(t.Position, selectionxMin, selectionxMax, selectionyMin,
                                 selectionyMax);
@@ -376,7 +383,7 @@ namespace Elmanager.EditorTools
                 }
                 foreach (Level.Picture z in Lev.Pictures)
                 {
-                    if ((z.IsPicture && LevEditor.PictureFilter) || (!z.IsPicture && LevEditor.TextureFilter))
+                    if ((z.IsPicture && pictureFilter) || (!z.IsPicture && textureFilter))
                         if (RectSelecting)
                             MarkSelectedInArea(z.Position, selectionxMin, selectionxMax, selectionyMin, selectionyMax);
                         else

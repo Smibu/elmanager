@@ -18,17 +18,17 @@ namespace Elmanager.Forms
         private const string LevEditorName = "SLE";
         private const int MouseWheelStep = 20;
         private readonly List<Level> _history = new List<Level>();
-        internal bool AppleFilter = true;
+        private bool AppleFilter = true;
+        private bool FlowerFilter = true;
+        private bool GrassFilter = true;
+        private bool GroundFilter = true;
+        private bool KillerFilter = true;
+        private bool PictureFilter = true;
+        private bool TextureFilter = true;
         internal IEditorTool CurrentTool;
-        internal bool FlowerFilter = true;
-        internal bool GrassFilter = true;
-        internal bool GroundFilter = true;
-        internal bool KillerFilter = true;
         internal Level Lev;
         internal PictureForm PicForm;
-        internal bool PictureFilter = true;
         internal ElmaRenderer Renderer;
-        internal bool TextureFilter = true;
         internal IEditorTool[] Tools;
         private string[] _currLevDirFiles;
         private bool _draggingScreen;
@@ -96,6 +96,41 @@ namespace Elmanager.Forms
         {
             get { return _modified; }
             set { SetModified(value); }
+        }
+
+        internal bool EffectiveAppleFilter
+        {
+            get { return AppleFilter && (ShowObjectFramesButton.Checked || (ShowObjectsButton.Checked && _pictureToolAvailable)); }
+        }
+
+        internal bool EffectiveKillerFilter
+        {
+            get { return KillerFilter && (ShowObjectFramesButton.Checked || (ShowObjectsButton.Checked && _pictureToolAvailable)); }
+        }
+
+        internal bool EffectiveFlowerFilter
+        {
+            get { return FlowerFilter && (ShowObjectFramesButton.Checked || (ShowObjectsButton.Checked && _pictureToolAvailable)); }
+        }
+
+        internal bool EffectiveGrassFilter
+        {
+            get { return GrassFilter && (ShowGrassEdgesButton.Checked); }
+        }
+
+        internal bool EffectiveGroundFilter
+        {
+            get { return GroundFilter && (ShowGroundEdgesButton.Checked || (ShowGroundButton.Checked && _pictureToolAvailable)); }
+        }
+
+        internal bool EffectiveTextureFilter
+        {
+            get { return TextureFilter && (ShowTextureFramesButton.Checked || (ShowTexturesButton.Checked && _pictureToolAvailable)); }
+        }
+
+        internal bool EffectivePictureFilter
+        {
+            get { return PictureFilter && (ShowPictureFramesButton.Checked || (ShowPicturesButton.Checked && _pictureToolAvailable)); }
         }
 
         private int SelectedElementCount
