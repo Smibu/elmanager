@@ -42,7 +42,7 @@ namespace Elmanager.EditorTools
                         break;
                 }
             }
-            if (!Global.AppSettings.LevelEditor.RenderingSettings.ShowObjects)
+            if (!Global.AppSettings.LevelEditor.RenderingSettings.ShowObjects || !Renderer.LgrGraphicsLoaded)
                 return;
             switch (_currentObjectType)
             {
