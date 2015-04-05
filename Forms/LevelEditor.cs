@@ -281,10 +281,13 @@ namespace Elmanager.Forms
         private void CheckForPictureLoss()
         {
             if (!Lev.AllPicturesFound)
-                Utils.ShowError(
-                    "Some pictures or textures could not be found in the default LGR file. You will lose these pictures if you save this level. " +
-                    "If the LGR of this level is different from default LGR file, you can try changing it.", "Warning",
-                    MessageBoxIcon.Exclamation);
+            {
+                topologyList.Text = "Warning";
+                topologyList.DropDownItems.Add("Some pictures or textures could not be found in the LGR file. " +
+                                               "You will lose these pictures if you save this level.");
+                topologyList.ForeColor = Color.DarkOrange;
+                topologyList.Font = new Font(topologyList.Font, FontStyle.Bold);
+            }
         }
 
         private void CheckTopology()
