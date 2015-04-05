@@ -704,12 +704,25 @@ namespace Elmanager.Forms
             Modified = true;
         }
 
+        private void UpdateLgrFromLev()
+        {
+            if (Directory.Exists(Global.AppSettings.General.LgrDirectory))
+            {
+                var lgr = Path.Combine(Global.AppSettings.General.LgrDirectory, Lev.LgrFile + ".lgr");
+                if (File.Exists(lgr))
+                {
+                    Global.AppSettings.LevelEditor.RenderingSettings.LgrFile = lgr;
+                }
+            }
+        }
+
         private void Initialize()
         {
             WindowState = Global.AppSettings.LevelEditor.WindowState;
             SelectButton.Select();
             UpdateButtons();
             Size = Global.AppSettings.LevelEditor.Size;
+            UpdateLgrFromLev();
             Renderer = new ElmaRenderer(Lev, EditorControl, Global.AppSettings.LevelEditor.RenderingSettings);
             UpdateLgrTools();
             ClearHistory();
@@ -747,7 +760,9 @@ namespace Elmanager.Forms
             UpdateLabels();
             UpdateButtons();
             Renderer.InitializeLevel(Lev);
-            CheckForPictureLoss();
+            UpdateLgrFromLev();
+            Renderer.UpdateSettings(Global.AppSettings.LevelEditor.RenderingSettings);
+            UpdateLgrTools();
             Renderer.RedrawScene();
             ClearHistory();
             Modified = false;
