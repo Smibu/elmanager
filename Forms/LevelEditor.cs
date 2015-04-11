@@ -1732,7 +1732,7 @@ namespace Elmanager.Forms
 
             foreach (var selectedVertex in selectedVertices)
             {
-                var obj = new Level.Object(selectedVertex, objType, Level.AppleTypes.Normal, 0);
+                var obj = new Level.Object(selectedVertex, objType, Level.AppleTypes.Normal);
                 Lev.Objects.Add(obj);
             }
             Modified = true;

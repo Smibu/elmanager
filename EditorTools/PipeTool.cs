@@ -239,7 +239,7 @@ namespace Elmanager.EditorTools
                     while (!(currVectorTrip > currVectorLength))
                     {
                         apples.Add(new Level.Object(_pipeline[i] + zUnit * currVectorTrip, Level.ObjectType.Apple,
-                                                         Level.AppleTypes.Normal, 0));
+                                                         Level.AppleTypes.Normal));
                         currVectorTrip += distance;
                     }
                     currentDistanceToApple = currVectorTrip - currVectorLength;

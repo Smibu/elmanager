@@ -170,11 +170,11 @@ namespace Elmanager
             }
             if (!startFound)
             {
-                Objects.Add(new Object(new Vector(0, 0), ObjectType.Start, AppleTypes.Normal, 0));
+                Objects.Add(new Object(new Vector(0, 0), ObjectType.Start, AppleTypes.Normal));
             }
             if (!flowerFound)
             {
-                Objects.Add(new Object(new Vector(0, 0), ObjectType.Flower, AppleTypes.Normal, 0));
+                Objects.Add(new Object(new Vector(0, 0), ObjectType.Flower, AppleTypes.Normal));
             }
             if (!AcrossLevel)
             {
@@ -928,12 +928,12 @@ namespace Elmanager
             internal Vector Position;
             internal ObjectType Type;
 
-            internal Object(Vector position, ObjectType type, AppleTypes appleType, int animNum)
+            internal Object(Vector position, ObjectType type, AppleTypes appleType, int animNum = 1)
             {
                 Position = position;
                 Type = type;
                 AppleType = appleType;
-                AnimationNumber = animNum;
+                AnimationNumber = Math.Min(Math.Max(animNum, 1), 9);
             }
 
             private Object(Object o)
@@ -946,12 +946,12 @@ namespace Elmanager
 
             internal static Object ExitObject(Vector exitPosition)
             {
-                return new Object(exitPosition, ObjectType.Flower, AppleTypes.Normal, 0);
+                return new Object(exitPosition, ObjectType.Flower, AppleTypes.Normal);
             }
 
             internal static Object StartObject(Vector startPosition)
             {
-                return new Object(startPosition, ObjectType.Start, AppleTypes.Normal, 0);
+                return new Object(startPosition, ObjectType.Start, AppleTypes.Normal);
             }
 
             internal Object Clone()
