@@ -768,7 +768,7 @@ namespace Elmanager
             {
                 bool showGrassVertices = Settings.ShowGrassEdges;
                 bool showGroundVertices = Settings.ShowGroundEdges || (Settings.ShowGround && LGRGraphicsLoaded);
-                GL.Color3(Color.Red);
+                GL.Color3(Settings.VertexColor);
                 GL.Begin(BeginMode.Triangles);
                 foreach (Polygon x in Lev.Polygons)
                     if ((showGrassVertices && x.IsGrass) || (showGroundVertices && !x.IsGrass))
