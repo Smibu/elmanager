@@ -773,7 +773,7 @@ namespace Elmanager
                 foreach (Polygon x in Lev.Polygons)
                     if ((showGrassVertices && x.IsGrass) || (showGroundVertices && !x.IsGrass))
                         foreach (Vector z in x.Vertices)
-                            DrawEquilateralTriangleFast(z, _ZoomLevel / 50);
+                            DrawEquilateralTriangleFast(z, _ZoomLevel * Settings.VertexSize);
                 GL.End();
             }
             if (CustomRendering != null)

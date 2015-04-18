@@ -15,6 +15,7 @@ namespace Elmanager
         private string _lgrFile = "";
         private float _lineWidth = 2.0f;
         private int _smoothZoomDuration = 200;
+        private double _vertexSize = 0.02;
 
         internal RenderingSettings()
         {
@@ -54,6 +55,7 @@ namespace Elmanager
             LgrFile = s.LgrFile;
             GridSize = s.GridSize;
             LineWidth = s.LineWidth;
+            VertexSize = s.VertexSize;
             SmoothZoomEnabled = s.SmoothZoomEnabled;
             ShowGround = s.ShowGround;
             ShowGroundEdges = s.ShowGroundEdges;
@@ -181,6 +183,15 @@ namespace Elmanager
                     _lineWidth = value;
                 else
                     throw (new ArgumentException("Line width must be greater than 0!"));
+            }
+        }
+
+        [DisplayName("Vertex size")]
+        public double VertexSize
+        {
+            get { return _vertexSize; }
+            set {
+                _vertexSize = value > 0 ? value : 0.02;
             }
         }
 
