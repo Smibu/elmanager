@@ -766,9 +766,15 @@ namespace Elmanager
 
             if (Settings.ShowVertices)
             {
+                bool showGrassVertices = Settings.ShowGrassEdges;
+                bool showGroundVertices = Settings.ShowGroundEdges || (Settings.ShowGround && LGRGraphicsLoaded);
+                GL.Color3(Color.Red);
+                GL.Begin(BeginMode.Triangles);
                 foreach (Polygon x in Lev.Polygons)
-                    foreach (Vector z in x.Vertices)
-                        DrawEquilateralTriangle(z, _ZoomLevel / 50, Color.Red);
+                    if ((showGrassVertices && x.IsGrass) || (showGroundVertices && !x.IsGrass))
+                        foreach (Vector z in x.Vertices)
+                            DrawEquilateralTriangleFast(z, _ZoomLevel / 50);
+                GL.End();
             }
             if (CustomRendering != null)
                 CustomRendering();
@@ -804,13 +810,18 @@ namespace Elmanager
 
         internal void DrawEquilateralTriangle(Vector center, double side, Color color)
         {
-            double factor = 1/(Math.Sqrt(3)*2);
             GL.Color3(color);
             GL.Begin(BeginMode.Triangles);
-            GL.Vertex3(center.X + side / 2, center.Y - side * factor, 0);
-            GL.Vertex3(center.X, center.Y + side / Math.Sqrt(3), 0);
-            GL.Vertex3(center.X - side / 2, center.Y - side * factor, 0);
+            DrawEquilateralTriangleFast(center, side);
             GL.End();
+        }
+
+        private void DrawEquilateralTriangleFast(Vector center, double side)
+        {
+            const double factor = 1 / (1.7320508075688772935274463415059 * 2);
+            GL.Vertex3(center.X + side/2, center.Y - side*factor, 0);
+            GL.Vertex3(center.X, center.Y + side/Math.Sqrt(3), 0);
+            GL.Vertex3(center.X - side/2, center.Y - side*factor, 0);
         }
 
         internal DrawableImage DrawableImageFromName(string name)
