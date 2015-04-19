@@ -123,10 +123,11 @@ namespace Elmanager.Forms
             this.ShowGroundTextureButton = new System.Windows.Forms.ToolStripButton();
             this.ShowSkyTextureButton = new System.Windows.Forms.ToolStripButton();
             this.ZoomTexturesButton = new System.Windows.Forms.ToolStripButton();
+            this.toolStripSeparator12 = new System.Windows.Forms.ToolStripSeparator();
+            this.BestTimeLabel = new System.Windows.Forms.ToolStripLabel();
+            this.topologyList = new System.Windows.Forms.ToolStripDropDownButton();
             this.StatusStrip2 = new System.Windows.Forms.StatusStrip();
             this.InfoLabel = new System.Windows.Forms.ToolStripStatusLabel();
-            this.BestTimeLabel = new System.Windows.Forms.ToolStripStatusLabel();
-            this.topologyList = new System.Windows.Forms.ToolStripDropDownButton();
             this.EditorMenuStrip = new System.Windows.Forms.ContextMenuStrip(this.components);
             this.CopyMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.TransformMenuItem = new System.Windows.Forms.ToolStripMenuItem();
@@ -145,6 +146,7 @@ namespace Elmanager.Forms
             this.killersConvertItem = new System.Windows.Forms.ToolStripMenuItem();
             this.flowersConvertItem = new System.Windows.Forms.ToolStripMenuItem();
             this.picturesConvertItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.saveAsPictureDialog = new System.Windows.Forms.SaveFileDialog();
             this.ToolPanel = new Elmanager.CustomControls.PanelMod();
             this.TextButton = new Elmanager.CustomControls.RadioButtonMod();
             this.PictureButton = new Elmanager.CustomControls.RadioButtonMod();
@@ -160,7 +162,6 @@ namespace Elmanager.Forms
             this.DrawButton = new Elmanager.CustomControls.RadioButtonMod();
             this.VertexButton = new Elmanager.CustomControls.RadioButtonMod();
             this.SelectButton = new Elmanager.CustomControls.RadioButtonMod();
-            this.saveAsPictureDialog = new System.Windows.Forms.SaveFileDialog();
             this.MenuStrip1.SuspendLayout();
             this.StatusStrip1.SuspendLayout();
             this.ToolStripPanel1.SuspendLayout();
@@ -538,9 +539,9 @@ namespace Elmanager.Forms
             // 
             this.EditorControl.AllowDrop = true;
             this.EditorControl.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.EditorControl.Location = new System.Drawing.Point(84, 126);
+            this.EditorControl.Location = new System.Drawing.Point(84, 124);
             this.EditorControl.Name = "EditorControl";
-            this.EditorControl.Size = new System.Drawing.Size(845, 329);
+            this.EditorControl.Size = new System.Drawing.Size(845, 331);
             this.EditorControl.TabIndex = 2;
             this.EditorControl.DragDrop += new System.Windows.Forms.DragEventHandler(this.LevelDropped);
             this.EditorControl.DragEnter += new System.Windows.Forms.DragEventHandler(this.StartingDrop);
@@ -620,7 +621,7 @@ namespace Elmanager.Forms
             this.ToolStripPanel1.Name = "ToolStripPanel1";
             this.ToolStripPanel1.Orientation = System.Windows.Forms.Orientation.Horizontal;
             this.ToolStripPanel1.RowMargin = new System.Windows.Forms.Padding(3, 0, 0, 0);
-            this.ToolStripPanel1.Size = new System.Drawing.Size(929, 102);
+            this.ToolStripPanel1.Size = new System.Drawing.Size(929, 100);
             // 
             // ToolStrip1
             // 
@@ -880,11 +881,14 @@ namespace Elmanager.Forms
             this.ShowGroundButton,
             this.ShowGroundTextureButton,
             this.ShowSkyTextureButton,
-            this.ZoomTexturesButton});
+            this.ZoomTexturesButton,
+            this.toolStripSeparator12,
+            this.BestTimeLabel,
+            this.topologyList});
             this.ToolStrip2.LayoutStyle = System.Windows.Forms.ToolStripLayoutStyle.HorizontalStackWithOverflow;
             this.ToolStrip2.Location = new System.Drawing.Point(3, 39);
             this.ToolStrip2.Name = "ToolStrip2";
-            this.ToolStrip2.Size = new System.Drawing.Size(615, 39);
+            this.ToolStrip2.Size = new System.Drawing.Size(795, 39);
             this.ToolStrip2.TabIndex = 15;
             // 
             // ShowGridButton
@@ -1057,43 +1061,16 @@ namespace Elmanager.Forms
             this.ZoomTexturesButton.Size = new System.Drawing.Size(36, 36);
             this.ZoomTexturesButton.Text = "Zoom textures";
             // 
-            // StatusStrip2
+            // toolStripSeparator12
             // 
-            this.StatusStrip2.BackColor = System.Drawing.SystemColors.Control;
-            this.StatusStrip2.Dock = System.Windows.Forms.DockStyle.None;
-            this.StatusStrip2.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
-            this.InfoLabel,
-            this.BestTimeLabel,
-            this.topologyList});
-            this.StatusStrip2.Location = new System.Drawing.Point(0, 78);
-            this.StatusStrip2.Name = "StatusStrip2";
-            this.StatusStrip2.ShowItemToolTips = true;
-            this.StatusStrip2.Size = new System.Drawing.Size(929, 24);
-            this.StatusStrip2.SizingGrip = false;
-            this.StatusStrip2.TabIndex = 16;
-            // 
-            // InfoLabel
-            // 
-            this.InfoLabel.AutoSize = false;
-            this.InfoLabel.AutoToolTip = true;
-            this.InfoLabel.BorderSides = ((System.Windows.Forms.ToolStripStatusLabelBorderSides)((((System.Windows.Forms.ToolStripStatusLabelBorderSides.Left | System.Windows.Forms.ToolStripStatusLabelBorderSides.Top) 
-            | System.Windows.Forms.ToolStripStatusLabelBorderSides.Right) 
-            | System.Windows.Forms.ToolStripStatusLabelBorderSides.Bottom)));
-            this.InfoLabel.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Text;
-            this.InfoLabel.Name = "InfoLabel";
-            this.InfoLabel.Size = new System.Drawing.Size(500, 19);
-            this.InfoLabel.Text = "Ready.";
-            this.InfoLabel.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
+            this.toolStripSeparator12.Name = "toolStripSeparator12";
+            this.toolStripSeparator12.Size = new System.Drawing.Size(6, 39);
             // 
             // BestTimeLabel
             // 
             this.BestTimeLabel.AutoSize = false;
-            this.BestTimeLabel.AutoToolTip = true;
-            this.BestTimeLabel.BorderSides = ((System.Windows.Forms.ToolStripStatusLabelBorderSides)((((System.Windows.Forms.ToolStripStatusLabelBorderSides.Left | System.Windows.Forms.ToolStripStatusLabelBorderSides.Top) 
-            | System.Windows.Forms.ToolStripStatusLabelBorderSides.Right) 
-            | System.Windows.Forms.ToolStripStatusLabelBorderSides.Bottom)));
             this.BestTimeLabel.Name = "BestTimeLabel";
-            this.BestTimeLabel.Size = new System.Drawing.Size(170, 19);
+            this.BestTimeLabel.Size = new System.Drawing.Size(170, 36);
             this.BestTimeLabel.Text = "Best time: None";
             this.BestTimeLabel.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
             // 
@@ -1104,7 +1081,29 @@ namespace Elmanager.Forms
             this.topologyList.ImageTransparentColor = System.Drawing.Color.Magenta;
             this.topologyList.Name = "topologyList";
             this.topologyList.ShowDropDownArrow = false;
-            this.topologyList.Size = new System.Drawing.Size(4, 22);
+            this.topologyList.Size = new System.Drawing.Size(4, 36);
+            // 
+            // StatusStrip2
+            // 
+            this.StatusStrip2.BackColor = System.Drawing.SystemColors.Control;
+            this.StatusStrip2.Dock = System.Windows.Forms.DockStyle.None;
+            this.StatusStrip2.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.InfoLabel});
+            this.StatusStrip2.Location = new System.Drawing.Point(0, 78);
+            this.StatusStrip2.Name = "StatusStrip2";
+            this.StatusStrip2.ShowItemToolTips = true;
+            this.StatusStrip2.Size = new System.Drawing.Size(929, 22);
+            this.StatusStrip2.SizingGrip = false;
+            this.StatusStrip2.TabIndex = 16;
+            // 
+            // InfoLabel
+            // 
+            this.InfoLabel.AutoToolTip = true;
+            this.InfoLabel.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Text;
+            this.InfoLabel.Name = "InfoLabel";
+            this.InfoLabel.Size = new System.Drawing.Size(42, 17);
+            this.InfoLabel.Text = "Ready.";
+            this.InfoLabel.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
             // 
             // EditorMenuStrip
             // 
@@ -1256,6 +1255,12 @@ namespace Elmanager.Forms
             this.picturesConvertItem.Text = "Pictures";
             this.picturesConvertItem.Click += new System.EventHandler(this.ConvertClicked);
             // 
+            // saveAsPictureDialog
+            // 
+            this.saveAsPictureDialog.DefaultExt = "png";
+            this.saveAsPictureDialog.FileName = "Untitled";
+            this.saveAsPictureDialog.Filter = "Portable Network Graphics (*.png)|*.png";
+            // 
             // ToolPanel
             // 
             this.ToolPanel.AutoScroll = true;
@@ -1274,9 +1279,9 @@ namespace Elmanager.Forms
             this.ToolPanel.Controls.Add(this.VertexButton);
             this.ToolPanel.Controls.Add(this.SelectButton);
             this.ToolPanel.Dock = System.Windows.Forms.DockStyle.Left;
-            this.ToolPanel.Location = new System.Drawing.Point(0, 126);
+            this.ToolPanel.Location = new System.Drawing.Point(0, 124);
             this.ToolPanel.Name = "ToolPanel";
-            this.ToolPanel.Size = new System.Drawing.Size(84, 329);
+            this.ToolPanel.Size = new System.Drawing.Size(84, 331);
             this.ToolPanel.TabIndex = 3;
             this.ToolPanel.Text = "Tools";
             // 
@@ -1465,12 +1470,6 @@ namespace Elmanager.Forms
             this.SelectButton.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
             this.SelectButton.UseVisualStyleBackColor = true;
             // 
-            // saveAsPictureDialog
-            // 
-            this.saveAsPictureDialog.DefaultExt = "png";
-            this.saveAsPictureDialog.FileName = "Untitled";
-            this.saveAsPictureDialog.Filter = "Portable Network Graphics (*.png)|*.png";
-            // 
             // LevelEditor
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -1612,8 +1611,7 @@ namespace Elmanager.Forms
 		internal System.Windows.Forms.ToolStripMenuItem CheckTopologyMenuItem;
 		internal System.Windows.Forms.ToolStripButton ZoomTexturesButton;
 		internal System.Windows.Forms.ToolStripMenuItem MainConfigMenuItem;
-		internal System.Windows.Forms.ToolStripMenuItem RenderingSettingsToolStripMenuItem;
-		internal System.Windows.Forms.ToolStripStatusLabel BestTimeLabel;
+        internal System.Windows.Forms.ToolStripMenuItem RenderingSettingsToolStripMenuItem;
 		internal System.Windows.Forms.ToolStripMenuItem LevelPropertiesToolStripMenuItem;
         private System.ComponentModel.IContainer components;
         private ToolStripButton PreviousButton;
@@ -1627,7 +1625,6 @@ namespace Elmanager.Forms
         private ToolStripButton snapToGridButton;
         private ToolStripMenuItem bringToFrontToolStripMenuItem;
         private ToolStripMenuItem sendToBackToolStripMenuItem;
-        private ToolStripDropDownButton topologyList;
         private ToolStripMenuItem toolStripMenuItem1;
         private ToolStripButton showCrossHairButton;
         private ToolStripMenuItem importLevelsToolStripMenuItem;
@@ -1640,6 +1637,9 @@ namespace Elmanager.Forms
         private ToolStripMenuItem picturesConvertItem;
         internal RadioButtonMod TextButton;
         internal ToolStripButton ShowGravityAppleArrowsButton;
+        private ToolStripLabel BestTimeLabel;
+        private ToolStripDropDownButton topologyList;
+        private ToolStripSeparator toolStripSeparator12;
 	}
 	
 }

@@ -298,7 +298,7 @@ namespace Elmanager.Forms
                 items.Clear();
                 ResetTopologyListStyle();
                 topologyList.Text = "Checking topology...";
-                StatusStrip2.Refresh();
+                ToolStrip2.Refresh();
                 _errorPoints.Clear();
                 if (Lev.TooWide)
                     items.Add("Level is too wide. Current width: " + Lev.Width + ", maximum width: " + Level.MaximumSize);
@@ -1459,8 +1459,14 @@ namespace Elmanager.Forms
             ToolPanel.MouseWheel += MouseWheelZoom2;
             previousLevelToolStripMenuItem.Click += PrevNextButtonClick;
             nextLevelToolStripMenuItem.Click += PrevNextButtonClick;
-            foreach (ToolStripButton x in ToolStrip2.Items)
-                x.CheckedChanged += SettingChanged;
+            foreach (var x in ToolStrip2.Items)
+            {
+                var button = x as ToolStripButton;
+                if (button != null)
+                {
+                    button.CheckedChanged += SettingChanged;
+                }
+            }
             foreach (RadioButtonMod x in ToolPanel.Controls)
             {
                 x.KeyDown += KeyHandlerDown;
