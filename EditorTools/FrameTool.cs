@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using System.Drawing;
 using System.Windows.Forms;
@@ -11,6 +12,14 @@ namespace Elmanager.EditorTools
         private double _frameRadius = 0.2;
         private List<Polygon> _frames;
         private bool _framing;
+        private FrameType _frameType = FrameType.Normal;
+
+        private enum FrameType
+        {
+            Normal,
+            Inward,
+            Outward
+        }
 
         internal FrameTool(LevelEditor editor)
             : base(editor)
@@ -38,7 +47,7 @@ namespace Elmanager.EditorTools
         public void UpdateHelp()
         {
             LevEditor.InfoLabel.Text = Framing
-                                           ? "Left mouse button: create frame; right mouse button: cancel; +/-: adjust frame width."
+                                           ? "Mouse left: create frame; mouse right: cancel; +/-: adjust width; Space: Change type - " + _frameType
                                            : "Click the polygon to frame.";
         }
 
@@ -65,16 +74,32 @@ namespace Elmanager.EditorTools
             {
                 case Constants.Increase:
                     _frameRadius += 0.05;
-                    UpdateFrame();
                     break;
                 case Constants.Decrease:
                     if (_frameRadius > 0.05)
                     {
                         _frameRadius -= 0.05;
-                        UpdateFrame();
                     }
                     break;
+                case Keys.Space:
+                    switch (_frameType)
+                    {
+                        case FrameType.Normal:
+                            _frameType = FrameType.Inward;
+                            break;
+                        case FrameType.Inward:
+                            _frameType = FrameType.Outward;
+                            break;
+                        case FrameType.Outward:
+                            _frameType = FrameType.Normal;
+                            break;
+                        default:
+                            throw new ArgumentOutOfRangeException();
+                    }
+                    UpdateHelp();
+                    break;
             }
+            UpdateFrame();
         }
 
         public void MouseDown(MouseEventArgs mouseData)
@@ -87,6 +112,10 @@ namespace Elmanager.EditorTools
                     {
                         Framing = true;
                         _currentPolygon = NearestPolygon;
+                        if (!_currentPolygon.IsCounterClockwise)
+                        {
+                            _currentPolygon.ChangeOrientation();
+                        }
                         _currentPolygon.Mark = PolygonMark.Selected;
                         Lev.Polygons.Remove(_currentPolygon);
                         _frames = new List<Polygon>();
@@ -163,15 +192,31 @@ namespace Elmanager.EditorTools
             Renderer.RedrawScene();
         }
 
-        private static List<Polygon> MakeClosedPipe(Polygon pipeLine, double radius)
+        private List<Polygon> MakeClosedPipe(Polygon pipeLine, double radius)
         {
-            List<Polygon> p = new List<Polygon> {new Polygon(), new Polygon()};
+            List<Polygon> p = new List<Polygon> { new Polygon(), new Polygon() };
             if (pipeLine.Vertices.Count < 2)
                 return p;
             for (int i = 0; i < pipeLine.Vertices.Count; i++)
             {
-                p[0].Add(Geometry.FindPoint(pipeLine[i - 1], pipeLine[i], pipeLine[i + 1], -radius));
-                p[1].Add(Geometry.FindPoint(pipeLine[i - 1], pipeLine[i], pipeLine[i + 1], radius));
+                switch (_frameType)
+                {
+                    case FrameType.Normal:
+                        p[0].Add(Geometry.FindPoint(pipeLine[i - 1], pipeLine[i], pipeLine[i + 1], -radius));
+                        p[1].Add(Geometry.FindPoint(pipeLine[i - 1], pipeLine[i], pipeLine[i + 1], radius));
+                        break;
+                    case FrameType.Inward:
+                        p[0].Add(pipeLine[i]);
+                        p[1].Add(Geometry.FindPoint(pipeLine[i - 1], pipeLine[i], pipeLine[i + 1], radius));
+                        break;
+                    case FrameType.Outward:
+                        p[0].Add(pipeLine[i]);
+                        p[1].Add(Geometry.FindPoint(pipeLine[i - 1], pipeLine[i], pipeLine[i + 1], -radius));
+                        break;
+                    default:
+                        throw new ArgumentOutOfRangeException();
+                }
+
             }
             p[0].UpdateDecomposition();
             p[1].UpdateDecomposition();
