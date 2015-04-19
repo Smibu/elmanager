@@ -1427,6 +1427,7 @@ namespace Elmanager.Forms
             settings.GroundTextureEnabled = ShowGroundTextureButton.Checked;
             settings.SkyTextureEnabled = ShowSkyTextureButton.Checked;
             settings.ZoomTextures = ZoomTexturesButton.Checked;
+            settings.ShowGravityAppleArrows = ShowGravityAppleArrowsButton.Checked;
             Global.AppSettings.LevelEditor.SnapToGrid = snapToGridButton.Checked;
             Global.AppSettings.LevelEditor.ShowCrossHair = showCrossHairButton.Checked;
             Renderer.UpdateSettings(settings);
@@ -1514,6 +1515,7 @@ namespace Elmanager.Forms
             ShowGroundTextureButton.Checked = settings.GroundTextureEnabled;
             ShowSkyTextureButton.Checked = settings.SkyTextureEnabled;
             ZoomTexturesButton.Checked = settings.ZoomTextures;
+            ShowGravityAppleArrowsButton.Checked = settings.ShowGravityAppleArrows;
             snapToGridButton.Checked = Global.AppSettings.LevelEditor.SnapToGrid;
             showCrossHairButton.Checked = Global.AppSettings.LevelEditor.ShowCrossHair;
             PreviousButton.Enabled = CurrLevDirExists();

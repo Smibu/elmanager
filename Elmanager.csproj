@@ -468,6 +468,7 @@
     <None Include="Icons\Exit.png" />
     <None Include="Icons\Delete.png" />
     <None Include="Icons\Edges.png" />
+    <Content Include="Icons\AppleArrow.png" />
     <Content Include="Icons\Crosshair2.png" />
     <Content Include="Icons\Elma.ico" />
   </ItemGroup>

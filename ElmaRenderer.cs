@@ -734,6 +734,50 @@ namespace Elmanager
                 DrawObjectFrames();
             if (Settings.ShowObjectCenters)
                 DrawObjectCenters();
+            if (Settings.ShowGravityAppleArrows && (Settings.ShowObjectFrames || (LGRGraphicsLoaded && Settings.ShowObjects)))
+            {
+                GL.Color3(Settings.AppleGravityArrowColor);
+                foreach (var o in Lev.Objects)
+                {
+                    if (o.Type == Level.ObjectType.Apple && o.AppleType != Level.AppleTypes.Normal)
+                    {
+                        double arrowRotation = 0.0;
+                        switch (o.AppleType)
+                        {
+                            case Level.AppleTypes.GravityUp:
+                                arrowRotation = 180.0;
+                                break;
+                            case Level.AppleTypes.GravityDown:
+                                arrowRotation = 0.0;
+                                break;
+                            case Level.AppleTypes.GravityLeft:
+                                arrowRotation = 90.0;
+                                break;
+                            case Level.AppleTypes.GravityRight:
+                                arrowRotation = 270.0;
+                                break;
+                            default:
+                                throw new ArgumentOutOfRangeException();
+                        }
+                        const double arrowThickness = 0.4;
+                        GL.PushMatrix();
+                        GL.Translate(o.Position.X, o.Position.Y, 0.0);
+                        GL.Scale(0.5, 0.5, 1.0);
+                        GL.Rotate(arrowRotation, 0.0, 0.0, 1.0);
+                        GL.Translate(-0.5, -0.5, 0.0);
+                        GL.Begin(BeginMode.LineLoop);
+                        GL.Vertex2((1 - arrowThickness) / 2.0, 0.0);
+                        GL.Vertex2((1 - arrowThickness) / 2.0, 0.5);
+                        GL.Vertex2(0.0, 0.5);
+                        GL.Vertex2(0.5, 1.0);
+                        GL.Vertex2(1.0, 0.5);
+                        GL.Vertex2(1.0 - (1 - arrowThickness) / 2.0, 0.5);
+                        GL.Vertex2(1.0 - (1 - arrowThickness) / 2.0, 0.0);
+                        GL.End();
+                        GL.PopMatrix();
+                    }
+                }
+            }
             foreach (Polygon x in Lev.Polygons)
             {
                 if (x.IsGrass)

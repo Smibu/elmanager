@@ -118,6 +118,7 @@ namespace Elmanager.Forms
             this.ShowPicturesButton = new System.Windows.Forms.ToolStripButton();
             this.ShowObjectFramesButton = new System.Windows.Forms.ToolStripButton();
             this.ShowObjectsButton = new System.Windows.Forms.ToolStripButton();
+            this.ShowGravityAppleArrowsButton = new System.Windows.Forms.ToolStripButton();
             this.ShowGroundButton = new System.Windows.Forms.ToolStripButton();
             this.ShowGroundTextureButton = new System.Windows.Forms.ToolStripButton();
             this.ShowSkyTextureButton = new System.Windows.Forms.ToolStripButton();
@@ -145,6 +146,7 @@ namespace Elmanager.Forms
             this.flowersConvertItem = new System.Windows.Forms.ToolStripMenuItem();
             this.picturesConvertItem = new System.Windows.Forms.ToolStripMenuItem();
             this.ToolPanel = new Elmanager.CustomControls.PanelMod();
+            this.TextButton = new Elmanager.CustomControls.RadioButtonMod();
             this.PictureButton = new Elmanager.CustomControls.RadioButtonMod();
             this.AutoGrassButton = new Elmanager.CustomControls.RadioButtonMod();
             this.CutConnectButton = new Elmanager.CustomControls.RadioButtonMod();
@@ -159,7 +161,6 @@ namespace Elmanager.Forms
             this.VertexButton = new Elmanager.CustomControls.RadioButtonMod();
             this.SelectButton = new Elmanager.CustomControls.RadioButtonMod();
             this.saveAsPictureDialog = new System.Windows.Forms.SaveFileDialog();
-            this.TextButton = new Elmanager.CustomControls.RadioButtonMod();
             this.MenuStrip1.SuspendLayout();
             this.StatusStrip1.SuspendLayout();
             this.ToolStripPanel1.SuspendLayout();
@@ -875,6 +876,7 @@ namespace Elmanager.Forms
             this.ShowPicturesButton,
             this.ShowObjectFramesButton,
             this.ShowObjectsButton,
+            this.ShowGravityAppleArrowsButton,
             this.ShowGroundButton,
             this.ShowGroundTextureButton,
             this.ShowSkyTextureButton,
@@ -882,7 +884,7 @@ namespace Elmanager.Forms
             this.ToolStrip2.LayoutStyle = System.Windows.Forms.ToolStripLayoutStyle.HorizontalStackWithOverflow;
             this.ToolStrip2.Location = new System.Drawing.Point(3, 39);
             this.ToolStrip2.Name = "ToolStrip2";
-            this.ToolStrip2.Size = new System.Drawing.Size(579, 39);
+            this.ToolStrip2.Size = new System.Drawing.Size(615, 39);
             this.ToolStrip2.TabIndex = 15;
             // 
             // ShowGridButton
@@ -1004,6 +1006,16 @@ namespace Elmanager.Forms
             this.ShowObjectsButton.Name = "ShowObjectsButton";
             this.ShowObjectsButton.Size = new System.Drawing.Size(36, 36);
             this.ShowObjectsButton.Text = "Show objects";
+            // 
+            // ShowGravityAppleArrowsButton
+            // 
+            this.ShowGravityAppleArrowsButton.CheckOnClick = true;
+            this.ShowGravityAppleArrowsButton.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
+            this.ShowGravityAppleArrowsButton.Image = global::My.Resources.Resources.AppleArrow;
+            this.ShowGravityAppleArrowsButton.ImageTransparentColor = System.Drawing.Color.Magenta;
+            this.ShowGravityAppleArrowsButton.Name = "ShowGravityAppleArrowsButton";
+            this.ShowGravityAppleArrowsButton.Size = new System.Drawing.Size(36, 36);
+            this.ShowGravityAppleArrowsButton.Text = "Show gravity apple arrows";
             // 
             // ShowGroundButton
             // 
@@ -1268,6 +1280,20 @@ namespace Elmanager.Forms
             this.ToolPanel.TabIndex = 3;
             this.ToolPanel.Text = "Tools";
             // 
+            // TextButton
+            // 
+            this.TextButton.Appearance = System.Windows.Forms.Appearance.Button;
+            this.TextButton.AutoSize = true;
+            this.TextButton.Dock = System.Windows.Forms.DockStyle.Top;
+            this.TextButton.Location = new System.Drawing.Point(0, 299);
+            this.TextButton.Name = "TextButton";
+            this.TextButton.Size = new System.Drawing.Size(84, 23);
+            this.TextButton.TabIndex = 16;
+            this.TextButton.Text = "&Text";
+            this.TextButton.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
+            this.TextButton.UseVisualStyleBackColor = true;
+            this.TextButton.CheckedChanged += new System.EventHandler(this.TextButton_CheckedChanged);
+            // 
             // PictureButton
             // 
             this.PictureButton.Appearance = System.Windows.Forms.Appearance.Button;
@@ -1445,20 +1471,6 @@ namespace Elmanager.Forms
             this.saveAsPictureDialog.FileName = "Untitled";
             this.saveAsPictureDialog.Filter = "Portable Network Graphics (*.png)|*.png";
             // 
-            // TextButton
-            // 
-            this.TextButton.Appearance = System.Windows.Forms.Appearance.Button;
-            this.TextButton.AutoSize = true;
-            this.TextButton.Dock = System.Windows.Forms.DockStyle.Top;
-            this.TextButton.Location = new System.Drawing.Point(0, 299);
-            this.TextButton.Name = "TextButton";
-            this.TextButton.Size = new System.Drawing.Size(84, 23);
-            this.TextButton.TabIndex = 16;
-            this.TextButton.Text = "&Text";
-            this.TextButton.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
-            this.TextButton.UseVisualStyleBackColor = true;
-            this.TextButton.CheckedChanged += new System.EventHandler(this.TextButton_CheckedChanged);
-            // 
             // LevelEditor
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -1627,6 +1639,7 @@ namespace Elmanager.Forms
         private ToolStripMenuItem flowersConvertItem;
         private ToolStripMenuItem picturesConvertItem;
         internal RadioButtonMod TextButton;
+        internal ToolStripButton ShowGravityAppleArrowsButton;
 	}
 	
 }

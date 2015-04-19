@@ -118,14 +118,14 @@
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
   <assembly alias="System.Windows.Forms" name="System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089" />
+  <data name="New16" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Icons\New16.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
   <data name="ObjectFrame" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\Icons\ObjectFrame.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
   <data name="TextureFrame" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\Icons\TextureFrame.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
-  </data>
-  <data name="Arial_Rounded_MT" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\Resources\Arial_Rounded_MT.ttf;System.Byte[], mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </data>
   <data name="Topology" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\Icons\Topology.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
@@ -136,11 +136,20 @@
   <data name="GrassAll" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\Icons\GrassAll.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
+  <data name="Crosshair2" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Icons\Crosshair2.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="Open" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Icons\Open.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
   <data name="Picture" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\Icons\Picture.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
   <data name="_New" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\Icons\New.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="ZoomFill16" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Icons\ZoomFill16.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
   <data name="_Object" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\Icons\Object.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
@@ -151,20 +160,17 @@
   <data name="GrassDelete" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\Icons\GrassDelete.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
+  <data name="ZoomOut" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Icons\ZoomOut.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
   <data name="Undo" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\Icons\Undo.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
-  </data>
-  <data name="New16" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\Icons\New16.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
   <data name="Ground" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\Icons\Ground.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
   <data name="GroundFill" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\Icons\GroundFill.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
-  </data>
-  <data name="PictureFrame" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\Icons\PictureFrame.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
   <data name="Mirror" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\Icons\Mirror.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
@@ -190,17 +196,14 @@
   <data name="Elma" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\Icons\Elma.ico;System.Drawing.Icon, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
-  <data name="ZoomFill16" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\Icons\ZoomFill16.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
-  </data>
-  <data name="SaveAs16" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\Icons\SaveAs16.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  <data name="Next" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Icons\Next.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
   <data name="Texture" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\Icons\Texture.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
-  <data name="ZoomOut" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\Icons\ZoomOut.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  <data name="Arial_Rounded_MT" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\Arial_Rounded_MT.ttf;System.Byte[], mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </data>
   <data name="ZoomIn" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\Icons\ZoomIn.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
@@ -214,23 +217,20 @@
   <data name="Delete" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\Icons\Delete.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
-  <data name="Exit16" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\Icons\Exit16.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  <data name="ZoomFill" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Icons\ZoomFill.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
   <data name="Snap" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\Icons\Snap.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
-  <data name="ZoomFill" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\Icons\ZoomFill.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
-  </data>
-  <data name="Mirror16" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\Icons\Mirror16.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
-  </data>
-  <data name="Next" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\Icons\Next.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  <data name="Exit16" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Icons\Exit16.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
   <data name="Save" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\Icons\Save.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="GrassOne" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Icons\GrassOne.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
   <data name="GroundSky" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\Icons\GroundSky.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
@@ -238,19 +238,22 @@
   <data name="Vertices" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\Icons\Vertices.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
-  <data name="GrassOne" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\Icons\GrassOne.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  <data name="PictureFrame" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Icons\PictureFrame.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
   <data name="GrassEdges" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\Icons\GrassEdges.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
-  <data name="Open" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\Icons\Open.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  <data name="Mirror16" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Icons\Mirror16.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="SaveAs16" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Icons\SaveAs16.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
   <data name="IntRes" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\Resources\IntComp.dat;System.Byte[], mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </data>
-  <data name="Crosshair2" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\Icons\Crosshair2.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  <data name="AppleArrow" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Icons\AppleArrow.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
 </root>
