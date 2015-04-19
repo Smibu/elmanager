@@ -9,7 +9,7 @@ namespace Elmanager
     [Serializable]
     public class ElmanagerSettings
     {
-        private static string SettingsFile = "Elmanager" + Global.Version + ".dat";
+        private static string SettingsFile = "Elmanager" + Global.Version.ToString("ddMMyyyy") + ".dat";
         public GeneralSettings General = new GeneralSettings();
         public LevelEditorSettings LevelEditor = new LevelEditorSettings();
         public ReplayManagerSettings ReplayManager = new ReplayManagerSettings();

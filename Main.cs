@@ -22,7 +22,7 @@ namespace Elmanager
         internal static Level[] Internals;
         internal static List<string> LevelFiles;
         internal static List<Replay> ReplayDataBase;
-        internal static string Version;
+        internal static DateTime Version;
 
         static Global()
         {
@@ -48,7 +48,7 @@ namespace Elmanager
 //                f.Write(matches[i--]);
 //            }
 //            return;
-            Version = BuildDate.ToString("ddMMyyyy");
+            Version = BuildDate;
             Debug.Listeners.Add(new TextWriterTraceListener(Console.Out));
             Debug.AutoFlush = true;
             var controller = new SingleInstanceController();
@@ -143,10 +143,7 @@ namespace Elmanager
             AppSettings = ElmanagerSettings.Load();
             if (AppSettings.General.CheckForUpdatesOnStartup)
             {
-                //ThreadPool.QueueUserWorkItem(Utils.CheckForUpdates);
-#if !DEBUG
                 ThreadPool.QueueUserWorkItem(Utils.CheckForUpdates);
-#endif
             }
             ParseCommandLine(args);
             ComponentManager.WaitAllThreads();

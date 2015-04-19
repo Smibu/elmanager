@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Collections.Specialized;
 using System.Diagnostics;
+using System.Globalization;
 using System.IO;
 using System.Linq;
 using System.Net;
@@ -140,18 +141,22 @@ namespace Elmanager
         internal static void CheckForUpdates(object state)
         {
             var wc = new WebClient();
-            string newestVersion = Global.Version;
             try
             {
-                newestVersion = wc.DownloadString(Constants.VersionUri);
+                DateTime newestVersion = DateTime.ParseExact(wc.DownloadString(Constants.VersionUri),
+                    "ddMMyyyy",
+                    CultureInfo.InvariantCulture);
+                if (newestVersion > Global.Version)
+                {
+                    var newDlg = new NewVersionForm();
+                    newDlg.ShowDialog();
+                }
             }
             catch (WebException)
             {
             }
-            if (!CompareWith(newestVersion, Global.Version))
+            catch (FormatException)
             {
-                var newDlg = new NewVersionForm();
-                newDlg.ShowDialog();
             }
         }
 
