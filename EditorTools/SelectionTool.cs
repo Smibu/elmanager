@@ -137,7 +137,23 @@ namespace Elmanager.EditorTools
             switch (mouseData.Button)
             {
                 case MouseButtons.Left:
-                    if (nearestVertexIndex >= 0)
+                    if (nearestVertexIndex >= -1 && Keyboard.IsKeyDown(Key.LeftAlt))
+                    {
+                        if (!Keyboard.IsKeyDown(Key.LeftCtrl))
+                        {
+                            MarkAllAs(Geometry.VectorMark.None);
+                        }
+                        NearestPolygon.MarkVectorsAs(Geometry.VectorMark.Selected);
+                        foreach (var polygon in Lev.Polygons)
+                        {
+                            if (NearestPolygon.AreaHasPoint(polygon[0]))
+                            {
+                                polygon.MarkVectorsAs(Geometry.VectorMark.Selected);
+                            }
+                        }
+                        EndSelectionHandling();
+                    }
+                    else if (nearestVertexIndex >= 0)
                     {
                         HandleMark(NearestPolygon[nearestVertexIndex]);
                         if (Keyboard.IsKeyDown(Key.LeftShift))
@@ -153,8 +169,6 @@ namespace Elmanager.EditorTools
                     {
                         int nearestSegmentIndex = NearestPolygon.GetNearestSegmentIndex(p);
                         AdjustForGrid(p);
-                        _moveStartPosition = p;
-                        Moving = true;
                         if (Keyboard.IsKeyDown(Key.LeftShift))
                         {
                             MarkAllAs(Geometry.VectorMark.None);
@@ -185,9 +199,8 @@ namespace Elmanager.EditorTools
                                     NearestPolygon.MarkVectorsAs(Geometry.VectorMark.Selected);
                                 }
                             }
-                            LevEditor.PreserveSelection();
                         }
-                        Renderer.RedrawScene();
+                        EndSelectionHandling();
                     }
                     else if (nearestObjectIndex >= 0)
                         HandleMark(Lev.Objects[nearestObjectIndex].Position);
@@ -455,16 +468,19 @@ namespace Elmanager.EditorTools
                 if (v.Mark != Geometry.VectorMark.Selected)
                     MarkAllAs(Geometry.VectorMark.None);
                 v.Mark = Geometry.VectorMark.Selected;
-                Moving = true;
             }
             else
             {
                 v.Mark = v.Mark != Geometry.VectorMark.Selected
                     ? Geometry.VectorMark.Selected
                     : Geometry.VectorMark.None;
-                if (v.Mark == Geometry.VectorMark.Selected)
-                    Moving = true;
             }
+            EndSelectionHandling();
+        }
+
+        private void EndSelectionHandling()
+        {
+            Moving = true;
             LevEditor.PreserveSelection();
             AdjustForGrid(CurrentPos);
             _moveStartPosition = CurrentPos;
