@@ -133,15 +133,26 @@ namespace Elmanager.EditorTools
             {
                 return nearestIndex;
             }
-
+            smallestDistance = double.MaxValue;
+            bool nearestSegmentFound = false;
             foreach (Polygon x in Lev.Polygons)
             {
+                double currentDistance;
                 if (((x.IsGrass && grassFilter) || (!x.IsGrass && groundFilter)) &&
-                    x.DistanceFromPoint(p) < Renderer.ZoomLevel * Global.AppSettings.LevelEditor.CaptureRadius)
+                    (currentDistance = x.DistanceFromPoint(p)) < Renderer.ZoomLevel * Global.AppSettings.LevelEditor.CaptureRadius)
                 {
-                    NearestPolygon = x;
-                    return -1; //Indicates that mouse was near an edge but not vertex
+
+                    if (currentDistance < smallestDistance)
+                    {
+                        nearestSegmentFound = true;
+                        smallestDistance = currentDistance;
+                        NearestPolygon = x;
+                    }
                 }
+            }
+            if (nearestSegmentFound)
+            {
+                return -1;
             }
             return -2; //Indicates that mouse wasn't near any edge nor vertex
         }
