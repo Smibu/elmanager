@@ -780,6 +780,15 @@ namespace Elmanager.Forms
 
         private void KeyHandlerDown(object sender, KeyEventArgs e)
         {
+            switch (e.KeyCode)
+            {
+                case Keys.Add:
+                    e = new KeyEventArgs(Constants.Increase);
+                    break;
+                case Keys.Subtract:
+                    e = new KeyEventArgs(Constants.Decrease);
+                    break;
+            }
             CurrentTool.KeyDown(e);
             switch (e.KeyCode)
             {
