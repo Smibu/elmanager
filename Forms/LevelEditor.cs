@@ -457,7 +457,6 @@ namespace Elmanager.Forms
         private void CustomRendering()
         {
             CurrentTool.ExtraRendering();
-            double zoom = Renderer.ZoomLevel/50;
             if (Global.AppSettings.LevelEditor.ShowCrossHair)
             {
                 var mouse = GetMouseCoordinatesFixed();
@@ -466,6 +465,11 @@ namespace Elmanager.Forms
                 Renderer.DrawDashLine(mouse.X, -Renderer.YMax, mouse.X,
                     -Renderer.YMin, Global.AppSettings.LevelEditor.CrosshairColor);
             }
+
+            Action<Vector, Color> drawAction = Global.AppSettings.LevelEditor.RenderingSettings.UseCirclesForVertices ?
+                    (Action<Vector, Color>)((pt, color) => Renderer.DrawPoint(pt, color))
+                    : ((pt, color) => Renderer.DrawEquilateralTriangle(pt, Renderer.ZoomLevel * Global.AppSettings.LevelEditor.RenderingSettings.VertexSize, color));
+
             foreach (Polygon x in Lev.Polygons)
             {
                 switch (x.Mark)
@@ -490,11 +494,11 @@ namespace Elmanager.Forms
                     switch (z.Mark)
                     {
                         case Geometry.VectorMark.Selected:
-                            Renderer.DrawEquilateralTriangle(z, zoom, Global.AppSettings.LevelEditor.SelectionColor);
+                            drawAction(z, Global.AppSettings.LevelEditor.SelectionColor);
                             break;
                         case Geometry.VectorMark.Highlight:
                             if (Global.AppSettings.LevelEditor.UseHighlight)
-                                Renderer.DrawPoint(z, Global.AppSettings.LevelEditor.HighlightColor);
+                                drawAction(z, Global.AppSettings.LevelEditor.HighlightColor);
                             break;
                     }
                 }
@@ -505,11 +509,11 @@ namespace Elmanager.Forms
                 switch (z.Mark)
                 {
                     case Geometry.VectorMark.Selected:
-                        Renderer.DrawEquilateralTriangle(z, zoom, Global.AppSettings.LevelEditor.SelectionColor);
+                        drawAction(z, Global.AppSettings.LevelEditor.SelectionColor);
                         break;
                     case Geometry.VectorMark.Highlight:
                         if (Global.AppSettings.LevelEditor.UseHighlight)
-                            Renderer.DrawPoint(z, Global.AppSettings.LevelEditor.HighlightColor);
+                            drawAction(z, Global.AppSettings.LevelEditor.HighlightColor);
                         break;
                 }
             }

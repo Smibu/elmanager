@@ -813,11 +813,23 @@ namespace Elmanager
                 bool showGrassVertices = Settings.ShowGrassEdges;
                 bool showGroundVertices = Settings.ShowGroundEdges || (Settings.ShowGround && LGRGraphicsLoaded);
                 GL.Color3(Settings.VertexColor);
-                GL.Begin(BeginMode.Triangles);
+                if (Settings.UseCirclesForVertices)
+                {
+                    GL.PointSize((float)(Settings.VertexSize * 300));
+                    GL.Begin(PrimitiveType.Points);
                 foreach (Polygon x in Lev.Polygons)
                     if ((showGrassVertices && x.IsGrass) || (showGroundVertices && !x.IsGrass))
                         foreach (Vector z in x.Vertices)
+                                GL.Vertex3(z.X, z.Y, 0);
+                }
+                else
+                {
+                    GL.Begin(PrimitiveType.Triangles);
+                    foreach (Polygon x in Lev.Polygons)
+                        if ((showGrassVertices && x.IsGrass) || (showGroundVertices && !x.IsGrass))
+                            foreach (Vector z in x.Vertices)
                             DrawEquilateralTriangleFast(z, _ZoomLevel * Settings.VertexSize);
+                }
                 GL.End();
             }
             if (CustomRendering != null)
@@ -1789,7 +1801,6 @@ namespace Elmanager
             GL.ClearStencil(GroundStencil);
             GL.DepthFunc(DepthFunction.Gequal);
             GL.AlphaFunc(AlphaFunction.Gequal, 0.9f);
-            GL.PointSize(5.0f);
             GL.Hint(HintTarget.PerspectiveCorrectionHint, HintMode.Fastest);
             GL.Hint(HintTarget.TextureCompressionHint, HintMode.Fastest);
             GL.Hint(HintTarget.PolygonSmoothHint, HintMode.Fastest);

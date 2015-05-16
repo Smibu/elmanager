@@ -37,6 +37,7 @@ namespace Elmanager
             ShowTextureFrames = false;
             ShowObjectFrames = true;
             ShowGravityAppleArrows = true;
+            UseCirclesForVertices = false;
         }
 
         private RenderingSettings(RenderingSettings s)
@@ -79,6 +80,7 @@ namespace Elmanager
             CircleDrawingAccuracy = s.CircleDrawingAccuracy;
             ShowObjectCenters = s.ShowObjectCenters;
             ShowGravityAppleArrows = s.ShowGravityAppleArrows;
+            UseCirclesForVertices = s.UseCirclesForVertices;
         }
 
         internal RenderingSettings Clone()
@@ -201,6 +203,9 @@ namespace Elmanager
                 _vertexSize = value > 0 ? value : 0.02;
             }
         }
+
+        [DisplayName("Use circles for vertices")]
+        public bool UseCirclesForVertices { get; set; }
 
         [DisplayName("Smooth zoom enabled")]
         public bool SmoothZoomEnabled { get; set; }
