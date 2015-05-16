@@ -255,7 +255,7 @@ namespace Elmanager
         {
             int accuracy = Settings.CircleDrawingAccuracy;
             GL.Color4(circleColor);
-            GL.Begin(BeginMode.LineLoop);
+            GL.Begin(PrimitiveType.LineLoop);
             for (int i = 0; i <= accuracy; i++)
                 GL.Vertex2(x + Math.Cos(i * 360 / (double) accuracy * Math.PI / 180) * radius,
                            y + Math.Sin(i * 360 / (double) accuracy * Math.PI / 180) * radius);
@@ -279,7 +279,7 @@ namespace Elmanager
         internal void DrawFilledTriangles(IEnumerable<Vector[]> triangles)
         {
             const double depth = zFar - (zFar - zNear) * SkyDepth;
-            GL.Begin(BeginMode.Triangles);
+            GL.Begin(PrimitiveType.Triangles);
             foreach (Vector[] triangle in triangles)
                 foreach (Vector x in triangle)
                     GL.Vertex3(x.X, x.Y, depth);
@@ -307,7 +307,7 @@ namespace Elmanager
         internal void DrawLine(Vector v1, Vector v2, Color color, double depth = 0)
         {
             GL.Color4(color);
-            GL.Begin(BeginMode.Lines);
+            GL.Begin(PrimitiveType.Lines);
             GL.Vertex3(v1.X, v1.Y, depth);
             GL.Vertex3(v2.X, v2.Y, depth);
             GL.End();
@@ -316,7 +316,7 @@ namespace Elmanager
         internal void DrawLine(double x1, double y1, double x2, double y2, Color color, double depth = 0)
         {
             GL.Color4(color);
-            GL.Begin(BeginMode.Lines);
+            GL.Begin(PrimitiveType.Lines);
             GL.Vertex3(x1, y1, depth);
             GL.Vertex3(x2, y2, depth);
             GL.End();
@@ -325,7 +325,7 @@ namespace Elmanager
         internal void DrawLineStrip(Polygon polygon, Color color, double depth = 0)
         {
             GL.Color4(color);
-            GL.Begin(BeginMode.LineStrip);
+            GL.Begin(PrimitiveType.LineStrip);
             foreach (Vector x in polygon.Vertices)
                 GL.Vertex3(x.X, x.Y, depth);
             GL.End();
@@ -344,7 +344,7 @@ namespace Elmanager
             GL.BindTexture(TextureTarget.Texture2D, pic);
             if (mirror)
             {
-                GL.Begin(BeginMode.Quads);
+                GL.Begin(PrimitiveType.Quads);
                 GL.TexCoord2(0, 1);
                 GL.Vertex3(startx + x - offsetx, starty - y - offsety, dist);
                 GL.TexCoord2(1, 1);
@@ -357,7 +357,7 @@ namespace Elmanager
             }
             else
             {
-                GL.Begin(BeginMode.Quads);
+                GL.Begin(PrimitiveType.Quads);
                 GL.TexCoord2(0, 0);
                 GL.Vertex3(startx + x - offsetx, starty - y - offsety, dist);
                 GL.TexCoord2(1, 0);
@@ -373,7 +373,7 @@ namespace Elmanager
         internal void DrawPoint(Vector v, Color color, double depth = 0)
         {
             GL.Color4(color);
-            GL.Begin(BeginMode.Points);
+            GL.Begin(PrimitiveType.Points);
             GL.Vertex3(v.X, v.Y, depth);
             GL.End();
         }
@@ -381,7 +381,7 @@ namespace Elmanager
         internal void DrawPoint(double x, double y, Color color, double depth = 0)
         {
             GL.Color4(color);
-            GL.Begin(BeginMode.Points);
+            GL.Begin(PrimitiveType.Points);
             GL.Vertex3(x, y, depth);
             GL.End();
         }
@@ -389,7 +389,7 @@ namespace Elmanager
         internal void DrawPolygon(Polygon polygon, Color color, double depth = 0)
         {
             GL.Color4(color);
-            GL.Begin(BeginMode.LineLoop);
+            GL.Begin(PrimitiveType.LineLoop);
             foreach (Vector x in polygon.Vertices)
                 GL.Vertex3(x.X, x.Y, depth);
             GL.End();
@@ -398,7 +398,7 @@ namespace Elmanager
         internal void DrawRectangle(double x1, double y1, double x2, double y2, Color rectColor)
         {
             GL.Color4(rectColor);
-            GL.Begin(BeginMode.LineLoop);
+            GL.Begin(PrimitiveType.LineLoop);
             GL.Vertex2(x1, y1);
             GL.Vertex2(x2, y1);
             GL.Vertex2(x2, y2);
@@ -408,7 +408,7 @@ namespace Elmanager
 
         internal void DrawRectangle(double x1, double y1, double x2, double y2)
         {
-            GL.Begin(BeginMode.LineLoop);
+            GL.Begin(PrimitiveType.LineLoop);
             GL.Vertex2(x1, y1);
             GL.Vertex2(x2, y1);
             GL.Vertex2(x2, y2);
@@ -419,7 +419,7 @@ namespace Elmanager
         internal void DrawRectangle(Vector v1, Vector v2, Color rectColor)
         {
             GL.Color4(rectColor);
-            GL.Begin(BeginMode.LineLoop);
+            GL.Begin(PrimitiveType.LineLoop);
             GL.Vertex2(v1.X, v1.Y);
             GL.Vertex2(v2.X, v1.Y);
             GL.Vertex2(v2.X, v2.Y);
@@ -429,7 +429,7 @@ namespace Elmanager
 
         internal void DrawRectangle(Vector v1, Vector v2)
         {
-            GL.Begin(BeginMode.LineLoop);
+            GL.Begin(PrimitiveType.LineLoop);
             GL.Vertex2(v1.X, v1.Y);
             GL.Vertex2(v2.X, v1.Y);
             GL.Vertex2(v2.X, v2.Y);
@@ -463,7 +463,7 @@ namespace Elmanager
             GL.StencilOp(StencilOp.Incr, StencilOp.Keep, StencilOp.Decr);
             GL.StencilFunc(StencilFunction.Equal, GroundStencil, StencilMask);
             GL.ColorMask(false, false, false, false);
-            GL.Begin(BeginMode.Triangles);
+            GL.Begin(PrimitiveType.Triangles);
             foreach (Polygon k in Lev.Polygons)
                 if (!k.IsGrass)
                     DrawFilledTrianglesFast(k.Decomposition, zFar - (zFar - zNear) * SkyDepth);
@@ -486,7 +486,7 @@ namespace Elmanager
                     double gtH = GroundTexture.Height;
                     if (Settings.ZoomTextures)
                     {
-                        GL.Begin(BeginMode.Quads);
+                        GL.Begin(PrimitiveType.Quads);
                         GL.TexCoord2(0, 0);
                         GL.Vertex3(MidX - TextureVertexConst, MidY - TextureVertexConst, depth);
                         GL.TexCoord2(TextureCoordConst / gtW, 0);
@@ -499,7 +499,7 @@ namespace Elmanager
                     }
                     else
                     {
-                        GL.Begin(BeginMode.Quads);
+                        GL.Begin(PrimitiveType.Quads);
                         const double texminx = 0;
                         const double texminy = 0;
                         GL.TexCoord2(texminx, texminy);
@@ -528,7 +528,7 @@ namespace Elmanager
                 {
                     GL.Disable(EnableCap.Texture2D);
                     GL.Color4(Settings.GroundFillColor);
-                    GL.Begin(BeginMode.Quads);
+                    GL.Begin(PrimitiveType.Quads);
                     GL.Vertex3(MidX - TextureVertexConst, MidY - TextureVertexConst, depth);
                     GL.Vertex3(MidX + TextureVertexConst, MidY - TextureVertexConst, depth);
                     GL.Vertex3(MidX + TextureVertexConst, MidY + TextureVertexConst, depth);
@@ -544,7 +544,7 @@ namespace Elmanager
                 GL.BindTexture(TextureTarget.Texture2D, SkyTexture.TextureIdentifier);
                 if (Settings.ZoomTextures)
                 {
-                    GL.Begin(BeginMode.Quads);
+                    GL.Begin(PrimitiveType.Quads);
                     GL.TexCoord2(0, 0);
                     GL.Vertex3(CenterX / 2 - TextureVertexConst, CenterY - TextureVertexConst, depth);
                     GL.TexCoord2(TextureCoordConst / SkyTexture.Width, 0);
@@ -558,7 +558,7 @@ namespace Elmanager
                 }
                 else
                 {
-                    //GL.Begin(BeginMode.Quads);
+                    //GL.Begin(PrimitiveType.Quads);
                     //GL.TexCoord2(0, 0);
                     //GL.Vertex3(CenterX / 2 - TextureVertexConst, CenterY - TextureVertexConst, depth);
                     //GL.TexCoord2(TextureZoomConst / SkyTexture.Width / ZoomLevel, 0);
@@ -574,7 +574,7 @@ namespace Elmanager
                     GL.PushMatrix();
                     GL.LoadIdentity();
                     GL.Ortho(0, 1, 0, 1, zNear, zFar);
-                    GL.Begin(BeginMode.Quads);
+                    GL.Begin(PrimitiveType.Quads);
                     GL.TexCoord2(xdelta, 0);
                     GL.Vertex3(0,1,depth);
                     GL.TexCoord2(2 + xdelta, 0);
@@ -647,7 +647,7 @@ namespace Elmanager
                         const double depth = zFar - (zFar - zNear) * 1;
                         if (Settings.ZoomTextures)
                         {
-                            GL.Begin(BeginMode.Quads);
+                            GL.Begin(PrimitiveType.Quads);
                             GL.TexCoord2(0, 0);
                             GL.Vertex3(MidX - TextureVertexConst, MidY - TextureVertexConst, depth);
                             GL.TexCoord2(TextureCoordConst / picture.TextureWidth, 0);
@@ -661,7 +661,7 @@ namespace Elmanager
                         }
                         else
                         {
-                            GL.Begin(BeginMode.Quads);
+                            GL.Begin(PrimitiveType.Quads);
                             double ymin = MidY - TextureVertexConst;
                             double ymax = MidY + TextureVertexConst;
                             GL.TexCoord2(0, 0);
@@ -765,7 +765,7 @@ namespace Elmanager
                         GL.Scale(0.5, 0.5, 1.0);
                         GL.Rotate(arrowRotation, 0.0, 0.0, 1.0);
                         GL.Translate(-0.5, -0.5, 0.0);
-                        GL.Begin(BeginMode.LineLoop);
+                        GL.Begin(PrimitiveType.LineLoop);
                         GL.Vertex2((1 - arrowThickness) / 2.0, 0.0);
                         GL.Vertex2((1 - arrowThickness) / 2.0, 0.5);
                         GL.Vertex2(0.0, 0.5);
@@ -817,9 +817,9 @@ namespace Elmanager
                 {
                     GL.PointSize((float)(Settings.VertexSize * 300));
                     GL.Begin(PrimitiveType.Points);
-                foreach (Polygon x in Lev.Polygons)
-                    if ((showGrassVertices && x.IsGrass) || (showGroundVertices && !x.IsGrass))
-                        foreach (Vector z in x.Vertices)
+                    foreach (Polygon x in Lev.Polygons)
+                        if ((showGrassVertices && x.IsGrass) || (showGroundVertices && !x.IsGrass))
+                            foreach (Vector z in x.Vertices)
                                 GL.Vertex3(z.X, z.Y, 0);
                 }
                 else
@@ -828,7 +828,7 @@ namespace Elmanager
                     foreach (Polygon x in Lev.Polygons)
                         if ((showGrassVertices && x.IsGrass) || (showGroundVertices && !x.IsGrass))
                             foreach (Vector z in x.Vertices)
-                            DrawEquilateralTriangleFast(z, _ZoomLevel * Settings.VertexSize);
+                                DrawEquilateralTriangleFast(z, _ZoomLevel*Settings.VertexSize);
                 }
                 GL.End();
             }
@@ -842,7 +842,7 @@ namespace Elmanager
                     if (Players[x].FrameCount > 1)
                     {
                         GL.Color4(DrivingLineColors[x]);
-                        GL.Begin(BeginMode.LineStrip);
+                        GL.Begin(PrimitiveType.LineStrip);
                         for (int k = 0; k < Players[x].FrameCount; k++)
                             GL.Vertex2(Players[x].GlobalBodyFromIndex(k).X, Players[x].GlobalBodyFromIndex(k).Y);
                         GL.End();
@@ -867,7 +867,7 @@ namespace Elmanager
         internal void DrawEquilateralTriangle(Vector center, double side, Color color)
         {
             GL.Color3(color);
-            GL.Begin(BeginMode.Triangles);
+            GL.Begin(PrimitiveType.Triangles);
             DrawEquilateralTriangleFast(center, side);
             GL.End();
         }
@@ -1287,7 +1287,7 @@ namespace Elmanager
             x -= ObjectRadius;
             y -= ObjectRadius;
             GL.BindTexture(TextureTarget.Texture2D, picture);
-            GL.Begin(BeginMode.Quads);
+            GL.Begin(PrimitiveType.Quads);
             GL.TexCoord2(0, 0);
             GL.Vertex3(x, y, depth);
             GL.TexCoord2(1, 0);
@@ -1307,7 +1307,7 @@ namespace Elmanager
         private static void DrawPicture(int picture, double x, double y, double width, double height, double depth)
         {
             GL.BindTexture(TextureTarget.Texture2D, picture);
-            GL.Begin(BeginMode.Quads);
+            GL.Begin(PrimitiveType.Quads);
             GL.TexCoord2(0, 0);
             GL.Vertex3(x, y, depth);
             GL.TexCoord2(1, 0);
@@ -1573,7 +1573,7 @@ namespace Elmanager
                     GL.Translate(wheelXpos, wheelYpos, 0);
                     GL.Rotate(angle, 0, 0, 1);
                     GL.BindTexture(TextureTarget.Texture2D, Suspensions[i].TextureIdentifier);
-                    GL.Begin(BeginMode.Quads);
+                    GL.Begin(PrimitiveType.Quads);
                     GL.TexCoord2(0, 0);
                     GL.Vertex3(-Suspensions[i].OffsetX, -Suspensions[i].Height / 2, distance);
                     GL.TexCoord2(1, 0);
@@ -1733,7 +1733,7 @@ namespace Elmanager
             double headLineEndPointY = headY + f * headSin * Constants.HeadDiameter / 2;
             DrawCircle(leftWheelx, leftWheely, ObjectRadius, playerColor);
             DrawCircle(rightWheelx, rightWheely, ObjectRadius, playerColor);
-            GL.Begin(BeginMode.Lines);
+            GL.Begin(PrimitiveType.Lines);
             for (int k = 0; k < 2; k++)
             {
                 for (int j = 0; j < 4; j++)
@@ -1761,7 +1761,7 @@ namespace Elmanager
             }
             GL.End();
             DrawCircle(headX, headY, Constants.HeadDiameter / 2, playerColor);
-            GL.Begin(BeginMode.Lines);
+            GL.Begin(PrimitiveType.Lines);
             GL.Vertex2(headX, headY);
             GL.Vertex2(headLineEndPointX, headLineEndPointY);
             GL.End();
