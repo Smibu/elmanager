@@ -815,7 +815,6 @@ namespace Elmanager
                 GL.Color3(Settings.VertexColor);
                 if (Settings.UseCirclesForVertices)
                 {
-                    GL.PointSize((float)(Settings.VertexSize * 300));
                     GL.Begin(PrimitiveType.Points);
                     foreach (Polygon x in Lev.Polygons)
                         if ((showGrassVertices && x.IsGrass) || (showGroundVertices && !x.IsGrass))
@@ -1153,6 +1152,7 @@ namespace Elmanager
                 GL.ClearColor(newSettings.SkyFillColor);
             if (Settings.LineWidth != newSettings.LineWidth)
                 GL.LineWidth(newSettings.LineWidth);
+            GL.PointSize((float)(newSettings.VertexSize * 300));
             Settings = newSettings.Clone();
         }
 
