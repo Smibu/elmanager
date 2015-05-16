@@ -1411,14 +1411,8 @@ namespace Elmanager.Forms
 
         private void SetBlankLevel()
         {
-            Lev =
-                new Level(
-                    Polygon.Rectangle(new Vector(), Global.AppSettings.LevelEditor.InitialWidth,
-                        Global.AppSettings.LevelEditor.InitialHeight),
-                    new Vector(Global.AppSettings.LevelEditor.InitialWidth/2,
-                        Global.AppSettings.LevelEditor.InitialHeight/2),
-                    new Vector(Global.AppSettings.LevelEditor.InitialWidth*3/4,
-                        Global.AppSettings.LevelEditor.InitialHeight/2));
+            Lev = Global.AppSettings.LevelEditor.GetTemplateLevel();
+                
             SetDefaultLevelTitle();
             _fromScratch = true;
         }

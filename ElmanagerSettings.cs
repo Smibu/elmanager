@@ -2,6 +2,7 @@ using System;
 using System.Drawing;
 using System.IO;
 using System.Runtime.Serialization.Formatters.Binary;
+using System.Text.RegularExpressions;
 using System.Windows.Forms;
 
 namespace Elmanager
@@ -93,6 +94,48 @@ namespace Elmanager
             public bool UseFilenameSuggestion;
             public bool UseHighlight = true;
             public FormWindowState WindowState = FormWindowState.Normal;
+            public string LevelTemplate = "50,50";
+
+            internal static Level TryGetTemplateLevel(string text)
+            {
+                if (text == null)
+                {
+                    throw new SettingsException("The level template is null.");
+                }
+                if (File.Exists(text))
+                {
+                    Level template = new Level();
+                    try
+                    {
+                        template.LoadFromPath(text);
+                        return template;
+                    }
+                    catch (Exception)
+                    {
+                        throw new SettingsException("The level template file is not a valid Elma level file.");
+                    }
+                }
+                var regex = new Regex(@"^(\d+),(\d+)$");
+                if (!regex.IsMatch(text))
+                {
+                    throw new SettingsException("The level template is neither a file nor a string of the form \"width,height\".");
+                }
+                double width = int.Parse(regex.Match(text).Groups[1].Value);
+                double height = int.Parse(regex.Match(text).Groups[2].Value);
+                return Level.FromDimensions(width, height);
+            }
+
+            internal Level GetTemplateLevel()
+            {
+                try
+                {
+                    return TryGetTemplateLevel(LevelTemplate);
+                }
+                catch (SettingsException)
+                {
+                    return Level.FromDimensions(50, 50);
+                }
+            }
         }
 
         [Serializable]

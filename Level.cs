@@ -1071,5 +1071,16 @@ namespace Elmanager
                 Time = time;
             }
         }
+
+        internal static Level FromDimensions(double width, double height)
+        {
+            return new Level(
+                Polygon.Rectangle(new Vector(), width,
+                    height),
+                new Vector(width / 2,
+                    height / 2),
+                new Vector(width * 3 / 4,
+                    height / 2));
+        }
     }
 }

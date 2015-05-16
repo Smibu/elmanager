@@ -332,6 +332,7 @@
     <Compile Include="EditorTools\ZoomTool.cs" />
     <Compile Include="EditorTools\SmoothenTool.cs" />
     <Compile Include="SearchParameters.cs" />
+    <Compile Include="SettingsException.cs" />
     <Compile Include="Utils.cs" />
     <Compile Include="Vector.cs" />
   </ItemGroup>

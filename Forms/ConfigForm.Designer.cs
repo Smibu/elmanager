@@ -30,6 +30,7 @@ namespace Elmanager.Forms
 		//Do not modify it using the code editor.
 		private void InitializeComponent()
 			{
+            this.components = new System.ComponentModel.Container();
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(ConfigForm));
             this.RecDirButton = new System.Windows.Forms.Button();
             this.LevDirButton = new System.Windows.Forms.Button();
@@ -62,6 +63,7 @@ namespace Elmanager.Forms
             this.SearchLevSubDirsBox = new System.Windows.Forms.CheckBox();
             this.ShowReplayListGridBox = new System.Windows.Forms.CheckBox();
             this.LevelEditorPage = new System.Windows.Forms.TabPage();
+            this.browseButton = new System.Windows.Forms.Button();
             this.numberFormatBox = new System.Windows.Forms.TextBox();
             this.RenderingSettingsButton = new System.Windows.Forms.Button();
             this.GroupBox1 = new System.Windows.Forms.GroupBox();
@@ -83,14 +85,13 @@ namespace Elmanager.Forms
             this.CheckTopologyWhenSavingBox = new System.Windows.Forms.CheckBox();
             this.CaptureRadiusBox = new System.Windows.Forms.TextBox();
             this.Label8 = new System.Windows.Forms.Label();
-            this.InitialHeightBox = new System.Windows.Forms.TextBox();
-            this.InitialWidthBox = new System.Windows.Forms.TextBox();
-            this.Label7 = new System.Windows.Forms.Label();
+            this.LevelTemplateBox = new System.Windows.Forms.TextBox();
             this.Label6 = new System.Windows.Forms.Label();
             this.DatabasePage = new System.Windows.Forms.TabPage();
             this.Label1 = new System.Windows.Forms.Label();
             this.WarnAboutOldDBBox = new System.Windows.Forms.CheckBox();
             this.ColorDialog1 = new System.Windows.Forms.ColorDialog();
+            this.toolTip1 = new System.Windows.Forms.ToolTip(this.components);
             this.TabControl1.SuspendLayout();
             this.GeneralPage.SuspendLayout();
             this.RMPage.SuspendLayout();
@@ -401,6 +402,7 @@ namespace Elmanager.Forms
             // 
             // LevelEditorPage
             // 
+            this.LevelEditorPage.Controls.Add(this.browseButton);
             this.LevelEditorPage.Controls.Add(this.numberFormatBox);
             this.LevelEditorPage.Controls.Add(this.RenderingSettingsButton);
             this.LevelEditorPage.Controls.Add(this.GroupBox1);
@@ -416,9 +418,7 @@ namespace Elmanager.Forms
             this.LevelEditorPage.Controls.Add(this.CheckTopologyWhenSavingBox);
             this.LevelEditorPage.Controls.Add(this.CaptureRadiusBox);
             this.LevelEditorPage.Controls.Add(this.Label8);
-            this.LevelEditorPage.Controls.Add(this.InitialHeightBox);
-            this.LevelEditorPage.Controls.Add(this.InitialWidthBox);
-            this.LevelEditorPage.Controls.Add(this.Label7);
+            this.LevelEditorPage.Controls.Add(this.LevelTemplateBox);
             this.LevelEditorPage.Controls.Add(this.Label6);
             this.LevelEditorPage.Location = new System.Drawing.Point(4, 22);
             this.LevelEditorPage.Name = "LevelEditorPage";
@@ -426,6 +426,16 @@ namespace Elmanager.Forms
             this.LevelEditorPage.TabIndex = 4;
             this.LevelEditorPage.Text = "SLE";
             this.LevelEditorPage.UseVisualStyleBackColor = true;
+            // 
+            // browseButton
+            // 
+            this.browseButton.Location = new System.Drawing.Point(398, 8);
+            this.browseButton.Name = "browseButton";
+            this.browseButton.Size = new System.Drawing.Size(75, 23);
+            this.browseButton.TabIndex = 29;
+            this.browseButton.Text = "Browse...";
+            this.browseButton.UseVisualStyleBackColor = true;
+            this.browseButton.Click += new System.EventHandler(this.browseButton_Click);
             // 
             // numberFormatBox
             // 
@@ -588,7 +598,7 @@ namespace Elmanager.Forms
             // HighlightBox
             // 
             this.HighlightBox.AutoSize = true;
-            this.HighlightBox.Location = new System.Drawing.Point(179, 63);
+            this.HighlightBox.Location = new System.Drawing.Point(191, 37);
             this.HighlightBox.Name = "HighlightBox";
             this.HighlightBox.Size = new System.Drawing.Size(201, 17);
             this.HighlightBox.TabIndex = 10;
@@ -598,7 +608,7 @@ namespace Elmanager.Forms
             // DynamicCheckTopologyBox
             // 
             this.DynamicCheckTopologyBox.AutoSize = true;
-            this.DynamicCheckTopologyBox.Location = new System.Drawing.Point(179, 37);
+            this.DynamicCheckTopologyBox.Location = new System.Drawing.Point(16, 61);
             this.DynamicCheckTopologyBox.Name = "DynamicCheckTopologyBox";
             this.DynamicCheckTopologyBox.Size = new System.Drawing.Size(157, 17);
             this.DynamicCheckTopologyBox.TabIndex = 7;
@@ -608,7 +618,7 @@ namespace Elmanager.Forms
             // CheckTopologyWhenSavingBox
             // 
             this.CheckTopologyWhenSavingBox.AutoSize = true;
-            this.CheckTopologyWhenSavingBox.Location = new System.Drawing.Point(179, 11);
+            this.CheckTopologyWhenSavingBox.Location = new System.Drawing.Point(179, 61);
             this.CheckTopologyWhenSavingBox.Name = "CheckTopologyWhenSavingBox";
             this.CheckTopologyWhenSavingBox.Size = new System.Drawing.Size(188, 17);
             this.CheckTopologyWhenSavingBox.TabIndex = 6;
@@ -617,7 +627,7 @@ namespace Elmanager.Forms
             // 
             // CaptureRadiusBox
             // 
-            this.CaptureRadiusBox.Location = new System.Drawing.Point(120, 61);
+            this.CaptureRadiusBox.Location = new System.Drawing.Point(132, 35);
             this.CaptureRadiusBox.Name = "CaptureRadiusBox";
             this.CaptureRadiusBox.Size = new System.Drawing.Size(53, 20);
             this.CaptureRadiusBox.TabIndex = 5;
@@ -626,45 +636,29 @@ namespace Elmanager.Forms
             // Label8
             // 
             this.Label8.AutoSize = true;
-            this.Label8.Location = new System.Drawing.Point(36, 64);
+            this.Label8.Location = new System.Drawing.Point(14, 38);
             this.Label8.Name = "Label8";
-            this.Label8.Size = new System.Drawing.Size(78, 13);
+            this.Label8.Size = new System.Drawing.Size(112, 13);
             this.Label8.TabIndex = 4;
-            this.Label8.Text = "Capture radius:";
+            this.Label8.Text = "Mouse capture radius:";
             // 
-            // InitialHeightBox
+            // LevelTemplateBox
             // 
-            this.InitialHeightBox.Location = new System.Drawing.Point(120, 35);
-            this.InitialHeightBox.Name = "InitialHeightBox";
-            this.InitialHeightBox.Size = new System.Drawing.Size(53, 20);
-            this.InitialHeightBox.TabIndex = 3;
-            this.InitialHeightBox.Text = "50";
-            // 
-            // InitialWidthBox
-            // 
-            this.InitialWidthBox.Location = new System.Drawing.Point(120, 9);
-            this.InitialWidthBox.Name = "InitialWidthBox";
-            this.InitialWidthBox.Size = new System.Drawing.Size(53, 20);
-            this.InitialWidthBox.TabIndex = 2;
-            this.InitialWidthBox.Text = "50";
-            // 
-            // Label7
-            // 
-            this.Label7.AutoSize = true;
-            this.Label7.Location = new System.Drawing.Point(8, 38);
-            this.Label7.Name = "Label7";
-            this.Label7.Size = new System.Drawing.Size(106, 13);
-            this.Label7.TabIndex = 1;
-            this.Label7.Text = "Initial polygon height:";
+            this.LevelTemplateBox.Location = new System.Drawing.Point(132, 10);
+            this.LevelTemplateBox.Name = "LevelTemplateBox";
+            this.LevelTemplateBox.Size = new System.Drawing.Size(260, 20);
+            this.LevelTemplateBox.TabIndex = 2;
+            this.LevelTemplateBox.Text = "50,50";
+            this.toolTip1.SetToolTip(this.LevelTemplateBox, "width,height or browse for a level template");
             // 
             // Label6
             // 
             this.Label6.AutoSize = true;
-            this.Label6.Location = new System.Drawing.Point(12, 12);
+            this.Label6.Location = new System.Drawing.Point(26, 12);
             this.Label6.Name = "Label6";
-            this.Label6.Size = new System.Drawing.Size(102, 13);
+            this.Label6.Size = new System.Drawing.Size(100, 13);
             this.Label6.TabIndex = 0;
-            this.Label6.Text = "Initial polygon width:";
+            this.Label6.Text = "New level template:";
             // 
             // DatabasePage
             // 
@@ -761,9 +755,7 @@ namespace Elmanager.Forms
 		internal System.Windows.Forms.CheckBox SearchLevSubDirsBox;
 		internal System.Windows.Forms.CheckBox ShowReplayListGridBox;
 		internal System.Windows.Forms.TabPage LevelEditorPage;
-		internal System.Windows.Forms.TextBox InitialHeightBox;
-		internal System.Windows.Forms.TextBox InitialWidthBox;
-		internal System.Windows.Forms.Label Label7;
+		internal System.Windows.Forms.TextBox LevelTemplateBox;
 		internal System.Windows.Forms.Label Label6;
 		internal System.Windows.Forms.TextBox CaptureRadiusBox;
 		internal System.Windows.Forms.Label Label8;
@@ -795,6 +787,8 @@ namespace Elmanager.Forms
         private TextBox numberFormatBox;
         internal Panel crosshairPanel;
         internal Label label9;
-	}
+        private Button browseButton;
+        private ToolTip toolTip1;
+    }
 	
 }

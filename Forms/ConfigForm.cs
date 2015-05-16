@@ -6,6 +6,7 @@ using System.IO;
 using System.Linq;
 using System.Runtime.InteropServices;
 using System.Runtime.Serialization.Formatters.Binary;
+using System.Text.RegularExpressions;
 using System.Windows.Forms;
 using Microsoft.VisualBasic.FileIO;
 using SearchOption = System.IO.SearchOption;
@@ -32,8 +33,7 @@ namespace Elmanager.Forms
             SearchRecSubDirsBox.Checked = Global.AppSettings.ReplayManager.SearchRecSubDirs;
             DeleteConfirmCheckBox.Checked = Global.AppSettings.ReplayManager.ConfirmDelete;
             DBTextBox.Text = Global.AppSettings.ReplayManager.DbFile;
-            InitialWidthBox.Text = Global.AppSettings.LevelEditor.InitialWidth.ToString();
-            InitialHeightBox.Text = Global.AppSettings.LevelEditor.InitialHeight.ToString();
+            LevelTemplateBox.Text = Global.AppSettings.LevelEditor.LevelTemplate ?? "50,50";
             CaptureRadiusBox.Text = Global.AppSettings.LevelEditor.CaptureRadius.ToString();
             CheckTopologyWhenSavingBox.Checked = Global.AppSettings.LevelEditor.CheckTopologyWhenSaving;
             DynamicCheckTopologyBox.Checked = Global.AppSettings.LevelEditor.CheckTopologyDynamically;
@@ -286,15 +286,17 @@ namespace Elmanager.Forms
             Global.AppSettings.ReplayManager.DbFile = DBTextBox.Text;
             Global.AppSettings.ReplayManager.ConfirmDelete = DeleteConfirmCheckBox.Checked;
             Global.AppSettings.ReplayManager.WarnAboutOldDb = WarnAboutOldDBBox.Checked;
+
             try
             {
-                Global.AppSettings.LevelEditor.InitialWidth = double.Parse(InitialWidthBox.Text);
-                Global.AppSettings.LevelEditor.InitialHeight = double.Parse(InitialHeightBox.Text);
+                ElmanagerSettings.LevelEditorSettings.TryGetTemplateLevel(LevelTemplateBox.Text);
+                Global.AppSettings.LevelEditor.LevelTemplate = LevelTemplateBox.Text;
             }
-            catch (FormatException)
+            catch (SettingsException settingsException)
             {
-                Utils.ShowError("Initial polygon width/height value was in an incorrect format!");
+                Utils.ShowError(settingsException.Message);
             }
+
             Global.AppSettings.LevelEditor.CheckTopologyWhenSaving = CheckTopologyWhenSavingBox.Checked;
             Global.AppSettings.LevelEditor.CheckTopologyDynamically = DynamicCheckTopologyBox.Checked;
             Global.AppSettings.LevelEditor.UseHighlight = HighlightBox.Checked;
@@ -332,6 +334,16 @@ namespace Elmanager.Forms
                 LoadButton.Enabled = File.Exists(DBTextBox.Text);
                 if (!CheckBox6.Enabled)
                     CheckBox6.Checked = false;
+            }
+        }
+
+        private void browseButton_Click(object sender, EventArgs e)
+        {
+            OpenFileDialog1.Filter = "Elasto Mania levels|*.lev";
+            OpenFileDialog1.CheckFileExists = true;
+            if (OpenFileDialog1.ShowDialog() == DialogResult.OK)
+            {
+                LevelTemplateBox.Text = OpenFileDialog1.FileName;
             }
         }
     }
