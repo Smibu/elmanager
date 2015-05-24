@@ -31,6 +31,7 @@ namespace Elmanager
             TextureFrameColor = Color.Red;
             VertexColor = Color.Red;
             SkyFillColor = Color.LightGray;
+            MaxDimensionColor = Color.Blue;
             AppleGravityArrowColor = Color.White;
             ShowGroundEdges = true;
             ShowPictureFrames = false;
@@ -38,6 +39,7 @@ namespace Elmanager
             ShowObjectFrames = true;
             ShowGravityAppleArrows = true;
             UseCirclesForVertices = false;
+            ShowMaxDimensions = false;
         }
 
         private RenderingSettings(RenderingSettings s)
@@ -55,6 +57,7 @@ namespace Elmanager
             PictureFrameColor = s.PictureFrameColor;
             TextureFrameColor = s.TextureFrameColor;
             AppleGravityArrowColor = s.AppleGravityArrowColor;
+            MaxDimensionColor = s.MaxDimensionColor;
             SmoothZoomDuration = s.SmoothZoomDuration;
             LgrFile = s.LgrFile;
             GridSize = s.GridSize;
@@ -81,6 +84,7 @@ namespace Elmanager
             ShowObjectCenters = s.ShowObjectCenters;
             ShowGravityAppleArrows = s.ShowGravityAppleArrows;
             UseCirclesForVertices = s.UseCirclesForVertices;
+            ShowMaxDimensions = s.ShowMaxDimensions;
         }
 
         internal RenderingSettings Clone()
@@ -126,6 +130,9 @@ namespace Elmanager
 
         [Category("Colors"), DisplayName("Apple gravity arrow")]
         public Color AppleGravityArrowColor { get; set; }
+
+        [Category("Colors"), DisplayName("Maximum dimensions")]
+        public Color MaxDimensionColor { get; set; }
 
         [DisplayName("Smooth zoom duration")]
         public int SmoothZoomDuration
@@ -260,6 +267,9 @@ namespace Elmanager
 
         [Category("Visibility"), DisplayName("Gravity apple arrows")]
         public bool ShowGravityAppleArrows { get; set; }
+
+        [Category("Visibility"), DisplayName("Maximum dimensions")]
+        public bool ShowMaxDimensions { get; set; }
 
         [DisplayName("Zoom textures")]
         public bool ZoomTextures { get; set; }

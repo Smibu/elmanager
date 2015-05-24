@@ -730,6 +730,21 @@ namespace Elmanager
             DisableCaps();
             if (Settings.ShowGrid)
                 DrawGrid();
+            if (Settings.ShowMaxDimensions)
+            {
+                GL.Enable(EnableCap.LineStipple);
+                GL.LineWidth(1);
+                GL.LineStipple(1, unchecked((short)(0xCCCC)));
+                double centerX = (Lev.XMin + Lev.XMax) / 2;
+                double centerY = (Lev.YMin + Lev.YMax) / 2;
+                DrawRectangle(centerX - Level.MaximumSize / 2,
+                    centerY - Level.MaximumSize / 2,
+                    centerX + Level.MaximumSize / 2,
+                    centerY + Level.MaximumSize / 2,
+                    Settings.MaxDimensionColor);
+                GL.Disable(EnableCap.LineStipple);
+                GL.LineWidth(Settings.LineWidth);
+            }
             if (Settings.ShowObjectFrames)
                 DrawObjectFrames();
             if (Settings.ShowObjectCenters)
