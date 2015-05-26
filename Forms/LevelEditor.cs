@@ -30,7 +30,7 @@ namespace Elmanager.Forms
         internal PictureForm PicForm;
         internal ElmaRenderer Renderer;
         internal IEditorTool[] Tools;
-        private string[] _currLevDirFiles;
+        private List<string> _currLevDirFiles;
         private bool _draggingScreen;
         private Lgr _editorLgr;
         private List<Vector> _errorPoints = new List<Vector>();
@@ -1022,7 +1022,7 @@ namespace Elmanager.Forms
             LGRBox.Focus();
         }
 
-        private void NewLevel(object sender, EventArgs e)
+        private void NewLevel(object sender = null, EventArgs e = null)
         {
             if (!PromptToSaveIfModified())
                 return;
@@ -1176,27 +1176,27 @@ namespace Elmanager.Forms
                 {
                     UpdateCurrLevDirFiles();
                 }
-                if (_currLevDirFiles.Length > 0)
+                if (_currLevDirFiles.Count > 0)
                 {
                     if (Lev.Path == null)
                         OpenLevel(_currLevDirFiles[0]);
                     else
                     {
-                        int i = 0;
-                        while (i < _currLevDirFiles.Length && string.Compare(_currLevDirFiles[i], Lev.Path, true) != 0)
-                            i++;
+                        int i = _currLevDirFiles.FindIndex(
+                            path => string.Compare(path, Lev.Path, StringComparison.OrdinalIgnoreCase) == 0);
                         if (sender.Equals(PreviousButton) || sender.Equals(previousLevelToolStripMenuItem))
                         {
-                            if (i == 0)
-                                i = _currLevDirFiles.Length;
-                            OpenLevel(_currLevDirFiles[i - 1]);
+                            i--;
+                            if (i < 0)
+                                i = _currLevDirFiles.Count - 1;
                         }
                         else
                         {
-                            if (i >= _currLevDirFiles.Length - 1)
-                                i = -1;
-                            OpenLevel(_currLevDirFiles[i + 1]);
+                            i++;
+                            if (i >= _currLevDirFiles.Count)
+                                i = 0;
                         }
+                        OpenLevel(_currLevDirFiles[i]);
                     }
                 }
                 else
@@ -1540,7 +1540,7 @@ namespace Elmanager.Forms
         private void UpdateCurrLevDirFiles()
         {
             string levDir = Path.GetDirectoryName(Lev.Path);
-            _currLevDirFiles = Directory.GetFiles(levDir, "*.lev", SearchOption.TopDirectoryOnly);
+            _currLevDirFiles = Directory.GetFiles(levDir, "*.lev", SearchOption.TopDirectoryOnly).ToList();
             _loadedLevFilesDir = levDir;
         }
 
@@ -1759,6 +1759,39 @@ namespace Elmanager.Forms
             {
                 ChangeToolTo(14);
             }
+        }
+
+        private void deleteLevMenuItem_Click(object sender, EventArgs e)
+        {
+            DeleteCurrentLevel();
+        }
+
+        private void DeleteCurrentLevel()
+        {
+            if (Lev.Path == null)
+            {
+                return;
+            }
+            if (MessageBox.Show("Are you sure you want to delete this level?", "Confirmation", MessageBoxButtons.YesNo, MessageBoxIcon.Question) == DialogResult.Yes)
+            {
+                File.Delete(Lev.Path);
+                int levIndex = _currLevDirFiles.FindIndex(
+                            path => string.Compare(path, Lev.Path, StringComparison.OrdinalIgnoreCase) == 0);
+                _currLevDirFiles.RemoveAt(levIndex);
+                if (levIndex < _currLevDirFiles.Count)
+                {
+                    OpenLevel(_currLevDirFiles[levIndex]);
+                }
+                else
+                {
+                    NewLevel();
+                }
+            }
+        }
+
+        private void deleteButton_Click(object sender, EventArgs e)
+        {
+            DeleteCurrentLevel();
         }
     }
 }

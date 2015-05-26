@@ -38,6 +38,7 @@ namespace Elmanager.Forms
             this.SaveToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.SaveAsToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.saveAsPictureToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.deleteLevMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.ExitToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.ActionsMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.QuickGrassToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
@@ -83,6 +84,7 @@ namespace Elmanager.Forms
             this.OpenButton = new System.Windows.Forms.ToolStripButton();
             this.SaveButton = new System.Windows.Forms.ToolStripButton();
             this.SaveAsButton = new System.Windows.Forms.ToolStripButton();
+            this.deleteButton = new System.Windows.Forms.ToolStripButton();
             this.ToolStripSeparator1 = new System.Windows.Forms.ToolStripSeparator();
             this.CheckTopologyButton = new System.Windows.Forms.ToolStripButton();
             this.ZoomFillButton = new System.Windows.Forms.ToolStripButton();
@@ -195,6 +197,7 @@ namespace Elmanager.Forms
             this.SaveToolStripMenuItem,
             this.SaveAsToolStripMenuItem,
             this.saveAsPictureToolStripMenuItem,
+            this.deleteLevMenuItem,
             this.ExitToolStripMenuItem});
             this.FileToolStripMenuItem.Name = "FileToolStripMenuItem";
             this.FileToolStripMenuItem.Size = new System.Drawing.Size(35, 20);
@@ -242,6 +245,14 @@ namespace Elmanager.Forms
             this.saveAsPictureToolStripMenuItem.Size = new System.Drawing.Size(157, 22);
             this.saveAsPictureToolStripMenuItem.Text = "Save as picture...";
             this.saveAsPictureToolStripMenuItem.Click += new System.EventHandler(this.saveAsPictureToolStripMenuItem_Click);
+            // 
+            // deleteLevMenuItem
+            // 
+            this.deleteLevMenuItem.Image = global::My.Resources.Resources.Delete;
+            this.deleteLevMenuItem.Name = "deleteLevMenuItem";
+            this.deleteLevMenuItem.Size = new System.Drawing.Size(157, 22);
+            this.deleteLevMenuItem.Text = "Delete";
+            this.deleteLevMenuItem.Click += new System.EventHandler(this.deleteLevMenuItem_Click);
             // 
             // ExitToolStripMenuItem
             // 
@@ -634,6 +645,7 @@ namespace Elmanager.Forms
             this.OpenButton,
             this.SaveButton,
             this.SaveAsButton,
+            this.deleteButton,
             this.ToolStripSeparator1,
             this.CheckTopologyButton,
             this.ZoomFillButton,
@@ -702,6 +714,17 @@ namespace Elmanager.Forms
             this.SaveAsButton.Size = new System.Drawing.Size(36, 36);
             this.SaveAsButton.Text = "Save as...";
             this.SaveAsButton.Click += new System.EventHandler(this.SaveAs);
+            // 
+            // deleteButton
+            // 
+            this.deleteButton.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
+            this.deleteButton.Image = global::My.Resources.Resources.Delete;
+            this.deleteButton.ImageTransparentColor = System.Drawing.Color.Magenta;
+            this.deleteButton.Name = "deleteButton";
+            this.deleteButton.Size = new System.Drawing.Size(36, 36);
+            this.deleteButton.Text = "toolStripButton1";
+            this.deleteButton.ToolTipText = "Delete this level";
+            this.deleteButton.Click += new System.EventHandler(this.deleteButton_Click);
             // 
             // ToolStripSeparator1
             // 
@@ -830,7 +853,7 @@ namespace Elmanager.Forms
             // 
             this.GroundComboBox.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
             this.GroundComboBox.Name = "GroundComboBox";
-            this.GroundComboBox.Size = new System.Drawing.Size(119, 39);
+            this.GroundComboBox.Size = new System.Drawing.Size(119, 23);
             this.GroundComboBox.DropDownClosed += new System.EventHandler(this.MoveFocus);
             this.GroundComboBox.KeyDown += new System.Windows.Forms.KeyEventHandler(this.KeyHandlerDown);
             // 
@@ -1640,6 +1663,8 @@ namespace Elmanager.Forms
         private ToolStripLabel BestTimeLabel;
         private ToolStripDropDownButton topologyList;
         private ToolStripSeparator toolStripSeparator12;
-	}
+        private ToolStripMenuItem deleteLevMenuItem;
+        private ToolStripButton deleteButton;
+    }
 	
 }
