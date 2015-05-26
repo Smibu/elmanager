@@ -30,7 +30,6 @@ namespace Elmanager.Forms
 		private void InitializeComponent()
 			{
             this.components = new System.ComponentModel.Container();
-            System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(LevelEditor));
             this.MenuStrip1 = new System.Windows.Forms.MenuStrip();
             this.FileToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.NewToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
@@ -94,6 +93,11 @@ namespace Elmanager.Forms
             this.ToolStripSeparator3 = new System.Windows.Forms.ToolStripSeparator();
             this.PreviousButton = new System.Windows.Forms.ToolStripButton();
             this.NextButton = new System.Windows.Forms.ToolStripButton();
+            this.toolStripSeparator13 = new System.Windows.Forms.ToolStripSeparator();
+            this.toolStripLabel5 = new System.Windows.Forms.ToolStripLabel();
+            this.filenameBox = new System.Windows.Forms.ToolStripTextBox();
+            this.filenameOkButton = new System.Windows.Forms.ToolStripButton();
+            this.filenameCancelButton = new System.Windows.Forms.ToolStripButton();
             this.toolStripSeparator9 = new System.Windows.Forms.ToolStripSeparator();
             this.ToolStripLabel1 = new System.Windows.Forms.ToolStripLabel();
             this.TitleBox = new System.Windows.Forms.ToolStripTextBox();
@@ -655,6 +659,11 @@ namespace Elmanager.Forms
             this.ToolStripSeparator3,
             this.PreviousButton,
             this.NextButton,
+            this.toolStripSeparator13,
+            this.toolStripLabel5,
+            this.filenameBox,
+            this.filenameOkButton,
+            this.filenameCancelButton,
             this.toolStripSeparator9,
             this.ToolStripLabel1,
             this.TitleBox,
@@ -800,6 +809,45 @@ namespace Elmanager.Forms
             this.NextButton.Text = "Next level";
             this.NextButton.Click += new System.EventHandler(this.PrevNextButtonClick);
             // 
+            // toolStripSeparator13
+            // 
+            this.toolStripSeparator13.Name = "toolStripSeparator13";
+            this.toolStripSeparator13.Size = new System.Drawing.Size(6, 39);
+            // 
+            // toolStripLabel5
+            // 
+            this.toolStripLabel5.Name = "toolStripLabel5";
+            this.toolStripLabel5.Size = new System.Drawing.Size(58, 36);
+            this.toolStripLabel5.Text = "Filename:";
+            // 
+            // filenameBox
+            // 
+            this.filenameBox.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
+            this.filenameBox.Name = "filenameBox";
+            this.filenameBox.Size = new System.Drawing.Size(100, 39);
+            this.filenameBox.KeyDown += new System.Windows.Forms.KeyEventHandler(this.filenameBox_KeyDown);
+            this.filenameBox.TextChanged += new System.EventHandler(this.filenameBox_TextChanged);
+            // 
+            // filenameOkButton
+            // 
+            this.filenameOkButton.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Text;
+            this.filenameOkButton.ImageTransparentColor = System.Drawing.Color.Magenta;
+            this.filenameOkButton.Name = "filenameOkButton";
+            this.filenameOkButton.Size = new System.Drawing.Size(27, 36);
+            this.filenameOkButton.Text = "OK";
+            this.filenameOkButton.Visible = false;
+            this.filenameOkButton.Click += new System.EventHandler(this.filenameOkButton_Click);
+            // 
+            // filenameCancelButton
+            // 
+            this.filenameCancelButton.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Text;
+            this.filenameCancelButton.ImageTransparentColor = System.Drawing.Color.Magenta;
+            this.filenameCancelButton.Name = "filenameCancelButton";
+            this.filenameCancelButton.Size = new System.Drawing.Size(47, 36);
+            this.filenameCancelButton.Text = "Cancel";
+            this.filenameCancelButton.Visible = false;
+            this.filenameCancelButton.Click += new System.EventHandler(this.filenameCancelButton_Click);
+            // 
             // toolStripSeparator9
             // 
             this.toolStripSeparator9.Name = "toolStripSeparator9";
@@ -836,7 +884,7 @@ namespace Elmanager.Forms
             this.LGRBox.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
             this.LGRBox.MaxLength = 8;
             this.LGRBox.Name = "LGRBox";
-            this.LGRBox.Size = new System.Drawing.Size(119, 39);
+            this.LGRBox.Size = new System.Drawing.Size(119, 23);
             // 
             // ToolStripSeparator5
             // 
@@ -846,7 +894,7 @@ namespace Elmanager.Forms
             // ToolStripLabel3
             // 
             this.ToolStripLabel3.Name = "ToolStripLabel3";
-            this.ToolStripLabel3.Size = new System.Drawing.Size(50, 36);
+            this.ToolStripLabel3.Size = new System.Drawing.Size(50, 15);
             this.ToolStripLabel3.Text = "Ground:";
             // 
             // GroundComboBox
@@ -1503,7 +1551,6 @@ namespace Elmanager.Forms
             this.Controls.Add(this.StatusStrip1);
             this.Controls.Add(this.ToolStripPanel1);
             this.Controls.Add(this.MenuStrip1);
-            this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
             this.MainMenuStrip = this.MenuStrip1;
             this.Name = "LevelEditor";
             this.Text = "SLE";
@@ -1665,6 +1712,11 @@ namespace Elmanager.Forms
         private ToolStripSeparator toolStripSeparator12;
         private ToolStripMenuItem deleteLevMenuItem;
         private ToolStripButton deleteButton;
+        private ToolStripSeparator toolStripSeparator13;
+        private ToolStripLabel toolStripLabel5;
+        private ToolStripTextBox filenameBox;
+        private ToolStripButton filenameOkButton;
+        private ToolStripButton filenameCancelButton;
     }
 	
 }

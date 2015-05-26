@@ -1182,8 +1182,7 @@ namespace Elmanager.Forms
                         OpenLevel(_currLevDirFiles[0]);
                     else
                     {
-                        int i = _currLevDirFiles.FindIndex(
-                            path => string.Compare(path, Lev.Path, StringComparison.OrdinalIgnoreCase) == 0);
+                        int i = GetCurrentLevelIndex();
                         if (sender.Equals(PreviousButton) || sender.Equals(previousLevelToolStripMenuItem))
                         {
                             i--;
@@ -1553,9 +1552,17 @@ namespace Elmanager.Forms
         private void UpdateLabels()
         {
             if (Lev.Path == null)
+            {
                 Text = "New - " + LevEditorName;
+                filenameBox.Text = string.Empty;
+                filenameBox.Enabled = false;
+            }
             else
+            {
                 Text = Lev.FileNameWithoutExtension + " - " + LevEditorName;
+                filenameBox.Text = Lev.FileNameWithoutExtension;
+                filenameBox.Enabled = true;
+            }
             TitleBox.Text = Lev.Title;
             LGRBox.Text = Lev.LgrFile;
             GroundComboBox.Text = Lev.GroundTextureName;
@@ -1775,8 +1782,7 @@ namespace Elmanager.Forms
             if (MessageBox.Show("Are you sure you want to delete this level?", "Confirmation", MessageBoxButtons.YesNo, MessageBoxIcon.Question) == DialogResult.Yes)
             {
                 File.Delete(Lev.Path);
-                int levIndex = _currLevDirFiles.FindIndex(
-                            path => string.Compare(path, Lev.Path, StringComparison.OrdinalIgnoreCase) == 0);
+                int levIndex = GetCurrentLevelIndex();
                 _currLevDirFiles.RemoveAt(levIndex);
                 if (levIndex < _currLevDirFiles.Count)
                 {
@@ -1789,9 +1795,78 @@ namespace Elmanager.Forms
             }
         }
 
+        private int GetCurrentLevelIndex()
+        {
+            return _currLevDirFiles.FindIndex(
+                        path => string.Compare(path, Lev.Path, StringComparison.OrdinalIgnoreCase) == 0);
+        }
+
         private void deleteButton_Click(object sender, EventArgs e)
         {
             DeleteCurrentLevel();
+        }
+
+        private void filenameBox_TextChanged(object sender = null, EventArgs e = null)
+        {
+            bool showButtons = string.Compare(filenameBox.Text,
+                Lev.FileNameWithoutExtension,
+                StringComparison.InvariantCulture) != 0 && Lev.Path != null;
+            filenameOkButton.Visible = showButtons;
+            filenameCancelButton.Visible = showButtons;
+        }
+
+        private void filenameCancelButton_Click(object sender = null, EventArgs e = null)
+        {
+            filenameBox.Text = Lev.FileNameWithoutExtension;
+        }
+
+        private void filenameOkButton_Click(object sender = null, EventArgs e = null)
+        {
+            if (filenameBox.Text == string.Empty)
+            {
+                Utils.ShowError("The filename cannot be empty.");
+                return;
+            }
+            try
+            {
+                var newPath = Path.Combine(Path.GetDirectoryName(Lev.Path), filenameBox.Text + ".lev");
+                File.Move(Lev.Path, newPath);
+                if (_currLevDirFiles != null)
+                {
+                    int index = GetCurrentLevelIndex();
+                    _currLevDirFiles[index] = newPath;
+                }
+                Lev.Path = newPath;
+                UpdateLabels();
+                filenameBox_TextChanged();
+            }
+            catch (ArgumentException exception)
+            {
+                Utils.ShowError("The filename is invalid.");
+            }
+            catch (IOException ex)
+            {
+                Utils.ShowError("A level with this name already exists.");
+            }
+        }
+
+        private void filenameBox_KeyDown(object sender, KeyEventArgs e)
+        {
+            if (Lev.Path == null)
+            {
+                return;
+            }
+            switch (e.KeyCode)
+            {
+                case Keys.Enter:
+                    filenameOkButton_Click();
+                    e.Handled = e.SuppressKeyPress = true;
+                    break;
+                case Keys.Escape:
+                    filenameCancelButton_Click();
+                    e.Handled = e.SuppressKeyPress = true;
+                    break;
+            }
         }
     }
 }
