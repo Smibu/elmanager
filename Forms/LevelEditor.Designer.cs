@@ -30,6 +30,7 @@ namespace Elmanager.Forms
 		private void InitializeComponent()
 			{
             this.components = new System.ComponentModel.Container();
+            System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(LevelEditor));
             this.MenuStrip1 = new System.Windows.Forms.MenuStrip();
             this.FileToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.NewToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
@@ -1551,6 +1552,7 @@ namespace Elmanager.Forms
             this.Controls.Add(this.StatusStrip1);
             this.Controls.Add(this.ToolStripPanel1);
             this.Controls.Add(this.MenuStrip1);
+            this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
             this.MainMenuStrip = this.MenuStrip1;
             this.Name = "LevelEditor";
             this.Text = "SLE";
