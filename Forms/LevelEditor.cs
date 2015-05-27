@@ -1856,11 +1856,11 @@ namespace Elmanager.Forms
                 UpdateLabels();
                 filenameBox_TextChanged();
             }
-            catch (ArgumentException exception)
+            catch (ArgumentException)
             {
                 Utils.ShowError("The filename is invalid.");
             }
-            catch (IOException ex)
+            catch (IOException)
             {
                 Utils.ShowError("A level with this name already exists.");
             }
