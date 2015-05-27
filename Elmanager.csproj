@@ -335,6 +335,10 @@
     <Compile Include="SettingsException.cs" />
     <Compile Include="Utils.cs" />
     <Compile Include="Vector.cs" />
+    <Compile Include="VectrastException.cs" />
+    <Compile Include="VectrastWrapper.cs" />
+    <Compile Include="Vectrast\Primitives.cs" />
+    <Compile Include="Vectrast\Vectrast.cs" />
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="Forms\CompareForm.resx">
@@ -394,6 +398,7 @@
     <None Include="Resources\Arial_Rounded_MT.ttf" />
     <None Include="Resources\IntComp.dat" />
     <None Include="Resources\IntRes.dat" />
+    <None Include="Vectrast\LICENSE" />
   </ItemGroup>
   <ItemGroup>
     <BootstrapperPackage Include="Microsoft.Net.Client.3.5">

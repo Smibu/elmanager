@@ -1653,24 +1653,40 @@ namespace Elmanager.Forms
 
         private void importLevelsToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            OpenFileDialog1.InitialDirectory = Global.AppSettings.General.LevelDirectory;
-            OpenFileDialog1.Multiselect = true;
-            if (OpenFileDialog1.ShowDialog() == DialogResult.OK)
+            importFileDialog.InitialDirectory = Global.AppSettings.General.LevelDirectory;
+            if (importFileDialog.ShowDialog() == DialogResult.OK)
             {
-                OpenFileDialog1.FileNames.ToList().ForEach(file =>
+                importFileDialog.FileNames.ToList().ForEach(file =>
                 {
-                    var lev = new Level();
-                    try
+                    Level lev;
+                    if (file.EndsWith(".lev", StringComparison.InvariantCultureIgnoreCase))
                     {
-                        lev.LoadFromPath(file);
+                        lev = new Level();
+                        try
+                        {
+                            lev.LoadFromPath(file);
+                        }
+                        catch (LevelException exception)
+                        {
+                            Utils.ShowError(
+                                string.Format("Imported level {0} with errors: {1}", file, exception.Message),
+                                "Warning",
+                                MessageBoxIcon.Exclamation);
+                        }
+                        lev.UpdateImages(Renderer.DrawableImages);
                     }
-                    catch (LevelException exception)
+                    else
                     {
-                        Utils.ShowError(string.Format("Imported level {0} with errors: {1}", file, exception.Message),
-                            "Warning",
-                            MessageBoxIcon.Exclamation);
+                        try
+                        {
+                            lev = VectrastWrapper.LoadLevelFromImage(file);
+                        }
+                        catch (VectrastException ex)
+                        {
+                            Utils.ShowError(ex.Message);
+                            return;
+                        }
                     }
-                    lev.UpdateImages(Renderer.DrawableImages);
                     Lev.Import(lev);
                 });
                 Modified = true;
