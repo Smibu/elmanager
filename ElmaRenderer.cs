@@ -519,16 +519,6 @@ namespace Elmanager
                         GL.TexCoord2(texminx, texminy + TextureZoomConst / gtW * gtW / gtH / ZoomLevel);
                         GL.Vertex3(MidX - TextureVertexConst, MidY + TextureVertexConst, depth);
                         GL.End();
-                        //double xs = TextureVertexConst* ZoomLevel-ZoomLevel*CenterX;
-                        //GL.TexCoord2(0, 0);
-                        //GL.Vertex3(MidX - xs, MidY - xs, depth);
-                        //GL.TexCoord2(TextureZoomConst / gtW, 0);
-                        //GL.Vertex3(MidX + xs, MidY - xs, depth);
-                        //GL.TexCoord2(TextureZoomConst / gtW, TextureZoomConst / gtW * gtW / gtH);
-                        //GL.Vertex3(MidX + xs, MidY + xs, depth);
-                        //GL.TexCoord2(0, TextureZoomConst / gtW * gtW / gtH);
-                        //GL.Vertex3(MidX - xs, MidY + xs, depth);
-                        //GL.End();
                     }
                 }
                 else
@@ -565,18 +555,6 @@ namespace Elmanager
                 }
                 else
                 {
-                    //GL.Begin(PrimitiveType.Quads);
-                    //GL.TexCoord2(0, 0);
-                    //GL.Vertex3(CenterX / 2 - TextureVertexConst, CenterY - TextureVertexConst, depth);
-                    //GL.TexCoord2(TextureZoomConst / SkyTexture.Width / ZoomLevel, 0);
-                    //GL.Vertex3(CenterX / 2 + TextureVertexConst, CenterY - TextureVertexConst, depth);
-                    //GL.TexCoord2(TextureZoomConst / SkyTexture.Width / ZoomLevel,
-                    //             TextureZoomConst / SkyTexture.Width * SkyTexture.Width / SkyTexture.Height / ZoomLevel);
-                    //GL.Vertex3(CenterX / 2 + TextureVertexConst, CenterY + TextureVertexConst, depth);
-                    //GL.TexCoord2(0,
-                    //             TextureZoomConst / SkyTexture.Width * SkyTexture.Width / SkyTexture.Height / ZoomLevel);
-                    //GL.Vertex3(CenterX / 2 - TextureVertexConst, CenterY + TextureVertexConst, depth);
-                    //GL.End();
                     double xdelta = CenterX /SkyTexture.Width;
                     GL.PushMatrix();
                     GL.LoadIdentity();

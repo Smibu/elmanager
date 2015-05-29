@@ -1038,8 +1038,6 @@ namespace Elmanager.Forms
                 {
                     Global.AppSettings.LevelEditor.RenderingSettings.GridSize = newSize;
                     Renderer.SetGridSizeWithMouse(newSize, GetMouseCoordinates());
-                    //Renderer.UpdateSettings(Global.AppSettings.LevelEditor.RenderingSettings);
-                    //Renderer.RedrawScene();
                 }
             }
             else

@@ -36,18 +36,6 @@ namespace Elmanager
         [STAThread]
         static void Main(string[] args)
         {
-            //SerializeInternals();
-            //return;
-//            var txt = File.ReadAllText(@"D:\Archives\em_changelog.txt");
-//            var r = new Regex(@"\*\*\*\*\*\*\*\*\*\*\r\n\d+\.\d+\.\d+\r\n\*\*\*\*\*\*\*\*\*\*\r\n[^*]+", RegexOptions.Singleline);
-//            var matches=r.Matches(txt);
-//            int i = matches.Count - 1;
-//            using(var f=new StreamWriter(@"D:\em_changelog_reversed.txt",false))
-//            {
-//                while (i>=0)
-//                f.Write(matches[i--]);
-//            }
-//            return;
             Version = BuildDate;
             Debug.Listeners.Add(new TextWriterTraceListener(Console.Out));
             Debug.AutoFlush = true;
@@ -90,16 +78,6 @@ namespace Elmanager
                 {
                     Internals = (Level[]) bf.Deserialize(unzip);
                 }
-
-                //for zipping
-//                using (var f = new FileStream(@"d:\compressed.dat", FileMode.Create))
-//                {
-//                    using (var compress = new GZipStream(f, CompressionMode.Compress))
-//                    {
-//                        compress.Write(Resources.IntRes,0,Resources.IntRes.Length);
-//                        //f.Close();
-//                    }
-//                }
             }
         }
 

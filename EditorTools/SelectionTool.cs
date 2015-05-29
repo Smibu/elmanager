@@ -32,7 +32,6 @@ namespace Elmanager.EditorTools
             }
         }
 
-        //private bool _freeSelectionMode;
         private Vector _selectionStartPoint;
         private double _mouseTrip;
         private Vector _lastMousePosition;
