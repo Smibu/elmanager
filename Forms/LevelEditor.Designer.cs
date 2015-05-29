@@ -1567,7 +1567,6 @@ namespace Elmanager.Forms
             this.Load += new System.EventHandler(this.RefreshOnOpen);
             this.KeyDown += new System.Windows.Forms.KeyEventHandler(this.KeyHandlerDown);
             this.KeyUp += new System.Windows.Forms.KeyEventHandler(this.KeyHandlerUp);
-            this.MouseWheel += new System.Windows.Forms.MouseEventHandler(this.MouseWheelZoom);
             this.MenuStrip1.ResumeLayout(false);
             this.MenuStrip1.PerformLayout();
             this.StatusStrip1.ResumeLayout(false);

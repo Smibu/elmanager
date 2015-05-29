@@ -187,16 +187,17 @@ namespace Elmanager.EditorTools
         {
             if (!Global.AppSettings.LevelEditor.RenderingSettings.ShowGrid || !Global.AppSettings.LevelEditor.SnapToGrid)
                 return;
-            double x = p.X % Global.AppSettings.LevelEditor.RenderingSettings.GridSize;
-            if (Math.Abs(x) > Global.AppSettings.LevelEditor.RenderingSettings.GridSize / 2)
+            var gridSize = Global.AppSettings.LevelEditor.RenderingSettings.GridSize;
+            double x = (p.X + Renderer.GridOffset.X) % gridSize;
+            if (Math.Abs(x) > gridSize / 2)
             {
-                x -= Global.AppSettings.LevelEditor.RenderingSettings.GridSize * Math.Sign(x);
+                x -= gridSize * Math.Sign(x);
             }
             p.X -= x;
-            double y = p.Y % Global.AppSettings.LevelEditor.RenderingSettings.GridSize;
-            if (Math.Abs(y) > Global.AppSettings.LevelEditor.RenderingSettings.GridSize / 2)
+            double y = (p.Y - Renderer.GridOffset.Y) % gridSize;
+            if (Math.Abs(y) > gridSize / 2)
             {
-                y -= Global.AppSettings.LevelEditor.RenderingSettings.GridSize * Math.Sign(y);
+                y -= gridSize * Math.Sign(y);
             }
             p.Y -= y;
         }

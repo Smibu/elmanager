@@ -6,8 +6,13 @@ using System.Drawing.Imaging;
 using System.IO;
 using System.Linq;
 using System.Windows.Forms;
+using System.Windows.Input;
 using Elmanager.CustomControls;
 using Elmanager.EditorTools;
+using Cursor = System.Windows.Forms.Cursor;
+using Cursors = System.Windows.Forms.Cursors;
+using KeyEventArgs = System.Windows.Forms.KeyEventArgs;
+using MouseEventArgs = System.Windows.Forms.MouseEventArgs;
 
 namespace Elmanager.Forms
 {
@@ -52,6 +57,8 @@ namespace Elmanager.Forms
         private int _selectedTextureCount;
         private int _selectedVerticeCount;
         private bool _pictureToolAvailable;
+        private bool _draggingGrid;
+        private Vector _gridStartOffset;
 
         internal LevelEditor(string levPath)
         {
@@ -970,7 +977,15 @@ namespace Elmanager.Forms
                     }
                     break;
                 case MouseButtons.Middle:
-                    _draggingScreen = true;
+                    if (Keyboard.IsKeyDown(Key.LeftCtrl))
+                    {
+                        _draggingGrid = true;
+                        _gridStartOffset = Renderer.GridOffset;
+                    }
+                    else
+                    {
+                        _draggingScreen = true;
+                    }
                     _moveStartPosition = GetMouseCoordinates();
                     break;
             }
@@ -989,13 +1004,18 @@ namespace Elmanager.Forms
             else if (_lockMouseY)
                 Cursor.Position = new Point(MousePosition.X, _lockCoord);
             ShowCoordinates();
-            if (_draggingScreen)
+            if (_draggingScreen || _draggingGrid)
             {
                 Vector z = GetMouseCoordinates();
-                Renderer.CenterX = _moveStartPosition.X - (_moveStartPosition.X - (Renderer.XMax + Renderer.XMin)/2) -
-                                   (z.X - _moveStartPosition.X);
-                Renderer.CenterY = _moveStartPosition.Y - (_moveStartPosition.Y - (Renderer.YMax + Renderer.YMin)/2) -
-                                   (z.Y - _moveStartPosition.Y);
+                if (_draggingGrid)
+                {
+                    Renderer.GridOffset = _gridStartOffset + _moveStartPosition - z;
+                }
+                else
+                {
+                    Renderer.CenterX = (Renderer.XMax + Renderer.XMin)/2 - (z.X - _moveStartPosition.X);
+                    Renderer.CenterY = (Renderer.YMax + Renderer.YMin)/2 - (z.Y - _moveStartPosition.Y);
+                }
                 Renderer.RedrawScene();
             }
             CurrentTool.MouseMove(GetMouseCoordinatesFixed());
@@ -1005,16 +1025,27 @@ namespace Elmanager.Forms
         {
             CurrentTool.MouseUp(e);
             _draggingScreen = false;
-        }
-
-        private void MouseWheelZoom(object sender, MouseEventArgs e)
-        {
-            //Renderer.Zoom(GetMouseCoordinates(), e.Delta > 0, 1 - MouseWheelStep/100.0);
+            _draggingGrid = false;
         }
 
         private void MouseWheelZoom2(long delta)
         {
-            Renderer.Zoom(GetMouseCoordinates(), delta > 0, 1 - MouseWheelStep/100.0);
+            if (Keyboard.IsKeyDown(Key.LeftCtrl))
+            {
+                double currSize = Global.AppSettings.LevelEditor.RenderingSettings.GridSize;
+                double newSize = currSize + Math.Sign(delta) * Renderer.ZoomLevel / 50.0;
+                if (newSize > 0)
+                {
+                    Global.AppSettings.LevelEditor.RenderingSettings.GridSize = newSize;
+                    Renderer.SetGridSizeWithMouse(newSize, GetMouseCoordinates());
+                    //Renderer.UpdateSettings(Global.AppSettings.LevelEditor.RenderingSettings);
+                    //Renderer.RedrawScene();
+                }
+            }
+            else
+            {
+                Renderer.Zoom(GetMouseCoordinates(), delta > 0, 1 - MouseWheelStep / 100.0);
+            }
         }
 
         private void MoveFocus(object sender, EventArgs e)

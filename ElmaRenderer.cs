@@ -116,6 +116,7 @@ namespace Elmanager
         private double _CenterY;
         private double _ZoomLevel;
         private double _currentTime;
+        private Vector _gridOffset = new Vector(0, 0);
 
         internal ElmaRenderer(Control renderingTarget, RenderingSettings settings)
         {
@@ -320,6 +321,12 @@ namespace Elmanager
             GL.Vertex3(x1, y1, depth);
             GL.Vertex3(x2, y2, depth);
             GL.End();
+        }
+
+        internal void DrawLineFast(double x1, double y1, double x2, double y2, double depth = 0)
+        {
+            GL.Vertex3(x1, y1, depth);
+            GL.Vertex3(x2, y2, depth);
         }
 
         internal void DrawLineStrip(Polygon polygon, Color color, double depth = 0)
@@ -1420,24 +1427,61 @@ namespace Elmanager
             SkyTexture = null;
         }
 
+        public Vector GridOffset
+        {
+            get { return _gridOffset; }
+            set
+            {
+                _gridOffset = value;
+                _gridOffset.X %= Settings.GridSize;
+                _gridOffset.Y %= Settings.GridSize;
+            }
+        }
+
+        internal void SetGridSizeWithMouse(double newSize, Vector mouseCoords)
+        {
+            GridOffset.X = (GridOffset.X + GetFirstGridLine(newSize, GridOffset.X, XMin) 
+                - mouseCoords.X + GetGridMouseRatio(Settings.GridSize, GridOffset.X, XMin, mouseCoords.X) * newSize) % newSize;
+            GridOffset.Y = (GridOffset.Y + GetFirstGridLine(newSize, GridOffset.Y, YMin)
+                - mouseCoords.Y + GetGridMouseRatio(Settings.GridSize, GridOffset.Y, YMin, mouseCoords.Y) * newSize) % newSize;
+            Settings.GridSize = newSize;
+            RedrawScene();
+        }
+
+        private static double GetGridMouseRatio(double size, double offset, double min, double mouse)
+        {
+            var dist = mouse - GetFirstGridLine(size, offset, min);
+            return (dist % size) / size;
+        }
+
+        private static double GetFirstGridLine(double size, double offset, double min)
+        {
+            var tmp = (Math.Floor(min / size) + 1) * size;
+            var left = (tmp - (size + offset));
+            return left;
+        }
+
         private void DrawGrid()
         {
-            double current = (Math.Floor(XMin / Settings.GridSize) + 1) * Settings.GridSize - (Settings.GridSize - 0);
+            double current = GetFirstGridLine(Settings.GridSize, GridOffset.X, XMin);
             GL.Enable(EnableCap.LineStipple);
             GL.LineWidth(1);
             GL.LineStipple(1, unchecked((short) (0xAAAA)));
             GL.Scale(1.0, -1.0, 1.0);
+            GL.Color3(Settings.GridColor);
+            GL.Begin(PrimitiveType.Lines);
             while (!(current > XMax))
             {
-                DrawLine(current, YMin, current, YMax, Settings.GridColor);
+                DrawLineFast(current, YMin, current, YMax);
                 current += Settings.GridSize;
             }
-            current = (Math.Floor(YMin / Settings.GridSize) + 1) * Settings.GridSize - (Settings.GridSize - 0);
+            current = GetFirstGridLine(Settings.GridSize, GridOffset.Y, YMin);
             while (!(current > YMax))
             {
-                DrawLine(XMin, current, XMax, current, Settings.GridColor);
+                DrawLineFast(XMin, current, XMax, current);
                 current += Settings.GridSize;
             }
+            GL.End();
             GL.Scale(1.0, -1.0, 1.0);
             GL.Disable(EnableCap.LineStipple);
             GL.LineWidth(Settings.LineWidth);
