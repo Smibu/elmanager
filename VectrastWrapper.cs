@@ -21,9 +21,9 @@ namespace Elmanager
                     Math.Abs(transformMatrix.elements[0, 0]) + Math.Abs(transformMatrix.elements[1, 1]),
                     1, numFlowers);
             }
-            catch (Exception e)
+            catch (ArgumentException)
             {
-                throw new VectrastException(e.Message);
+                throw new VectrastException(string.Format("The image file {0} is invalid.", imageFileName));
             }
             try
             {
