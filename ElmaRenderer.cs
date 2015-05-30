@@ -20,7 +20,7 @@ namespace Elmanager
         //Constants
         internal const double ObjectDiameter = ObjectRadius * 2;
         internal const double ObjectRadius = 0.4;
-        internal List<int> ActivePlayerIndices;
+        internal List<int> ActivePlayerIndices = new List<int>();
         internal Action AdditionalPolys;
         internal Action AfterDrawing;
         internal Lgr CurrentLgr;
@@ -28,7 +28,7 @@ namespace Elmanager
         internal Color[] DrivingLineColors = new Color[] {};
         internal Level Lev;
         internal bool Playing;
-        internal List<int> VisiblePlayerIndices;
+        internal List<int> VisiblePlayerIndices = new List<int>();
         private const int BikeDistance = 500;
         private const double BikePicAspectRatio = 380.0 / 301.0;
         private const double BikePicRotationConst = 35.0;
@@ -75,7 +75,7 @@ namespace Elmanager
         private bool DrawInActiveAsTransparent;
         private bool DrawOnlyPlayerFrames;
 
-        public List<DrawableImage> DrawableImages { get; set; }
+        public List<DrawableImage> DrawableImages { get; set; } = new List<DrawableImage>();
 
         private int FlowerPic;
         private bool FollowDriver;
@@ -101,7 +101,7 @@ namespace Elmanager
         private double PlayBackSpeed = 1.0;
         private Stopwatch PlayTimer = new Stopwatch();
         private List<Player> Players;
-        private RenderingSettings Settings;
+        private RenderingSettings Settings = new RenderingSettings();
         private bool ShowDriverPath;
         private DrawableImage SkyTexture;
         private Suspension[] Suspensions = new Suspension[2];
@@ -1142,16 +1142,22 @@ namespace Elmanager
             {
                 if (CurrentLgr != null)
                     CurrentLgr.Dispose();
-                LoadLgrGraphics(newSettings.LgrFile);
-                Lev.UpdateImages(DrawableImages);
+                if (File.Exists(newSettings.LgrFile))
+                {
+                    LoadLgrGraphics(newSettings.LgrFile);
+                    if (Lev != null)
+                    {
+                        Lev.UpdateImages(DrawableImages);
+                        UpdateGroundAndSky(newSettings.DefaultGroundAndSky);
+                    }
+                }
+            }
+            else if (Settings.DefaultGroundAndSky != newSettings.DefaultGroundAndSky)
+            {
                 UpdateGroundAndSky(newSettings.DefaultGroundAndSky);
             }
-            if (Settings.DefaultGroundAndSky != newSettings.DefaultGroundAndSky)
-                UpdateGroundAndSky(newSettings.DefaultGroundAndSky);
-            if (Settings.SkyFillColor != newSettings.SkyFillColor)
-                GL.ClearColor(newSettings.SkyFillColor);
-            if (Settings.LineWidth != newSettings.LineWidth)
-                GL.LineWidth(newSettings.LineWidth);
+            GL.ClearColor(newSettings.SkyFillColor);
+            GL.LineWidth(newSettings.LineWidth);
             GL.PointSize((float)(newSettings.VertexSize * 300));
             Settings = newSettings.Clone();
         }
@@ -1365,15 +1371,10 @@ namespace Elmanager
                                            BikePicYFacingRight * Math.Sin(-BikePicRotationConst * Constants.DegToRad);
             BikePicTranslateYFacingRight = BikePicXFacingRight * Math.Sin(-BikePicRotationConst * Constants.DegToRad) +
                                            BikePicYFacingRight * Math.Cos(-BikePicRotationConst * Constants.DegToRad);
-            Settings = settings.Clone();
             AspectRatio = renderingTarget.Width / (double) renderingTarget.Height;
             CtrlWindowInfo = Utilities.CreateWindowsWindowInfo(renderingTarget.Handle);
             InitializeOpengl();
-            DrawableImages = new List<DrawableImage>();
-            if (File.Exists(Settings.LgrFile))
-                LoadLgrGraphics(Settings.LgrFile);
-            ActivePlayerIndices = new List<int>();
-            VisiblePlayerIndices = new List<int>();
+            UpdateSettings(settings);
         }
 
         private void DeleteTextures()
@@ -1844,8 +1845,6 @@ namespace Elmanager
             GL.Hint(HintTarget.LineSmoothHint, HintMode.Fastest);
             GL.Enable(EnableCap.PointSmooth);
             GL.TexEnv(TextureEnvTarget.TextureEnv, TextureEnvParameter.TextureEnvMode, (float) TextureEnvMode.Replace);
-            GL.ClearColor(Settings.SkyFillColor);
-            GL.LineWidth(Settings.LineWidth);
             OpenGLInitialized = true;
         }
 
