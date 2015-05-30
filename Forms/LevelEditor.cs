@@ -1585,12 +1585,14 @@ namespace Elmanager.Forms
                 Text = "New - " + LevEditorName;
                 filenameBox.Text = string.Empty;
                 filenameBox.Enabled = false;
+                deleteButton.Enabled = false;
             }
             else
             {
                 Text = Lev.FileNameWithoutExtension + " - " + LevEditorName;
                 filenameBox.Text = Lev.FileNameWithoutExtension;
                 filenameBox.Enabled = true;
+                deleteButton.Enabled = true;
             }
             TitleBox.Text = Lev.Title;
             LGRBox.Text = Lev.LgrFile;
