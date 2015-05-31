@@ -108,6 +108,7 @@ namespace Elmanager
                     try
                     {
                         template.LoadFromPath(text);
+                        template.Path = null;
                         return template;
                     }
                     catch (Exception)
