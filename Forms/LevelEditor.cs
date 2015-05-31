@@ -154,6 +154,16 @@ namespace Elmanager.Forms
             get { return ((ToolBase) CurrentTool); }
         }
 
+        private List<string> CurrLevDirFiles
+        {
+            get
+            {
+                UpdateCurrLevDirFiles();
+                return _currLevDirFiles;
+            }
+            set { _currLevDirFiles = value; }
+        }
+
         internal void TransformMenuItemClick(object sender = null, EventArgs e = null)
         {
             if (!CurrentTool.Busy)
@@ -1198,17 +1208,12 @@ namespace Elmanager.Forms
 
         private void PrevNextButtonClick(object sender, EventArgs e)
         {
-            string levDir = Path.GetDirectoryName(Lev.Path);
             if (CurrLevDirExists())
             {
-                if (_currLevDirFiles == null || _loadedLevFilesDir != levDir)
-                {
-                    UpdateCurrLevDirFiles();
-                }
-                if (_currLevDirFiles.Count > 0)
+                if (CurrLevDirFiles.Count > 0)
                 {
                     if (Lev.Path == null)
-                        OpenLevel(_currLevDirFiles[0]);
+                        OpenLevel(CurrLevDirFiles[0]);
                     else
                     {
                         int i = GetCurrentLevelIndex();
@@ -1216,15 +1221,15 @@ namespace Elmanager.Forms
                         {
                             i--;
                             if (i < 0)
-                                i = _currLevDirFiles.Count - 1;
+                                i = CurrLevDirFiles.Count - 1;
                         }
                         else
                         {
                             i++;
-                            if (i >= _currLevDirFiles.Count)
+                            if (i >= CurrLevDirFiles.Count)
                                 i = 0;
                         }
-                        OpenLevel(_currLevDirFiles[i]);
+                        OpenLevel(CurrLevDirFiles[i]);
                     }
                 }
                 else
@@ -1346,16 +1351,16 @@ namespace Elmanager.Forms
                 try
                 {
                     Lev.Save(_savePath);
-                    Modified = false;
                     _savedIndex = _historyIndex;
                     _fromScratch = false;
                     if (!Global.LevelFiles.Contains(_savePath))
                     {
                         Global.LevelFiles.Add(_savePath);
-                        UpdateCurrLevDirFiles();
+                        UpdateCurrLevDirFiles(force: true);
                     }
                     UpdateLabels();
                     UpdateButtons();
+                    Modified = false;
                 }
                 catch (UnauthorizedAccessException ex)
                 {
@@ -1440,8 +1445,8 @@ namespace Elmanager.Forms
         private void SetBlankLevel()
         {
             Lev = Global.AppSettings.LevelEditor.GetTemplateLevel();
-                
             SetDefaultLevelTitle();
+            SaveButton.Enabled = true;
             _fromScratch = true;
         }
 
@@ -1565,11 +1570,18 @@ namespace Elmanager.Forms
             nextLevelToolStripMenuItem.Enabled = PreviousButton.Enabled;
         }
 
-        private void UpdateCurrLevDirFiles()
+        private void UpdateCurrLevDirFiles(bool force = false)
         {
             string levDir = Path.GetDirectoryName(Lev.Path);
-            _currLevDirFiles = Directory.GetFiles(levDir, "*.lev", SearchOption.TopDirectoryOnly).ToList();
-            _loadedLevFilesDir = levDir;
+            if (levDir == null)
+            {
+                return;
+            }
+            if (force || _currLevDirFiles == null || _loadedLevFilesDir != levDir)
+            {
+                _currLevDirFiles = Directory.GetFiles(levDir, "*.lev", SearchOption.TopDirectoryOnly).ToList();
+                _loadedLevFilesDir = levDir;
+            }
         }
 
         private void UpdateGravityMenu(object sender)
@@ -1586,6 +1598,7 @@ namespace Elmanager.Forms
                 filenameBox.Text = string.Empty;
                 filenameBox.Enabled = false;
                 deleteButton.Enabled = false;
+                deleteLevMenuItem.Enabled = false;
             }
             else
             {
@@ -1593,6 +1606,7 @@ namespace Elmanager.Forms
                 filenameBox.Text = Lev.FileNameWithoutExtension;
                 filenameBox.Enabled = true;
                 deleteButton.Enabled = true;
+                deleteLevMenuItem.Enabled = true;
             }
             TitleBox.Text = Lev.Title;
             LGRBox.Text = Lev.LgrFile;
@@ -1828,12 +1842,14 @@ namespace Elmanager.Forms
             }
             if (MessageBox.Show("Are you sure you want to delete this level?", "Confirmation", MessageBoxButtons.YesNo, MessageBoxIcon.Question) == DialogResult.Yes)
             {
+                UpdateCurrLevDirFiles();
                 File.Delete(Lev.Path);
+                
                 int levIndex = GetCurrentLevelIndex();
-                _currLevDirFiles.RemoveAt(levIndex);
-                if (levIndex < _currLevDirFiles.Count)
+                CurrLevDirFiles.RemoveAt(levIndex);
+                if (levIndex < CurrLevDirFiles.Count)
                 {
-                    OpenLevel(_currLevDirFiles[levIndex]);
+                    OpenLevel(CurrLevDirFiles[levIndex]);
                 }
                 else
                 {
@@ -1844,7 +1860,7 @@ namespace Elmanager.Forms
 
         private int GetCurrentLevelIndex()
         {
-            return _currLevDirFiles.FindIndex(
+            return CurrLevDirFiles.FindIndex(
                         path => string.Compare(path, Lev.Path, StringComparison.OrdinalIgnoreCase) == 0);
         }
 
@@ -1877,11 +1893,12 @@ namespace Elmanager.Forms
             try
             {
                 var newPath = Path.Combine(Path.GetDirectoryName(Lev.Path), filenameBox.Text + ".lev");
+                UpdateCurrLevDirFiles();
                 File.Move(Lev.Path, newPath);
-                if (_currLevDirFiles != null)
+                if (CurrLevDirFiles != null)
                 {
                     int index = GetCurrentLevelIndex();
-                    _currLevDirFiles[index] = newPath;
+                    CurrLevDirFiles[index] = newPath;
                 }
                 Lev.Path = newPath;
                 UpdateLabels();
