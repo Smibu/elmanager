@@ -59,6 +59,7 @@ namespace Elmanager.Forms
         private bool _pictureToolAvailable;
         private bool _draggingGrid;
         private Vector _gridStartOffset;
+        private bool _programmaticPropertyChange;
 
         internal LevelEditor(string levPath)
         {
@@ -185,8 +186,7 @@ namespace Elmanager.Forms
         internal void SetModified(bool value, bool updateHistory = true)
         {
             _modified = value;
-            SaveButton.Enabled = value;
-            SaveToolStripMenuItem.Enabled = value;
+            EnableSaveButtons(value);
             if (value)
             {
                 Lev.UpdateBounds();
@@ -196,6 +196,12 @@ namespace Elmanager.Forms
                     CheckTopology();
                 Renderer.UpdateZoomFillBounds();
             }
+        }
+
+        private void EnableSaveButtons(bool value)
+        {
+            SaveButton.Enabled = value;
+            SaveToolStripMenuItem.Enabled = value;
         }
 
         internal void UpdateSelectionInfo()
@@ -781,21 +787,20 @@ namespace Elmanager.Forms
         private void InitializeLevel()
         {
             _savePath = Lev.Path;
+            Modified = false;
             UpdateLabels();
             UpdateButtons();
             Renderer.InitializeLevel(Lev);
             UpdateLgrFromLev();
             Renderer.UpdateSettings(Global.AppSettings.LevelEditor.RenderingSettings);
+            topologyList.Text = string.Empty;
+            topologyList.DropDownItems.Clear();
+            ResetTopologyListStyle();
             UpdateLgrTools();
             Renderer.RedrawScene();
             ClearHistory();
-            Modified = false;
             CurrentTool.InActivate();
             CurrentTool.Activate();
-
-            topologyList.Text = string.Empty;
-            ResetTopologyListStyle();
-
             _errorPoints.Clear();
         }
 
@@ -866,20 +871,22 @@ namespace Elmanager.Forms
 
         private void LevelPropertyModified(object sender, EventArgs e)
         {
-            _modified = true;
-            SaveButton.Enabled = true;
-            SaveToolStripMenuItem.Enabled = true;
-            if (sender.Equals(SkyComboBox) || sender.Equals(GroundComboBox))
+            if (!_programmaticPropertyChange)
             {
-                if (sender.Equals(GroundComboBox))
-                    Lev.GroundTextureName = GroundComboBox.SelectedItem.ToString();
-                if (sender.Equals(SkyComboBox))
-                    Lev.SkyTextureName = SkyComboBox.SelectedItem.ToString();
-                if (Global.AppSettings.LevelEditor.RenderingSettings.DefaultGroundAndSky)
-                    Utils.ShowError("Default ground and sky is enabled, so you won\'t see this change in editor.",
-                        "Warning", MessageBoxIcon.Exclamation);
-                Renderer.UpdateGroundAndSky(Global.AppSettings.LevelEditor.RenderingSettings.DefaultGroundAndSky);
-                Renderer.RedrawScene();
+                _modified = true;
+                EnableSaveButtons(true);
+                if (sender.Equals(SkyComboBox) || sender.Equals(GroundComboBox))
+                {
+                    if (sender.Equals(GroundComboBox))
+                        Lev.GroundTextureName = GroundComboBox.SelectedItem.ToString();
+                    if (sender.Equals(SkyComboBox))
+                        Lev.SkyTextureName = SkyComboBox.SelectedItem.ToString();
+                    if (Global.AppSettings.LevelEditor.RenderingSettings.DefaultGroundAndSky)
+                        Utils.ShowError("Default ground and sky is enabled, so you won\'t see this change in editor.",
+                            "Warning", MessageBoxIcon.Exclamation);
+                    Renderer.UpdateGroundAndSky(Global.AppSettings.LevelEditor.RenderingSettings.DefaultGroundAndSky);
+                    Renderer.RedrawScene();
+                }
             }
         }
 
@@ -1446,7 +1453,6 @@ namespace Elmanager.Forms
         {
             Lev = Global.AppSettings.LevelEditor.GetTemplateLevel();
             SetDefaultLevelTitle();
-            SaveButton.Enabled = true;
             _fromScratch = true;
         }
 
@@ -1599,6 +1605,7 @@ namespace Elmanager.Forms
                 filenameBox.Enabled = false;
                 deleteButton.Enabled = false;
                 deleteLevMenuItem.Enabled = false;
+                EnableSaveButtons(true);
             }
             else
             {
@@ -1608,10 +1615,12 @@ namespace Elmanager.Forms
                 deleteButton.Enabled = true;
                 deleteLevMenuItem.Enabled = true;
             }
+            _programmaticPropertyChange = true;
             TitleBox.Text = Lev.Title;
             LGRBox.Text = Lev.LgrFile;
             GroundComboBox.Text = Lev.GroundTextureName;
             SkyComboBox.Text = Lev.SkyTextureName;
+            _programmaticPropertyChange = false;
             BestTimeLabel.Text = "Best time: " + Lev.Top10.GetSinglePlayerString(0);
             UpdateSelectionInfo();
         }
