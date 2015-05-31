@@ -129,11 +129,8 @@
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="GeoAPI, Version=1.7.3.0, Culture=neutral, PublicKeyToken=a1a0da7def465678, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>packages\GeoAPI.1.7.3\lib\net40-client\GeoAPI.dll</HintPath>
-    </Reference>
-    <Reference Include="ListViewPrinter">
-      <HintPath>packages\ObjectListView.2.7.1\lib\ListViewPrinter.dll</HintPath>
+      <HintPath>packages\GeoAPI.1.7.3.1\lib\net40-client\GeoAPI.dll</HintPath>
+      <Private>True</Private>
     </Reference>
     <Reference Include="Microsoft.VisualBasic" />
     <Reference Include="mscorlib" />
@@ -141,9 +138,9 @@
       <SpecificVersion>False</SpecificVersion>
       <HintPath>packages\NetTopologySuite.1.13.3.2\lib\net40-client\NetTopologySuite.dll</HintPath>
     </Reference>
-    <Reference Include="ObjectListView, Version=2.7.0.20263, Culture=neutral, PublicKeyToken=b1c5bf581481bcd4, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>packages\ObjectListView.2.7.1\lib\ObjectListView.dll</HintPath>
+    <Reference Include="ObjectListView, Version=2.8.1.33936, Culture=neutral, PublicKeyToken=b1c5bf581481bcd4, processorArchitecture=MSIL">
+      <HintPath>packages\ObjectListView.Official.2.8.1\lib\net20\ObjectListView.dll</HintPath>
+      <Private>True</Private>
     </Reference>
     <Reference Include="OpenTK, Version=1.1.0.0, Culture=neutral, PublicKeyToken=bad199fe84eb3df4, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
@@ -155,9 +152,6 @@
     </Reference>
     <Reference Include="PresentationCore">
       <Private>False</Private>
-    </Reference>
-    <Reference Include="SparkleLibrary">
-      <HintPath>packages\ObjectListView.2.7.1\lib\SparkleLibrary.dll</HintPath>
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core">
