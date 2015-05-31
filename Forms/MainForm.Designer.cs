@@ -38,6 +38,7 @@
             this.configButton = new System.Windows.Forms.Button();
             this.linkLabel1 = new System.Windows.Forms.LinkLabel();
             this.toolTip1 = new System.Windows.Forms.ToolTip(this.components);
+            this.linkLabel2 = new System.Windows.Forms.LinkLabel();
             this.SuspendLayout();
             // 
             // rmButton
@@ -129,7 +130,7 @@
             this.linkLabel1.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
             this.linkLabel1.AutoSize = true;
             this.linkLabel1.LinkArea = new System.Windows.Forms.LinkArea(33, 6);
-            this.linkLabel1.Location = new System.Drawing.Point(52, 239);
+            this.linkLabel1.Location = new System.Drawing.Point(52, 241);
             this.linkLabel1.Name = "linkLabel1";
             this.linkLabel1.Size = new System.Drawing.Size(209, 17);
             this.linkLabel1.TabIndex = 9;
@@ -146,11 +147,27 @@
             this.toolTip1.ReshowDelay = 100;
             this.toolTip1.UseFading = false;
             // 
+            // linkLabel2
+            // 
+            this.linkLabel2.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
+            this.linkLabel2.AutoSize = true;
+            this.linkLabel2.LinkArea = new System.Windows.Forms.LinkArea(10, 13);
+            this.linkLabel2.Location = new System.Drawing.Point(91, 258);
+            this.linkLabel2.Name = "linkLabel2";
+            this.linkLabel2.Size = new System.Drawing.Size(131, 17);
+            this.linkLabel2.TabIndex = 10;
+            this.linkLabel2.TabStop = true;
+            this.linkLabel2.Text = "Vectrast: Radim Řehůřek";
+            this.toolTip1.SetToolTip(this.linkLabel2, "http://radimrehurek.com/");
+            this.linkLabel2.UseCompatibleTextRendering = true;
+            this.linkLabel2.LinkClicked += new System.Windows.Forms.LinkLabelLinkClickedEventHandler(this.linkLabel2_LinkClicked);
+            // 
             // MainForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(312, 265);
+            this.ClientSize = new System.Drawing.Size(312, 288);
+            this.Controls.Add(this.linkLabel2);
             this.Controls.Add(this.linkLabel1);
             this.Controls.Add(this.configButton);
             this.Controls.Add(this.homePageLabel);
@@ -179,6 +196,7 @@
         internal System.Windows.Forms.Button configButton;
         private System.Windows.Forms.LinkLabel linkLabel1;
         private System.Windows.Forms.ToolTip toolTip1;
-	}
+        private System.Windows.Forms.LinkLabel linkLabel2;
+    }
 	
 }

@@ -60,5 +60,10 @@ namespace Elmanager.Forms
         {
             Process.Start("mailto:mawane@hotmail.com");
         }
+
+        private void linkLabel2_LinkClicked(object sender, LinkLabelLinkClickedEventArgs e)
+        {
+            Process.Start("http://radimrehurek.com/");
+        }
     }
 }
