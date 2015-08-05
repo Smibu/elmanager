@@ -1045,7 +1045,7 @@ namespace Elmanager.Forms
             _draggingGrid = false;
         }
 
-        private void MouseWheelZoom2(long delta)
+        private void MouseWheelZoom(long delta)
         {
             if (Keyboard.IsKeyDown(Key.LeftCtrl))
             {
@@ -1502,7 +1502,8 @@ namespace Elmanager.Forms
             GroundComboBox.SelectedIndexChanged += LevelPropertyModified;
             SkyComboBox.SelectedIndexChanged += LevelPropertyModified;
             TitleBox.KeyPress += LevelPropertyModified;
-            ToolPanel.MouseWheel += MouseWheelZoom2;
+            ToolPanel.MouseWheel += MouseWheelZoom; // Windows 8.1 and earlier
+            EditorControl.MouseWheel += MouseWheelZoom; // Windows 10 with the option "Scroll inactive windows when I hover over them" enabled
             previousLevelToolStripMenuItem.Click += PrevNextButtonClick;
             nextLevelToolStripMenuItem.Click += PrevNextButtonClick;
             foreach (var x in ToolStrip2.Items)
@@ -1518,6 +1519,11 @@ namespace Elmanager.Forms
                 x.KeyDown += KeyHandlerDown;
                 x.KeyUp += KeyHandlerUp;
             }
+        }
+
+        private void MouseWheelZoom(object sender, MouseEventArgs e)
+        {
+            MouseWheelZoom(e.Delta);
         }
 
         private void ShowCoordinates()
