@@ -474,38 +474,7 @@ namespace Elmanager
 
         internal List<Vector> GetIntersectionPoints()
         {
-            var isects = new List<Vector>();
-            var f = GeometryFactory.Floating;
-            var ipolys = new List<IPolygon>();
-            foreach (var p in Polygons.Where(poly => !poly.IsGrass))
-            {
-                var verts = p.Vertices.Select(v => new Coordinate(v.X, v.Y));
-                var ring = verts.ToList();
-                ring.Add(verts.First());
-                var ipoly = f.CreatePolygon(f.CreateLinearRing(ring.ToArray()));
-                ipolys.Add(ipoly);
-                if (!ipoly.IsValid)
-                {
-                    var validOp = new IsValidOp(ipoly).ValidationError.Coordinate;
-                    isects.Add(new Vector(validOp.X, validOp.Y));
-                }
-            }
-            var multipoly = f.CreateMultiPolygon(ipolys.ToArray());
-            if (!multipoly.IsValid)
-            {
-                var validOp = new IsValidOp(multipoly).ValidationError;
-                if (validOp.Message == "Self-intersection")
-                {
-                    isects.Add(new Vector(validOp.Coordinate.X, validOp.Coordinate.Y));
-                }
-            }
-
-            var vectors = Polygons.SelectMany(p => p.Vertices);
-            var query = vectors.GroupBy(x => x)
-                          .Where(g => g.Count() > 1)
-                          .Select(y => y.Key);
-            isects.AddRange(query);
-            return isects;
+            return Geometry.GetIntersectionPoints(Polygons);
         }
 
         internal void Import(Level other)

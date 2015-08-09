@@ -110,6 +110,11 @@ namespace Elmanager
             return new Vector(v.X, v.Y);
         }
 
+        public static implicit operator Coordinate(Vector v)
+        {
+            return new Coordinate(v.X, v.Y);
+        }
+
         public static Vector operator +(Vector vector1, Vector vector2)
         {
             return new Vector(vector1.X + vector2.X, vector1.Y + vector2.Y);

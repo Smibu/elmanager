@@ -9,6 +9,8 @@ using System.Windows.Forms;
 using System.Windows.Markup;
 using System.Windows.Media;
 using Elmanager.Forms;
+using GeoAPI.Geometries;
+using NetTopologySuite.Geometries;
 using Brushes = System.Windows.Media.Brushes;
 using Color = System.Drawing.Color;
 using FlowDirection = System.Windows.FlowDirection;
@@ -19,13 +21,7 @@ namespace Elmanager.EditorTools
 {
     internal class TextTool : ToolBase, IEditorTool
     {
-        private TextToolOptions _currentOptions = new TextToolOptions
-        {
-            Font = new Font(new FontFamily("Arial"), 9.0f),
-            Smoothness = 0.03,
-            Text = "Type text here!",
-            LineHeight = 1
-        };
+        private TextToolOptions _currentOptions = TextToolOptions.Default;
 
         private List<Polygon> _currentTextPolygons;
         private bool _writing;
@@ -36,6 +32,8 @@ namespace Elmanager.EditorTools
             {"Italic", "Oblique"},
             {"Demibold", "Bold"}
         };
+
+        private Dictionary<Font, double> minSmoothnesses = new Dictionary<Font, double>();
 
         internal TextTool(LevelEditor editor) : base(editor)
         {
@@ -120,7 +118,7 @@ namespace Elmanager.EditorTools
             UpdateHelp();
         }
 
-        private static List<Polygon> RenderString(TextToolOptions options, Vector offset)
+        private List<Polygon> RenderString(TextToolOptions options, Vector offset)
         {
             var fontfamily = new System.Windows.Media.FontFamily(options.Font.FontFamily.Name);
 
@@ -145,23 +143,77 @@ namespace Elmanager.EditorTools
                 LineHeight = options.LineHeight*options.Font.SizeInPoints*sizeFactor
             };
             formattedText.SetTextDecorations(decorations);
-            var poly = formattedText.BuildGeometry(new Point(0, 0))
-                .GetOutlinedPathGeometry(0.005, ToleranceType.Absolute)
-                .GetFlattenedPathGeometry(options.Smoothness, ToleranceType.Absolute);
-            foreach (var figure in poly.Figures)
+            double cached;
+            var isCached = minSmoothnesses.TryGetValue(options.Font, out cached);
+            if (!isCached)
             {
-                var polygon = new Polygon();
-                foreach (
-                    var point in
-                        figure.Segments.Select(segment => segment as PolyLineSegment)
-                            .SelectMany(polysegment => polysegment.Points))
-                {
-                    polygon.Add(new Vector(point.X + offset.X, point.Y + offset.Y,
-                        Geometry.VectorMark.Selected));
-                }
-                polygon.UpdateDecomposition();
-                polys.Add(polygon);
+                cached = options.Smoothness;
             }
+            var smoothness = Math.Min(options.Smoothness, cached);
+            var outlinedGeometry = formattedText.BuildGeometry(new Point(0, 0))
+                .GetOutlinedPathGeometry(0.005, ToleranceType.Absolute);
+            int iterations = 0;
+            do
+            {
+                if (smoothness < 0.0001)
+                {
+                    var opt = TextToolOptions.Default;
+                    opt.Text = "Unable to render\nthis font without\ntopology errors.";
+                    return RenderString(opt, offset);
+                }
+                polys.Clear();
+                var poly = outlinedGeometry.GetFlattenedPathGeometry(smoothness, ToleranceType.Absolute);
+                polys.AddRange(
+                    poly.Figures.Select(
+                        figure => new Polygon(
+                            figure.Segments
+                            .Select(segment => segment as PolyLineSegment)
+                            .SelectMany(polysegment => polysegment.Points)
+                            .Select(p => new Vector(p.X + offset.X, p.Y + offset.Y, Geometry.VectorMark.Selected))
+                        )
+                    )
+                );
+                smoothness *= 0.5;
+                ++iterations;
+            } while (polys.Any(p => p.Count < 3 || !p.IsSimple));
+            if (iterations > 1)
+            {
+                minSmoothnesses[options.Font] = smoothness*2;
+            }
+            var isects = Geometry.GetIntersectionPoints(polys);
+            if (isects.Count > 0)
+            {
+                var f = GeometryFactory.Floating;
+                var iarray = polys.Select(p => p.ToIPolygon()).ToArray();
+                polys.Clear();
+                IGeometry union = f.CreateMultiPolygon(iarray);
+                try
+                {
+                    union = isects.Aggregate(union, (current, vector) => current.Union(f.CreatePoint(vector).Buffer(0.0001, 1)));
+                }
+                catch (TopologyException)
+                {
+                    var opt = options;
+                    opt.Smoothness = smoothness;
+                    minSmoothnesses[options.Font] = smoothness;
+                    return RenderString(opt, offset);
+                }
+                var polygon = union as IPolygon;
+                if (polygon != null)
+                {
+                    polys.AddRange(polygon.ToPolygons());
+                }
+                else
+                {
+                    var multiPolygon = union as IMultiPolygon;
+                    if (multiPolygon != null)
+                    {
+                        polys.AddRange(multiPolygon.Geometries.Select(geometry => geometry as IPolygon).SelectMany(poly => poly.ToPolygons()));
+                    }
+                }
+                polys.ForEach(p => p.MarkVectorsAs(Geometry.VectorMark.Selected));
+            }
+            polys.ForEach(p => p.UpdateDecomposition());
             return polys;
         }
 

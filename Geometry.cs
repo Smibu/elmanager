@@ -1,5 +1,9 @@
 using System;
 using System.Collections.Generic;
+using System.Linq;
+using GeoAPI.Geometries;
+using NetTopologySuite.Geometries;
+using NetTopologySuite.Operation.Valid;
 
 namespace Elmanager
 {
@@ -346,6 +350,56 @@ namespace Elmanager
             Selected = 1,
             Highlight = 2,
             Visited = 3
+        }
+
+        internal static List<Vector> GetIntersectionPoints(List<Polygon> polygons)
+        {
+            var f = GeometryFactory.Floating;
+            var iarray = polygons.Where(poly => !poly.IsGrass).Select(p => p.ToIPolygon()).ToArray();
+            var multipoly = f.CreateMultiPolygon(iarray);
+            var isects = iarray.Where(p => !p.IsValid).Select(p =>
+            {
+                var validOp = new IsValidOp(p).ValidationError.Coordinate;
+                return new Vector(validOp.X, validOp.Y);
+            }).ToList();
+            if (!multipoly.IsValid)
+            {
+                var validOp = new IsValidOp(multipoly).ValidationError;
+                if (validOp.ErrorType == TopologyValidationErrors.SelfIntersection)
+                {
+                    isects.Add(new Vector(validOp.Coordinate.X, validOp.Coordinate.Y));
+                }
+            }
+
+            var vectors = polygons.SelectMany(p => p.Vertices);
+            var query = vectors.GroupBy(x => x)
+                .Where(g => g.Count() > 1)
+                .Select(y => y.Key);
+            isects.AddRange(query);
+            return isects;
+        }
+
+        internal static List<Polygon> ToPolygons(this IPolygon poly)
+        {
+            var polys = new List<Polygon>();
+            var npoly = new Polygon();
+            foreach (var coordinate in poly.Shell.Coordinates.Skip(1))
+            {
+                npoly.Add(coordinate);
+            }
+            polys.Add(npoly);
+
+            foreach (var linearRing in poly.Holes)
+            {
+                var p = new Polygon();
+                foreach (var coordinate in linearRing.Coordinates.Skip(1))
+                {
+                    p.Add(coordinate);
+                }
+                polys.Add(p);
+            }
+
+            return polys;
         }
     }
 }

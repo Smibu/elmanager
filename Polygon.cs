@@ -1,6 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using GeoAPI.Geometries;
+using NetTopologySuite.Geometries;
 
 namespace Elmanager
 {
@@ -20,9 +22,10 @@ namespace Elmanager
         internal PolygonMark Mark;
         internal List<Vector> Vertices;
 
-        internal Polygon(List<Vector> vertices)
+        internal Polygon(IEnumerable<Vector> vertices)
         {
-            Vertices = vertices;
+            Vertices = new List<Vector>();
+            Vertices.AddRange(vertices);
         }
 
         internal Polygon()
@@ -860,6 +863,14 @@ namespace Elmanager
         public static Polygon Rectangle(Vector corner1, Vector corner2)
         {
             return new Polygon(corner1, new Vector(corner2.X, corner1.Y), corner2, new Vector(corner1.X, corner2.Y));
+        }
+
+        internal IPolygon ToIPolygon()
+        {
+            var verts = Vertices.Select(v => new Coordinate(v.X, v.Y));
+            var ring = verts.ToList();
+            ring.Add(ring.First());
+            return GeometryFactory.Floating.CreatePolygon(ring.ToArray());
         }
     }
 }
