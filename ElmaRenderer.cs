@@ -785,6 +785,10 @@ namespace Elmanager
                     if (Settings.ShowGrassEdges)
                     {
                         DrawLineStrip(x, Settings.GrassEdgeColor);
+                        if (Settings.ShowInactiveGrassEdges)
+                        {
+                            DrawLine(x.Vertices.First(), x.Vertices.Last(), Settings.GrassEdgeColor);
+                        }
                     }
                 }
                 else if (Settings.ShowGroundEdges)

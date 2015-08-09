@@ -500,7 +500,13 @@ namespace Elmanager.Forms
                     case PolygonMark.Highlight:
                         if (Global.AppSettings.LevelEditor.UseHighlight)
                             if (x.IsGrass)
+                            {
                                 Renderer.DrawLineStrip(x, Global.AppSettings.LevelEditor.HighlightColor);
+                                if (Global.AppSettings.LevelEditor.RenderingSettings.ShowInactiveGrassEdges)
+                                {
+                                    Renderer.DrawLine(x.Vertices.First(), x.Vertices.Last(), Global.AppSettings.LevelEditor.HighlightColor);
+                                }
+                            }
                             else
                                 Renderer.DrawPolygon(x, Global.AppSettings.LevelEditor.HighlightColor);
                         break;

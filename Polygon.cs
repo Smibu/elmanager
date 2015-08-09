@@ -260,7 +260,7 @@ namespace Elmanager
                 if (current < smallest)
                     smallest = current;
             }
-            if (!IsGrass)
+            if (!IsGrass || Global.AppSettings.LevelEditor.RenderingSettings.ShowInactiveGrassEdges)
             {
                 current = Geometry.DistanceFromSegment(Vertices[c].X, Vertices[c].Y, Vertices[0].X, Vertices[0].Y, p.X,
                     p.Y);

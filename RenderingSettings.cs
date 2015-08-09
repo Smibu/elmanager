@@ -40,6 +40,7 @@ namespace Elmanager
             ShowGravityAppleArrows = true;
             UseCirclesForVertices = false;
             ShowMaxDimensions = false;
+            ShowInactiveGrassEdges = false;
         }
 
         private RenderingSettings(RenderingSettings s)
@@ -85,6 +86,7 @@ namespace Elmanager
             ShowGravityAppleArrows = s.ShowGravityAppleArrows;
             UseCirclesForVertices = s.UseCirclesForVertices;
             ShowMaxDimensions = s.ShowMaxDimensions;
+            ShowInactiveGrassEdges = s.ShowInactiveGrassEdges;
         }
 
         internal RenderingSettings Clone()
@@ -270,6 +272,9 @@ namespace Elmanager
 
         [Category("Visibility"), DisplayName("Maximum dimensions")]
         public bool ShowMaxDimensions { get; set; }
+
+        [Category("Visibility"), DisplayName("Show inactive grass edges")]
+        public bool ShowInactiveGrassEdges { get; set; }
 
         [DisplayName("Zoom textures")]
         public bool ZoomTextures { get; set; }
