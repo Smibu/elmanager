@@ -8,8 +8,8 @@ namespace Elmanager.CustomControls
 {
     internal class FontDialogMod : FontDialog
     {
-
-        private readonly IntPtr _applyCommand = new IntPtr(0x402);
+        private const int APPLY_CLICK = 0x402;
+        private readonly IntPtr _applyCommand = new IntPtr(APPLY_CLICK);
         public string FontStyleName { get; private set; }
         private const int WM_COMMAND = 0x0111;
 
@@ -28,14 +28,12 @@ namespace Elmanager.CustomControls
 
         protected override IntPtr HookProc(IntPtr hWnd, int msg, IntPtr wparam, IntPtr lparam)
         {
-            int low = unchecked((short) (long) wparam);
-            int high = unchecked((short) ((long) wparam >> 16));
             switch (msg)
             {
                 case WM_COMMAND:
                     switch ((int) wparam)
                     {
-                        case 0x402: 
+                        case APPLY_CLICK:
                             var sb = new StringBuilder();
                             GetDlgItemText(hWnd, 0x471, sb, 100);
                             FontStyleName = sb.ToString();
