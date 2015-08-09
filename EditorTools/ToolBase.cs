@@ -74,15 +74,36 @@ namespace Elmanager.EditorTools
         {
             var pictureFilter = LevEditor.EffectivePictureFilter;
             var textureFilter = LevEditor.EffectiveTextureFilter;
-            for (int j = 0; j < Lev.Pictures.Count; j++)
+            if (Global.AppSettings.LevelEditor.CapturePicturesAndTexturesFromBordersOnly)
             {
-                Level.Picture z = Lev.Pictures[j];
-                if ((z.IsPicture && pictureFilter) || (!z.IsPicture && textureFilter))
+                var limit = Renderer.ZoomLevel * Global.AppSettings.LevelEditor.CaptureRadius;
+                for (int j = 0; j < Lev.Pictures.Count; j++)
                 {
-                    if (p.X > z.Position.X && p.X < z.Position.X + z.Width && p.Y > z.Position.Y &&
-                        p.Y < z.Position.Y + z.Height)
+                    Level.Picture z = Lev.Pictures[j];
+                    if ((z.IsPicture && pictureFilter) || (!z.IsPicture && textureFilter))
                     {
-                        return j;
+                        if (Geometry.DistanceFromSegment(z.Position.X, z.Position.Y, z.Position.X + z.Width, z.Position.Y, p.X, p.Y) < limit
+                         || Geometry.DistanceFromSegment(z.Position.X, z.Position.Y, z.Position.X, z.Position.Y + z.Height, p.X, p.Y) < limit
+                         || Geometry.DistanceFromSegment(z.Position.X + z.Width, z.Position.Y, z.Position.X + z.Width, z.Position.Y + z.Height, p.X, p.Y) < limit
+                         || Geometry.DistanceFromSegment(z.Position.X, z.Position.Y + z.Height, z.Position.X + z.Width, z.Position.Y + z.Height, p.X, p.Y) < limit)
+                        {
+                            return j;
+                        }
+                    }
+                }
+            }
+            else
+            {
+                for (int j = 0; j < Lev.Pictures.Count; j++)
+                {
+                    Level.Picture z = Lev.Pictures[j];
+                    if ((z.IsPicture && pictureFilter) || (!z.IsPicture && textureFilter))
+                    {
+                        if (p.X > z.Position.X && p.X < z.Position.X + z.Width && p.Y > z.Position.Y &&
+                            p.Y < z.Position.Y + z.Height)
+                        {
+                            return j;
+                        }
                     }
                 }
             }

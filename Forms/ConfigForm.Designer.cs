@@ -92,6 +92,7 @@ namespace Elmanager.Forms
             this.WarnAboutOldDBBox = new System.Windows.Forms.CheckBox();
             this.ColorDialog1 = new System.Windows.Forms.ColorDialog();
             this.toolTip1 = new System.Windows.Forms.ToolTip(this.components);
+            this.capturePicTextFromBordersCheckBox = new System.Windows.Forms.CheckBox();
             this.TabControl1.SuspendLayout();
             this.GeneralPage.SuspendLayout();
             this.RMPage.SuspendLayout();
@@ -402,6 +403,7 @@ namespace Elmanager.Forms
             // 
             // LevelEditorPage
             // 
+            this.LevelEditorPage.Controls.Add(this.capturePicTextFromBordersCheckBox);
             this.LevelEditorPage.Controls.Add(this.browseButton);
             this.LevelEditorPage.Controls.Add(this.numberFormatBox);
             this.LevelEditorPage.Controls.Add(this.RenderingSettingsButton);
@@ -439,7 +441,7 @@ namespace Elmanager.Forms
             // 
             // numberFormatBox
             // 
-            this.numberFormatBox.Location = new System.Drawing.Point(339, 120);
+            this.numberFormatBox.Location = new System.Drawing.Point(339, 130);
             this.numberFormatBox.Name = "numberFormatBox";
             this.numberFormatBox.Size = new System.Drawing.Size(100, 20);
             this.numberFormatBox.TabIndex = 28;
@@ -532,7 +534,7 @@ namespace Elmanager.Forms
             // SameAsFilenameBox
             // 
             this.SameAsFilenameBox.AutoSize = true;
-            this.SameAsFilenameBox.Location = new System.Drawing.Point(227, 148);
+            this.SameAsFilenameBox.Location = new System.Drawing.Point(227, 158);
             this.SameAsFilenameBox.Name = "SameAsFilenameBox";
             this.SameAsFilenameBox.Size = new System.Drawing.Size(109, 17);
             this.SameAsFilenameBox.TabIndex = 19;
@@ -542,7 +544,7 @@ namespace Elmanager.Forms
             // 
             // DefaultTitleBox
             // 
-            this.DefaultTitleBox.Location = new System.Drawing.Point(120, 146);
+            this.DefaultTitleBox.Location = new System.Drawing.Point(120, 156);
             this.DefaultTitleBox.MaxLength = 50;
             this.DefaultTitleBox.Name = "DefaultTitleBox";
             this.DefaultTitleBox.Size = new System.Drawing.Size(100, 20);
@@ -552,7 +554,7 @@ namespace Elmanager.Forms
             // Label20
             // 
             this.Label20.AutoSize = true;
-            this.Label20.Location = new System.Drawing.Point(26, 149);
+            this.Label20.Location = new System.Drawing.Point(26, 159);
             this.Label20.Name = "Label20";
             this.Label20.Size = new System.Drawing.Size(88, 13);
             this.Label20.TabIndex = 17;
@@ -560,7 +562,7 @@ namespace Elmanager.Forms
             // 
             // baseFilenameBox
             // 
-            this.baseFilenameBox.Location = new System.Drawing.Point(120, 120);
+            this.baseFilenameBox.Location = new System.Drawing.Point(120, 130);
             this.baseFilenameBox.Name = "baseFilenameBox";
             this.baseFilenameBox.Size = new System.Drawing.Size(100, 20);
             this.baseFilenameBox.TabIndex = 15;
@@ -569,7 +571,7 @@ namespace Elmanager.Forms
             // Label19
             // 
             this.Label19.AutoSize = true;
-            this.Label19.Location = new System.Drawing.Point(226, 123);
+            this.Label19.Location = new System.Drawing.Point(226, 133);
             this.Label19.Name = "Label19";
             this.Label19.Size = new System.Drawing.Size(107, 13);
             this.Label19.TabIndex = 14;
@@ -578,7 +580,7 @@ namespace Elmanager.Forms
             // Label18
             // 
             this.Label18.AutoSize = true;
-            this.Label18.Location = new System.Drawing.Point(41, 123);
+            this.Label18.Location = new System.Drawing.Point(41, 133);
             this.Label18.Name = "Label18";
             this.Label18.Size = new System.Drawing.Size(73, 13);
             this.Label18.TabIndex = 13;
@@ -587,7 +589,7 @@ namespace Elmanager.Forms
             // FilenameSuggestionBox
             // 
             this.FilenameSuggestionBox.AutoSize = true;
-            this.FilenameSuggestionBox.Location = new System.Drawing.Point(11, 97);
+            this.FilenameSuggestionBox.Location = new System.Drawing.Point(16, 107);
             this.FilenameSuggestionBox.Name = "FilenameSuggestionBox";
             this.FilenameSuggestionBox.Size = new System.Drawing.Size(141, 17);
             this.FilenameSuggestionBox.TabIndex = 12;
@@ -608,7 +610,7 @@ namespace Elmanager.Forms
             // DynamicCheckTopologyBox
             // 
             this.DynamicCheckTopologyBox.AutoSize = true;
-            this.DynamicCheckTopologyBox.Location = new System.Drawing.Point(16, 61);
+            this.DynamicCheckTopologyBox.Location = new System.Drawing.Point(16, 84);
             this.DynamicCheckTopologyBox.Name = "DynamicCheckTopologyBox";
             this.DynamicCheckTopologyBox.Size = new System.Drawing.Size(157, 17);
             this.DynamicCheckTopologyBox.TabIndex = 7;
@@ -618,7 +620,7 @@ namespace Elmanager.Forms
             // CheckTopologyWhenSavingBox
             // 
             this.CheckTopologyWhenSavingBox.AutoSize = true;
-            this.CheckTopologyWhenSavingBox.Location = new System.Drawing.Point(179, 61);
+            this.CheckTopologyWhenSavingBox.Location = new System.Drawing.Point(191, 84);
             this.CheckTopologyWhenSavingBox.Name = "CheckTopologyWhenSavingBox";
             this.CheckTopologyWhenSavingBox.Size = new System.Drawing.Size(188, 17);
             this.CheckTopologyWhenSavingBox.TabIndex = 6;
@@ -702,6 +704,16 @@ namespace Elmanager.Forms
             // ColorDialog1
             // 
             this.ColorDialog1.FullOpen = true;
+            // 
+            // capturePicTextFromBordersCheckBox
+            // 
+            this.capturePicTextFromBordersCheckBox.AutoSize = true;
+            this.capturePicTextFromBordersCheckBox.Location = new System.Drawing.Point(16, 61);
+            this.capturePicTextFromBordersCheckBox.Name = "capturePicTextFromBordersCheckBox";
+            this.capturePicTextFromBordersCheckBox.Size = new System.Drawing.Size(247, 17);
+            this.capturePicTextFromBordersCheckBox.TabIndex = 30;
+            this.capturePicTextFromBordersCheckBox.Text = "Capture pictures and textures from borders only";
+            this.capturePicTextFromBordersCheckBox.UseVisualStyleBackColor = true;
             // 
             // ConfigForm
             // 
@@ -789,6 +801,7 @@ namespace Elmanager.Forms
         internal Label label9;
         private Button browseButton;
         private ToolTip toolTip1;
+        internal CheckBox capturePicTextFromBordersCheckBox;
     }
 	
 }

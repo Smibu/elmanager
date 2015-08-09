@@ -95,6 +95,7 @@ namespace Elmanager
             public bool UseHighlight = true;
             public FormWindowState WindowState = FormWindowState.Normal;
             public string LevelTemplate = "50,50";
+            public bool CapturePicturesAndTexturesFromBordersOnly = false;
 
             internal static Level TryGetTemplateLevel(string text)
             {

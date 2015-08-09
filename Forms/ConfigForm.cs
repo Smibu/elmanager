@@ -49,6 +49,8 @@ namespace Elmanager.Forms
             HighlightPanel.BackColor = Global.AppSettings.LevelEditor.HighlightColor;
             SelectionPanel.BackColor = Global.AppSettings.LevelEditor.SelectionColor;
             crosshairPanel.BackColor = Global.AppSettings.LevelEditor.CrosshairColor;
+            capturePicTextFromBordersCheckBox.Checked =
+                Global.AppSettings.LevelEditor.CapturePicturesAndTexturesFromBordersOnly;
             FilenameSuggestionBoxCheckedChanged(null, null);
             SameAsFilenameBoxCheckedChanged(null, null);
         }
@@ -309,6 +311,8 @@ namespace Elmanager.Forms
             Global.AppSettings.LevelEditor.HighlightColor = HighlightPanel.BackColor;
             Global.AppSettings.LevelEditor.SelectionColor = SelectionPanel.BackColor;
             Global.AppSettings.LevelEditor.CrosshairColor = crosshairPanel.BackColor;
+            Global.AppSettings.LevelEditor.CapturePicturesAndTexturesFromBordersOnly =
+                capturePicTextFromBordersCheckBox.Checked;
             try
             {
                 Global.AppSettings.LevelEditor.CaptureRadius = double.Parse(CaptureRadiusBox.Text);
