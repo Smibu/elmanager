@@ -150,6 +150,20 @@ namespace Elmanager.EditorTools
                                 polygon.MarkVectorsAs(Geometry.VectorMark.Selected);
                             }
                         }
+                        foreach (var obj in Lev.Objects)
+                        {
+                            if (NearestPolygon.AreaHasPoint(obj.Position))
+                            {
+                                obj.Position.Mark = Geometry.VectorMark.Selected;
+                            }
+                        }
+                        foreach (var pic in Lev.Pictures)
+                        {
+                            if (NearestPolygon.AreaHasPoint(pic.Position))
+                            {
+                                pic.Position.Mark = Geometry.VectorMark.Selected;
+                            }
+                        }
                         EndSelectionHandling();
                     }
                     else if (nearestVertexIndex >= 0)
