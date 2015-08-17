@@ -1763,8 +1763,9 @@ namespace Elmanager.Forms
 
         private void saveAsPictureToolStripMenuItem_Click(object sender, EventArgs e)
         {
+            saveAsPictureDialog.FileName = Lev.FileNameWithoutExtension ?? "Untitled";
             if (saveAsPictureDialog.ShowDialog() == DialogResult.OK)
-                ElmaRenderer.GetSnapShot(EditorControl.Width, EditorControl.Height).Save(saveAsPictureDialog.FileName,
+                Renderer.GetSnapShot().Save(saveAsPictureDialog.FileName,
                     ImageFormat.Png);
         }
 

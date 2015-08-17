@@ -112,11 +112,13 @@ namespace Elmanager
         private double ZoomFillxMin;
         private double ZoomFillyMax;
         private double ZoomFillyMin;
-        private double _CenterX;
-        private double _CenterY;
-        private double _ZoomLevel;
+        private ViewSettings viewSettings;
         private double _currentTime;
         private Vector _gridOffset = new Vector(0, 0);
+        private int frameBuffer;
+        private int colorRenderBuffer;
+        private int depthStencilRenderBuffer;
+        private int maxRenderbufferSize;
 
         internal ElmaRenderer(Control renderingTarget, RenderingSettings settings)
         {
@@ -131,27 +133,27 @@ namespace Elmanager
 
         internal double CenterX
         {
-            get { return _CenterX; }
+            get { return viewSettings.CenterX; }
             set
             {
                 if (value < ZoomFillxMin - XSize)
                     value = ZoomFillxMin - XSize;
                 if (value > ZoomFillxMax + XSize)
                     value = ZoomFillxMax + XSize;
-                _CenterX = value;
+                viewSettings.CenterX = value;
             }
         }
 
         internal double CenterY
         {
-            get { return _CenterY; }
+            get { return viewSettings.CenterY; }
             set
             {
                 if (value < ZoomFillyMin - YSize)
                     value = ZoomFillyMin - YSize;
                 if (value > ZoomFillyMax + YSize)
                     value = ZoomFillyMax + YSize;
-                _CenterY = value;
+                viewSettings.CenterY = value;
             }
         }
 
@@ -199,14 +201,14 @@ namespace Elmanager
 
         internal double ZoomLevel
         {
-            get { return _ZoomLevel; }
+            get { return viewSettings.ZoomLevel; }
             set
             {
                 if (value > MaxDimension * 2)
                     value = MaxDimension * 2;
                 if (value < MinimumZoom)
                     value = MinimumZoom;
-                _ZoomLevel = value;
+                viewSettings.ZoomLevel = value;
             }
         }
 
@@ -225,15 +227,29 @@ namespace Elmanager
             Dispose(true);
         }
 
-        internal static Bitmap GetSnapShot(int width, int height)
+        internal Bitmap GetSnapShot()
         {
+            int width = maxRenderbufferSize;
+            int height = maxRenderbufferSize;
+            GL.BindFramebuffer(FramebufferTarget.ReadFramebuffer, frameBuffer);
+            GL.BindFramebuffer(FramebufferTarget.DrawFramebuffer, frameBuffer);
+            var oldViewPort = (int[])_viewPort.Clone();
+            var oldViewSettings = viewSettings;
+            ResetViewport(width, height);
+            ZoomFill();
             var snapShotBmp = new Bitmap(width, height);
             BitmapData bmpData = snapShotBmp.LockBits(new Rectangle(0, 0, width, height), ImageLockMode.WriteOnly,
                                                       PixelFormat.Format24bppRgb);
+            GL.ReadBuffer(ReadBufferMode.ColorAttachment0);
             GL.ReadPixels(0, 0, width, height, OpenTK.Graphics.OpenGL.PixelFormat.Bgr, PixelType.UnsignedByte,
                           bmpData.Scan0);
             snapShotBmp.UnlockBits(bmpData);
             snapShotBmp.RotateFlip(RotateFlipType.RotateNoneFlipY);
+            GL.BindFramebuffer(FramebufferTarget.ReadFramebuffer, 0);
+            GL.BindFramebuffer(FramebufferTarget.DrawFramebuffer, 0);
+            ResetViewport(oldViewPort[2], oldViewPort[3]);
+            viewSettings = oldViewSettings;
+            RedrawScene();
             return snapShotBmp;
         }
 
@@ -831,7 +847,7 @@ namespace Elmanager
                     foreach (Polygon x in Lev.Polygons)
                         if ((showGrassVertices && x.IsGrass) || (showGroundVertices && !x.IsGrass))
                             foreach (Vector z in x.Vertices)
-                                DrawEquilateralTriangleFast(z, _ZoomLevel*Settings.VertexSize);
+                                DrawEquilateralTriangleFast(z, viewSettings.ZoomLevel*Settings.VertexSize);
                 }
                 GL.End();
             }
@@ -926,8 +942,8 @@ namespace Elmanager
             Lev.UpdateImages(DrawableImages);
             Lev.UpdateBounds();
             UpdateZoomFillBounds();
-            SetZoomFill();
             UpdateGroundAndSky(Settings.DefaultGroundAndSky);
+            ZoomFill();
         }
 
         internal void InitializeReplays(List<Replay> replays)
@@ -1849,6 +1865,29 @@ namespace Elmanager
             GL.Hint(HintTarget.LineSmoothHint, HintMode.Fastest);
             GL.Enable(EnableCap.PointSmooth);
             GL.TexEnv(TextureEnvTarget.TextureEnv, TextureEnvParameter.TextureEnvMode, (float) TextureEnvMode.Replace);
+
+            maxRenderbufferSize = GL.GetInteger(GetPName.MaxRenderbufferSize);
+
+            colorRenderBuffer = GL.GenRenderbuffer();
+            GL.BindRenderbuffer(RenderbufferTarget.Renderbuffer, colorRenderBuffer);
+            GL.RenderbufferStorage(RenderbufferTarget.Renderbuffer, RenderbufferStorage.Rgba8, maxRenderbufferSize, maxRenderbufferSize);
+            GL.BindRenderbuffer(RenderbufferTarget.Renderbuffer, 0);
+
+            depthStencilRenderBuffer = GL.GenRenderbuffer();
+            GL.BindRenderbuffer(RenderbufferTarget.Renderbuffer, depthStencilRenderBuffer);
+            GL.RenderbufferStorage(RenderbufferTarget.Renderbuffer, RenderbufferStorage.DepthStencil, maxRenderbufferSize, maxRenderbufferSize);
+            GL.BindRenderbuffer(RenderbufferTarget.Renderbuffer, 0);
+
+            frameBuffer = GL.GenFramebuffer();
+            GL.BindFramebuffer(FramebufferTarget.DrawFramebuffer, frameBuffer);
+            GL.FramebufferRenderbuffer(FramebufferTarget.DrawFramebuffer,
+                FramebufferAttachment.ColorAttachment0,
+                RenderbufferTarget.Renderbuffer, colorRenderBuffer);
+            GL.FramebufferRenderbuffer(FramebufferTarget.DrawFramebuffer,
+                FramebufferAttachment.DepthStencilAttachment,
+                RenderbufferTarget.Renderbuffer, depthStencilRenderBuffer);
+            GL.BindFramebuffer(FramebufferTarget.DrawFramebuffer, 0);
+
             OpenGLInitialized = true;
         }
 
@@ -1945,16 +1984,6 @@ namespace Elmanager
                 if (!Playing)
                     DrawSceneNoDriverFocus();
             }
-        }
-
-        private void SetZoomFill()
-        {
-            double levelAspectRatio = (ZoomFillxMax - ZoomFillxMin) / (ZoomFillyMax - ZoomFillyMin);
-            ZoomLevel = (ZoomFillyMax - ZoomFillyMin) / 2.0;
-            if (levelAspectRatio > AspectRatio)
-                ZoomLevel = (ZoomFillxMax - ZoomFillxMin) / 2.0 / AspectRatio;
-            CenterX = (ZoomFillxMax + ZoomFillxMin) / 2.0;
-            CenterY = (ZoomFillyMax + ZoomFillyMin) / 2.0;
         }
 
         private void SmoothZoom(double newZoomLevel, double newCenterX, double newCenterY)

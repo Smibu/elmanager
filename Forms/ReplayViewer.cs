@@ -457,7 +457,7 @@ namespace Elmanager.Forms
         private void SnapShotButtonClick(object sender, EventArgs e)
         {
             if (SaveFileDialog1.ShowDialog() == DialogResult.OK)
-                ElmaRenderer.GetSnapShot(ViewerBox.Width, ViewerBox.Height).Save(SaveFileDialog1.FileName,
+                _renderer.GetSnapShot().Save(SaveFileDialog1.FileName,
                                                                                  ImageFormat.Png);
         }
 

@@ -333,6 +333,7 @@
     <Compile Include="VectrastWrapper.cs" />
     <Compile Include="Vectrast\Primitives.cs" />
     <Compile Include="Vectrast\Vectrast.cs" />
+    <Compile Include="ViewSettings.cs" />
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="Forms\CompareForm.resx">
