@@ -214,7 +214,7 @@ namespace Elmanager.Forms
             this.NewToolStripMenuItem.Image = global::My.Resources.Resources.New16;
             this.NewToolStripMenuItem.Name = "NewToolStripMenuItem";
             this.NewToolStripMenuItem.ShortcutKeys = ((System.Windows.Forms.Keys)((System.Windows.Forms.Keys.Control | System.Windows.Forms.Keys.N)));
-            this.NewToolStripMenuItem.Size = new System.Drawing.Size(157, 22);
+            this.NewToolStripMenuItem.Size = new System.Drawing.Size(192, 22);
             this.NewToolStripMenuItem.Text = "New";
             this.NewToolStripMenuItem.Click += new System.EventHandler(this.NewLevel);
             // 
@@ -223,7 +223,7 @@ namespace Elmanager.Forms
             this.OpenToolStripMenuItem.Image = global::My.Resources.Resources.Open;
             this.OpenToolStripMenuItem.Name = "OpenToolStripMenuItem";
             this.OpenToolStripMenuItem.ShortcutKeys = ((System.Windows.Forms.Keys)((System.Windows.Forms.Keys.Control | System.Windows.Forms.Keys.O)));
-            this.OpenToolStripMenuItem.Size = new System.Drawing.Size(157, 22);
+            this.OpenToolStripMenuItem.Size = new System.Drawing.Size(192, 22);
             this.OpenToolStripMenuItem.Text = "Open";
             this.OpenToolStripMenuItem.Click += new System.EventHandler(this.OpenToolStripMenuItemClick);
             // 
@@ -233,7 +233,7 @@ namespace Elmanager.Forms
             this.SaveToolStripMenuItem.Image = global::My.Resources.Resources.Save;
             this.SaveToolStripMenuItem.Name = "SaveToolStripMenuItem";
             this.SaveToolStripMenuItem.ShortcutKeys = ((System.Windows.Forms.Keys)((System.Windows.Forms.Keys.Control | System.Windows.Forms.Keys.S)));
-            this.SaveToolStripMenuItem.Size = new System.Drawing.Size(157, 22);
+            this.SaveToolStripMenuItem.Size = new System.Drawing.Size(192, 22);
             this.SaveToolStripMenuItem.Text = "Save";
             this.SaveToolStripMenuItem.Click += new System.EventHandler(this.SaveClicked);
             // 
@@ -241,14 +241,15 @@ namespace Elmanager.Forms
             // 
             this.SaveAsToolStripMenuItem.Image = global::My.Resources.Resources.SaveAs16;
             this.SaveAsToolStripMenuItem.Name = "SaveAsToolStripMenuItem";
-            this.SaveAsToolStripMenuItem.Size = new System.Drawing.Size(157, 22);
+            this.SaveAsToolStripMenuItem.Size = new System.Drawing.Size(192, 22);
             this.SaveAsToolStripMenuItem.Text = "Save as...";
             this.SaveAsToolStripMenuItem.Click += new System.EventHandler(this.SaveAs);
             // 
             // saveAsPictureToolStripMenuItem
             // 
             this.saveAsPictureToolStripMenuItem.Name = "saveAsPictureToolStripMenuItem";
-            this.saveAsPictureToolStripMenuItem.Size = new System.Drawing.Size(157, 22);
+            this.saveAsPictureToolStripMenuItem.ShortcutKeys = ((System.Windows.Forms.Keys)((System.Windows.Forms.Keys.Control | System.Windows.Forms.Keys.P)));
+            this.saveAsPictureToolStripMenuItem.Size = new System.Drawing.Size(192, 22);
             this.saveAsPictureToolStripMenuItem.Text = "Save as picture...";
             this.saveAsPictureToolStripMenuItem.Click += new System.EventHandler(this.saveAsPictureToolStripMenuItem_Click);
             // 
@@ -256,7 +257,7 @@ namespace Elmanager.Forms
             // 
             this.deleteLevMenuItem.Image = global::My.Resources.Resources.Delete;
             this.deleteLevMenuItem.Name = "deleteLevMenuItem";
-            this.deleteLevMenuItem.Size = new System.Drawing.Size(157, 22);
+            this.deleteLevMenuItem.Size = new System.Drawing.Size(192, 22);
             this.deleteLevMenuItem.Text = "Delete";
             this.deleteLevMenuItem.Click += new System.EventHandler(this.deleteLevMenuItem_Click);
             // 
@@ -264,7 +265,7 @@ namespace Elmanager.Forms
             // 
             this.ExitToolStripMenuItem.Image = global::My.Resources.Resources.Exit16;
             this.ExitToolStripMenuItem.Name = "ExitToolStripMenuItem";
-            this.ExitToolStripMenuItem.Size = new System.Drawing.Size(157, 22);
+            this.ExitToolStripMenuItem.Size = new System.Drawing.Size(192, 22);
             this.ExitToolStripMenuItem.Text = "Exit";
             this.ExitToolStripMenuItem.Click += new System.EventHandler(this.ExitToolStripMenuItemClick);
             // 
