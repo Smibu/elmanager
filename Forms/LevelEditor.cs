@@ -1765,8 +1765,7 @@ namespace Elmanager.Forms
         {
             saveAsPictureDialog.FileName = Lev.FileNameWithoutExtension ?? "Untitled";
             if (saveAsPictureDialog.ShowDialog() == DialogResult.OK)
-                Renderer.GetSnapShot().Save(saveAsPictureDialog.FileName,
-                    ImageFormat.Png);
+                Renderer.SaveSnapShot(saveAsPictureDialog.FileName);
         }
 
         private void ConvertClicked(object sender, EventArgs e)

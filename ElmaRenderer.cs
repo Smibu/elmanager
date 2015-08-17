@@ -2080,5 +2080,13 @@ namespace Elmanager
             GL.Disable(EnableCap.LineStipple);
             GL.LineWidth(Settings.LineWidth);
         }
+
+        public void SaveSnapShot(string fileName)
+        {
+            using (var bmp = GetSnapShot())
+            {
+                bmp.Save(fileName, ImageFormat.Png);
+            }
+        }
     }
 }

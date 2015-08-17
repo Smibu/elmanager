@@ -457,8 +457,7 @@ namespace Elmanager.Forms
         private void SnapShotButtonClick(object sender, EventArgs e)
         {
             if (SaveFileDialog1.ShowDialog() == DialogResult.OK)
-                _renderer.GetSnapShot().Save(SaveFileDialog1.FileName,
-                                                                                 ImageFormat.Png);
+                _renderer.SaveSnapShot(SaveFileDialog1.FileName);
         }
 
         private void TextBoxKeyPress(KeyEventArgs e)
