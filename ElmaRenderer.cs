@@ -624,7 +624,6 @@ namespace Elmanager
                     else if (!picture.IsPicture && Settings.ShowTextures)
                     {
                         GL.StencilOp(StencilOp.Keep, StencilOp.Keep, StencilOp.Invert);
-                        GL.ColorMask(false, false, false, false);
                         switch (picture.Clipping)
                         {
                             case Level.ClippingType.Ground:
@@ -637,34 +636,33 @@ namespace Elmanager
                                 GL.StencilFunc(StencilFunction.Gequal, 5, StencilMask);
                                 break;
                         }
+                        double depth = (picture.Distance / 1000.0 * (zFar - zNear)) + zNear;
                         DrawPicture(picture.Id, picture.Position.X, picture.Position.Y, picture.Width, picture.Height,
-                                    (picture.Distance / 1000.0 * (zFar - zNear)) + zNear);
+                                    depth + 0.001);
 
                         GL.BindTexture(TextureTarget.Texture2D, picture.TextureId);
                         GL.StencilFunc(StencilFunction.Lequal, 5, StencilMask);
-                        GL.ColorMask(true, true, true, true);
-                        GL.DepthMask(false);
-                        GL.Scale(1.0, -1.0, 1.0);
-                        const double depth = zFar - (zFar - zNear) * 1;
                         if (Settings.ZoomTextures)
                         {
                             GL.Begin(PrimitiveType.Quads);
+                            double ymin = -(MidY - TextureVertexConst);
+                            double ymax = -(MidY + TextureVertexConst);
                             GL.TexCoord2(0, 0);
-                            GL.Vertex3(MidX - TextureVertexConst, MidY - TextureVertexConst, depth);
+                            GL.Vertex3(MidX - TextureVertexConst, ymin, depth);
                             GL.TexCoord2(TextureCoordConst / picture.TextureWidth, 0);
-                            GL.Vertex3(MidX + TextureVertexConst, MidY - TextureVertexConst, depth);
+                            GL.Vertex3(MidX + TextureVertexConst, ymin, depth);
                             GL.TexCoord2(TextureCoordConst / picture.TextureWidth,
                                          TextureCoordConst / picture.TextureWidth * picture.AspectRatio);
-                            GL.Vertex3(MidX + TextureVertexConst, MidY + TextureVertexConst, depth);
+                            GL.Vertex3(MidX + TextureVertexConst, ymax, depth);
                             GL.TexCoord2(0, TextureCoordConst / picture.TextureWidth * picture.AspectRatio);
-                            GL.Vertex3(MidX - TextureVertexConst, MidY + TextureVertexConst, depth);
+                            GL.Vertex3(MidX - TextureVertexConst, ymax, depth);
                             GL.End();
                         }
                         else
                         {
                             GL.Begin(PrimitiveType.Quads);
-                            double ymin = MidY - TextureVertexConst;
-                            double ymax = MidY + TextureVertexConst;
+                            double ymin = -(MidY - TextureVertexConst);
+                            double ymax = -(MidY + TextureVertexConst);
                             GL.TexCoord2(0, 0);
                             GL.Vertex3(MidX - TextureVertexConst, ymin, depth);
                             GL.TexCoord2(TextureZoomConst / picture.TextureWidth / ZoomLevel, 0);
@@ -676,8 +674,6 @@ namespace Elmanager
                             GL.Vertex3(MidX - TextureVertexConst, ymax, depth);
                             GL.End();
                         }
-                        GL.Scale(1.0, -1.0, 1.0);
-                        GL.DepthMask(true);
                     }
                 }
                 GL.Disable(EnableCap.ScissorTest);
