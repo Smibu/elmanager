@@ -171,18 +171,19 @@ namespace Elmanager.EditorTools
             for (j = i; j < p.Vertices.Count; j++)
                 if (Math.Abs((p[j + 1] - p[j]).Angle) <= MaximumGrassAngle)
                     break;
-            int k = j - 1;
-            if (k == -1)
-                k = p.Vertices.Count - 1;
-            while (j != k)
+            var exploredVerts = new HashSet<int>();
+            j = j % p.Vertices.Count;
+            while (!exploredVerts.Contains(j))
             {
                 while (!(Math.Abs((p[j + 1] - p[j]).Angle) <= MaximumGrassAngle))
                 {
+                    exploredVerts.Add(j);
                     j++;
                     j = j % p.Vertices.Count;
-                    if (j == k)
+                    if (exploredVerts.Contains(j))
                         return grassPolys;
                 }
+                exploredVerts.Add(j);
                 Vector directionVector = p[j + 1] - p[j];
                 Vector previousDirectionVector = p[j] - p[j - 1];
                 Vector previousDirectionVectorNeg = -previousDirectionVector;
