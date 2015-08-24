@@ -338,7 +338,7 @@ namespace Elmanager.Forms
                               Level.MaximumPolygonCount);
                 if (Lev.HasTooManyVertices)
                     items.Add("There are too many vertices in the level. Current: " + Lev.VertexCount + ", maximum: " +
-                              Level.MaximumVertexCount);
+                              Level.MaximumGroundVertexCount);
                 if (Lev.HeadTouchesGround)
                     items.Add("The driver\'s head is touching ground.");
 

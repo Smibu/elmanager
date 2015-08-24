@@ -20,7 +20,7 @@ namespace Elmanager
         internal const int MaximumPolygonCount = 1200;
         internal const int MaximumPolygonVertexCount = 1000;
         internal const double MaximumSize = 188.0;
-        internal const int MaximumVertexCount = 5130;
+        internal const int MaximumGroundVertexCount = 5130;
         internal const double RightWheelDifferenceFromLeftWheelX = 1.698;
         private const int EndOfDataMagicNumber = 0x67103A;
         private const int EndOfFileMagicNumber = 0x845D52;
@@ -329,7 +329,7 @@ namespace Elmanager
 
         internal bool HasTooManyVertices
         {
-            get { return VertexCount > MaximumVertexCount; }
+            get { return GroundVertexCount > MaximumGroundVertexCount; }
         }
 
         internal bool HasTopologyErrors
