@@ -1,5 +1,5 @@
 ﻿using System;
-using System.Net;
+using System.Diagnostics;
 using System.Windows.Forms;
 
 namespace Elmanager.Forms
@@ -11,16 +11,8 @@ namespace Elmanager.Forms
             InitializeComponent();
         }
 
-        private void LoadChangelog()
-        {
-            var wc = new WebClient();
-            string changelog = wc.DownloadString(Constants.ChangelogUri).Replace("\n", "\r\n");
-            textBox1.Text = changelog;
-        }
-
         private void NewVersionForm_Load(object sender, EventArgs e)
         {
-            LoadChangelog();
             downloadButton.Select();
         }
 
@@ -36,6 +28,11 @@ namespace Elmanager.Forms
         private void button2_Click(object sender, EventArgs e)
         {
             Close();
+        }
+
+        private void linkLabel1_LinkClicked(object sender, LinkLabelLinkClickedEventArgs e)
+        {
+            Process.Start(Constants.ChangelogUri);
         }
     }
 }
