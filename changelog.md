@@ -1,5 +1,18 @@
 # Elmanager changelog
 
+## 25.8.2015
+* SLE: Improved rendering performance for levels with lots of textures.
+* SLE: Added a shortcut key for saving as picture.
+* SLE: Added an option to show inactive grass edges.
+* SLE: Select also objects, pictures and textures inside the polygon with left Alt.
+* SLE: Added an option to capture pictures and textures from borders only.
+* SLE: Improved handling of possible topology errors with fonts in text tool.
+* SLE & Replay viewer: Snapshot is saved with high resolution.
+* Changelog is displayed in a web page by clicking a link instead of in a text box.
+* SLE: Bugfix: Incorrect topology error about too many vertices was reported sometimes.
+* SLE: Bugfix: AutoGrass froze with certain polygons.
+* SLE: Bugfix: Mouse wheel zoom did not always work on Windows 10.
+
 ## 31.5.2015
 * SLE: Make numpad `+`/`-` work for tools.
 * SLE: Grid can be resized and moved with mouse.
