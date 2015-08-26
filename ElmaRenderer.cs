@@ -944,7 +944,6 @@ namespace Elmanager
 
         internal void InitializeReplays(List<Replay> replays)
         {
-            InitializeLevel(replays[0].GetLevel());
             ZoomLevel = 5.0;
             MaxTime = 0.0;
             Players = new List<Player>();
@@ -962,6 +961,7 @@ namespace Elmanager
             }
             MaxTime /= 30.0;
             CurrentTime = 0.0;
+            InitializeLevel(replays[0].GetLevel());
             ActivePlayerIndices = new List<int>();
             VisiblePlayerIndices = new List<int>();
             int killerObjectCount = Lev.KillerObjectCount;
