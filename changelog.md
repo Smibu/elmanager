@@ -1,5 +1,8 @@
 # Elmanager changelog
 
+## 27.8.2015
+* Replay viewer: Bugfix: Replay playing was not working at all.
+
 ## 25.8.2015
 * SLE: Improved rendering performance for levels with lots of textures.
 * SLE: Added a shortcut key for saving as picture.
