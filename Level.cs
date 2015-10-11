@@ -24,7 +24,8 @@ namespace Elmanager
         internal const double RightWheelDifferenceFromLeftWheelX = 1.698;
         private const int EndOfDataMagicNumber = 0x67103A;
         private const int EndOfFileMagicNumber = 0x845D52;
-
+        private const double MagicDouble = 0.4643643;
+        private const double MagicDouble2 = 0.2345672;
         internal static readonly string[] InternalTitles =
         {
             "Warm Up", "Flat Track", "Twin Peaks", "Over and Under",
@@ -106,7 +107,7 @@ namespace Elmanager
                 SkyTextureName = Utils.ReadNullTerminatedString(level, sp, 12).ToLower();
                 sp += 10;
             }
-            int polygonCount = (int) Math.Round(BitConverter.ToDouble(level, sp) - 0.4643643);
+            int polygonCount = (int) Math.Round(BitConverter.ToDouble(level, sp) - MagicDouble);
             sp += 8;
             bool isGrassPolygon = false;
             Polygons = new List<Polygon>();
@@ -135,7 +136,7 @@ namespace Elmanager
                 poly.IsGrass = isGrassPolygon;
                 Polygons.Add(poly);
             }
-            int objectCount = (int) Math.Round(BitConverter.ToDouble(level, sp) - 0.4643643);
+            int objectCount = (int) Math.Round(BitConverter.ToDouble(level, sp) - MagicDouble);
             sp += 8;
             Apples = new List<Object>();
             bool startFound = false;
@@ -178,7 +179,7 @@ namespace Elmanager
             }
             if (!AcrossLevel)
             {
-                int numberOfPicturesPlusTextures = (int) Math.Round(BitConverter.ToDouble(level, sp) - 0.2345672);
+                int numberOfPicturesPlusTextures = (int) Math.Round(BitConverter.ToDouble(level, sp) - MagicDouble2);
                 sp += 8;
                 for (int i = 0; i < numberOfPicturesPlusTextures; i++)
                 {
@@ -620,7 +621,7 @@ namespace Elmanager
             levelFile.AddRange(GetByteArrayFromString(LgrFile, 16));
             levelFile.AddRange(GetByteArrayFromString(GroundTextureName, 10));
             levelFile.AddRange(GetByteArrayFromString(SkyTextureName, 10));
-            levelFile.AddRange(BitConverter.GetBytes(Polygons.Count + 0.4643643));
+            levelFile.AddRange(BitConverter.GetBytes(Polygons.Count + MagicDouble));
             foreach (Polygon x in Polygons)
             {
                 if (x.IsCounterClockwise ^ IsSky(x))
@@ -635,7 +636,7 @@ namespace Elmanager
                     levelFile.AddRange(BitConverter.GetBytes(z.Y));
                 }
             }
-            levelFile.AddRange(BitConverter.GetBytes(Objects.Count + 0.4643643));
+            levelFile.AddRange(BitConverter.GetBytes(Objects.Count + MagicDouble));
             foreach (Object x in Objects)
             {
                 levelFile.AddRange(BitConverter.GetBytes(x.Position.X));
@@ -644,7 +645,7 @@ namespace Elmanager
                 levelFile.AddRange(BitConverter.GetBytes((int) x.AppleType));
                 levelFile.AddRange(BitConverter.GetBytes(x.AnimationNumber - 1));
             }
-            levelFile.AddRange(BitConverter.GetBytes(_textureData.Count + 0.2345672));
+            levelFile.AddRange(BitConverter.GetBytes(_textureData.Count + MagicDouble2));
             foreach (LevelFileTexture x in _textureData)
             {
                 if (x.MaskName == null)
