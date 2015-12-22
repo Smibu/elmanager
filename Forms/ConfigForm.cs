@@ -51,6 +51,20 @@ namespace Elmanager.Forms
             crosshairPanel.BackColor = Global.AppSettings.LevelEditor.CrosshairColor;
             capturePicTextFromBordersCheckBox.Checked =
                 Global.AppSettings.LevelEditor.CapturePicturesAndTexturesFromBordersOnly;
+            if (Global.AppSettings.LevelEditor.RenderingSettings.DisableFrameBuffer &&
+                Global.AppSettings.ReplayViewer.RenderingSettings.DisableFrameBuffer)
+            {
+                DisableFrameBufferUsageCheckBox.CheckState = CheckState.Checked;
+            }
+            else if (Global.AppSettings.LevelEditor.RenderingSettings.DisableFrameBuffer ||
+                     Global.AppSettings.ReplayViewer.RenderingSettings.DisableFrameBuffer)
+            {
+                DisableFrameBufferUsageCheckBox.CheckState = CheckState.Indeterminate;
+            }
+            else
+            {
+                DisableFrameBufferUsageCheckBox.CheckState = CheckState.Unchecked;
+            }
             FilenameSuggestionBoxCheckedChanged(null, null);
             SameAsFilenameBoxCheckedChanged(null, null);
         }
@@ -313,6 +327,13 @@ namespace Elmanager.Forms
             Global.AppSettings.LevelEditor.CrosshairColor = crosshairPanel.BackColor;
             Global.AppSettings.LevelEditor.CapturePicturesAndTexturesFromBordersOnly =
                 capturePicTextFromBordersCheckBox.Checked;
+            if (DisableFrameBufferUsageCheckBox.CheckState != CheckState.Indeterminate)
+            {
+                Global.AppSettings.LevelEditor.RenderingSettings.DisableFrameBuffer =
+                    DisableFrameBufferUsageCheckBox.Checked;
+                Global.AppSettings.ReplayViewer.RenderingSettings.DisableFrameBuffer =
+                    DisableFrameBufferUsageCheckBox.Checked;
+            }
             try
             {
                 Global.AppSettings.LevelEditor.CaptureRadius = double.Parse(CaptureRadiusBox.Text);

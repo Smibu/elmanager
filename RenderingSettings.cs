@@ -41,6 +41,7 @@ namespace Elmanager
             UseCirclesForVertices = false;
             ShowMaxDimensions = false;
             ShowInactiveGrassEdges = false;
+            DisableFrameBuffer = false;
         }
 
         private RenderingSettings(RenderingSettings s)
@@ -87,6 +88,7 @@ namespace Elmanager
             UseCirclesForVertices = s.UseCirclesForVertices;
             ShowMaxDimensions = s.ShowMaxDimensions;
             ShowInactiveGrassEdges = s.ShowInactiveGrassEdges;
+            DisableFrameBuffer = s.DisableFrameBuffer;
         }
 
         internal RenderingSettings Clone()
@@ -278,5 +280,8 @@ namespace Elmanager
 
         [DisplayName("Zoom textures")]
         public bool ZoomTextures { get; set; }
+
+        [Category("Workarounds"), DisplayName("Disable framebuffer usage")]
+        public bool DisableFrameBuffer { get; set; }
     }
 }

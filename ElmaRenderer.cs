@@ -229,27 +229,43 @@ namespace Elmanager
 
         internal Bitmap GetSnapShot()
         {
-            int width = maxRenderbufferSize;
-            int height = maxRenderbufferSize;
-            GL.BindFramebuffer(FramebufferTarget.ReadFramebuffer, frameBuffer);
-            GL.BindFramebuffer(FramebufferTarget.DrawFramebuffer, frameBuffer);
-            var oldViewPort = (int[])_viewPort.Clone();
-            var oldViewSettings = viewSettings;
-            ResetViewport(width, height);
-            ZoomFill();
-            var snapShotBmp = new Bitmap(width, height);
-            BitmapData bmpData = snapShotBmp.LockBits(new Rectangle(0, 0, width, height), ImageLockMode.WriteOnly,
-                                                      PixelFormat.Format24bppRgb);
-            GL.ReadBuffer(ReadBufferMode.ColorAttachment0);
-            GL.ReadPixels(0, 0, width, height, OpenTK.Graphics.OpenGL.PixelFormat.Bgr, PixelType.UnsignedByte,
-                          bmpData.Scan0);
-            snapShotBmp.UnlockBits(bmpData);
-            snapShotBmp.RotateFlip(RotateFlipType.RotateNoneFlipY);
-            GL.BindFramebuffer(FramebufferTarget.ReadFramebuffer, 0);
-            GL.BindFramebuffer(FramebufferTarget.DrawFramebuffer, 0);
-            ResetViewport(oldViewPort[2], oldViewPort[3]);
-            viewSettings = oldViewSettings;
-            RedrawScene();
+            Bitmap snapShotBmp;
+            if (maxRenderbufferSize > 0)
+            {
+                int width = maxRenderbufferSize;
+                int height = maxRenderbufferSize;
+                GL.BindFramebuffer(FramebufferTarget.ReadFramebuffer, frameBuffer);
+                GL.BindFramebuffer(FramebufferTarget.DrawFramebuffer, frameBuffer);
+                var oldViewPort = (int[]) _viewPort.Clone();
+                var oldViewSettings = viewSettings;
+                ResetViewport(width, height);
+                ZoomFill();
+                snapShotBmp = new Bitmap(width, height);
+                BitmapData bmpData = snapShotBmp.LockBits(new Rectangle(0, 0, width, height), ImageLockMode.WriteOnly,
+                    PixelFormat.Format24bppRgb);
+                GL.ReadBuffer(ReadBufferMode.ColorAttachment0);
+                GL.ReadPixels(0, 0, width, height, OpenTK.Graphics.OpenGL.PixelFormat.Bgr, PixelType.UnsignedByte,
+                    bmpData.Scan0);
+                snapShotBmp.UnlockBits(bmpData);
+                snapShotBmp.RotateFlip(RotateFlipType.RotateNoneFlipY);
+                GL.BindFramebuffer(FramebufferTarget.ReadFramebuffer, 0);
+                GL.BindFramebuffer(FramebufferTarget.DrawFramebuffer, 0);
+                ResetViewport(oldViewPort[2], oldViewPort[3]);
+                viewSettings = oldViewSettings;
+                RedrawScene();
+            }
+            else
+            {
+                int width = _viewPort[2];
+                int height = _viewPort[3];
+                snapShotBmp = new Bitmap(width, height);
+                BitmapData bmpData = snapShotBmp.LockBits(new Rectangle(0, 0, width, height), ImageLockMode.WriteOnly,
+                                                          PixelFormat.Format24bppRgb);
+                GL.ReadPixels(0, 0, width, height, OpenTK.Graphics.OpenGL.PixelFormat.Bgr, PixelType.UnsignedByte,
+                              bmpData.Scan0);
+                snapShotBmp.UnlockBits(bmpData);
+                snapShotBmp.RotateFlip(RotateFlipType.RotateNoneFlipY);
+            }
             return snapShotBmp;
         }
 
@@ -1389,7 +1405,7 @@ namespace Elmanager
                                            BikePicYFacingRight * Math.Cos(-BikePicRotationConst * Constants.DegToRad);
             AspectRatio = renderingTarget.Width / (double) renderingTarget.Height;
             CtrlWindowInfo = Utilities.CreateWindowsWindowInfo(renderingTarget.Handle);
-            InitializeOpengl();
+            InitializeOpengl(disableFrameBuffer: settings.DisableFrameBuffer);
             UpdateSettings(settings);
         }
 
@@ -1844,7 +1860,7 @@ namespace Elmanager
             GL.PopMatrix();
         }
 
-        private void InitializeOpengl()
+        private void InitializeOpengl(bool disableFrameBuffer)
         {
             GFXContext = new GraphicsContext(new GraphicsMode(new ColorFormat(8, 8, 8, 8), 8, 8), CtrlWindowInfo);
             GFXContext.MakeCurrent(CtrlWindowInfo);
@@ -1864,25 +1880,35 @@ namespace Elmanager
 
             maxRenderbufferSize = GL.GetInteger(GetPName.MaxRenderbufferSize);
 
-            colorRenderBuffer = GL.GenRenderbuffer();
-            GL.BindRenderbuffer(RenderbufferTarget.Renderbuffer, colorRenderBuffer);
-            GL.RenderbufferStorage(RenderbufferTarget.Renderbuffer, RenderbufferStorage.Rgba8, maxRenderbufferSize, maxRenderbufferSize);
-            GL.BindRenderbuffer(RenderbufferTarget.Renderbuffer, 0);
+            if (GL.GetError() != ErrorCode.NoError || disableFrameBuffer)
+            {
+                maxRenderbufferSize = 0;
+            }
 
-            depthStencilRenderBuffer = GL.GenRenderbuffer();
-            GL.BindRenderbuffer(RenderbufferTarget.Renderbuffer, depthStencilRenderBuffer);
-            GL.RenderbufferStorage(RenderbufferTarget.Renderbuffer, RenderbufferStorage.DepthStencil, maxRenderbufferSize, maxRenderbufferSize);
-            GL.BindRenderbuffer(RenderbufferTarget.Renderbuffer, 0);
+            if (maxRenderbufferSize > 0)
+            {
+                colorRenderBuffer = GL.GenRenderbuffer();
+                GL.BindRenderbuffer(RenderbufferTarget.Renderbuffer, colorRenderBuffer);
+                GL.RenderbufferStorage(RenderbufferTarget.Renderbuffer, RenderbufferStorage.Rgba8, maxRenderbufferSize,
+                    maxRenderbufferSize);
+                GL.BindRenderbuffer(RenderbufferTarget.Renderbuffer, 0);
 
-            frameBuffer = GL.GenFramebuffer();
-            GL.BindFramebuffer(FramebufferTarget.DrawFramebuffer, frameBuffer);
-            GL.FramebufferRenderbuffer(FramebufferTarget.DrawFramebuffer,
-                FramebufferAttachment.ColorAttachment0,
-                RenderbufferTarget.Renderbuffer, colorRenderBuffer);
-            GL.FramebufferRenderbuffer(FramebufferTarget.DrawFramebuffer,
-                FramebufferAttachment.DepthStencilAttachment,
-                RenderbufferTarget.Renderbuffer, depthStencilRenderBuffer);
-            GL.BindFramebuffer(FramebufferTarget.DrawFramebuffer, 0);
+                depthStencilRenderBuffer = GL.GenRenderbuffer();
+                GL.BindRenderbuffer(RenderbufferTarget.Renderbuffer, depthStencilRenderBuffer);
+                GL.RenderbufferStorage(RenderbufferTarget.Renderbuffer, RenderbufferStorage.DepthStencil,
+                    maxRenderbufferSize, maxRenderbufferSize);
+                GL.BindRenderbuffer(RenderbufferTarget.Renderbuffer, 0);
+
+                frameBuffer = GL.GenFramebuffer();
+                GL.BindFramebuffer(FramebufferTarget.DrawFramebuffer, frameBuffer);
+                GL.FramebufferRenderbuffer(FramebufferTarget.DrawFramebuffer,
+                    FramebufferAttachment.ColorAttachment0,
+                    RenderbufferTarget.Renderbuffer, colorRenderBuffer);
+                GL.FramebufferRenderbuffer(FramebufferTarget.DrawFramebuffer,
+                    FramebufferAttachment.DepthStencilAttachment,
+                    RenderbufferTarget.Renderbuffer, depthStencilRenderBuffer);
+                GL.BindFramebuffer(FramebufferTarget.DrawFramebuffer, 0);
+            }
 
             OpenGLInitialized = true;
         }

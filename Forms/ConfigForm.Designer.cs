@@ -63,6 +63,7 @@ namespace Elmanager.Forms
             this.SearchLevSubDirsBox = new System.Windows.Forms.CheckBox();
             this.ShowReplayListGridBox = new System.Windows.Forms.CheckBox();
             this.LevelEditorPage = new System.Windows.Forms.TabPage();
+            this.capturePicTextFromBordersCheckBox = new System.Windows.Forms.CheckBox();
             this.browseButton = new System.Windows.Forms.Button();
             this.numberFormatBox = new System.Windows.Forms.TextBox();
             this.RenderingSettingsButton = new System.Windows.Forms.Button();
@@ -92,13 +93,15 @@ namespace Elmanager.Forms
             this.WarnAboutOldDBBox = new System.Windows.Forms.CheckBox();
             this.ColorDialog1 = new System.Windows.Forms.ColorDialog();
             this.toolTip1 = new System.Windows.Forms.ToolTip(this.components);
-            this.capturePicTextFromBordersCheckBox = new System.Windows.Forms.CheckBox();
+            this.DisableFrameBufferUsageCheckBox = new System.Windows.Forms.CheckBox();
+            this.groupBox2 = new System.Windows.Forms.GroupBox();
             this.TabControl1.SuspendLayout();
             this.GeneralPage.SuspendLayout();
             this.RMPage.SuspendLayout();
             this.LevelEditorPage.SuspendLayout();
             this.GroupBox1.SuspendLayout();
             this.DatabasePage.SuspendLayout();
+            this.groupBox2.SuspendLayout();
             this.SuspendLayout();
             // 
             // RecDirButton
@@ -237,6 +240,7 @@ namespace Elmanager.Forms
             // GeneralPage
             // 
             this.GeneralPage.BackColor = System.Drawing.Color.White;
+            this.GeneralPage.Controls.Add(this.groupBox2);
             this.GeneralPage.Controls.Add(this.generateNativeImageButton);
             this.GeneralPage.Controls.Add(this.resetButton);
             this.GeneralPage.Controls.Add(this.ElmaDirButton);
@@ -428,6 +432,16 @@ namespace Elmanager.Forms
             this.LevelEditorPage.TabIndex = 4;
             this.LevelEditorPage.Text = "SLE";
             this.LevelEditorPage.UseVisualStyleBackColor = true;
+            // 
+            // capturePicTextFromBordersCheckBox
+            // 
+            this.capturePicTextFromBordersCheckBox.AutoSize = true;
+            this.capturePicTextFromBordersCheckBox.Location = new System.Drawing.Point(16, 61);
+            this.capturePicTextFromBordersCheckBox.Name = "capturePicTextFromBordersCheckBox";
+            this.capturePicTextFromBordersCheckBox.Size = new System.Drawing.Size(247, 17);
+            this.capturePicTextFromBordersCheckBox.TabIndex = 30;
+            this.capturePicTextFromBordersCheckBox.Text = "Capture pictures and textures from borders only";
+            this.capturePicTextFromBordersCheckBox.UseVisualStyleBackColor = true;
             // 
             // browseButton
             // 
@@ -705,15 +719,25 @@ namespace Elmanager.Forms
             // 
             this.ColorDialog1.FullOpen = true;
             // 
-            // capturePicTextFromBordersCheckBox
+            // DisableFrameBufferUsageCheckBox
             // 
-            this.capturePicTextFromBordersCheckBox.AutoSize = true;
-            this.capturePicTextFromBordersCheckBox.Location = new System.Drawing.Point(16, 61);
-            this.capturePicTextFromBordersCheckBox.Name = "capturePicTextFromBordersCheckBox";
-            this.capturePicTextFromBordersCheckBox.Size = new System.Drawing.Size(247, 17);
-            this.capturePicTextFromBordersCheckBox.TabIndex = 30;
-            this.capturePicTextFromBordersCheckBox.Text = "Capture pictures and textures from borders only";
-            this.capturePicTextFromBordersCheckBox.UseVisualStyleBackColor = true;
+            this.DisableFrameBufferUsageCheckBox.AutoSize = true;
+            this.DisableFrameBufferUsageCheckBox.Location = new System.Drawing.Point(6, 19);
+            this.DisableFrameBufferUsageCheckBox.Name = "DisableFrameBufferUsageCheckBox";
+            this.DisableFrameBufferUsageCheckBox.Size = new System.Drawing.Size(149, 17);
+            this.DisableFrameBufferUsageCheckBox.TabIndex = 55;
+            this.DisableFrameBufferUsageCheckBox.Text = "Disable framebuffer usage";
+            this.DisableFrameBufferUsageCheckBox.UseVisualStyleBackColor = true;
+            // 
+            // groupBox2
+            // 
+            this.groupBox2.Controls.Add(this.DisableFrameBufferUsageCheckBox);
+            this.groupBox2.Location = new System.Drawing.Point(8, 186);
+            this.groupBox2.Name = "groupBox2";
+            this.groupBox2.Size = new System.Drawing.Size(200, 46);
+            this.groupBox2.TabIndex = 56;
+            this.groupBox2.TabStop = false;
+            this.groupBox2.Text = "Workarounds";
             // 
             // ConfigForm
             // 
@@ -738,6 +762,8 @@ namespace Elmanager.Forms
             this.GroupBox1.PerformLayout();
             this.DatabasePage.ResumeLayout(false);
             this.DatabasePage.PerformLayout();
+            this.groupBox2.ResumeLayout(false);
+            this.groupBox2.PerformLayout();
             this.ResumeLayout(false);
 
 		}
@@ -802,6 +828,8 @@ namespace Elmanager.Forms
         private Button browseButton;
         private ToolTip toolTip1;
         internal CheckBox capturePicTextFromBordersCheckBox;
+        private GroupBox groupBox2;
+        private CheckBox DisableFrameBufferUsageCheckBox;
     }
 	
 }
