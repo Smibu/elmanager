@@ -2,10 +2,10 @@
 Elmanager is a manager program for [Elasto Mania](http://www.elastomania.com) written in C#. Most important features include replay searching and viewing and a level editor.
 
 ## System requirements
-Windows XP/Vista/7/8 with [.NET Framework 4](http://download.microsoft.com/download/9/5/A/95A9616B-7A37-4AF6-BC36-D6EA96C8DAAE/dotNetFx40_Full_x86_x64.exe).
+Windows XP/Vista/7/8/10 with [.NET Framework 4](http://download.microsoft.com/download/9/5/A/95A9616B-7A37-4AF6-BC36-D6EA96C8DAAE/dotNetFx40_Full_x86_x64.exe).
 
 ## Installation
-Unzip `Elmanager.zip` to any directory, such as `C:\Elma\Elmanager`. The ZIP file contains 2 DLL files that are required for the program to work correctly (keep them in the same directory as `Elmanager.exe`). Program settings are also saved in this directory.
+Unzip `Elmanager.zip` to any directory, such as `C:\Elma\Elmanager`. Program settings are also saved in this directory.
 
 ## Features
 Elmanager has basically two components: replay manager and a level editor (named SLE).
