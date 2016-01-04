@@ -9,6 +9,7 @@ using System.Reflection;
 using System.Runtime.Serialization.Formatters.Binary;
 using System.Threading;
 using System.Windows.Forms;
+using Elmanager.Updating;
 using Microsoft.VisualBasic.ApplicationServices;
 using My.Resources;
 
@@ -121,7 +122,7 @@ namespace Elmanager
             AppSettings = ElmanagerSettings.Load();
             if (AppSettings.General.CheckForUpdatesOnStartup)
             {
-                ThreadPool.QueueUserWorkItem(Utils.CheckForUpdates);
+                ThreadPool.QueueUserWorkItem(UpdateChecker.CheckForUpdates);
             }
             ParseCommandLine(args);
             ComponentManager.WaitAllThreads();

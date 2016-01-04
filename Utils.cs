@@ -2,7 +2,6 @@
 using System.Collections.Generic;
 using System.Collections.Specialized;
 using System.Diagnostics;
-using System.Globalization;
 using System.IO;
 using System.Linq;
 using System.Net;
@@ -12,7 +11,6 @@ using System.Text;
 using System.Threading;
 using System.Windows.Forms;
 using System.Windows.Input;
-using Elmanager.Forms;
 
 namespace Elmanager
 {
@@ -132,32 +130,6 @@ namespace Elmanager
         internal static int BooleanToInteger(bool b)
         {
             return b ? 1 : 0;
-        }
-
-        /// <summary>
-        ///   Checks if there are new updates for the program.
-        /// </summary>
-        /// <param name = "state">Not used.</param>
-        internal static void CheckForUpdates(object state)
-        {
-            var wc = new WebClient();
-            try
-            {
-                DateTime newestVersion = DateTime.ParseExact(wc.DownloadString(Constants.VersionUri),
-                    "ddMMyyyy",
-                    CultureInfo.InvariantCulture);
-                if (newestVersion > Global.Version)
-                {
-                    var newDlg = new NewVersionForm();
-                    newDlg.ShowDialog();
-                }
-            }
-            catch (WebException)
-            {
-            }
-            catch (FormatException)
-            {
-            }
         }
 
         internal static bool CompareWith(this string str1, string str2)

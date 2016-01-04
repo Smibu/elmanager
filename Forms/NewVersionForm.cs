@@ -1,13 +1,17 @@
 ﻿using System;
 using System.Diagnostics;
 using System.Windows.Forms;
+using Elmanager.Updating;
 
 namespace Elmanager.Forms
 {
     public partial class NewVersionForm : Form
     {
-        public NewVersionForm()
+        private readonly UpdateInfo updateInfo;
+
+        public NewVersionForm(UpdateInfo info)
         {
+            updateInfo = info;
             InitializeComponent();
         }
 
@@ -21,7 +25,7 @@ namespace Elmanager.Forms
             downloadButton.Text = "Downloading...";
             downloadButton.Enabled = false;
             downloadButton.Refresh();
-            Utils.DownloadAndOpenFile(Constants.ProgramUri, Application.StartupPath + "\\Elmanager.zip");
+            Utils.DownloadAndOpenFile(updateInfo.Link, Application.StartupPath + "\\Elmanager.zip");
             Environment.Exit(0);
         }
 
