@@ -6,6 +6,7 @@ namespace Elmanager.EditorTools
 {
     internal class DrawTool : ToolBase, IEditorTool
     {
+        private const double ThresholdAdjustStep = 0.125;
         private Polygon _currentPolygon;
         private bool _drawing;
         private Vector _lastMousePosition;
@@ -34,7 +35,8 @@ namespace Elmanager.EditorTools
 
         public void UpdateHelp()
         {
-            LevEditor.InfoLabel.Text = "Press and hold left mouse button to create vertex.";
+            LevEditor.InfoLabel.Text =
+                $"Press and hold left mouse button to create vertex. Threshold: {Global.AppSettings.LevelEditor.DrawStep:F2}";
         }
 
         public void ExtraRendering()
@@ -50,6 +52,19 @@ namespace Elmanager.EditorTools
 
         public void KeyDown(KeyEventArgs key)
         {
+            switch (key.KeyCode)
+            {
+                case Constants.Increase:
+                    Global.AppSettings.LevelEditor.DrawStep += ThresholdAdjustStep;
+                    break;
+                case Constants.Decrease:
+                    if (Global.AppSettings.LevelEditor.DrawStep > ThresholdAdjustStep)
+                    {
+                        Global.AppSettings.LevelEditor.DrawStep -= ThresholdAdjustStep;
+                    }
+                    break;
+            }
+            UpdateHelp();
         }
 
         public void MouseDown(MouseEventArgs mouseData)
@@ -74,10 +89,11 @@ namespace Elmanager.EditorTools
             if (!Drawing) return;
             _mouseTrip += (p - _lastMousePosition).Length;
             _lastMousePosition = p;
-            if (_mouseTrip > Global.AppSettings.LevelEditor.DrawStep)
+            var scaledStep = Global.AppSettings.LevelEditor.DrawStep * Renderer.ZoomLevel * 0.1;
+            if (_mouseTrip > scaledStep)
             {
-                while (!(_mouseTrip < Global.AppSettings.LevelEditor.DrawStep))
-                    _mouseTrip -= Global.AppSettings.LevelEditor.DrawStep;
+                while (!(_mouseTrip < scaledStep))
+                    _mouseTrip -= scaledStep;
                 _currentPolygon.Add(p);
                 if (_currentPolygon.Count == 3)
                     Lev.Polygons.Add(_currentPolygon);
