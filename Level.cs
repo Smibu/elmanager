@@ -21,6 +21,7 @@ namespace Elmanager
         internal const int MaximumPolygonVertexCount = 1000;
         internal const double MaximumSize = 188.0;
         internal const int MaximumGroundVertexCount = 5130;
+        internal const int MaximumPictureTextureCount = 5000;
         internal const double RightWheelDifferenceFromLeftWheelX = 1.698;
         private const int EndOfDataMagicNumber = 0x67103A;
         private const int EndOfFileMagicNumber = 0x845D52;
@@ -337,10 +338,12 @@ namespace Elmanager
         {
             get
             {
-                return HasTooLargePolygons || HasTooManyObjects || HasTooManyPolygons || HasTooManyVertices ||
+                return HasTooLargePolygons || HasTooManyObjects || HasTooManyPolygons || HasTooManyVertices || HasTooManyPictures ||
                        HeadTouchesGround || TooTall || TooWide || GetIntersectionPoints().Count > 0;
             }
         }
+
+        internal bool HasTooManyPictures { get { return PictureTextureCount > MaximumPictureTextureCount; } }
 
         internal bool HeadTouchesGround
         {
@@ -373,6 +376,14 @@ namespace Elmanager
         internal int PictureCount
         {
             get { return Pictures.Count(texture => texture.IsPicture); }
+        }
+
+        internal int PictureTextureCount
+        {
+            get
+            {
+                return Pictures.Count;
+            }
         }
 
         internal string Title

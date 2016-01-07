@@ -339,6 +339,9 @@ namespace Elmanager.Forms
                 if (Lev.HasTooManyVertices)
                     items.Add("There are too many vertices in the level. Current: " + Lev.VertexCount + ", maximum: " +
                               Level.MaximumGroundVertexCount);
+                if (Lev.HasTooManyPictures)
+                    items.Add("There are too many pictures and textures in the level. Current: " + Lev.PictureTextureCount + ", maximum: " +
+                              Level.MaximumPictureTextureCount);
                 if (Lev.HeadTouchesGround)
                     items.Add("The driver\'s head is touching ground.");
 
