@@ -1,6 +1,8 @@
 using System;
 using System.Drawing;
+using System.Globalization;
 using System.IO;
+using System.Linq;
 using System.Runtime.Serialization.Formatters.Binary;
 using System.Text.RegularExpressions;
 using System.Windows.Forms;
@@ -10,7 +12,9 @@ namespace Elmanager
     [Serializable]
     public class ElmanagerSettings
     {
-        private static string SettingsFile = "Elmanager" + Global.Version.ToString("ddMMyyyy") + ".dat";
+        private const string SettingsFileDateFormat = "ddMMyyyy";
+        private const string SettingsFileBaseName = "Elmanager";
+        private static string SettingsFile = SettingsFileBaseName + Global.Version.ToString(SettingsFileDateFormat) + ".dat";
         public GeneralSettings General = new GeneralSettings();
         public LevelEditorSettings LevelEditor = new LevelEditorSettings();
         public ReplayManagerSettings ReplayManager = new ReplayManagerSettings();
@@ -26,7 +30,15 @@ namespace Elmanager
             try
             {
                 if (oldSettingFiles.Length > 0)
-                    return GetSettings(oldSettingFiles[0]);
+                {
+                    var oldFileDate = oldSettingFiles.Select(
+                        path =>
+                            DateTime.ParseExact(Path.GetFileNameWithoutExtension(path).Substring(SettingsFileBaseName.Length),
+                                SettingsFileDateFormat, CultureInfo.InvariantCulture))
+                        .Max()
+                        .ToString(SettingsFileDateFormat);
+                    return GetSettings(Path.Combine(Application.StartupPath, SettingsFileBaseName + oldFileDate + ".dat"));
+                }
             }
             catch (Exception)
             {
