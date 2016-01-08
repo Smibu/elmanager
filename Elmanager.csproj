@@ -396,6 +396,7 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="app.config" />
+    <None Include="changelog.md" />
     <None Include="packages.config" />
     <None Include="Resources\Arial_Rounded_MT.ttf" />
     <None Include="Resources\IntComp.dat" />

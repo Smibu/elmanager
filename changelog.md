@@ -1,5 +1,12 @@
 # Elmanager changelog
 
+## 8.1.2016
+* SLE: Draw tool is now zoom-aware and allows adjusting threshold.
+* Added an option to disable framebuffer usage.
+* Changed update checking address to mkl.io.
+* If there are several older settings files after updating, the latest of them is loaded instead of the first found.
+* SLE: Bugfix: Picture/texture limit was not being checked.
+
 ## 27.8.2015
 * Replay viewer: Bugfix: Replay playing was not working at all.
 
