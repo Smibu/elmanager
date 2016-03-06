@@ -109,7 +109,7 @@
             this.homePageLabel.Size = new System.Drawing.Size(288, 13);
             this.homePageLabel.TabIndex = 6;
             this.homePageLabel.TabStop = true;
-            this.homePageLabel.Text = "http://users.jyu.fi/~mikkalle/Elma";
+            this.homePageLabel.Text = "https://mkl.io/Elma/";
             this.homePageLabel.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
             this.homePageLabel.LinkClicked += new System.Windows.Forms.LinkLabelLinkClickedEventHandler(this.HomePageClicked);
             // 
