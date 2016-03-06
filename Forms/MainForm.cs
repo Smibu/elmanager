@@ -58,7 +58,7 @@ namespace Elmanager.Forms
 
         private void LinkLabel1LinkClicked(object sender, LinkLabelLinkClickedEventArgs e)
         {
-            Process.Start("mailto:mawane@hotmail.com");
+            Process.Start("http://www.oscarstours.ca/avis-de-deces/m-marck-antoine-simoneau#defunt");
         }
 
         private void linkLabel2_LinkClicked(object sender, LinkLabelLinkClickedEventArgs e)

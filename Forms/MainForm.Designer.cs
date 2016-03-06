@@ -129,14 +129,14 @@
             // 
             this.linkLabel1.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
             this.linkLabel1.AutoSize = true;
-            this.linkLabel1.LinkArea = new System.Windows.Forms.LinkArea(33, 6);
-            this.linkLabel1.Location = new System.Drawing.Point(52, 241);
+            this.linkLabel1.LinkArea = new System.Windows.Forms.LinkArea(41, 6);
+            this.linkLabel1.Location = new System.Drawing.Point(32, 241);
             this.linkLabel1.Name = "linkLabel1";
-            this.linkLabel1.Size = new System.Drawing.Size(209, 17);
+            this.linkLabel1.Size = new System.Drawing.Size(248, 17);
             this.linkLabel1.TabIndex = 9;
             this.linkLabel1.TabStop = true;
-            this.linkLabel1.Text = "Testing && SLE toolbar graphics: Mawane";
-            this.toolTip1.SetToolTip(this.linkLabel1, "mailto:mawane@hotmail.com");
+            this.linkLabel1.Text = "Testing && SLE toolbar graphics: Mawane (R.I.P.)";
+            this.toolTip1.SetToolTip(this.linkLabel1, "http://www.oscarstours.ca/avis-de-deces/m-marck-antoine-simoneau#defunt");
             this.linkLabel1.UseCompatibleTextRendering = true;
             this.linkLabel1.LinkClicked += new System.Windows.Forms.LinkLabelLinkClickedEventHandler(this.LinkLabel1LinkClicked);
             // 
