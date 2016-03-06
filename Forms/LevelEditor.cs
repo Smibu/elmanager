@@ -423,6 +423,10 @@ namespace Elmanager.Forms
             var copiedObjects = new List<Level.Object>();
             var copiedTextures = new List<Level.Picture>();
             Vector.MarkDefault = Geometry.VectorMark.Selected;
+            var delta = Keyboard.IsKeyDown(Key.LeftShift) ? 
+                Global.AppSettings.LevelEditor.RenderingSettings.GridSize
+                :
+                Renderer.ZoomLevel * 0.1;
             foreach (Polygon x in Lev.Polygons)
             {
                 var copy = new Polygon();
@@ -431,8 +435,8 @@ namespace Elmanager.Forms
                     if (z.Mark == Geometry.VectorMark.Selected)
                     {
                         z.Mark = Geometry.VectorMark.None;
-                        copy.Add(new Vector(z.X + Global.AppSettings.LevelEditor.RenderingSettings.GridSize,
-                            z.Y + Global.AppSettings.LevelEditor.RenderingSettings.GridSize));
+                        copy.Add(new Vector(z.X + delta,
+                            z.Y + delta));
                     }
                 }
                 if (copy.Count > 2)
@@ -450,8 +454,8 @@ namespace Elmanager.Forms
                     copiedObjects.Add(
                         new Level.Object(
                             x.Position +
-                            new Vector(Global.AppSettings.LevelEditor.RenderingSettings.GridSize,
-                                Global.AppSettings.LevelEditor.RenderingSettings.GridSize), x.Type, x.AppleType,
+                            new Vector(delta,
+                                delta), x.Type, x.AppleType,
                             x.AnimationNumber));
                 }
             }
@@ -460,8 +464,8 @@ namespace Elmanager.Forms
                 if (x.Position.Mark == Geometry.VectorMark.Selected)
                 {
                     Level.Picture copiedPicture = x.Clone();
-                    copiedPicture.Position.X += Global.AppSettings.LevelEditor.RenderingSettings.GridSize;
-                    copiedPicture.Position.Y += Global.AppSettings.LevelEditor.RenderingSettings.GridSize;
+                    copiedPicture.Position.X += delta;
+                    copiedPicture.Position.Y += delta;
                     copiedTextures.Add(copiedPicture);
                     x.Position.Mark = Geometry.VectorMark.None;
                 }
