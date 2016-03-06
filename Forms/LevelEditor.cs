@@ -1074,7 +1074,7 @@ namespace Elmanager.Forms
 
         private void MoveFocus(object sender, EventArgs e)
         {
-            LGRBox.Focus();
+            ToolPanel.Focus();
         }
 
         private void NewLevel(object sender = null, EventArgs e = null)
