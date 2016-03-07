@@ -1,5 +1,11 @@
 # Elmanager changelog
 
+## 7.3.2016
+* SLE: Copy function now respects the current zoom level. To get the old behavior (copy and snap to grid), press Ctrl+Shift+C.
+* SLE: Bugfix: Tool pane lost focus after changing ground or sky texture.
+* Main window: Updated homepage address.
+* Main window: Replaced Mawane's email with the URL to his obituary :(
+
 ## 8.1.2016
 * SLE: Draw tool is now zoom-aware and allows adjusting threshold.
 * Added an option to disable framebuffer usage.
