@@ -50,6 +50,14 @@ namespace Elmanager
                 Vertices.Add(x);
         }
 
+        private Polygon(IPolygon polygon) : this()
+        {
+            foreach (var v in polygon.Coordinates.Skip(1))
+            {
+                Vertices.Add(v);
+            }
+        }
+
         internal int Count
         {
             get { return Vertices.Count; }
@@ -463,136 +471,35 @@ namespace Elmanager
             {
                 throw new PolygonException("Both polygons must be non-self-intersecting.");
             }
-            if (!IsCounterClockwise)
-                ChangeOrientation();
-            if ((!p.IsCounterClockwise) ^ (type == PolygonOperationType.Difference))
-                p.ChangeOrientation();
-            var merged = new Polygon(p);
-            var pClone = new Polygon(p);
-            var clip = new Polygon(this);
+            IGeometry resultPolys;
+            switch (type)
+            {
+                case PolygonOperationType.Intersection:
+                    resultPolys = p.ToIPolygon().Intersection(ToIPolygon());
+                    break;
+                case PolygonOperationType.Merge:
+                    resultPolys = p.ToIPolygon().Union(ToIPolygon());
+                    break;
+                case PolygonOperationType.Difference:
+                    resultPolys = p.ToIPolygon().Difference(ToIPolygon());
+                    break;
+                default:
+                    throw new PolygonException("Unsupported operation type.");
+            }
+            var multiPolygon = resultPolys as IMultiPolygon;
             var results = new List<Polygon>();
-            if (!merged.IntersectsWith(clip))
-                throw new PolygonException("The polygons do not intersect.");
-
-            while (merged.HasEdgeIntersectionsWith(clip))
+            if (multiPolygon != null)
             {
-                merged.Move(new Vector(0.000001, 0.000001));
-                pClone.Move(new Vector(0.000001, 0.000001));
+                results.AddRange(from IPolygon poly in multiPolygon.Geometries select new Polygon(poly));
             }
-                
-
-            results.Add(new Polygon());
-            Vector.MarkDefault = Geometry.VectorMark.Selected;
-            for (int i = 0; i < p.Vertices.Count; i++)
+            var polygon = resultPolys as IPolygon;
+            if (polygon != null)
             {
-                for (int j = 0; j < Vertices.Count; j++)
-                {
-                    Vector isectPoint = Geometry.GetIntersectionPoint(pClone[i], pClone[i + 1], this[j], this[j + 1]);
-                    if ((object) isectPoint != null)
-                    {
-                        merged.InsertIntersection(isectPoint, 0.00000001);
-                        clip.InsertIntersection(isectPoint, 0.00000001);
-                    }
-                }
+                results.Add(new Polygon(polygon));
             }
-            Vector.MarkDefault = Geometry.VectorMark.None;
-            int k = 0;
-            Polygon currentPolygon = merged;
-            Polygon notCurrentPolygon = clip;
-            bool ready = false;
-            while (true)
-            {
-                //Search for intersection
-                while (currentPolygon[k].Mark != Geometry.VectorMark.Selected)
-                {
-                    k++;
-                    k = k % currentPolygon.Vertices.Count;
-                }
-                //Is this inbound intersection
-                int j = notCurrentPolygon.Vertices.IndexOf(currentPolygon.Vertices[k]);
-                if (Geometry.IsInboundIntersection(currentPolygon[k - 1], currentPolygon[k + 1],
-                    notCurrentPolygon[j - 1], notCurrentPolygon[j + 1]))
-                {
-                    k--;
-                    if (k == -1)
-                        k = currentPolygon.Vertices.Count - 1;
-                    while (currentPolygon[k].Mark != Geometry.VectorMark.Selected)
-                    {
-                        k--;
-                        if (k == -1)
-                            k = currentPolygon.Vertices.Count - 1;
-                    }
-                    k++;
-                    while (true)
-                    {
-                        k = k % currentPolygon.Vertices.Count;
-                        //Now we are at the first vertex
-                        while (currentPolygon[k].Mark != Geometry.VectorMark.Selected)
-                        {
-                            if (currentPolygon[k].Mark == Geometry.VectorMark.None)
-                            {
-                                results[results.Count - 1].Add(currentPolygon[k]);
-                                currentPolygon.Vertices[k % currentPolygon.Count].Mark =
-                                    Geometry.VectorMark.Highlight;
-                            }
-                            else
-                            {
-                                //Check if there are unexplored vertices
-                                int i;
-                                for (i = 0; i < currentPolygon.Vertices.Count; i++)
-                                    if (currentPolygon.Vertices[i].Mark == Geometry.VectorMark.Selected)
-                                        break;
-                                if (i < currentPolygon.Vertices.Count)
-                                {
-                                    k = i;
-                                    results.Add(new Polygon());
-                                    goto endOfWhileLoop;
-                                }
-                                for (i = 0; i < notCurrentPolygon.Vertices.Count; i++)
-                                    if (notCurrentPolygon.Vertices[i].Mark == Geometry.VectorMark.Selected)
-                                        break;
-                                if (i < notCurrentPolygon.Vertices.Count)
-                                {
-                                    k = i;
-                                    results.Add(new Polygon());
-                                    currentPolygon = clip;
-                                    notCurrentPolygon = merged;
-                                    goto endOfWhileLoop;
-                                }
-                                ready = true;
-                                goto endOfWhileLoop;
-                            }
-                            k++;
-                        }
-                        k = k % currentPolygon.Vertices.Count;
-                        results[results.Count - 1].Add(currentPolygon.Vertices[k]); //Add the intersection point
-                        int g = notCurrentPolygon.IndexOf(currentPolygon.Vertices[k]);
-                        currentPolygon.Vertices[k].Mark = Geometry.VectorMark.Visited; //Mark as visited
-                        notCurrentPolygon.Vertices[g].Mark = Geometry.VectorMark.Visited; //Mark as visited
-                        //Switch to the other polygon
-                        if (currentPolygon.Equals(merged))
-                        {
-                            currentPolygon = clip;
-                            notCurrentPolygon = merged;
-                        }
-                        else
-                        {
-                            currentPolygon = merged;
-                            notCurrentPolygon = clip;
-                        }
-                        k = g + 1;
-                    }
-                    endOfWhileLoop:
-                    if (ready)
-                    {
-                        foreach (Polygon x in results)
-                            x.UpdateDecomposition();
-                        return results;
-                    }
-                    continue;
-                }
-                k++;
-            }
+            foreach (var x in results)
+                x.UpdateDecomposition();
+            return results;
         }
 
         internal int IndexOf(Vector v)
