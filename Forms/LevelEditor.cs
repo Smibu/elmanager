@@ -80,11 +80,10 @@ namespace Elmanager.Forms
             {
                 Utils.ShowError("Error occurred while parsing level file: " + ex.Message, "Warning", MessageBoxIcon.Exclamation);
             }
-            catch (Exception ex)
+            catch (FileNotFoundException)
             {
-                Utils.ShowError("Error occurred when loading level file " + levPath + ". Exception text: " +
-                                ex.Message);
                 SetBlankLevel();
+                ShowWarning($"The last opened level {levPath} was not found.");
             }
         }
 
@@ -305,12 +304,18 @@ namespace Elmanager.Forms
         {
             if (!Lev.AllPicturesFound)
             {
-                topologyList.Text = "Warning";
-                topologyList.DropDownItems.Add("Some pictures or textures could not be found in the LGR file. " +
-                                               "You will lose these pictures if you save this level.");
-                topologyList.ForeColor = Color.DarkOrange;
-                topologyList.Font = new Font(topologyList.Font, FontStyle.Bold);
+                const string text = "Some pictures or textures could not be found in the LGR file. " +
+                                               "You will lose these pictures if you save this level.";
+                ShowWarning(text);
             }
+        }
+
+        private void ShowWarning(string text)
+        {
+            topologyList.Text = "Warning";
+            topologyList.DropDownItems.Add(text);
+            topologyList.ForeColor = Color.DarkOrange;
+            topologyList.Font = new Font(topologyList.Font, FontStyle.Bold);
         }
 
         private void CheckTopology()
