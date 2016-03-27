@@ -741,7 +741,12 @@ namespace Elmanager
                     {
                         Vector cutVector = clone[k + 1] - clone[k - 1];
                         cutVector /= cutVector.Length;
-                        cutVector *= cutRadius / Math.Sin(Math.Abs(cutVector.AngleBetween(v2 - v1)) * Constants.DegToRad);
+                        var angleAbs = Math.Abs(cutVector.AngleBetween(v2 - v1));
+                        if (angleAbs < 0.00000001)
+                        {
+                            return null;
+                        }
+                        cutVector *= cutRadius / Math.Sin(angleAbs * Constants.DegToRad);
                         double distance1 = (clone[k + 1] - clone[k]).Length;
                         double distance2 = (clone[k] - clone[k - 1]).Length;
                         if (cutVector.Length > Math.Min(distance1, distance2))

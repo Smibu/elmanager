@@ -86,8 +86,13 @@ namespace Elmanager
                     {
                         p1ConnectVector = p1C[p1Index + 1] - p1C[p1Index - 1];
                         p1ConnectVector /= p1ConnectVector.Length;
+                        var p1AngleAbs = Math.Abs(p1ConnectVector.AngleBetween(v2 - v1));
+                        if (p1AngleAbs < 0.0000001)
+                        {
+                            return null;
+                        }
                         p1ConnectVector *= connectRadius /
-                                           Math.Sin(Math.Abs(p1ConnectVector.AngleBetween(v2 - v1)) * Constants.DegToRad);
+                                           Math.Sin(p1AngleAbs * Constants.DegToRad);
                         double distance1 = (p1C[p1Index + 1] - p1C[p1Index]).Length;
                         double distance2 = (p1C[p1Index] - p1C[p1Index - 1]).Length;
                         if (p1ConnectVector.Length > Math.Min(distance1, distance2))
@@ -97,8 +102,13 @@ namespace Elmanager
 
                         p2ConnectVector = p2C[p2Index + 1] - p2C[p2Index - 1];
                         p2ConnectVector /= p2ConnectVector.Length;
+                        var p2AngleAbs = Math.Abs(p2ConnectVector.AngleBetween(v2 - v1));
+                        if (p2AngleAbs < 0.0000001)
+                        {
+                            return null;
+                        }
                         p2ConnectVector *= connectRadius /
-                                           Math.Sin(Math.Abs(p2ConnectVector.AngleBetween(v2 - v1)) * Constants.DegToRad);
+                                           Math.Sin(p2AngleAbs * Constants.DegToRad);
                         double dist1 = (p2C[p2Index + 1] - p2C[p2Index]).Length;
                         double dist2 = (p2C[p2Index] - p2C[p2Index - 1]).Length;
                         if (p2ConnectVector.Length > Math.Min(dist1, dist2))
