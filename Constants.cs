@@ -19,7 +19,6 @@ namespace Elmanager
         internal const string LevOrRecDirNotFound =
             "Replay or level directory are not specified or they doesn\'t exist!";
 
-        internal const string ProgramUri = "http://users.jyu.fi/~mikkalle/Elma/Elmanager.zip";
         internal const double RadToDeg = 180 / Math.PI;
         internal const string RecDirNotFound = "Replay directory is not specified or it doesn\'t exist!";
         internal const string RecExtension = ".rec";
