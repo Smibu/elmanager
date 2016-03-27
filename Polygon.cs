@@ -388,7 +388,7 @@ namespace Elmanager
 
         internal Polygon Smoothen(int steps, double vertexOffset, bool onlySelected) //0.5 <= VertexOffset <= 1.0
         {
-            if (Math.Abs(vertexOffset - 1.0) < 0.000001)
+            if (Math.Abs(vertexOffset - 1.0) < Constants.TOLERANCE)
             {
                 return Clone();
             }
@@ -419,7 +419,7 @@ namespace Elmanager
                 Vector midPoint = this[i + 1];
 
                 int numPoints = steps;
-                if (Math.Abs(vertexOffset - 0.5) < 0.000001 && (!onlySelected || (this[i + 3].Mark == Geometry.VectorMark.Selected)))
+                if (Math.Abs(vertexOffset - 0.5) < Constants.TOLERANCE && (!onlySelected || (this[i + 3].Mark == Geometry.VectorMark.Selected)))
                 {
                     numPoints--;
                 }
@@ -632,7 +632,7 @@ namespace Elmanager
                 Vector isectPoint = Geometry.GetIntersectionPoint(this[i], this[i + 1], v1, v2);
                 if ((object) isectPoint != null)
                 {
-                    clone.InsertIntersection(isectPoint, 0.00000001);
+                    clone.InsertIntersection(isectPoint, Constants.TOLERANCE);
                     numberOfIntersections++;
                 }
             }
@@ -649,7 +649,7 @@ namespace Elmanager
                         Vector cutVector = clone[k + 1] - clone[k - 1];
                         cutVector /= cutVector.Length;
                         var angleAbs = Math.Abs(cutVector.AngleBetween(v2 - v1));
-                        if (angleAbs < 0.00000001)
+                        if (angleAbs < Constants.TOLERANCE)
                         {
                             return null;
                         }
