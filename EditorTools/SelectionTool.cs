@@ -143,12 +143,10 @@ namespace Elmanager.EditorTools
                             MarkAllAs(Geometry.VectorMark.None);
                         }
                         NearestPolygon.MarkVectorsAs(Geometry.VectorMark.Selected);
-                        foreach (var polygon in Lev.Polygons)
+                        var inearest = NearestPolygon.ToIPolygon();
+                        foreach (var polygon in Lev.Polygons.Where(polygon => polygon.ToIPolygon().Within(inearest)))
                         {
-                            if (NearestPolygon.AreaHasPoint(polygon[0]))
-                            {
-                                polygon.MarkVectorsAs(Geometry.VectorMark.Selected);
-                            }
+                            polygon.MarkVectorsAs(Geometry.VectorMark.Selected);
                         }
                         foreach (var obj in Lev.Objects)
                         {
