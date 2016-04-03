@@ -50,9 +50,9 @@ namespace Elmanager
                 Vertices.Add(x);
         }
 
-        private Polygon(IPolygon polygon) : this()
+        public Polygon(ILinearRing vertices) : this()
         {
-            foreach (var v in polygon.Coordinates.Skip(1))
+            foreach (var v in vertices.Coordinates.Skip(1))
             {
                 Vertices.Add(v);
             }
@@ -477,11 +477,14 @@ namespace Elmanager
                 case PolygonOperationType.Intersection:
                     resultPolys = p.ToIPolygon().Intersection(ToIPolygon());
                     break;
-                case PolygonOperationType.Merge:
+                case PolygonOperationType.Union:
                     resultPolys = p.ToIPolygon().Union(ToIPolygon());
                     break;
                 case PolygonOperationType.Difference:
                     resultPolys = p.ToIPolygon().Difference(ToIPolygon());
+                    break;
+                case PolygonOperationType.SymmetricDifference:
+                    resultPolys = p.ToIPolygon().SymmetricDifference(ToIPolygon()).Buffer(-0.000001);
                     break;
                 default:
                     throw new PolygonException("Unsupported operation type.");
@@ -490,12 +493,12 @@ namespace Elmanager
             var results = new List<Polygon>();
             if (multiPolygon != null)
             {
-                results.AddRange(from IPolygon poly in multiPolygon.Geometries select new Polygon(poly));
+                results.AddRange(multiPolygon.Geometries.Cast<IPolygon>().SelectMany(poly => poly.ToElmaPolygons()));
             }
             var polygon = resultPolys as IPolygon;
             if (polygon != null)
             {
-                results.Add(new Polygon(polygon));
+                results.AddRange(polygon.ToElmaPolygons());
             }
             foreach (var x in results)
                 x.UpdateDecomposition();

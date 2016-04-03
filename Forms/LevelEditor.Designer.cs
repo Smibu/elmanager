@@ -43,11 +43,8 @@ namespace Elmanager.Forms
             this.ActionsMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.QuickGrassToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.DeleteAllGrassToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.DeleteSelectedMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.MirrorLevelToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.UndoToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.RedoToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.toolStripMenuItem1 = new System.Windows.Forms.ToolStripMenuItem();
             this.ToolStripSeparator8 = new System.Windows.Forms.ToolStripSeparator();
             this.ZoomFillToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.CheckTopologyMenuItem = new System.Windows.Forms.ToolStripMenuItem();
@@ -58,6 +55,16 @@ namespace Elmanager.Forms
             this.toolStripSeparator11 = new System.Windows.Forms.ToolStripSeparator();
             this.selectAllToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.importLevelsToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.selectionToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.toolStripMenuItem1 = new System.Windows.Forms.ToolStripMenuItem();
+            this.copyAndSnapToGridMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.MirrorLevelToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.DeleteSelectedMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.toolStripSeparator14 = new System.Windows.Forms.ToolStripSeparator();
+            this.unionToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.differenceToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.intersectionToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.symmetricDifferenceToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.SelectionFilterToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.EnableAllToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.DisableAllToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
@@ -154,6 +161,7 @@ namespace Elmanager.Forms
             this.flowersConvertItem = new System.Windows.Forms.ToolStripMenuItem();
             this.picturesConvertItem = new System.Windows.Forms.ToolStripMenuItem();
             this.saveAsPictureDialog = new System.Windows.Forms.SaveFileDialog();
+            this.importFileDialog = new System.Windows.Forms.OpenFileDialog();
             this.ToolPanel = new Elmanager.CustomControls.PanelMod();
             this.TextButton = new Elmanager.CustomControls.RadioButtonMod();
             this.PictureButton = new Elmanager.CustomControls.RadioButtonMod();
@@ -169,8 +177,6 @@ namespace Elmanager.Forms
             this.DrawButton = new Elmanager.CustomControls.RadioButtonMod();
             this.VertexButton = new Elmanager.CustomControls.RadioButtonMod();
             this.SelectButton = new Elmanager.CustomControls.RadioButtonMod();
-            this.importFileDialog = new System.Windows.Forms.OpenFileDialog();
-            this.toolStripMenuItem2 = new System.Windows.Forms.ToolStripMenuItem();
             this.MenuStrip1.SuspendLayout();
             this.StatusStrip1.SuspendLayout();
             this.ToolStripPanel1.SuspendLayout();
@@ -188,6 +194,7 @@ namespace Elmanager.Forms
             this.MenuStrip1.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.FileToolStripMenuItem,
             this.ActionsMenuItem,
+            this.selectionToolStripMenuItem,
             this.SelectionFilterToolStripMenuItem,
             this.ConfigurationToolStripMenuItem});
             this.MenuStrip1.Location = new System.Drawing.Point(0, 0);
@@ -275,12 +282,8 @@ namespace Elmanager.Forms
             this.ActionsMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.QuickGrassToolStripMenuItem,
             this.DeleteAllGrassToolStripMenuItem,
-            this.DeleteSelectedMenuItem,
-            this.MirrorLevelToolStripMenuItem,
             this.UndoToolStripMenuItem,
             this.RedoToolStripMenuItem,
-            this.toolStripMenuItem1,
-            this.toolStripMenuItem2,
             this.ToolStripSeparator8,
             this.ZoomFillToolStripMenuItem,
             this.CheckTopologyMenuItem,
@@ -300,7 +303,7 @@ namespace Elmanager.Forms
             this.QuickGrassToolStripMenuItem.Image = global::My.Resources.Resources.GrassAll;
             this.QuickGrassToolStripMenuItem.Name = "QuickGrassToolStripMenuItem";
             this.QuickGrassToolStripMenuItem.ShortcutKeys = ((System.Windows.Forms.Keys)((System.Windows.Forms.Keys.Control | System.Windows.Forms.Keys.G)));
-            this.QuickGrassToolStripMenuItem.Size = new System.Drawing.Size(239, 22);
+            this.QuickGrassToolStripMenuItem.Size = new System.Drawing.Size(227, 22);
             this.QuickGrassToolStripMenuItem.Text = "QuickGrass";
             this.QuickGrassToolStripMenuItem.Click += new System.EventHandler(this.QuickGrassToolStripMenuItemClick);
             // 
@@ -309,33 +312,16 @@ namespace Elmanager.Forms
             this.DeleteAllGrassToolStripMenuItem.Image = global::My.Resources.Resources.GrassDelete;
             this.DeleteAllGrassToolStripMenuItem.Name = "DeleteAllGrassToolStripMenuItem";
             this.DeleteAllGrassToolStripMenuItem.ShortcutKeys = ((System.Windows.Forms.Keys)((System.Windows.Forms.Keys.Control | System.Windows.Forms.Keys.D)));
-            this.DeleteAllGrassToolStripMenuItem.Size = new System.Drawing.Size(239, 22);
+            this.DeleteAllGrassToolStripMenuItem.Size = new System.Drawing.Size(227, 22);
             this.DeleteAllGrassToolStripMenuItem.Text = "Delete all grass";
             this.DeleteAllGrassToolStripMenuItem.Click += new System.EventHandler(this.DeleteAllGrassToolStripMenuItemClick);
-            // 
-            // DeleteSelectedMenuItem
-            // 
-            this.DeleteSelectedMenuItem.Image = global::My.Resources.Resources.Delete;
-            this.DeleteSelectedMenuItem.Name = "DeleteSelectedMenuItem";
-            this.DeleteSelectedMenuItem.Size = new System.Drawing.Size(239, 22);
-            this.DeleteSelectedMenuItem.Text = "Delete selected";
-            this.DeleteSelectedMenuItem.Click += new System.EventHandler(this.DeleteSelected);
-            // 
-            // MirrorLevelToolStripMenuItem
-            // 
-            this.MirrorLevelToolStripMenuItem.Image = global::My.Resources.Resources.Mirror16;
-            this.MirrorLevelToolStripMenuItem.Name = "MirrorLevelToolStripMenuItem";
-            this.MirrorLevelToolStripMenuItem.ShortcutKeys = ((System.Windows.Forms.Keys)((System.Windows.Forms.Keys.Control | System.Windows.Forms.Keys.M)));
-            this.MirrorLevelToolStripMenuItem.Size = new System.Drawing.Size(239, 22);
-            this.MirrorLevelToolStripMenuItem.Text = "Mirror selected";
-            this.MirrorLevelToolStripMenuItem.Click += new System.EventHandler(this.Mirror);
             // 
             // UndoToolStripMenuItem
             // 
             this.UndoToolStripMenuItem.Image = global::My.Resources.Resources.Undo;
             this.UndoToolStripMenuItem.Name = "UndoToolStripMenuItem";
             this.UndoToolStripMenuItem.ShortcutKeys = ((System.Windows.Forms.Keys)((System.Windows.Forms.Keys.Control | System.Windows.Forms.Keys.Z)));
-            this.UndoToolStripMenuItem.Size = new System.Drawing.Size(239, 22);
+            this.UndoToolStripMenuItem.Size = new System.Drawing.Size(227, 22);
             this.UndoToolStripMenuItem.Text = "Undo";
             this.UndoToolStripMenuItem.Click += new System.EventHandler(this.Undo);
             // 
@@ -345,9 +331,98 @@ namespace Elmanager.Forms
             this.RedoToolStripMenuItem.Name = "RedoToolStripMenuItem";
             this.RedoToolStripMenuItem.ShortcutKeyDisplayString = "";
             this.RedoToolStripMenuItem.ShortcutKeys = ((System.Windows.Forms.Keys)((System.Windows.Forms.Keys.Control | System.Windows.Forms.Keys.Y)));
-            this.RedoToolStripMenuItem.Size = new System.Drawing.Size(239, 22);
+            this.RedoToolStripMenuItem.Size = new System.Drawing.Size(227, 22);
             this.RedoToolStripMenuItem.Text = "Redo";
             this.RedoToolStripMenuItem.Click += new System.EventHandler(this.Redo);
+            // 
+            // ToolStripSeparator8
+            // 
+            this.ToolStripSeparator8.Name = "ToolStripSeparator8";
+            this.ToolStripSeparator8.Size = new System.Drawing.Size(224, 6);
+            // 
+            // ZoomFillToolStripMenuItem
+            // 
+            this.ZoomFillToolStripMenuItem.Image = global::My.Resources.Resources.ZoomFill16;
+            this.ZoomFillToolStripMenuItem.Name = "ZoomFillToolStripMenuItem";
+            this.ZoomFillToolStripMenuItem.ShortcutKeys = System.Windows.Forms.Keys.F5;
+            this.ZoomFillToolStripMenuItem.Size = new System.Drawing.Size(227, 22);
+            this.ZoomFillToolStripMenuItem.Text = "Zoom fill";
+            this.ZoomFillToolStripMenuItem.Click += new System.EventHandler(this.ZoomFillToolStripMenuItemClick);
+            // 
+            // CheckTopologyMenuItem
+            // 
+            this.CheckTopologyMenuItem.Image = global::My.Resources.Resources.Topology;
+            this.CheckTopologyMenuItem.Name = "CheckTopologyMenuItem";
+            this.CheckTopologyMenuItem.ShortcutKeys = System.Windows.Forms.Keys.F6;
+            this.CheckTopologyMenuItem.Size = new System.Drawing.Size(227, 22);
+            this.CheckTopologyMenuItem.Text = "Check topology";
+            this.CheckTopologyMenuItem.Click += new System.EventHandler(this.CheckTopologyAndUpdate);
+            // 
+            // LevelPropertiesToolStripMenuItem
+            // 
+            this.LevelPropertiesToolStripMenuItem.Name = "LevelPropertiesToolStripMenuItem";
+            this.LevelPropertiesToolStripMenuItem.ShortcutKeys = System.Windows.Forms.Keys.F4;
+            this.LevelPropertiesToolStripMenuItem.Size = new System.Drawing.Size(227, 22);
+            this.LevelPropertiesToolStripMenuItem.Text = "Level properties";
+            this.LevelPropertiesToolStripMenuItem.Click += new System.EventHandler(this.LevelPropertiesToolStripMenuItemClick);
+            // 
+            // toolStripSeparator10
+            // 
+            this.toolStripSeparator10.Name = "toolStripSeparator10";
+            this.toolStripSeparator10.Size = new System.Drawing.Size(224, 6);
+            // 
+            // previousLevelToolStripMenuItem
+            // 
+            this.previousLevelToolStripMenuItem.Image = global::My.Resources.Resources.Previous;
+            this.previousLevelToolStripMenuItem.Name = "previousLevelToolStripMenuItem";
+            this.previousLevelToolStripMenuItem.ShortcutKeys = System.Windows.Forms.Keys.F2;
+            this.previousLevelToolStripMenuItem.Size = new System.Drawing.Size(227, 22);
+            this.previousLevelToolStripMenuItem.Text = "Previous level";
+            // 
+            // nextLevelToolStripMenuItem
+            // 
+            this.nextLevelToolStripMenuItem.Image = global::My.Resources.Resources.Next;
+            this.nextLevelToolStripMenuItem.Name = "nextLevelToolStripMenuItem";
+            this.nextLevelToolStripMenuItem.ShortcutKeys = System.Windows.Forms.Keys.F3;
+            this.nextLevelToolStripMenuItem.Size = new System.Drawing.Size(227, 22);
+            this.nextLevelToolStripMenuItem.Text = "Next Level";
+            // 
+            // toolStripSeparator11
+            // 
+            this.toolStripSeparator11.Name = "toolStripSeparator11";
+            this.toolStripSeparator11.Size = new System.Drawing.Size(224, 6);
+            // 
+            // selectAllToolStripMenuItem
+            // 
+            this.selectAllToolStripMenuItem.Name = "selectAllToolStripMenuItem";
+            this.selectAllToolStripMenuItem.ShortcutKeys = ((System.Windows.Forms.Keys)((System.Windows.Forms.Keys.Control | System.Windows.Forms.Keys.A)));
+            this.selectAllToolStripMenuItem.Size = new System.Drawing.Size(227, 22);
+            this.selectAllToolStripMenuItem.Text = "Select all";
+            this.selectAllToolStripMenuItem.Click += new System.EventHandler(this.SelectAllToolStripMenuItemClick);
+            // 
+            // importLevelsToolStripMenuItem
+            // 
+            this.importLevelsToolStripMenuItem.Name = "importLevelsToolStripMenuItem";
+            this.importLevelsToolStripMenuItem.ShortcutKeys = ((System.Windows.Forms.Keys)((System.Windows.Forms.Keys.Control | System.Windows.Forms.Keys.V)));
+            this.importLevelsToolStripMenuItem.Size = new System.Drawing.Size(227, 22);
+            this.importLevelsToolStripMenuItem.Text = "Import level(s)/image(s)...";
+            this.importLevelsToolStripMenuItem.Click += new System.EventHandler(this.importLevelsToolStripMenuItem_Click);
+            // 
+            // selectionToolStripMenuItem
+            // 
+            this.selectionToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.toolStripMenuItem1,
+            this.copyAndSnapToGridMenuItem,
+            this.MirrorLevelToolStripMenuItem,
+            this.DeleteSelectedMenuItem,
+            this.toolStripSeparator14,
+            this.unionToolStripMenuItem,
+            this.differenceToolStripMenuItem,
+            this.intersectionToolStripMenuItem,
+            this.symmetricDifferenceToolStripMenuItem});
+            this.selectionToolStripMenuItem.Name = "selectionToolStripMenuItem";
+            this.selectionToolStripMenuItem.Size = new System.Drawing.Size(63, 20);
+            this.selectionToolStripMenuItem.Text = "Selection";
             // 
             // toolStripMenuItem1
             // 
@@ -357,78 +432,64 @@ namespace Elmanager.Forms
             this.toolStripMenuItem1.Text = "Copy";
             this.toolStripMenuItem1.Click += new System.EventHandler(this.CopyMenuItemClick);
             // 
-            // ToolStripSeparator8
+            // copyAndSnapToGridMenuItem
             // 
-            this.ToolStripSeparator8.Name = "ToolStripSeparator8";
-            this.ToolStripSeparator8.Size = new System.Drawing.Size(236, 6);
+            this.copyAndSnapToGridMenuItem.Name = "copyAndSnapToGridMenuItem";
+            this.copyAndSnapToGridMenuItem.ShortcutKeys = ((System.Windows.Forms.Keys)(((System.Windows.Forms.Keys.Control | System.Windows.Forms.Keys.Shift) 
+            | System.Windows.Forms.Keys.C)));
+            this.copyAndSnapToGridMenuItem.Size = new System.Drawing.Size(239, 22);
+            this.copyAndSnapToGridMenuItem.Text = "Copy and snap to grid";
+            this.copyAndSnapToGridMenuItem.Click += new System.EventHandler(this.CopyMenuItemClick);
             // 
-            // ZoomFillToolStripMenuItem
+            // MirrorLevelToolStripMenuItem
             // 
-            this.ZoomFillToolStripMenuItem.Image = global::My.Resources.Resources.ZoomFill16;
-            this.ZoomFillToolStripMenuItem.Name = "ZoomFillToolStripMenuItem";
-            this.ZoomFillToolStripMenuItem.ShortcutKeys = System.Windows.Forms.Keys.F5;
-            this.ZoomFillToolStripMenuItem.Size = new System.Drawing.Size(239, 22);
-            this.ZoomFillToolStripMenuItem.Text = "Zoom fill";
-            this.ZoomFillToolStripMenuItem.Click += new System.EventHandler(this.ZoomFillToolStripMenuItemClick);
+            this.MirrorLevelToolStripMenuItem.Image = global::My.Resources.Resources.Mirror16;
+            this.MirrorLevelToolStripMenuItem.Name = "MirrorLevelToolStripMenuItem";
+            this.MirrorLevelToolStripMenuItem.ShortcutKeys = ((System.Windows.Forms.Keys)((System.Windows.Forms.Keys.Control | System.Windows.Forms.Keys.M)));
+            this.MirrorLevelToolStripMenuItem.Size = new System.Drawing.Size(239, 22);
+            this.MirrorLevelToolStripMenuItem.Text = "Mirror";
+            this.MirrorLevelToolStripMenuItem.Click += new System.EventHandler(this.Mirror);
             // 
-            // CheckTopologyMenuItem
+            // DeleteSelectedMenuItem
             // 
-            this.CheckTopologyMenuItem.Image = global::My.Resources.Resources.Topology;
-            this.CheckTopologyMenuItem.Name = "CheckTopologyMenuItem";
-            this.CheckTopologyMenuItem.ShortcutKeys = System.Windows.Forms.Keys.F6;
-            this.CheckTopologyMenuItem.Size = new System.Drawing.Size(239, 22);
-            this.CheckTopologyMenuItem.Text = "Check topology";
-            this.CheckTopologyMenuItem.Click += new System.EventHandler(this.CheckTopologyAndUpdate);
+            this.DeleteSelectedMenuItem.Image = global::My.Resources.Resources.Delete;
+            this.DeleteSelectedMenuItem.Name = "DeleteSelectedMenuItem";
+            this.DeleteSelectedMenuItem.Size = new System.Drawing.Size(239, 22);
+            this.DeleteSelectedMenuItem.Text = "Delete";
+            this.DeleteSelectedMenuItem.Click += new System.EventHandler(this.DeleteSelected);
             // 
-            // LevelPropertiesToolStripMenuItem
+            // toolStripSeparator14
             // 
-            this.LevelPropertiesToolStripMenuItem.Name = "LevelPropertiesToolStripMenuItem";
-            this.LevelPropertiesToolStripMenuItem.ShortcutKeys = System.Windows.Forms.Keys.F4;
-            this.LevelPropertiesToolStripMenuItem.Size = new System.Drawing.Size(239, 22);
-            this.LevelPropertiesToolStripMenuItem.Text = "Level properties";
-            this.LevelPropertiesToolStripMenuItem.Click += new System.EventHandler(this.LevelPropertiesToolStripMenuItemClick);
+            this.toolStripSeparator14.Name = "toolStripSeparator14";
+            this.toolStripSeparator14.Size = new System.Drawing.Size(236, 6);
             // 
-            // toolStripSeparator10
+            // unionToolStripMenuItem
             // 
-            this.toolStripSeparator10.Name = "toolStripSeparator10";
-            this.toolStripSeparator10.Size = new System.Drawing.Size(236, 6);
+            this.unionToolStripMenuItem.Name = "unionToolStripMenuItem";
+            this.unionToolStripMenuItem.Size = new System.Drawing.Size(239, 22);
+            this.unionToolStripMenuItem.Text = "Union";
+            this.unionToolStripMenuItem.Click += new System.EventHandler(this.unionToolStripMenuItem_Click);
             // 
-            // previousLevelToolStripMenuItem
+            // differenceToolStripMenuItem
             // 
-            this.previousLevelToolStripMenuItem.Image = global::My.Resources.Resources.Previous;
-            this.previousLevelToolStripMenuItem.Name = "previousLevelToolStripMenuItem";
-            this.previousLevelToolStripMenuItem.ShortcutKeys = System.Windows.Forms.Keys.F2;
-            this.previousLevelToolStripMenuItem.Size = new System.Drawing.Size(239, 22);
-            this.previousLevelToolStripMenuItem.Text = "Previous level";
+            this.differenceToolStripMenuItem.Name = "differenceToolStripMenuItem";
+            this.differenceToolStripMenuItem.Size = new System.Drawing.Size(239, 22);
+            this.differenceToolStripMenuItem.Text = "Difference";
+            this.differenceToolStripMenuItem.Click += new System.EventHandler(this.differenceToolStripMenuItem_Click);
             // 
-            // nextLevelToolStripMenuItem
+            // intersectionToolStripMenuItem
             // 
-            this.nextLevelToolStripMenuItem.Image = global::My.Resources.Resources.Next;
-            this.nextLevelToolStripMenuItem.Name = "nextLevelToolStripMenuItem";
-            this.nextLevelToolStripMenuItem.ShortcutKeys = System.Windows.Forms.Keys.F3;
-            this.nextLevelToolStripMenuItem.Size = new System.Drawing.Size(239, 22);
-            this.nextLevelToolStripMenuItem.Text = "Next Level";
+            this.intersectionToolStripMenuItem.Name = "intersectionToolStripMenuItem";
+            this.intersectionToolStripMenuItem.Size = new System.Drawing.Size(239, 22);
+            this.intersectionToolStripMenuItem.Text = "Intersection";
+            this.intersectionToolStripMenuItem.Click += new System.EventHandler(this.intersectionToolStripMenuItem_Click);
             // 
-            // toolStripSeparator11
+            // symmetricDifferenceToolStripMenuItem
             // 
-            this.toolStripSeparator11.Name = "toolStripSeparator11";
-            this.toolStripSeparator11.Size = new System.Drawing.Size(236, 6);
-            // 
-            // selectAllToolStripMenuItem
-            // 
-            this.selectAllToolStripMenuItem.Name = "selectAllToolStripMenuItem";
-            this.selectAllToolStripMenuItem.ShortcutKeys = ((System.Windows.Forms.Keys)((System.Windows.Forms.Keys.Control | System.Windows.Forms.Keys.A)));
-            this.selectAllToolStripMenuItem.Size = new System.Drawing.Size(239, 22);
-            this.selectAllToolStripMenuItem.Text = "Select all";
-            this.selectAllToolStripMenuItem.Click += new System.EventHandler(this.SelectAllToolStripMenuItemClick);
-            // 
-            // importLevelsToolStripMenuItem
-            // 
-            this.importLevelsToolStripMenuItem.Name = "importLevelsToolStripMenuItem";
-            this.importLevelsToolStripMenuItem.ShortcutKeys = ((System.Windows.Forms.Keys)((System.Windows.Forms.Keys.Control | System.Windows.Forms.Keys.V)));
-            this.importLevelsToolStripMenuItem.Size = new System.Drawing.Size(239, 22);
-            this.importLevelsToolStripMenuItem.Text = "Import level(s)/image(s)...";
-            this.importLevelsToolStripMenuItem.Click += new System.EventHandler(this.importLevelsToolStripMenuItem_Click);
+            this.symmetricDifferenceToolStripMenuItem.Name = "symmetricDifferenceToolStripMenuItem";
+            this.symmetricDifferenceToolStripMenuItem.Size = new System.Drawing.Size(239, 22);
+            this.symmetricDifferenceToolStripMenuItem.Text = "Symmetric difference";
+            this.symmetricDifferenceToolStripMenuItem.Click += new System.EventHandler(this.symmetricDifferenceToolStripMenuItem_Click);
             // 
             // SelectionFilterToolStripMenuItem
             // 
@@ -1337,6 +1398,12 @@ namespace Elmanager.Forms
             this.saveAsPictureDialog.FileName = "Untitled";
             this.saveAsPictureDialog.Filter = "Portable Network Graphics (*.png)|*.png";
             // 
+            // importFileDialog
+            // 
+            this.importFileDialog.Filter = "Elasto Mania level or image (*.lev, *.bmp, *.png, *.gif, *.tiff, *.exif)|*.lev;*." +
+    "bmp;*.png;*.gif;*.tiff;*.exif";
+            this.importFileDialog.Multiselect = true;
+            // 
             // ToolPanel
             // 
             this.ToolPanel.AutoScroll = true;
@@ -1546,21 +1613,6 @@ namespace Elmanager.Forms
             this.SelectButton.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
             this.SelectButton.UseVisualStyleBackColor = true;
             // 
-            // importFileDialog
-            // 
-            this.importFileDialog.Filter = "Elasto Mania level or image (*.lev, *.bmp, *.png, *.gif, *.tiff, *.exif)|*.lev;*." +
-    "bmp;*.png;*.gif;*.tiff;*.exif";
-            this.importFileDialog.Multiselect = true;
-            // 
-            // toolStripMenuItem2
-            // 
-            this.toolStripMenuItem2.Name = "toolStripMenuItem2";
-            this.toolStripMenuItem2.ShortcutKeys = ((System.Windows.Forms.Keys)(((System.Windows.Forms.Keys.Control | System.Windows.Forms.Keys.Shift) 
-            | System.Windows.Forms.Keys.C)));
-            this.toolStripMenuItem2.Size = new System.Drawing.Size(239, 22);
-            this.toolStripMenuItem2.Text = "Copy and snap to grid";
-            this.toolStripMenuItem2.Click += new System.EventHandler(this.CopyMenuItemClick);
-            // 
             // LevelEditor
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -1634,7 +1686,6 @@ namespace Elmanager.Forms
 		internal RadioButtonMod AutoGrassButton;
 		internal System.Windows.Forms.ToolStripMenuItem DeleteAllGrassToolStripMenuItem;
 		internal System.Windows.Forms.ToolStripMenuItem DeleteMenuItem;
-		internal System.Windows.Forms.ToolStripMenuItem MirrorLevelToolStripMenuItem;
 		internal System.Windows.Forms.ToolStripMenuItem GrassMenuItem;
 		internal System.Windows.Forms.ToolStripMenuItem GravityNoneMenuItem;
 		internal System.Windows.Forms.ToolStripMenuItem GravityUpMenuItem;
@@ -1692,7 +1743,6 @@ namespace Elmanager.Forms
 		internal System.Windows.Forms.ToolStripButton ShowGroundButton;
 		internal System.Windows.Forms.ToolStripButton ShowGroundTextureButton;
 		internal System.Windows.Forms.ToolStripButton ShowSkyTextureButton;
-		internal System.Windows.Forms.ToolStripMenuItem DeleteSelectedMenuItem;
 		internal System.Windows.Forms.ToolStripSeparator ToolStripSeparator8;
 		internal System.Windows.Forms.ToolStripMenuItem ZoomFillToolStripMenuItem;
 		internal System.Windows.Forms.ToolStripStatusLabel HighlightLabel;
@@ -1715,7 +1765,6 @@ namespace Elmanager.Forms
         private ToolStripButton snapToGridButton;
         private ToolStripMenuItem bringToFrontToolStripMenuItem;
         private ToolStripMenuItem sendToBackToolStripMenuItem;
-        private ToolStripMenuItem toolStripMenuItem1;
         private ToolStripButton showCrossHairButton;
         private ToolStripMenuItem importLevelsToolStripMenuItem;
         private ToolStripMenuItem saveAsPictureToolStripMenuItem;
@@ -1738,7 +1787,16 @@ namespace Elmanager.Forms
         private ToolStripButton filenameOkButton;
         private ToolStripButton filenameCancelButton;
         private OpenFileDialog importFileDialog;
-        private ToolStripMenuItem toolStripMenuItem2;
+        private ToolStripMenuItem selectionToolStripMenuItem;
+        private ToolStripMenuItem toolStripMenuItem1;
+        private ToolStripMenuItem copyAndSnapToGridMenuItem;
+        internal ToolStripMenuItem MirrorLevelToolStripMenuItem;
+        internal ToolStripMenuItem DeleteSelectedMenuItem;
+        private ToolStripSeparator toolStripSeparator14;
+        private ToolStripMenuItem unionToolStripMenuItem;
+        private ToolStripMenuItem differenceToolStripMenuItem;
+        private ToolStripMenuItem intersectionToolStripMenuItem;
+        private ToolStripMenuItem symmetricDifferenceToolStripMenuItem;
     }
 	
 }

@@ -2,17 +2,19 @@
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Drawing;
-using System.Drawing.Imaging;
 using System.IO;
 using System.Linq;
 using System.Windows.Forms;
 using System.Windows.Input;
 using Elmanager.CustomControls;
 using Elmanager.EditorTools;
+using GeoAPI.Geometries;
+using NetTopologySuite.Geometries;
 using Cursor = System.Windows.Forms.Cursor;
 using Cursors = System.Windows.Forms.Cursors;
 using KeyEventArgs = System.Windows.Forms.KeyEventArgs;
 using MouseEventArgs = System.Windows.Forms.MouseEventArgs;
+using Point = System.Drawing.Point;
 
 namespace Elmanager.Forms
 {
@@ -859,7 +861,25 @@ namespace Elmanager.Forms
                 case Keys.Delete:
                     DeleteSelected(null, null);
                     break;
+                case Keys.Oemcomma:
+                    PolyOpTool.PolyOpSelected(PolygonOperationType.Union, Lev.Polygons, SetModifiedAndRender);
+                    break;
+                case Keys.OemPeriod:
+                    PolyOpTool.PolyOpSelected(PolygonOperationType.Difference, Lev.Polygons, SetModifiedAndRender);
+                    break;
+                case Keys.Enter:
+                    PolyOpTool.PolyOpSelected(PolygonOperationType.Intersection, Lev.Polygons, SetModifiedAndRender);
+                    break;
+                case Keys.Oem2:
+                    PolyOpTool.PolyOpSelected(PolygonOperationType.SymmetricDifference, Lev.Polygons, SetModifiedAndRender);
+                    break;
             }
+        }
+
+        private void SetModifiedAndRender()
+        {
+            Modified = true;
+            Renderer.RedrawScene();
         }
 
         private void KeyHandlerUp(object sender, KeyEventArgs e)
@@ -1964,6 +1984,26 @@ namespace Elmanager.Forms
                     e.Handled = e.SuppressKeyPress = true;
                     break;
             }
+        }
+
+        private void unionToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            PolyOpTool.PolyOpSelected(PolygonOperationType.Union, Lev.Polygons, SetModifiedAndRender);
+        }
+
+        private void differenceToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            PolyOpTool.PolyOpSelected(PolygonOperationType.Difference, Lev.Polygons, SetModifiedAndRender);
+        }
+
+        private void intersectionToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            PolyOpTool.PolyOpSelected(PolygonOperationType.Intersection, Lev.Polygons, SetModifiedAndRender);
+        }
+
+        private void symmetricDifferenceToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            PolyOpTool.PolyOpSelected(PolygonOperationType.SymmetricDifference, Lev.Polygons, SetModifiedAndRender);
         }
     }
 }

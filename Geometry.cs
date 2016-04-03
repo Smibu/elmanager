@@ -9,15 +9,34 @@ namespace Elmanager
 {
     internal enum PolygonOperationType
     {
-        Merge,
+        Union,
         Difference,
-        Intersection
+        Intersection,
+        SymmetricDifference
     }
 
     [Serializable]
     internal static class Geometry
     {
         private const int RoundingPrecision = 10;
+
+        internal static IEnumerable<Polygon> ToElmaPolygons(this IPolygon poly)
+        {
+            var p = new Polygon(poly.Shell);
+            p.UpdateDecomposition();
+            yield return p;
+            foreach (var linearRing in poly.Holes)
+            {
+                p = new Polygon(linearRing);
+                p.UpdateDecomposition();
+                yield return p;
+            }
+        }
+
+        internal static IEnumerable<IPolygon> ToIPolygons(this IEnumerable<Polygon> polys)
+        {
+            return polys.Select(polygon => polygon.ToIPolygon());
+        }
 
         internal static Vector FindPoint(Vector v1, Vector v2, Vector v3, double radius)
         {

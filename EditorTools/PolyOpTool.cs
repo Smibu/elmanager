@@ -1,11 +1,16 @@
+using System;
+using System.Collections.Generic;
+using System.Linq;
 using System.Windows.Forms;
 using Elmanager.Forms;
+using GeoAPI.Geometries;
+using NetTopologySuite.Geometries;
 
 namespace Elmanager.EditorTools
 {
     internal class PolyOpTool : ToolBase, IEditorTool
     {
-        private PolygonOperationType _currentOpType = PolygonOperationType.Merge;
+        private PolygonOperationType _currentOpType = PolygonOperationType.Union;
         private Polygon _firstPolygon;
         private bool _firstSelected;
 
@@ -35,7 +40,7 @@ namespace Elmanager.EditorTools
             char polyChar = FirstSelected ? 'B' : 'A';
             switch (_currentOpType)
             {
-                case PolygonOperationType.Merge:
+                case PolygonOperationType.Union:
                     LevEditor.InfoLabel.Text = "Click the polygon " + polyChar + " (operation = A+B).";
                     break;
                 case PolygonOperationType.Difference:
@@ -67,14 +72,14 @@ namespace Elmanager.EditorTools
             if (key.KeyCode != Keys.Space || FirstSelected) return;
             switch (_currentOpType)
             {
-                case PolygonOperationType.Merge:
+                case PolygonOperationType.Union:
                     _currentOpType = PolygonOperationType.Difference;
                     break;
                 case PolygonOperationType.Intersection:
                     break;
 
                 case PolygonOperationType.Difference:
-                    _currentOpType = PolygonOperationType.Merge;
+                    _currentOpType = PolygonOperationType.Union;
                     break;
             }
             UpdateHelp();
@@ -159,6 +164,83 @@ namespace Elmanager.EditorTools
 
         public void MouseUp(MouseEventArgs mouseData)
         {
+        }
+
+        public static void PolyOpSelected(PolygonOperationType opType, List<Polygon> polygons, Action ifChanged = null)
+        {
+            var polys = polygons.Where(p => !p.IsGrass && p.Vertices.Any(v => v.Mark == Geometry.VectorMark.Selected)).ToList();
+            if (!polys.Any())
+            {
+                return;
+            }
+            var multipoly = GeometryFactory.Floating.CreateMultiPolygon(polys.ToIPolygons().ToArray());
+            Func<IGeometry, IGeometry, IGeometry> symDiff = (g, p) => p.SymmetricDifference(g);
+            var selection = multipoly.Geometries.Aggregate(symDiff);
+            var touching = polygons.Where(p =>
+            {
+                if (p.IsGrass)
+                    return false;
+                var ip = p.ToIPolygon();
+                return !polys.Contains(p) && ip.Intersects(selection) && !ip.Contains(selection);
+            }).ToList();
+            
+            if (!touching.Any())
+            {
+                return;
+            }
+            var others = touching.ToIPolygons().Aggregate(symDiff);
+            var remaining = polygons.Where(p =>
+            {
+                if (p.IsGrass)
+                    return false;
+                var ipoly = p.ToIPolygon();
+                return !touching.Contains(p) && !polys.Contains(p) && ipoly.Within(others);
+            }).ToList();
+
+            others = remaining.ToIPolygons().Aggregate(others, symDiff);
+            
+            IGeometry result;
+            try
+            {
+                switch (opType)
+                {
+                    case PolygonOperationType.Union:
+                        result = others.Union(selection);
+                        break;
+                    case PolygonOperationType.Difference:
+                        result = others.Difference(selection);
+                        break;
+                    case PolygonOperationType.Intersection:
+                        result = others.Intersection(selection);
+                        break;
+                    case PolygonOperationType.SymmetricDifference:
+                        result = others.SymmetricDifference(selection).Buffer(-0.000001);
+                        break;
+                    default:
+                        throw new Exception("Unknown operation type.");
+                }
+            }
+            catch (TopologyException)
+            {
+                Utils.ShowError("Could not perform this operation. Make sure the polygons don't have self-intersections.");
+                return;
+            }
+
+            touching.ForEach(p => polygons.Remove(p));
+            polys.ForEach(p => polygons.Remove(p));
+            remaining.ForEach(p => polygons.Remove(p));
+            if (result is MultiPolygon)
+            {
+                foreach (var geometry in (result as MultiPolygon).Geometries.Cast<IPolygon>().Where(p => !p.IsEmpty))
+                {
+                    polygons.AddRange(geometry.ToElmaPolygons());
+                }
+            }
+            else if (result is IPolygon && !result.IsEmpty)
+            {
+                polygons.AddRange((result as IPolygon).ToElmaPolygons());
+            }
+            ifChanged?.Invoke();
         }
     }
 }
