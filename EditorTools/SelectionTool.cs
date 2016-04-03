@@ -290,7 +290,7 @@ namespace Elmanager.EditorTools
                 {
                     z.Position += delta;
                 }
-                Vector.MarkDefault = 0;
+                Vector.MarkDefault = Geometry.VectorMark.None;
                 _moveStartPosition = p;
             }
             else if (FreeSelecting)
