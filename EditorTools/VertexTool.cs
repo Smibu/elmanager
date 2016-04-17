@@ -48,6 +48,12 @@ namespace Elmanager.EditorTools
         {
             LevEditor.InfoLabel.Text =
                 "Left mouse button: create vertex. Click near a vertex of a polygon to add vertices to it.";
+            if (CreatingVertex)
+            {
+                var lngth = (_currentPolygon.Vertices[_currentPolygon.Count - 1] -
+                             _currentPolygon.Vertices[_currentPolygon.Count - 2]).Length;
+                LevEditor.InfoLabel.Text += $" Edge length: {lngth:F3}";
+            }
         }
 
         public void ExtraRendering()
@@ -147,6 +153,7 @@ namespace Elmanager.EditorTools
                 _currentPolygon.Vertices[_currentPolygon.Count - 1] = p;
                 if (_currentPolygon.Count > 2)
                     _currentPolygon.UpdateDecomposition(false);
+                UpdateHelp();
             }
             else if(!CreatingRectangle)
             {
