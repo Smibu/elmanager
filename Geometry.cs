@@ -1,8 +1,12 @@
 using System;
+using System.CodeDom;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
+using System.Threading;
 using GeoAPI.Geometries;
 using NetTopologySuite.Geometries;
+using NetTopologySuite.Geometries.Utilities;
 using NetTopologySuite.Operation.Valid;
 
 namespace Elmanager
@@ -408,27 +412,107 @@ namespace Elmanager
             return isects;
         }
 
-        internal static List<Polygon> ToPolygons(this IPolygon poly)
+        internal static IEnumerable<Polygon> GetSelectedPolygons(this IEnumerable<Polygon> polys)
         {
-            var polys = new List<Polygon>();
-            var npoly = new Polygon();
-            foreach (var coordinate in poly.Shell.Coordinates.Skip(1))
-            {
-                npoly.Add(coordinate);
-            }
-            polys.Add(npoly);
+            return polys.Where(p => !p.IsGrass && p.Vertices.Any(v => v.Mark == Geometry.VectorMark.Selected));
+        }
 
-            foreach (var linearRing in poly.Holes)
+        internal static IGeometry GetSelectedPolygonsAsMultiPolygon(this IEnumerable<Polygon> px)
+        {
+            var polys = px.GetSelectedPolygons().ToList();
+            var multipoly = GeometryFactory.Floating.CreateMultiPolygon(polys.ToIPolygons().ToArray());
+            if (multipoly.IsEmpty)
             {
-                var p = new Polygon();
-                foreach (var coordinate in linearRing.Coordinates.Skip(1))
+                return multipoly;
+            }
+            Func<IGeometry, IGeometry, IGeometry> symDiff = (g, p) => p.SymmetricDifference(g);
+            var selection = multipoly.Geometries.Aggregate(symDiff);
+            return selection;
+        }
+
+        internal static IEnumerable<Envelope> FindCovering(this IGeometry g, IEnumerable<Envelope> rectangles, CancellationToken token, IProgress<double> progress, int iterations = 2, double minRectCover = 0.33, double minCoverBreak = 0.9)
+        {
+            var sortedRectangles = rectangles.ToList();
+            sortedRectangles.Sort((b, a) => a.Area.CompareTo(b.Area));
+            var lastRect = sortedRectangles.Last();
+            var f = GeometryFactory.Floating;
+            var remaining = f.CreateGeometry(g);
+
+            var centroid = remaining.Centroid;
+            // For some reason, the Intersection method throws a TopologyException more easily if the coordinates are near origin,
+            // so we translate the geometry further away, and cancel the translation when reporting the final result.
+            double translationx = 100.0 - centroid.X;
+            double translationy = 100.0 - centroid.Y;
+            remaining = AffineTransformation.TranslationInstance(translationx, translationy).Transform(remaining);
+            var coveredArea = 0.0;
+            var totalArea = remaining.Area;
+
+            while (!remaining.IsEmpty)
+            {
+                var p = remaining.Coordinate;
+                foreach (var c in remaining.Coordinates)
                 {
-                    p.Add(coordinate);
+                    if (p.Y > c.Y)
+                        p = c;
                 }
-                polys.Add(p);
-            }
+                foreach (var rectangle in sortedRectangles)
+                {
+                    var bestArea = 0.0;
+                    IGeometry bestRect = null;
+                    var bestxmin = -1.0;
+                    var bestymin = -1.0;
+                    var bestxmax = -1.0;
+                    var bestymax = -1.0;
+                    const string errorMsg = "Could not texturize the selected polygon(s). Make sure they don't have topology errors.";
+                    for (var x = -iterations; x <= iterations; x++)
+                    {
+                        rectangle.Translate(p.X - rectangle.Centre.X + x* rectangle.Width/(iterations * 2),
+                            p.Y - rectangle.Centre.Y + iterations* rectangle.Height/(iterations * 2));
+                        var rectg = f.ToGeometry(rectangle);
 
-            return polys;
+                        IGeometry isect;
+                        try
+                        {
+                            isect = remaining.Intersection(rectg);
+                        }
+                        catch (TopologyException)
+                        {
+                            throw new PolygonException(errorMsg);
+                        }
+                        if (isect.Area > bestArea)
+                        {
+                            bestArea = isect.Area;
+                            bestRect = rectg;
+                            bestxmin = rectangle.MinX;
+                            bestymin = rectangle.MinY;
+                            bestxmax = rectangle.MaxX;
+                            bestymax = rectangle.MaxY;
+                            if (bestArea/bestRect.Area > minCoverBreak)
+                            {
+                                x = iterations;
+                            }
+                        }
+                    }
+                    if (bestRect == null)
+                    {
+                        throw new PolygonException(errorMsg);
+                    }
+                    if (bestArea/bestRect.Area > minRectCover || rectangle.Equals(lastRect))
+                    {
+                        // we need to call Buffer(0) to remove any possible degenerate parts from the intersection result
+                        remaining = remaining.Difference(bestRect).Buffer(0);
+                        coveredArea += bestArea;
+                        progress.Report(coveredArea / totalArea);
+                        yield return new Envelope(
+                            bestxmin - translationx,
+                            bestxmax - translationx, 
+                            bestymin - translationy,
+                            bestymax - translationy);
+                        break;
+                    }
+                }
+                token.ThrowIfCancellationRequested();
+            }
         }
     }
 }

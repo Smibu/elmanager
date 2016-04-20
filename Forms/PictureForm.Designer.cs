@@ -41,6 +41,12 @@
             this.DistanceBox = new System.Windows.Forms.TextBox();
             this.Label3 = new System.Windows.Forms.Label();
             this.ClippingComboBox = new System.Windows.Forms.ComboBox();
+            this.maskListBox = new System.Windows.Forms.CheckedListBox();
+            this.masksLabel = new System.Windows.Forms.Label();
+            this.minCoverLabel = new System.Windows.Forms.Label();
+            this.iterationsLabel = new System.Windows.Forms.Label();
+            this.iterationsTextBox = new Elmanager.CustomControls.IntTextBox();
+            this.minCoverTextBox = new Elmanager.CustomControls.NumericTextBox();
             ((System.ComponentModel.ISupportInitialize)(this.ImageBox)).BeginInit();
             this.Panel1.SuspendLayout();
             this.SuspendLayout();
@@ -48,7 +54,7 @@
             // OKButton
             // 
             this.OKButton.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
-            this.OKButton.Location = new System.Drawing.Point(12, 159);
+            this.OKButton.Location = new System.Drawing.Point(12, 264);
             this.OKButton.Name = "OKButton";
             this.OKButton.Size = new System.Drawing.Size(75, 23);
             this.OKButton.TabIndex = 0;
@@ -60,7 +66,7 @@
             // 
             this.CButton.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
             this.CButton.DialogResult = System.Windows.Forms.DialogResult.Cancel;
-            this.CButton.Location = new System.Drawing.Point(93, 159);
+            this.CButton.Location = new System.Drawing.Point(93, 264);
             this.CButton.Name = "CButton";
             this.CButton.Size = new System.Drawing.Size(75, 23);
             this.CButton.TabIndex = 1;
@@ -184,13 +190,75 @@
             this.ClippingComboBox.Size = new System.Drawing.Size(121, 21);
             this.ClippingComboBox.TabIndex = 10;
             // 
+            // maskListBox
+            // 
+            this.maskListBox.CheckOnClick = true;
+            this.maskListBox.FormattingEnabled = true;
+            this.maskListBox.Location = new System.Drawing.Point(82, 150);
+            this.maskListBox.Name = "maskListBox";
+            this.maskListBox.Size = new System.Drawing.Size(121, 49);
+            this.maskListBox.TabIndex = 11;
+            // 
+            // masksLabel
+            // 
+            this.masksLabel.AutoSize = true;
+            this.masksLabel.Location = new System.Drawing.Point(35, 150);
+            this.masksLabel.Name = "masksLabel";
+            this.masksLabel.Size = new System.Drawing.Size(38, 13);
+            this.masksLabel.TabIndex = 12;
+            this.masksLabel.Text = "Masks";
+            // 
+            // minCoverLabel
+            // 
+            this.minCoverLabel.AutoSize = true;
+            this.minCoverLabel.Location = new System.Drawing.Point(11, 208);
+            this.minCoverLabel.Name = "minCoverLabel";
+            this.minCoverLabel.Size = new System.Drawing.Size(65, 13);
+            this.minCoverLabel.TabIndex = 14;
+            this.minCoverLabel.Text = "Min cover %";
+            // 
+            // iterationsLabel
+            // 
+            this.iterationsLabel.AutoSize = true;
+            this.iterationsLabel.Location = new System.Drawing.Point(23, 234);
+            this.iterationsLabel.Name = "iterationsLabel";
+            this.iterationsLabel.Size = new System.Drawing.Size(50, 13);
+            this.iterationsLabel.TabIndex = 16;
+            this.iterationsLabel.Text = "Iterations";
+            // 
+            // iterationsTextBox
+            // 
+            this.iterationsTextBox.BackColor = System.Drawing.SystemColors.Window;
+            this.iterationsTextBox.DefaultValue = 0;
+            this.iterationsTextBox.Location = new System.Drawing.Point(82, 231);
+            this.iterationsTextBox.Name = "iterationsTextBox";
+            this.iterationsTextBox.Size = new System.Drawing.Size(121, 20);
+            this.iterationsTextBox.TabIndex = 18;
+            this.iterationsTextBox.Text = "2";
+            // 
+            // minCoverTextBox
+            // 
+            this.minCoverTextBox.BackColor = System.Drawing.SystemColors.Window;
+            this.minCoverTextBox.DefaultValue = 0D;
+            this.minCoverTextBox.Location = new System.Drawing.Point(82, 205);
+            this.minCoverTextBox.Name = "minCoverTextBox";
+            this.minCoverTextBox.Size = new System.Drawing.Size(121, 20);
+            this.minCoverTextBox.TabIndex = 17;
+            this.minCoverTextBox.Text = "33";
+            // 
             // PictureForm
             // 
             this.AcceptButton = this.OKButton;
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.CancelButton = this.CButton;
-            this.ClientSize = new System.Drawing.Size(383, 194);
+            this.ClientSize = new System.Drawing.Size(383, 299);
+            this.Controls.Add(this.iterationsTextBox);
+            this.Controls.Add(this.minCoverTextBox);
+            this.Controls.Add(this.iterationsLabel);
+            this.Controls.Add(this.minCoverLabel);
+            this.Controls.Add(this.masksLabel);
+            this.Controls.Add(this.maskListBox);
             this.Controls.Add(this.ClippingComboBox);
             this.Controls.Add(this.Label3);
             this.Controls.Add(this.DistanceBox);
@@ -232,6 +300,12 @@
 		internal System.Windows.Forms.TextBox DistanceBox;
 		internal System.Windows.Forms.Label Label3;
 		internal System.Windows.Forms.ComboBox ClippingComboBox;
-	}
+        private System.Windows.Forms.CheckedListBox maskListBox;
+        internal System.Windows.Forms.Label masksLabel;
+        internal System.Windows.Forms.Label minCoverLabel;
+        internal System.Windows.Forms.Label iterationsLabel;
+        private CustomControls.NumericTextBox minCoverTextBox;
+        private CustomControls.IntTextBox iterationsTextBox;
+    }
 	
 }

@@ -201,14 +201,14 @@ namespace Elmanager.EditorTools
                 var polygon = union as IPolygon;
                 if (polygon != null)
                 {
-                    polys.AddRange(polygon.ToPolygons());
+                    polys.AddRange(polygon.ToElmaPolygons());
                 }
                 else
                 {
                     var multiPolygon = union as IMultiPolygon;
                     if (multiPolygon != null)
                     {
-                        polys.AddRange(multiPolygon.Geometries.Select(geometry => geometry as IPolygon).SelectMany(poly => poly.ToPolygons()));
+                        polys.AddRange(multiPolygon.Geometries.Select(geometry => geometry as IPolygon).SelectMany(poly => poly.ToElmaPolygons()));
                     }
                 }
                 polys.ForEach(p => p.MarkVectorsAs(Geometry.VectorMark.Selected));

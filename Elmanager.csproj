@@ -12,7 +12,7 @@
     <AssemblyName>Elmanager</AssemblyName>
     <FileAlignment>512</FileAlignment>
     <MyType>WindowsFormsWithCustomSubMain</MyType>
-    <TargetFrameworkVersion>v4.0</TargetFrameworkVersion>
+    <TargetFrameworkVersion>v4.5</TargetFrameworkVersion>
     <OptionExplicit>On</OptionExplicit>
     <OptionCompare>Binary</OptionCompare>
     <OptionStrict>On</OptionStrict>
@@ -63,6 +63,7 @@
     <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
     <UseVSHostingProcess>false</UseVSHostingProcess>
     <DefineConstants>DEBUG</DefineConstants>
+    <Prefer32Bit>false</Prefer32Bit>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
     <DebugType>None</DebugType>
@@ -78,6 +79,7 @@
     <CodeAnalysisRuleSet>AllRules.ruleset</CodeAnalysisRuleSet>
     <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
     <UseVSHostingProcess>false</UseVSHostingProcess>
+    <Prefer32Bit>false</Prefer32Bit>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Debug|x86'">
     <DebugSymbols>true</DebugSymbols>
@@ -99,6 +101,7 @@
     <RemoveIntegerChecks>true</RemoveIntegerChecks>
     <UseVSHostingProcess>true</UseVSHostingProcess>
     <DefineDebug>true</DefineDebug>
+    <Prefer32Bit>false</Prefer32Bit>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Release|x86'">
     <OutputPath>..\</OutputPath>
@@ -119,6 +122,7 @@
     <RunCodeAnalysis>false</RunCodeAnalysis>
     <RemoveIntegerChecks>true</RemoveIntegerChecks>
     <DebugSymbols>true</DebugSymbols>
+    <Prefer32Bit>false</Prefer32Bit>
   </PropertyGroup>
   <PropertyGroup>
     <AssemblyOriginatorKeyFile>
@@ -129,17 +133,17 @@
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="GeoAPI, Version=1.7.4.0, Culture=neutral, PublicKeyToken=a1a0da7def465678, processorArchitecture=MSIL">
-      <HintPath>packages\GeoAPI.1.7.4\lib\net40-client\GeoAPI.dll</HintPath>
+      <HintPath>packages\GeoAPI.1.7.4\lib\net45\GeoAPI.dll</HintPath>
       <Private>True</Private>
     </Reference>
     <Reference Include="Microsoft.VisualBasic" />
     <Reference Include="mscorlib" />
     <Reference Include="NetTopologySuite, Version=1.14.0.0, Culture=neutral, PublicKeyToken=f580a05016ebada1, processorArchitecture=MSIL">
-      <HintPath>packages\NetTopologySuite.1.14\lib\net40-client\NetTopologySuite.dll</HintPath>
+      <HintPath>packages\NetTopologySuite.1.14\lib\net45\NetTopologySuite.dll</HintPath>
       <Private>True</Private>
     </Reference>
     <Reference Include="Newtonsoft.Json, Version=8.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
-      <HintPath>packages\Newtonsoft.Json.8.0.1\lib\net40\Newtonsoft.Json.dll</HintPath>
+      <HintPath>packages\Newtonsoft.Json.8.0.1\lib\net45\Newtonsoft.Json.dll</HintPath>
       <Private>True</Private>
     </Reference>
     <Reference Include="ObjectListView, Version=2.8.1.33936, Culture=neutral, PublicKeyToken=b1c5bf581481bcd4, processorArchitecture=MSIL">
@@ -151,7 +155,7 @@
       <HintPath>packages\OpenTK.1.1.1589.5942\lib\NET40\OpenTK.dll</HintPath>
     </Reference>
     <Reference Include="PowerCollections, Version=1.0.0.0, Culture=neutral, PublicKeyToken=2573bf8a1bdddcd5, processorArchitecture=MSIL">
-      <HintPath>packages\NetTopologySuite.1.14\lib\net40-client\PowerCollections.dll</HintPath>
+      <HintPath>packages\NetTopologySuite.1.14\lib\net45\PowerCollections.dll</HintPath>
       <Private>True</Private>
     </Reference>
     <Reference Include="PresentationCore">
@@ -161,9 +165,11 @@
     <Reference Include="System.Core">
       <RequiredTargetFramework>3.5</RequiredTargetFramework>
     </Reference>
+    <Reference Include="System.Data" />
     <Reference Include="System.Design" />
     <Reference Include="System.Drawing" />
     <Reference Include="System.Windows.Forms" />
+    <Reference Include="System.Xml" />
     <Reference Include="WindowsBase">
       <Private>False</Private>
     </Reference>
@@ -172,6 +178,12 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="CustomControls\FontDialogMod.cs">
+      <SubType>Component</SubType>
+    </Compile>
+    <Compile Include="CustomControls\IntTextBox.cs">
+      <SubType>Component</SubType>
+    </Compile>
+    <Compile Include="CustomControls\ToolStripMenuItemMod.cs">
       <SubType>Component</SubType>
     </Compile>
     <Compile Include="EditorTools\TextTool.cs" />
@@ -259,6 +271,12 @@
     </Compile>
     <Compile Include="Forms\PictureForm.Designer.cs">
       <DependentUpon>PictureForm.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Forms\ProgressDialog.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Forms\ProgressDialog.Designer.cs">
+      <DependentUpon>ProgressDialog.cs</DependentUpon>
     </Compile>
     <Compile Include="Forms\TextToolForm.cs">
       <SubType>Form</SubType>
@@ -368,6 +386,9 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Forms\PictureForm.resx">
       <DependentUpon>PictureForm.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Forms\ProgressDialog.resx">
+      <DependentUpon>ProgressDialog.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="Forms\TextToolForm.resx">
       <DependentUpon>TextToolForm.cs</DependentUpon>

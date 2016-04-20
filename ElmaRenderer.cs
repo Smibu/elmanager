@@ -2071,6 +2071,46 @@ namespace Elmanager
             {
                 get { return Width / Height; }
             }
+
+            internal double WidthMinusMargin => Width - 2*EmptyPixelXMargin;
+
+            internal double HeightMinusMargin => Height - 2 * EmptyPixelYMargin;
+
+            internal double EmptyPixelXMargin
+            {
+                get
+                {
+                    switch (Name)
+                    {
+                        case "maskhor":
+                            return 0.029;
+                        case "masklitt":
+                            return 0.015;
+                        case "maskbig":
+                            return 0.092;
+                        default:
+                            throw new Exception("Unknown mask.");
+                    }
+                }
+            }
+
+            internal double EmptyPixelYMargin
+            {
+                get
+                {
+                    switch (Name)
+                    {
+                        case "maskhor":
+                            return 0.029;
+                        case "masklitt":
+                            return 0.015;
+                        case "maskbig":
+                            return 0.112;
+                        default:
+                            throw new Exception("Unknown mask.");
+                    }
+                }
+            }
         }
 
         internal class Suspension

@@ -4,12 +4,13 @@ using System.ComponentModel;
 using System.Drawing;
 using System.IO;
 using System.Linq;
+using System.Threading;
+using System.Threading.Tasks;
 using System.Windows.Forms;
 using System.Windows.Input;
 using Elmanager.CustomControls;
 using Elmanager.EditorTools;
 using GeoAPI.Geometries;
-using NetTopologySuite.Geometries;
 using Cursor = System.Windows.Forms.Cursor;
 using Cursors = System.Windows.Forms.Cursors;
 using KeyEventArgs = System.Windows.Forms.KeyEventArgs;
@@ -838,6 +839,9 @@ namespace Elmanager.Forms
             CurrentTool.KeyDown(e);
             switch (e.KeyCode)
             {
+                case Keys.Oem5:
+                    TexturizeSelection();
+                    break;
                 case Keys.Up:
                 case Keys.Down:
                 case Keys.Left:
@@ -874,6 +878,53 @@ namespace Elmanager.Forms
                     PolyOpTool.PolyOpSelected(PolygonOperationType.SymmetricDifference, Lev.Polygons, SetModifiedAndRender);
                     break;
             }
+        }
+
+        private async void TexturizeSelection()
+        {
+            PicForm.AutoTextureMode = true;
+            PicForm.AllowMultiple = false;
+            PicForm.ShowDialog();
+            if (!PicForm.OkButtonPressed)
+            {
+                return;
+            }
+            var masks = PicForm.SelectedMasks.Select(x => Renderer.DrawableImageFromName(x.Name)).ToList();
+            var texture = Renderer.DrawableImages.First(i => i.Type == Lgr.ImageType.Texture && i.Name == PicForm.Texture.Name);
+            var rects = masks
+                .Select(i => new Envelope(0, i.WidthMinusMargin, 0, i.HeightMinusMargin));
+            var selected = Lev.Polygons.GetSelectedPolygonsAsMultiPolygon();
+            var src = new CancellationTokenSource();
+
+            var progress = new Progress<double>();
+            var task = Task.Run(() => selected.FindCovering(rects, src.Token, progress, iterations: PicForm.IterationCount,
+                minRectCover: PicForm.MinCoverPercentage/100).ToList(), src.Token);
+
+            var progressForm = new ProgressDialog(task, src, progress);
+            BeginInvoke(new Action(()=> { progressForm.ShowDialog(); }));
+            List<Envelope> covering;
+            try
+            {
+                covering = await task;
+            }
+            catch (PolygonException e)
+            {
+                Utils.ShowError(e.Message);
+                return;
+            }
+            catch (OperationCanceledException)
+            {
+                return;
+            }
+            var selmasks =
+                covering.Select(env => masks.First(m => Math.Abs(m.WidthMinusMargin*m.HeightMinusMargin - env.Area) < 0.001));
+            var pics = selmasks.Zip(covering,
+                (m, c) =>
+                    new Level.Picture(PicForm.Clipping, PicForm.Distance,
+                        new Vector(c.MinX - m.EmptyPixelXMargin, c.MinY - m.EmptyPixelYMargin), texture, m));
+            Lev.Pictures.AddRange(pics);
+            Modified = true;
+            Renderer.RedrawScene();
         }
 
         private void SetModifiedAndRender()
@@ -1186,7 +1237,8 @@ namespace Elmanager.Forms
                 selectedPics = new List<Level.Picture> {Lev.Pictures[_selectedPictureIndex]};
                 PicForm.SelectTexture(Lev.Pictures[_selectedPictureIndex]);    
             }
-            
+
+            PicForm.AutoTextureMode = false;
             PicForm.ShowDialog();
             if (PicForm.OkButtonPressed)
             {
@@ -1839,6 +1891,7 @@ namespace Elmanager.Forms
             {
                 // handle picture
                 PicForm.AllowMultiple = false;
+                PicForm.AutoTextureMode = false;
                 PicForm.ShowDialog();
                 if (PicForm.OkButtonPressed)
                 {
@@ -2004,6 +2057,11 @@ namespace Elmanager.Forms
         private void symmetricDifferenceToolStripMenuItem_Click(object sender, EventArgs e)
         {
             PolyOpTool.PolyOpSelected(PolygonOperationType.SymmetricDifference, Lev.Polygons, SetModifiedAndRender);
+        }
+
+        private void texturizeMenuItem_Click(object sender, EventArgs e)
+        {
+            TexturizeSelection();
         }
     }
 }

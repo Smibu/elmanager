@@ -100,6 +100,7 @@ namespace Elmanager.EditorTools
         {
             LevEditor.PicForm.Location = Control.MousePosition;
             LevEditor.PicForm.AllowMultiple = false;
+            LevEditor.PicForm.AutoTextureMode = false;
             LevEditor.PicForm.ShowDialog();
             if (LevEditor.PicForm.OkButtonPressed)
             {

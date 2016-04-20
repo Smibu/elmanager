@@ -4,7 +4,9 @@ using System.Linq;
 using System.Windows.Forms;
 using Elmanager.Forms;
 using GeoAPI.Geometries;
+using GeoAPI.Operation.Buffer;
 using NetTopologySuite.Geometries;
+using NetTopologySuite.Operation.Buffer;
 
 namespace Elmanager.EditorTools
 {
@@ -168,14 +170,9 @@ namespace Elmanager.EditorTools
 
         public static void PolyOpSelected(PolygonOperationType opType, List<Polygon> polygons, Action ifChanged = null)
         {
-            var polys = polygons.Where(p => !p.IsGrass && p.Vertices.Any(v => v.Mark == Geometry.VectorMark.Selected)).ToList();
-            if (!polys.Any())
-            {
-                return;
-            }
-            var multipoly = GeometryFactory.Floating.CreateMultiPolygon(polys.ToIPolygons().ToArray());
+            var polys = polygons.GetSelectedPolygons().ToList();
             Func<IGeometry, IGeometry, IGeometry> symDiff = (g, p) => p.SymmetricDifference(g);
-            var selection = multipoly.Geometries.Aggregate(symDiff);
+            var selection = polygons.GetSelectedPolygonsAsMultiPolygon();
             var touching = polygons.Where(p =>
             {
                 if (p.IsGrass)
@@ -214,7 +211,8 @@ namespace Elmanager.EditorTools
                         result = others.Intersection(selection);
                         break;
                     case PolygonOperationType.SymmetricDifference:
-                        result = others.SymmetricDifference(selection).Buffer(-0.000001);
+                        result = others.SymmetricDifference(selection)
+                            .Buffer(-0.000001, new BufferParameters(0, EndCapStyle.Flat, JoinStyle.Bevel, 1));
                         break;
                     default:
                         throw new Exception("Unknown operation type.");

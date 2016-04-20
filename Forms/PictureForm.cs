@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Drawing;
+using System.Linq;
 using System.Windows.Forms;
 
 namespace Elmanager.Forms
@@ -17,6 +18,7 @@ namespace Elmanager.Forms
         internal Lgr.LgrImage Texture;
         internal bool TextureSelected;
         private Lgr _currentLgr;
+        private bool _autoTextureMode;
 
         internal PictureForm(Lgr currentLgr)
         {
@@ -30,6 +32,37 @@ namespace Elmanager.Forms
             UpdatePictureLists();
             TextureButtonCheckedChanged();
         }
+
+        internal bool AutoTextureMode
+        {
+            get { return _autoTextureMode; }
+            set
+            {
+                masksLabel.Visible = value;
+                minCoverLabel.Visible = value;
+                iterationsLabel.Visible = value;
+                maskListBox.Visible = value;
+                minCoverTextBox.Visible = value;
+                iterationsTextBox.Visible = value;
+                MaskComboBox.Visible = !value;
+                Label1.Visible = !value;
+                if (value)
+                    TextureButton.Checked = true;
+                PictureButton.Enabled = !value;
+                _autoTextureMode = value;
+                UpdatePicture(ImageBox.Image);
+            }
+        }
+
+        internal IEnumerable<Lgr.LgrImage> SelectedMasks =>
+            maskListBox.CheckedItems.Cast<string>()
+                .Select(selectedItem => _currentLgr.ImageFromName(selectedItem.ToString()));
+
+        internal double MinCoverPercentage => minCoverTextBox.Value;
+
+        internal int IterationCount => iterationsTextBox.Value;
+
+        internal int MinHeight => AutoTextureMode ? 293 : 185;
 
         internal bool AllowMultiple { get; set; }
 
@@ -78,6 +111,7 @@ namespace Elmanager.Forms
             PictureComboBox.SelectedIndexChanged -= PictureComboBoxSelectedIndexChanged;
             TextureButton.CheckedChanged -= TextureButtonCheckedChanged;
             MaskComboBox.Items.Clear();
+            maskListBox.Items.Clear();
             PictureComboBox.Items.Clear();
             TextureComboBox.Items.Clear();
             ClippingComboBox.Items.Clear();
@@ -92,6 +126,7 @@ namespace Elmanager.Forms
                     {
                         case Lgr.ImageType.Mask:
                             MaskComboBox.Items.Add(x.Name);
+                            maskListBox.Items.Add(x.Name, true);
                             break;
                         case Lgr.ImageType.Picture:
                             PictureComboBox.Items.Add(x.Name);
@@ -295,8 +330,7 @@ namespace Elmanager.Forms
             ImageBox.Image = bmp;
             ImageBox.Width = bmp.Width;
             ImageBox.Height = bmp.Height;
-            Width = ImageBox.Location.X + bmp.Width + 20;
-            Height = Math.Max(ImageBox.Location.Y + bmp.Height + 40, 218);
+            SetClientSizeCore(ImageBox.Location.X + bmp.Width + 5, Math.Max(ImageBox.Location.Y + bmp.Height, MinHeight) + 5);
         }
 
         private void PreventClose(object sender, CancelEventArgs e)
@@ -316,6 +350,24 @@ namespace Elmanager.Forms
             OkButtonPressed = sender.Equals(OKButton);
             if (OkButtonPressed)
             {
+                if (AutoTextureMode)
+                {
+                    if (maskListBox.CheckedItems.Count == 0)
+                    {
+                        Utils.ShowError("You have to select at least one mask.");
+                        return;
+                    }
+                    if (IterationCount <= 0)
+                    {
+                        Utils.ShowError("Iteration count must be at least 1.");
+                        return;
+                    }
+                    if (MinCoverPercentage <= 0 || MinCoverPercentage > 100)
+                    {
+                        Utils.ShowError("Min cover % must be greater than 0 and less than or equal to 100.");
+                        return;
+                    }
+                }
                 TextureSelected = TextureButton.Checked;
                 if (!AllowMultiple)
                 {
