@@ -882,6 +882,12 @@ namespace Elmanager.Forms
 
         private async void TexturizeSelection()
         {
+            var selected = Lev.Polygons.GetSelectedPolygonsAsMultiPolygon();
+            if (selected.IsEmpty)
+            {
+                return;
+            }
+
             PicForm.AutoTextureMode = true;
             PicForm.AllowMultiple = false;
             PicForm.ShowDialog();
@@ -893,7 +899,7 @@ namespace Elmanager.Forms
             var texture = Renderer.DrawableImages.First(i => i.Type == Lgr.ImageType.Texture && i.Name == PicForm.Texture.Name);
             var rects = masks
                 .Select(i => new Envelope(0, i.WidthMinusMargin, 0, i.HeightMinusMargin));
-            var selected = Lev.Polygons.GetSelectedPolygonsAsMultiPolygon();
+            
             var src = new CancellationTokenSource();
 
             var progress = new Progress<double>();
