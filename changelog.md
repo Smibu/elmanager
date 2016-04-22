@@ -1,5 +1,14 @@
 # Elmanager changelog
 
+## 22.4.2016
+* SLE: Added a function to automatically texturize the selected polygons.
+* SLE: Improved support for polygon operations.
+* SLE: Vertex tool: The length of the current edge is shown.
+* SLE: Improved the display of error message about non-existent level.
+* SLE: Bugfix: Polygon operation tool could cause SLE to freeze.
+* SLE: Bugfix: Cut tool could cause SLE to freeze.
+* Updated to .NET Framework 4.5 (from 4). If you have Windows 8 or newer, you don't have to install it. People with Vista or 7 can download it [here](https://download.microsoft.com/download/E/2/1/E21644B5-2DF2-47C2-91BD-63C560427900/NDP452-KB2901907-x86-x64-AllOS-ENU.exe).
+
 ## 7.3.2016
 * SLE: Copy function now respects the current zoom level. To get the old behavior (copy and snap to grid), press Ctrl+Shift+C.
 * SLE: Bugfix: Tool pane lost focus after changing ground or sky texture.
