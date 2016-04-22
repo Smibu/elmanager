@@ -238,6 +238,12 @@ namespace Elmanager.EditorTools
             {
                 polygons.AddRange((result as IPolygon).ToElmaPolygons());
             }
+            if (!polygons.Any())
+            {
+                Utils.ShowError("The level would become empty after this operation.");
+                polygons.AddRange(polys);
+                polygons.AddRange(touching);
+            }
             ifChanged?.Invoke();
         }
     }
