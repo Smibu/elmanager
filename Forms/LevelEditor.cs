@@ -11,6 +11,7 @@ using System.Windows.Input;
 using Elmanager.CustomControls;
 using Elmanager.EditorTools;
 using GeoAPI.Geometries;
+using Microsoft;
 using Cursor = System.Windows.Forms.Cursor;
 using Cursors = System.Windows.Forms.Cursors;
 using KeyEventArgs = System.Windows.Forms.KeyEventArgs;
@@ -908,7 +909,7 @@ namespace Elmanager.Forms
             var src = new CancellationTokenSource();
 
             var progress = new Progress<double>();
-            var task = Task.Run(() => selected.FindCovering(rects, src.Token, progress, iterations: PicForm.IterationCount,
+            var task = Task.Factory.StartNew(() => selected.FindCovering(rects, src.Token, progress, iterations: PicForm.IterationCount,
                 minRectCover: PicForm.MinCoverPercentage/100).ToList(), src.Token);
 
             var progressForm = new ProgressDialog(task, src, progress);
