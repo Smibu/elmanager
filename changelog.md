@@ -1,5 +1,9 @@
 # Elmanager changelog
 
+## 24.4.2016
+* SLE: Bugfix: Texturize function would crash if there was no LGR file selected.
+* Downgraded to .NET Framework 4 to keep Windows XP supported.
+
 ## 22.4.2016
 * SLE: Added a function to automatically texturize the selected polygons.
 * SLE: Improved support for polygon operations.
