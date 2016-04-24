@@ -882,6 +882,11 @@ namespace Elmanager.Forms
 
         private async void TexturizeSelection()
         {
+            if (!_pictureToolAvailable)
+            {
+                Utils.ShowError("You need to select LGR file from settings before you can use texturize tool.", "Note", MessageBoxIcon.Information);
+                return;
+            }
             var selected = Lev.Polygons.GetSelectedPolygonsAsMultiPolygon();
             if (selected.IsEmpty)
             {
