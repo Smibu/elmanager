@@ -65,6 +65,10 @@ namespace Elmanager
         private int _randomNumber;
         private List<LevelFileTexture> _textureData = new List<LevelFileTexture>();
         private string _title = "New level";
+        private double polygonXMin;
+        private double polygonYMin;
+        private double polygonXMax;
+        private double polygonYMax;
 
         internal Level()
         {
@@ -339,7 +343,7 @@ namespace Elmanager
             get
             {
                 return HasTooLargePolygons || HasTooManyObjects || HasTooManyPolygons || HasTooManyVertices || HasTooManyPictures ||
-                       HeadTouchesGround || TooTall || TooWide || GetIntersectionPoints().Count > 0;
+                       WheelLiesOnEdge || HasTexturesOutOfBounds || HeadTouchesGround || TooTall || TooWide || GetIntersectionPoints().Count > 0;
             }
         }
 
@@ -355,6 +359,30 @@ namespace Elmanager
                         new Vector(x.Position.X + HeadDifferenceFromLeftWheelX,
                             x.Position.Y + HeadDifferenceFromLeftWheelY)).FirstOrDefault();
                 return Polygons.Where(poly => !poly.IsGrass).Any(x => x.DistanceFromPoint(head) < Constants.HeadRadius);
+            }
+        }
+
+        internal bool WheelLiesOnEdge
+        {
+            get
+            {
+                Vector leftWheel = Objects.First(x => x.Type == ObjectType.Start).Position;
+                Vector rightWheel = new Vector(leftWheel.X + RightWheelDifferenceFromLeftWheelX, leftWheel.Y);
+                const double wheelTolerance = 1e-6;
+                return Polygons.Where(poly => !poly.IsGrass).Any(x => x.DistanceFromPoint(leftWheel) < wheelTolerance || x.DistanceFromPoint(rightWheel) < wheelTolerance);
+            }
+        }
+
+        internal bool HasTexturesOutOfBounds
+        {
+            get
+            {
+                double padding = 11.898;
+                return Pictures.Where(p => !p.IsPicture).Any(p => 
+                p.Position.X < polygonXMin - padding ||
+                p.Position.X > polygonXMax + padding ||
+                p.Position.Y < polygonYMin - padding ||
+                p.Position.Y > polygonYMax + padding);
             }
         }
 
@@ -699,6 +727,10 @@ namespace Elmanager
                 YMax = Math.Max(YMax, x.YMax);
                 YMin = Math.Min(YMin, x.YMin);
             }
+            polygonXMin = XMin;
+            polygonYMin = YMin;
+            polygonXMax = XMax;
+            polygonYMax = YMax;
             foreach (Object x in Objects)
             {
                 XMin = Math.Min(XMin, x.Position.X);

@@ -354,6 +354,10 @@ namespace Elmanager.Forms
                               Level.MaximumPictureTextureCount);
                 if (Lev.HeadTouchesGround)
                     items.Add("The driver\'s head is touching ground.");
+                if (Lev.WheelLiesOnEdge)
+                    items.Add("The driver\'s wheel is lying on an edge.");
+                if (Lev.HasTexturesOutOfBounds)
+                    items.Add("Some textures are too far outside of the level polygons.");
 
                 _errorPoints = Lev.GetIntersectionPoints();
                 if (_errorPoints.Count > 0)
