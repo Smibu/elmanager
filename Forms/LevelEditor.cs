@@ -720,9 +720,17 @@ namespace Elmanager.Forms
 
         private void HandleGrassMenu(object sender, EventArgs e)
         {
-            ToolBase.NearestPolygon.IsGrass = GrassMenuItem.Checked;
+            var polys = Lev.Polygons.GetSelectedPolygons(includeGrass: true).ToList();
+            if (!polys.Any())
+            {
+                polys.Add(ToolBase.NearestPolygon);
+            }
+            polys.ForEach(p =>
+            {
+                p.IsGrass = !p.IsGrass;
+                p.UpdateDecomposition();
+            });
             Modified = true;
-            ToolBase.NearestPolygon.UpdateDecomposition();
             Renderer.RedrawScene();
         }
 
@@ -1081,7 +1089,6 @@ namespace Elmanager.Forms
                         }
                         if (nearestVertexIndex >= -1)
                         {
-                            GrassMenuItem.Checked = ToolBase.NearestPolygon.IsGrass;
                             GrassMenuItem.Visible = true;
                         }
                         _selectedPictureIndex = nearestPictureIndex;

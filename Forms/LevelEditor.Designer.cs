@@ -1306,10 +1306,9 @@ namespace Elmanager.Forms
             // 
             // GrassMenuItem
             // 
-            this.GrassMenuItem.CheckOnClick = true;
             this.GrassMenuItem.Name = "GrassMenuItem";
             this.GrassMenuItem.Size = new System.Drawing.Size(167, 22);
-            this.GrassMenuItem.Text = "Grass";
+            this.GrassMenuItem.Text = "Toggle grass";
             this.GrassMenuItem.Click += new System.EventHandler(this.HandleGrassMenu);
             // 
             // GravityNoneMenuItem

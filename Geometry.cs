@@ -412,9 +412,9 @@ namespace Elmanager
             return isects;
         }
 
-        internal static IEnumerable<Polygon> GetSelectedPolygons(this IEnumerable<Polygon> polys)
+        internal static IEnumerable<Polygon> GetSelectedPolygons(this IEnumerable<Polygon> polys, bool includeGrass = false)
         {
-            return polys.Where(p => !p.IsGrass && p.Vertices.Any(v => v.Mark == Geometry.VectorMark.Selected));
+            return polys.Where(p => (includeGrass || !p.IsGrass) && p.Vertices.Any(v => v.Mark == Geometry.VectorMark.Selected));
         }
 
         internal static IGeometry GetSelectedPolygonsAsMultiPolygon(this IEnumerable<Polygon> px)
