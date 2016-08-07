@@ -4,6 +4,7 @@ using System.ComponentModel;
 using System.Drawing;
 using System.IO;
 using System.Linq;
+using System.Text.RegularExpressions;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Windows.Forms;
@@ -1813,6 +1814,7 @@ namespace Elmanager.Forms
         {
             int width = TextRenderer.MeasureText(TitleBox.Text, TitleBox.Font).Width;
             TitleBox.Width = Math.Max(width, 120);
+            TitleBox.BackColor = Regex.IsMatch(TitleBox.Text, "[^a-zA-Z0-9!\"%&/()=?`^*-_,.;:<>\\[\\]+]") ? Color.Red : Color.White;
         }
 
         public void PreserveSelection()
