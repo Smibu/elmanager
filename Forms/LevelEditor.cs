@@ -1818,7 +1818,7 @@ namespace Elmanager.Forms
         {
             int width = TextRenderer.MeasureText(TitleBox.Text, TitleBox.Font).Width;
             TitleBox.Width = Math.Max(width + 5, 120);
-            TitleBox.BackColor = Regex.IsMatch(TitleBox.Text, "[^a-zA-Z0-9!\"%&/()=?`^*-_,.;:<>\\[\\]+]") ? Color.Red : Color.White;
+            TitleBox.BackColor = Regex.IsMatch(TitleBox.Text, "[^a-zA-Z0-9!\"%&/()=?`^*-_,.;:<>\\[\\]+ ]") ? Color.Red : Color.White;
         }
 
         public void PreserveSelection()
