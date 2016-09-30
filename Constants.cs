@@ -15,6 +15,8 @@ namespace Elmanager
         internal const Keys Increase = Keys.Oemplus;
         internal const Keys IncreaseBig = Keys.PageUp;
         internal const string LevExtension = ".lev";
+        internal const string LebExtension = ".leb";
+        internal static readonly string[] LevLebExtensions = {LevExtension, LebExtension};
 
         internal const string LevOrRecDirNotFound =
             "Replay or level directory are not specified or they doesn\'t exist!";

@@ -77,13 +77,15 @@ namespace Elmanager.Forms
         {
             try
             {
-                Lev = new Level();
-                Lev.LoadFromPath(levPath);
+                var lev = new Level();
+                lev.LoadFromPath(levPath);
+                Lev = lev;
                 _fromScratch = false;
             }
             catch (LevelException ex)
             {
-                Utils.ShowError("Error occurred while parsing level file: " + ex.Message, "Warning", MessageBoxIcon.Exclamation);
+                Utils.ShowError("Error occurred while loading level file: " + ex.Message, "Warning", MessageBoxIcon.Exclamation);
+                SetBlankLevel();
             }
             catch (FileNotFoundException)
             {
@@ -1657,7 +1659,7 @@ namespace Elmanager.Forms
         {
             string filePath = ((Array) (e.Data.GetData(DataFormats.FileDrop))).GetValue(0).ToString();
             if (File.Exists(filePath))
-                if (Path.GetExtension(filePath).CompareWith(Constants.LevExtension))
+                if (Constants.LevLebExtensions.Any(ext => Path.GetExtension(filePath).CompareWith(ext)))
                     e.Effect = DragDropEffects.Copy;
         }
 
@@ -1705,7 +1707,8 @@ namespace Elmanager.Forms
             }
             if (force || _currLevDirFiles == null || _loadedLevFilesDir != levDir)
             {
-                _currLevDirFiles = Directory.GetFiles(levDir, "*.lev", SearchOption.TopDirectoryOnly).ToList();
+                _currLevDirFiles = Directory.GetFiles(levDir, "*.*", SearchOption.TopDirectoryOnly)
+                    .Where(s => s.EndsWith(Constants.LevExtension, StringComparison.OrdinalIgnoreCase) || s.EndsWith(Constants.LebExtension, StringComparison.OrdinalIgnoreCase)).ToList();
                 _loadedLevFilesDir = levDir;
             }
         }

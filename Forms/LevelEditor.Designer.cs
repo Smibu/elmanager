@@ -655,7 +655,7 @@ namespace Elmanager.Forms
             // 
             // OpenFileDialog1
             // 
-            this.OpenFileDialog1.Filter = "Elasto Mania level (*.lev)|*.lev";
+            this.OpenFileDialog1.Filter = "Elasto Mania level (*.lev, *.leb)|*.lev;*.leb";
             // 
             // StatusStrip1
             // 

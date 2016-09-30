@@ -48,7 +48,7 @@ namespace Elmanager
             "Hang Tight", "Hooked", "Apple Harvest", "More Levels"
         };
 
-        internal bool AcrossLevel;
+        private bool _acrossLevel;
         internal bool AllPicturesFound = true;
         internal List<Object> Apples;
         internal string GroundTextureName = "ground";
@@ -69,6 +69,7 @@ namespace Elmanager
         private double polygonYMin;
         private double polygonXMax;
         private double polygonYMax;
+        private string identifier;
 
         internal Level()
         {
@@ -88,9 +89,14 @@ namespace Elmanager
             byte[] level = File.ReadAllBytes(levelPath);
             Path = levelPath;
             IsInternal = IsInternalLevel(_fileName);
-            AcrossLevel = level[3] == 48;
+            identifier = Encoding.UTF8.GetString(level, 0, 5);
+            if (!IsElmaLevel && !IsAcrossLevel && !IsLeb)
+            {
+                throw new LevelException("Unknown file type. This is neither an Elma level, an Across level nor a LEB file.");
+            }
+
             int sp = 7;
-            if (AcrossLevel)
+            if (IsAcrossLevel)
                 sp -= 2;
             _randomNumber = BitConverter.ToInt32(level, sp);
             sp += 4;
@@ -100,7 +106,7 @@ namespace Elmanager
                 sp += 8;
             }
             Title = Utils.ReadNullTerminatedString(level, sp, 60);
-            if (AcrossLevel)
+            if (IsAcrossLevel)
                 sp = 100;
             else
             {
@@ -114,12 +120,18 @@ namespace Elmanager
             }
             int polygonCount = (int) Math.Round(BitConverter.ToDouble(level, sp) - MagicDouble);
             sp += 8;
+            int objectCount = -1;
+            if (IsLeb)
+            {
+                objectCount = (int)Math.Round(BitConverter.ToDouble(level, sp) - MagicDouble);
+                sp += 8;
+            }
             bool isGrassPolygon = false;
             Polygons = new List<Polygon>();
             for (int i = 0; i < polygonCount; i++)
             {
                 int numVertice;
-                if (AcrossLevel)
+                if (IsAcrossLevel)
                 {
                     numVertice = level[sp] + 256 * level[sp + 1];
                     sp += 4;
@@ -141,8 +153,11 @@ namespace Elmanager
                 poly.IsGrass = isGrassPolygon;
                 Polygons.Add(poly);
             }
-            int objectCount = (int) Math.Round(BitConverter.ToDouble(level, sp) - MagicDouble);
-            sp += 8;
+            if (!IsLeb)
+            {
+                objectCount = (int) Math.Round(BitConverter.ToDouble(level, sp) - MagicDouble);
+                sp += 8;
+            }
             Apples = new List<Object>();
             bool startFound = false;
             bool flowerFound = false;
@@ -161,7 +176,7 @@ namespace Elmanager
                 }
                 AppleTypes appleType = AppleTypes.Normal;
                 int animNum = 0;
-                if (!AcrossLevel)
+                if (!IsAcrossLevel)
                 {
                     appleType = (AppleTypes) (BitConverter.ToInt32(level, sp + 20));
                     animNum = BitConverter.ToInt32(level, sp + 24);
@@ -182,7 +197,7 @@ namespace Elmanager
             {
                 Objects.Add(new Object(new Vector(0, 0), ObjectType.Flower, AppleTypes.Normal));
             }
-            if (!AcrossLevel)
+            if (!IsAcrossLevel)
             {
                 int numberOfPicturesPlusTextures = (int) Math.Round(BitConverter.ToDouble(level, sp) - MagicDouble2);
                 sp += 8;
@@ -228,7 +243,7 @@ namespace Elmanager
             Path = lev.Path;
             _fileName = lev._fileName;
             IsInternal = lev.IsInternal;
-            AcrossLevel = lev.AcrossLevel;
+            identifier = lev.identifier;
             foreach (Object x in lev.Objects)
                 Objects.Add(x.Clone());
             foreach (Polygon x in lev.Polygons)
@@ -476,6 +491,12 @@ namespace Elmanager
                 return sum;
             }
         }
+
+        internal bool IsElmaLevel => identifier == "POT14";
+
+        internal bool IsAcrossLevel => identifier == "POT06";
+
+        internal bool IsLeb => identifier == "@@^!@";
 
         internal static string GetPossiblyInternal(string level)
         {
