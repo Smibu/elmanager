@@ -1,5 +1,15 @@
 # Elmanager changelog
 
+## 13.10.2016
+* SLE: Title box warns if title contains non-Elma-printable characters.
+* SLE: Added "Textures out of bounds" topology check.
+* SLE: Added "Wheel exactly on a line" topology check.
+* SLE: Clipping and distance are no longer changed when changing picture/texture image.
+* SLE: Added support for opening LEB files.
+* SLE: Bugfix: Changing apple animation number didn't cause level to be modified.
+* SLE: Bugfix: Crash would happen when level folder was moved.
+* SLE: Bugfix: It was not possible to convert multiple ground polygons to grass.
+
 ## 24.4.2016
 * SLE: Bugfix: Texturize function would crash if there was no LGR file selected.
 * Downgraded to .NET Framework 4 to keep Windows XP supported.
