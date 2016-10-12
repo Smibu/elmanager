@@ -48,7 +48,6 @@ namespace Elmanager
             "Hang Tight", "Hooked", "Apple Harvest", "More Levels"
         };
 
-        private bool _acrossLevel;
         internal bool AllPicturesFound = true;
         internal List<Object> Apples;
         internal string GroundTextureName = "ground";
