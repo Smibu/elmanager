@@ -171,6 +171,7 @@
             this.DistanceBox.Name = "DistanceBox";
             this.DistanceBox.Size = new System.Drawing.Size(121, 20);
             this.DistanceBox.TabIndex = 8;
+            this.DistanceBox.Text = "550";
             // 
             // Label3
             // 

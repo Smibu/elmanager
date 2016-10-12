@@ -118,6 +118,7 @@ namespace Elmanager.Forms
             ClippingComboBox.Items.Add("Unclipped");
             ClippingComboBox.Items.Add("Ground");
             ClippingComboBox.Items.Add("Sky");
+            ClippingComboBox.SelectedIndex = 0;
             foreach (Lgr.ListedImage x in _currentLgr.ListedImages)
             {
                 if (x.Name[0] != 'q')
@@ -264,14 +265,6 @@ namespace Elmanager.Forms
             if (PictureItemCount > 0 && !IsNothingSelected(PictureComboBox) && !IsMultipleSelected(PictureComboBox))
             {
                 Lgr.LgrImage selectedPicture = _currentLgr.ImageFromName(PictureComboBox.SelectedItem.ToString());
-                if (!MultipleDistanceSelected)
-                {
-                    DistanceBox.Text = selectedPicture.Distance.ToString();
-                }
-                if (!MultipleClippingSelected)
-                {
-                    ClippingComboBox.SelectedIndex = (int) (selectedPicture.ClippingType);
-                }
                 UpdatePicture(selectedPicture.Bmp);
             }
         }
@@ -291,14 +284,6 @@ namespace Elmanager.Forms
             if (TextureItemCount > 0 && !IsNothingSelected(TextureComboBox) && !IsMultipleSelected(TextureComboBox))
             {
                 Lgr.LgrImage selectedTexture = _currentLgr.ImageFromName(TextureComboBox.SelectedItem.ToString());
-                if (!MultipleDistanceSelected)
-                {
-                    DistanceBox.Text = selectedTexture.Distance.ToString();
-                }
-                if (!MultipleClippingSelected)
-                {
-                    ClippingComboBox.SelectedIndex = (int) (selectedTexture.ClippingType);
-                }
                 UpdatePicture(selectedTexture.Bmp);
             }
         }
