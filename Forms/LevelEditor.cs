@@ -87,7 +87,7 @@ namespace Elmanager.Forms
                 Utils.ShowError("Error occurred while loading level file: " + ex.Message, "Warning", MessageBoxIcon.Exclamation);
                 SetBlankLevel();
             }
-            catch (FileNotFoundException)
+            catch (Exception ex) when (ex is FileNotFoundException || ex is DirectoryNotFoundException)
             {
                 SetBlankLevel();
                 ShowWarning($"The last opened level {levPath} was not found.");
