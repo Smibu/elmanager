@@ -120,9 +120,14 @@ namespace Elmanager.EditorTools
 
         private void UpdateAnimNumbers(int animNum)
         {
-            Lev.Objects.Where(obj => obj.Type == Level.ObjectType.Apple && obj.Position.Mark == Geometry.VectorMark.Selected)
-                .ToList().ForEach(obj => obj.AnimationNumber = animNum);
+            var selected = Lev.Objects.Where(obj => obj.Type == Level.ObjectType.Apple && obj.Position.Mark == Geometry.VectorMark.Selected).ToList();
+            bool updated = selected.Any(obj => obj.AnimationNumber != animNum);
+            selected.ForEach(obj => obj.AnimationNumber = animNum);
             Renderer.RedrawScene();
+            if (updated)
+            {
+                LevEditor.Modified = true;
+            }
             ShowObjectInfo(GetNearestObjectIndex(CurrentPos));
         }
 
