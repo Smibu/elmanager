@@ -1,5 +1,9 @@
 # Elmanager changelog
 
+## 16.10.2016
+* SLE: Improved handling of default values in picture tool.
+* SLE: Bugfix: Picture tool close button click was sometimes being interpreted as OK button click.
+
 ## 13.10.2016
 * SLE: Title box warns if title contains non-Elma-printable characters.
 * SLE: Added "Textures out of bounds" topology check.
