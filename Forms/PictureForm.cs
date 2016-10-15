@@ -9,7 +9,7 @@ namespace Elmanager.Forms
 {
     partial class PictureForm
     {
-        private const string _multipleValues = "<multiple values>";
+        private const string _multipleValues = "<multiple>";
         internal Level.ClippingType Clipping;
         internal int Distance;
         internal Lgr.LgrImage Mask;
@@ -19,6 +19,7 @@ namespace Elmanager.Forms
         internal bool TextureSelected;
         private Lgr _currentLgr;
         private bool _autoTextureMode;
+        private bool _setDefaultsAutomatically;
 
         internal PictureForm(Lgr currentLgr)
         {
@@ -65,6 +66,19 @@ namespace Elmanager.Forms
         internal int MinHeight => AutoTextureMode ? 293 : 185;
 
         internal bool AllowMultiple { get; set; }
+
+        internal bool SetDefaultsAutomatically
+        {
+            get { return _setDefaultsAutomatically; }
+            set
+            {
+                _setDefaultsAutomatically = value;
+                if (value)
+                {
+                    SetDefaultDistanceAndClipping();
+                }
+            }
+        }
 
         internal bool MultiplePicturesSelected
         {
@@ -264,9 +278,18 @@ namespace Elmanager.Forms
         {
             if (PictureItemCount > 0 && !IsNothingSelected(PictureComboBox) && !IsMultipleSelected(PictureComboBox))
             {
-                Lgr.LgrImage selectedPicture = _currentLgr.ImageFromName(PictureComboBox.SelectedItem.ToString());
+                var selectedPicture = GetSelectedPicture();
+                if (SetDefaultsAutomatically)
+                {
+                    SetDefaultDistanceAndClipping();
+                }
                 UpdatePicture(selectedPicture.Bmp);
             }
+        }
+
+        private Lgr.LgrImage GetSelectedPicture()
+        {
+            return _currentLgr.ImageFromName(PictureComboBox.SelectedItem.ToString());
         }
 
         private bool IsNothingSelected(ComboBox comboBox)
@@ -283,9 +306,18 @@ namespace Elmanager.Forms
         {
             if (TextureItemCount > 0 && !IsNothingSelected(TextureComboBox) && !IsMultipleSelected(TextureComboBox))
             {
-                Lgr.LgrImage selectedTexture = _currentLgr.ImageFromName(TextureComboBox.SelectedItem.ToString());
+                var selectedTexture = GetSelectedTexture();
+                if (SetDefaultsAutomatically)
+                {
+                    SetDefaultDistanceAndClipping();
+                }
                 UpdatePicture(selectedTexture.Bmp);
             }
+        }
+
+        private Lgr.LgrImage GetSelectedTexture()
+        {
+            return _currentLgr.ImageFromName(TextureComboBox.SelectedItem.ToString());
         }
 
         private int TextureItemCount
@@ -421,6 +453,37 @@ namespace Elmanager.Forms
         private static void DistanceError()
         {
             Utils.ShowError("Distance is not valid! It must be an integer in range 1-999.");
+        }
+
+        private void DistanceBox_KeyPress(object sender, KeyPressEventArgs e)
+        {
+            SetDefaultsAutomatically = false;
+        }
+
+        private void ClippingComboBox_Click(object sender, EventArgs e)
+        {
+            SetDefaultsAutomatically = false;
+        }
+
+        private void ClippingComboBox_KeyPress(object sender, KeyPressEventArgs e)
+        {
+            SetDefaultsAutomatically = false;
+        }
+
+        private void SetDefaultsClicked(object sender, EventArgs e)
+        {
+            SetDefaultsAutomatically = true;
+        }
+
+        private void SetDefaultDistanceAndClipping()
+        {
+            var element = TextureButton.Checked ? GetSelectedTexture() : GetSelectedPicture();
+            // can be null if <multiple> option is selected
+            if (element != null)
+            {
+                DistanceBox.Text = element.Distance.ToString();
+                ClippingComboBox.SelectedIndex = (int)element.ClippingType;
+            }
         }
     }
 }

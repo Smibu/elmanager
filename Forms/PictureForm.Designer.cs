@@ -27,6 +27,7 @@
 		//Do not modify it using the code editor.
 		private void InitializeComponent()
 			{
+            this.components = new System.ComponentModel.Container();
             this.OKButton = new System.Windows.Forms.Button();
             this.CButton = new System.Windows.Forms.Button();
             this.ImageBox = new System.Windows.Forms.PictureBox();
@@ -47,6 +48,8 @@
             this.iterationsLabel = new System.Windows.Forms.Label();
             this.iterationsTextBox = new Elmanager.CustomControls.IntTextBox();
             this.minCoverTextBox = new Elmanager.CustomControls.NumericTextBox();
+            this.setDefaultsButton = new System.Windows.Forms.Button();
+            this.toolTip1 = new System.Windows.Forms.ToolTip(this.components);
             ((System.ComponentModel.ISupportInitialize)(this.ImageBox)).BeginInit();
             this.Panel1.SuspendLayout();
             this.SuspendLayout();
@@ -151,7 +154,7 @@
             this.MaskComboBox.FormattingEnabled = true;
             this.MaskComboBox.Location = new System.Drawing.Point(82, 70);
             this.MaskComboBox.Name = "MaskComboBox";
-            this.MaskComboBox.Size = new System.Drawing.Size(121, 21);
+            this.MaskComboBox.Size = new System.Drawing.Size(94, 21);
             this.MaskComboBox.Sorted = true;
             this.MaskComboBox.TabIndex = 6;
             // 
@@ -169,9 +172,10 @@
             this.DistanceBox.Location = new System.Drawing.Point(82, 97);
             this.DistanceBox.MaxLength = 20;
             this.DistanceBox.Name = "DistanceBox";
-            this.DistanceBox.Size = new System.Drawing.Size(121, 20);
+            this.DistanceBox.Size = new System.Drawing.Size(94, 20);
             this.DistanceBox.TabIndex = 8;
             this.DistanceBox.Text = "550";
+            this.DistanceBox.KeyPress += new System.Windows.Forms.KeyPressEventHandler(this.DistanceBox_KeyPress);
             // 
             // Label3
             // 
@@ -188,8 +192,10 @@
             this.ClippingComboBox.FormattingEnabled = true;
             this.ClippingComboBox.Location = new System.Drawing.Point(82, 123);
             this.ClippingComboBox.Name = "ClippingComboBox";
-            this.ClippingComboBox.Size = new System.Drawing.Size(121, 21);
+            this.ClippingComboBox.Size = new System.Drawing.Size(94, 21);
             this.ClippingComboBox.TabIndex = 10;
+            this.ClippingComboBox.Click += new System.EventHandler(this.ClippingComboBox_Click);
+            this.ClippingComboBox.KeyPress += new System.Windows.Forms.KeyPressEventHandler(this.ClippingComboBox_KeyPress);
             // 
             // maskListBox
             // 
@@ -247,6 +253,17 @@
             this.minCoverTextBox.TabIndex = 17;
             this.minCoverTextBox.Text = "33";
             // 
+            // setDefaultsButton
+            // 
+            this.setDefaultsButton.Location = new System.Drawing.Point(182, 97);
+            this.setDefaultsButton.Name = "setDefaultsButton";
+            this.setDefaultsButton.Size = new System.Drawing.Size(21, 47);
+            this.setDefaultsButton.TabIndex = 19;
+            this.setDefaultsButton.Text = "D";
+            this.toolTip1.SetToolTip(this.setDefaultsButton, "Set defaults to distance and clipping");
+            this.setDefaultsButton.UseVisualStyleBackColor = true;
+            this.setDefaultsButton.Click += new System.EventHandler(this.SetDefaultsClicked);
+            // 
             // PictureForm
             // 
             this.AcceptButton = this.OKButton;
@@ -254,6 +271,7 @@
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.CancelButton = this.CButton;
             this.ClientSize = new System.Drawing.Size(383, 299);
+            this.Controls.Add(this.setDefaultsButton);
             this.Controls.Add(this.iterationsTextBox);
             this.Controls.Add(this.minCoverTextBox);
             this.Controls.Add(this.iterationsLabel);
@@ -307,6 +325,8 @@
         internal System.Windows.Forms.Label iterationsLabel;
         private CustomControls.NumericTextBox minCoverTextBox;
         private CustomControls.IntTextBox iterationsTextBox;
+        private System.Windows.Forms.Button setDefaultsButton;
+        private System.Windows.Forms.ToolTip toolTip1;
     }
 	
 }

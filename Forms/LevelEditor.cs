@@ -911,6 +911,7 @@ namespace Elmanager.Forms
 
             PicForm.AutoTextureMode = true;
             PicForm.AllowMultiple = false;
+            PicForm.SetDefaultsAutomatically = true;
             PicForm.ShowDialog();
             if (!PicForm.OkButtonPressed)
             {
@@ -1252,6 +1253,7 @@ namespace Elmanager.Forms
         private void PicturePropertiesToolStripMenuItemClick(object sender, EventArgs e)
         {
             var selectedPics = Lev.Pictures.Where(p => p.Position.Mark == Geometry.VectorMark.Selected).ToList();
+            PicForm.SetDefaultsAutomatically = false;
             if (selectedPics.Count > 0)
             {
                 PicForm.AllowMultiple = true;
@@ -1920,6 +1922,7 @@ namespace Elmanager.Forms
                 // handle picture
                 PicForm.AllowMultiple = false;
                 PicForm.AutoTextureMode = false;
+                PicForm.SetDefaultsAutomatically = true;
                 PicForm.ShowDialog();
                 if (PicForm.OkButtonPressed)
                 {
