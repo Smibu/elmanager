@@ -364,8 +364,8 @@ namespace Elmanager.Forms
 
         private void ButtonClick(object sender, EventArgs e)
         {
-            OkButtonPressed = sender.Equals(OKButton);
-            if (OkButtonPressed)
+            bool ok = sender.Equals(OKButton);
+            if (ok)
             {
                 if (AutoTextureMode)
                 {
@@ -402,7 +402,7 @@ namespace Elmanager.Forms
                             Picture = _currentLgr.ImageFromName(PictureComboBox.SelectedItem.ToString());
                             Texture = _currentLgr.ImageFromName(TextureComboBox.SelectedItem.ToString());
                             Mask = _currentLgr.ImageFromName(MaskComboBox.SelectedItem.ToString());
-                            Close();
+                            CloseAndAccept(true);
                         }
                         else
                             DistanceError();
@@ -442,12 +442,20 @@ namespace Elmanager.Forms
                             return;
                         }
                     }
-                    Close();
+                    CloseAndAccept(true);
                 }
                 
             }
             else
-                Close();
+            {
+                CloseAndAccept(false);
+            }
+        }
+
+        private void CloseAndAccept(bool accept)
+        {
+            Close();
+            OkButtonPressed = accept;
         }
 
         private static void DistanceError()
