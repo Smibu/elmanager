@@ -130,12 +130,14 @@ namespace Elmanager.EditorTools
                     Lev.Polygons.Remove(intersectingPolygons[0]);
                     Lev.Polygons.Remove(intersectingPolygons[1]);
                     Lev.Polygons.Add(connected);
-                    LevEditor.Modified = true;
                     anythingConnected = true;
                 }
             }
             StartSelected = false;
-            Renderer.RedrawScene();
+            if (anythingConnected)
+            {
+                LevEditor.Modified = true;
+            }
             return anythingConnected;
         }
     }
