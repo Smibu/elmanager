@@ -441,12 +441,12 @@ namespace Elmanager
 
         internal bool TooTall
         {
-            get { return YMax - YMin >= MaximumSize; }
+            get { return polygonYMax - polygonYMin >= MaximumSize; }
         }
 
         internal bool TooWide
         {
-            get { return XMax - XMin >= MaximumSize; }
+            get { return polygonXMax - polygonXMin >= MaximumSize; }
         }
 
         internal int VertexCount
