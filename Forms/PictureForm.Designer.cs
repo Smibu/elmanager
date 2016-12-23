@@ -39,7 +39,7 @@
             this.Label1 = new System.Windows.Forms.Label();
             this.MaskComboBox = new System.Windows.Forms.ComboBox();
             this.Label2 = new System.Windows.Forms.Label();
-            this.DistanceBox = new System.Windows.Forms.TextBox();
+            this.DistanceBox = new Elmanager.CustomControls.NumericTextBox();
             this.Label3 = new System.Windows.Forms.Label();
             this.ClippingComboBox = new System.Windows.Forms.ComboBox();
             this.maskListBox = new System.Windows.Forms.CheckedListBox();
@@ -169,8 +169,10 @@
             // 
             // DistanceBox
             // 
+            this.DistanceBox.BackColor = System.Drawing.SystemColors.Window;
+            this.DistanceBox.DefaultValue = 500D;
             this.DistanceBox.Location = new System.Drawing.Point(82, 97);
-            this.DistanceBox.MaxLength = 20;
+            this.DistanceBox.MaxLength = 3;
             this.DistanceBox.Name = "DistanceBox";
             this.DistanceBox.Size = new System.Drawing.Size(94, 20);
             this.DistanceBox.TabIndex = 8;
@@ -316,7 +318,7 @@
 		internal System.Windows.Forms.Label Label1;
 		internal System.Windows.Forms.ComboBox MaskComboBox;
 		internal System.Windows.Forms.Label Label2;
-		internal System.Windows.Forms.TextBox DistanceBox;
+		internal CustomControls.NumericTextBox DistanceBox;
 		internal System.Windows.Forms.Label Label3;
 		internal System.Windows.Forms.ComboBox ClippingComboBox;
         private System.Windows.Forms.CheckedListBox maskListBox;
