@@ -177,6 +177,10 @@ namespace Elmanager
             double a2Minusa1Y = a2.Y - a1.Y;
             double a1Minusb1X = a1.X - b1.X;
             double a1Minusb1Y = a1.Y - b1.Y;
+            if (a2Minusa1X == 0 && a2Minusa1Y == 0 || b2Minusb1X == 0 && b2Minusb1Y == 0)
+            {
+                return false;
+            }
             double uaT = b2Minusb1X * a1Minusb1Y - b2Minusb1Y * a1Minusb1X;
             double ubT = a2Minusa1X * a1Minusb1Y - a2Minusa1Y * a1Minusb1X;
             double uB = b2Minusb1Y * a2Minusa1X - b2Minusb1X * a2Minusa1Y;
