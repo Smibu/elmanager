@@ -535,10 +535,11 @@ namespace Elmanager.Forms
                     RList.RemoveObjects(RList.SelectedObjects);
                     if (RList.Items.Count > 0)
                     {
-                        if (index == 0)
-                            RList.Items[0].Selected = true;
-                        else
-                            RList.Items[index - 1].Selected = true;
+                        if (index >= RList.Items.Count)
+                        {
+                            index--;
+                        }
+                        RList.Items[index].Selected = true;
                     }
                     DisplaySelectionInfo();
                 }
