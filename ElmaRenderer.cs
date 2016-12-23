@@ -1862,6 +1862,9 @@ namespace Elmanager
 
         private void InitializeOpengl(bool disableFrameBuffer)
         {
+            var opts = ToolkitOptions.Default;
+            opts.Backend = PlatformBackend.PreferNative;
+            Toolkit.Init(opts);
             GFXContext = new GraphicsContext(new GraphicsMode(new ColorFormat(8, 8, 8, 8), 8, 8), CtrlWindowInfo);
             GFXContext.MakeCurrent(CtrlWindowInfo);
             GFXContext.LoadAll();
