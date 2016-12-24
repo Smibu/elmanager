@@ -686,6 +686,57 @@ namespace Elmanager.Forms
             FlowerFilter = FlowersToolStripMenuItem.Checked;
             PictureFilter = PicturesToolStripMenuItem.Checked;
             TextureFilter = TexturesToolStripMenuItem.Checked;
+            foreach (var polygon in Lev.Polygons)
+            {
+                if (polygon.IsGrass && !GrassFilter)
+                {
+                    polygon.MarkVectorsAs(Geometry.VectorMark.None);
+                }
+                else if (!polygon.IsGrass && !GroundFilter)
+                {
+                    polygon.MarkVectorsAs(Geometry.VectorMark.None);
+                }
+            }
+            foreach (var o in Lev.Objects)
+            {
+                switch (o.Type)
+                {
+                    case Level.ObjectType.Flower:
+                        if (!FlowerFilter)
+                        {
+                            o.Position.Mark = Geometry.VectorMark.None;
+                        }
+                        break;
+                    case Level.ObjectType.Apple:
+                        if (!AppleFilter)
+                        {
+                            o.Position.Mark = Geometry.VectorMark.None;
+                        }
+                        break;
+                    case Level.ObjectType.Killer:
+                        if (!KillerFilter)
+                        {
+                            o.Position.Mark = Geometry.VectorMark.None;
+                        }
+                        break;
+                    case Level.ObjectType.Start:
+                        break;
+                    default:
+                        throw new ArgumentOutOfRangeException();
+                }
+            }
+            foreach (var picture in Lev.Pictures)
+            {
+                if (picture.IsPicture && !PictureFilter)
+                {
+                    picture.Position.Mark = Geometry.VectorMark.None;
+                }
+                else if (!picture.IsPicture && !TextureFilter)
+                {
+                    picture.Position.Mark = Geometry.VectorMark.None;
+                }
+            }
+            Renderer.RedrawScene();
             SelectionFilterToolStripMenuItem.ShowDropDown();
         }
 
