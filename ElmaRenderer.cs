@@ -119,6 +119,7 @@ namespace Elmanager
         private int colorRenderBuffer;
         private int depthStencilRenderBuffer;
         private int maxRenderbufferSize;
+        private Control RenderTarget;
 
         internal ElmaRenderer(Control renderingTarget, RenderingSettings settings)
         {
@@ -479,10 +480,16 @@ namespace Elmanager
         internal void DrawScene(bool zoomToDriver, bool showDriverPath)
         {
             GL.LoadIdentity();
+            double fixx = 0;
+            double fixy = 0;
             if (ActivePlayerIndices.Count > 0 && zoomToDriver)
             {
                 CenterX = Players[ActivePlayerIndices[0]].GlobalBodyX;
                 CenterY = Players[ActivePlayerIndices[0]].GlobalBodyY;
+                fixx = CenterX % (2 * ZoomLevel * AspectRatio / RenderTarget.Width);
+                fixy = CenterY % (2 * ZoomLevel / RenderTarget.Height);
+                CenterX -= fixx;
+                CenterY -= fixy;
                 GL.Ortho(XMin, XMax, YMin, YMax, zNear, zFar);
                 if (LockedCamera)
                 {
@@ -697,7 +704,9 @@ namespace Elmanager
             }
             GL.Disable(EnableCap.StencilTest);
             GL.Scale(1.0, -1.0, 1.0);
+            GL.Translate(-fixx, -fixy, 0);
             DrawPlayers(ActivePlayerIndices, VisiblePlayerIndices);
+            GL.Translate(fixx, fixy, 0);
             GL.Scale(1.0, -1.0, 1.0);
             if (Settings.ShowObjects && LgrGraphicsLoaded) //BUG Drawing order should be: 1. killers, 2. apples, 3. flowers.
             {
@@ -1406,6 +1415,7 @@ namespace Elmanager
             CtrlWindowInfo = Utilities.CreateWindowsWindowInfo(renderingTarget.Handle);
             InitializeOpengl(disableFrameBuffer: settings.DisableFrameBuffer);
             UpdateSettings(settings);
+            RenderTarget = renderingTarget;
         }
 
         private void DeleteTextures()
