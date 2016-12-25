@@ -48,6 +48,8 @@ namespace Elmanager.Forms
             this.LoadButton = new System.Windows.Forms.Button();
             this.TabControl1 = new System.Windows.Forms.TabControl();
             this.GeneralPage = new System.Windows.Forms.TabPage();
+            this.groupBox2 = new System.Windows.Forms.GroupBox();
+            this.DisableFrameBufferUsageCheckBox = new System.Windows.Forms.CheckBox();
             this.generateNativeImageButton = new System.Windows.Forms.Button();
             this.resetButton = new System.Windows.Forms.Button();
             this.ElmaDirButton = new System.Windows.Forms.Button();
@@ -93,15 +95,14 @@ namespace Elmanager.Forms
             this.WarnAboutOldDBBox = new System.Windows.Forms.CheckBox();
             this.ColorDialog1 = new System.Windows.Forms.ColorDialog();
             this.toolTip1 = new System.Windows.Forms.ToolTip(this.components);
-            this.DisableFrameBufferUsageCheckBox = new System.Windows.Forms.CheckBox();
-            this.groupBox2 = new System.Windows.Forms.GroupBox();
+            this.showTooltipForReplaysCheckBox = new System.Windows.Forms.CheckBox();
             this.TabControl1.SuspendLayout();
             this.GeneralPage.SuspendLayout();
+            this.groupBox2.SuspendLayout();
             this.RMPage.SuspendLayout();
             this.LevelEditorPage.SuspendLayout();
             this.GroupBox1.SuspendLayout();
             this.DatabasePage.SuspendLayout();
-            this.groupBox2.SuspendLayout();
             this.SuspendLayout();
             // 
             // RecDirButton
@@ -261,6 +262,26 @@ namespace Elmanager.Forms
             this.GeneralPage.TabIndex = 0;
             this.GeneralPage.Text = "General";
             // 
+            // groupBox2
+            // 
+            this.groupBox2.Controls.Add(this.DisableFrameBufferUsageCheckBox);
+            this.groupBox2.Location = new System.Drawing.Point(8, 186);
+            this.groupBox2.Name = "groupBox2";
+            this.groupBox2.Size = new System.Drawing.Size(200, 46);
+            this.groupBox2.TabIndex = 56;
+            this.groupBox2.TabStop = false;
+            this.groupBox2.Text = "Workarounds";
+            // 
+            // DisableFrameBufferUsageCheckBox
+            // 
+            this.DisableFrameBufferUsageCheckBox.AutoSize = true;
+            this.DisableFrameBufferUsageCheckBox.Location = new System.Drawing.Point(6, 19);
+            this.DisableFrameBufferUsageCheckBox.Name = "DisableFrameBufferUsageCheckBox";
+            this.DisableFrameBufferUsageCheckBox.Size = new System.Drawing.Size(149, 17);
+            this.DisableFrameBufferUsageCheckBox.TabIndex = 55;
+            this.DisableFrameBufferUsageCheckBox.Text = "Disable framebuffer usage";
+            this.DisableFrameBufferUsageCheckBox.UseVisualStyleBackColor = true;
+            // 
             // generateNativeImageButton
             // 
             this.generateNativeImageButton.Location = new System.Drawing.Point(8, 157);
@@ -332,6 +353,7 @@ namespace Elmanager.Forms
             // 
             // RMPage
             // 
+            this.RMPage.Controls.Add(this.showTooltipForReplaysCheckBox);
             this.RMPage.Controls.Add(this.DeleteConfirmCheckBox);
             this.RMPage.Controls.Add(this.SearchRecSubDirsBox);
             this.RMPage.Controls.Add(this.DeleteRecycleCheckBox);
@@ -719,25 +741,15 @@ namespace Elmanager.Forms
             // 
             this.ColorDialog1.FullOpen = true;
             // 
-            // DisableFrameBufferUsageCheckBox
+            // showTooltipForReplaysCheckBox
             // 
-            this.DisableFrameBufferUsageCheckBox.AutoSize = true;
-            this.DisableFrameBufferUsageCheckBox.Location = new System.Drawing.Point(6, 19);
-            this.DisableFrameBufferUsageCheckBox.Name = "DisableFrameBufferUsageCheckBox";
-            this.DisableFrameBufferUsageCheckBox.Size = new System.Drawing.Size(149, 17);
-            this.DisableFrameBufferUsageCheckBox.TabIndex = 55;
-            this.DisableFrameBufferUsageCheckBox.Text = "Disable framebuffer usage";
-            this.DisableFrameBufferUsageCheckBox.UseVisualStyleBackColor = true;
-            // 
-            // groupBox2
-            // 
-            this.groupBox2.Controls.Add(this.DisableFrameBufferUsageCheckBox);
-            this.groupBox2.Location = new System.Drawing.Point(8, 186);
-            this.groupBox2.Name = "groupBox2";
-            this.groupBox2.Size = new System.Drawing.Size(200, 46);
-            this.groupBox2.TabIndex = 56;
-            this.groupBox2.TabStop = false;
-            this.groupBox2.Text = "Workarounds";
+            this.showTooltipForReplaysCheckBox.AutoSize = true;
+            this.showTooltipForReplaysCheckBox.Location = new System.Drawing.Point(8, 82);
+            this.showTooltipForReplaysCheckBox.Name = "showTooltipForReplaysCheckBox";
+            this.showTooltipForReplaysCheckBox.Size = new System.Drawing.Size(192, 17);
+            this.showTooltipForReplaysCheckBox.TabIndex = 58;
+            this.showTooltipForReplaysCheckBox.Text = "Show tooltip for replays in replay list";
+            this.showTooltipForReplaysCheckBox.UseVisualStyleBackColor = true;
             // 
             // ConfigForm
             // 
@@ -754,6 +766,8 @@ namespace Elmanager.Forms
             this.TabControl1.ResumeLayout(false);
             this.GeneralPage.ResumeLayout(false);
             this.GeneralPage.PerformLayout();
+            this.groupBox2.ResumeLayout(false);
+            this.groupBox2.PerformLayout();
             this.RMPage.ResumeLayout(false);
             this.RMPage.PerformLayout();
             this.LevelEditorPage.ResumeLayout(false);
@@ -762,8 +776,6 @@ namespace Elmanager.Forms
             this.GroupBox1.PerformLayout();
             this.DatabasePage.ResumeLayout(false);
             this.DatabasePage.PerformLayout();
-            this.groupBox2.ResumeLayout(false);
-            this.groupBox2.PerformLayout();
             this.ResumeLayout(false);
 
 		}
@@ -830,6 +842,7 @@ namespace Elmanager.Forms
         internal CheckBox capturePicTextFromBordersCheckBox;
         private GroupBox groupBox2;
         private CheckBox DisableFrameBufferUsageCheckBox;
+        internal CheckBox showTooltipForReplaysCheckBox;
     }
 	
 }

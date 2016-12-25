@@ -173,6 +173,7 @@ namespace Elmanager
             public bool UseDataBase;
             public bool WarnAboutOldDb = true;
             public FormWindowState WindowState = FormWindowState.Normal;
+            public bool ShowTooltipForReplays = true;
         }
 
         [Serializable]

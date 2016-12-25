@@ -43,12 +43,15 @@ namespace Elmanager.Forms
             foreach (int i in _boolIndices)
                 RList.GetColumn(i).AspectToStringConverter = Utils.BoolToString;
             RList.GetColumn(6).AspectToStringConverter = Utils.SizeToString;
-            RList.CellToolTipGetter = ShowReplayToolTip;
-            RList.CellToolTip.IsBalloon = true;
-            RList.CellToolTip.AutoPopDelay = 30000;
-            RList.CellToolTip.InitialDelay = 1000;
-            RList.CellToolTip.ReshowDelay = 0;
-            RList.CellToolTip.Title = "Details";
+            if (Global.AppSettings.ReplayManager.ShowTooltipForReplays)
+            {
+                RList.CellToolTipGetter = ShowReplayToolTip;
+                RList.CellToolTip.IsBalloon = true;
+                RList.CellToolTip.AutoPopDelay = 30000;
+                RList.CellToolTip.InitialDelay = 1000;
+                RList.CellToolTip.ReshowDelay = 0;
+                RList.CellToolTip.Title = "Details";
+            }
             if (Global.AppSettings.ReplayManager.ReplayListState != null)
             {
                 RList.RestoreState(Global.AppSettings.ReplayManager.ReplayListState);

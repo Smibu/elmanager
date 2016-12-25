@@ -39,6 +39,7 @@ namespace Elmanager.Forms
             DynamicCheckTopologyBox.Checked = Global.AppSettings.LevelEditor.CheckTopologyDynamically;
             CheckBox6.Enabled = File.Exists(Global.AppSettings.ReplayManager.DbFile);
             LoadButton.Enabled = File.Exists(Global.AppSettings.ReplayManager.DbFile);
+            showTooltipForReplaysCheckBox.Checked = Global.AppSettings.ReplayManager.ShowTooltipForReplays;
             FilenameSuggestionBox.Checked = Global.AppSettings.LevelEditor.UseFilenameSuggestion;
             SameAsFilenameBox.Checked = Global.AppSettings.LevelEditor.UseFilenameForTitle;
             baseFilenameBox.Text = Global.AppSettings.LevelEditor.BaseFilename;
@@ -302,6 +303,7 @@ namespace Elmanager.Forms
             Global.AppSettings.ReplayManager.DbFile = DBTextBox.Text;
             Global.AppSettings.ReplayManager.ConfirmDelete = DeleteConfirmCheckBox.Checked;
             Global.AppSettings.ReplayManager.WarnAboutOldDb = WarnAboutOldDBBox.Checked;
+            Global.AppSettings.ReplayManager.ShowTooltipForReplays = showTooltipForReplaysCheckBox.Checked;
 
             try
             {
