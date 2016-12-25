@@ -558,12 +558,8 @@ namespace Elmanager.Forms
             Vector z = GetMouseCoordinates();
             if (_draggingScreen)
             {
-                _renderer.CenterX = _moveStartPosition.X -
-                                    (_moveStartPosition.X - (_renderer.XMax + _renderer.XMin) / 2) -
-                                    (z.X - _moveStartPosition.X);
-                _renderer.CenterY = _moveStartPosition.Y -
-                                    (_moveStartPosition.Y - (_renderer.YMax + _renderer.YMin) / 2) -
-                                    (z.Y - _moveStartPosition.Y);
+                _renderer.CenterX = _moveStartPosition.X + (_renderer.XMax + _renderer.XMin) / 2 - z.X;
+                _renderer.CenterY = _moveStartPosition.Y + (_renderer.YMax + _renderer.YMin) / 2 - z.Y;
                 _renderer.RedrawScene();
             }
             else if (_zoomRecting)
