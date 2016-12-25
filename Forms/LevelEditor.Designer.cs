@@ -162,6 +162,8 @@ namespace Elmanager.Forms
             this.killersConvertItem = new System.Windows.Forms.ToolStripMenuItem();
             this.flowersConvertItem = new System.Windows.Forms.ToolStripMenuItem();
             this.picturesConvertItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.saveStartPositionToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.restoreStartPositionToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.saveAsPictureDialog = new System.Windows.Forms.SaveFileDialog();
             this.importFileDialog = new System.Windows.Forms.OpenFileDialog();
             this.ToolPanel = new Elmanager.CustomControls.PanelMod();
@@ -1279,35 +1281,37 @@ namespace Elmanager.Forms
             this.PicturePropertiesMenuItem,
             this.bringToFrontToolStripMenuItem,
             this.sendToBackToolStripMenuItem,
-            this.convertToToolStripMenuItem});
+            this.convertToToolStripMenuItem,
+            this.saveStartPositionToolStripMenuItem,
+            this.restoreStartPositionToolStripMenuItem});
             this.EditorMenuStrip.Name = "SelectedMenuStrip";
-            this.EditorMenuStrip.Size = new System.Drawing.Size(168, 290);
+            this.EditorMenuStrip.Size = new System.Drawing.Size(186, 356);
             // 
             // CopyMenuItem
             // 
             this.CopyMenuItem.Name = "CopyMenuItem";
-            this.CopyMenuItem.Size = new System.Drawing.Size(167, 22);
+            this.CopyMenuItem.Size = new System.Drawing.Size(185, 22);
             this.CopyMenuItem.Text = "Copy";
             this.CopyMenuItem.Click += new System.EventHandler(this.CopyMenuItemClick);
             // 
             // TransformMenuItem
             // 
             this.TransformMenuItem.Name = "TransformMenuItem";
-            this.TransformMenuItem.Size = new System.Drawing.Size(167, 22);
+            this.TransformMenuItem.Size = new System.Drawing.Size(185, 22);
             this.TransformMenuItem.Text = "Transform";
             this.TransformMenuItem.Click += new System.EventHandler(this.TransformMenuItemClick);
             // 
             // DeleteMenuItem
             // 
             this.DeleteMenuItem.Name = "DeleteMenuItem";
-            this.DeleteMenuItem.Size = new System.Drawing.Size(167, 22);
+            this.DeleteMenuItem.Size = new System.Drawing.Size(185, 22);
             this.DeleteMenuItem.Text = "Delete";
             this.DeleteMenuItem.Click += new System.EventHandler(this.DeleteSelected);
             // 
             // GrassMenuItem
             // 
             this.GrassMenuItem.Name = "GrassMenuItem";
-            this.GrassMenuItem.Size = new System.Drawing.Size(167, 22);
+            this.GrassMenuItem.Size = new System.Drawing.Size(185, 22);
             this.GrassMenuItem.Text = "Toggle grass";
             this.GrassMenuItem.Click += new System.EventHandler(this.HandleGrassMenu);
             // 
@@ -1317,7 +1321,7 @@ namespace Elmanager.Forms
             this.GravityNoneMenuItem.CheckOnClick = true;
             this.GravityNoneMenuItem.CheckState = System.Windows.Forms.CheckState.Checked;
             this.GravityNoneMenuItem.Name = "GravityNoneMenuItem";
-            this.GravityNoneMenuItem.Size = new System.Drawing.Size(167, 22);
+            this.GravityNoneMenuItem.Size = new System.Drawing.Size(185, 22);
             this.GravityNoneMenuItem.Text = "Gravity none";
             this.GravityNoneMenuItem.Click += new System.EventHandler(this.HandleGravityMenu);
             // 
@@ -1325,7 +1329,7 @@ namespace Elmanager.Forms
             // 
             this.GravityUpMenuItem.CheckOnClick = true;
             this.GravityUpMenuItem.Name = "GravityUpMenuItem";
-            this.GravityUpMenuItem.Size = new System.Drawing.Size(167, 22);
+            this.GravityUpMenuItem.Size = new System.Drawing.Size(185, 22);
             this.GravityUpMenuItem.Text = "Gravity up";
             this.GravityUpMenuItem.Click += new System.EventHandler(this.HandleGravityMenu);
             // 
@@ -1333,7 +1337,7 @@ namespace Elmanager.Forms
             // 
             this.GravityDownMenuItem.CheckOnClick = true;
             this.GravityDownMenuItem.Name = "GravityDownMenuItem";
-            this.GravityDownMenuItem.Size = new System.Drawing.Size(167, 22);
+            this.GravityDownMenuItem.Size = new System.Drawing.Size(185, 22);
             this.GravityDownMenuItem.Text = "Gravity down";
             this.GravityDownMenuItem.Click += new System.EventHandler(this.HandleGravityMenu);
             // 
@@ -1341,7 +1345,7 @@ namespace Elmanager.Forms
             // 
             this.GravityLeftMenuItem.CheckOnClick = true;
             this.GravityLeftMenuItem.Name = "GravityLeftMenuItem";
-            this.GravityLeftMenuItem.Size = new System.Drawing.Size(167, 22);
+            this.GravityLeftMenuItem.Size = new System.Drawing.Size(185, 22);
             this.GravityLeftMenuItem.Text = "Gravity left";
             this.GravityLeftMenuItem.Click += new System.EventHandler(this.HandleGravityMenu);
             // 
@@ -1349,28 +1353,28 @@ namespace Elmanager.Forms
             // 
             this.GravityRightMenuItem.CheckOnClick = true;
             this.GravityRightMenuItem.Name = "GravityRightMenuItem";
-            this.GravityRightMenuItem.Size = new System.Drawing.Size(167, 22);
+            this.GravityRightMenuItem.Size = new System.Drawing.Size(185, 22);
             this.GravityRightMenuItem.Text = "Gravity right";
             this.GravityRightMenuItem.Click += new System.EventHandler(this.HandleGravityMenu);
             // 
             // PicturePropertiesMenuItem
             // 
             this.PicturePropertiesMenuItem.Name = "PicturePropertiesMenuItem";
-            this.PicturePropertiesMenuItem.Size = new System.Drawing.Size(167, 22);
+            this.PicturePropertiesMenuItem.Size = new System.Drawing.Size(185, 22);
             this.PicturePropertiesMenuItem.Text = "Picture properties";
             this.PicturePropertiesMenuItem.Click += new System.EventHandler(this.PicturePropertiesToolStripMenuItemClick);
             // 
             // bringToFrontToolStripMenuItem
             // 
             this.bringToFrontToolStripMenuItem.Name = "bringToFrontToolStripMenuItem";
-            this.bringToFrontToolStripMenuItem.Size = new System.Drawing.Size(167, 22);
+            this.bringToFrontToolStripMenuItem.Size = new System.Drawing.Size(185, 22);
             this.bringToFrontToolStripMenuItem.Text = "Bring to front";
             this.bringToFrontToolStripMenuItem.Click += new System.EventHandler(this.BringToFrontToolStripMenuItemClick);
             // 
             // sendToBackToolStripMenuItem
             // 
             this.sendToBackToolStripMenuItem.Name = "sendToBackToolStripMenuItem";
-            this.sendToBackToolStripMenuItem.Size = new System.Drawing.Size(167, 22);
+            this.sendToBackToolStripMenuItem.Size = new System.Drawing.Size(185, 22);
             this.sendToBackToolStripMenuItem.Text = "Send to back";
             this.sendToBackToolStripMenuItem.Click += new System.EventHandler(this.SendToBackToolStripMenuItemClick);
             // 
@@ -1382,7 +1386,7 @@ namespace Elmanager.Forms
             this.flowersConvertItem,
             this.picturesConvertItem});
             this.convertToToolStripMenuItem.Name = "convertToToolStripMenuItem";
-            this.convertToToolStripMenuItem.Size = new System.Drawing.Size(167, 22);
+            this.convertToToolStripMenuItem.Size = new System.Drawing.Size(185, 22);
             this.convertToToolStripMenuItem.Text = "Convert to";
             // 
             // applesConvertItem
@@ -1412,6 +1416,20 @@ namespace Elmanager.Forms
             this.picturesConvertItem.Size = new System.Drawing.Size(116, 22);
             this.picturesConvertItem.Text = "Pictures";
             this.picturesConvertItem.Click += new System.EventHandler(this.ConvertClicked);
+            // 
+            // saveStartPositionToolStripMenuItem
+            // 
+            this.saveStartPositionToolStripMenuItem.Name = "saveStartPositionToolStripMenuItem";
+            this.saveStartPositionToolStripMenuItem.Size = new System.Drawing.Size(185, 22);
+            this.saveStartPositionToolStripMenuItem.Text = "Save start position";
+            this.saveStartPositionToolStripMenuItem.Click += new System.EventHandler(this.saveStartPositionToolStripMenuItem_Click);
+            // 
+            // restoreStartPositionToolStripMenuItem
+            // 
+            this.restoreStartPositionToolStripMenuItem.Name = "restoreStartPositionToolStripMenuItem";
+            this.restoreStartPositionToolStripMenuItem.Size = new System.Drawing.Size(185, 22);
+            this.restoreStartPositionToolStripMenuItem.Text = "Restore start position";
+            this.restoreStartPositionToolStripMenuItem.Click += new System.EventHandler(this.restoreStartPositionToolStripMenuItem_Click);
             // 
             // saveAsPictureDialog
             // 
@@ -1820,6 +1838,8 @@ namespace Elmanager.Forms
         internal ToolStripMenuItemMod DeleteSelectedMenuItem;
         private ToolStripSeparator toolStripSeparator15;
         private ToolStripMenuItemMod texturizeMenuItem;
+        private ToolStripMenuItem saveStartPositionToolStripMenuItem;
+        private ToolStripMenuItem restoreStartPositionToolStripMenuItem;
     }
 	
 }

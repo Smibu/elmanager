@@ -65,6 +65,7 @@ namespace Elmanager.Forms
         private bool _draggingGrid;
         private Vector _gridStartOffset;
         private bool _programmaticPropertyChange;
+        private Vector _savedStartPosition;
 
         internal LevelEditor(string levPath)
         {
@@ -586,6 +587,10 @@ namespace Elmanager.Forms
             }
             foreach (Vector x in _errorPoints)
                 Renderer.DrawSquare(x, Renderer.ZoomLevel/25, Color.Red);
+            if ((object)_savedStartPosition != null)
+            {
+                Renderer.DrawDummyPlayer(_savedStartPosition.X, -_savedStartPosition.Y, false);
+            }
         }
 
         private void CutButtonChanged(object sender, EventArgs e)
@@ -876,6 +881,7 @@ namespace Elmanager.Forms
         {
             _savePath = Lev.Path;
             Modified = false;
+            _savedStartPosition = null;
             UpdateLabels();
             UpdateButtons();
             Renderer.InitializeLevel(Lev);
@@ -1106,6 +1112,8 @@ namespace Elmanager.Forms
                         bringToFrontToolStripMenuItem.Visible = false;
                         sendToBackToolStripMenuItem.Visible = false;
                         convertToToolStripMenuItem.Visible = false;
+                        saveStartPositionToolStripMenuItem.Visible = false;
+                        restoreStartPositionToolStripMenuItem.Visible = false;
                         ChangeToDefaultCursor();
                         if (SelectedElementCount > 0)
                         {
@@ -1120,31 +1128,46 @@ namespace Elmanager.Forms
                         {
                             bringToFrontToolStripMenuItem.Visible = true;
                             sendToBackToolStripMenuItem.Visible = true;
-                            if (Lev.Objects[nearestObjectIndex].Type == Level.ObjectType.Apple)
+                            switch (Lev.Objects[nearestObjectIndex].Type)
                             {
-                                GravityNoneMenuItem.Visible = true;
-                                GravityUpMenuItem.Visible = true;
-                                GravityDownMenuItem.Visible = true;
-                                GravityLeftMenuItem.Visible = true;
-                                GravityRightMenuItem.Visible = true;
-                                switch (Lev.Objects[nearestObjectIndex].AppleType)
-                                {
-                                    case Level.AppleTypes.Normal:
-                                        UpdateGravityMenu(GravityNoneMenuItem);
-                                        break;
-                                    case Level.AppleTypes.GravityUp:
-                                        UpdateGravityMenu(GravityUpMenuItem);
-                                        break;
-                                    case Level.AppleTypes.GravityDown:
-                                        UpdateGravityMenu(GravityDownMenuItem);
-                                        break;
-                                    case Level.AppleTypes.GravityLeft:
-                                        UpdateGravityMenu(GravityLeftMenuItem);
-                                        break;
-                                    case Level.AppleTypes.GravityRight:
-                                        UpdateGravityMenu(GravityRightMenuItem);
-                                        break;
-                                }
+                                case Level.ObjectType.Apple:
+                                    GravityNoneMenuItem.Visible = true;
+                                    GravityUpMenuItem.Visible = true;
+                                    GravityDownMenuItem.Visible = true;
+                                    GravityLeftMenuItem.Visible = true;
+                                    GravityRightMenuItem.Visible = true;
+                                    switch (Lev.Objects[nearestObjectIndex].AppleType)
+                                    {
+                                        case Level.AppleTypes.Normal:
+                                            UpdateGravityMenu(GravityNoneMenuItem);
+                                            break;
+                                        case Level.AppleTypes.GravityUp:
+                                            UpdateGravityMenu(GravityUpMenuItem);
+                                            break;
+                                        case Level.AppleTypes.GravityDown:
+                                            UpdateGravityMenu(GravityDownMenuItem);
+                                            break;
+                                        case Level.AppleTypes.GravityLeft:
+                                            UpdateGravityMenu(GravityLeftMenuItem);
+                                            break;
+                                        case Level.AppleTypes.GravityRight:
+                                            UpdateGravityMenu(GravityRightMenuItem);
+                                            break;
+                                    }
+                                    break;
+                                case Level.ObjectType.Flower:
+                                    break;
+                                case Level.ObjectType.Killer:
+                                    break;
+                                case Level.ObjectType.Start:
+                                    saveStartPositionToolStripMenuItem.Visible = true;
+                                    if ((object)_savedStartPosition != null)
+                                    {
+                                        restoreStartPositionToolStripMenuItem.Visible = true;
+                                    }
+                                    break;
+                                default:
+                                    throw new ArgumentOutOfRangeException();
                             }
                         }
                         if (nearestVertexIndex >= -1)
@@ -2145,6 +2168,28 @@ namespace Elmanager.Forms
         private void texturizeMenuItem_Click(object sender, EventArgs e)
         {
             TexturizeSelection();
+        }
+
+        private void saveStartPositionToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            foreach (var o in Lev.Objects)
+            {
+                if (o.Type == Level.ObjectType.Start)
+                {
+                    _savedStartPosition = o.Position.Clone();
+                }
+            }
+        }
+
+        private void restoreStartPositionToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            foreach (var o in Lev.Objects)
+            {
+                if (o.Type == Level.ObjectType.Start)
+                {
+                    o.Position = _savedStartPosition.Clone();
+                }
+            }
         }
     }
 }

@@ -301,13 +301,18 @@ namespace Elmanager
             DrawCircle(v.X, v.Y, radius, circleColor);
         }
 
-        internal void DrawDummyPlayer(double leftWheelx, double leftWheely)
+        internal void DrawDummyPlayer(double leftWheelx, double leftWheely, bool active = true)
         {
+            GL.Scale(1, -1, 1);
+            GL.Enable(EnableCap.Texture2D);
+            GL.Enable(EnableCap.AlphaTest);
+            GL.Enable(EnableCap.DepthTest);
             DrawPlayer(leftWheelx + Level.GlobalBodyDifferenceFromLeftWheelX,
                        leftWheely + Level.GlobalBodyDifferenceFromLeftWheelY, leftWheelx, leftWheely,
                        leftWheelx + Level.RightWheelDifferenceFromLeftWheelX, leftWheely, 0, 0,
                        leftWheelx + Level.HeadDifferenceFromLeftWheelX, leftWheely - Level.HeadDifferenceFromLeftWheelY,
-                       0, Direction.Left, 0, false);
+                       0, Direction.Left, 0, active);
+            GL.Scale(1, -1, 1);
         }
 
         internal void DrawFilledTriangles(IEnumerable<Vector[]> triangles)
@@ -728,9 +733,7 @@ namespace Elmanager
                         case Level.ObjectType.Start:
                             if (!HideStartObject)
                             {
-                                GL.Scale(1, -1, 1);
                                 DrawDummyPlayer(x.Position.X, -x.Position.Y);
-                                GL.Scale(1, -1, 1);
                             }
                             break;
                     }
@@ -1612,7 +1615,7 @@ namespace Elmanager
         {
             DrawPlayer(player.GlobalBodyX, player.GlobalBodyY, player.LeftWheelX, player.LeftWheelY, player.RightWheelX,
                        player.RightWheelY, player.LeftWheelRotation, player.RightWheelRotation, player.HeadX,
-                       player.HeadY, player.BikeRotation, player.Dir, player.ArmRotation, isActive);
+                       player.HeadY, player.BikeRotation, player.Dir, player.ArmRotation, isActive || !DrawInActiveAsTransparent);
         }
 
         private void DrawPlayer(double globalBodyX, double globalBodyY, double leftWheelx, double leftWheely,
@@ -1629,7 +1632,7 @@ namespace Elmanager
                 double rotationCos = Math.Cos(rotation);
                 double rotationSin = Math.Sin(rotation);
 
-                if (!isActive && DrawInActiveAsTransparent)
+                if (!isActive)
                 {
                     GL.Enable(EnableCap.Blend);
                     GL.BlendFunc(BlendingFactorSrc.One, BlendingFactorDest.OneMinusDstColor);
