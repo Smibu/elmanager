@@ -879,6 +879,7 @@ namespace Elmanager.Forms
             UpdateLabels();
             UpdateButtons();
             Renderer.InitializeLevel(Lev);
+            Renderer.ZoomFill();
             UpdateLgrFromLev();
             Renderer.UpdateSettings(Global.AppSettings.LevelEditor.RenderingSettings);
             topologyList.Text = string.Empty;

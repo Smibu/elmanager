@@ -51,6 +51,7 @@ namespace Elmanager.Forms
             InitializeComponent();
             Initialize();
             SetReplays(rp);
+            ViewerResized();
         }
 
         internal ReplayViewer(List<Replay> replaysToPlay)
@@ -58,6 +59,7 @@ namespace Elmanager.Forms
             InitializeComponent();
             Initialize();
             SetReplays(replaysToPlay);
+            ViewerResized();
         }
 
         internal void SetReplays(Replay replay)
@@ -87,13 +89,14 @@ namespace Elmanager.Forms
             Text = Utils.GetPossiblyInternal(replays[0].LevelFilename) + " - Replay viewer";
             if (replays[0].WrongLevelVersion)
                 Text += " (wrong version)";
+            if (Global.AppSettings.ReplayViewer.DontSelectPlayersByDefault)
+                _renderer.ZoomFill();
+            else
+                _renderer.ZoomLevel = Global.AppSettings.ReplayViewer.ZoomLevel;
             if (!Global.AppSettings.ReplayViewer.DontSelectPlayersByDefault)
                 PlayList.Items[0].Selected = true;
             PlayList.CheckedObjects = (IList) PlayList.Objects;
-            ViewerResized();
             UpdateEventsLists();
-            if (Global.AppSettings.ReplayViewer.DontSelectPlayersByDefault)
-                _renderer.ZoomFill();
         }
 
         private static void UpdateControlColor(Control control, Color newColor)
@@ -320,8 +323,13 @@ namespace Elmanager.Forms
 
         private void MouseWheelZoom(object sender, MouseEventArgs e)
         {
-            _renderer.Zoom(GetMouseCoordinates(), e.Delta > 0,
-                           1 - Global.AppSettings.ReplayViewer.MouseWheelStep / 100.0);
+            Zoom(e.Delta > 0, 1 - Global.AppSettings.ReplayViewer.MouseWheelStep / 100.0);
+        }
+
+        private void Zoom(bool zoomIn, double zoomFactor)
+        {
+            _renderer.Zoom(GetMouseCoordinates(), zoomIn, zoomFactor);
+            Global.AppSettings.ReplayViewer.ZoomLevel = _renderer.ZoomLevel;
         }
 
         private void MouseWheelZoomBoxTextChanged(object sender, EventArgs e)
@@ -468,7 +476,7 @@ namespace Elmanager.Forms
 
         private void TrackBarScrolled(int delta)
         {
-            _renderer.Zoom(GetMouseCoordinates(), delta > 0, 1 - Global.AppSettings.ReplayViewer.MouseWheelStep / 100.0);
+            Zoom(delta > 0, 1 - Global.AppSettings.ReplayViewer.MouseWheelStep / 100.0);
         }
 
         private void UpdateCurrFrameFromTime(double newTime)
@@ -530,12 +538,12 @@ namespace Elmanager.Forms
                         _zoomRectStartPoint = z;
                     }
                     else
-                        _renderer.Zoom(z, e.Button == MouseButtons.Left,
-                                       1 - Global.AppSettings.ReplayViewer.MouseClickStep / 100.0);
+                        Zoom(e.Button == MouseButtons.Left,
+                            1 - Global.AppSettings.ReplayViewer.MouseClickStep / 100.0);
                     break;
                 case MouseButtons.Right:
-                    _renderer.Zoom(z, e.Button == MouseButtons.Left,
-                                   1 - Global.AppSettings.ReplayViewer.MouseClickStep / 100.0);
+                    Zoom(e.Button == MouseButtons.Left,
+                        1 - Global.AppSettings.ReplayViewer.MouseClickStep / 100.0);
                     break;
                 case MouseButtons.Middle:
                     _moveStartPosition = z;
@@ -613,6 +621,7 @@ namespace Elmanager.Forms
                 }
                 _renderer.RedrawScene();
                 _lastMouseX = MousePosition.X;
+                Global.AppSettings.ReplayViewer.ZoomLevel = _renderer.ZoomLevel;
             }
         }
 

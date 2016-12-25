@@ -955,7 +955,6 @@ namespace Elmanager
             Lev.UpdateBounds();
             UpdateZoomFillBounds();
             UpdateGroundAndSky(Settings.DefaultGroundAndSky);
-            ZoomFill();
         }
 
         internal void InitializeReplays(List<Replay> replays)

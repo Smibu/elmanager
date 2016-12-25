@@ -61,6 +61,10 @@ namespace Elmanager
             var binFormatter = new BinaryFormatter();
             var loadedSettings = (ElmanagerSettings) (binFormatter.UnsafeDeserialize(appSettingsFile, null));
             appSettingsFile.Close();
+            if (loadedSettings.ReplayViewer.ZoomLevel <= 0)
+            {
+                loadedSettings.ReplayViewer.ZoomLevel = 5.0;
+            }
             return loadedSettings;
         }
 
@@ -198,6 +202,7 @@ namespace Elmanager
             public bool ShowDriverPath;
             public Size Size = new Size(800, 600);
             public FormWindowState WindowState = FormWindowState.Normal;
+            public double ZoomLevel = 5.0;
         }
     }
 }
