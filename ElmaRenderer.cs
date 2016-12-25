@@ -773,46 +773,23 @@ namespace Elmanager
                 DrawObjectCenters();
             if (Settings.ShowGravityAppleArrows && (Settings.ShowObjectFrames || (LGRGraphicsLoaded && Settings.ShowObjects)))
             {
-                GL.Color3(Settings.AppleGravityArrowColor);
-                foreach (var o in Lev.Objects)
-                {
-                    if (o.Type == Level.ObjectType.Apple && o.AppleType != Level.AppleTypes.Normal)
+                if (WrongLevVersion || ActivePlayerIndices.Count == 0)
+                    foreach (var o in Lev.Objects)
                     {
-                        double arrowRotation = 0.0;
-                        switch (o.AppleType)
-                        {
-                            case Level.AppleTypes.GravityUp:
-                                arrowRotation = 180.0;
-                                break;
-                            case Level.AppleTypes.GravityDown:
-                                arrowRotation = 0.0;
-                                break;
-                            case Level.AppleTypes.GravityLeft:
-                                arrowRotation = 90.0;
-                                break;
-                            case Level.AppleTypes.GravityRight:
-                                arrowRotation = 270.0;
-                                break;
-                            default:
-                                throw new ArgumentOutOfRangeException();
-                        }
-                        const double arrowThickness = 0.4;
-                        GL.PushMatrix();
-                        GL.Translate(o.Position.X, o.Position.Y, 0.0);
-                        GL.Scale(0.5, 0.5, 1.0);
-                        GL.Rotate(arrowRotation, 0.0, 0.0, 1.0);
-                        GL.Translate(-0.5, -0.5, 0.0);
-                        GL.Begin(PrimitiveType.LineLoop);
-                        GL.Vertex2((1 - arrowThickness) / 2.0, 0.0);
-                        GL.Vertex2((1 - arrowThickness) / 2.0, 0.5);
-                        GL.Vertex2(0.0, 0.5);
-                        GL.Vertex2(0.5, 1.0);
-                        GL.Vertex2(1.0, 0.5);
-                        GL.Vertex2(1.0 - (1 - arrowThickness) / 2.0, 0.5);
-                        GL.Vertex2(1.0 - (1 - arrowThickness) / 2.0, 0.0);
-                        GL.End();
-                        GL.PopMatrix();
+                        DrawGravityArrowMaybe(o);
                     }
+                else if (!WrongLevVersion && ActivePlayerIndices.Count > 0)
+                {
+                    int i = 0;
+                    while (!(i >= CurrentPlayerAppleEvents.Length || CurrentPlayerAppleEvents[i].Time >= CurrentTime))
+                        i++;
+                    for (int j = i; j < CurrentPlayerAppleEvents.Length; j++)
+                    {
+                        var z = Lev.Apples[CurrentPlayerAppleEvents[j].Info];
+                        DrawGravityArrowMaybe(z);
+                    }
+                    foreach (var x in NotTakenApples)
+                        DrawGravityArrowMaybe(x);
                 }
             }
             foreach (Polygon x in Lev.Polygons)
@@ -892,6 +869,48 @@ namespace Elmanager
             GFXContext.SwapBuffers();
             if (AfterDrawing != null)
                 AfterDrawing();
+        }
+
+        private void DrawGravityArrowMaybe(Level.Object o)
+        {
+            if (o.Type == Level.ObjectType.Apple && o.AppleType != Level.AppleTypes.Normal)
+            {
+                GL.Color3(Settings.AppleGravityArrowColor);
+                double arrowRotation = 0.0;
+                switch (o.AppleType)
+                {
+                    case Level.AppleTypes.GravityUp:
+                        arrowRotation = 180.0;
+                        break;
+                    case Level.AppleTypes.GravityDown:
+                        arrowRotation = 0.0;
+                        break;
+                    case Level.AppleTypes.GravityLeft:
+                        arrowRotation = 90.0;
+                        break;
+                    case Level.AppleTypes.GravityRight:
+                        arrowRotation = 270.0;
+                        break;
+                    default:
+                        throw new ArgumentOutOfRangeException();
+                }
+                const double arrowThickness = 0.4;
+                GL.PushMatrix();
+                GL.Translate(o.Position.X, o.Position.Y, 0.0);
+                GL.Scale(0.5, 0.5, 1.0);
+                GL.Rotate(arrowRotation, 0.0, 0.0, 1.0);
+                GL.Translate(-0.5, -0.5, 0.0);
+                GL.Begin(PrimitiveType.LineLoop);
+                GL.Vertex2((1 - arrowThickness) / 2.0, 0.0);
+                GL.Vertex2((1 - arrowThickness) / 2.0, 0.5);
+                GL.Vertex2(0.0, 0.5);
+                GL.Vertex2(0.5, 1.0);
+                GL.Vertex2(1.0, 0.5);
+                GL.Vertex2(1.0 - (1 - arrowThickness) / 2.0, 0.5);
+                GL.Vertex2(1.0 - (1 - arrowThickness) / 2.0, 0.0);
+                GL.End();
+                GL.PopMatrix();
+            }
         }
 
         internal void DrawSceneDefault()
