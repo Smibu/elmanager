@@ -301,7 +301,7 @@ namespace Elmanager
             DrawCircle(v.X, v.Y, radius, circleColor);
         }
 
-        internal void DrawDummyPlayer(double leftWheelx, double leftWheely, bool active = true)
+        internal void DrawDummyPlayer(double leftWheelx, double leftWheely, bool active = true, bool useGraphics = true)
         {
             GL.Scale(1, -1, 1);
             GL.Enable(EnableCap.Texture2D);
@@ -311,7 +311,7 @@ namespace Elmanager
                        leftWheely + Level.GlobalBodyDifferenceFromLeftWheelY, leftWheelx, leftWheely,
                        leftWheelx + Level.RightWheelDifferenceFromLeftWheelX, leftWheely, 0, 0,
                        leftWheelx + Level.HeadDifferenceFromLeftWheelX, leftWheely - Level.HeadDifferenceFromLeftWheelY,
-                       0, Direction.Left, 0, active);
+                       0, Direction.Left, 0, active, useGraphics);
             GL.Scale(1, -1, 1);
         }
 
@@ -733,7 +733,7 @@ namespace Elmanager
                         case Level.ObjectType.Start:
                             if (!HideStartObject)
                             {
-                                DrawDummyPlayer(x.Position.X, -x.Position.Y);
+                                DrawDummyPlayer(x.Position.X, -x.Position.Y, false, !DrawOnlyPlayerFrames);
                             }
                             break;
                     }
@@ -1615,18 +1615,18 @@ namespace Elmanager
         {
             DrawPlayer(player.GlobalBodyX, player.GlobalBodyY, player.LeftWheelX, player.LeftWheelY, player.RightWheelX,
                        player.RightWheelY, player.LeftWheelRotation, player.RightWheelRotation, player.HeadX,
-                       player.HeadY, player.BikeRotation, player.Dir, player.ArmRotation, isActive || !DrawInActiveAsTransparent);
+                       player.HeadY, player.BikeRotation, player.Dir, player.ArmRotation, isActive || !DrawInActiveAsTransparent, !DrawOnlyPlayerFrames);
         }
 
         private void DrawPlayer(double globalBodyX, double globalBodyY, double leftWheelx, double leftWheely,
                                 double rightWheelx, double rightWheely, double leftWheelRotation,
                                 double rightWheelRotation, double headX, double headY, double bikeRotation,
-                                Direction direction, double armRotation, bool isActive)
+                                Direction direction, double armRotation, bool isActive, bool useGraphics)
         {
             double distance = ((PicturesInBackground ? 1 : BikeDistance) - Utils.BooleanToInteger(isActive)) /
                               1000.0 * (zFar - zNear) + zNear;
             bool isright = direction == Direction.Right;
-            if (!DrawOnlyPlayerFrames && LgrGraphicsLoaded)
+            if (useGraphics && LgrGraphicsLoaded)
             {
                 double rotation = bikeRotation * Constants.DegToRad;
                 double rotationCos = Math.Cos(rotation);
@@ -1815,9 +1815,18 @@ namespace Elmanager
             {
                 GL.Disable(EnableCap.Texture2D);
                 GL.Disable(EnableCap.DepthTest);
+                if (!isActive)
+                {
+                    GL.Enable(EnableCap.LineStipple);
+                    GL.LineStipple(1, unchecked((short)(0xAAAA)));
+                }
                 DrawPlayerFrames(headX, headY, bikeRotation, isright, leftWheelx, leftWheely, rightWheelx, rightWheely,
                                  leftWheelRotation, rightWheelRotation,
                                  isActive ? ActivePlayerColor : InActivePlayerColor);
+                if (!isActive)
+                {
+                    GL.Disable(EnableCap.LineStipple);
+                }
                 GL.Enable(EnableCap.Texture2D);
                 GL.Enable(EnableCap.DepthTest);
             }

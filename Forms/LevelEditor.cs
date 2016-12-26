@@ -589,7 +589,14 @@ namespace Elmanager.Forms
                 Renderer.DrawSquare(x, Renderer.ZoomLevel/25, Color.Red);
             if ((object)_savedStartPosition != null)
             {
-                Renderer.DrawDummyPlayer(_savedStartPosition.X, -_savedStartPosition.Y, false);
+                if (Global.AppSettings.LevelEditor.RenderingSettings.ShowObjects)
+                {
+                    Renderer.DrawDummyPlayer(_savedStartPosition.X, -_savedStartPosition.Y, false, true);
+                }
+                if (Global.AppSettings.LevelEditor.RenderingSettings.ShowObjectFrames)
+                {
+                    Renderer.DrawDummyPlayer(_savedStartPosition.X, -_savedStartPosition.Y, false, false);
+                }
             }
         }
 
