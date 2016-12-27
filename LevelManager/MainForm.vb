@@ -91,6 +91,7 @@
     Dim Remainder As Integer
     Public ZoomRectStartPoint, ZoomRectEndPoint As PointF
     Sub StartProgram() Handles Me.Load
+        My.Forms.m_MainForm = Me
         DeleteToRecycleBinToolStripMenuItem.Checked = My.Settings.DelToRecycle
         SingleTotalTimeShown = My.Settings.ShowSingleTotal
     End Sub
