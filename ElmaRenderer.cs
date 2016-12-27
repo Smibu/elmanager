@@ -733,7 +733,7 @@ namespace Elmanager
                         case Level.ObjectType.Start:
                             if (!HideStartObject)
                             {
-                                DrawDummyPlayer(x.Position.X, -x.Position.Y, false, !DrawOnlyPlayerFrames);
+                                DrawDummyPlayer(x.Position.X, -x.Position.Y, true, !DrawOnlyPlayerFrames);
                             }
                             break;
                     }
