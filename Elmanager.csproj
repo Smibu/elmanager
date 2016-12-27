@@ -204,6 +204,10 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="LevelManager\Level manager.vbproj">
+      <Project>{b6c8ac80-ee67-467e-9094-6c18a924056b}</Project>
+      <Name>Level manager</Name>
+    </ProjectReference>
   </ItemGroup>
   <ItemGroup>
     <Compile Include="CustomControls\FontDialogMod.cs">

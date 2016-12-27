@@ -101,5 +101,15 @@ namespace Elmanager
             t.SetApartmentState(ApartmentState.STA);
             t.Start();
         }
+
+        internal static void LaunchLevelManager()
+        {
+            LevelManager.My.MySettings.Default.LevelDirectory = Global.AppSettings.General.LevelDirectory;
+            LevelManager.My.MySettings.Default.ReplayDirectory = Global.AppSettings.General.ReplayDirectory;
+            StartThread(() =>
+            {
+                AddAndRun(new LevelManager.MainForm());
+            });
+        }
     }
 }

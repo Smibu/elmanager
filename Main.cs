@@ -90,6 +90,8 @@ namespace Elmanager
                 ComponentManager.LaunchReplayManager();
             else if (args[0] == "/leveleditor")
                 ComponentManager.LaunchLevelEditor();
+            else if (args[0] == "/levelmanager")
+                ComponentManager.LaunchLevelManager();
             else if (args[0].EndsWith(Constants.LevExtension, StringComparison.OrdinalIgnoreCase))
                 ComponentManager.LaunchLevelEditor(args[0]);
             else if (args[0].EndsWith(Constants.RecExtension, StringComparison.OrdinalIgnoreCase))

@@ -39,6 +39,7 @@
             this.linkLabel1 = new System.Windows.Forms.LinkLabel();
             this.toolTip1 = new System.Windows.Forms.ToolTip(this.components);
             this.linkLabel2 = new System.Windows.Forms.LinkLabel();
+            this.levelManagerButton = new System.Windows.Forms.Button();
             this.SuspendLayout();
             // 
             // rmButton
@@ -57,7 +58,7 @@
             // 
             this.levelEditorButton.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
-            this.levelEditorButton.Location = new System.Drawing.Point(87, 175);
+            this.levelEditorButton.Location = new System.Drawing.Point(87, 204);
             this.levelEditorButton.Name = "levelEditorButton";
             this.levelEditorButton.Size = new System.Drawing.Size(138, 23);
             this.levelEditorButton.TabIndex = 2;
@@ -117,7 +118,7 @@
             // 
             this.configButton.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
-            this.configButton.Location = new System.Drawing.Point(87, 204);
+            this.configButton.Location = new System.Drawing.Point(87, 233);
             this.configButton.Name = "configButton";
             this.configButton.Size = new System.Drawing.Size(138, 23);
             this.configButton.TabIndex = 7;
@@ -130,7 +131,7 @@
             this.linkLabel1.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
             this.linkLabel1.AutoSize = true;
             this.linkLabel1.LinkArea = new System.Windows.Forms.LinkArea(41, 6);
-            this.linkLabel1.Location = new System.Drawing.Point(32, 241);
+            this.linkLabel1.Location = new System.Drawing.Point(32, 274);
             this.linkLabel1.Name = "linkLabel1";
             this.linkLabel1.Size = new System.Drawing.Size(248, 17);
             this.linkLabel1.TabIndex = 9;
@@ -152,7 +153,7 @@
             this.linkLabel2.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
             this.linkLabel2.AutoSize = true;
             this.linkLabel2.LinkArea = new System.Windows.Forms.LinkArea(10, 13);
-            this.linkLabel2.Location = new System.Drawing.Point(91, 258);
+            this.linkLabel2.Location = new System.Drawing.Point(91, 291);
             this.linkLabel2.Name = "linkLabel2";
             this.linkLabel2.Size = new System.Drawing.Size(131, 17);
             this.linkLabel2.TabIndex = 10;
@@ -162,11 +163,24 @@
             this.linkLabel2.UseCompatibleTextRendering = true;
             this.linkLabel2.LinkClicked += new System.Windows.Forms.LinkLabelLinkClickedEventHandler(this.linkLabel2_LinkClicked);
             // 
+            // levelManagerButton
+            // 
+            this.levelManagerButton.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+            this.levelManagerButton.Location = new System.Drawing.Point(87, 175);
+            this.levelManagerButton.Name = "levelManagerButton";
+            this.levelManagerButton.Size = new System.Drawing.Size(138, 23);
+            this.levelManagerButton.TabIndex = 11;
+            this.levelManagerButton.Text = "Level manager";
+            this.levelManagerButton.UseVisualStyleBackColor = true;
+            this.levelManagerButton.Click += new System.EventHandler(this.levelManagerButton_Click);
+            // 
             // MainForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(312, 288);
+            this.ClientSize = new System.Drawing.Size(312, 321);
+            this.Controls.Add(this.levelManagerButton);
             this.Controls.Add(this.linkLabel2);
             this.Controls.Add(this.linkLabel1);
             this.Controls.Add(this.configButton);
@@ -197,6 +211,7 @@
         private System.Windows.Forms.LinkLabel linkLabel1;
         private System.Windows.Forms.ToolTip toolTip1;
         private System.Windows.Forms.LinkLabel linkLabel2;
+        internal System.Windows.Forms.Button levelManagerButton;
     }
 	
 }

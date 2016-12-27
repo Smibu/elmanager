@@ -65,5 +65,10 @@ namespace Elmanager.Forms
         {
             Process.Start("http://radimrehurek.com/");
         }
+
+        private void levelManagerButton_Click(object sender, EventArgs e)
+        {
+            ComponentManager.LaunchLevelManager();
+        }
     }
 }
