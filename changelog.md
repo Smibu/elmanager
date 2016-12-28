@@ -1,5 +1,21 @@
 # Elmanager changelog
 
+## 28.12.2016
+* Integrated Level manager.
+* SLE: Added possibility to save start position and restore it later.
+* SLE: Selection is updated when selection filter is restricted.
+* SLE: Picture tool dialog uses numeric text box for distance.
+* SLE: Bugfix: Bogus "cannot check topology..." was sometimes shown when connecting polygons.
+* SLE: Bugfix: Connect tool did not always connect polygons if the level had a specific topology error (two vertices at the same spot).
+* SLE: Bugfix: Pictures/textures were not ignored when checking if the level is too big.
+* Replay manager: Added an option to disable replay list tooltip.
+* Replay manager: Bugfix: Replay list messed up selected item when something was removed from the list.
+* Replay viewer: Last zoom level is remembered.
+* Replay viewer: Ground edges no longer "jitter" when playing a replay.
+* Replay viewer: Bugfix: Gravity apple arrows were not removed for collected apples.
+* Bugfix: SLE or replay viewer could crash if sdl2.dll was found in system path.
+* Updated external libraries.
+
 ## 16.10.2016
 * SLE: Improved handling of default values in picture tool.
 * SLE: Bugfix: Picture tool close button click was sometimes being interpreted as OK button click.
