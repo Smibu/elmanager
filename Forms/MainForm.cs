@@ -69,6 +69,7 @@ namespace Elmanager.Forms
         private void levelManagerButton_Click(object sender, EventArgs e)
         {
             ComponentManager.LaunchLevelManager();
+            Close();
         }
     }
 }
