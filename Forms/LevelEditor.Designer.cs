@@ -1422,7 +1422,7 @@ namespace Elmanager.Forms
             this.saveStartPositionToolStripMenuItem.Name = "saveStartPositionToolStripMenuItem";
             this.saveStartPositionToolStripMenuItem.Size = new System.Drawing.Size(185, 22);
             this.saveStartPositionToolStripMenuItem.Text = "Save start position";
-            this.saveStartPositionToolStripMenuItem.Click += new System.EventHandler(this.saveStartPositionToolStripMenuItem_Click);
+            this.saveStartPositionToolStripMenuItem.Click += new System.EventHandler(this.SaveStartPosition);
             // 
             // restoreStartPositionToolStripMenuItem
             // 

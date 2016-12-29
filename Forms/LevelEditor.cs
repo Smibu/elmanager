@@ -82,6 +82,7 @@ namespace Elmanager.Forms
                 lev.LoadFromPath(levPath);
                 Lev = lev;
                 _fromScratch = false;
+                SaveStartPosition();
             }
             catch (LevelException ex)
             {
@@ -888,7 +889,6 @@ namespace Elmanager.Forms
         {
             _savePath = Lev.Path;
             Modified = false;
-            _savedStartPosition = null;
             UpdateLabels();
             UpdateButtons();
             Renderer.InitializeLevel(Lev);
@@ -1654,6 +1654,7 @@ namespace Elmanager.Forms
             Lev = Global.AppSettings.LevelEditor.GetTemplateLevel();
             SetDefaultLevelTitle();
             _fromScratch = true;
+            _savedStartPosition = null;
         }
 
         private void SettingChanged(object sender, EventArgs e)
@@ -2177,7 +2178,7 @@ namespace Elmanager.Forms
             TexturizeSelection();
         }
 
-        private void saveStartPositionToolStripMenuItem_Click(object sender, EventArgs e)
+        private void SaveStartPosition(object sender = null, EventArgs e = null)
         {
             foreach (var o in Lev.Objects)
             {
