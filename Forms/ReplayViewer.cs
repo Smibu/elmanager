@@ -583,8 +583,11 @@ namespace Elmanager.Forms
                 viewerSizeXBox.Text = ViewerBox.Width.ToString();
                 viewerSizeYBox.Text = ViewerBox.Height.ToString();
             }
-            _renderer.ResetViewport(ViewerBox.Width, ViewerBox.Height);
-            _renderer.RedrawScene();
+            if (_renderer != null)
+            {
+                _renderer.ResetViewport(ViewerBox.Width, ViewerBox.Height);
+                _renderer.RedrawScene();
+            }
         }
 
         private void ViewerSizeBoxKeyUp(object sender, KeyEventArgs e)

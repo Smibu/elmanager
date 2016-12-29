@@ -1042,8 +1042,7 @@ namespace Elmanager
 
         internal void RedrawScene(object sender = null, EventArgs e = null)
         {
-            if (!Playing)
-                DrawSceneNoDriverFocus();
+            DrawSceneNoDriverFocus();
         }
 
         internal void ResetViewport(int width, int height)
