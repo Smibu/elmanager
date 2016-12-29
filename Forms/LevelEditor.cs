@@ -2194,7 +2194,12 @@ namespace Elmanager.Forms
             {
                 if (o.Type == Level.ObjectType.Start)
                 {
+                    var oldPos = o.Position;
                     o.Position = _savedStartPosition.Clone();
+                    if (oldPos != _savedStartPosition)
+                    {
+                        Modified = true;
+                    }
                 }
             }
         }
