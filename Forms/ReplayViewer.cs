@@ -250,6 +250,24 @@ namespace Elmanager.Forms
             SetupEventHandlers();
         }
 
+        protected override bool ProcessCmdKey(ref Message m, Keys keyData)
+        {
+            const int WM_KEYDOWN = 0x100;
+            if (m.Msg == WM_KEYDOWN)
+            {
+                switch (keyData)
+                {
+                    case Keys.Up:
+                    case Keys.Down:
+                    case Keys.Left:
+                    case Keys.Right:
+                        Utils.BeginArrowScroll(_renderer);
+                        break;
+                }
+            }
+            return base.ProcessCmdKey(ref m, keyData);
+        }
+
         private void KeyHandler(object sender, KeyEventArgs e)
         {
             e.SuppressKeyPress = true;
@@ -298,12 +316,6 @@ namespace Elmanager.Forms
                     break;
                 case Keys.F11:
                     FullScreen(null, null);
-                    break;
-                case Keys.Up:
-                case Keys.Down:
-                case Keys.Left:
-                case Keys.Right:
-                    Utils.BeginArrowScroll(_renderer);
                     break;
                 case Keys.F5:
                     _renderer.ZoomFill();
