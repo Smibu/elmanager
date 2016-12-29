@@ -232,6 +232,7 @@ namespace Elmanager.Forms
             Size = Global.AppSettings.ReplayViewer.Size;
             playbackSpeedBar.Value = 0;
             FollowDriverBox.Checked = Global.AppSettings.ReplayViewer.FollowDriver;
+            followAlsoWhenZooming.Checked = Global.AppSettings.ReplayViewer.FollowAlsoWhenZooming;
             LoopPlayingBox.Checked = Global.AppSettings.ReplayViewer.LoopPlaying;
             ShowDriverPathBox.Checked = Global.AppSettings.ReplayViewer.ShowDriverPath;
             MouseClickZoomBox.Text = Global.AppSettings.ReplayViewer.MouseClickStep.ToString();
@@ -394,6 +395,7 @@ namespace Elmanager.Forms
             var settings = Global.AppSettings.ReplayViewer;
             settings.Size = Size;
             settings.FollowDriver = FollowDriverBox.Checked;
+            settings.FollowAlsoWhenZooming = followAlsoWhenZooming.Checked;
             settings.LoopPlaying = LoopPlayingBox.Checked;
             settings.ShowDriverPath = ShowDriverPathBox.Checked;
             settings.LockedCamera = LockedCamBox.Checked;
@@ -421,6 +423,7 @@ namespace Elmanager.Forms
             LockedCamBox.CheckedChanged += RenderingOptionsChanged;
             LoopPlayingBox.CheckedChanged += RenderingOptionsChanged;
             FollowDriverBox.CheckedChanged += RenderingOptionsChanged;
+            followAlsoWhenZooming.CheckedChanged += RenderingOptionsChanged;
             PictBackGroundBox.CheckedChanged += RenderingOptionsChanged;
             TransparentInactiveBox.CheckedChanged += RenderingOptionsChanged;
             PlayerFramesBox.CheckedChanged += RenderingOptionsChanged;

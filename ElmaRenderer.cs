@@ -120,6 +120,7 @@ namespace Elmanager
         private int depthStencilRenderBuffer;
         private int maxRenderbufferSize;
         private Control RenderTarget;
+        private bool FollowAlsoWhenZooming;
 
         internal ElmaRenderer(Control renderingTarget, RenderingSettings settings)
         {
@@ -1185,6 +1186,7 @@ namespace Elmanager
         {
             ShowDriverPath = Global.AppSettings.ReplayViewer.ShowDriverPath;
             FollowDriver = Global.AppSettings.ReplayViewer.FollowDriver;
+            FollowAlsoWhenZooming = Global.AppSettings.ReplayViewer.FollowAlsoWhenZooming;
             LockedCamera = Global.AppSettings.ReplayViewer.LockedCamera;
             PicturesInBackground = Global.AppSettings.ReplayViewer.PicturesInBackGround;
             DrawInActiveAsTransparent = Global.AppSettings.ReplayViewer.DrawTransparentInactive;
@@ -1241,6 +1243,13 @@ namespace Elmanager
             double i = zoomIn ? zoomFactor : 1 / zoomFactor;
             double x = p.X;
             double y = p.Y;
+            if (ActivePlayerIndices.Count > 0 && FollowDriver && FollowAlsoWhenZooming)
+            {
+                x = Players[ActivePlayerIndices[0]].GlobalBodyX;
+                y = Players[ActivePlayerIndices[0]].GlobalBodyY;
+                CenterX = x;
+                CenterY = y;
+            }
             x -= (x - (XMax + XMin) / 2) * i;
             y -= (y - (YMax + YMin) / 2) * i;
             PerformZoom(ZoomLevel * i, x, y);

@@ -203,6 +203,7 @@ namespace Elmanager
             public Size Size = new Size(800, 600);
             public FormWindowState WindowState = FormWindowState.Normal;
             public double ZoomLevel = 5.0;
+            public bool FollowAlsoWhenZooming = false;
         }
     }
 }
