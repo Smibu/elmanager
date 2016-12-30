@@ -208,6 +208,14 @@
       <Project>{b6c8ac80-ee67-467e-9094-6c18a924056b}</Project>
       <Name>Level manager</Name>
     </ProjectReference>
+    <ProjectReference Include="ReplayManager\ReplayManager.csproj">
+      <Project>{4d204929-f770-4ebc-8e28-2f224618464e}</Project>
+      <Name>ReplayManager</Name>
+    </ProjectReference>
+    <ProjectReference Include="SLE\SLE.csproj">
+      <Project>{55da2b75-0c4e-4a1d-af1b-8ea8696e409b}</Project>
+      <Name>SLE</Name>
+    </ProjectReference>
   </ItemGroup>
   <ItemGroup>
     <Compile Include="CustomControls\FontDialogMod.cs">
