@@ -1,5 +1,13 @@
 # Elmanager changelog
 
+## 31.12.2016
+* Added separate files for launching replay manager and SLE.
+* SLE: Start position is automatically saved when opening a level.
+* SLE: Bugfix: Level was not marked as modified when restoring start position.
+* Replay viewer: Added an option to force driver-centered zoom when not playing.
+* Replay viewer: Pressing arrow keys to move screen works better.
+* Replay viewer: Bugfix: Moving with arrow keys when playing a replay didn't update screen until releasing the key.
+
 ## 28.12.2016
 * Integrated Level manager.
 * SLE: Added possibility to save start position and restore it later.
