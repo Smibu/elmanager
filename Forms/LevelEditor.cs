@@ -1496,6 +1496,7 @@ namespace Elmanager.Forms
             {
                 var filenameStart = Global.AppSettings.LevelEditor.BaseFilename;
                 int highestNumber = 0;
+                int lowestNumber = int.MaxValue;
                 foreach (string levelFile in Global.LevelFiles)
                 {
                     string x = Path.GetFileNameWithoutExtension(levelFile);
@@ -1504,13 +1505,24 @@ namespace Elmanager.Forms
                         int levelNumber;
                         bool isNum = int.TryParse(x.Substring(filenameStart.Length), out levelNumber);
                         if (isNum)
+                        {
                             highestNumber = Math.Max(highestNumber, levelNumber);
+                            lowestNumber = Math.Min(lowestNumber, levelNumber);
+                        }
                     }
                 }
                 try
                 {
-                    suggestion = filenameStart +
-                                 (highestNumber + 1).ToString(Global.AppSettings.LevelEditor.NumberFormat);
+                    int newNumber;
+                    if (highestNumber == 0 || lowestNumber <= 1)
+                    {
+                        newNumber = highestNumber + 1;
+                    }
+                    else
+                    {
+                        newNumber = lowestNumber - 1;
+                    }
+                    suggestion = filenameStart + newNumber.ToString(Global.AppSettings.LevelEditor.NumberFormat);
                 }
                 catch (FormatException)
                 {
