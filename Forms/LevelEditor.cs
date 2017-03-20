@@ -1055,8 +1055,8 @@ namespace Elmanager.Forms
         {
             if (!_programmaticPropertyChange)
             {
-                _modified = true;
-                EnableSaveButtons(true);
+                Lev.Title = TitleBox.Text;
+                Lev.LgrFile = LGRBox.Text;
                 if (sender.Equals(SkyComboBox) || sender.Equals(GroundComboBox))
                 {
                     if (sender.Equals(GroundComboBox))
@@ -1069,6 +1069,7 @@ namespace Elmanager.Forms
                     Renderer.UpdateGroundAndSky(Global.AppSettings.LevelEditor.RenderingSettings.DefaultGroundAndSky);
                     Renderer.RedrawScene();
                 }
+                Modified = true;
             }
         }
 
@@ -1079,11 +1080,12 @@ namespace Elmanager.Forms
             Lev.DecomposeGroundPolygons();
             Renderer.UpdateZoomFillBounds();
             UpdateUndoRedo();
-            UpdateSelectionInfo();
             topologyList.DropDownItems.Clear();
             topologyList.Text = "";
             _errorPoints.Clear();
+            Renderer.UpdateGroundAndSky(Global.AppSettings.LevelEditor.RenderingSettings.DefaultGroundAndSky);
             Renderer.RedrawScene();
+            UpdateLabels();
             SetModified(_savedIndex != _historyIndex, false);
         }
 
@@ -1711,10 +1713,10 @@ namespace Elmanager.Forms
             CutConnectButton.CheckedChanged += CutButtonChanged;
             AutoGrassButton.CheckedChanged += AutoGrassButtonChanged;
             PictureButton.CheckedChanged += PictureButtonChanged;
-            LGRBox.KeyPress += LevelPropertyModified;
+            LGRBox.TextChanged += LevelPropertyModified;
             GroundComboBox.SelectedIndexChanged += LevelPropertyModified;
             SkyComboBox.SelectedIndexChanged += LevelPropertyModified;
-            TitleBox.KeyPress += LevelPropertyModified;
+            TitleBox.TextChanged += LevelPropertyModified;
             ToolPanel.MouseWheel += MouseWheelZoom; // Windows 8.1 and earlier
             EditorControl.MouseWheel += MouseWheelZoom; // Windows 10 with the option "Scroll inactive windows when I hover over them" enabled
             previousLevelToolStripMenuItem.Click += PrevNextButtonClick;
