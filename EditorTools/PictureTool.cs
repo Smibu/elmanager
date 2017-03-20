@@ -93,7 +93,8 @@ namespace Elmanager.EditorTools
 
         private void AddCurrent()
         {
-            Lev.Pictures.Add(_currentPicture);
+            Lev.Pictures.Insert(0, _currentPicture);
+            Lev.SortPictures();
         }
 
         private void FirstTimeDialog()

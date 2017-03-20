@@ -733,6 +733,11 @@ namespace Elmanager
             File.WriteAllBytes(savePath, levelFile.ToArray());
         }
 
+        internal void SortPictures()
+        {
+            Pictures = Pictures.OrderBy(p => p.Clipping == ClippingType.Unclipped ? 1 : 0).ToList();
+        }
+
         internal void UpdateBounds()
         {
             var first = Polygons.First();
@@ -812,6 +817,7 @@ namespace Elmanager
                 if (!pictureFound)
                     AllPicturesFound = false;
             }
+            SortPictures();
         }
 
         private static void CryptTop10(IList<byte> level, int top10Offset)

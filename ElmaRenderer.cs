@@ -623,15 +623,12 @@ namespace Elmanager
             GL.Enable(EnableCap.AlphaTest);
             if (LgrGraphicsLoaded)
             {
-                GL.DepthFunc(DepthFunction.Greater);
+                GL.DepthFunc(DepthFunction.Gequal);
                 GL.Enable(EnableCap.ScissorTest);
-                foreach (Level.Picture picture in Lev.Pictures)
+                for (int i = Lev.Pictures.Count - 1; i >= 0; --i)
                 {
-                    int x = (int) ((picture.Position.X - XMin) / (XMax - XMin) * _viewPort[2]);
-                    int y = (int) (((-picture.Position.Y - picture.Height) - YMin) / (YMax - YMin) * _viewPort[3]);
-                    int w = (int) ((picture.Position.X + picture.Width - XMin) / (XMax - XMin) * _viewPort[2]) - x;
-                    int h = (int) ((-picture.Position.Y - YMin) / (YMax - YMin) * _viewPort[3]) - y;
-                    GL.Scissor(x, y, w, h);
+                    var picture = Lev.Pictures[i];
+                    DoPictureScissor(picture);
                     if (picture.IsPicture && Settings.ShowPictures)
                     {
                         GL.StencilOp(StencilOp.Keep, StencilOp.Keep, StencilOp.Keep);
@@ -648,9 +645,14 @@ namespace Elmanager
                                 break;
                         }
                         DrawPicture(picture.Id, picture.Position.X, picture.Position.Y, picture.Width, picture.Height,
-                                    (picture.Distance / 1000.0 * (zFar - zNear)) + zNear);
+                            (picture.Distance / 1000.0 * (zFar - zNear)) + zNear);
                     }
-                    else if (!picture.IsPicture && Settings.ShowTextures)
+                }
+                for (int i = 0; i < Lev.Pictures.Count; ++i)
+                {
+                    var picture = Lev.Pictures[i];
+                    DoPictureScissor(picture);
+                    if (!picture.IsPicture && Settings.ShowTextures)
                     {
                         GL.StencilOp(StencilOp.Keep, StencilOp.Keep, StencilOp.Invert);
                         switch (picture.Clipping)
@@ -873,6 +875,15 @@ namespace Elmanager
             GFXContext.SwapBuffers();
             if (AfterDrawing != null)
                 AfterDrawing();
+        }
+
+        private void DoPictureScissor(Level.Picture picture)
+        {
+            int x = (int) ((picture.Position.X - XMin) / (XMax - XMin) * _viewPort[2]);
+            int y = (int) (((-picture.Position.Y - picture.Height) - YMin) / (YMax - YMin) * _viewPort[3]);
+            int w = (int) ((picture.Position.X + picture.Width - XMin) / (XMax - XMin) * _viewPort[2]) - x;
+            int h = (int) ((-picture.Position.Y - YMin) / (YMax - YMin) * _viewPort[3]) - y;
+            GL.Scissor(x, y, w, h);
         }
 
         private void DrawGravityArrowMaybe(Level.Object o)
