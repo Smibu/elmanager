@@ -100,6 +100,7 @@ namespace Elmanager.EditorTools
                             if (!NearestPolygon.Equals(_firstPolygon))
                             {
                                 MarkAllAs(Geometry.VectorMark.None);
+                                FirstSelected = false;
                                 try
                                 {
                                     Lev.Polygons.AddRange(NearestPolygon.PolygonOperationWith(_firstPolygon, _currentOpType));
@@ -112,7 +113,6 @@ namespace Elmanager.EditorTools
                                 {
                                     Utils.ShowError(e.Message);
                                 }
-                                FirstSelected = false;
                                 ResetPolygonMarks();
                                 Renderer.RedrawScene();
                                 UpdateHelp();
