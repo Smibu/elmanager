@@ -61,7 +61,7 @@
             this.levelEditorButton.Location = new System.Drawing.Point(87, 204);
             this.levelEditorButton.Name = "levelEditorButton";
             this.levelEditorButton.Size = new System.Drawing.Size(138, 23);
-            this.levelEditorButton.TabIndex = 2;
+            this.levelEditorButton.TabIndex = 3;
             this.levelEditorButton.Text = "SLE";
             this.levelEditorButton.UseVisualStyleBackColor = true;
             this.levelEditorButton.Click += new System.EventHandler(this.OpenLevelEditor);
@@ -108,7 +108,7 @@
             this.homePageLabel.Location = new System.Drawing.Point(12, 116);
             this.homePageLabel.Name = "homePageLabel";
             this.homePageLabel.Size = new System.Drawing.Size(288, 13);
-            this.homePageLabel.TabIndex = 6;
+            this.homePageLabel.TabIndex = 7;
             this.homePageLabel.TabStop = true;
             this.homePageLabel.Text = "https://mkl.io/Elma/";
             this.homePageLabel.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
@@ -121,7 +121,7 @@
             this.configButton.Location = new System.Drawing.Point(87, 233);
             this.configButton.Name = "configButton";
             this.configButton.Size = new System.Drawing.Size(138, 23);
-            this.configButton.TabIndex = 7;
+            this.configButton.TabIndex = 4;
             this.configButton.Text = "Configuration";
             this.configButton.UseVisualStyleBackColor = true;
             this.configButton.Click += new System.EventHandler(this.ConfigButtonClick);
@@ -134,7 +134,7 @@
             this.linkLabel1.Location = new System.Drawing.Point(32, 274);
             this.linkLabel1.Name = "linkLabel1";
             this.linkLabel1.Size = new System.Drawing.Size(248, 17);
-            this.linkLabel1.TabIndex = 9;
+            this.linkLabel1.TabIndex = 5;
             this.linkLabel1.TabStop = true;
             this.linkLabel1.Text = "Testing && SLE toolbar graphics: Mawane (R.I.P.)";
             this.toolTip1.SetToolTip(this.linkLabel1, "http://www.oscarstours.ca/avis-de-deces/m-marck-antoine-simoneau#defunt");
@@ -156,7 +156,7 @@
             this.linkLabel2.Location = new System.Drawing.Point(91, 291);
             this.linkLabel2.Name = "linkLabel2";
             this.linkLabel2.Size = new System.Drawing.Size(131, 17);
-            this.linkLabel2.TabIndex = 10;
+            this.linkLabel2.TabIndex = 6;
             this.linkLabel2.TabStop = true;
             this.linkLabel2.Text = "Vectrast: Radim Řehůřek";
             this.toolTip1.SetToolTip(this.linkLabel2, "http://radimrehurek.com/");
@@ -170,7 +170,7 @@
             this.levelManagerButton.Location = new System.Drawing.Point(87, 175);
             this.levelManagerButton.Name = "levelManagerButton";
             this.levelManagerButton.Size = new System.Drawing.Size(138, 23);
-            this.levelManagerButton.TabIndex = 11;
+            this.levelManagerButton.TabIndex = 2;
             this.levelManagerButton.Text = "Level manager";
             this.levelManagerButton.UseVisualStyleBackColor = true;
             this.levelManagerButton.Click += new System.EventHandler(this.levelManagerButton_Click);
