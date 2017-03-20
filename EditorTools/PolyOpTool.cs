@@ -103,6 +103,7 @@ namespace Elmanager.EditorTools
                                 try
                                 {
                                     Lev.Polygons.AddRange(NearestPolygon.PolygonOperationWith(_firstPolygon, _currentOpType));
+                                    Lev.Polygons.RemoveAll(p => p.Vertices.Count < 3);
                                     Lev.Polygons.Remove(_firstPolygon);
                                     Lev.Polygons.Remove(NearestPolygon);
                                     LevEditor.Modified = true;
