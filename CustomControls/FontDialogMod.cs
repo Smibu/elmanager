@@ -26,6 +26,21 @@ namespace Elmanager.CustomControls
             FontStyleName = "";
         }
 
+        protected override bool RunDialog(IntPtr hWndOwner)
+        {
+            while (true)
+            {
+                try
+                {
+                    return base.RunDialog(hWndOwner);
+                }
+                catch (ArgumentException)
+                {
+                    Utils.ShowError("Sorry, this font does not work. Pick some other font.");
+                }
+            }
+        }
+
         protected override IntPtr HookProc(IntPtr hWnd, int msg, IntPtr wparam, IntPtr lparam)
         {
             switch (msg)
@@ -51,7 +66,14 @@ namespace Elmanager.CustomControls
                     }
                     break;
             }
-            return base.HookProc(hWnd, msg, wparam, lparam);
+            try
+            {
+                return base.HookProc(hWnd, msg, wparam, lparam);
+            }
+            catch (ArgumentException)
+            {
+                return IntPtr.Zero;
+            }
         }
     }
 }
