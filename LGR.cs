@@ -18,6 +18,16 @@ namespace Elmanager
             Mask = 102
         }
 
+        internal enum Transparency
+        {
+            NotTransparent = 10,
+            Palette0 = 11,
+            TopLeft = 12,
+            TopRight = 13,
+            BottomLeft = 14,
+            BottomRight = 15
+        }
+
         internal Lgr(string lgrFile)
         {
             byte[] lgrData = File.ReadAllBytes(lgrFile);
@@ -34,12 +44,15 @@ namespace Elmanager
                                           Name = Utils.ReadNullTerminatedString(lgrData, i * 10 + 17, 10).ToLower(),
                                           Type =
                                               (ImageType)
-                                              (BitConverter.ToInt32(lgrData, 17 + numberOfOptPcXs * 10 + i * 4)),
+                                              BitConverter.ToInt32(lgrData, 17 + numberOfOptPcXs * 10 + i * 4),
                                           Distance = BitConverter.ToInt32(lgrData, 17 + numberOfOptPcXs * 14 + i * 4),
                                           ClippingType =
                                               (Level.ClippingType)
-                                              (BitConverter.ToInt32(lgrData, 17 + numberOfOptPcXs * 18 + i * 4))
-                                      };
+                                              BitConverter.ToInt32(lgrData, 17 + numberOfOptPcXs * 18 + i * 4),
+                                          Transparency =
+                                              (Transparency)
+                                              BitConverter.ToInt32(lgrData, 17 + numberOfOptPcXs * 22 + i * 4)
+                };
             }
             int sp = 17 + numberOfOptPcXs * 26;
             for (int i = 0; i < numberOfPcXs; i++)
@@ -49,6 +62,7 @@ namespace Elmanager
                 ImageType imgType = ImageType.Picture;
                 int imgDistance = 500;
                 Level.ClippingType imgClippingType = Level.ClippingType.Unclipped;
+                var transparency = Transparency.TopLeft;
                 foreach (ListedImage x in ListedImages)
                 {
                     if (x.Name == lgrImageName)
@@ -56,6 +70,7 @@ namespace Elmanager
                         imgType = x.Type;
                         imgClippingType = x.ClippingType;
                         imgDistance = x.Distance;
+                        transparency = x.Transparency;
                     }
                 }
                 sp += 24;
@@ -67,7 +82,30 @@ namespace Elmanager
                 {
                     Bitmap bmp = new Pcx(memStream).ToBitmap();
                     if (imgType != ImageType.Texture)
-                        bmp.MakeTransparent(bmp.GetPixel(0, 0));
+                    {
+                        switch (transparency)
+                        {
+                            case Transparency.NotTransparent:
+                                break;
+                            case Transparency.Palette0:
+                                bmp.MakeTransparent(Color.Black); // TODO get from palette index 0
+                                break;
+                            case Transparency.TopLeft:
+                                bmp.MakeTransparent(bmp.GetPixel(0, 0));
+                                break;
+                            case Transparency.TopRight:
+                                bmp.MakeTransparent(bmp.GetPixel(bmp.Width - 1, 0));
+                                break;
+                            case Transparency.BottomLeft:
+                                bmp.MakeTransparent(bmp.GetPixel(0, bmp.Height - 1));
+                                break;
+                            case Transparency.BottomRight:
+                                bmp.MakeTransparent(bmp.GetPixel(bmp.Width - 1, bmp.Height - 1));
+                                break;
+                            default:
+                                throw new ArgumentOutOfRangeException(nameof(transparency));
+                        }
+                    }
                     LgrImages[i] = new LgrImage(lgrImageName, bmp, imgType, imgDistance, imgClippingType);
                 }
                 finally
@@ -98,6 +136,7 @@ namespace Elmanager
             internal int Distance;
             internal string Name;
             internal ImageType Type;
+            internal Transparency Transparency;
         }
 
         internal class LgrImage
