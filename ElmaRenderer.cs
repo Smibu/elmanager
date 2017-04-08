@@ -1991,6 +1991,7 @@ namespace Elmanager
             var firstFrameRect = new Rectangle(0, 0, 40, 40);
             foreach (Lgr.LgrImage x in CurrentLgr.LgrImages)
             {
+                var isSpecial = true;
                 switch (x.Name)
                 {
                     case "q1wheel":
@@ -2045,8 +2046,11 @@ namespace Elmanager
                                                         x.Bmp.Height * Suspension2Factor,
                                                         x.Bmp.Height * Suspension2Factor / 1.3, 1);
                         break;
+                    default:
+                        isSpecial = false;
+                        break;
                 }
-                if (!x.Name.StartsWith("q"))
+                if (!isSpecial)
                 {
                     DrawableImages.Add(new DrawableImage(LoadTexture(x), x.Bmp.Width * PictureFactor,
                                                          x.Bmp.Height * PictureFactor, x.ClippingType, x.Distance,

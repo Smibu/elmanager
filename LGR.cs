@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using System.Drawing;
 using System.IO;
 using System.Linq;
@@ -8,8 +9,8 @@ namespace Elmanager
 {
     internal class Lgr : IDisposable
     {
-        internal LgrImage[] LgrImages;
-        internal ListedImage[] ListedImages;
+        internal readonly List<LgrImage> LgrImages = new List<LgrImage>();
+        internal readonly List<ListedImage> ListedImages = new List<ListedImage>();
 
         internal enum ImageType
         {
@@ -28,6 +29,37 @@ namespace Elmanager
             BottomRight = 15
         }
 
+        internal IEnumerable<ListedImage> ListedImagesIncludingGrass
+        {
+            get
+            {
+                foreach (var listedImage in ListedImages)
+                {
+                    if (listedImage.Name[0] != 'q')
+                    {
+                        yield return listedImage;
+                    }
+                }
+                var grassImg = GetImage("QGRASS");
+                if (grassImg != null)
+                {
+                    yield return new ListedImage
+                    {
+                        ClippingType = Level.ClippingType.Ground,
+                        Distance = 500,
+                        Name = grassImg.Name,
+                        Transparency = Transparency.Palette0,
+                        Type = ImageType.Texture
+                    };
+                }
+            }
+        }
+
+        private LgrImage GetImage(string name)
+        {
+            return LgrImages.FirstOrDefault(img => img.Name == name.ToLower());
+        }
+
         internal Lgr(string lgrFile)
         {
             byte[] lgrData = File.ReadAllBytes(lgrFile);
@@ -35,11 +67,9 @@ namespace Elmanager
                 throw (new Exception("The specified LGR file " + lgrFile + " is not valid!"));
             int numberOfPcXs = BitConverter.ToInt32(lgrData, 5);
             int numberOfOptPcXs = BitConverter.ToInt32(lgrData, 13);
-            Array.Resize(ref ListedImages, numberOfOptPcXs);
-            Array.Resize(ref LgrImages, numberOfPcXs);
             for (int i = 0; i < numberOfOptPcXs; i++)
             {
-                ListedImages[i] = new ListedImage
+                ListedImages.Add(new ListedImage
                                       {
                                           Name = Utils.ReadNullTerminatedString(lgrData, i * 10 + 17, 10).ToLower(),
                                           Type =
@@ -52,16 +82,17 @@ namespace Elmanager
                                           Transparency =
                                               (Transparency)
                                               BitConverter.ToInt32(lgrData, 17 + numberOfOptPcXs * 22 + i * 4)
-                };
+                });
             }
             int sp = 17 + numberOfOptPcXs * 26;
             for (int i = 0; i < numberOfPcXs; i++)
             {
                 string lgrImageName =
                     Path.GetFileNameWithoutExtension(Utils.ReadNullTerminatedString(lgrData, sp, 12)).ToLower();
-                ImageType imgType = ImageType.Picture;
+                var isGrass = lgrImageName == "qgrass";
+                ImageType imgType = isGrass ? ImageType.Texture : ImageType.Picture;
                 int imgDistance = 500;
-                Level.ClippingType imgClippingType = Level.ClippingType.Unclipped;
+                Level.ClippingType imgClippingType = isGrass? Level.ClippingType.Ground : Level.ClippingType.Unclipped;
                 var transparency = Transparency.TopLeft;
                 foreach (ListedImage x in ListedImages)
                 {
@@ -106,7 +137,7 @@ namespace Elmanager
                                 throw new ArgumentOutOfRangeException(nameof(transparency));
                         }
                     }
-                    LgrImages[i] = new LgrImage(lgrImageName, bmp, imgType, imgDistance, imgClippingType);
+                    LgrImages.Add(new LgrImage(lgrImageName, bmp, imgType, imgDistance, imgClippingType));
                 }
                 finally
                 {

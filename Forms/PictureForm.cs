@@ -133,23 +133,20 @@ namespace Elmanager.Forms
             ClippingComboBox.Items.Add("Ground");
             ClippingComboBox.Items.Add("Sky");
             ClippingComboBox.SelectedIndex = 0;
-            foreach (Lgr.ListedImage x in _currentLgr.ListedImages)
+            foreach (Lgr.ListedImage x in _currentLgr.ListedImagesIncludingGrass)
             {
-                if (x.Name[0] != 'q')
+                switch (x.Type)
                 {
-                    switch (x.Type)
-                    {
-                        case Lgr.ImageType.Mask:
-                            MaskComboBox.Items.Add(x.Name);
-                            maskListBox.Items.Add(x.Name, true);
-                            break;
-                        case Lgr.ImageType.Picture:
-                            PictureComboBox.Items.Add(x.Name);
-                            break;
-                        case Lgr.ImageType.Texture:
-                            TextureComboBox.Items.Add(x.Name);
-                            break;
-                    }
+                    case Lgr.ImageType.Mask:
+                        MaskComboBox.Items.Add(x.Name);
+                        maskListBox.Items.Add(x.Name, true);
+                        break;
+                    case Lgr.ImageType.Picture:
+                        PictureComboBox.Items.Add(x.Name);
+                        break;
+                    case Lgr.ImageType.Texture:
+                        TextureComboBox.Items.Add(x.Name);
+                        break;
                 }
             }
             foreach (var c in new[] { MaskComboBox, PictureComboBox, TextureComboBox, ClippingComboBox })
