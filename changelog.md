@@ -1,5 +1,18 @@
 # Elmanager changelog
 
+## 9.4.2017
+* SLE: QGRASS is available as a texture.
+* SLE: Numbering direction for filename suggestion is deduced automatically.
+* SLE: Title and LGR changes are included in undo history.
+* SLE: Improved accuracy of rendering overlapping pictures with same distances.
+* SLE: Improved accuracy of texture rendering.
+* SLE: Bugfix: Some pictures were rendered incorrectly because LGR transparency fields were ignored.
+* SLE: Bugfix: The character '#' in level title was incorrectly reported as invalid.
+* SLE: Bugfix: Font dialog would sometimes crash when selecting certain fonts. (You still cannot use such fonts, but now a proper error message is shown.)
+* SLE: Bugfix: Wrong "editing in progress" notification was shown with PolyOp tool.
+* SLE: Bugfix: PolyOp crashed if inner and then outer polygon was selected.
+* Bugfix: Main window tab order was incorrect.
+
 ## 31.12.2016
 * Added separate files for launching replay manager and SLE.
 * SLE: Start position is automatically saved when opening a level.
