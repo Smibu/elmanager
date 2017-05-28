@@ -1862,13 +1862,10 @@ namespace Elmanager.Forms
                     PicForm = new PictureForm(_editorLgr);
                 SkyComboBox.Items.Clear();
                 GroundComboBox.Items.Clear();
-                foreach (Lgr.LgrImage x in _editorLgr.LgrImages)
+                foreach (var texture in _editorLgr.ListedImagesIncludingGrass.Where(image => image.Type == Lgr.ImageType.Texture))
                 {
-                    if (x.Type == Lgr.ImageType.Texture && x.Name[0] != 'q')
-                    {
-                        SkyComboBox.Items.Add(x.Name);
-                        GroundComboBox.Items.Add(x.Name);
-                    }
+                    SkyComboBox.Items.Add(texture.Name);
+                    GroundComboBox.Items.Add(texture.Name);
                 }
                 UpdateLabels();
             }
