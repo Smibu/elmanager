@@ -121,6 +121,8 @@ namespace Elmanager
                             case Transparency.Palette0:
                                 bmp.MakeTransparent(Color.Black); // TODO get from palette index 0
                                 break;
+                            // If the transparency field value is invalid, we'll assume Transparency.TopLeft as it is the most common case.
+                            default:
                             case Transparency.TopLeft:
                                 bmp.MakeTransparent(bmp.GetPixel(0, 0));
                                 break;
@@ -133,8 +135,6 @@ namespace Elmanager
                             case Transparency.BottomRight:
                                 bmp.MakeTransparent(bmp.GetPixel(bmp.Width - 1, bmp.Height - 1));
                                 break;
-                            default:
-                                throw new ArgumentOutOfRangeException(nameof(transparency));
                         }
                     }
                     LgrImages.Add(new LgrImage(lgrImageName, bmp, imgType, imgDistance, imgClippingType));
