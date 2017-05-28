@@ -1,5 +1,11 @@
 # Elmanager changelog
 
+## 28.5.2017
+* SLE: QGRASS is available as a ground/sky texture.
+* SLE: Added option to mirror selection vertically.
+* SLE: Bugfix: LGRs with invalid transparency values did not work.
+* SLE: Bugfix: Transparency type for certain pictures was not ignored like in Elma.
+
 ## 9.4.2017
 * SLE: QGRASS is available as a texture.
 * SLE: Numbering direction for filename suggestion is deduced automatically.
