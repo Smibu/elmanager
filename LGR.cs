@@ -11,6 +11,7 @@ namespace Elmanager
     {
         internal readonly List<LgrImage> LgrImages = new List<LgrImage>();
         internal readonly List<ListedImage> ListedImages = new List<ListedImage>();
+        private readonly HashSet<string> _transparencyIgnoreSet = new HashSet<string>(Enumerable.Range(1, 18).SelectMany(TransparencyIgnoreHelper));
 
         internal enum ImageType
         {
@@ -27,6 +28,13 @@ namespace Elmanager
             TopRight = 13,
             BottomLeft = 14,
             BottomRight = 15
+        }
+
+        private static IEnumerable<string> TransparencyIgnoreHelper(int i)
+        {
+            yield return $"qfood{i}";
+            yield return $"qup_{i}";
+            yield return $"qdown_{i}";
         }
 
         internal IEnumerable<ListedImage> ListedImagesIncludingGrass
@@ -101,7 +109,10 @@ namespace Elmanager
                         imgType = x.Type;
                         imgClippingType = x.ClippingType;
                         imgDistance = x.Distance;
-                        transparency = x.Transparency;
+                        if (!_transparencyIgnoreSet.Contains(x.Name))
+                        {
+                            transparency = x.Transparency;
+                        }
                     }
                 }
                 sp += 24;
