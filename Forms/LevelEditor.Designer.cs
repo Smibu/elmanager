@@ -58,7 +58,8 @@ namespace Elmanager.Forms
             this.selectionToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.toolStripMenuItem1 = new System.Windows.Forms.ToolStripMenuItem();
             this.copyAndSnapToGridMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.MirrorLevelToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.MirrorHorizontallyToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.MirrorVerticallyToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.DeleteSelectedMenuItem = new Elmanager.CustomControls.ToolStripMenuItemMod();
             this.toolStripSeparator14 = new System.Windows.Forms.ToolStripSeparator();
             this.unionToolStripMenuItem = new Elmanager.CustomControls.ToolStripMenuItemMod();
@@ -417,7 +418,8 @@ namespace Elmanager.Forms
             this.selectionToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.toolStripMenuItem1,
             this.copyAndSnapToGridMenuItem,
-            this.MirrorLevelToolStripMenuItem,
+            this.MirrorHorizontallyToolStripMenuItem,
+            this.MirrorVerticallyToolStripMenuItem,
             this.DeleteSelectedMenuItem,
             this.toolStripSeparator14,
             this.unionToolStripMenuItem,
@@ -447,14 +449,24 @@ namespace Elmanager.Forms
             this.copyAndSnapToGridMenuItem.Text = "Copy and snap to grid";
             this.copyAndSnapToGridMenuItem.Click += new System.EventHandler(this.CopyMenuItemClick);
             // 
-            // MirrorLevelToolStripMenuItem
+            // MirrorHorizontallyToolStripMenuItem
             // 
-            this.MirrorLevelToolStripMenuItem.Image = global::My.Resources.Resources.Mirror16;
-            this.MirrorLevelToolStripMenuItem.Name = "MirrorLevelToolStripMenuItem";
-            this.MirrorLevelToolStripMenuItem.ShortcutKeys = ((System.Windows.Forms.Keys)((System.Windows.Forms.Keys.Control | System.Windows.Forms.Keys.M)));
-            this.MirrorLevelToolStripMenuItem.Size = new System.Drawing.Size(239, 22);
-            this.MirrorLevelToolStripMenuItem.Text = "Mirror";
-            this.MirrorLevelToolStripMenuItem.Click += new System.EventHandler(this.Mirror);
+            this.MirrorHorizontallyToolStripMenuItem.Image = global::My.Resources.Resources.Mirror16;
+            this.MirrorHorizontallyToolStripMenuItem.Name = "MirrorHorizontallyToolStripMenuItem";
+            this.MirrorHorizontallyToolStripMenuItem.ShortcutKeys = ((System.Windows.Forms.Keys)((System.Windows.Forms.Keys.Control | System.Windows.Forms.Keys.M)));
+            this.MirrorHorizontallyToolStripMenuItem.Size = new System.Drawing.Size(239, 22);
+            this.MirrorHorizontallyToolStripMenuItem.Text = "Mirror horizontally";
+            this.MirrorHorizontallyToolStripMenuItem.Click += new System.EventHandler(this.MirrorHorizontallyToolStripMenuItem_Click);
+            // 
+            // MirrorVerticallyToolStripMenuItem
+            // 
+            this.MirrorVerticallyToolStripMenuItem.Image = global::My.Resources.Resources.Mirror16;
+            this.MirrorVerticallyToolStripMenuItem.Name = "MirrorVerticallyToolStripMenuItem";
+            this.MirrorVerticallyToolStripMenuItem.ShortcutKeys = ((System.Windows.Forms.Keys)(((System.Windows.Forms.Keys.Control | System.Windows.Forms.Keys.Shift) 
+            | System.Windows.Forms.Keys.M)));
+            this.MirrorVerticallyToolStripMenuItem.Size = new System.Drawing.Size(239, 22);
+            this.MirrorVerticallyToolStripMenuItem.Text = "Mirror vertically";
+            this.MirrorVerticallyToolStripMenuItem.Click += new System.EventHandler(this.MirrorVerticallyToolStripMenuItem_Click);
             // 
             // DeleteSelectedMenuItem
             // 
@@ -1285,7 +1297,7 @@ namespace Elmanager.Forms
             this.saveStartPositionToolStripMenuItem,
             this.restoreStartPositionToolStripMenuItem});
             this.EditorMenuStrip.Name = "SelectedMenuStrip";
-            this.EditorMenuStrip.Size = new System.Drawing.Size(186, 356);
+            this.EditorMenuStrip.Size = new System.Drawing.Size(186, 334);
             // 
             // CopyMenuItem
             // 
@@ -1829,7 +1841,7 @@ namespace Elmanager.Forms
         private ToolStripMenuItem selectionToolStripMenuItem;
         private ToolStripMenuItem toolStripMenuItem1;
         private ToolStripMenuItem copyAndSnapToGridMenuItem;
-        internal ToolStripMenuItem MirrorLevelToolStripMenuItem;
+        internal ToolStripMenuItem MirrorHorizontallyToolStripMenuItem;
         private ToolStripSeparator toolStripSeparator14;
         private ToolStripMenuItemMod unionToolStripMenuItem;
         private ToolStripMenuItemMod differenceToolStripMenuItem;
@@ -1840,6 +1852,7 @@ namespace Elmanager.Forms
         private ToolStripMenuItemMod texturizeMenuItem;
         private ToolStripMenuItem saveStartPositionToolStripMenuItem;
         private ToolStripMenuItem restoreStartPositionToolStripMenuItem;
+        internal ToolStripMenuItem MirrorVerticallyToolStripMenuItem;
     }
 	
 }

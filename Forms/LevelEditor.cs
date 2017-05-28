@@ -245,7 +245,7 @@ namespace Elmanager.Forms
             SelectionLabel.Text = "Selected " + _selectedVerticeCount + " vertices of " + _selectedPolygonCount +
                                   " polygons, " + _selectedObjectCount + " objects, " + _selectedPictureCount +
                                   " pictures, " + _selectedTextureCount + " textures.";
-            MirrorLevelToolStripMenuItem.Enabled = SelectedElementCount >= 2;
+            MirrorHorizontallyToolStripMenuItem.Enabled = SelectedElementCount >= 2;
         }
 
         private void AddToHistory()
@@ -1089,9 +1089,9 @@ namespace Elmanager.Forms
             SetModified(_savedIndex != _historyIndex, false);
         }
 
-        private void Mirror(object sender, EventArgs e)
+        private void MirrorHorizontallyToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            Lev.MirrorSelected();
+            Lev.MirrorSelected(Level.MirrorOption.Horizontal);
             Modified = true;
             Renderer.RedrawScene();
         }
@@ -2214,6 +2214,13 @@ namespace Elmanager.Forms
                     }
                 }
             }
+        }
+
+        private void MirrorVerticallyToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            Lev.MirrorSelected(Level.MirrorOption.Vertical);
+            Modified = true;
+            Renderer.RedrawScene();
         }
     }
 }

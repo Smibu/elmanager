@@ -586,10 +586,16 @@ namespace Elmanager
             mirrorMatrix.Translate(-(XMax + XMin) / 2, -(YMax + YMin) / 2);
             mirrorMatrix.Scale(-1.0, 1.0);
             mirrorMatrix.Translate((XMax + XMin) / 2, (YMax + YMin) / 2);
-            Mirror(mirrorMatrix, v => true);
+            Transform(mirrorMatrix, v => true);
         }
 
-        internal void MirrorSelected()
+        internal enum MirrorOption
+        {
+            Horizontal,
+            Vertical
+        }
+
+        internal void MirrorSelected(MirrorOption mirrorOption)
         {
             double xMin = double.PositiveInfinity;
             double xMax = double.NegativeInfinity;
@@ -618,17 +624,27 @@ namespace Elmanager
             }
             Matrix mirrorMatrix = Matrix.Identity;
             mirrorMatrix.Translate(-(xMax + xMin) / 2, -(yMax + yMin) / 2);
-            mirrorMatrix.Scale(-1.0, 1.0);
+            switch (mirrorOption)
+            {
+                case MirrorOption.Horizontal:
+                    mirrorMatrix.Scale(-1.0, 1.0);
+                    break;
+                case MirrorOption.Vertical:
+                    mirrorMatrix.Scale(1.0, -1.0);
+                    break;
+                default:
+                    throw new ArgumentOutOfRangeException(nameof(mirrorOption), mirrorOption, null);
+            }
             mirrorMatrix.Translate((xMax + xMin) / 2, (yMax + yMin) / 2);
-            Mirror(mirrorMatrix, v => v.Mark == Geometry.VectorMark.Selected);
+            Transform(mirrorMatrix, v => v.Mark == Geometry.VectorMark.Selected);
         }
 
-        internal void Mirror(Matrix mirrorMatrix, Func<Vector, bool> selector)
+        internal void Transform(Matrix matrix, Func<Vector, bool> selector)
         {
             foreach (Polygon x in Polygons)
             {
                 foreach (Vector t in x.Vertices.Where(selector))
-                    t.Transform(mirrorMatrix);
+                    t.Transform(matrix);
                 x.UpdateDecomposition();
             }
             foreach (Object t in Objects.Where(o => selector(o.Position)))
@@ -637,15 +653,15 @@ namespace Elmanager
                 if (t.Type == ObjectType.Start)
                 {
                     var fix = new Vector(RightWheelDifferenceFromLeftWheelX / 2, 0);
-                    t.Position.SetPosition((z + fix) * mirrorMatrix - fix);
+                    t.Position.SetPosition((z + fix) * matrix - fix);
                 }
                 else
-                    t.Position.Transform(mirrorMatrix);
+                    t.Position.Transform(matrix);
             }
             foreach (Picture z in Pictures.Where(p => selector(p.Position)))
             {
-                var fix = new Vector(z.Width / 2, 0);
-                z.Position.SetPosition((z.Position + fix) * mirrorMatrix - fix);
+                var fix = new Vector(z.Width / 2, z.Height / 2);
+                z.Position.SetPosition((z.Position + fix) * matrix - fix);
             }
         }
 
