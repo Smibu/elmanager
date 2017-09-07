@@ -45,7 +45,6 @@ namespace Elmanager.CustomControls
             set
             {
                 OptionButton1.Text = value;
-                Resized();
             }
         }
 
@@ -56,7 +55,6 @@ namespace Elmanager.CustomControls
             set
             {
                 OptionButton2.Text = value;
-                Resized();
             }
         }
 
@@ -67,24 +65,7 @@ namespace Elmanager.CustomControls
             set
             {
                 OptionButton3.Text = value;
-                Resized();
             }
-        }
-
-        private void Resized(object sender = null, EventArgs e = null)
-        {
-            Height = Math.Max(36, Height);
-            OptionBox.Size = Size;
-            int optionBoxY = OptionBox.Height / 2 + 1 - OptionButton1.Height / 2;
-            OptionButton1.Location = new Point(OptionButton1.Location.X, optionBoxY);
-            OptionButton2.Location = new Point(
-                Math.Max(OptionButton1.Location.X + OptionButton1.Width, OptionBox.Width / 2 - OptionButton2.Width / 2),
-                optionBoxY);
-            OptionButton3.Location =
-                new Point(
-                    Math.Max(OptionBox.Width - OptionButton3.Width, OptionButton2.Location.X + OptionButton2.Width),
-                    optionBoxY);
-            Width = Math.Max(Width, OptionButton3.Location.X + OptionButton3.Width);
         }
     }
 }

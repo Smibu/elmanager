@@ -71,21 +71,24 @@ namespace Elmanager.Forms
             this.FolderBrowserDialog1 = new System.Windows.Forms.FolderBrowserDialog();
             this.TabControl1 = new System.Windows.Forms.TabControl();
             this.TabPage1 = new System.Windows.Forms.TabPage();
-            this.intExtSelect = new Elmanager.CustomControls.TriSelect();
+            this.tableLayoutPanel1 = new System.Windows.Forms.TableLayoutPanel();
+            this.tableLayoutPanel2 = new System.Windows.Forms.TableLayoutPanel();
+            this.singleMultiSelect = new Elmanager.CustomControls.TriSelect();
             this.finishedSelect = new Elmanager.CustomControls.TriSelect();
-            this.maxDateTime = new System.Windows.Forms.DateTimePicker();
-            this.label26 = new System.Windows.Forms.Label();
-            this.minDateTime = new System.Windows.Forms.DateTimePicker();
-            this.label25 = new System.Windows.Forms.Label();
-            this.maxFileSizeBox = new Elmanager.CustomControls.NumericTextBox();
-            this.label24 = new System.Windows.Forms.Label();
+            this.elmaAcrossSelect = new Elmanager.CustomControls.TriSelect();
+            this.intExtSelect = new Elmanager.CustomControls.TriSelect();
+            this.fastestSlowestSelect = new Elmanager.CustomControls.TriSelect();
+            this.panel1 = new System.Windows.Forms.Panel();
             this.minFileSizeBox = new Elmanager.CustomControls.NumericTextBox();
-            this.label23 = new System.Windows.Forms.Label();
             this.TimeMaxBox = new Elmanager.CustomControls.TimeTextBox();
             this.TimeMinBox = new Elmanager.CustomControls.TimeTextBox();
-            this.singleMultiSelect = new Elmanager.CustomControls.TriSelect();
-            this.elmaAcrossSelect = new Elmanager.CustomControls.TriSelect();
-            this.fastestSlowestSelect = new Elmanager.CustomControls.TriSelect();
+            this.maxDateTime = new System.Windows.Forms.DateTimePicker();
+            this.maxFileSizeBox = new Elmanager.CustomControls.NumericTextBox();
+            this.label26 = new System.Windows.Forms.Label();
+            this.label23 = new System.Windows.Forms.Label();
+            this.minDateTime = new System.Windows.Forms.DateTimePicker();
+            this.label25 = new System.Windows.Forms.Label();
+            this.label24 = new System.Windows.Forms.Label();
             this.TabPage2 = new System.Windows.Forms.TabPage();
             this.ResetButton = new System.Windows.Forms.Button();
             this.Label15 = new System.Windows.Forms.Label();
@@ -145,6 +148,9 @@ namespace Elmanager.Forms
             ((System.ComponentModel.ISupportInitialize)(this.RList)).BeginInit();
             this.TabControl1.SuspendLayout();
             this.TabPage1.SuspendLayout();
+            this.tableLayoutPanel1.SuspendLayout();
+            this.tableLayoutPanel2.SuspendLayout();
+            this.panel1.SuspendLayout();
             this.TabPage2.SuspendLayout();
             this.TabPage3.SuspendLayout();
             this.StatusStrip1.SuspendLayout();
@@ -152,6 +158,7 @@ namespace Elmanager.Forms
             // 
             // ContextMenuStrip1
             // 
+            this.ContextMenuStrip1.ImageScalingSize = new System.Drawing.Size(32, 32);
             this.ContextMenuStrip1.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.SelectAllToolStripMenuItem,
             this.InvertToolStripMenuItem,
@@ -168,13 +175,13 @@ namespace Elmanager.Forms
             this.DeleteToolStripMenuItem,
             this.uploadToZworqyToolStripMenuItem});
             this.ContextMenuStrip1.Name = "ContextMenuStrip1";
-            this.ContextMenuStrip1.Size = new System.Drawing.Size(209, 312);
+            this.ContextMenuStrip1.Size = new System.Drawing.Size(357, 508);
             // 
             // SelectAllToolStripMenuItem
             // 
             this.SelectAllToolStripMenuItem.Name = "SelectAllToolStripMenuItem";
             this.SelectAllToolStripMenuItem.ShortcutKeys = ((System.Windows.Forms.Keys)((System.Windows.Forms.Keys.Control | System.Windows.Forms.Keys.A)));
-            this.SelectAllToolStripMenuItem.Size = new System.Drawing.Size(208, 22);
+            this.SelectAllToolStripMenuItem.Size = new System.Drawing.Size(356, 36);
             this.SelectAllToolStripMenuItem.Text = "Select all";
             this.SelectAllToolStripMenuItem.Click += new System.EventHandler(this.SelectAll);
             // 
@@ -182,7 +189,7 @@ namespace Elmanager.Forms
             // 
             this.InvertToolStripMenuItem.Name = "InvertToolStripMenuItem";
             this.InvertToolStripMenuItem.ShortcutKeys = ((System.Windows.Forms.Keys)((System.Windows.Forms.Keys.Control | System.Windows.Forms.Keys.I)));
-            this.InvertToolStripMenuItem.Size = new System.Drawing.Size(208, 22);
+            this.InvertToolStripMenuItem.Size = new System.Drawing.Size(356, 36);
             this.InvertToolStripMenuItem.Text = "Invert selection";
             this.InvertToolStripMenuItem.Click += new System.EventHandler(this.InvertSelection);
             // 
@@ -190,7 +197,7 @@ namespace Elmanager.Forms
             // 
             this.RemoveFromListToolStripMenuItem.Name = "RemoveFromListToolStripMenuItem";
             this.RemoveFromListToolStripMenuItem.ShortcutKeys = ((System.Windows.Forms.Keys)((System.Windows.Forms.Keys.Control | System.Windows.Forms.Keys.Z)));
-            this.RemoveFromListToolStripMenuItem.Size = new System.Drawing.Size(208, 22);
+            this.RemoveFromListToolStripMenuItem.Size = new System.Drawing.Size(356, 36);
             this.RemoveFromListToolStripMenuItem.Text = "Remove from list";
             this.RemoveFromListToolStripMenuItem.Click += new System.EventHandler(this.RemoveReplays);
             // 
@@ -198,7 +205,7 @@ namespace Elmanager.Forms
             // 
             this.CopyToToolStripMenuItem.Name = "CopyToToolStripMenuItem";
             this.CopyToToolStripMenuItem.ShortcutKeys = ((System.Windows.Forms.Keys)((System.Windows.Forms.Keys.Control | System.Windows.Forms.Keys.C)));
-            this.CopyToToolStripMenuItem.Size = new System.Drawing.Size(208, 22);
+            this.CopyToToolStripMenuItem.Size = new System.Drawing.Size(356, 36);
             this.CopyToToolStripMenuItem.Text = "Copy to...";
             this.CopyToToolStripMenuItem.Click += new System.EventHandler(this.MoveOrCopy);
             // 
@@ -206,7 +213,7 @@ namespace Elmanager.Forms
             // 
             this.MoveToToolStripMenuItem.Name = "MoveToToolStripMenuItem";
             this.MoveToToolStripMenuItem.ShortcutKeys = ((System.Windows.Forms.Keys)((System.Windows.Forms.Keys.Control | System.Windows.Forms.Keys.X)));
-            this.MoveToToolStripMenuItem.Size = new System.Drawing.Size(208, 22);
+            this.MoveToToolStripMenuItem.Size = new System.Drawing.Size(356, 36);
             this.MoveToToolStripMenuItem.Text = "Move to...";
             this.MoveToToolStripMenuItem.Click += new System.EventHandler(this.MoveOrCopy);
             // 
@@ -214,7 +221,7 @@ namespace Elmanager.Forms
             // 
             this.OpenLevelMenuItem.Name = "OpenLevelMenuItem";
             this.OpenLevelMenuItem.ShortcutKeys = ((System.Windows.Forms.Keys)((System.Windows.Forms.Keys.Control | System.Windows.Forms.Keys.L)));
-            this.OpenLevelMenuItem.Size = new System.Drawing.Size(208, 22);
+            this.OpenLevelMenuItem.Size = new System.Drawing.Size(356, 36);
             this.OpenLevelMenuItem.Text = "Open level file";
             this.OpenLevelMenuItem.Click += new System.EventHandler(this.OpenLevelMenuItemClick);
             // 
@@ -222,7 +229,7 @@ namespace Elmanager.Forms
             // 
             this.RenameToolStripMenuItem.Name = "RenameToolStripMenuItem";
             this.RenameToolStripMenuItem.ShortcutKeys = System.Windows.Forms.Keys.F2;
-            this.RenameToolStripMenuItem.Size = new System.Drawing.Size(208, 22);
+            this.RenameToolStripMenuItem.Size = new System.Drawing.Size(356, 36);
             this.RenameToolStripMenuItem.Text = "Rename";
             this.RenameToolStripMenuItem.Click += new System.EventHandler(this.Rename);
             // 
@@ -230,7 +237,7 @@ namespace Elmanager.Forms
             // 
             this.RenamePatternToolStripMenuItem.Name = "RenamePatternToolStripMenuItem";
             this.RenamePatternToolStripMenuItem.ShortcutKeys = ((System.Windows.Forms.Keys)((System.Windows.Forms.Keys.Control | System.Windows.Forms.Keys.P)));
-            this.RenamePatternToolStripMenuItem.Size = new System.Drawing.Size(208, 22);
+            this.RenamePatternToolStripMenuItem.Size = new System.Drawing.Size(356, 36);
             this.RenamePatternToolStripMenuItem.Text = "Rename pattern...";
             this.RenamePatternToolStripMenuItem.Click += new System.EventHandler(this.RenamePattern);
             // 
@@ -238,7 +245,7 @@ namespace Elmanager.Forms
             // 
             this.CompareToolStripMenuItem.Name = "CompareToolStripMenuItem";
             this.CompareToolStripMenuItem.ShortcutKeys = ((System.Windows.Forms.Keys)((System.Windows.Forms.Keys.Control | System.Windows.Forms.Keys.O)));
-            this.CompareToolStripMenuItem.Size = new System.Drawing.Size(208, 22);
+            this.CompareToolStripMenuItem.Size = new System.Drawing.Size(356, 36);
             this.CompareToolStripMenuItem.Text = "Compare";
             this.CompareToolStripMenuItem.Click += new System.EventHandler(this.Compare);
             // 
@@ -246,7 +253,7 @@ namespace Elmanager.Forms
             // 
             this.OpenViewerMenuItem.Name = "OpenViewerMenuItem";
             this.OpenViewerMenuItem.ShortcutKeys = ((System.Windows.Forms.Keys)((System.Windows.Forms.Keys.Control | System.Windows.Forms.Keys.V)));
-            this.OpenViewerMenuItem.Size = new System.Drawing.Size(208, 22);
+            this.OpenViewerMenuItem.Size = new System.Drawing.Size(356, 36);
             this.OpenViewerMenuItem.Text = "Replay viewer";
             this.OpenViewerMenuItem.Click += new System.EventHandler(this.OpenViewer);
             // 
@@ -254,7 +261,7 @@ namespace Elmanager.Forms
             // 
             this.MergeToolStripMenuItem.Name = "MergeToolStripMenuItem";
             this.MergeToolStripMenuItem.ShortcutKeys = ((System.Windows.Forms.Keys)((System.Windows.Forms.Keys.Control | System.Windows.Forms.Keys.M)));
-            this.MergeToolStripMenuItem.Size = new System.Drawing.Size(208, 22);
+            this.MergeToolStripMenuItem.Size = new System.Drawing.Size(356, 36);
             this.MergeToolStripMenuItem.Text = "Merge";
             this.MergeToolStripMenuItem.Click += new System.EventHandler(this.MergeReplays);
             // 
@@ -262,7 +269,7 @@ namespace Elmanager.Forms
             // 
             this.SaveListToTextFileToolStripMenuItem.Name = "SaveListToTextFileToolStripMenuItem";
             this.SaveListToTextFileToolStripMenuItem.ShortcutKeys = ((System.Windows.Forms.Keys)((System.Windows.Forms.Keys.Control | System.Windows.Forms.Keys.S)));
-            this.SaveListToTextFileToolStripMenuItem.Size = new System.Drawing.Size(208, 22);
+            this.SaveListToTextFileToolStripMenuItem.Size = new System.Drawing.Size(356, 36);
             this.SaveListToTextFileToolStripMenuItem.Text = "Save to textfile";
             this.SaveListToTextFileToolStripMenuItem.Click += new System.EventHandler(this.SaveListToTextFile);
             // 
@@ -270,7 +277,7 @@ namespace Elmanager.Forms
             // 
             this.DeleteToolStripMenuItem.Name = "DeleteToolStripMenuItem";
             this.DeleteToolStripMenuItem.ShortcutKeys = System.Windows.Forms.Keys.Delete;
-            this.DeleteToolStripMenuItem.Size = new System.Drawing.Size(208, 22);
+            this.DeleteToolStripMenuItem.Size = new System.Drawing.Size(356, 36);
             this.DeleteToolStripMenuItem.Text = "Delete";
             this.DeleteToolStripMenuItem.Click += new System.EventHandler(this.DeleteReplays);
             // 
@@ -280,29 +287,31 @@ namespace Elmanager.Forms
             this.zworqyToolStripMenuItem,
             this.k10xnetToolStripMenuItem});
             this.uploadToZworqyToolStripMenuItem.Name = "uploadToZworqyToolStripMenuItem";
-            this.uploadToZworqyToolStripMenuItem.Size = new System.Drawing.Size(208, 22);
+            this.uploadToZworqyToolStripMenuItem.Size = new System.Drawing.Size(356, 36);
             this.uploadToZworqyToolStripMenuItem.Text = "Upload to";
             // 
             // zworqyToolStripMenuItem
             // 
             this.zworqyToolStripMenuItem.Name = "zworqyToolStripMenuItem";
-            this.zworqyToolStripMenuItem.Size = new System.Drawing.Size(201, 22);
+            this.zworqyToolStripMenuItem.Size = new System.Drawing.Size(365, 38);
             this.zworqyToolStripMenuItem.Text = "zworqy.com/up";
             this.zworqyToolStripMenuItem.Click += new System.EventHandler(this.UploadToZworqyToolStripMenuItemClick);
             // 
             // k10xnetToolStripMenuItem
             // 
             this.k10xnetToolStripMenuItem.Name = "k10xnetToolStripMenuItem";
-            this.k10xnetToolStripMenuItem.Size = new System.Drawing.Size(201, 22);
+            this.k10xnetToolStripMenuItem.Size = new System.Drawing.Size(365, 38);
             this.k10xnetToolStripMenuItem.Text = "www.jappe2.net/upload";
             this.k10xnetToolStripMenuItem.Click += new System.EventHandler(this.K10XnetToolStripMenuItemClick);
             // 
             // SearchButton
             // 
+            this.SearchButton.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
             this.SearchButton.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.SearchButton.Location = new System.Drawing.Point(225, 188);
+            this.SearchButton.Location = new System.Drawing.Point(334, 425);
+            this.SearchButton.Margin = new System.Windows.Forms.Padding(6);
             this.SearchButton.Name = "SearchButton";
-            this.SearchButton.Size = new System.Drawing.Size(97, 24);
+            this.SearchButton.Size = new System.Drawing.Size(194, 46);
             this.SearchButton.TabIndex = 13;
             this.SearchButton.Text = "Search";
             this.SearchButton.UseVisualStyleBackColor = true;
@@ -311,52 +320,58 @@ namespace Elmanager.Forms
             // PatternLabel
             // 
             this.PatternLabel.AutoSize = true;
-            this.PatternLabel.Location = new System.Drawing.Point(6, 194);
+            this.PatternLabel.Location = new System.Drawing.Point(6, 207);
+            this.PatternLabel.Margin = new System.Windows.Forms.Padding(6, 0, 6, 0);
             this.PatternLabel.Name = "PatternLabel";
-            this.PatternLabel.Size = new System.Drawing.Size(85, 13);
+            this.PatternLabel.Size = new System.Drawing.Size(172, 25);
             this.PatternLabel.TabIndex = 14;
             this.PatternLabel.Text = "Replay filename:";
             // 
             // PatternBox
             // 
-            this.PatternBox.Location = new System.Drawing.Point(97, 191);
+            this.PatternBox.Location = new System.Drawing.Point(190, 204);
+            this.PatternBox.Margin = new System.Windows.Forms.Padding(6);
             this.PatternBox.Name = "PatternBox";
-            this.PatternBox.Size = new System.Drawing.Size(122, 20);
+            this.PatternBox.Size = new System.Drawing.Size(240, 31);
             this.PatternBox.TabIndex = 15;
             this.toolTip1.SetToolTip(this.PatternBox, "Enter regular expression");
             // 
             // LevPatternBox
             // 
-            this.LevPatternBox.Location = new System.Drawing.Point(9, 230);
+            this.LevPatternBox.Location = new System.Drawing.Point(190, 251);
+            this.LevPatternBox.Margin = new System.Windows.Forms.Padding(6);
             this.LevPatternBox.Name = "LevPatternBox";
-            this.LevPatternBox.Size = new System.Drawing.Size(80, 20);
+            this.LevPatternBox.Size = new System.Drawing.Size(156, 31);
             this.LevPatternBox.TabIndex = 42;
             this.toolTip1.SetToolTip(this.LevPatternBox, "Enter regular expression");
             // 
             // SearchSpecificLabel
             // 
             this.SearchSpecificLabel.AutoSize = true;
-            this.SearchSpecificLabel.Location = new System.Drawing.Point(6, 214);
+            this.SearchSpecificLabel.Location = new System.Drawing.Point(6, 253);
+            this.SearchSpecificLabel.Margin = new System.Windows.Forms.Padding(6, 0, 6, 0);
             this.SearchSpecificLabel.Name = "SearchSpecificLabel";
-            this.SearchSpecificLabel.Size = new System.Drawing.Size(78, 13);
+            this.SearchSpecificLabel.Size = new System.Drawing.Size(157, 25);
             this.SearchSpecificLabel.TabIndex = 41;
             this.SearchSpecificLabel.Text = "Level filename:";
             // 
             // Label7
             // 
             this.Label7.AutoSize = true;
-            this.Label7.Location = new System.Drawing.Point(203, 233);
+            this.Label7.Location = new System.Drawing.Point(209, 297);
+            this.Label7.Margin = new System.Windows.Forms.Padding(6, 0, 6, 0);
             this.Label7.Name = "Label7";
-            this.Label7.Size = new System.Drawing.Size(16, 13);
+            this.Label7.Size = new System.Drawing.Size(30, 25);
             this.Label7.TabIndex = 22;
             this.Label7.Text = "to";
             // 
             // Label1
             // 
             this.Label1.AutoSize = true;
-            this.Label1.Location = new System.Drawing.Point(105, 233);
+            this.Label1.Location = new System.Drawing.Point(5, 297);
+            this.Label1.Margin = new System.Windows.Forms.Padding(6, 0, 6, 0);
             this.Label1.Name = "Label1";
-            this.Label1.Size = new System.Drawing.Size(33, 13);
+            this.Label1.Size = new System.Drawing.Size(65, 25);
             this.Label1.TabIndex = 20;
             this.Label1.Text = "Time:";
             // 
@@ -364,9 +379,10 @@ namespace Elmanager.Forms
             // 
             this.SelectedReplaysLabel.AutoSize = true;
             this.SelectedReplaysLabel.Cursor = System.Windows.Forms.Cursors.Hand;
-            this.SelectedReplaysLabel.Location = new System.Drawing.Point(9, 14);
+            this.SelectedReplaysLabel.Location = new System.Drawing.Point(18, 27);
+            this.SelectedReplaysLabel.Margin = new System.Windows.Forms.Padding(6, 0, 6, 0);
             this.SelectedReplaysLabel.Name = "SelectedReplaysLabel";
-            this.SelectedReplaysLabel.Size = new System.Drawing.Size(70, 13);
+            this.SelectedReplaysLabel.Size = new System.Drawing.Size(142, 25);
             this.SelectedReplaysLabel.TabIndex = 49;
             this.SelectedReplaysLabel.Text = "0 of 0 replays";
             this.toolTip1.SetToolTip(this.SelectedReplaysLabel, "Click to toggle between 2 and 3 decimal view.");
@@ -392,6 +408,7 @@ namespace Elmanager.Forms
             this.RList.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
             | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
+            this.RList.CellEditUseWholeCell = false;
             this.RList.Columns.AddRange(new System.Windows.Forms.ColumnHeader[] {
             this.OlvColumn1,
             this.OlvColumn2,
@@ -407,12 +424,13 @@ namespace Elmanager.Forms
             this.RList.EmptyListMsg = "";
             this.RList.FullRowSelect = true;
             this.RList.HideSelection = false;
-            this.RList.Location = new System.Drawing.Point(12, 37);
+            this.RList.Location = new System.Drawing.Point(24, 73);
+            this.RList.Margin = new System.Windows.Forms.Padding(6);
             this.RList.Name = "RList";
             this.RList.OwnerDrawnHeader = true;
             this.RList.SelectAllOnControlA = false;
             this.RList.ShowGroups = false;
-            this.RList.Size = new System.Drawing.Size(558, 86);
+            this.RList.Size = new System.Drawing.Size(1116, 213);
             this.RList.TabIndex = 50;
             this.RList.UpdateSpaceFillingColumnsWhenDraggingColumnDivider = false;
             this.RList.UseCompatibleStateImageBehavior = false;
@@ -434,7 +452,7 @@ namespace Elmanager.Forms
             this.OlvColumn2.AspectName = "";
             this.OlvColumn2.IsEditable = false;
             this.OlvColumn2.Text = "";
-            this.OlvColumn2.Width = 120;
+            this.OlvColumn2.Width = 56;
             // 
             // OlvColumn3
             // 
@@ -482,9 +500,10 @@ namespace Elmanager.Forms
             // ConfigButton
             // 
             this.ConfigButton.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-            this.ConfigButton.Location = new System.Drawing.Point(467, 8);
+            this.ConfigButton.Location = new System.Drawing.Point(934, 15);
+            this.ConfigButton.Margin = new System.Windows.Forms.Padding(6);
             this.ConfigButton.Name = "ConfigButton";
-            this.ConfigButton.Size = new System.Drawing.Size(103, 24);
+            this.ConfigButton.Size = new System.Drawing.Size(206, 46);
             this.ConfigButton.TabIndex = 52;
             this.ConfigButton.Text = "Configuration";
             this.ConfigButton.UseVisualStyleBackColor = true;
@@ -497,153 +516,177 @@ namespace Elmanager.Forms
             this.TabControl1.Controls.Add(this.TabPage1);
             this.TabControl1.Controls.Add(this.TabPage2);
             this.TabControl1.Controls.Add(this.TabPage3);
-            this.TabControl1.Location = new System.Drawing.Point(12, 129);
+            this.TabControl1.Location = new System.Drawing.Point(24, 298);
+            this.TabControl1.Margin = new System.Windows.Forms.Padding(6);
             this.TabControl1.Name = "TabControl1";
             this.TabControl1.SelectedIndex = 0;
-            this.TabControl1.Size = new System.Drawing.Size(558, 286);
+            this.TabControl1.Size = new System.Drawing.Size(1116, 550);
             this.TabControl1.TabIndex = 54;
             // 
             // TabPage1
             // 
             this.TabPage1.AutoScroll = true;
-            this.TabPage1.Controls.Add(this.intExtSelect);
-            this.TabPage1.Controls.Add(this.finishedSelect);
-            this.TabPage1.Controls.Add(this.maxDateTime);
-            this.TabPage1.Controls.Add(this.label26);
-            this.TabPage1.Controls.Add(this.minDateTime);
-            this.TabPage1.Controls.Add(this.label25);
-            this.TabPage1.Controls.Add(this.maxFileSizeBox);
-            this.TabPage1.Controls.Add(this.label24);
-            this.TabPage1.Controls.Add(this.minFileSizeBox);
-            this.TabPage1.Controls.Add(this.label23);
-            this.TabPage1.Controls.Add(this.PatternLabel);
-            this.TabPage1.Controls.Add(this.LevPatternBox);
-            this.TabPage1.Controls.Add(this.PatternBox);
-            this.TabPage1.Controls.Add(this.SearchSpecificLabel);
-            this.TabPage1.Controls.Add(this.SearchButton);
-            this.TabPage1.Controls.Add(this.Label1);
-            this.TabPage1.Controls.Add(this.TimeMaxBox);
-            this.TabPage1.Controls.Add(this.TimeMinBox);
-            this.TabPage1.Controls.Add(this.Label7);
-            this.TabPage1.Controls.Add(this.singleMultiSelect);
-            this.TabPage1.Controls.Add(this.elmaAcrossSelect);
-            this.TabPage1.Controls.Add(this.fastestSlowestSelect);
-            this.TabPage1.Location = new System.Drawing.Point(4, 22);
+            this.TabPage1.Controls.Add(this.tableLayoutPanel1);
+            this.TabPage1.Location = new System.Drawing.Point(8, 39);
+            this.TabPage1.Margin = new System.Windows.Forms.Padding(6);
             this.TabPage1.Name = "TabPage1";
-            this.TabPage1.Padding = new System.Windows.Forms.Padding(3);
-            this.TabPage1.Size = new System.Drawing.Size(550, 260);
+            this.TabPage1.Padding = new System.Windows.Forms.Padding(6);
+            this.TabPage1.Size = new System.Drawing.Size(1100, 503);
             this.TabPage1.TabIndex = 0;
             this.TabPage1.Text = "Search options";
             this.TabPage1.UseVisualStyleBackColor = true;
             // 
-            // intExtSelect
+            // tableLayoutPanel1
             // 
-            this.intExtSelect.Location = new System.Drawing.Point(9, 6);
-            this.intExtSelect.Margin = new System.Windows.Forms.Padding(0);
-            this.intExtSelect.Name = "intExtSelect";
-            this.intExtSelect.Option1Text = "Internal replays";
-            this.intExtSelect.Option2Text = "External replays";
-            this.intExtSelect.Option3Text = "Both";
-            this.intExtSelect.SelectedOption = 2;
-            this.intExtSelect.Size = new System.Drawing.Size(313, 36);
-            this.intExtSelect.TabIndex = 60;
+            this.tableLayoutPanel1.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+            this.tableLayoutPanel1.ColumnCount = 2;
+            this.tableLayoutPanel1.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 50F));
+            this.tableLayoutPanel1.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 50F));
+            this.tableLayoutPanel1.Controls.Add(this.tableLayoutPanel2, 0, 0);
+            this.tableLayoutPanel1.Controls.Add(this.panel1, 1, 0);
+            this.tableLayoutPanel1.Location = new System.Drawing.Point(9, 14);
+            this.tableLayoutPanel1.Margin = new System.Windows.Forms.Padding(0);
+            this.tableLayoutPanel1.Name = "tableLayoutPanel1";
+            this.tableLayoutPanel1.RowCount = 1;
+            this.tableLayoutPanel1.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 50F));
+            this.tableLayoutPanel1.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 483F));
+            this.tableLayoutPanel1.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 483F));
+            this.tableLayoutPanel1.Size = new System.Drawing.Size(1082, 483);
+            this.tableLayoutPanel1.TabIndex = 65;
+            // 
+            // tableLayoutPanel2
+            // 
+            this.tableLayoutPanel2.ColumnCount = 1;
+            this.tableLayoutPanel2.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 100F));
+            this.tableLayoutPanel2.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Absolute, 20F));
+            this.tableLayoutPanel2.Controls.Add(this.singleMultiSelect, 0, 4);
+            this.tableLayoutPanel2.Controls.Add(this.finishedSelect, 0, 2);
+            this.tableLayoutPanel2.Controls.Add(this.elmaAcrossSelect, 0, 1);
+            this.tableLayoutPanel2.Controls.Add(this.intExtSelect, 0, 0);
+            this.tableLayoutPanel2.Controls.Add(this.fastestSlowestSelect, 0, 3);
+            this.tableLayoutPanel2.Dock = System.Windows.Forms.DockStyle.Top;
+            this.tableLayoutPanel2.Location = new System.Drawing.Point(3, 3);
+            this.tableLayoutPanel2.Name = "tableLayoutPanel2";
+            this.tableLayoutPanel2.RowCount = 5;
+            this.tableLayoutPanel2.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 20F));
+            this.tableLayoutPanel2.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 20F));
+            this.tableLayoutPanel2.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 20F));
+            this.tableLayoutPanel2.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 20F));
+            this.tableLayoutPanel2.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 20F));
+            this.tableLayoutPanel2.Size = new System.Drawing.Size(535, 338);
+            this.tableLayoutPanel2.TabIndex = 65;
+            // 
+            // singleMultiSelect
+            // 
+            this.singleMultiSelect.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.singleMultiSelect.Location = new System.Drawing.Point(0, 268);
+            this.singleMultiSelect.Margin = new System.Windows.Forms.Padding(0);
+            this.singleMultiSelect.Name = "singleMultiSelect";
+            this.singleMultiSelect.Option1Text = "Multiplayer";
+            this.singleMultiSelect.Option2Text = "Singleplayer";
+            this.singleMultiSelect.Option3Text = "Both";
+            this.singleMultiSelect.SelectedOption = 2;
+            this.singleMultiSelect.Size = new System.Drawing.Size(535, 70);
+            this.singleMultiSelect.TabIndex = 62;
             // 
             // finishedSelect
             // 
-            this.finishedSelect.Location = new System.Drawing.Point(9, 39);
+            this.finishedSelect.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.finishedSelect.Location = new System.Drawing.Point(0, 134);
             this.finishedSelect.Margin = new System.Windows.Forms.Padding(0);
             this.finishedSelect.Name = "finishedSelect";
             this.finishedSelect.Option1Text = "Finished";
             this.finishedSelect.Option2Text = "Not finished";
             this.finishedSelect.Option3Text = "Both";
             this.finishedSelect.SelectedOption = 2;
-            this.finishedSelect.Size = new System.Drawing.Size(313, 36);
+            this.finishedSelect.Size = new System.Drawing.Size(535, 67);
             this.finishedSelect.TabIndex = 61;
             // 
-            // maxDateTime
+            // elmaAcrossSelect
             // 
-            this.maxDateTime.CustomFormat = "dd.MM.yyyy HH:mm:ss";
-            this.maxDateTime.Format = System.Windows.Forms.DateTimePickerFormat.Custom;
-            this.maxDateTime.Location = new System.Drawing.Point(331, 97);
-            this.maxDateTime.Name = "maxDateTime";
-            this.maxDateTime.Size = new System.Drawing.Size(153, 20);
-            this.maxDateTime.TabIndex = 59;
-            this.maxDateTime.Value = new System.DateTime(9000, 1, 1, 0, 0, 0, 0);
+            this.elmaAcrossSelect.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.elmaAcrossSelect.Location = new System.Drawing.Point(0, 67);
+            this.elmaAcrossSelect.Margin = new System.Windows.Forms.Padding(0);
+            this.elmaAcrossSelect.Name = "elmaAcrossSelect";
+            this.elmaAcrossSelect.Option1Text = "Across levels";
+            this.elmaAcrossSelect.Option2Text = "Elma levels";
+            this.elmaAcrossSelect.Option3Text = "Both";
+            this.elmaAcrossSelect.SelectedOption = 2;
+            this.elmaAcrossSelect.Size = new System.Drawing.Size(535, 67);
+            this.elmaAcrossSelect.TabIndex = 63;
             // 
-            // label26
+            // intExtSelect
             // 
-            this.label26.AutoSize = true;
-            this.label26.Location = new System.Drawing.Point(490, 76);
-            this.label26.Name = "label26";
-            this.label26.Size = new System.Drawing.Size(16, 13);
-            this.label26.TabIndex = 58;
-            this.label26.Text = "to";
+            this.intExtSelect.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.intExtSelect.Location = new System.Drawing.Point(0, 0);
+            this.intExtSelect.Margin = new System.Windows.Forms.Padding(0);
+            this.intExtSelect.Name = "intExtSelect";
+            this.intExtSelect.Option1Text = "Internal replays";
+            this.intExtSelect.Option2Text = "External replays";
+            this.intExtSelect.Option3Text = "Both";
+            this.intExtSelect.SelectedOption = 2;
+            this.intExtSelect.Size = new System.Drawing.Size(535, 67);
+            this.intExtSelect.TabIndex = 60;
             // 
-            // minDateTime
+            // fastestSlowestSelect
             // 
-            this.minDateTime.CustomFormat = "dd.MM.yyyy HH:mm:ss";
-            this.minDateTime.Format = System.Windows.Forms.DateTimePickerFormat.Custom;
-            this.minDateTime.Location = new System.Drawing.Point(331, 71);
-            this.minDateTime.Name = "minDateTime";
-            this.minDateTime.Size = new System.Drawing.Size(153, 20);
-            this.minDateTime.TabIndex = 57;
-            this.minDateTime.Value = new System.DateTime(1800, 1, 1, 0, 0, 0, 0);
+            this.fastestSlowestSelect.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.fastestSlowestSelect.Location = new System.Drawing.Point(0, 201);
+            this.fastestSlowestSelect.Margin = new System.Windows.Forms.Padding(0);
+            this.fastestSlowestSelect.Name = "fastestSlowestSelect";
+            this.fastestSlowestSelect.Option1Text = "Fastest replays";
+            this.fastestSlowestSelect.Option2Text = "Slowest replays";
+            this.fastestSlowestSelect.Option3Text = "All";
+            this.fastestSlowestSelect.SelectedOption = 2;
+            this.fastestSlowestSelect.Size = new System.Drawing.Size(535, 67);
+            this.fastestSlowestSelect.TabIndex = 64;
             // 
-            // label25
+            // panel1
             // 
-            this.label25.AutoSize = true;
-            this.label25.Location = new System.Drawing.Point(328, 55);
-            this.label25.Name = "label25";
-            this.label25.Size = new System.Drawing.Size(75, 13);
-            this.label25.TabIndex = 56;
-            this.label25.Text = "Date modified:";
-            // 
-            // maxFileSizeBox
-            // 
-            this.maxFileSizeBox.BackColor = System.Drawing.SystemColors.Window;
-            this.maxFileSizeBox.DefaultValue = 0D;
-            this.maxFileSizeBox.Location = new System.Drawing.Point(484, 17);
-            this.maxFileSizeBox.Name = "maxFileSizeBox";
-            this.maxFileSizeBox.Size = new System.Drawing.Size(53, 20);
-            this.maxFileSizeBox.TabIndex = 55;
-            this.maxFileSizeBox.Text = "10000";
-            // 
-            // label24
-            // 
-            this.label24.AutoSize = true;
-            this.label24.Location = new System.Drawing.Point(462, 20);
-            this.label24.Name = "label24";
-            this.label24.Size = new System.Drawing.Size(16, 13);
-            this.label24.TabIndex = 54;
-            this.label24.Text = "to";
+            this.panel1.Controls.Add(this.minFileSizeBox);
+            this.panel1.Controls.Add(this.Label1);
+            this.panel1.Controls.Add(this.SearchButton);
+            this.panel1.Controls.Add(this.TimeMaxBox);
+            this.panel1.Controls.Add(this.LevPatternBox);
+            this.panel1.Controls.Add(this.TimeMinBox);
+            this.panel1.Controls.Add(this.Label7);
+            this.panel1.Controls.Add(this.PatternLabel);
+            this.panel1.Controls.Add(this.SearchSpecificLabel);
+            this.panel1.Controls.Add(this.PatternBox);
+            this.panel1.Controls.Add(this.maxDateTime);
+            this.panel1.Controls.Add(this.maxFileSizeBox);
+            this.panel1.Controls.Add(this.label26);
+            this.panel1.Controls.Add(this.label23);
+            this.panel1.Controls.Add(this.minDateTime);
+            this.panel1.Controls.Add(this.label25);
+            this.panel1.Controls.Add(this.label24);
+            this.panel1.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.panel1.Location = new System.Drawing.Point(544, 3);
+            this.panel1.Name = "panel1";
+            this.panel1.Size = new System.Drawing.Size(535, 477);
+            this.panel1.TabIndex = 1;
             // 
             // minFileSizeBox
             // 
             this.minFileSizeBox.BackColor = System.Drawing.SystemColors.Window;
             this.minFileSizeBox.DefaultValue = 0D;
-            this.minFileSizeBox.Location = new System.Drawing.Point(403, 17);
+            this.minFileSizeBox.Location = new System.Drawing.Point(149, 27);
+            this.minFileSizeBox.Margin = new System.Windows.Forms.Padding(6);
             this.minFileSizeBox.Name = "minFileSizeBox";
-            this.minFileSizeBox.Size = new System.Drawing.Size(53, 20);
+            this.minFileSizeBox.Size = new System.Drawing.Size(102, 31);
             this.minFileSizeBox.TabIndex = 53;
             this.minFileSizeBox.Text = "0";
-            // 
-            // label23
-            // 
-            this.label23.AutoSize = true;
-            this.label23.Location = new System.Drawing.Point(328, 20);
-            this.label23.Name = "label23";
-            this.label23.Size = new System.Drawing.Size(69, 13);
-            this.label23.TabIndex = 52;
-            this.label23.Text = "File size (kB):";
             // 
             // TimeMaxBox
             // 
             this.TimeMaxBox.BackColor = System.Drawing.SystemColors.Window;
             this.TimeMaxBox.DefaultValue = 0D;
-            this.TimeMaxBox.Location = new System.Drawing.Point(223, 230);
+            this.TimeMaxBox.Location = new System.Drawing.Point(251, 294);
+            this.TimeMaxBox.Margin = new System.Windows.Forms.Padding(6);
             this.TimeMaxBox.MaxLength = 9;
             this.TimeMaxBox.Name = "TimeMaxBox";
-            this.TimeMaxBox.Size = new System.Drawing.Size(56, 20);
+            this.TimeMaxBox.Size = new System.Drawing.Size(108, 31);
             this.TimeMaxBox.TabIndex = 23;
             this.TimeMaxBox.Text = "99:00,000";
             // 
@@ -651,48 +694,86 @@ namespace Elmanager.Forms
             // 
             this.TimeMinBox.BackColor = System.Drawing.SystemColors.Window;
             this.TimeMinBox.DefaultValue = 0D;
-            this.TimeMinBox.Location = new System.Drawing.Point(141, 230);
+            this.TimeMinBox.Location = new System.Drawing.Point(89, 294);
+            this.TimeMinBox.Margin = new System.Windows.Forms.Padding(6);
             this.TimeMinBox.MaxLength = 9;
             this.TimeMinBox.Name = "TimeMinBox";
-            this.TimeMinBox.Size = new System.Drawing.Size(56, 20);
+            this.TimeMinBox.Size = new System.Drawing.Size(108, 31);
             this.TimeMinBox.TabIndex = 21;
             this.TimeMinBox.Text = "00:00,000";
             // 
-            // singleMultiSelect
+            // maxDateTime
             // 
-            this.singleMultiSelect.Location = new System.Drawing.Point(9, 72);
-            this.singleMultiSelect.Margin = new System.Windows.Forms.Padding(0);
-            this.singleMultiSelect.Name = "singleMultiSelect";
-            this.singleMultiSelect.Option1Text = "Multiplayer";
-            this.singleMultiSelect.Option2Text = "Singleplayer";
-            this.singleMultiSelect.Option3Text = "Both";
-            this.singleMultiSelect.SelectedOption = 2;
-            this.singleMultiSelect.Size = new System.Drawing.Size(313, 36);
-            this.singleMultiSelect.TabIndex = 62;
+            this.maxDateTime.CustomFormat = "dd.MM.yyyy HH:mm:ss";
+            this.maxDateTime.Format = System.Windows.Forms.DateTimePickerFormat.Custom;
+            this.maxDateTime.Location = new System.Drawing.Point(11, 159);
+            this.maxDateTime.Margin = new System.Windows.Forms.Padding(6);
+            this.maxDateTime.Name = "maxDateTime";
+            this.maxDateTime.Size = new System.Drawing.Size(302, 31);
+            this.maxDateTime.TabIndex = 59;
+            this.maxDateTime.Value = new System.DateTime(9000, 1, 1, 0, 0, 0, 0);
             // 
-            // elmaAcrossSelect
+            // maxFileSizeBox
             // 
-            this.elmaAcrossSelect.Location = new System.Drawing.Point(9, 105);
-            this.elmaAcrossSelect.Margin = new System.Windows.Forms.Padding(0);
-            this.elmaAcrossSelect.Name = "elmaAcrossSelect";
-            this.elmaAcrossSelect.Option1Text = "Across levels";
-            this.elmaAcrossSelect.Option2Text = "Elma levels";
-            this.elmaAcrossSelect.Option3Text = "Both";
-            this.elmaAcrossSelect.SelectedOption = 2;
-            this.elmaAcrossSelect.Size = new System.Drawing.Size(313, 36);
-            this.elmaAcrossSelect.TabIndex = 63;
+            this.maxFileSizeBox.BackColor = System.Drawing.SystemColors.Window;
+            this.maxFileSizeBox.DefaultValue = 0D;
+            this.maxFileSizeBox.Location = new System.Drawing.Point(297, 27);
+            this.maxFileSizeBox.Margin = new System.Windows.Forms.Padding(6);
+            this.maxFileSizeBox.Name = "maxFileSizeBox";
+            this.maxFileSizeBox.Size = new System.Drawing.Size(102, 31);
+            this.maxFileSizeBox.TabIndex = 55;
+            this.maxFileSizeBox.Text = "10000";
             // 
-            // fastestSlowestSelect
+            // label26
             // 
-            this.fastestSlowestSelect.Location = new System.Drawing.Point(9, 138);
-            this.fastestSlowestSelect.Margin = new System.Windows.Forms.Padding(0);
-            this.fastestSlowestSelect.Name = "fastestSlowestSelect";
-            this.fastestSlowestSelect.Option1Text = "Fastest replays";
-            this.fastestSlowestSelect.Option2Text = "Slowest replays";
-            this.fastestSlowestSelect.Option3Text = "All";
-            this.fastestSlowestSelect.SelectedOption = 2;
-            this.fastestSlowestSelect.Size = new System.Drawing.Size(313, 36);
-            this.fastestSlowestSelect.TabIndex = 64;
+            this.label26.AutoSize = true;
+            this.label26.Location = new System.Drawing.Point(329, 118);
+            this.label26.Margin = new System.Windows.Forms.Padding(6, 0, 6, 0);
+            this.label26.Name = "label26";
+            this.label26.Size = new System.Drawing.Size(30, 25);
+            this.label26.TabIndex = 58;
+            this.label26.Text = "to";
+            // 
+            // label23
+            // 
+            this.label23.AutoSize = true;
+            this.label23.Location = new System.Drawing.Point(6, 30);
+            this.label23.Margin = new System.Windows.Forms.Padding(6, 0, 6, 0);
+            this.label23.Name = "label23";
+            this.label23.Size = new System.Drawing.Size(143, 25);
+            this.label23.TabIndex = 52;
+            this.label23.Text = "File size (kB):";
+            // 
+            // minDateTime
+            // 
+            this.minDateTime.CustomFormat = "dd.MM.yyyy HH:mm:ss";
+            this.minDateTime.Format = System.Windows.Forms.DateTimePickerFormat.Custom;
+            this.minDateTime.Location = new System.Drawing.Point(11, 109);
+            this.minDateTime.Margin = new System.Windows.Forms.Padding(6);
+            this.minDateTime.Name = "minDateTime";
+            this.minDateTime.Size = new System.Drawing.Size(302, 31);
+            this.minDateTime.TabIndex = 57;
+            this.minDateTime.Value = new System.DateTime(1800, 1, 1, 0, 0, 0, 0);
+            // 
+            // label25
+            // 
+            this.label25.AutoSize = true;
+            this.label25.Location = new System.Drawing.Point(5, 78);
+            this.label25.Margin = new System.Windows.Forms.Padding(6, 0, 6, 0);
+            this.label25.Name = "label25";
+            this.label25.Size = new System.Drawing.Size(150, 25);
+            this.label25.TabIndex = 56;
+            this.label25.Text = "Date modified:";
+            // 
+            // label24
+            // 
+            this.label24.AutoSize = true;
+            this.label24.Location = new System.Drawing.Point(263, 30);
+            this.label24.Margin = new System.Windows.Forms.Padding(6, 0, 6, 0);
+            this.label24.Name = "label24";
+            this.label24.Size = new System.Drawing.Size(30, 25);
+            this.label24.TabIndex = 54;
+            this.label24.Text = "to";
             // 
             // TabPage2
             // 
@@ -741,19 +822,21 @@ namespace Elmanager.Forms
             this.TabPage2.Controls.Add(this.TextBox21);
             this.TabPage2.Controls.Add(this.TextBox2);
             this.TabPage2.Controls.Add(this.TextBox1);
-            this.TabPage2.Location = new System.Drawing.Point(4, 22);
+            this.TabPage2.Location = new System.Drawing.Point(8, 39);
+            this.TabPage2.Margin = new System.Windows.Forms.Padding(6);
             this.TabPage2.Name = "TabPage2";
-            this.TabPage2.Padding = new System.Windows.Forms.Padding(3);
-            this.TabPage2.Size = new System.Drawing.Size(550, 260);
+            this.TabPage2.Padding = new System.Windows.Forms.Padding(6);
+            this.TabPage2.Size = new System.Drawing.Size(1100, 503);
             this.TabPage2.TabIndex = 1;
             this.TabPage2.Text = "Advanced";
             this.TabPage2.UseVisualStyleBackColor = true;
             // 
             // ResetButton
             // 
-            this.ResetButton.Location = new System.Drawing.Point(11, 189);
+            this.ResetButton.Location = new System.Drawing.Point(22, 363);
+            this.ResetButton.Margin = new System.Windows.Forms.Padding(6);
             this.ResetButton.Name = "ResetButton";
-            this.ResetButton.Size = new System.Drawing.Size(78, 25);
+            this.ResetButton.Size = new System.Drawing.Size(156, 48);
             this.ResetButton.TabIndex = 81;
             this.ResetButton.Text = "Reset fields";
             this.ResetButton.UseVisualStyleBackColor = true;
@@ -762,180 +845,200 @@ namespace Elmanager.Forms
             // Label15
             // 
             this.Label15.AutoSize = true;
-            this.Label15.Location = new System.Drawing.Point(325, 34);
+            this.Label15.Location = new System.Drawing.Point(650, 65);
+            this.Label15.Margin = new System.Windows.Forms.Padding(6, 0, 6, 0);
             this.Label15.Name = "Label15";
-            this.Label15.Size = new System.Drawing.Size(16, 13);
+            this.Label15.Size = new System.Drawing.Size(30, 25);
             this.Label15.TabIndex = 88;
             this.Label15.Text = "to";
             // 
             // Label16
             // 
             this.Label16.AutoSize = true;
-            this.Label16.Location = new System.Drawing.Point(325, 84);
+            this.Label16.Location = new System.Drawing.Point(650, 162);
+            this.Label16.Margin = new System.Windows.Forms.Padding(6, 0, 6, 0);
             this.Label16.Name = "Label16";
-            this.Label16.Size = new System.Drawing.Size(16, 13);
+            this.Label16.Size = new System.Drawing.Size(30, 25);
             this.Label16.TabIndex = 87;
             this.Label16.Text = "to";
             // 
             // Label17
             // 
             this.Label17.AutoSize = true;
-            this.Label17.Location = new System.Drawing.Point(325, 109);
+            this.Label17.Location = new System.Drawing.Point(650, 210);
+            this.Label17.Margin = new System.Windows.Forms.Padding(6, 0, 6, 0);
             this.Label17.Name = "Label17";
-            this.Label17.Size = new System.Drawing.Size(16, 13);
+            this.Label17.Size = new System.Drawing.Size(30, 25);
             this.Label17.TabIndex = 86;
             this.Label17.Text = "to";
             // 
             // Label18
             // 
             this.Label18.AutoSize = true;
-            this.Label18.Location = new System.Drawing.Point(325, 134);
+            this.Label18.Location = new System.Drawing.Point(650, 258);
+            this.Label18.Margin = new System.Windows.Forms.Padding(6, 0, 6, 0);
             this.Label18.Name = "Label18";
-            this.Label18.Size = new System.Drawing.Size(16, 13);
+            this.Label18.Size = new System.Drawing.Size(30, 25);
             this.Label18.TabIndex = 85;
             this.Label18.Text = "to";
             // 
             // Label19
             // 
             this.Label19.AutoSize = true;
-            this.Label19.Location = new System.Drawing.Point(325, 159);
+            this.Label19.Location = new System.Drawing.Point(650, 306);
+            this.Label19.Margin = new System.Windows.Forms.Padding(6, 0, 6, 0);
             this.Label19.Name = "Label19";
-            this.Label19.Size = new System.Drawing.Size(16, 13);
+            this.Label19.Size = new System.Drawing.Size(30, 25);
             this.Label19.TabIndex = 84;
             this.Label19.Text = "to";
             // 
             // Label20
             // 
             this.Label20.AutoSize = true;
-            this.Label20.Location = new System.Drawing.Point(325, 59);
+            this.Label20.Location = new System.Drawing.Point(650, 113);
+            this.Label20.Margin = new System.Windows.Forms.Padding(6, 0, 6, 0);
             this.Label20.Name = "Label20";
-            this.Label20.Size = new System.Drawing.Size(16, 13);
+            this.Label20.Size = new System.Drawing.Size(30, 25);
             this.Label20.TabIndex = 83;
             this.Label20.Text = "to";
             // 
             // Label14
             // 
             this.Label14.AutoSize = true;
-            this.Label14.Location = new System.Drawing.Point(149, 34);
+            this.Label14.Location = new System.Drawing.Point(298, 65);
+            this.Label14.Margin = new System.Windows.Forms.Padding(6, 0, 6, 0);
             this.Label14.Name = "Label14";
-            this.Label14.Size = new System.Drawing.Size(16, 13);
+            this.Label14.Size = new System.Drawing.Size(30, 25);
             this.Label14.TabIndex = 82;
             this.Label14.Text = "to";
             // 
             // Label13
             // 
             this.Label13.AutoSize = true;
-            this.Label13.Location = new System.Drawing.Point(149, 84);
+            this.Label13.Location = new System.Drawing.Point(298, 162);
+            this.Label13.Margin = new System.Windows.Forms.Padding(6, 0, 6, 0);
             this.Label13.Name = "Label13";
-            this.Label13.Size = new System.Drawing.Size(16, 13);
+            this.Label13.Size = new System.Drawing.Size(30, 25);
             this.Label13.TabIndex = 80;
             this.Label13.Text = "to";
             // 
             // Label12
             // 
             this.Label12.AutoSize = true;
-            this.Label12.Location = new System.Drawing.Point(149, 109);
+            this.Label12.Location = new System.Drawing.Point(298, 210);
+            this.Label12.Margin = new System.Windows.Forms.Padding(6, 0, 6, 0);
             this.Label12.Name = "Label12";
-            this.Label12.Size = new System.Drawing.Size(16, 13);
+            this.Label12.Size = new System.Drawing.Size(30, 25);
             this.Label12.TabIndex = 78;
             this.Label12.Text = "to";
             // 
             // Label11
             // 
             this.Label11.AutoSize = true;
-            this.Label11.Location = new System.Drawing.Point(149, 134);
+            this.Label11.Location = new System.Drawing.Point(298, 258);
+            this.Label11.Margin = new System.Windows.Forms.Padding(6, 0, 6, 0);
             this.Label11.Name = "Label11";
-            this.Label11.Size = new System.Drawing.Size(16, 13);
+            this.Label11.Size = new System.Drawing.Size(30, 25);
             this.Label11.TabIndex = 76;
             this.Label11.Text = "to";
             // 
             // Label10
             // 
             this.Label10.AutoSize = true;
-            this.Label10.Location = new System.Drawing.Point(149, 159);
+            this.Label10.Location = new System.Drawing.Point(298, 306);
+            this.Label10.Margin = new System.Windows.Forms.Padding(6, 0, 6, 0);
             this.Label10.Name = "Label10";
-            this.Label10.Size = new System.Drawing.Size(16, 13);
+            this.Label10.Size = new System.Drawing.Size(30, 25);
             this.Label10.TabIndex = 73;
             this.Label10.Text = "to";
             // 
             // Label9
             // 
             this.Label9.AutoSize = true;
-            this.Label9.Location = new System.Drawing.Point(149, 59);
+            this.Label9.Location = new System.Drawing.Point(298, 113);
+            this.Label9.Margin = new System.Windows.Forms.Padding(6, 0, 6, 0);
             this.Label9.Name = "Label9";
-            this.Label9.Size = new System.Drawing.Size(16, 13);
+            this.Label9.Size = new System.Drawing.Size(30, 25);
             this.Label9.TabIndex = 72;
             this.Label9.Text = "to";
             // 
             // Label8
             // 
             this.Label8.AutoSize = true;
-            this.Label8.Location = new System.Drawing.Point(8, 159);
+            this.Label8.Location = new System.Drawing.Point(16, 306);
+            this.Label8.Margin = new System.Windows.Forms.Padding(6, 0, 6, 0);
             this.Label8.Name = "Label8";
-            this.Label8.Size = new System.Drawing.Size(83, 13);
+            this.Label8.Size = new System.Drawing.Size(165, 25);
             this.Label8.TabIndex = 57;
             this.Label8.Text = "Groundtouches:";
             // 
             // Label2
             // 
             this.Label2.AutoSize = true;
-            this.Label2.Location = new System.Drawing.Point(54, 134);
+            this.Label2.Location = new System.Drawing.Point(108, 258);
+            this.Label2.Margin = new System.Windows.Forms.Padding(6, 0, 6, 0);
             this.Label2.Name = "Label2";
-            this.Label2.Size = new System.Drawing.Size(37, 13);
+            this.Label2.Size = new System.Drawing.Size(73, 25);
             this.Label2.TabIndex = 56;
             this.Label2.Text = "Turns:";
             // 
             // Label6
             // 
             this.Label6.AutoSize = true;
-            this.Label6.Location = new System.Drawing.Point(31, 109);
+            this.Label6.Location = new System.Drawing.Point(62, 210);
+            this.Label6.Margin = new System.Windows.Forms.Padding(6, 0, 6, 0);
             this.Label6.Name = "Label6";
-            this.Label6.Size = new System.Drawing.Size(60, 13);
+            this.Label6.Size = new System.Drawing.Size(120, 25);
             this.Label6.TabIndex = 53;
             this.Label6.Text = "Supervolts:";
             // 
             // Label5
             // 
             this.Label5.AutoSize = true;
-            this.Label5.Location = new System.Drawing.Point(31, 84);
+            this.Label5.Location = new System.Drawing.Point(62, 162);
+            this.Label5.Margin = new System.Windows.Forms.Padding(6, 0, 6, 0);
             this.Label5.Name = "Label5";
-            this.Label5.Size = new System.Drawing.Size(60, 13);
+            this.Label5.Size = new System.Drawing.Size(119, 25);
             this.Label5.TabIndex = 52;
             this.Label5.Text = "Right volts:";
             // 
             // Label4
             // 
             this.Label4.AutoSize = true;
-            this.Label4.Location = new System.Drawing.Point(38, 59);
+            this.Label4.Location = new System.Drawing.Point(76, 113);
+            this.Label4.Margin = new System.Windows.Forms.Padding(6, 0, 6, 0);
             this.Label4.Name = "Label4";
-            this.Label4.Size = new System.Drawing.Size(53, 13);
+            this.Label4.Size = new System.Drawing.Size(105, 25);
             this.Label4.TabIndex = 49;
             this.Label4.Text = "Left volts:";
             // 
             // Label3
             // 
             this.Label3.AutoSize = true;
-            this.Label3.Location = new System.Drawing.Point(28, 34);
+            this.Label3.Location = new System.Drawing.Point(56, 65);
+            this.Label3.Margin = new System.Windows.Forms.Padding(6, 0, 6, 0);
             this.Label3.Name = "Label3";
-            this.Label3.Size = new System.Drawing.Size(63, 13);
+            this.Label3.Size = new System.Drawing.Size(125, 25);
             this.Label3.TabIndex = 48;
             this.Label3.Text = "Appletakes:";
             // 
             // Label21
             // 
             this.Label21.AutoSize = true;
-            this.Label21.Location = new System.Drawing.Point(311, 3);
+            this.Label21.Location = new System.Drawing.Point(622, 6);
+            this.Label21.Margin = new System.Windows.Forms.Padding(6, 0, 6, 0);
             this.Label21.Name = "Label21";
-            this.Label21.Size = new System.Drawing.Size(45, 13);
+            this.Label21.Size = new System.Drawing.Size(91, 25);
             this.Label21.TabIndex = 46;
             this.Label21.Text = "Player 2";
             // 
             // Label22
             // 
             this.Label22.AutoSize = true;
-            this.Label22.Location = new System.Drawing.Point(134, 3);
+            this.Label22.Location = new System.Drawing.Point(268, 6);
+            this.Label22.Margin = new System.Windows.Forms.Padding(6, 0, 6, 0);
             this.Label22.Name = "Label22";
-            this.Label22.Size = new System.Drawing.Size(45, 13);
+            this.Label22.Size = new System.Drawing.Size(91, 25);
             this.Label22.TabIndex = 44;
             this.Label22.Text = "Player 1";
             // 
@@ -943,9 +1046,10 @@ namespace Elmanager.Forms
             // 
             this.TextBox13.BackColor = System.Drawing.SystemColors.Window;
             this.TextBox13.DefaultValue = 0D;
-            this.TextBox13.Location = new System.Drawing.Point(346, 156);
+            this.TextBox13.Location = new System.Drawing.Point(692, 300);
+            this.TextBox13.Margin = new System.Windows.Forms.Padding(6);
             this.TextBox13.Name = "TextBox13";
-            this.TextBox13.Size = new System.Drawing.Size(47, 20);
+            this.TextBox13.Size = new System.Drawing.Size(90, 31);
             this.TextBox13.TabIndex = 79;
             this.TextBox13.Text = "10000";
             // 
@@ -953,9 +1057,10 @@ namespace Elmanager.Forms
             // 
             this.TextBox12.BackColor = System.Drawing.SystemColors.Window;
             this.TextBox12.DefaultValue = 0D;
-            this.TextBox12.Location = new System.Drawing.Point(273, 156);
+            this.TextBox12.Location = new System.Drawing.Point(546, 300);
+            this.TextBox12.Margin = new System.Windows.Forms.Padding(6);
             this.TextBox12.Name = "TextBox12";
-            this.TextBox12.Size = new System.Drawing.Size(47, 20);
+            this.TextBox12.Size = new System.Drawing.Size(90, 31);
             this.TextBox12.TabIndex = 77;
             this.TextBox12.Text = "0";
             // 
@@ -963,9 +1068,10 @@ namespace Elmanager.Forms
             // 
             this.TextBox15.BackColor = System.Drawing.SystemColors.Window;
             this.TextBox15.DefaultValue = 0D;
-            this.TextBox15.Location = new System.Drawing.Point(346, 131);
+            this.TextBox15.Location = new System.Drawing.Point(692, 252);
+            this.TextBox15.Margin = new System.Windows.Forms.Padding(6);
             this.TextBox15.Name = "TextBox15";
-            this.TextBox15.Size = new System.Drawing.Size(47, 20);
+            this.TextBox15.Size = new System.Drawing.Size(90, 31);
             this.TextBox15.TabIndex = 75;
             this.TextBox15.Text = "10000";
             // 
@@ -973,9 +1079,10 @@ namespace Elmanager.Forms
             // 
             this.TextBox16.BackColor = System.Drawing.SystemColors.Window;
             this.TextBox16.DefaultValue = 0D;
-            this.TextBox16.Location = new System.Drawing.Point(346, 31);
+            this.TextBox16.Location = new System.Drawing.Point(692, 60);
+            this.TextBox16.Margin = new System.Windows.Forms.Padding(6);
             this.TextBox16.Name = "TextBox16";
-            this.TextBox16.Size = new System.Drawing.Size(47, 20);
+            this.TextBox16.Size = new System.Drawing.Size(90, 31);
             this.TextBox16.TabIndex = 65;
             this.TextBox16.Text = "10000";
             // 
@@ -983,9 +1090,10 @@ namespace Elmanager.Forms
             // 
             this.TextBox5.BackColor = System.Drawing.SystemColors.Window;
             this.TextBox5.DefaultValue = 0D;
-            this.TextBox5.Location = new System.Drawing.Point(273, 56);
+            this.TextBox5.Location = new System.Drawing.Point(546, 108);
+            this.TextBox5.Margin = new System.Windows.Forms.Padding(6);
             this.TextBox5.Name = "TextBox5";
-            this.TextBox5.Size = new System.Drawing.Size(47, 20);
+            this.TextBox5.Size = new System.Drawing.Size(90, 31);
             this.TextBox5.TabIndex = 66;
             this.TextBox5.Text = "0";
             // 
@@ -993,9 +1101,10 @@ namespace Elmanager.Forms
             // 
             this.TextBox18.BackColor = System.Drawing.SystemColors.Window;
             this.TextBox18.DefaultValue = 0D;
-            this.TextBox18.Location = new System.Drawing.Point(346, 56);
+            this.TextBox18.Location = new System.Drawing.Point(692, 108);
+            this.TextBox18.Margin = new System.Windows.Forms.Padding(6);
             this.TextBox18.Name = "TextBox18";
-            this.TextBox18.Size = new System.Drawing.Size(47, 20);
+            this.TextBox18.Size = new System.Drawing.Size(90, 31);
             this.TextBox18.TabIndex = 67;
             this.TextBox18.Text = "10000";
             // 
@@ -1003,9 +1112,10 @@ namespace Elmanager.Forms
             // 
             this.TextBox7.BackColor = System.Drawing.SystemColors.Window;
             this.TextBox7.DefaultValue = 0D;
-            this.TextBox7.Location = new System.Drawing.Point(273, 81);
+            this.TextBox7.Location = new System.Drawing.Point(546, 156);
+            this.TextBox7.Margin = new System.Windows.Forms.Padding(6);
             this.TextBox7.Name = "TextBox7";
-            this.TextBox7.Size = new System.Drawing.Size(47, 20);
+            this.TextBox7.Size = new System.Drawing.Size(90, 31);
             this.TextBox7.TabIndex = 68;
             this.TextBox7.Text = "0";
             // 
@@ -1013,9 +1123,10 @@ namespace Elmanager.Forms
             // 
             this.TextBox20.BackColor = System.Drawing.SystemColors.Window;
             this.TextBox20.DefaultValue = 0D;
-            this.TextBox20.Location = new System.Drawing.Point(346, 81);
+            this.TextBox20.Location = new System.Drawing.Point(692, 156);
+            this.TextBox20.Margin = new System.Windows.Forms.Padding(6);
             this.TextBox20.Name = "TextBox20";
-            this.TextBox20.Size = new System.Drawing.Size(47, 20);
+            this.TextBox20.Size = new System.Drawing.Size(90, 31);
             this.TextBox20.TabIndex = 69;
             this.TextBox20.Text = "10000";
             // 
@@ -1023,9 +1134,10 @@ namespace Elmanager.Forms
             // 
             this.TextBox9.BackColor = System.Drawing.SystemColors.Window;
             this.TextBox9.DefaultValue = 0D;
-            this.TextBox9.Location = new System.Drawing.Point(273, 106);
+            this.TextBox9.Location = new System.Drawing.Point(546, 204);
+            this.TextBox9.Margin = new System.Windows.Forms.Padding(6);
             this.TextBox9.Name = "TextBox9";
-            this.TextBox9.Size = new System.Drawing.Size(47, 20);
+            this.TextBox9.Size = new System.Drawing.Size(90, 31);
             this.TextBox9.TabIndex = 70;
             this.TextBox9.Text = "0";
             // 
@@ -1033,9 +1145,10 @@ namespace Elmanager.Forms
             // 
             this.TextBox22.BackColor = System.Drawing.SystemColors.Window;
             this.TextBox22.DefaultValue = 0D;
-            this.TextBox22.Location = new System.Drawing.Point(346, 106);
+            this.TextBox22.Location = new System.Drawing.Point(692, 204);
+            this.TextBox22.Margin = new System.Windows.Forms.Padding(6);
             this.TextBox22.Name = "TextBox22";
-            this.TextBox22.Size = new System.Drawing.Size(47, 20);
+            this.TextBox22.Size = new System.Drawing.Size(90, 31);
             this.TextBox22.TabIndex = 71;
             this.TextBox22.Text = "10000";
             // 
@@ -1043,9 +1156,10 @@ namespace Elmanager.Forms
             // 
             this.TextBox10.BackColor = System.Drawing.SystemColors.Window;
             this.TextBox10.DefaultValue = 0D;
-            this.TextBox10.Location = new System.Drawing.Point(273, 131);
+            this.TextBox10.Location = new System.Drawing.Point(546, 252);
+            this.TextBox10.Margin = new System.Windows.Forms.Padding(6);
             this.TextBox10.Name = "TextBox10";
-            this.TextBox10.Size = new System.Drawing.Size(47, 20);
+            this.TextBox10.Size = new System.Drawing.Size(90, 31);
             this.TextBox10.TabIndex = 74;
             this.TextBox10.Text = "0";
             // 
@@ -1053,9 +1167,10 @@ namespace Elmanager.Forms
             // 
             this.TextBox3.BackColor = System.Drawing.SystemColors.Window;
             this.TextBox3.DefaultValue = 0D;
-            this.TextBox3.Location = new System.Drawing.Point(273, 31);
+            this.TextBox3.Location = new System.Drawing.Point(546, 60);
+            this.TextBox3.Margin = new System.Windows.Forms.Padding(6);
             this.TextBox3.Name = "TextBox3";
-            this.TextBox3.Size = new System.Drawing.Size(47, 20);
+            this.TextBox3.Size = new System.Drawing.Size(90, 31);
             this.TextBox3.TabIndex = 64;
             this.TextBox3.Text = "0";
             // 
@@ -1063,9 +1178,10 @@ namespace Elmanager.Forms
             // 
             this.TextBox24.BackColor = System.Drawing.SystemColors.Window;
             this.TextBox24.DefaultValue = 0D;
-            this.TextBox24.Location = new System.Drawing.Point(170, 156);
+            this.TextBox24.Location = new System.Drawing.Point(340, 300);
+            this.TextBox24.Margin = new System.Windows.Forms.Padding(6);
             this.TextBox24.Name = "TextBox24";
-            this.TextBox24.Size = new System.Drawing.Size(47, 20);
+            this.TextBox24.Size = new System.Drawing.Size(90, 31);
             this.TextBox24.TabIndex = 63;
             this.TextBox24.Text = "10000";
             // 
@@ -1073,9 +1189,10 @@ namespace Elmanager.Forms
             // 
             this.TextBox11.BackColor = System.Drawing.SystemColors.Window;
             this.TextBox11.DefaultValue = 0D;
-            this.TextBox11.Location = new System.Drawing.Point(97, 156);
+            this.TextBox11.Location = new System.Drawing.Point(194, 300);
+            this.TextBox11.Margin = new System.Windows.Forms.Padding(6);
             this.TextBox11.Name = "TextBox11";
-            this.TextBox11.Size = new System.Drawing.Size(47, 20);
+            this.TextBox11.Size = new System.Drawing.Size(90, 31);
             this.TextBox11.TabIndex = 62;
             this.TextBox11.Text = "0";
             // 
@@ -1083,9 +1200,10 @@ namespace Elmanager.Forms
             // 
             this.TextBox23.BackColor = System.Drawing.SystemColors.Window;
             this.TextBox23.DefaultValue = 0D;
-            this.TextBox23.Location = new System.Drawing.Point(170, 131);
+            this.TextBox23.Location = new System.Drawing.Point(340, 252);
+            this.TextBox23.Margin = new System.Windows.Forms.Padding(6);
             this.TextBox23.Name = "TextBox23";
-            this.TextBox23.Size = new System.Drawing.Size(47, 20);
+            this.TextBox23.Size = new System.Drawing.Size(90, 31);
             this.TextBox23.TabIndex = 61;
             this.TextBox23.Text = "10000";
             // 
@@ -1093,9 +1211,10 @@ namespace Elmanager.Forms
             // 
             this.TextBox14.BackColor = System.Drawing.SystemColors.Window;
             this.TextBox14.DefaultValue = 0D;
-            this.TextBox14.Location = new System.Drawing.Point(170, 31);
+            this.TextBox14.Location = new System.Drawing.Point(340, 60);
+            this.TextBox14.Margin = new System.Windows.Forms.Padding(6);
             this.TextBox14.Name = "TextBox14";
-            this.TextBox14.Size = new System.Drawing.Size(47, 20);
+            this.TextBox14.Size = new System.Drawing.Size(90, 31);
             this.TextBox14.TabIndex = 47;
             this.TextBox14.Text = "10000";
             // 
@@ -1103,9 +1222,10 @@ namespace Elmanager.Forms
             // 
             this.TextBox8.BackColor = System.Drawing.SystemColors.Window;
             this.TextBox8.DefaultValue = 0D;
-            this.TextBox8.Location = new System.Drawing.Point(97, 56);
+            this.TextBox8.Location = new System.Drawing.Point(194, 108);
+            this.TextBox8.Margin = new System.Windows.Forms.Padding(6);
             this.TextBox8.Name = "TextBox8";
-            this.TextBox8.Size = new System.Drawing.Size(47, 20);
+            this.TextBox8.Size = new System.Drawing.Size(90, 31);
             this.TextBox8.TabIndex = 50;
             this.TextBox8.Text = "0";
             // 
@@ -1113,9 +1233,10 @@ namespace Elmanager.Forms
             // 
             this.TextBox17.BackColor = System.Drawing.SystemColors.Window;
             this.TextBox17.DefaultValue = 0D;
-            this.TextBox17.Location = new System.Drawing.Point(170, 56);
+            this.TextBox17.Location = new System.Drawing.Point(340, 108);
+            this.TextBox17.Margin = new System.Windows.Forms.Padding(6);
             this.TextBox17.Name = "TextBox17";
-            this.TextBox17.Size = new System.Drawing.Size(47, 20);
+            this.TextBox17.Size = new System.Drawing.Size(90, 31);
             this.TextBox17.TabIndex = 51;
             this.TextBox17.Text = "10000";
             // 
@@ -1123,9 +1244,10 @@ namespace Elmanager.Forms
             // 
             this.TextBox6.BackColor = System.Drawing.SystemColors.Window;
             this.TextBox6.DefaultValue = 0D;
-            this.TextBox6.Location = new System.Drawing.Point(97, 81);
+            this.TextBox6.Location = new System.Drawing.Point(194, 156);
+            this.TextBox6.Margin = new System.Windows.Forms.Padding(6);
             this.TextBox6.Name = "TextBox6";
-            this.TextBox6.Size = new System.Drawing.Size(47, 20);
+            this.TextBox6.Size = new System.Drawing.Size(90, 31);
             this.TextBox6.TabIndex = 54;
             this.TextBox6.Text = "0";
             // 
@@ -1133,9 +1255,10 @@ namespace Elmanager.Forms
             // 
             this.TextBox19.BackColor = System.Drawing.SystemColors.Window;
             this.TextBox19.DefaultValue = 0D;
-            this.TextBox19.Location = new System.Drawing.Point(170, 81);
+            this.TextBox19.Location = new System.Drawing.Point(340, 156);
+            this.TextBox19.Margin = new System.Windows.Forms.Padding(6);
             this.TextBox19.Name = "TextBox19";
-            this.TextBox19.Size = new System.Drawing.Size(47, 20);
+            this.TextBox19.Size = new System.Drawing.Size(90, 31);
             this.TextBox19.TabIndex = 55;
             this.TextBox19.Text = "10000";
             // 
@@ -1143,9 +1266,10 @@ namespace Elmanager.Forms
             // 
             this.TextBox4.BackColor = System.Drawing.SystemColors.Window;
             this.TextBox4.DefaultValue = 0D;
-            this.TextBox4.Location = new System.Drawing.Point(97, 106);
+            this.TextBox4.Location = new System.Drawing.Point(194, 204);
+            this.TextBox4.Margin = new System.Windows.Forms.Padding(6);
             this.TextBox4.Name = "TextBox4";
-            this.TextBox4.Size = new System.Drawing.Size(47, 20);
+            this.TextBox4.Size = new System.Drawing.Size(90, 31);
             this.TextBox4.TabIndex = 58;
             this.TextBox4.Text = "0";
             // 
@@ -1153,9 +1277,10 @@ namespace Elmanager.Forms
             // 
             this.TextBox21.BackColor = System.Drawing.SystemColors.Window;
             this.TextBox21.DefaultValue = 0D;
-            this.TextBox21.Location = new System.Drawing.Point(170, 106);
+            this.TextBox21.Location = new System.Drawing.Point(340, 204);
+            this.TextBox21.Margin = new System.Windows.Forms.Padding(6);
             this.TextBox21.Name = "TextBox21";
-            this.TextBox21.Size = new System.Drawing.Size(47, 20);
+            this.TextBox21.Size = new System.Drawing.Size(90, 31);
             this.TextBox21.TabIndex = 59;
             this.TextBox21.Text = "10000";
             // 
@@ -1163,9 +1288,10 @@ namespace Elmanager.Forms
             // 
             this.TextBox2.BackColor = System.Drawing.SystemColors.Window;
             this.TextBox2.DefaultValue = 0D;
-            this.TextBox2.Location = new System.Drawing.Point(97, 131);
+            this.TextBox2.Location = new System.Drawing.Point(194, 252);
+            this.TextBox2.Margin = new System.Windows.Forms.Padding(6);
             this.TextBox2.Name = "TextBox2";
-            this.TextBox2.Size = new System.Drawing.Size(47, 20);
+            this.TextBox2.Size = new System.Drawing.Size(90, 31);
             this.TextBox2.TabIndex = 60;
             this.TextBox2.Text = "0";
             // 
@@ -1173,9 +1299,10 @@ namespace Elmanager.Forms
             // 
             this.TextBox1.BackColor = System.Drawing.SystemColors.Window;
             this.TextBox1.DefaultValue = 0D;
-            this.TextBox1.Location = new System.Drawing.Point(97, 31);
+            this.TextBox1.Location = new System.Drawing.Point(194, 60);
+            this.TextBox1.Margin = new System.Windows.Forms.Padding(6);
             this.TextBox1.Name = "TextBox1";
-            this.TextBox1.Size = new System.Drawing.Size(47, 20);
+            this.TextBox1.Size = new System.Drawing.Size(90, 31);
             this.TextBox1.TabIndex = 45;
             this.TextBox1.Text = "0";
             // 
@@ -1185,18 +1312,20 @@ namespace Elmanager.Forms
             this.TabPage3.Controls.Add(this.ReplaysWithoutLevFileButton);
             this.TabPage3.Controls.Add(this.DuplicateFilenameButton);
             this.TabPage3.Controls.Add(this.DuplicateButton);
-            this.TabPage3.Location = new System.Drawing.Point(4, 22);
+            this.TabPage3.Location = new System.Drawing.Point(8, 39);
+            this.TabPage3.Margin = new System.Windows.Forms.Padding(6);
             this.TabPage3.Name = "TabPage3";
-            this.TabPage3.Size = new System.Drawing.Size(550, 260);
+            this.TabPage3.Size = new System.Drawing.Size(1100, 503);
             this.TabPage3.TabIndex = 2;
             this.TabPage3.Text = "Other searches";
             this.TabPage3.UseVisualStyleBackColor = true;
             // 
             // ReplaysIncorrectLevButton
             // 
-            this.ReplaysIncorrectLevButton.Location = new System.Drawing.Point(12, 102);
+            this.ReplaysIncorrectLevButton.Location = new System.Drawing.Point(24, 196);
+            this.ReplaysIncorrectLevButton.Margin = new System.Windows.Forms.Padding(6);
             this.ReplaysIncorrectLevButton.Name = "ReplaysIncorrectLevButton";
-            this.ReplaysIncorrectLevButton.Size = new System.Drawing.Size(164, 24);
+            this.ReplaysIncorrectLevButton.Size = new System.Drawing.Size(328, 46);
             this.ReplaysIncorrectLevButton.TabIndex = 56;
             this.ReplaysIncorrectLevButton.Text = "Replays with incorrect level";
             this.ReplaysIncorrectLevButton.UseVisualStyleBackColor = true;
@@ -1204,9 +1333,10 @@ namespace Elmanager.Forms
             // 
             // ReplaysWithoutLevFileButton
             // 
-            this.ReplaysWithoutLevFileButton.Location = new System.Drawing.Point(12, 72);
+            this.ReplaysWithoutLevFileButton.Location = new System.Drawing.Point(24, 138);
+            this.ReplaysWithoutLevFileButton.Margin = new System.Windows.Forms.Padding(6);
             this.ReplaysWithoutLevFileButton.Name = "ReplaysWithoutLevFileButton";
-            this.ReplaysWithoutLevFileButton.Size = new System.Drawing.Size(164, 24);
+            this.ReplaysWithoutLevFileButton.Size = new System.Drawing.Size(328, 46);
             this.ReplaysWithoutLevFileButton.TabIndex = 55;
             this.ReplaysWithoutLevFileButton.Text = "Replays without level file";
             this.ReplaysWithoutLevFileButton.UseVisualStyleBackColor = true;
@@ -1214,9 +1344,10 @@ namespace Elmanager.Forms
             // 
             // DuplicateFilenameButton
             // 
-            this.DuplicateFilenameButton.Location = new System.Drawing.Point(12, 42);
+            this.DuplicateFilenameButton.Location = new System.Drawing.Point(24, 81);
+            this.DuplicateFilenameButton.Margin = new System.Windows.Forms.Padding(6);
             this.DuplicateFilenameButton.Name = "DuplicateFilenameButton";
-            this.DuplicateFilenameButton.Size = new System.Drawing.Size(164, 24);
+            this.DuplicateFilenameButton.Size = new System.Drawing.Size(328, 46);
             this.DuplicateFilenameButton.TabIndex = 54;
             this.DuplicateFilenameButton.Text = "Duplicate filename search";
             this.DuplicateFilenameButton.UseVisualStyleBackColor = true;
@@ -1224,9 +1355,10 @@ namespace Elmanager.Forms
             // 
             // DuplicateButton
             // 
-            this.DuplicateButton.Location = new System.Drawing.Point(12, 12);
+            this.DuplicateButton.Location = new System.Drawing.Point(24, 23);
+            this.DuplicateButton.Margin = new System.Windows.Forms.Padding(6);
             this.DuplicateButton.Name = "DuplicateButton";
-            this.DuplicateButton.Size = new System.Drawing.Size(164, 24);
+            this.DuplicateButton.Size = new System.Drawing.Size(328, 46);
             this.DuplicateButton.TabIndex = 53;
             this.DuplicateButton.Text = "Duplicate replay search";
             this.DuplicateButton.UseVisualStyleBackColor = true;
@@ -1235,12 +1367,14 @@ namespace Elmanager.Forms
             // StatusStrip1
             // 
             this.StatusStrip1.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F);
+            this.StatusStrip1.ImageScalingSize = new System.Drawing.Size(32, 32);
             this.StatusStrip1.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.statusLabel,
             this.ToolStripProgressBar1});
-            this.StatusStrip1.Location = new System.Drawing.Point(0, 414);
+            this.StatusStrip1.Location = new System.Drawing.Point(0, 851);
             this.StatusStrip1.Name = "StatusStrip1";
-            this.StatusStrip1.Size = new System.Drawing.Size(582, 22);
+            this.StatusStrip1.Padding = new System.Windows.Forms.Padding(2, 0, 28, 0);
+            this.StatusStrip1.Size = new System.Drawing.Size(1164, 37);
             this.StatusStrip1.TabIndex = 55;
             this.StatusStrip1.Text = "StatusStrip1";
             // 
@@ -1248,31 +1382,32 @@ namespace Elmanager.Forms
             // 
             this.statusLabel.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F);
             this.statusLabel.Name = "statusLabel";
-            this.statusLabel.Size = new System.Drawing.Size(165, 17);
+            this.statusLabel.Size = new System.Drawing.Size(332, 32);
             this.statusLabel.Spring = true;
             this.statusLabel.Text = "Ready";
             // 
             // ToolStripProgressBar1
             // 
             this.ToolStripProgressBar1.Name = "ToolStripProgressBar1";
-            this.ToolStripProgressBar1.Size = new System.Drawing.Size(400, 16);
+            this.ToolStripProgressBar1.Size = new System.Drawing.Size(800, 31);
             this.ToolStripProgressBar1.Step = 1;
             this.ToolStripProgressBar1.Style = System.Windows.Forms.ProgressBarStyle.Continuous;
             // 
             // ReplayManager
             // 
             this.AcceptButton = this.SearchButton;
-            this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
+            this.AutoScaleDimensions = new System.Drawing.SizeF(12F, 25F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(582, 436);
+            this.ClientSize = new System.Drawing.Size(1164, 888);
             this.Controls.Add(this.StatusStrip1);
-            this.Controls.Add(this.TabControl1);
             this.Controls.Add(this.RList);
+            this.Controls.Add(this.TabControl1);
             this.Controls.Add(this.ConfigButton);
             this.Controls.Add(this.SelectedReplaysLabel);
             this.DoubleBuffered = true;
             this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
-            this.MinimumSize = new System.Drawing.Size(593, 450);
+            this.Margin = new System.Windows.Forms.Padding(6);
+            this.MinimumSize = new System.Drawing.Size(1160, 800);
             this.Name = "ReplayManager";
             this.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;
             this.Text = "Replay manager";
@@ -1282,7 +1417,10 @@ namespace Elmanager.Forms
             ((System.ComponentModel.ISupportInitialize)(this.RList)).EndInit();
             this.TabControl1.ResumeLayout(false);
             this.TabPage1.ResumeLayout(false);
-            this.TabPage1.PerformLayout();
+            this.tableLayoutPanel1.ResumeLayout(false);
+            this.tableLayoutPanel2.ResumeLayout(false);
+            this.panel1.ResumeLayout(false);
+            this.panel1.PerformLayout();
             this.TabPage2.ResumeLayout(false);
             this.TabPage2.PerformLayout();
             this.TabPage3.ResumeLayout(false);
@@ -1403,7 +1541,9 @@ namespace Elmanager.Forms
         private ToolStripMenuItem zworqyToolStripMenuItem;
         private ToolStripMenuItem k10xnetToolStripMenuItem;
         private ToolTip toolTip1;
-		
-	}
+        private TableLayoutPanel tableLayoutPanel1;
+        private Panel panel1;
+        private TableLayoutPanel tableLayoutPanel2;
+    }
 	
 }

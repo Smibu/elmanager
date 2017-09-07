@@ -402,6 +402,9 @@
     <Compile Include="ViewSettings.cs" />
   </ItemGroup>
   <ItemGroup>
+    <EmbeddedResource Include="CustomControls\TriSelect.resx">
+      <DependentUpon>TriSelect.cs</DependentUpon>
+    </EmbeddedResource>
     <EmbeddedResource Include="Forms\CompareForm.resx">
       <DependentUpon>CompareForm.cs</DependentUpon>
       <SubType>Designer</SubType>
@@ -458,6 +461,7 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="app.config" />
+    <None Include="app.manifest" />
     <None Include="changelog.md" />
     <None Include="OpenTK.dll.config" />
     <None Include="packages.config" />
@@ -554,6 +558,10 @@
   <PropertyGroup>
     <PostBuildEvent>
     </PostBuildEvent>
+  </PropertyGroup>
+  <PropertyGroup />
+  <PropertyGroup>
+    <ApplicationManifest>app.manifest</ApplicationManifest>
   </PropertyGroup>
   <Import Project="$(MSBuildBinPath)/Microsoft.CSharp.targets" />
   <Import Project="packages\Microsoft.Bcl.Build.1.0.21\build\Microsoft.Bcl.Build.targets" Condition="Exists('packages\Microsoft.Bcl.Build.1.0.21\build\Microsoft.Bcl.Build.targets')" />

@@ -20,11 +20,17 @@ namespace Elmanager.Forms
         private Lgr _currentLgr;
         private bool _autoTextureMode;
         private bool _setDefaultsAutomatically;
+        private readonly float dpiX;
+        private readonly float dpiY;
 
         internal PictureForm(Lgr currentLgr)
         {
             InitializeComponent();
             UpdateLgr(currentLgr);
+            var graphics = CreateGraphics();
+            dpiX = graphics.DpiX / 96;
+            dpiY = graphics.DpiY / 96;
+            graphics.Dispose();
         }
 
         internal void UpdateLgr(Lgr newLgr)
@@ -63,7 +69,7 @@ namespace Elmanager.Forms
 
         internal int IterationCount => iterationsTextBox.Value;
 
-        internal int MinHeight => AutoTextureMode ? 293 : 185;
+        internal int MinHeight => (int)((AutoTextureMode ? 293 : 185) * dpiY);
 
         internal bool AllowMultiple { get; set; }
 

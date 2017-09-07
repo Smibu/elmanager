@@ -66,6 +66,8 @@ namespace Elmanager.Forms
         private Vector _gridStartOffset;
         private bool _programmaticPropertyChange;
         private Vector _savedStartPosition;
+        private float dpiX;
+        private float dpiY;
 
         internal LevelEditor(string levPath)
         {
@@ -849,6 +851,22 @@ namespace Elmanager.Forms
 
         private void Initialize()
         {
+            var graphics = CreateGraphics();
+            dpiX = graphics.DpiX / 96;
+            dpiY = graphics.DpiY / 96;
+            ToolStrip1.ImageScalingSize = new Size(32 * (int)dpiX, 32 * (int)dpiY);
+            ToolStrip2.ImageScalingSize = new Size(32 * (int)dpiX, 32 * (int)dpiY);
+            MenuStrip1.ImageScalingSize = new Size(16 * (int)dpiX, 16 * (int)dpiY);
+            EditorMenuStrip.ImageScalingSize = new Size(16 * (int)dpiX, 16 * (int)dpiY);
+            graphics.Dispose();
+            SelectionLabel.Width *= (int)dpiX;
+            CoordinateLabel.Width *= (int)dpiX;
+            BestTimeLabel.Width *= (int)dpiX;
+            filenameBox.Width *= (int)dpiX;
+            TitleBox.Width *= (int)dpiX;
+            LGRBox.Width *= (int)dpiX;
+            GroundComboBox.Width *= (int)dpiX;
+            SkyComboBox.Width *= (int)dpiX;
             WindowState = Global.AppSettings.LevelEditor.WindowState;
             SelectButton.Select();
             UpdateButtons();
@@ -1916,7 +1934,7 @@ namespace Elmanager.Forms
         private void TitleBoxTextChanged(object sender, EventArgs e)
         {
             int width = TextRenderer.MeasureText(TitleBox.Text, TitleBox.Font).Width;
-            TitleBox.Width = Math.Max(width + 5, 120);
+            TitleBox.Width = Math.Max(width + 5, 120 * (int)dpiX);
             TitleBox.BackColor = Regex.IsMatch(TitleBox.Text, "[^a-zA-Z0-9!\"%&/()=?`^*-_,.;:<>\\[\\]+# ]") ? Color.Red : Color.White;
         }
 
