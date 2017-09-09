@@ -57,6 +57,7 @@ namespace Elmanager
         private const double ZoomFillMargin = 0.05;
         private const double zFar = 1;
         private const double zNear = -1;
+        private const int LinePattern = 0b0101010101010101;
         private readonly int[] _viewPort = new int[4];
         private static bool _smoothZoomInProgress;
         private Color ActivePlayerColor;
@@ -761,8 +762,7 @@ namespace Elmanager
             if (Settings.ShowMaxDimensions)
             {
                 GL.Enable(EnableCap.LineStipple);
-                GL.LineWidth(1);
-                GL.LineStipple(1, unchecked((short)(0xCCCC)));
+                GL.LineStipple((int)Settings.LineWidth * 2, LinePattern);
                 double centerX = (Lev.XMin + Lev.XMax) / 2;
                 double centerY = (Lev.YMin + Lev.YMax) / 2;
                 DrawRectangle(centerX - Level.MaximumSize / 2,
@@ -807,7 +807,7 @@ namespace Elmanager
                         DrawLineStrip(x, Settings.GrassEdgeColor);
                         if (Settings.ShowInactiveGrassEdges)
                         {
-                            DrawLine(x.Vertices.First(), x.Vertices.Last(), Settings.GrassEdgeColor);
+                            DrawDashLine(x.Vertices.First(), x.Vertices.Last(), Settings.GrassEdgeColor);
                         }
                     }
                 }
@@ -1526,8 +1526,7 @@ namespace Elmanager
         {
             double current = GetFirstGridLine(Settings.GridSize, GridOffset.X, XMin);
             GL.Enable(EnableCap.LineStipple);
-            GL.LineWidth(1);
-            GL.LineStipple(1, unchecked((short) (0xAAAA)));
+            GL.LineStipple((int)Settings.LineWidth, LinePattern);
             GL.Scale(1.0, -1.0, 1.0);
             GL.Color3(Settings.GridColor);
             GL.Begin(PrimitiveType.Lines);
@@ -1837,7 +1836,7 @@ namespace Elmanager
                 if (!isActive)
                 {
                     GL.Enable(EnableCap.LineStipple);
-                    GL.LineStipple(1, unchecked((short)(0xAAAA)));
+                    GL.LineStipple((int)Settings.LineWidth, LinePattern);
                 }
                 DrawPlayerFrames(headX, headY, bikeRotation, isright, leftWheelx, leftWheely, rightWheelx, rightWheely,
                                  leftWheelRotation, rightWheelRotation,
@@ -2199,11 +2198,15 @@ namespace Elmanager
             }
         }
 
+        public void DrawDashLine(Vector v1, Vector v2, Color color)
+        {
+            DrawDashLine(v1.X, v1.Y, v2.X, v2.Y, color);
+        }
+
         public void DrawDashLine(double x1, double y1, double x2, double y2, Color color)
         {
             GL.Enable(EnableCap.LineStipple);
-            GL.LineWidth(1);
-            GL.LineStipple(1, unchecked((short)(0xAAAA)));
+            GL.LineStipple((int)Settings.LineWidth, LinePattern);
             DrawLine(x1, y1, x2, y2, color);
             GL.Disable(EnableCap.LineStipple);
             GL.LineWidth(Settings.LineWidth);

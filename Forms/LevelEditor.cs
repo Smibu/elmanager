@@ -531,7 +531,7 @@ namespace Elmanager.Forms
                                 Renderer.DrawLineStrip(x, Global.AppSettings.LevelEditor.HighlightColor);
                                 if (Global.AppSettings.LevelEditor.RenderingSettings.ShowInactiveGrassEdges)
                                 {
-                                    Renderer.DrawLine(x.Vertices.First(), x.Vertices.Last(), Global.AppSettings.LevelEditor.HighlightColor);
+                                    Renderer.DrawDashLine(x.Vertices.First(), x.Vertices.Last(), Global.AppSettings.LevelEditor.HighlightColor);
                                 }
                             }
                             else
