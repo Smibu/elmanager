@@ -275,7 +275,7 @@ namespace Elmanager
         [Category("Visibility"), DisplayName("Maximum dimensions")]
         public bool ShowMaxDimensions { get; set; }
 
-        [Category("Visibility"), DisplayName("Show inactive grass edges")]
+        [Category("Visibility"), DisplayName("Inactive grass edges")]
         public bool ShowInactiveGrassEdges { get; set; }
 
         [DisplayName("Zoom textures")]
