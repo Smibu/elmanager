@@ -57,7 +57,10 @@ namespace Elmanager.Forms
                     TextureButton.Checked = true;
                 PictureButton.Enabled = !value;
                 _autoTextureMode = value;
-                UpdatePicture(ImageBox.Image);
+                if (ImageBox.Image != null)
+                {
+                    UpdatePicture(ImageBox.Image);
+                }
             }
         }
 
@@ -279,7 +282,7 @@ namespace Elmanager.Forms
 
         private void PictureComboBoxSelectedIndexChanged(object sender = null, EventArgs e = null)
         {
-            if (PictureItemCount > 0 && !IsNothingSelected(PictureComboBox) && !IsMultipleSelected(PictureComboBox))
+            if (PictureItemCount > 0 && IsAnythingSelected(PictureComboBox) && !IsMultipleSelected(PictureComboBox))
             {
                 var selectedPicture = GetSelectedPicture();
                 if (SetDefaultsAutomatically)
@@ -292,12 +295,12 @@ namespace Elmanager.Forms
 
         private Lgr.LgrImage GetSelectedPicture()
         {
-            return _currentLgr.ImageFromName(PictureComboBox.SelectedItem.ToString());
+            return _currentLgr.ImageFromName(PictureComboBox.SelectedItem?.ToString());
         }
 
-        private bool IsNothingSelected(ComboBox comboBox)
+        private bool IsAnythingSelected(ComboBox comboBox)
         {
-            return comboBox.SelectedItem == null;
+            return comboBox.SelectedItem != null;
         }
 
         private int PictureItemCount
@@ -307,7 +310,7 @@ namespace Elmanager.Forms
 
         private void TextureComboBoxSelectedIndexChanged(object sender = null, EventArgs e = null)
         {
-            if (TextureItemCount > 0 && !IsNothingSelected(TextureComboBox) && !IsMultipleSelected(TextureComboBox))
+            if (TextureItemCount > 0 && IsAnythingSelected(TextureComboBox) && !IsMultipleSelected(TextureComboBox))
             {
                 var selectedTexture = GetSelectedTexture();
                 if (SetDefaultsAutomatically)
@@ -320,7 +323,7 @@ namespace Elmanager.Forms
 
         private Lgr.LgrImage GetSelectedTexture()
         {
-            return _currentLgr.ImageFromName(TextureComboBox.SelectedItem.ToString());
+            return _currentLgr.ImageFromName(TextureComboBox.SelectedItem?.ToString());
         }
 
         private int TextureItemCount
@@ -489,7 +492,7 @@ namespace Elmanager.Forms
         private void SetDefaultDistanceAndClipping()
         {
             var element = TextureButton.Checked ? GetSelectedTexture() : GetSelectedPicture();
-            // can be null if <multiple> option is selected
+            // can be null if <multiple> option is selected or the LGR has no pictures (e.g. Haddock)
             if (element != null)
             {
                 DistanceBox.Text = element.Distance.ToString();
