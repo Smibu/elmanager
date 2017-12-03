@@ -142,7 +142,7 @@ namespace Elmanager.Forms
             ClippingComboBox.Items.Add("Ground");
             ClippingComboBox.Items.Add("Sky");
             ClippingComboBox.SelectedIndex = 0;
-            foreach (Lgr.ListedImage x in _currentLgr.ListedImagesIncludingGrass)
+            foreach (Lgr.ListedImage x in _currentLgr.ListedImagesExcludingSpecial)
             {
                 switch (x.Type)
                 {

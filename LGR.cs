@@ -11,7 +11,7 @@ namespace Elmanager
     {
         internal readonly List<LgrImage> LgrImages = new List<LgrImage>();
         internal readonly List<ListedImage> ListedImages = new List<ListedImage>();
-        private readonly HashSet<string> _transparencyIgnoreSet = new HashSet<string>(Enumerable.Range(1, 18).SelectMany(TransparencyIgnoreHelper));
+        private static readonly HashSet<string> _transparencyIgnoreSet = new HashSet<string>(Enumerable.Range(0, 18).SelectMany(TransparencyIgnoreHelper));
 
         internal enum ImageType
         {
@@ -37,13 +37,13 @@ namespace Elmanager
             yield return $"qdown_{i}";
         }
 
-        internal IEnumerable<ListedImage> ListedImagesIncludingGrass
+        internal IEnumerable<ListedImage> ListedImagesExcludingSpecial
         {
             get
             {
                 foreach (var listedImage in ListedImages)
                 {
-                    if (listedImage.Name[0] != 'q')
+                    if (!listedImage.IsSpecial)
                     {
                         yield return listedImage;
                     }
@@ -174,11 +174,33 @@ namespace Elmanager
 
         internal struct ListedImage
         {
+            private static readonly string[] BodyPartNames = { "body", "thigh", "leg", "bike", "wheel", "susp1", "susp2", "forarm", "up_arm", "head" };
+
+            private static IEnumerable<string> EnumSpecialNames()
+            {
+                for (int i = 1; i <= 2; i++)
+                {
+                    foreach (var bodyPartName in BodyPartNames)
+                    {
+                        yield return $"q{i}{bodyPartName}";
+                    }
+                }
+                yield return "qflag";
+                yield return "qkiller";
+                yield return "qexit";
+                yield return "qframe";
+                yield return "qcolors";
+                yield return "qgrass";
+            }
+
+            private static readonly HashSet<string> SpecialNames = new HashSet<string>(EnumSpecialNames().Union(_transparencyIgnoreSet));
             internal Level.ClippingType ClippingType;
             internal int Distance;
             internal string Name;
             internal ImageType Type;
             internal Transparency Transparency;
+
+            public bool IsSpecial => SpecialNames.Contains(Name);
         }
 
         internal class LgrImage

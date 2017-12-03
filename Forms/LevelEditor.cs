@@ -1880,7 +1880,7 @@ namespace Elmanager.Forms
                     PicForm = new PictureForm(_editorLgr);
                 SkyComboBox.Items.Clear();
                 GroundComboBox.Items.Clear();
-                foreach (var texture in _editorLgr.ListedImagesIncludingGrass.Where(image => image.Type == Lgr.ImageType.Texture))
+                foreach (var texture in _editorLgr.ListedImagesExcludingSpecial.Where(image => image.Type == Lgr.ImageType.Texture))
                 {
                     SkyComboBox.Items.Add(texture.Name);
                     GroundComboBox.Items.Add(texture.Name);
