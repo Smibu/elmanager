@@ -298,7 +298,7 @@ namespace Elmanager.Forms
             return _currentLgr.ImageFromName(PictureComboBox.SelectedItem?.ToString());
         }
 
-        private bool IsAnythingSelected(ComboBox comboBox)
+        private static bool IsAnythingSelected(ComboBox comboBox)
         {
             return comboBox.SelectedItem != null;
         }
