@@ -1,4 +1,5 @@
-﻿using System.Windows.Forms;
+﻿using System.Drawing;
+using System.Windows.Forms;
 using Elmanager.CustomControls;
 
 namespace Elmanager.Forms
@@ -60,14 +61,8 @@ namespace Elmanager.Forms
             this.copyAndSnapToGridMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.MirrorHorizontallyToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.MirrorVerticallyToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.DeleteSelectedMenuItem = new Elmanager.CustomControls.ToolStripMenuItemMod();
             this.toolStripSeparator14 = new System.Windows.Forms.ToolStripSeparator();
-            this.unionToolStripMenuItem = new Elmanager.CustomControls.ToolStripMenuItemMod();
-            this.differenceToolStripMenuItem = new Elmanager.CustomControls.ToolStripMenuItemMod();
-            this.intersectionToolStripMenuItem = new Elmanager.CustomControls.ToolStripMenuItemMod();
-            this.symmetricDifferenceToolStripMenuItem = new Elmanager.CustomControls.ToolStripMenuItemMod();
             this.toolStripSeparator15 = new System.Windows.Forms.ToolStripSeparator();
-            this.texturizeMenuItem = new Elmanager.CustomControls.ToolStripMenuItemMod();
             this.SelectionFilterToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.EnableAllToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.DisableAllToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
@@ -89,27 +84,6 @@ namespace Elmanager.Forms
             this.HighlightLabel = new System.Windows.Forms.ToolStripStatusLabel();
             this.SaveFileDialog1 = new System.Windows.Forms.SaveFileDialog();
             this.ToolStripPanel1 = new System.Windows.Forms.ToolStripPanel();
-            this.ToolStrip2 = new System.Windows.Forms.ToolStrip();
-            this.ShowGridButton = new System.Windows.Forms.ToolStripButton();
-            this.snapToGridButton = new System.Windows.Forms.ToolStripButton();
-            this.showCrossHairButton = new System.Windows.Forms.ToolStripButton();
-            this.ShowGrassEdgesButton = new System.Windows.Forms.ToolStripButton();
-            this.ShowGroundEdgesButton = new System.Windows.Forms.ToolStripButton();
-            this.ShowVerticesButton = new System.Windows.Forms.ToolStripButton();
-            this.ShowTextureFramesButton = new System.Windows.Forms.ToolStripButton();
-            this.ShowPictureFramesButton = new System.Windows.Forms.ToolStripButton();
-            this.ShowTexturesButton = new System.Windows.Forms.ToolStripButton();
-            this.ShowPicturesButton = new System.Windows.Forms.ToolStripButton();
-            this.ShowObjectFramesButton = new System.Windows.Forms.ToolStripButton();
-            this.ShowObjectsButton = new System.Windows.Forms.ToolStripButton();
-            this.ShowGravityAppleArrowsButton = new System.Windows.Forms.ToolStripButton();
-            this.ShowGroundButton = new System.Windows.Forms.ToolStripButton();
-            this.ShowGroundTextureButton = new System.Windows.Forms.ToolStripButton();
-            this.ShowSkyTextureButton = new System.Windows.Forms.ToolStripButton();
-            this.ZoomTexturesButton = new System.Windows.Forms.ToolStripButton();
-            this.toolStripSeparator12 = new System.Windows.Forms.ToolStripSeparator();
-            this.BestTimeLabel = new System.Windows.Forms.ToolStripLabel();
-            this.topologyList = new System.Windows.Forms.ToolStripDropDownButton();
             this.ToolStrip1 = new System.Windows.Forms.ToolStrip();
             this.NewButton = new System.Windows.Forms.ToolStripButton();
             this.OpenButton = new System.Windows.Forms.ToolStripButton();
@@ -143,6 +117,27 @@ namespace Elmanager.Forms
             this.ToolStripLabel4 = new System.Windows.Forms.ToolStripLabel();
             this.SkyComboBox = new System.Windows.Forms.ToolStripComboBox();
             this.ToolStripSeparator7 = new System.Windows.Forms.ToolStripSeparator();
+            this.ToolStrip2 = new System.Windows.Forms.ToolStrip();
+            this.ShowGridButton = new System.Windows.Forms.ToolStripButton();
+            this.snapToGridButton = new System.Windows.Forms.ToolStripButton();
+            this.showCrossHairButton = new System.Windows.Forms.ToolStripButton();
+            this.ShowGrassEdgesButton = new System.Windows.Forms.ToolStripButton();
+            this.ShowGroundEdgesButton = new System.Windows.Forms.ToolStripButton();
+            this.ShowVerticesButton = new System.Windows.Forms.ToolStripButton();
+            this.ShowTextureFramesButton = new System.Windows.Forms.ToolStripButton();
+            this.ShowPictureFramesButton = new System.Windows.Forms.ToolStripButton();
+            this.ShowTexturesButton = new System.Windows.Forms.ToolStripButton();
+            this.ShowPicturesButton = new System.Windows.Forms.ToolStripButton();
+            this.ShowObjectFramesButton = new System.Windows.Forms.ToolStripButton();
+            this.ShowObjectsButton = new System.Windows.Forms.ToolStripButton();
+            this.ShowGravityAppleArrowsButton = new System.Windows.Forms.ToolStripButton();
+            this.ShowGroundButton = new System.Windows.Forms.ToolStripButton();
+            this.ShowGroundTextureButton = new System.Windows.Forms.ToolStripButton();
+            this.ShowSkyTextureButton = new System.Windows.Forms.ToolStripButton();
+            this.ZoomTexturesButton = new System.Windows.Forms.ToolStripButton();
+            this.toolStripSeparator12 = new System.Windows.Forms.ToolStripSeparator();
+            this.BestTimeLabel = new System.Windows.Forms.ToolStripLabel();
+            this.topologyList = new System.Windows.Forms.ToolStripDropDownButton();
             this.StatusStrip2 = new System.Windows.Forms.StatusStrip();
             this.InfoLabel = new System.Windows.Forms.ToolStripStatusLabel();
             this.EditorMenuStrip = new System.Windows.Forms.ContextMenuStrip(this.components);
@@ -182,11 +177,17 @@ namespace Elmanager.Forms
             this.DrawButton = new Elmanager.CustomControls.RadioButtonMod();
             this.VertexButton = new Elmanager.CustomControls.RadioButtonMod();
             this.SelectButton = new Elmanager.CustomControls.RadioButtonMod();
+            this.DeleteSelectedMenuItem = new Elmanager.CustomControls.ToolStripMenuItemMod();
+            this.unionToolStripMenuItem = new Elmanager.CustomControls.ToolStripMenuItemMod();
+            this.differenceToolStripMenuItem = new Elmanager.CustomControls.ToolStripMenuItemMod();
+            this.intersectionToolStripMenuItem = new Elmanager.CustomControls.ToolStripMenuItemMod();
+            this.symmetricDifferenceToolStripMenuItem = new Elmanager.CustomControls.ToolStripMenuItemMod();
+            this.texturizeMenuItem = new Elmanager.CustomControls.ToolStripMenuItemMod();
             this.MenuStrip1.SuspendLayout();
             this.StatusStrip1.SuspendLayout();
             this.ToolStripPanel1.SuspendLayout();
-            this.ToolStrip2.SuspendLayout();
             this.ToolStrip1.SuspendLayout();
+            this.ToolStrip2.SuspendLayout();
             this.StatusStrip2.SuspendLayout();
             this.EditorMenuStrip.SuspendLayout();
             this.ToolPanel.SuspendLayout();
@@ -470,64 +471,15 @@ namespace Elmanager.Forms
             this.MirrorVerticallyToolStripMenuItem.Text = "Mirror vertically";
             this.MirrorVerticallyToolStripMenuItem.Click += new System.EventHandler(this.MirrorVerticallyToolStripMenuItem_Click);
             // 
-            // DeleteSelectedMenuItem
-            // 
-            this.DeleteSelectedMenuItem.Image = global::My.Resources.Resources.Delete;
-            this.DeleteSelectedMenuItem.Name = "DeleteSelectedMenuItem";
-            this.DeleteSelectedMenuItem.ShortcutText = "Del";
-            this.DeleteSelectedMenuItem.Size = new System.Drawing.Size(452, 38);
-            this.DeleteSelectedMenuItem.Text = "Delete";
-            this.DeleteSelectedMenuItem.Click += new System.EventHandler(this.DeleteSelected);
-            // 
             // toolStripSeparator14
             // 
             this.toolStripSeparator14.Name = "toolStripSeparator14";
             this.toolStripSeparator14.Size = new System.Drawing.Size(449, 6);
             // 
-            // unionToolStripMenuItem
-            // 
-            this.unionToolStripMenuItem.Name = "unionToolStripMenuItem";
-            this.unionToolStripMenuItem.ShortcutText = ",";
-            this.unionToolStripMenuItem.Size = new System.Drawing.Size(452, 38);
-            this.unionToolStripMenuItem.Text = "Union";
-            this.unionToolStripMenuItem.Click += new System.EventHandler(this.unionToolStripMenuItem_Click);
-            // 
-            // differenceToolStripMenuItem
-            // 
-            this.differenceToolStripMenuItem.Name = "differenceToolStripMenuItem";
-            this.differenceToolStripMenuItem.ShortcutText = ".";
-            this.differenceToolStripMenuItem.Size = new System.Drawing.Size(452, 38);
-            this.differenceToolStripMenuItem.Text = "Difference";
-            this.differenceToolStripMenuItem.Click += new System.EventHandler(this.differenceToolStripMenuItem_Click);
-            // 
-            // intersectionToolStripMenuItem
-            // 
-            this.intersectionToolStripMenuItem.Name = "intersectionToolStripMenuItem";
-            this.intersectionToolStripMenuItem.ShortcutText = "Enter";
-            this.intersectionToolStripMenuItem.Size = new System.Drawing.Size(452, 38);
-            this.intersectionToolStripMenuItem.Text = "Intersection";
-            this.intersectionToolStripMenuItem.Click += new System.EventHandler(this.intersectionToolStripMenuItem_Click);
-            // 
-            // symmetricDifferenceToolStripMenuItem
-            // 
-            this.symmetricDifferenceToolStripMenuItem.Name = "symmetricDifferenceToolStripMenuItem";
-            this.symmetricDifferenceToolStripMenuItem.ShortcutText = "\'";
-            this.symmetricDifferenceToolStripMenuItem.Size = new System.Drawing.Size(452, 38);
-            this.symmetricDifferenceToolStripMenuItem.Text = "Symmetric difference";
-            this.symmetricDifferenceToolStripMenuItem.Click += new System.EventHandler(this.symmetricDifferenceToolStripMenuItem_Click);
-            // 
             // toolStripSeparator15
             // 
             this.toolStripSeparator15.Name = "toolStripSeparator15";
             this.toolStripSeparator15.Size = new System.Drawing.Size(449, 6);
-            // 
-            // texturizeMenuItem
-            // 
-            this.texturizeMenuItem.Name = "texturizeMenuItem";
-            this.texturizeMenuItem.ShortcutText = "§";
-            this.texturizeMenuItem.Size = new System.Drawing.Size(452, 38);
-            this.texturizeMenuItem.Text = "Texturize";
-            this.texturizeMenuItem.Click += new System.EventHandler(this.texturizeMenuItem_Click);
             // 
             // SelectionFilterToolStripMenuItem
             // 
@@ -658,10 +610,10 @@ namespace Elmanager.Forms
             // 
             this.EditorControl.AllowDrop = true;
             this.EditorControl.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.EditorControl.Location = new System.Drawing.Point(168, 154);
+            this.EditorControl.Location = new System.Drawing.Point(168, 163);
             this.EditorControl.Margin = new System.Windows.Forms.Padding(6);
             this.EditorControl.Name = "EditorControl";
-            this.EditorControl.Size = new System.Drawing.Size(1690, 729);
+            this.EditorControl.Size = new System.Drawing.Size(1690, 720);
             this.EditorControl.TabIndex = 2;
             this.EditorControl.DragDrop += new System.Windows.Forms.DragEventHandler(this.LevelDropped);
             this.EditorControl.DragEnter += new System.Windows.Forms.DragEventHandler(this.StartingDrop);
@@ -735,242 +687,16 @@ namespace Elmanager.Forms
             // ToolStripPanel1
             // 
             this.ToolStripPanel1.BackColor = System.Drawing.SystemColors.Control;
-            this.ToolStripPanel1.Controls.Add(this.ToolStrip2);
             this.ToolStripPanel1.Controls.Add(this.ToolStrip1);
+            this.ToolStripPanel1.Controls.Add(this.ToolStrip2);
             this.ToolStripPanel1.Controls.Add(this.StatusStrip2);
             this.ToolStripPanel1.Dock = System.Windows.Forms.DockStyle.Top;
             this.ToolStripPanel1.ForeColor = System.Drawing.SystemColors.ControlText;
             this.ToolStripPanel1.Location = new System.Drawing.Point(0, 38);
             this.ToolStripPanel1.Name = "ToolStripPanel1";
             this.ToolStripPanel1.Orientation = System.Windows.Forms.Orientation.Horizontal;
-            this.ToolStripPanel1.RowMargin = new System.Windows.Forms.Padding(3, 0, 0, 0);
-            this.ToolStripPanel1.Size = new System.Drawing.Size(1858, 116);
-            // 
-            // ToolStrip2
-            // 
-            this.ToolStrip2.BackColor = System.Drawing.SystemColors.Control;
-            this.ToolStrip2.Dock = System.Windows.Forms.DockStyle.None;
-            this.ToolStrip2.GripStyle = System.Windows.Forms.ToolStripGripStyle.Hidden;
-            this.ToolStrip2.ImageScalingSize = new System.Drawing.Size(32, 32);
-            this.ToolStrip2.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
-            this.ShowGridButton,
-            this.snapToGridButton,
-            this.showCrossHairButton,
-            this.ShowGrassEdgesButton,
-            this.ShowGroundEdgesButton,
-            this.ShowVerticesButton,
-            this.ShowTextureFramesButton,
-            this.ShowPictureFramesButton,
-            this.ShowTexturesButton,
-            this.ShowPicturesButton,
-            this.ShowObjectFramesButton,
-            this.ShowObjectsButton,
-            this.ShowGravityAppleArrowsButton,
-            this.ShowGroundButton,
-            this.ShowGroundTextureButton,
-            this.ShowSkyTextureButton,
-            this.ZoomTexturesButton,
-            this.toolStripSeparator12,
-            this.BestTimeLabel,
-            this.topologyList});
-            this.ToolStrip2.LayoutStyle = System.Windows.Forms.ToolStripLayoutStyle.HorizontalStackWithOverflow;
-            this.ToolStrip2.Location = new System.Drawing.Point(3, 0);
-            this.ToolStrip2.Name = "ToolStrip2";
-            this.ToolStrip2.Size = new System.Drawing.Size(795, 39);
-            this.ToolStrip2.TabIndex = 15;
-            this.ToolStrip2.Text = "ToolStrip2";
-            // 
-            // ShowGridButton
-            // 
-            this.ShowGridButton.CheckOnClick = true;
-            this.ShowGridButton.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
-            this.ShowGridButton.Image = global::My.Resources.Resources.Grid;
-            this.ShowGridButton.ImageTransparentColor = System.Drawing.Color.Magenta;
-            this.ShowGridButton.Name = "ShowGridButton";
-            this.ShowGridButton.Size = new System.Drawing.Size(36, 36);
-            this.ShowGridButton.Text = "S&how grid";
-            // 
-            // snapToGridButton
-            // 
-            this.snapToGridButton.CheckOnClick = true;
-            this.snapToGridButton.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
-            this.snapToGridButton.Image = global::My.Resources.Resources.Snap;
-            this.snapToGridButton.ImageTransparentColor = System.Drawing.Color.Magenta;
-            this.snapToGridButton.Name = "snapToGridButton";
-            this.snapToGridButton.Size = new System.Drawing.Size(36, 36);
-            this.snapToGridButton.Text = "Snap to grid";
-            // 
-            // showCrossHairButton
-            // 
-            this.showCrossHairButton.CheckOnClick = true;
-            this.showCrossHairButton.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
-            this.showCrossHairButton.Image = global::My.Resources.Resources.Crosshair2;
-            this.showCrossHairButton.ImageTransparentColor = System.Drawing.Color.Magenta;
-            this.showCrossHairButton.Name = "showCrossHairButton";
-            this.showCrossHairButton.Size = new System.Drawing.Size(36, 36);
-            this.showCrossHairButton.Text = "Show crosshair";
-            // 
-            // ShowGrassEdgesButton
-            // 
-            this.ShowGrassEdgesButton.CheckOnClick = true;
-            this.ShowGrassEdgesButton.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
-            this.ShowGrassEdgesButton.Image = global::My.Resources.Resources.GrassEdges;
-            this.ShowGrassEdgesButton.ImageTransparentColor = System.Drawing.Color.Magenta;
-            this.ShowGrassEdgesButton.Name = "ShowGrassEdgesButton";
-            this.ShowGrassEdgesButton.Size = new System.Drawing.Size(36, 36);
-            this.ShowGrassEdgesButton.Text = "Show grass edges";
-            // 
-            // ShowGroundEdgesButton
-            // 
-            this.ShowGroundEdgesButton.CheckOnClick = true;
-            this.ShowGroundEdgesButton.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
-            this.ShowGroundEdgesButton.Image = global::My.Resources.Resources.Edges;
-            this.ShowGroundEdgesButton.ImageTransparentColor = System.Drawing.Color.Magenta;
-            this.ShowGroundEdgesButton.Name = "ShowGroundEdgesButton";
-            this.ShowGroundEdgesButton.Size = new System.Drawing.Size(36, 36);
-            this.ShowGroundEdgesButton.Text = "Show ground edges";
-            // 
-            // ShowVerticesButton
-            // 
-            this.ShowVerticesButton.CheckOnClick = true;
-            this.ShowVerticesButton.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
-            this.ShowVerticesButton.Image = global::My.Resources.Resources.Vertices;
-            this.ShowVerticesButton.ImageTransparentColor = System.Drawing.Color.Magenta;
-            this.ShowVerticesButton.Name = "ShowVerticesButton";
-            this.ShowVerticesButton.Size = new System.Drawing.Size(36, 36);
-            this.ShowVerticesButton.Text = "Show vertices";
-            // 
-            // ShowTextureFramesButton
-            // 
-            this.ShowTextureFramesButton.CheckOnClick = true;
-            this.ShowTextureFramesButton.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
-            this.ShowTextureFramesButton.Image = global::My.Resources.Resources.TextureFrame;
-            this.ShowTextureFramesButton.ImageTransparentColor = System.Drawing.Color.Magenta;
-            this.ShowTextureFramesButton.Name = "ShowTextureFramesButton";
-            this.ShowTextureFramesButton.Size = new System.Drawing.Size(36, 36);
-            this.ShowTextureFramesButton.Text = "Show texture frames";
-            // 
-            // ShowPictureFramesButton
-            // 
-            this.ShowPictureFramesButton.CheckOnClick = true;
-            this.ShowPictureFramesButton.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
-            this.ShowPictureFramesButton.Image = global::My.Resources.Resources.PictureFrame;
-            this.ShowPictureFramesButton.ImageTransparentColor = System.Drawing.Color.Magenta;
-            this.ShowPictureFramesButton.Name = "ShowPictureFramesButton";
-            this.ShowPictureFramesButton.Size = new System.Drawing.Size(36, 36);
-            this.ShowPictureFramesButton.Text = "Show picture frames";
-            // 
-            // ShowTexturesButton
-            // 
-            this.ShowTexturesButton.CheckOnClick = true;
-            this.ShowTexturesButton.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
-            this.ShowTexturesButton.Image = global::My.Resources.Resources.Texture;
-            this.ShowTexturesButton.ImageTransparentColor = System.Drawing.Color.Magenta;
-            this.ShowTexturesButton.Name = "ShowTexturesButton";
-            this.ShowTexturesButton.Size = new System.Drawing.Size(36, 36);
-            this.ShowTexturesButton.Text = "Show textures";
-            // 
-            // ShowPicturesButton
-            // 
-            this.ShowPicturesButton.CheckOnClick = true;
-            this.ShowPicturesButton.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
-            this.ShowPicturesButton.Image = global::My.Resources.Resources.Picture;
-            this.ShowPicturesButton.ImageTransparentColor = System.Drawing.Color.Magenta;
-            this.ShowPicturesButton.Name = "ShowPicturesButton";
-            this.ShowPicturesButton.Size = new System.Drawing.Size(36, 36);
-            this.ShowPicturesButton.Text = "Show pictures";
-            // 
-            // ShowObjectFramesButton
-            // 
-            this.ShowObjectFramesButton.CheckOnClick = true;
-            this.ShowObjectFramesButton.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
-            this.ShowObjectFramesButton.Image = global::My.Resources.Resources.ObjectFrame;
-            this.ShowObjectFramesButton.ImageTransparentColor = System.Drawing.Color.Magenta;
-            this.ShowObjectFramesButton.Name = "ShowObjectFramesButton";
-            this.ShowObjectFramesButton.Size = new System.Drawing.Size(36, 36);
-            this.ShowObjectFramesButton.Text = "Show object frames";
-            // 
-            // ShowObjectsButton
-            // 
-            this.ShowObjectsButton.CheckOnClick = true;
-            this.ShowObjectsButton.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
-            this.ShowObjectsButton.Image = global::My.Resources.Resources._Object;
-            this.ShowObjectsButton.ImageTransparentColor = System.Drawing.Color.Magenta;
-            this.ShowObjectsButton.Name = "ShowObjectsButton";
-            this.ShowObjectsButton.Size = new System.Drawing.Size(36, 36);
-            this.ShowObjectsButton.Text = "Show objects";
-            // 
-            // ShowGravityAppleArrowsButton
-            // 
-            this.ShowGravityAppleArrowsButton.CheckOnClick = true;
-            this.ShowGravityAppleArrowsButton.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
-            this.ShowGravityAppleArrowsButton.Image = global::My.Resources.Resources.AppleArrow;
-            this.ShowGravityAppleArrowsButton.ImageTransparentColor = System.Drawing.Color.Magenta;
-            this.ShowGravityAppleArrowsButton.Name = "ShowGravityAppleArrowsButton";
-            this.ShowGravityAppleArrowsButton.Size = new System.Drawing.Size(36, 36);
-            this.ShowGravityAppleArrowsButton.Text = "Show gravity apple arrows";
-            // 
-            // ShowGroundButton
-            // 
-            this.ShowGroundButton.CheckOnClick = true;
-            this.ShowGroundButton.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
-            this.ShowGroundButton.Image = global::My.Resources.Resources.GroundFill;
-            this.ShowGroundButton.ImageTransparentColor = System.Drawing.Color.Magenta;
-            this.ShowGroundButton.Name = "ShowGroundButton";
-            this.ShowGroundButton.Size = new System.Drawing.Size(36, 36);
-            this.ShowGroundButton.Text = "Show ground";
-            // 
-            // ShowGroundTextureButton
-            // 
-            this.ShowGroundTextureButton.CheckOnClick = true;
-            this.ShowGroundTextureButton.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
-            this.ShowGroundTextureButton.Image = global::My.Resources.Resources.Ground;
-            this.ShowGroundTextureButton.ImageTransparentColor = System.Drawing.Color.Magenta;
-            this.ShowGroundTextureButton.Name = "ShowGroundTextureButton";
-            this.ShowGroundTextureButton.Size = new System.Drawing.Size(36, 36);
-            this.ShowGroundTextureButton.Text = "Show ground texture";
-            // 
-            // ShowSkyTextureButton
-            // 
-            this.ShowSkyTextureButton.CheckOnClick = true;
-            this.ShowSkyTextureButton.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
-            this.ShowSkyTextureButton.Image = global::My.Resources.Resources.Sky;
-            this.ShowSkyTextureButton.ImageTransparentColor = System.Drawing.Color.Magenta;
-            this.ShowSkyTextureButton.Name = "ShowSkyTextureButton";
-            this.ShowSkyTextureButton.Size = new System.Drawing.Size(36, 36);
-            this.ShowSkyTextureButton.Text = "Show sky texture";
-            // 
-            // ZoomTexturesButton
-            // 
-            this.ZoomTexturesButton.CheckOnClick = true;
-            this.ZoomTexturesButton.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
-            this.ZoomTexturesButton.Image = global::My.Resources.Resources.ZoomTexture;
-            this.ZoomTexturesButton.ImageTransparentColor = System.Drawing.Color.Magenta;
-            this.ZoomTexturesButton.Name = "ZoomTexturesButton";
-            this.ZoomTexturesButton.Size = new System.Drawing.Size(36, 36);
-            this.ZoomTexturesButton.Text = "Zoom textures";
-            // 
-            // toolStripSeparator12
-            // 
-            this.toolStripSeparator12.Name = "toolStripSeparator12";
-            this.toolStripSeparator12.Size = new System.Drawing.Size(6, 39);
-            // 
-            // BestTimeLabel
-            // 
-            this.BestTimeLabel.AutoSize = false;
-            this.BestTimeLabel.Name = "BestTimeLabel";
-            this.BestTimeLabel.Size = new System.Drawing.Size(170, 36);
-            this.BestTimeLabel.Text = "Best time: None";
-            this.BestTimeLabel.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
-            // 
-            // topologyList
-            // 
-            this.topologyList.AutoToolTip = false;
-            this.topologyList.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Text;
-            this.topologyList.ImageTransparentColor = System.Drawing.Color.Magenta;
-            this.topologyList.Name = "topologyList";
-            this.topologyList.ShowDropDownArrow = false;
-            this.topologyList.Size = new System.Drawing.Size(4, 36);
+            this.ToolStripPanel1.RowMargin = new System.Windows.Forms.Padding(0, 3, 0, 0);
+            this.ToolStripPanel1.Size = new System.Drawing.Size(1858, 125);
             // 
             // ToolStrip1
             // 
@@ -1012,7 +738,7 @@ namespace Elmanager.Forms
             this.SkyComboBox,
             this.ToolStripSeparator7});
             this.ToolStrip1.LayoutStyle = System.Windows.Forms.ToolStripLayoutStyle.HorizontalStackWithOverflow;
-            this.ToolStrip1.Location = new System.Drawing.Point(3, 39);
+            this.ToolStrip1.Location = new System.Drawing.Point(0, 3);
             this.ToolStrip1.Name = "ToolStrip1";
             this.ToolStrip1.Size = new System.Drawing.Size(1484, 40);
             this.ToolStrip1.TabIndex = 14;
@@ -1268,6 +994,232 @@ namespace Elmanager.Forms
             this.ToolStripSeparator7.Name = "ToolStripSeparator7";
             this.ToolStripSeparator7.Size = new System.Drawing.Size(6, 40);
             // 
+            // ToolStrip2
+            // 
+            this.ToolStrip2.BackColor = System.Drawing.SystemColors.Control;
+            this.ToolStrip2.Dock = System.Windows.Forms.DockStyle.None;
+            this.ToolStrip2.GripStyle = System.Windows.Forms.ToolStripGripStyle.Hidden;
+            this.ToolStrip2.ImageScalingSize = new System.Drawing.Size(32, 32);
+            this.ToolStrip2.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.ShowGridButton,
+            this.snapToGridButton,
+            this.showCrossHairButton,
+            this.ShowGrassEdgesButton,
+            this.ShowGroundEdgesButton,
+            this.ShowVerticesButton,
+            this.ShowTextureFramesButton,
+            this.ShowPictureFramesButton,
+            this.ShowTexturesButton,
+            this.ShowPicturesButton,
+            this.ShowObjectFramesButton,
+            this.ShowObjectsButton,
+            this.ShowGravityAppleArrowsButton,
+            this.ShowGroundButton,
+            this.ShowGroundTextureButton,
+            this.ShowSkyTextureButton,
+            this.ZoomTexturesButton,
+            this.toolStripSeparator12,
+            this.BestTimeLabel,
+            this.topologyList});
+            this.ToolStrip2.LayoutStyle = System.Windows.Forms.ToolStripLayoutStyle.HorizontalStackWithOverflow;
+            this.ToolStrip2.Location = new System.Drawing.Point(0, 46);
+            this.ToolStrip2.Name = "ToolStrip2";
+            this.ToolStrip2.Size = new System.Drawing.Size(795, 39);
+            this.ToolStrip2.TabIndex = 15;
+            this.ToolStrip2.Text = "ToolStrip2";
+            // 
+            // ShowGridButton
+            // 
+            this.ShowGridButton.CheckOnClick = true;
+            this.ShowGridButton.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
+            this.ShowGridButton.Image = global::My.Resources.Resources.Grid;
+            this.ShowGridButton.ImageTransparentColor = System.Drawing.Color.Magenta;
+            this.ShowGridButton.Name = "ShowGridButton";
+            this.ShowGridButton.Size = new System.Drawing.Size(36, 36);
+            this.ShowGridButton.Text = "S&how grid";
+            // 
+            // snapToGridButton
+            // 
+            this.snapToGridButton.CheckOnClick = true;
+            this.snapToGridButton.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
+            this.snapToGridButton.Image = global::My.Resources.Resources.Snap;
+            this.snapToGridButton.ImageTransparentColor = System.Drawing.Color.Magenta;
+            this.snapToGridButton.Name = "snapToGridButton";
+            this.snapToGridButton.Size = new System.Drawing.Size(36, 36);
+            this.snapToGridButton.Text = "Snap to grid";
+            // 
+            // showCrossHairButton
+            // 
+            this.showCrossHairButton.CheckOnClick = true;
+            this.showCrossHairButton.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
+            this.showCrossHairButton.Image = global::My.Resources.Resources.Crosshair2;
+            this.showCrossHairButton.ImageTransparentColor = System.Drawing.Color.Magenta;
+            this.showCrossHairButton.Name = "showCrossHairButton";
+            this.showCrossHairButton.Size = new System.Drawing.Size(36, 36);
+            this.showCrossHairButton.Text = "Show crosshair";
+            // 
+            // ShowGrassEdgesButton
+            // 
+            this.ShowGrassEdgesButton.CheckOnClick = true;
+            this.ShowGrassEdgesButton.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
+            this.ShowGrassEdgesButton.Image = global::My.Resources.Resources.GrassEdges;
+            this.ShowGrassEdgesButton.ImageTransparentColor = System.Drawing.Color.Magenta;
+            this.ShowGrassEdgesButton.Name = "ShowGrassEdgesButton";
+            this.ShowGrassEdgesButton.Size = new System.Drawing.Size(36, 36);
+            this.ShowGrassEdgesButton.Text = "Show grass edges";
+            // 
+            // ShowGroundEdgesButton
+            // 
+            this.ShowGroundEdgesButton.CheckOnClick = true;
+            this.ShowGroundEdgesButton.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
+            this.ShowGroundEdgesButton.Image = global::My.Resources.Resources.Edges;
+            this.ShowGroundEdgesButton.ImageTransparentColor = System.Drawing.Color.Magenta;
+            this.ShowGroundEdgesButton.Name = "ShowGroundEdgesButton";
+            this.ShowGroundEdgesButton.Size = new System.Drawing.Size(36, 36);
+            this.ShowGroundEdgesButton.Text = "Show ground edges";
+            // 
+            // ShowVerticesButton
+            // 
+            this.ShowVerticesButton.CheckOnClick = true;
+            this.ShowVerticesButton.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
+            this.ShowVerticesButton.Image = global::My.Resources.Resources.Vertices;
+            this.ShowVerticesButton.ImageTransparentColor = System.Drawing.Color.Magenta;
+            this.ShowVerticesButton.Name = "ShowVerticesButton";
+            this.ShowVerticesButton.Size = new System.Drawing.Size(36, 36);
+            this.ShowVerticesButton.Text = "Show vertices";
+            // 
+            // ShowTextureFramesButton
+            // 
+            this.ShowTextureFramesButton.CheckOnClick = true;
+            this.ShowTextureFramesButton.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
+            this.ShowTextureFramesButton.Image = global::My.Resources.Resources.TextureFrame;
+            this.ShowTextureFramesButton.ImageTransparentColor = System.Drawing.Color.Magenta;
+            this.ShowTextureFramesButton.Name = "ShowTextureFramesButton";
+            this.ShowTextureFramesButton.Size = new System.Drawing.Size(36, 36);
+            this.ShowTextureFramesButton.Text = "Show texture frames";
+            // 
+            // ShowPictureFramesButton
+            // 
+            this.ShowPictureFramesButton.CheckOnClick = true;
+            this.ShowPictureFramesButton.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
+            this.ShowPictureFramesButton.Image = global::My.Resources.Resources.PictureFrame;
+            this.ShowPictureFramesButton.ImageTransparentColor = System.Drawing.Color.Magenta;
+            this.ShowPictureFramesButton.Name = "ShowPictureFramesButton";
+            this.ShowPictureFramesButton.Size = new System.Drawing.Size(36, 36);
+            this.ShowPictureFramesButton.Text = "Show picture frames";
+            // 
+            // ShowTexturesButton
+            // 
+            this.ShowTexturesButton.CheckOnClick = true;
+            this.ShowTexturesButton.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
+            this.ShowTexturesButton.Image = global::My.Resources.Resources.Texture;
+            this.ShowTexturesButton.ImageTransparentColor = System.Drawing.Color.Magenta;
+            this.ShowTexturesButton.Name = "ShowTexturesButton";
+            this.ShowTexturesButton.Size = new System.Drawing.Size(36, 36);
+            this.ShowTexturesButton.Text = "Show textures";
+            // 
+            // ShowPicturesButton
+            // 
+            this.ShowPicturesButton.CheckOnClick = true;
+            this.ShowPicturesButton.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
+            this.ShowPicturesButton.Image = global::My.Resources.Resources.Picture;
+            this.ShowPicturesButton.ImageTransparentColor = System.Drawing.Color.Magenta;
+            this.ShowPicturesButton.Name = "ShowPicturesButton";
+            this.ShowPicturesButton.Size = new System.Drawing.Size(36, 36);
+            this.ShowPicturesButton.Text = "Show pictures";
+            // 
+            // ShowObjectFramesButton
+            // 
+            this.ShowObjectFramesButton.CheckOnClick = true;
+            this.ShowObjectFramesButton.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
+            this.ShowObjectFramesButton.Image = global::My.Resources.Resources.ObjectFrame;
+            this.ShowObjectFramesButton.ImageTransparentColor = System.Drawing.Color.Magenta;
+            this.ShowObjectFramesButton.Name = "ShowObjectFramesButton";
+            this.ShowObjectFramesButton.Size = new System.Drawing.Size(36, 36);
+            this.ShowObjectFramesButton.Text = "Show object frames";
+            // 
+            // ShowObjectsButton
+            // 
+            this.ShowObjectsButton.CheckOnClick = true;
+            this.ShowObjectsButton.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
+            this.ShowObjectsButton.Image = global::My.Resources.Resources._Object;
+            this.ShowObjectsButton.ImageTransparentColor = System.Drawing.Color.Magenta;
+            this.ShowObjectsButton.Name = "ShowObjectsButton";
+            this.ShowObjectsButton.Size = new System.Drawing.Size(36, 36);
+            this.ShowObjectsButton.Text = "Show objects";
+            // 
+            // ShowGravityAppleArrowsButton
+            // 
+            this.ShowGravityAppleArrowsButton.CheckOnClick = true;
+            this.ShowGravityAppleArrowsButton.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
+            this.ShowGravityAppleArrowsButton.Image = global::My.Resources.Resources.AppleArrow;
+            this.ShowGravityAppleArrowsButton.ImageTransparentColor = System.Drawing.Color.Magenta;
+            this.ShowGravityAppleArrowsButton.Name = "ShowGravityAppleArrowsButton";
+            this.ShowGravityAppleArrowsButton.Size = new System.Drawing.Size(36, 36);
+            this.ShowGravityAppleArrowsButton.Text = "Show gravity apple arrows";
+            // 
+            // ShowGroundButton
+            // 
+            this.ShowGroundButton.CheckOnClick = true;
+            this.ShowGroundButton.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
+            this.ShowGroundButton.Image = global::My.Resources.Resources.GroundFill;
+            this.ShowGroundButton.ImageTransparentColor = System.Drawing.Color.Magenta;
+            this.ShowGroundButton.Name = "ShowGroundButton";
+            this.ShowGroundButton.Size = new System.Drawing.Size(36, 36);
+            this.ShowGroundButton.Text = "Show ground";
+            // 
+            // ShowGroundTextureButton
+            // 
+            this.ShowGroundTextureButton.CheckOnClick = true;
+            this.ShowGroundTextureButton.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
+            this.ShowGroundTextureButton.Image = global::My.Resources.Resources.Ground;
+            this.ShowGroundTextureButton.ImageTransparentColor = System.Drawing.Color.Magenta;
+            this.ShowGroundTextureButton.Name = "ShowGroundTextureButton";
+            this.ShowGroundTextureButton.Size = new System.Drawing.Size(36, 36);
+            this.ShowGroundTextureButton.Text = "Show ground texture";
+            // 
+            // ShowSkyTextureButton
+            // 
+            this.ShowSkyTextureButton.CheckOnClick = true;
+            this.ShowSkyTextureButton.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
+            this.ShowSkyTextureButton.Image = global::My.Resources.Resources.Sky;
+            this.ShowSkyTextureButton.ImageTransparentColor = System.Drawing.Color.Magenta;
+            this.ShowSkyTextureButton.Name = "ShowSkyTextureButton";
+            this.ShowSkyTextureButton.Size = new System.Drawing.Size(36, 36);
+            this.ShowSkyTextureButton.Text = "Show sky texture";
+            // 
+            // ZoomTexturesButton
+            // 
+            this.ZoomTexturesButton.CheckOnClick = true;
+            this.ZoomTexturesButton.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
+            this.ZoomTexturesButton.Image = global::My.Resources.Resources.ZoomTexture;
+            this.ZoomTexturesButton.ImageTransparentColor = System.Drawing.Color.Magenta;
+            this.ZoomTexturesButton.Name = "ZoomTexturesButton";
+            this.ZoomTexturesButton.Size = new System.Drawing.Size(36, 36);
+            this.ZoomTexturesButton.Text = "Zoom textures";
+            // 
+            // toolStripSeparator12
+            // 
+            this.toolStripSeparator12.Name = "toolStripSeparator12";
+            this.toolStripSeparator12.Size = new System.Drawing.Size(6, 39);
+            // 
+            // BestTimeLabel
+            // 
+            this.BestTimeLabel.AutoSize = false;
+            this.BestTimeLabel.Name = "BestTimeLabel";
+            this.BestTimeLabel.Size = new System.Drawing.Size(170, 36);
+            this.BestTimeLabel.Text = "Best time: None";
+            this.BestTimeLabel.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
+            // 
+            // topologyList
+            // 
+            this.topologyList.AutoToolTip = false;
+            this.topologyList.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Text;
+            this.topologyList.ImageTransparentColor = System.Drawing.Color.Magenta;
+            this.topologyList.Name = "topologyList";
+            this.topologyList.ShowDropDownArrow = false;
+            this.topologyList.Size = new System.Drawing.Size(4, 36);
+            // 
             // StatusStrip2
             // 
             this.StatusStrip2.BackColor = System.Drawing.SystemColors.Control;
@@ -1275,8 +1227,7 @@ namespace Elmanager.Forms
             this.StatusStrip2.ImageScalingSize = new System.Drawing.Size(32, 32);
             this.StatusStrip2.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.InfoLabel});
-            this.StatusStrip2.LayoutStyle = System.Windows.Forms.ToolStripLayoutStyle.HorizontalStackWithOverflow;
-            this.StatusStrip2.Location = new System.Drawing.Point(0, 79);
+            this.StatusStrip2.Location = new System.Drawing.Point(0, 88);
             this.StatusStrip2.Name = "StatusStrip2";
             this.StatusStrip2.ShowItemToolTips = true;
             this.StatusStrip2.Size = new System.Drawing.Size(1858, 37);
@@ -1488,10 +1439,10 @@ namespace Elmanager.Forms
             this.ToolPanel.Controls.Add(this.VertexButton);
             this.ToolPanel.Controls.Add(this.SelectButton);
             this.ToolPanel.Dock = System.Windows.Forms.DockStyle.Left;
-            this.ToolPanel.Location = new System.Drawing.Point(0, 154);
+            this.ToolPanel.Location = new System.Drawing.Point(0, 163);
             this.ToolPanel.Margin = new System.Windows.Forms.Padding(6);
             this.ToolPanel.Name = "ToolPanel";
-            this.ToolPanel.Size = new System.Drawing.Size(168, 729);
+            this.ToolPanel.Size = new System.Drawing.Size(168, 720);
             this.ToolPanel.TabIndex = 3;
             this.ToolPanel.Text = "Tools";
             // 
@@ -1694,6 +1645,55 @@ namespace Elmanager.Forms
             this.SelectButton.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
             this.SelectButton.UseVisualStyleBackColor = true;
             // 
+            // DeleteSelectedMenuItem
+            // 
+            this.DeleteSelectedMenuItem.Image = global::My.Resources.Resources.Delete;
+            this.DeleteSelectedMenuItem.Name = "DeleteSelectedMenuItem";
+            this.DeleteSelectedMenuItem.ShortcutText = "Del";
+            this.DeleteSelectedMenuItem.Size = new System.Drawing.Size(452, 38);
+            this.DeleteSelectedMenuItem.Text = "Delete";
+            this.DeleteSelectedMenuItem.Click += new System.EventHandler(this.DeleteSelected);
+            // 
+            // unionToolStripMenuItem
+            // 
+            this.unionToolStripMenuItem.Name = "unionToolStripMenuItem";
+            this.unionToolStripMenuItem.ShortcutText = ",";
+            this.unionToolStripMenuItem.Size = new System.Drawing.Size(452, 38);
+            this.unionToolStripMenuItem.Text = "Union";
+            this.unionToolStripMenuItem.Click += new System.EventHandler(this.unionToolStripMenuItem_Click);
+            // 
+            // differenceToolStripMenuItem
+            // 
+            this.differenceToolStripMenuItem.Name = "differenceToolStripMenuItem";
+            this.differenceToolStripMenuItem.ShortcutText = ".";
+            this.differenceToolStripMenuItem.Size = new System.Drawing.Size(452, 38);
+            this.differenceToolStripMenuItem.Text = "Difference";
+            this.differenceToolStripMenuItem.Click += new System.EventHandler(this.differenceToolStripMenuItem_Click);
+            // 
+            // intersectionToolStripMenuItem
+            // 
+            this.intersectionToolStripMenuItem.Name = "intersectionToolStripMenuItem";
+            this.intersectionToolStripMenuItem.ShortcutText = "Enter";
+            this.intersectionToolStripMenuItem.Size = new System.Drawing.Size(452, 38);
+            this.intersectionToolStripMenuItem.Text = "Intersection";
+            this.intersectionToolStripMenuItem.Click += new System.EventHandler(this.intersectionToolStripMenuItem_Click);
+            // 
+            // symmetricDifferenceToolStripMenuItem
+            // 
+            this.symmetricDifferenceToolStripMenuItem.Name = "symmetricDifferenceToolStripMenuItem";
+            this.symmetricDifferenceToolStripMenuItem.ShortcutText = "\'";
+            this.symmetricDifferenceToolStripMenuItem.Size = new System.Drawing.Size(452, 38);
+            this.symmetricDifferenceToolStripMenuItem.Text = "Symmetric difference";
+            this.symmetricDifferenceToolStripMenuItem.Click += new System.EventHandler(this.symmetricDifferenceToolStripMenuItem_Click);
+            // 
+            // texturizeMenuItem
+            // 
+            this.texturizeMenuItem.Name = "texturizeMenuItem";
+            this.texturizeMenuItem.ShortcutText = "§";
+            this.texturizeMenuItem.Size = new System.Drawing.Size(452, 38);
+            this.texturizeMenuItem.Text = "Texturize";
+            this.texturizeMenuItem.Click += new System.EventHandler(this.texturizeMenuItem_Click);
+            // 
             // LevelEditor
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(12F, 25F);
@@ -1719,10 +1719,10 @@ namespace Elmanager.Forms
             this.StatusStrip1.PerformLayout();
             this.ToolStripPanel1.ResumeLayout(false);
             this.ToolStripPanel1.PerformLayout();
-            this.ToolStrip2.ResumeLayout(false);
-            this.ToolStrip2.PerformLayout();
             this.ToolStrip1.ResumeLayout(false);
             this.ToolStrip1.PerformLayout();
+            this.ToolStrip2.ResumeLayout(false);
+            this.ToolStrip2.PerformLayout();
             this.StatusStrip2.ResumeLayout(false);
             this.StatusStrip2.PerformLayout();
             this.EditorMenuStrip.ResumeLayout(false);
