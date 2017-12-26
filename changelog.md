@@ -1,5 +1,12 @@
 # Elmanager changelog
 
+## Beta
+* SLE: Improved Picture tool usability.
+* SLE: Added support for high DPI monitors.
+* SLE: Inactive grass edges are now shown dashed.
+* SLE: Bugfix: Crash if LGR had no images.
+* SLE: Bugfix: Too many pictures were excluded from the list of available pictures.
+
 ## 28.5.2017
 * SLE: QGRASS is available as a ground/sky texture.
 * SLE: Added option to mirror selection vertically.
