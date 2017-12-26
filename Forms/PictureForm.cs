@@ -19,7 +19,6 @@ namespace Elmanager.Forms
         internal bool TextureSelected;
         private Lgr _currentLgr;
         private bool _autoTextureMode;
-        private bool _setDefaultsAutomatically;
         private readonly float dpiX;
         private readonly float dpiY;
 
@@ -76,18 +75,7 @@ namespace Elmanager.Forms
 
         internal bool AllowMultiple { get; set; }
 
-        internal bool SetDefaultsAutomatically
-        {
-            get { return _setDefaultsAutomatically; }
-            set
-            {
-                _setDefaultsAutomatically = value;
-                if (value)
-                {
-                    SetDefaultDistanceAndClipping();
-                }
-            }
-        }
+        internal bool SetDefaultsAutomatically { get; set; }
 
         internal bool MultiplePicturesSelected
         {
@@ -200,7 +188,7 @@ namespace Elmanager.Forms
             return c.SelectedItem.ToString() == _multipleValues;
         }
 
-        internal void SelectTexture(Level.Picture picture)
+        internal void SelectElement(Level.Picture picture)
         {
             if (picture.IsPicture)
             {
@@ -214,7 +202,7 @@ namespace Elmanager.Forms
             }
 
             DistanceBox.Text = picture.Distance.ToString();
-            ClippingComboBox.SelectedIndex = (int) (picture.Clipping);
+            ClippingComboBox.SelectedIndex = (int) picture.Clipping;
         }
 
         internal void SelectMultiple(List<Level.Picture> pictures)
@@ -487,9 +475,10 @@ namespace Elmanager.Forms
         private void SetDefaultsClicked(object sender, EventArgs e)
         {
             SetDefaultsAutomatically = true;
+            SetDefaultDistanceAndClipping();
         }
 
-        private void SetDefaultDistanceAndClipping()
+        public void SetDefaultDistanceAndClipping()
         {
             var element = TextureButton.Checked ? GetSelectedTexture() : GetSelectedPicture();
             // can be null if <multiple> option is selected or the LGR has no pictures (e.g. Haddock)

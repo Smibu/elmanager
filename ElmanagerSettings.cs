@@ -112,6 +112,7 @@ namespace Elmanager
             public FormWindowState WindowState = FormWindowState.Normal;
             public string LevelTemplate = "50,50";
             public bool CapturePicturesAndTexturesFromBordersOnly = false;
+            public bool AlwaysSetDefaultsInPictureTool = false;
 
             internal static Level TryGetTemplateLevel(string text)
             {

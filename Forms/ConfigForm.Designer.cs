@@ -58,6 +58,7 @@ namespace Elmanager.Forms
             this.Label5 = new System.Windows.Forms.Label();
             this.CheckForUpdatesBox = new System.Windows.Forms.CheckBox();
             this.RMPage = new System.Windows.Forms.TabPage();
+            this.showTooltipForReplaysCheckBox = new System.Windows.Forms.CheckBox();
             this.DeleteConfirmCheckBox = new System.Windows.Forms.CheckBox();
             this.SearchRecSubDirsBox = new System.Windows.Forms.CheckBox();
             this.DeleteRecycleCheckBox = new System.Windows.Forms.CheckBox();
@@ -95,7 +96,7 @@ namespace Elmanager.Forms
             this.WarnAboutOldDBBox = new System.Windows.Forms.CheckBox();
             this.ColorDialog1 = new System.Windows.Forms.ColorDialog();
             this.toolTip1 = new System.Windows.Forms.ToolTip(this.components);
-            this.showTooltipForReplaysCheckBox = new System.Windows.Forms.CheckBox();
+            this.alwaysSetDefaultsInPictureTool = new System.Windows.Forms.CheckBox();
             this.TabControl1.SuspendLayout();
             this.GeneralPage.SuspendLayout();
             this.groupBox2.SuspendLayout();
@@ -107,9 +108,10 @@ namespace Elmanager.Forms
             // 
             // RecDirButton
             // 
-            this.RecDirButton.Location = new System.Drawing.Point(361, 14);
+            this.RecDirButton.Location = new System.Drawing.Point(722, 27);
+            this.RecDirButton.Margin = new System.Windows.Forms.Padding(6, 6, 6, 6);
             this.RecDirButton.Name = "RecDirButton";
-            this.RecDirButton.Size = new System.Drawing.Size(67, 23);
+            this.RecDirButton.Size = new System.Drawing.Size(134, 44);
             this.RecDirButton.TabIndex = 0;
             this.RecDirButton.Text = "Browse...";
             this.RecDirButton.UseVisualStyleBackColor = true;
@@ -117,9 +119,10 @@ namespace Elmanager.Forms
             // 
             // LevDirButton
             // 
-            this.LevDirButton.Location = new System.Drawing.Point(361, 40);
+            this.LevDirButton.Location = new System.Drawing.Point(722, 77);
+            this.LevDirButton.Margin = new System.Windows.Forms.Padding(6, 6, 6, 6);
             this.LevDirButton.Name = "LevDirButton";
-            this.LevDirButton.Size = new System.Drawing.Size(67, 23);
+            this.LevDirButton.Size = new System.Drawing.Size(134, 44);
             this.LevDirButton.TabIndex = 1;
             this.LevDirButton.Text = "Browse...";
             this.LevDirButton.UseVisualStyleBackColor = true;
@@ -129,18 +132,20 @@ namespace Elmanager.Forms
             // 
             this.CheckBox6.AutoSize = true;
             this.CheckBox6.Enabled = false;
-            this.CheckBox6.Location = new System.Drawing.Point(360, 17);
+            this.CheckBox6.Location = new System.Drawing.Point(720, 33);
+            this.CheckBox6.Margin = new System.Windows.Forms.Padding(6, 6, 6, 6);
             this.CheckBox6.Name = "CheckBox6";
-            this.CheckBox6.Size = new System.Drawing.Size(123, 17);
+            this.CheckBox6.Size = new System.Drawing.Size(242, 29);
             this.CheckBox6.TabIndex = 9;
             this.CheckBox6.Text = "Use replay database";
             this.CheckBox6.UseVisualStyleBackColor = true;
             // 
             // GenerateButton
             // 
-            this.GenerateButton.Location = new System.Drawing.Point(9, 51);
+            this.GenerateButton.Location = new System.Drawing.Point(18, 98);
+            this.GenerateButton.Margin = new System.Windows.Forms.Padding(6, 6, 6, 6);
             this.GenerateButton.Name = "GenerateButton";
-            this.GenerateButton.Size = new System.Drawing.Size(150, 23);
+            this.GenerateButton.Size = new System.Drawing.Size(300, 44);
             this.GenerateButton.TabIndex = 10;
             this.GenerateButton.Text = "Generate/update database";
             this.GenerateButton.UseVisualStyleBackColor = true;
@@ -148,60 +153,67 @@ namespace Elmanager.Forms
             // 
             // RecTextBox
             // 
-            this.RecTextBox.Location = new System.Drawing.Point(105, 16);
+            this.RecTextBox.Location = new System.Drawing.Point(210, 31);
+            this.RecTextBox.Margin = new System.Windows.Forms.Padding(6, 6, 6, 6);
             this.RecTextBox.Name = "RecTextBox";
             this.RecTextBox.ReadOnly = true;
-            this.RecTextBox.Size = new System.Drawing.Size(250, 20);
+            this.RecTextBox.Size = new System.Drawing.Size(496, 31);
             this.RecTextBox.TabIndex = 44;
             // 
             // LevTextBox
             // 
-            this.LevTextBox.Location = new System.Drawing.Point(105, 42);
+            this.LevTextBox.Location = new System.Drawing.Point(210, 81);
+            this.LevTextBox.Margin = new System.Windows.Forms.Padding(6, 6, 6, 6);
             this.LevTextBox.Name = "LevTextBox";
             this.LevTextBox.ReadOnly = true;
-            this.LevTextBox.Size = new System.Drawing.Size(250, 20);
+            this.LevTextBox.Size = new System.Drawing.Size(496, 31);
             this.LevTextBox.TabIndex = 45;
             // 
             // Label2
             // 
             this.Label2.AutoSize = true;
-            this.Label2.Location = new System.Drawing.Point(13, 19);
+            this.Label2.Location = new System.Drawing.Point(26, 37);
+            this.Label2.Margin = new System.Windows.Forms.Padding(6, 0, 6, 0);
             this.Label2.Name = "Label2";
-            this.Label2.Size = new System.Drawing.Size(86, 13);
+            this.Label2.Size = new System.Drawing.Size(174, 25);
             this.Label2.TabIndex = 46;
             this.Label2.Text = "Replay directory:";
             // 
             // Label3
             // 
             this.Label3.AutoSize = true;
-            this.Label3.Location = new System.Drawing.Point(20, 45);
+            this.Label3.Location = new System.Drawing.Point(40, 87);
+            this.Label3.Margin = new System.Windows.Forms.Padding(6, 0, 6, 0);
             this.Label3.Name = "Label3";
-            this.Label3.Size = new System.Drawing.Size(79, 13);
+            this.Label3.Size = new System.Drawing.Size(159, 25);
             this.Label3.TabIndex = 47;
             this.Label3.Text = "Level directory:";
             // 
             // Label4
             // 
             this.Label4.AutoSize = true;
-            this.Label4.Location = new System.Drawing.Point(6, 18);
+            this.Label4.Location = new System.Drawing.Point(12, 35);
+            this.Label4.Margin = new System.Windows.Forms.Padding(6, 0, 6, 0);
             this.Label4.Name = "Label4";
-            this.Label4.Size = new System.Drawing.Size(106, 13);
+            this.Label4.Size = new System.Drawing.Size(214, 25);
             this.Label4.TabIndex = 48;
             this.Label4.Text = "Replay database file:";
             // 
             // DBTextBox
             // 
-            this.DBTextBox.Location = new System.Drawing.Point(118, 15);
+            this.DBTextBox.Location = new System.Drawing.Point(236, 29);
+            this.DBTextBox.Margin = new System.Windows.Forms.Padding(6, 6, 6, 6);
             this.DBTextBox.Name = "DBTextBox";
             this.DBTextBox.ReadOnly = true;
-            this.DBTextBox.Size = new System.Drawing.Size(163, 20);
+            this.DBTextBox.Size = new System.Drawing.Size(322, 31);
             this.DBTextBox.TabIndex = 49;
             // 
             // SetPathButton
             // 
-            this.SetPathButton.Location = new System.Drawing.Point(287, 13);
+            this.SetPathButton.Location = new System.Drawing.Point(574, 25);
+            this.SetPathButton.Margin = new System.Windows.Forms.Padding(6, 6, 6, 6);
             this.SetPathButton.Name = "SetPathButton";
-            this.SetPathButton.Size = new System.Drawing.Size(67, 23);
+            this.SetPathButton.Size = new System.Drawing.Size(134, 44);
             this.SetPathButton.TabIndex = 50;
             this.SetPathButton.Text = "Set path...";
             this.SetPathButton.UseVisualStyleBackColor = true;
@@ -217,9 +229,10 @@ namespace Elmanager.Forms
             // 
             // LoadButton
             // 
-            this.LoadButton.Location = new System.Drawing.Point(165, 51);
+            this.LoadButton.Location = new System.Drawing.Point(330, 98);
+            this.LoadButton.Margin = new System.Windows.Forms.Padding(6, 6, 6, 6);
             this.LoadButton.Name = "LoadButton";
-            this.LoadButton.Size = new System.Drawing.Size(150, 23);
+            this.LoadButton.Size = new System.Drawing.Size(300, 44);
             this.LoadButton.TabIndex = 53;
             this.LoadButton.Text = "Load selected database";
             this.LoadButton.UseVisualStyleBackColor = true;
@@ -233,9 +246,10 @@ namespace Elmanager.Forms
             this.TabControl1.Controls.Add(this.DatabasePage);
             this.TabControl1.Dock = System.Windows.Forms.DockStyle.Fill;
             this.TabControl1.Location = new System.Drawing.Point(0, 0);
+            this.TabControl1.Margin = new System.Windows.Forms.Padding(6, 6, 6, 6);
             this.TabControl1.Name = "TabControl1";
             this.TabControl1.SelectedIndex = 0;
-            this.TabControl1.Size = new System.Drawing.Size(604, 336);
+            this.TabControl1.Size = new System.Drawing.Size(1208, 646);
             this.TabControl1.TabIndex = 55;
             // 
             // GeneralPage
@@ -255,19 +269,22 @@ namespace Elmanager.Forms
             this.GeneralPage.Controls.Add(this.LevTextBox);
             this.GeneralPage.Controls.Add(this.Label2);
             this.GeneralPage.Controls.Add(this.Label3);
-            this.GeneralPage.Location = new System.Drawing.Point(4, 22);
+            this.GeneralPage.Location = new System.Drawing.Point(8, 39);
+            this.GeneralPage.Margin = new System.Windows.Forms.Padding(6, 6, 6, 6);
             this.GeneralPage.Name = "GeneralPage";
-            this.GeneralPage.Padding = new System.Windows.Forms.Padding(3);
-            this.GeneralPage.Size = new System.Drawing.Size(596, 310);
+            this.GeneralPage.Padding = new System.Windows.Forms.Padding(6, 6, 6, 6);
+            this.GeneralPage.Size = new System.Drawing.Size(1192, 599);
             this.GeneralPage.TabIndex = 0;
             this.GeneralPage.Text = "General";
             // 
             // groupBox2
             // 
             this.groupBox2.Controls.Add(this.DisableFrameBufferUsageCheckBox);
-            this.groupBox2.Location = new System.Drawing.Point(8, 186);
+            this.groupBox2.Location = new System.Drawing.Point(16, 358);
+            this.groupBox2.Margin = new System.Windows.Forms.Padding(6, 6, 6, 6);
             this.groupBox2.Name = "groupBox2";
-            this.groupBox2.Size = new System.Drawing.Size(200, 46);
+            this.groupBox2.Padding = new System.Windows.Forms.Padding(6, 6, 6, 6);
+            this.groupBox2.Size = new System.Drawing.Size(400, 88);
             this.groupBox2.TabIndex = 56;
             this.groupBox2.TabStop = false;
             this.groupBox2.Text = "Workarounds";
@@ -275,18 +292,20 @@ namespace Elmanager.Forms
             // DisableFrameBufferUsageCheckBox
             // 
             this.DisableFrameBufferUsageCheckBox.AutoSize = true;
-            this.DisableFrameBufferUsageCheckBox.Location = new System.Drawing.Point(6, 19);
+            this.DisableFrameBufferUsageCheckBox.Location = new System.Drawing.Point(12, 37);
+            this.DisableFrameBufferUsageCheckBox.Margin = new System.Windows.Forms.Padding(6, 6, 6, 6);
             this.DisableFrameBufferUsageCheckBox.Name = "DisableFrameBufferUsageCheckBox";
-            this.DisableFrameBufferUsageCheckBox.Size = new System.Drawing.Size(149, 17);
+            this.DisableFrameBufferUsageCheckBox.Size = new System.Drawing.Size(296, 29);
             this.DisableFrameBufferUsageCheckBox.TabIndex = 55;
             this.DisableFrameBufferUsageCheckBox.Text = "Disable framebuffer usage";
             this.DisableFrameBufferUsageCheckBox.UseVisualStyleBackColor = true;
             // 
             // generateNativeImageButton
             // 
-            this.generateNativeImageButton.Location = new System.Drawing.Point(8, 157);
+            this.generateNativeImageButton.Location = new System.Drawing.Point(16, 302);
+            this.generateNativeImageButton.Margin = new System.Windows.Forms.Padding(6, 6, 6, 6);
             this.generateNativeImageButton.Name = "generateNativeImageButton";
-            this.generateNativeImageButton.Size = new System.Drawing.Size(143, 23);
+            this.generateNativeImageButton.Size = new System.Drawing.Size(286, 44);
             this.generateNativeImageButton.TabIndex = 54;
             this.generateNativeImageButton.Text = "Put Elmanager in cache";
             this.generateNativeImageButton.UseVisualStyleBackColor = true;
@@ -296,9 +315,10 @@ namespace Elmanager.Forms
             // 
             this.resetButton.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
             this.resetButton.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.resetButton.Location = new System.Drawing.Point(8, 276);
+            this.resetButton.Location = new System.Drawing.Point(16, 531);
+            this.resetButton.Margin = new System.Windows.Forms.Padding(6, 6, 6, 6);
             this.resetButton.Name = "resetButton";
-            this.resetButton.Size = new System.Drawing.Size(161, 23);
+            this.resetButton.Size = new System.Drawing.Size(322, 44);
             this.resetButton.TabIndex = 53;
             this.resetButton.Text = "Reset settings to default";
             this.resetButton.UseVisualStyleBackColor = true;
@@ -306,9 +326,10 @@ namespace Elmanager.Forms
             // 
             // ElmaDirButton
             // 
-            this.ElmaDirButton.Location = new System.Drawing.Point(457, 40);
+            this.ElmaDirButton.Location = new System.Drawing.Point(914, 77);
+            this.ElmaDirButton.Margin = new System.Windows.Forms.Padding(6, 6, 6, 6);
             this.ElmaDirButton.Name = "ElmaDirButton";
-            this.ElmaDirButton.Size = new System.Drawing.Size(118, 23);
+            this.ElmaDirButton.Size = new System.Drawing.Size(236, 44);
             this.ElmaDirButton.TabIndex = 52;
             this.ElmaDirButton.Text = "Get all from Elma dir";
             this.ElmaDirButton.UseVisualStyleBackColor = true;
@@ -316,9 +337,10 @@ namespace Elmanager.Forms
             // 
             // LGRDirButton
             // 
-            this.LGRDirButton.Location = new System.Drawing.Point(361, 66);
+            this.LGRDirButton.Location = new System.Drawing.Point(722, 127);
+            this.LGRDirButton.Margin = new System.Windows.Forms.Padding(6, 6, 6, 6);
             this.LGRDirButton.Name = "LGRDirButton";
-            this.LGRDirButton.Size = new System.Drawing.Size(67, 23);
+            this.LGRDirButton.Size = new System.Drawing.Size(134, 44);
             this.LGRDirButton.TabIndex = 49;
             this.LGRDirButton.Text = "Browse...";
             this.LGRDirButton.UseVisualStyleBackColor = true;
@@ -326,27 +348,30 @@ namespace Elmanager.Forms
             // 
             // LGRTextBox
             // 
-            this.LGRTextBox.Location = new System.Drawing.Point(105, 68);
+            this.LGRTextBox.Location = new System.Drawing.Point(210, 131);
+            this.LGRTextBox.Margin = new System.Windows.Forms.Padding(6, 6, 6, 6);
             this.LGRTextBox.Name = "LGRTextBox";
             this.LGRTextBox.ReadOnly = true;
-            this.LGRTextBox.Size = new System.Drawing.Size(250, 20);
+            this.LGRTextBox.Size = new System.Drawing.Size(496, 31);
             this.LGRTextBox.TabIndex = 50;
             // 
             // Label5
             // 
             this.Label5.AutoSize = true;
-            this.Label5.Location = new System.Drawing.Point(24, 71);
+            this.Label5.Location = new System.Drawing.Point(48, 137);
+            this.Label5.Margin = new System.Windows.Forms.Padding(6, 0, 6, 0);
             this.Label5.Name = "Label5";
-            this.Label5.Size = new System.Drawing.Size(75, 13);
+            this.Label5.Size = new System.Drawing.Size(150, 25);
             this.Label5.TabIndex = 51;
             this.Label5.Text = "LGR directory:";
             // 
             // CheckForUpdatesBox
             // 
             this.CheckForUpdatesBox.AutoSize = true;
-            this.CheckForUpdatesBox.Location = new System.Drawing.Point(8, 125);
+            this.CheckForUpdatesBox.Location = new System.Drawing.Point(16, 240);
+            this.CheckForUpdatesBox.Margin = new System.Windows.Forms.Padding(6, 6, 6, 6);
             this.CheckForUpdatesBox.Name = "CheckForUpdatesBox";
-            this.CheckForUpdatesBox.Size = new System.Drawing.Size(213, 17);
+            this.CheckForUpdatesBox.Size = new System.Drawing.Size(424, 29);
             this.CheckForUpdatesBox.TabIndex = 48;
             this.CheckForUpdatesBox.Text = "Check for Elmanager updates at startup";
             this.CheckForUpdatesBox.UseVisualStyleBackColor = true;
@@ -360,19 +385,32 @@ namespace Elmanager.Forms
             this.RMPage.Controls.Add(this.NitroBox);
             this.RMPage.Controls.Add(this.SearchLevSubDirsBox);
             this.RMPage.Controls.Add(this.ShowReplayListGridBox);
-            this.RMPage.Location = new System.Drawing.Point(4, 22);
+            this.RMPage.Location = new System.Drawing.Point(8, 39);
+            this.RMPage.Margin = new System.Windows.Forms.Padding(6, 6, 6, 6);
             this.RMPage.Name = "RMPage";
-            this.RMPage.Size = new System.Drawing.Size(596, 310);
+            this.RMPage.Size = new System.Drawing.Size(1192, 599);
             this.RMPage.TabIndex = 3;
             this.RMPage.Text = "Replay manager";
             this.RMPage.UseVisualStyleBackColor = true;
             // 
+            // showTooltipForReplaysCheckBox
+            // 
+            this.showTooltipForReplaysCheckBox.AutoSize = true;
+            this.showTooltipForReplaysCheckBox.Location = new System.Drawing.Point(16, 158);
+            this.showTooltipForReplaysCheckBox.Margin = new System.Windows.Forms.Padding(6, 6, 6, 6);
+            this.showTooltipForReplaysCheckBox.Name = "showTooltipForReplaysCheckBox";
+            this.showTooltipForReplaysCheckBox.Size = new System.Drawing.Size(389, 29);
+            this.showTooltipForReplaysCheckBox.TabIndex = 58;
+            this.showTooltipForReplaysCheckBox.Text = "Show tooltip for replays in replay list";
+            this.showTooltipForReplaysCheckBox.UseVisualStyleBackColor = true;
+            // 
             // DeleteConfirmCheckBox
             // 
             this.DeleteConfirmCheckBox.AutoSize = true;
-            this.DeleteConfirmCheckBox.Location = new System.Drawing.Point(250, 36);
+            this.DeleteConfirmCheckBox.Location = new System.Drawing.Point(500, 69);
+            this.DeleteConfirmCheckBox.Margin = new System.Windows.Forms.Padding(6, 6, 6, 6);
             this.DeleteConfirmCheckBox.Name = "DeleteConfirmCheckBox";
-            this.DeleteConfirmCheckBox.Size = new System.Drawing.Size(101, 17);
+            this.DeleteConfirmCheckBox.Size = new System.Drawing.Size(200, 29);
             this.DeleteConfirmCheckBox.TabIndex = 57;
             this.DeleteConfirmCheckBox.Text = "Confirm deletion";
             this.DeleteConfirmCheckBox.UseVisualStyleBackColor = true;
@@ -380,9 +418,10 @@ namespace Elmanager.Forms
             // SearchRecSubDirsBox
             // 
             this.SearchRecSubDirsBox.AutoSize = true;
-            this.SearchRecSubDirsBox.Location = new System.Drawing.Point(8, 13);
+            this.SearchRecSubDirsBox.Location = new System.Drawing.Point(16, 25);
+            this.SearchRecSubDirsBox.Margin = new System.Windows.Forms.Padding(6, 6, 6, 6);
             this.SearchRecSubDirsBox.Name = "SearchRecSubDirsBox";
-            this.SearchRecSubDirsBox.Size = new System.Drawing.Size(221, 17);
+            this.SearchRecSubDirsBox.Size = new System.Drawing.Size(447, 29);
             this.SearchRecSubDirsBox.TabIndex = 55;
             this.SearchRecSubDirsBox.Text = "Search also subdirectories in replay folder";
             this.SearchRecSubDirsBox.UseVisualStyleBackColor = true;
@@ -390,9 +429,10 @@ namespace Elmanager.Forms
             // DeleteRecycleCheckBox
             // 
             this.DeleteRecycleCheckBox.AutoSize = true;
-            this.DeleteRecycleCheckBox.Location = new System.Drawing.Point(8, 36);
+            this.DeleteRecycleCheckBox.Location = new System.Drawing.Point(16, 69);
+            this.DeleteRecycleCheckBox.Margin = new System.Windows.Forms.Padding(6, 6, 6, 6);
             this.DeleteRecycleCheckBox.Name = "DeleteRecycleCheckBox";
-            this.DeleteRecycleCheckBox.Size = new System.Drawing.Size(128, 17);
+            this.DeleteRecycleCheckBox.Size = new System.Drawing.Size(248, 29);
             this.DeleteRecycleCheckBox.TabIndex = 52;
             this.DeleteRecycleCheckBox.Text = "Delete to Recycle bin";
             this.DeleteRecycleCheckBox.UseVisualStyleBackColor = true;
@@ -400,9 +440,10 @@ namespace Elmanager.Forms
             // NitroBox
             // 
             this.NitroBox.AutoSize = true;
-            this.NitroBox.Location = new System.Drawing.Point(8, 59);
+            this.NitroBox.Location = new System.Drawing.Point(16, 113);
+            this.NitroBox.Margin = new System.Windows.Forms.Padding(6, 6, 6, 6);
             this.NitroBox.Name = "NitroBox";
-            this.NitroBox.Size = new System.Drawing.Size(176, 17);
+            this.NitroBox.Size = new System.Drawing.Size(353, 29);
             this.NitroBox.TabIndex = 53;
             this.NitroBox.Text = "Treat Nitro replays as erroneous";
             this.NitroBox.UseVisualStyleBackColor = true;
@@ -410,9 +451,10 @@ namespace Elmanager.Forms
             // SearchLevSubDirsBox
             // 
             this.SearchLevSubDirsBox.AutoSize = true;
-            this.SearchLevSubDirsBox.Location = new System.Drawing.Point(250, 13);
+            this.SearchLevSubDirsBox.Location = new System.Drawing.Point(500, 25);
+            this.SearchLevSubDirsBox.Margin = new System.Windows.Forms.Padding(6, 6, 6, 6);
             this.SearchLevSubDirsBox.Name = "SearchLevSubDirsBox";
-            this.SearchLevSubDirsBox.Size = new System.Drawing.Size(215, 17);
+            this.SearchLevSubDirsBox.Size = new System.Drawing.Size(433, 29);
             this.SearchLevSubDirsBox.TabIndex = 56;
             this.SearchLevSubDirsBox.Text = "Search also subdirectories in level folder";
             this.SearchLevSubDirsBox.UseVisualStyleBackColor = true;
@@ -420,15 +462,17 @@ namespace Elmanager.Forms
             // ShowReplayListGridBox
             // 
             this.ShowReplayListGridBox.AutoSize = true;
-            this.ShowReplayListGridBox.Location = new System.Drawing.Point(250, 59);
+            this.ShowReplayListGridBox.Location = new System.Drawing.Point(500, 113);
+            this.ShowReplayListGridBox.Margin = new System.Windows.Forms.Padding(6, 6, 6, 6);
             this.ShowReplayListGridBox.Name = "ShowReplayListGridBox";
-            this.ShowReplayListGridBox.Size = new System.Drawing.Size(130, 17);
+            this.ShowReplayListGridBox.Size = new System.Drawing.Size(260, 29);
             this.ShowReplayListGridBox.TabIndex = 54;
             this.ShowReplayListGridBox.Text = "Show grid in replay list";
             this.ShowReplayListGridBox.UseVisualStyleBackColor = true;
             // 
             // LevelEditorPage
             // 
+            this.LevelEditorPage.Controls.Add(this.alwaysSetDefaultsInPictureTool);
             this.LevelEditorPage.Controls.Add(this.capturePicTextFromBordersCheckBox);
             this.LevelEditorPage.Controls.Add(this.browseButton);
             this.LevelEditorPage.Controls.Add(this.numberFormatBox);
@@ -448,9 +492,10 @@ namespace Elmanager.Forms
             this.LevelEditorPage.Controls.Add(this.Label8);
             this.LevelEditorPage.Controls.Add(this.LevelTemplateBox);
             this.LevelEditorPage.Controls.Add(this.Label6);
-            this.LevelEditorPage.Location = new System.Drawing.Point(4, 22);
+            this.LevelEditorPage.Location = new System.Drawing.Point(8, 39);
+            this.LevelEditorPage.Margin = new System.Windows.Forms.Padding(6, 6, 6, 6);
             this.LevelEditorPage.Name = "LevelEditorPage";
-            this.LevelEditorPage.Size = new System.Drawing.Size(596, 310);
+            this.LevelEditorPage.Size = new System.Drawing.Size(1192, 599);
             this.LevelEditorPage.TabIndex = 4;
             this.LevelEditorPage.Text = "SLE";
             this.LevelEditorPage.UseVisualStyleBackColor = true;
@@ -458,18 +503,20 @@ namespace Elmanager.Forms
             // capturePicTextFromBordersCheckBox
             // 
             this.capturePicTextFromBordersCheckBox.AutoSize = true;
-            this.capturePicTextFromBordersCheckBox.Location = new System.Drawing.Point(16, 61);
+            this.capturePicTextFromBordersCheckBox.Location = new System.Drawing.Point(32, 117);
+            this.capturePicTextFromBordersCheckBox.Margin = new System.Windows.Forms.Padding(6, 6, 6, 6);
             this.capturePicTextFromBordersCheckBox.Name = "capturePicTextFromBordersCheckBox";
-            this.capturePicTextFromBordersCheckBox.Size = new System.Drawing.Size(247, 17);
+            this.capturePicTextFromBordersCheckBox.Size = new System.Drawing.Size(500, 29);
             this.capturePicTextFromBordersCheckBox.TabIndex = 30;
             this.capturePicTextFromBordersCheckBox.Text = "Capture pictures and textures from borders only";
             this.capturePicTextFromBordersCheckBox.UseVisualStyleBackColor = true;
             // 
             // browseButton
             // 
-            this.browseButton.Location = new System.Drawing.Point(398, 8);
+            this.browseButton.Location = new System.Drawing.Point(796, 15);
+            this.browseButton.Margin = new System.Windows.Forms.Padding(6, 6, 6, 6);
             this.browseButton.Name = "browseButton";
-            this.browseButton.Size = new System.Drawing.Size(75, 23);
+            this.browseButton.Size = new System.Drawing.Size(150, 44);
             this.browseButton.TabIndex = 29;
             this.browseButton.Text = "Browse...";
             this.browseButton.UseVisualStyleBackColor = true;
@@ -477,17 +524,19 @@ namespace Elmanager.Forms
             // 
             // numberFormatBox
             // 
-            this.numberFormatBox.Location = new System.Drawing.Point(339, 130);
+            this.numberFormatBox.Location = new System.Drawing.Point(678, 250);
+            this.numberFormatBox.Margin = new System.Windows.Forms.Padding(6, 6, 6, 6);
             this.numberFormatBox.Name = "numberFormatBox";
-            this.numberFormatBox.Size = new System.Drawing.Size(100, 20);
+            this.numberFormatBox.Size = new System.Drawing.Size(196, 31);
             this.numberFormatBox.TabIndex = 28;
             // 
             // RenderingSettingsButton
             // 
             this.RenderingSettingsButton.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
-            this.RenderingSettingsButton.Location = new System.Drawing.Point(229, 275);
+            this.RenderingSettingsButton.Location = new System.Drawing.Point(458, 529);
+            this.RenderingSettingsButton.Margin = new System.Windows.Forms.Padding(6, 6, 6, 6);
             this.RenderingSettingsButton.Name = "RenderingSettingsButton";
-            this.RenderingSettingsButton.Size = new System.Drawing.Size(114, 23);
+            this.RenderingSettingsButton.Size = new System.Drawing.Size(228, 44);
             this.RenderingSettingsButton.TabIndex = 27;
             this.RenderingSettingsButton.Text = "Rendering settings";
             this.RenderingSettingsButton.UseVisualStyleBackColor = true;
@@ -503,9 +552,11 @@ namespace Elmanager.Forms
             this.GroupBox1.Controls.Add(this.Label15);
             this.GroupBox1.Controls.Add(this.Label17);
             this.GroupBox1.Controls.Add(this.HighlightPanel);
-            this.GroupBox1.Location = new System.Drawing.Point(11, 207);
+            this.GroupBox1.Location = new System.Drawing.Point(22, 398);
+            this.GroupBox1.Margin = new System.Windows.Forms.Padding(6, 6, 6, 6);
             this.GroupBox1.Name = "GroupBox1";
-            this.GroupBox1.Size = new System.Drawing.Size(207, 91);
+            this.GroupBox1.Padding = new System.Windows.Forms.Padding(6, 6, 6, 6);
+            this.GroupBox1.Size = new System.Drawing.Size(414, 175);
             this.GroupBox1.TabIndex = 26;
             this.GroupBox1.TabStop = false;
             this.GroupBox1.Text = "Colors";
@@ -514,18 +565,20 @@ namespace Elmanager.Forms
             // 
             this.crosshairPanel.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
             this.crosshairPanel.Cursor = System.Windows.Forms.Cursors.Hand;
-            this.crosshairPanel.Location = new System.Drawing.Point(12, 57);
+            this.crosshairPanel.Location = new System.Drawing.Point(24, 110);
+            this.crosshairPanel.Margin = new System.Windows.Forms.Padding(6, 6, 6, 6);
             this.crosshairPanel.Name = "crosshairPanel";
-            this.crosshairPanel.Size = new System.Drawing.Size(20, 20);
+            this.crosshairPanel.Size = new System.Drawing.Size(38, 37);
             this.crosshairPanel.TabIndex = 9;
             this.crosshairPanel.Click += new System.EventHandler(this.PanelClick);
             // 
             // label9
             // 
             this.label9.AutoSize = true;
-            this.label9.Location = new System.Drawing.Point(38, 61);
+            this.label9.Location = new System.Drawing.Point(76, 117);
+            this.label9.Margin = new System.Windows.Forms.Padding(6, 0, 6, 0);
             this.label9.Name = "label9";
-            this.label9.Size = new System.Drawing.Size(50, 13);
+            this.label9.Size = new System.Drawing.Size(104, 25);
             this.label9.TabIndex = 10;
             this.label9.Text = "Crosshair";
             // 
@@ -533,27 +586,30 @@ namespace Elmanager.Forms
             // 
             this.SelectionPanel.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
             this.SelectionPanel.Cursor = System.Windows.Forms.Cursors.Hand;
-            this.SelectionPanel.Location = new System.Drawing.Point(12, 19);
+            this.SelectionPanel.Location = new System.Drawing.Point(24, 37);
+            this.SelectionPanel.Margin = new System.Windows.Forms.Padding(6, 6, 6, 6);
             this.SelectionPanel.Name = "SelectionPanel";
-            this.SelectionPanel.Size = new System.Drawing.Size(20, 20);
+            this.SelectionPanel.Size = new System.Drawing.Size(38, 37);
             this.SelectionPanel.TabIndex = 1;
             this.SelectionPanel.Click += new System.EventHandler(this.PanelClick);
             // 
             // Label15
             // 
             this.Label15.AutoSize = true;
-            this.Label15.Location = new System.Drawing.Point(38, 23);
+            this.Label15.Location = new System.Drawing.Point(76, 44);
+            this.Label15.Margin = new System.Windows.Forms.Padding(6, 0, 6, 0);
             this.Label15.Name = "Label15";
-            this.Label15.Size = new System.Drawing.Size(51, 13);
+            this.Label15.Size = new System.Drawing.Size(101, 25);
             this.Label15.TabIndex = 8;
             this.Label15.Text = "Selection";
             // 
             // Label17
             // 
             this.Label17.AutoSize = true;
-            this.Label17.Location = new System.Drawing.Point(148, 23);
+            this.Label17.Location = new System.Drawing.Point(296, 44);
+            this.Label17.Margin = new System.Windows.Forms.Padding(6, 0, 6, 0);
             this.Label17.Name = "Label17";
-            this.Label17.Size = new System.Drawing.Size(48, 13);
+            this.Label17.Size = new System.Drawing.Size(96, 25);
             this.Label17.TabIndex = 10;
             this.Label17.Text = "Highlight";
             // 
@@ -561,18 +617,20 @@ namespace Elmanager.Forms
             // 
             this.HighlightPanel.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
             this.HighlightPanel.Cursor = System.Windows.Forms.Cursors.Hand;
-            this.HighlightPanel.Location = new System.Drawing.Point(122, 19);
+            this.HighlightPanel.Location = new System.Drawing.Point(244, 37);
+            this.HighlightPanel.Margin = new System.Windows.Forms.Padding(6, 6, 6, 6);
             this.HighlightPanel.Name = "HighlightPanel";
-            this.HighlightPanel.Size = new System.Drawing.Size(20, 20);
+            this.HighlightPanel.Size = new System.Drawing.Size(38, 37);
             this.HighlightPanel.TabIndex = 2;
             this.HighlightPanel.Click += new System.EventHandler(this.PanelClick);
             // 
             // SameAsFilenameBox
             // 
             this.SameAsFilenameBox.AutoSize = true;
-            this.SameAsFilenameBox.Location = new System.Drawing.Point(227, 158);
+            this.SameAsFilenameBox.Location = new System.Drawing.Point(454, 304);
+            this.SameAsFilenameBox.Margin = new System.Windows.Forms.Padding(6, 6, 6, 6);
             this.SameAsFilenameBox.Name = "SameAsFilenameBox";
-            this.SameAsFilenameBox.Size = new System.Drawing.Size(109, 17);
+            this.SameAsFilenameBox.Size = new System.Drawing.Size(215, 29);
             this.SameAsFilenameBox.TabIndex = 19;
             this.SameAsFilenameBox.Text = "Same as filename";
             this.SameAsFilenameBox.UseVisualStyleBackColor = true;
@@ -580,54 +638,60 @@ namespace Elmanager.Forms
             // 
             // DefaultTitleBox
             // 
-            this.DefaultTitleBox.Location = new System.Drawing.Point(120, 156);
+            this.DefaultTitleBox.Location = new System.Drawing.Point(240, 300);
+            this.DefaultTitleBox.Margin = new System.Windows.Forms.Padding(6, 6, 6, 6);
             this.DefaultTitleBox.MaxLength = 50;
             this.DefaultTitleBox.Name = "DefaultTitleBox";
-            this.DefaultTitleBox.Size = new System.Drawing.Size(100, 20);
+            this.DefaultTitleBox.Size = new System.Drawing.Size(196, 31);
             this.DefaultTitleBox.TabIndex = 18;
             this.DefaultTitleBox.Text = "New level";
             // 
             // Label20
             // 
             this.Label20.AutoSize = true;
-            this.Label20.Location = new System.Drawing.Point(26, 159);
+            this.Label20.Location = new System.Drawing.Point(52, 306);
+            this.Label20.Margin = new System.Windows.Forms.Padding(6, 0, 6, 0);
             this.Label20.Name = "Label20";
-            this.Label20.Size = new System.Drawing.Size(88, 13);
+            this.Label20.Size = new System.Drawing.Size(177, 25);
             this.Label20.TabIndex = 17;
             this.Label20.Text = "Default level title:";
             // 
             // baseFilenameBox
             // 
-            this.baseFilenameBox.Location = new System.Drawing.Point(120, 130);
+            this.baseFilenameBox.Location = new System.Drawing.Point(240, 250);
+            this.baseFilenameBox.Margin = new System.Windows.Forms.Padding(6, 6, 6, 6);
             this.baseFilenameBox.Name = "baseFilenameBox";
-            this.baseFilenameBox.Size = new System.Drawing.Size(100, 20);
+            this.baseFilenameBox.Size = new System.Drawing.Size(196, 31);
             this.baseFilenameBox.TabIndex = 15;
             this.baseFilenameBox.Text = "MyLev";
             // 
             // Label19
             // 
             this.Label19.AutoSize = true;
-            this.Label19.Location = new System.Drawing.Point(226, 133);
+            this.Label19.Location = new System.Drawing.Point(452, 256);
+            this.Label19.Margin = new System.Windows.Forms.Padding(6, 0, 6, 0);
             this.Label19.Name = "Label19";
-            this.Label19.Size = new System.Drawing.Size(107, 13);
+            this.Label19.Size = new System.Drawing.Size(218, 25);
             this.Label19.TabIndex = 14;
             this.Label19.Text = "Number format string:";
             // 
             // Label18
             // 
             this.Label18.AutoSize = true;
-            this.Label18.Location = new System.Drawing.Point(41, 133);
+            this.Label18.Location = new System.Drawing.Point(82, 256);
+            this.Label18.Margin = new System.Windows.Forms.Padding(6, 0, 6, 0);
             this.Label18.Name = "Label18";
-            this.Label18.Size = new System.Drawing.Size(73, 13);
+            this.Label18.Size = new System.Drawing.Size(148, 25);
             this.Label18.TabIndex = 13;
             this.Label18.Text = "Basefilename:";
             // 
             // FilenameSuggestionBox
             // 
             this.FilenameSuggestionBox.AutoSize = true;
-            this.FilenameSuggestionBox.Location = new System.Drawing.Point(16, 107);
+            this.FilenameSuggestionBox.Location = new System.Drawing.Point(32, 206);
+            this.FilenameSuggestionBox.Margin = new System.Windows.Forms.Padding(6, 6, 6, 6);
             this.FilenameSuggestionBox.Name = "FilenameSuggestionBox";
-            this.FilenameSuggestionBox.Size = new System.Drawing.Size(141, 17);
+            this.FilenameSuggestionBox.Size = new System.Drawing.Size(280, 29);
             this.FilenameSuggestionBox.TabIndex = 12;
             this.FilenameSuggestionBox.Text = "Use filename suggestion";
             this.FilenameSuggestionBox.UseVisualStyleBackColor = true;
@@ -636,9 +700,10 @@ namespace Elmanager.Forms
             // HighlightBox
             // 
             this.HighlightBox.AutoSize = true;
-            this.HighlightBox.Location = new System.Drawing.Point(191, 37);
+            this.HighlightBox.Location = new System.Drawing.Point(382, 71);
+            this.HighlightBox.Margin = new System.Windows.Forms.Padding(6, 6, 6, 6);
             this.HighlightBox.Name = "HighlightBox";
-            this.HighlightBox.Size = new System.Drawing.Size(201, 17);
+            this.HighlightBox.Size = new System.Drawing.Size(403, 29);
             this.HighlightBox.TabIndex = 10;
             this.HighlightBox.Text = "Highlight level elements under mouse";
             this.HighlightBox.UseVisualStyleBackColor = true;
@@ -646,9 +711,10 @@ namespace Elmanager.Forms
             // DynamicCheckTopologyBox
             // 
             this.DynamicCheckTopologyBox.AutoSize = true;
-            this.DynamicCheckTopologyBox.Location = new System.Drawing.Point(16, 84);
+            this.DynamicCheckTopologyBox.Location = new System.Drawing.Point(32, 162);
+            this.DynamicCheckTopologyBox.Margin = new System.Windows.Forms.Padding(6, 6, 6, 6);
             this.DynamicCheckTopologyBox.Name = "DynamicCheckTopologyBox";
-            this.DynamicCheckTopologyBox.Size = new System.Drawing.Size(157, 17);
+            this.DynamicCheckTopologyBox.Size = new System.Drawing.Size(312, 29);
             this.DynamicCheckTopologyBox.TabIndex = 7;
             this.DynamicCheckTopologyBox.Text = "Check topology dynamically";
             this.DynamicCheckTopologyBox.UseVisualStyleBackColor = true;
@@ -656,35 +722,39 @@ namespace Elmanager.Forms
             // CheckTopologyWhenSavingBox
             // 
             this.CheckTopologyWhenSavingBox.AutoSize = true;
-            this.CheckTopologyWhenSavingBox.Location = new System.Drawing.Point(191, 84);
+            this.CheckTopologyWhenSavingBox.Location = new System.Drawing.Point(382, 162);
+            this.CheckTopologyWhenSavingBox.Margin = new System.Windows.Forms.Padding(6, 6, 6, 6);
             this.CheckTopologyWhenSavingBox.Name = "CheckTopologyWhenSavingBox";
-            this.CheckTopologyWhenSavingBox.Size = new System.Drawing.Size(188, 17);
+            this.CheckTopologyWhenSavingBox.Size = new System.Drawing.Size(370, 29);
             this.CheckTopologyWhenSavingBox.TabIndex = 6;
             this.CheckTopologyWhenSavingBox.Text = "Check topology when saving level";
             this.CheckTopologyWhenSavingBox.UseVisualStyleBackColor = true;
             // 
             // CaptureRadiusBox
             // 
-            this.CaptureRadiusBox.Location = new System.Drawing.Point(132, 35);
+            this.CaptureRadiusBox.Location = new System.Drawing.Point(264, 67);
+            this.CaptureRadiusBox.Margin = new System.Windows.Forms.Padding(6, 6, 6, 6);
             this.CaptureRadiusBox.Name = "CaptureRadiusBox";
-            this.CaptureRadiusBox.Size = new System.Drawing.Size(53, 20);
+            this.CaptureRadiusBox.Size = new System.Drawing.Size(102, 31);
             this.CaptureRadiusBox.TabIndex = 5;
             this.CaptureRadiusBox.Text = "100";
             // 
             // Label8
             // 
             this.Label8.AutoSize = true;
-            this.Label8.Location = new System.Drawing.Point(14, 38);
+            this.Label8.Location = new System.Drawing.Point(28, 73);
+            this.Label8.Margin = new System.Windows.Forms.Padding(6, 0, 6, 0);
             this.Label8.Name = "Label8";
-            this.Label8.Size = new System.Drawing.Size(112, 13);
+            this.Label8.Size = new System.Drawing.Size(226, 25);
             this.Label8.TabIndex = 4;
             this.Label8.Text = "Mouse capture radius:";
             // 
             // LevelTemplateBox
             // 
-            this.LevelTemplateBox.Location = new System.Drawing.Point(132, 10);
+            this.LevelTemplateBox.Location = new System.Drawing.Point(264, 19);
+            this.LevelTemplateBox.Margin = new System.Windows.Forms.Padding(6, 6, 6, 6);
             this.LevelTemplateBox.Name = "LevelTemplateBox";
-            this.LevelTemplateBox.Size = new System.Drawing.Size(260, 20);
+            this.LevelTemplateBox.Size = new System.Drawing.Size(516, 31);
             this.LevelTemplateBox.TabIndex = 2;
             this.LevelTemplateBox.Text = "50,50";
             this.toolTip1.SetToolTip(this.LevelTemplateBox, "width,height or browse for a level template");
@@ -692,9 +762,10 @@ namespace Elmanager.Forms
             // Label6
             // 
             this.Label6.AutoSize = true;
-            this.Label6.Location = new System.Drawing.Point(26, 12);
+            this.Label6.Location = new System.Drawing.Point(52, 23);
+            this.Label6.Margin = new System.Windows.Forms.Padding(6, 0, 6, 0);
             this.Label6.Name = "Label6";
-            this.Label6.Size = new System.Drawing.Size(100, 13);
+            this.Label6.Size = new System.Drawing.Size(199, 25);
             this.Label6.TabIndex = 0;
             this.Label6.Text = "New level template:";
             // 
@@ -709,19 +780,21 @@ namespace Elmanager.Forms
             this.DatabasePage.Controls.Add(this.GenerateButton);
             this.DatabasePage.Controls.Add(this.SetPathButton);
             this.DatabasePage.Controls.Add(this.DBTextBox);
-            this.DatabasePage.Location = new System.Drawing.Point(4, 22);
+            this.DatabasePage.Location = new System.Drawing.Point(8, 39);
+            this.DatabasePage.Margin = new System.Windows.Forms.Padding(6, 6, 6, 6);
             this.DatabasePage.Name = "DatabasePage";
-            this.DatabasePage.Padding = new System.Windows.Forms.Padding(3);
-            this.DatabasePage.Size = new System.Drawing.Size(596, 310);
+            this.DatabasePage.Padding = new System.Windows.Forms.Padding(6, 6, 6, 6);
+            this.DatabasePage.Size = new System.Drawing.Size(1192, 599);
             this.DatabasePage.TabIndex = 1;
             this.DatabasePage.Text = "Databases";
             // 
             // Label1
             // 
             this.Label1.AutoSize = true;
-            this.Label1.Location = new System.Drawing.Point(8, 77);
+            this.Label1.Location = new System.Drawing.Point(16, 148);
+            this.Label1.Margin = new System.Windows.Forms.Padding(6, 0, 6, 0);
             this.Label1.Name = "Label1";
-            this.Label1.Size = new System.Drawing.Size(10, 13);
+            this.Label1.Size = new System.Drawing.Size(18, 25);
             this.Label1.TabIndex = 56;
             this.Label1.Text = " ";
             // 
@@ -730,9 +803,10 @@ namespace Elmanager.Forms
             this.WarnAboutOldDBBox.AutoSize = true;
             this.WarnAboutOldDBBox.Checked = true;
             this.WarnAboutOldDBBox.CheckState = System.Windows.Forms.CheckState.Checked;
-            this.WarnAboutOldDBBox.Location = new System.Drawing.Point(9, 98);
+            this.WarnAboutOldDBBox.Location = new System.Drawing.Point(18, 188);
+            this.WarnAboutOldDBBox.Margin = new System.Windows.Forms.Padding(6, 6, 6, 6);
             this.WarnAboutOldDBBox.Name = "WarnAboutOldDBBox";
-            this.WarnAboutOldDBBox.Size = new System.Drawing.Size(146, 17);
+            this.WarnAboutOldDBBox.Size = new System.Drawing.Size(285, 29);
             this.WarnAboutOldDBBox.TabIndex = 54;
             this.WarnAboutOldDBBox.Text = "Warn about old database";
             this.WarnAboutOldDBBox.UseVisualStyleBackColor = true;
@@ -741,24 +815,26 @@ namespace Elmanager.Forms
             // 
             this.ColorDialog1.FullOpen = true;
             // 
-            // showTooltipForReplaysCheckBox
+            // alwaysSetDefaultsInPictureTool
             // 
-            this.showTooltipForReplaysCheckBox.AutoSize = true;
-            this.showTooltipForReplaysCheckBox.Location = new System.Drawing.Point(8, 82);
-            this.showTooltipForReplaysCheckBox.Name = "showTooltipForReplaysCheckBox";
-            this.showTooltipForReplaysCheckBox.Size = new System.Drawing.Size(192, 17);
-            this.showTooltipForReplaysCheckBox.TabIndex = 58;
-            this.showTooltipForReplaysCheckBox.Text = "Show tooltip for replays in replay list";
-            this.showTooltipForReplaysCheckBox.UseVisualStyleBackColor = true;
+            this.alwaysSetDefaultsInPictureTool.AutoSize = true;
+            this.alwaysSetDefaultsInPictureTool.Location = new System.Drawing.Point(382, 206);
+            this.alwaysSetDefaultsInPictureTool.Margin = new System.Windows.Forms.Padding(6);
+            this.alwaysSetDefaultsInPictureTool.Name = "alwaysSetDefaultsInPictureTool";
+            this.alwaysSetDefaultsInPictureTool.Size = new System.Drawing.Size(756, 29);
+            this.alwaysSetDefaultsInPictureTool.TabIndex = 31;
+            this.alwaysSetDefaultsInPictureTool.Text = "Always set distance and clipping to defaults when changing picture/texture";
+            this.alwaysSetDefaultsInPictureTool.UseVisualStyleBackColor = true;
             // 
             // ConfigForm
             // 
-            this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
+            this.AutoScaleDimensions = new System.Drawing.SizeF(12F, 25F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(604, 336);
+            this.ClientSize = new System.Drawing.Size(1208, 646);
             this.Controls.Add(this.TabControl1);
             this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedSingle;
             this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
+            this.Margin = new System.Windows.Forms.Padding(6, 6, 6, 6);
             this.MaximizeBox = false;
             this.Name = "ConfigForm";
             this.Text = "Elmanager configuration";
@@ -843,6 +919,7 @@ namespace Elmanager.Forms
         private GroupBox groupBox2;
         private CheckBox DisableFrameBufferUsageCheckBox;
         internal CheckBox showTooltipForReplaysCheckBox;
+        internal CheckBox alwaysSetDefaultsInPictureTool;
     }
 	
 }

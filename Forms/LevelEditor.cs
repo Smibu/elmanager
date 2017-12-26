@@ -997,6 +997,7 @@ namespace Elmanager.Forms
             PicForm.AutoTextureMode = true;
             PicForm.AllowMultiple = false;
             PicForm.SetDefaultsAutomatically = true;
+            PicForm.SetDefaultDistanceAndClipping();
             PicForm.ShowDialog();
             if (!PicForm.OkButtonPressed)
             {
@@ -1357,7 +1358,7 @@ namespace Elmanager.Forms
         private void PicturePropertiesToolStripMenuItemClick(object sender, EventArgs e)
         {
             var selectedPics = Lev.Pictures.Where(p => p.Position.Mark == Geometry.VectorMark.Selected).ToList();
-            PicForm.SetDefaultsAutomatically = false;
+            PicForm.SetDefaultsAutomatically = Global.AppSettings.LevelEditor.AlwaysSetDefaultsInPictureTool;
             if (selectedPics.Count > 0)
             {
                 PicForm.AllowMultiple = true;
@@ -1367,7 +1368,7 @@ namespace Elmanager.Forms
             {
                 PicForm.AllowMultiple = false;
                 selectedPics = new List<Level.Picture> {Lev.Pictures[_selectedPictureIndex]};
-                PicForm.SelectTexture(Lev.Pictures[_selectedPictureIndex]);    
+                PicForm.SelectElement(Lev.Pictures[_selectedPictureIndex]);    
             }
 
             PicForm.AutoTextureMode = false;
@@ -2037,6 +2038,7 @@ namespace Elmanager.Forms
                 PicForm.AllowMultiple = false;
                 PicForm.AutoTextureMode = false;
                 PicForm.SetDefaultsAutomatically = true;
+                PicForm.SetDefaultDistanceAndClipping();
                 PicForm.ShowDialog();
                 if (PicForm.OkButtonPressed)
                 {

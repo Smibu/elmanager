@@ -66,6 +66,7 @@ namespace Elmanager.Forms
             {
                 DisableFrameBufferUsageCheckBox.CheckState = CheckState.Unchecked;
             }
+            alwaysSetDefaultsInPictureTool.Checked = Global.AppSettings.LevelEditor.AlwaysSetDefaultsInPictureTool;
             FilenameSuggestionBoxCheckedChanged(null, null);
             SameAsFilenameBoxCheckedChanged(null, null);
         }
@@ -336,6 +337,7 @@ namespace Elmanager.Forms
                 Global.AppSettings.ReplayViewer.RenderingSettings.DisableFrameBuffer =
                     DisableFrameBufferUsageCheckBox.Checked;
             }
+            Global.AppSettings.LevelEditor.AlwaysSetDefaultsInPictureTool = alwaysSetDefaultsInPictureTool.Checked;
             try
             {
                 Global.AppSettings.LevelEditor.CaptureRadius = double.Parse(CaptureRadiusBox.Text);

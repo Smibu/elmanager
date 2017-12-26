@@ -27,7 +27,6 @@ namespace Elmanager.EditorTools
         {
             if (_currentPicture != null)
                 RemoveCurrent();
-            _currentPicture = null;
         }
 
         public void KeyDown(KeyEventArgs key)
@@ -54,7 +53,7 @@ namespace Elmanager.EditorTools
                         LevEditor.Modified = true;
                     }
                     else
-                        FirstTimeDialog();
+                        OpenDialog();
                     break;
                 case MouseButtons.Right:
                     OpenDialog();
@@ -97,12 +96,12 @@ namespace Elmanager.EditorTools
             Lev.SortPictures();
         }
 
-        private void FirstTimeDialog()
+        private void OpenDialogNow(bool setDefaultsAutomatically)
         {
             LevEditor.PicForm.Location = Control.MousePosition;
             LevEditor.PicForm.AllowMultiple = false;
             LevEditor.PicForm.AutoTextureMode = false;
-            LevEditor.PicForm.SetDefaultsAutomatically = true;
+            LevEditor.PicForm.SetDefaultsAutomatically = setDefaultsAutomatically;
             LevEditor.PicForm.ShowDialog();
             if (LevEditor.PicForm.OkButtonPressed)
             {
@@ -126,11 +125,15 @@ namespace Elmanager.EditorTools
         private void OpenDialog()
         {
             if (_currentPicture == null)
-                FirstTimeDialog();
+            {
+                LevEditor.PicForm.SetDefaultDistanceAndClipping();
+                OpenDialogNow(setDefaultsAutomatically: true);
+            }
             else
             {
                 RemoveCurrent();
-                FirstTimeDialog();
+                LevEditor.PicForm.SelectElement(_currentPicture);
+                OpenDialogNow(setDefaultsAutomatically: Global.AppSettings.LevelEditor.AlwaysSetDefaultsInPictureTool);
                 if (!LevEditor.PicForm.OkButtonPressed)
                     AddCurrent();
             }
