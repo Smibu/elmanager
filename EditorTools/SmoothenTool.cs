@@ -203,11 +203,11 @@ namespace Elmanager.EditorTools
                     ChangeCursorToHand();
                 }
                 else
-                    ChangeToDefaultCursor();
+                    ChangeToDefaultCursorIfHand();
                 Renderer.RedrawScene();
             }
             else
-                ChangeToDefaultCursor();
+                ChangeToDefaultCursorIfHand();
         }
 
         public void MouseOutOfEditor()

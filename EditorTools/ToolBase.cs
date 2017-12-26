@@ -1,5 +1,6 @@
 using System;
 using System.Linq;
+using System.Reflection;
 using System.Windows.Forms;
 using Elmanager.Forms;
 
@@ -13,6 +14,7 @@ namespace Elmanager.EditorTools
         internal Polygon NearestPolygon;
         protected ElmaRenderer Renderer;
         protected bool _Busy;
+        private Cursor _hand;
 
         protected ToolBase(LevelEditor editor)
         {
@@ -223,16 +225,26 @@ namespace Elmanager.EditorTools
             p.Y -= y;
         }
 
+        private Cursor Hand => _hand ?? (_hand = CreateHandCursor());
+
+        private Cursor CreateHandCursor()
+        {
+            var ctor = typeof(Cursor).GetConstructor(BindingFlags.NonPublic | BindingFlags.Instance, null,
+                new[] {typeof(int), typeof(int)}, null);
+            const int IDC_HAND = 32649;
+            return (Cursor)ctor.Invoke(new object[] { IDC_HAND, 0 });
+        }
+
         protected void ChangeCursorToHand()
         {
             if (Global.AppSettings.LevelEditor.UseHighlight)
-                EditorControl.Cursor = Cursors.Hand;
+                EditorControl.Cursor = Hand;
         }
 
-        protected void ChangeToDefaultCursor()
+        protected void ChangeToDefaultCursorIfHand()
         {
-            if (EditorControl.Cursor == Cursors.Hand)
-                EditorControl.Cursor = Cursors.Default;
+            if (EditorControl.Cursor == Hand)
+                LevEditor.ChangeToDefaultCursor();
         }
 
         protected void MarkAllAs(Geometry.VectorMark mark)

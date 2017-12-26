@@ -298,10 +298,9 @@ namespace Elmanager.Forms
             Modified = true;
         }
 
-        private void ChangeToDefaultCursor()
+        public void ChangeToDefaultCursor()
         {
-            if (EditorControl.Cursor == Cursors.Hand)
-                EditorControl.Cursor = Cursors.Default;
+            EditorControl.Cursor = Cursors.Default;
         }
 
         private void ChangeToolTo(int index)

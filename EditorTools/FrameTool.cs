@@ -152,11 +152,11 @@ namespace Elmanager.EditorTools
                         NearestPolygon.Mark = PolygonMark.Highlight;
                 }
                 else
-                    ChangeToDefaultCursor();
+                    ChangeToDefaultCursorIfHand();
                 Renderer.RedrawScene();
             }
             else
-                ChangeToDefaultCursor();
+                ChangeToDefaultCursorIfHand();
         }
 
         public void MouseOutOfEditor()

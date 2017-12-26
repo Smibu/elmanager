@@ -347,7 +347,7 @@ namespace Elmanager.EditorTools
                 }
                 else
                 {
-                    ChangeToDefaultCursor();
+                    ChangeToDefaultCursorIfHand();
                     LevEditor.HighlightLabel.Text = "";
                 }
             }

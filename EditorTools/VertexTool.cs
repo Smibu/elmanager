@@ -121,7 +121,7 @@ namespace Elmanager.EditorTools
                                 _currentPolygon = NearestPolygon;
                                 _currentPolygon.SetBeginPoint(nearestSegmentIndex + 1);
                                 _currentPolygon.Add(CurrentPos);
-                                ChangeToDefaultCursor();
+                                ChangeToDefaultCursorIfHand();
                             }
                             else
                                 _currentPolygon = new Polygon(CurrentPos, CurrentPos);
@@ -166,7 +166,7 @@ namespace Elmanager.EditorTools
                 }
                 else
                 {
-                    ChangeToDefaultCursor();
+                    ChangeToDefaultCursorIfHand();
                     nearestSegmentIndex = -1;
                 }
             }
