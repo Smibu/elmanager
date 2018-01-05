@@ -1,6 +1,6 @@
 # Elmanager changelog
 
-## Beta
+## 5.1.2018
 * SLE: Improved Picture tool usability.
 * SLE: Added support for high DPI monitors.
 * SLE: Inactive grass edges are now shown dashed.
