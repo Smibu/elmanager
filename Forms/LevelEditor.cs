@@ -348,6 +348,8 @@ namespace Elmanager.Forms
                 if (Lev.HasTooManyObjects)
                     items.Add("There are too many objects in the level. Current: " + Lev.Objects.Count + ", maximum: " +
                               Level.MaximumObjectCount);
+                if (Lev.HasTooFewObjects)
+                    items.Add("There must be at least one object in the level (in addition to the start object).");
                 if (Lev.HasTooManyPolygons)
                     items.Add("There are too many polygons in the level. Current: " + Lev.Polygons.Count + ", maximum: " +
                               Level.MaximumPolygonCount);
@@ -648,8 +650,7 @@ namespace Elmanager.Forms
                 {
                     if (Lev.Objects[i].Position.Mark == Geometry.VectorMark.Selected)
                     {
-                        if (Lev.Objects[i].Type != Level.ObjectType.Start &&
-                            (Lev.Objects[i].Type != Level.ObjectType.Flower || Lev.ExitObjectCount > 1))
+                        if (Lev.Objects[i].Type != Level.ObjectType.Start)
                         {
                             Lev.Objects.RemoveAt(i);
                             anythingDeleted = true;

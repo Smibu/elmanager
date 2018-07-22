@@ -159,7 +159,6 @@ namespace Elmanager
             }
             Apples = new List<Object>();
             bool startFound = false;
-            bool flowerFound = false;
             for (int i = 0; i < objectCount; i++)
             {
                 double x = BitConverter.ToDouble(level, sp);
@@ -168,10 +167,6 @@ namespace Elmanager
                 if (objectType == ObjectType.Start)
                 {
                     startFound = true;
-                }
-                else if (objectType == ObjectType.Flower)
-                {
-                    flowerFound = true;
                 }
                 AppleTypes appleType = AppleTypes.Normal;
                 int animNum = 0;
@@ -191,10 +186,6 @@ namespace Elmanager
             if (!startFound)
             {
                 Objects.Add(new Object(new Vector(0, 0), ObjectType.Start, AppleTypes.Normal));
-            }
-            if (!flowerFound)
-            {
-                Objects.Add(new Object(new Vector(0, 0), ObjectType.Flower, AppleTypes.Normal));
             }
             if (!IsAcrossLevel)
             {
@@ -356,7 +347,7 @@ namespace Elmanager
         {
             get
             {
-                return HasTooLargePolygons || HasTooManyObjects || HasTooManyPolygons || HasTooManyVertices || HasTooManyPictures ||
+                return HasTooLargePolygons || HasTooManyObjects || HasTooFewObjects || HasTooManyPolygons || HasTooManyVertices || HasTooManyPictures ||
                        WheelLiesOnEdge || HasTexturesOutOfBounds || HeadTouchesGround || TooTall || TooWide || GetIntersectionPoints().Count > 0;
             }
         }
@@ -496,6 +487,8 @@ namespace Elmanager
         internal bool IsAcrossLevel => identifier == "POT06";
 
         internal bool IsLeb => identifier == "@@^!@";
+
+        internal bool HasTooFewObjects => Objects.Count < 2;
 
         internal static string GetPossiblyInternal(string level)
         {
