@@ -352,7 +352,7 @@ namespace Elmanager.Forms
                     items.Add("There are too many polygons in the level. Current: " + Lev.Polygons.Count + ", maximum: " +
                               Level.MaximumPolygonCount);
                 if (Lev.HasTooManyVertices)
-                    items.Add("There are too many vertices in the level. Current: " + Lev.VertexCount + ", maximum: " +
+                    items.Add("There are too many ground vertices in the level. Current: " + Lev.GroundVertexCount + ", maximum: " +
                               Level.MaximumGroundVertexCount);
                 if (Lev.HasTooManyPictures)
                     items.Add("There are too many pictures and textures in the level. Current: " + Lev.PictureTextureCount + ", maximum: " +
