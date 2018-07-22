@@ -2154,6 +2154,7 @@ namespace Elmanager.Forms
                     CurrLevDirFiles[index] = newPath;
                 }
                 Lev.Path = newPath;
+                _savePath = newPath;
                 UpdateLabels();
                 filenameBox_TextChanged();
             }
