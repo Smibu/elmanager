@@ -76,6 +76,7 @@ namespace Elmanager.EditorTools
         {
             var pictureFilter = LevEditor.EffectivePictureFilter;
             var textureFilter = LevEditor.EffectiveTextureFilter;
+            int found = -1;
             if (Global.AppSettings.LevelEditor.CapturePicturesAndTexturesFromBordersOnly)
             {
                 var limit = Renderer.ZoomLevel * Global.AppSettings.LevelEditor.CaptureRadius;
@@ -89,7 +90,11 @@ namespace Elmanager.EditorTools
                          || Geometry.DistanceFromSegment(z.Position.X + z.Width, z.Position.Y, z.Position.X + z.Width, z.Position.Y + z.Height, p.X, p.Y) < limit
                          || Geometry.DistanceFromSegment(z.Position.X, z.Position.Y + z.Height, z.Position.X + z.Width, z.Position.Y + z.Height, p.X, p.Y) < limit)
                         {
-                            return j;
+                            found = j;
+                            if (z.Position.Mark == Geometry.VectorMark.Selected)
+                            {
+                                return found;
+                            }
                         }
                     }
                 }
@@ -104,12 +109,16 @@ namespace Elmanager.EditorTools
                         if (p.X > z.Position.X && p.X < z.Position.X + z.Width && p.Y > z.Position.Y &&
                             p.Y < z.Position.Y + z.Height)
                         {
-                            return j;
+                            found = j;
+                            if (z.Position.Mark == Geometry.VectorMark.Selected)
+                            {
+                                return found;
+                            }
                         }
                     }
                 }
             }
-            return -1;
+            return found;
         }
 
         internal int GetNearestVertexIndex(Vector p)
