@@ -6,14 +6,13 @@ using Elmanager.Forms;
 
 namespace Elmanager.EditorTools
 {
-    internal class ToolBase : IEditorToolBase
+    internal abstract class ToolBase : IEditorToolBase
     {
         protected Vector CurrentPos;
         private Control EditorControl;
         protected LevelEditor LevEditor;
         internal Polygon NearestPolygon;
         protected ElmaRenderer Renderer;
-        protected bool _Busy;
         private Cursor _hand;
 
         protected ToolBase(LevelEditor editor)
@@ -23,15 +22,9 @@ namespace Elmanager.EditorTools
             EditorControl = editor.EditorControl;
         }
 
-        protected Level Lev
-        {
-            get { return LevEditor.Lev; }
-        }
+        protected Level Lev => LevEditor.Lev;
 
-        public bool Busy
-        {
-            get { return _Busy; }
-        }
+        public abstract bool Busy { get; }
 
         internal int GetNearestObjectIndex(Vector p)
         {

@@ -8,7 +8,6 @@ namespace Elmanager.EditorTools
     {
         private const double ThresholdAdjustStep = 0.125;
         private Polygon _currentPolygon;
-        private bool _drawing;
         private Vector _lastMousePosition;
         private double _mouseTrip;
 
@@ -17,20 +16,11 @@ namespace Elmanager.EditorTools
         {
         }
 
-        private bool Drawing
-        {
-            get { return _drawing; }
-            set
-            {
-                _drawing = value;
-                _Busy = value;
-            }
-        }
+        private bool Drawing { get; set; }
 
         public void Activate()
         {
             UpdateHelp();
-            Renderer.RedrawScene();
         }
 
         public void UpdateHelp()
@@ -100,7 +90,6 @@ namespace Elmanager.EditorTools
                 if (_currentPolygon.Count > 2)
                     _currentPolygon.UpdateDecomposition();
             }
-            Renderer.RedrawScene();
         }
 
         public void MouseOutOfEditor()
@@ -116,7 +105,8 @@ namespace Elmanager.EditorTools
                 _currentPolygon.UpdateDecomposition();
                 LevEditor.Modified = true;
             }
-            Renderer.RedrawScene();
         }
+
+        public override bool Busy => Drawing;
     }
 }

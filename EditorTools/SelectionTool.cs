@@ -17,20 +17,9 @@ namespace Elmanager.EditorTools
         private Vector _lockPrev; //for lock lines -mode
         private bool _lockingLines;
         private Vector _moveStartPosition;
-        private bool _moving;
-        private bool _rectSelecting;
-        private bool _freeSelecting;
         private Polygon _selectionPoly;
 
-        private bool FreeSelecting
-        {
-            get { return _freeSelecting; }
-            set
-            {
-                _freeSelecting = value;
-                UpdateBusy();
-            }
-        }
+        private bool FreeSelecting { get; set; }
 
         private Vector _selectionStartPoint;
         private double _mouseTrip;
@@ -41,30 +30,13 @@ namespace Elmanager.EditorTools
         {
         }
 
-        private bool Moving
-        {
-            get { return _moving; }
-            set
-            {
-                _moving = value;
-                UpdateBusy();
-            }
-        }
+        private bool Moving { get; set; }
 
-        private bool RectSelecting
-        {
-            get { return _rectSelecting; }
-            set
-            {
-                _rectSelecting = value;
-                UpdateBusy();
-            }
-        }
+        private bool RectSelecting { get; set; }
 
         public void Activate()
         {
             UpdateHelp();
-            Renderer.RedrawScene();
         }
 
         public void ExtraRendering()
@@ -123,7 +95,6 @@ namespace Elmanager.EditorTools
             var selected = Lev.Objects.Where(obj => obj.Type == Level.ObjectType.Apple && obj.Position.Mark == Geometry.VectorMark.Selected).ToList();
             bool updated = selected.Any(obj => obj.AnimationNumber != animNum);
             selected.ForEach(obj => obj.AnimationNumber = animNum);
-            Renderer.RedrawScene();
             if (updated)
             {
                 LevEditor.Modified = true;
@@ -242,8 +213,6 @@ namespace Elmanager.EditorTools
                             _selectionStartPoint = p;
                             RectSelecting = true;
                         }
-
-                        Renderer.RedrawScene();
                     }
                     LevEditor.UpdateSelectionInfo();
                     break;
@@ -351,13 +320,11 @@ namespace Elmanager.EditorTools
                     LevEditor.HighlightLabel.Text = "";
                 }
             }
-            Renderer.RedrawScene();
         }
 
         public void MouseOutOfEditor()
         {
             ResetHighlight();
-            Renderer.RedrawScene();
         }
 
         public void MouseUp(MouseEventArgs mouseData)
@@ -432,7 +399,6 @@ namespace Elmanager.EditorTools
                 if (_anythingMoved)
                     LevEditor.Modified = true;
             }
-            Renderer.RedrawScene();
         }
 
         private static void MarkSelectedInArea(Vector z, Polygon selectionPoly)
@@ -500,7 +466,6 @@ namespace Elmanager.EditorTools
             LevEditor.PreserveSelection();
             AdjustForGrid(CurrentPos);
             _moveStartPosition = CurrentPos;
-            Renderer.RedrawScene();
         }
 
         private void ShowObjectInfo(int currentObjectIndex)
@@ -561,9 +526,6 @@ namespace Elmanager.EditorTools
             }
         }
 
-        private void UpdateBusy()
-        {
-            _Busy = RectSelecting || FreeSelecting || Moving;
-        }
+        public override bool Busy => RectSelecting || FreeSelecting || Moving;
     }
 }

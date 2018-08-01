@@ -12,7 +12,6 @@ namespace Elmanager.EditorTools
         public void Activate()
         {
             UpdateHelp();
-            Renderer.RedrawScene();
         }
 
         public void ExtraRendering()
@@ -57,5 +56,7 @@ namespace Elmanager.EditorTools
         {
             LevEditor.InfoLabel.Text = "Left mouse button: zoom in; right mouse button: zoom out.";
         }
+
+        public override bool Busy => false;
     }
 }

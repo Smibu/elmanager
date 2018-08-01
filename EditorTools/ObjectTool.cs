@@ -64,7 +64,6 @@ namespace Elmanager.EditorTools
 
         public void KeyDown(KeyEventArgs key)
         {
-            var somethingHappened = true;
             switch (key.KeyCode)
             {
                 case Keys.Space:
@@ -109,13 +108,6 @@ namespace Elmanager.EditorTools
                 case Keys.D9:
                     _animNum = 9;
                     break;
-                default:
-                    somethingHappened = false;
-                    break;
-            }
-            if (somethingHappened)
-            {
-                Renderer.RedrawScene();
             }
         }
 
@@ -131,13 +123,11 @@ namespace Elmanager.EditorTools
             CurrentPos = p;
             _hasFocus = true;
             AdjustForGrid(CurrentPos);
-            Renderer.RedrawScene();
         }
 
         public void MouseOutOfEditor()
         {
             _hasFocus = false;
-            Renderer.RedrawScene();
         }
 
         public void MouseUp(MouseEventArgs mouseData)
@@ -161,5 +151,7 @@ namespace Elmanager.EditorTools
             }
             LevEditor.InfoLabel.Text += " Space: change object type.";
         }
+
+        public override bool Busy => false;
     }
 }

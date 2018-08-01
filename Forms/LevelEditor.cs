@@ -182,15 +182,27 @@ namespace Elmanager.Forms
                 ChangeToDefaultCursor();
                 CurrentTool.InActivate();
                 CurrentTool = Tools[12];
-                CurrentTool.Activate();
+                ActivateCurrentAndRedraw();
                 
                 // if not busy, there's nothing to transform
                 if (!CurrentTool.Busy)
                 {
                     CurrentTool = Tools[0];
-                    CurrentTool.Activate();   
+                    ActivateCurrentAndRedraw();
                 }
             }
+        }
+
+        internal void ActivateCurrentAndRedraw()
+        {
+            CurrentTool.Activate();
+            Renderer.RedrawScene();
+        }
+
+        internal void InactivateCurrentAndRedraw()
+        {
+            CurrentTool.InActivate();
+            Renderer.RedrawScene();
         }
 
         internal void SetModified(bool value, bool updateHistory = true)
@@ -307,7 +319,7 @@ namespace Elmanager.Forms
         {
             CurrentTool.InActivate();
             CurrentTool = Tools[index];
-            CurrentTool.Activate();
+            ActivateCurrentAndRedraw();
         }
 
         private void CheckForPictureLoss()
@@ -428,7 +440,7 @@ namespace Elmanager.Forms
                 e.Cancel = true;
             else
             {
-                CurrentTool.InActivate();
+                InactivateCurrentAndRedraw();
             }
             if (WindowState == FormWindowState.Normal)
             {
@@ -671,7 +683,6 @@ namespace Elmanager.Forms
                     Modified = true;
                     UpdateSelectionInfo();
                 }
-                Renderer.RedrawScene();
             }
         }
 
@@ -898,7 +909,7 @@ namespace Elmanager.Forms
                 new TextTool(this)
             };
             CurrentTool = Tools[0];
-            CurrentTool.Activate();
+            ActivateCurrentAndRedraw();
             SetupEventHandlers();
             _savePath = Lev.Path;
             if (Global.LevelFiles == null)
@@ -919,10 +930,9 @@ namespace Elmanager.Forms
             topologyList.DropDownItems.Clear();
             ResetTopologyListStyle();
             UpdateLgrTools();
-            Renderer.RedrawScene();
             ClearHistory();
             CurrentTool.InActivate();
-            CurrentTool.Activate();
+            ActivateCurrentAndRedraw();
             _errorPoints.Clear();
         }
 
@@ -938,6 +948,7 @@ namespace Elmanager.Forms
                     break;
             }
             CurrentTool.KeyDown(e);
+            var wasModified = false;
             switch (e.KeyCode)
             {
                 case Keys.Oem5:
@@ -967,18 +978,23 @@ namespace Elmanager.Forms
                     DeleteSelected(null, null);
                     break;
                 case Keys.Oemcomma:
-                    PolyOpTool.PolyOpSelected(PolygonOperationType.Union, Lev.Polygons, SetModifiedAndRender);
+                    wasModified = PolyOpTool.PolyOpSelected(PolygonOperationType.Union, Lev.Polygons);
                     break;
                 case Keys.OemPeriod:
-                    PolyOpTool.PolyOpSelected(PolygonOperationType.Difference, Lev.Polygons, SetModifiedAndRender);
+                    wasModified = PolyOpTool.PolyOpSelected(PolygonOperationType.Difference, Lev.Polygons);
                     break;
                 case Keys.Enter:
-                    PolyOpTool.PolyOpSelected(PolygonOperationType.Intersection, Lev.Polygons, SetModifiedAndRender);
+                    wasModified = PolyOpTool.PolyOpSelected(PolygonOperationType.Intersection, Lev.Polygons);
                     break;
                 case Keys.Oem2:
-                    PolyOpTool.PolyOpSelected(PolygonOperationType.SymmetricDifference, Lev.Polygons, SetModifiedAndRender);
+                    wasModified = PolyOpTool.PolyOpSelected(PolygonOperationType.SymmetricDifference, Lev.Polygons);
                     break;
             }
+            if (wasModified)
+            {
+                Modified = true;
+            }
+            Renderer.RedrawScene();
         }
 
         private async void TexturizeSelection()
@@ -1038,7 +1054,6 @@ namespace Elmanager.Forms
                         new Vector(c.MinX - m.EmptyPixelXMargin, c.MinY - m.EmptyPixelYMargin), texture, m));
             Lev.Pictures.AddRange(pics);
             Modified = true;
-            Renderer.RedrawScene();
         }
 
         private void SetModifiedAndRender()
@@ -1228,11 +1243,13 @@ namespace Elmanager.Forms
                     break;
             }
             CurrentTool.MouseDown(e);
+            Renderer.RedrawScene();
         }
 
         private void MouseLeaveEvent(object sender, EventArgs e)
         {
             CurrentTool.MouseOutOfEditor();
+            Renderer.RedrawScene();
         }
 
         private void MouseMoveEvent(object sender, MouseEventArgs e)
@@ -1254,9 +1271,9 @@ namespace Elmanager.Forms
                     Renderer.CenterX = (Renderer.XMax + Renderer.XMin)/2 - (z.X - _moveStartPosition.X);
                     Renderer.CenterY = (Renderer.YMax + Renderer.YMin)/2 - (z.Y - _moveStartPosition.Y);
                 }
-                Renderer.RedrawScene();
             }
             CurrentTool.MouseMove(GetMouseCoordinatesFixed());
+            Renderer.RedrawScene();
         }
 
         private void MouseUpEvent(object sender, MouseEventArgs e)
@@ -1264,6 +1281,7 @@ namespace Elmanager.Forms
             CurrentTool.MouseUp(e);
             _draggingScreen = false;
             _draggingGrid = false;
+            Renderer.RedrawScene();
         }
 
         private void MouseWheelZoom(long delta)
@@ -1609,7 +1627,7 @@ namespace Elmanager.Forms
                     Utils.ShowError("Error when saving level: " + ex.Message);
                 }
             }
-            CurrentTool.Activate();
+            ActivateCurrentAndRedraw();
         }
 
         private void SelectAllToolStripMenuItemClick(object sender, EventArgs e)
@@ -2189,22 +2207,34 @@ namespace Elmanager.Forms
 
         private void unionToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            PolyOpTool.PolyOpSelected(PolygonOperationType.Union, Lev.Polygons, SetModifiedAndRender);
+            if (PolyOpTool.PolyOpSelected(PolygonOperationType.Union, Lev.Polygons))
+            {
+                SetModifiedAndRender();
+            }
         }
 
         private void differenceToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            PolyOpTool.PolyOpSelected(PolygonOperationType.Difference, Lev.Polygons, SetModifiedAndRender);
+            if (PolyOpTool.PolyOpSelected(PolygonOperationType.Difference, Lev.Polygons))
+            {
+                SetModifiedAndRender();
+            }
         }
 
         private void intersectionToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            PolyOpTool.PolyOpSelected(PolygonOperationType.Intersection, Lev.Polygons, SetModifiedAndRender);
+            if (PolyOpTool.PolyOpSelected(PolygonOperationType.Intersection, Lev.Polygons))
+            {
+                SetModifiedAndRender();
+            }
         }
 
         private void symmetricDifferenceToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            PolyOpTool.PolyOpSelected(PolygonOperationType.SymmetricDifference, Lev.Polygons, SetModifiedAndRender);
+            if (PolyOpTool.PolyOpSelected(PolygonOperationType.SymmetricDifference, Lev.Polygons))
+            {
+                SetModifiedAndRender();
+            }
         }
 
         private void texturizeMenuItem_Click(object sender, EventArgs e)

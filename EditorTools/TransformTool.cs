@@ -23,21 +23,14 @@ namespace Elmanager.EditorTools
         {
         }
 
-        private bool DisableRotation
-        {
-            get { return Keyboard.IsKeyDown(Key.LeftShift); }
-        }
+        private bool DisableRotation => Keyboard.IsKeyDown(Key.LeftShift);
 
-        private bool DisableScaling
-        {
-            get { return Keyboard.IsKeyDown(Key.LeftCtrl); }
-        }
+        private bool DisableScaling => Keyboard.IsKeyDown(Key.LeftCtrl);
 
         private bool Transforming { get; set; }
 
         public void Activate()
         {
-            _Busy = true;
             List<Level.Object> transformObjectReferences = new List<Level.Object>();
             List<Polygon> transformPolygonReferences = new List<Polygon>();
             List<Level.Picture> transformTextureReferences = new List<Level.Picture>();
@@ -121,7 +114,6 @@ namespace Elmanager.EditorTools
                     Lev.Pictures.Remove(x);
                     Lev.Pictures.Add(x);
                 }
-                Renderer.RedrawScene();
                 UpdateHelp();
             }
             else
@@ -140,7 +132,6 @@ namespace Elmanager.EditorTools
         public void InActivate()
         {
             EndTransforming();
-            _Busy = false;
         }
 
         public void KeyDown(KeyEventArgs key)
@@ -246,7 +237,6 @@ namespace Elmanager.EditorTools
                 Lev.Pictures[Lev.Pictures.Count - 1 - i].Position =
                     x.Position * transformMatrix;
             }
-            Renderer.RedrawScene();
         }
 
         public void MouseOutOfEditor()
@@ -282,5 +272,7 @@ namespace Elmanager.EditorTools
         }
 
         private delegate void LambdaOneParam(Vector x);
+
+        public override bool Busy => true;
     }
 }

@@ -72,8 +72,6 @@ namespace Elmanager.EditorTools
                 _currentPicture.Position.X -= _currentPicture.Width / 2;
                 _currentPicture.Position.Y -= _currentPicture.Height / 2;
             }
-
-            Renderer.RedrawScene();
         }
 
         public void MouseOutOfEditor()
@@ -143,5 +141,7 @@ namespace Elmanager.EditorTools
         {
             Lev.Pictures.Remove(_currentPicture);
         }
+
+        public override bool Busy => false;
     }
 }

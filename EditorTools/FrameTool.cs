@@ -11,7 +11,6 @@ namespace Elmanager.EditorTools
         private Polygon _currentPolygon;
         private double _frameRadius = 0.2;
         private List<Polygon> _frames;
-        private bool _framing;
         private FrameType _frameType = FrameType.Normal;
 
         private enum FrameType
@@ -26,22 +25,13 @@ namespace Elmanager.EditorTools
         {
         }
 
-        private bool Framing
-        {
-            get { return _framing; }
-            set
-            {
-                _framing = value;
-                _Busy = value;
-            }
-        }
+        private bool Framing { get; set; }
 
         public void Activate()
         {
             _frameRadius = Global.AppSettings.LevelEditor.FrameRadius;
             UpdateHelp();
             Renderer.AdditionalPolys = ExtraPolygons;
-            Renderer.RedrawScene();
         }
 
         public void UpdateHelp()
@@ -135,7 +125,6 @@ namespace Elmanager.EditorTools
                     break;
             }
             UpdateHelp();
-            Renderer.RedrawScene();
         }
 
         public void MouseMove(Vector p)
@@ -153,7 +142,6 @@ namespace Elmanager.EditorTools
                 }
                 else
                     ChangeToDefaultCursorIfHand();
-                Renderer.RedrawScene();
             }
             else
                 ChangeToDefaultCursorIfHand();
@@ -164,7 +152,6 @@ namespace Elmanager.EditorTools
             if (!Framing)
             {
                 ResetHighlight();
-                Renderer.RedrawScene();
             }
         }
 
@@ -189,7 +176,6 @@ namespace Elmanager.EditorTools
         private void UpdateFrame()
         {
             _frames = MakeClosedPipe(_currentPolygon, _frameRadius);
-            Renderer.RedrawScene();
         }
 
         private List<Polygon> MakeClosedPipe(Polygon pipeLine, double radius)
@@ -222,5 +208,7 @@ namespace Elmanager.EditorTools
             p[1].UpdateDecomposition();
             return p;
         }
+
+        public override bool Busy => Framing;
     }
 }

@@ -261,5 +261,7 @@ namespace Elmanager.EditorTools
         {
             LevEditor.InfoLabel.Text = "Left mouse button: open text input dialog.";
         }
+
+        public override bool Busy => false; // dialog is modal
     }
 }

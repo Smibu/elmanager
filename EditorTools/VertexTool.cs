@@ -9,8 +9,6 @@ namespace Elmanager.EditorTools
 {
     internal class VertexTool : ToolBase, IEditorTool
     {
-        private bool _creatingVertex;
-        private bool _creatingRectangle;
         private Polygon _currentPolygon;
         private int nearestSegmentIndex = -1;
         private Vector _rectangleStart;
@@ -20,28 +18,13 @@ namespace Elmanager.EditorTools
         {
         }
 
-        private bool CreatingVertex
-        {
-            get { return _creatingVertex; }
-            set
-            {
-                _creatingVertex = value;
-                _Busy = _creatingVertex || _creatingRectangle;
-            }
-        }
+        private bool CreatingVertex { get; set; }
 
-        private bool CreatingRectangle
-        {
-            get { return _creatingRectangle; }
-            set { _creatingRectangle = value; 
-                _Busy = _creatingVertex || _creatingRectangle; 
-            }
-        }
+        private bool CreatingRectangle { get; set; }
 
         public void Activate()
         {
             UpdateHelp();
-            Renderer.RedrawScene();
         }
 
         public void UpdateHelp()
@@ -86,7 +69,6 @@ namespace Elmanager.EditorTools
             _currentPolygon.ChangeOrientation();
             _currentPolygon.Add(CurrentPos);
             _currentPolygon.UpdateDecomposition(false);
-            Renderer.RedrawScene();
         }
 
         public void MouseDown(MouseEventArgs mouseData)
@@ -136,7 +118,6 @@ namespace Elmanager.EditorTools
                             _currentPolygon.UpdateDecomposition(false);
                         }
                     }
-                    Renderer.RedrawScene();
                     break;
                 case MouseButtons.Right:
                     FinishVertexCreation();
@@ -170,13 +151,11 @@ namespace Elmanager.EditorTools
                     nearestSegmentIndex = -1;
                 }
             }
-            Renderer.RedrawScene();
         }
 
         public void MouseOutOfEditor()
         {
             ResetHighlight();
-            Renderer.RedrawScene();
         }
 
         public void MouseUp(MouseEventArgs mouseData)
@@ -198,12 +177,13 @@ namespace Elmanager.EditorTools
                 }
                 else
                     Lev.Polygons.Remove(_currentPolygon);
-                Renderer.RedrawScene();
             }
             else if (CreatingRectangle)
             {
                 CreatingRectangle = false;
             }
         }
+
+        public override bool Busy => CreatingVertex || CreatingRectangle;
     }
 }

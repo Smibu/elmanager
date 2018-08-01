@@ -17,7 +17,6 @@ namespace Elmanager.EditorTools
         private List<Polygon> _smoothPolys;
         private int _smoothSteps = 3;
         private int _smoothVertexOffset = 50;
-        private bool _smoothing;
         private bool _unsmooth;
         private double _unsmoothAngle = 10;
         private double _unsmoothLength = 1.0;
@@ -26,15 +25,7 @@ namespace Elmanager.EditorTools
         {
         }
 
-        private bool Smoothing
-        {
-            get { return _smoothing; }
-            set
-            {
-                _smoothing = value;
-                _Busy = value;
-            }
-        }
+        private bool Smoothing { get; set; }
 
         public void Activate()
         {
@@ -43,7 +34,6 @@ namespace Elmanager.EditorTools
             _unsmoothAngle = Math.Max(Global.AppSettings.LevelEditor.UnsmoothAngle, 1);
             _unsmoothLength = Math.Max(Global.AppSettings.LevelEditor.UnsmoothLength, 0.1);
             UpdateHelp();
-            Renderer.RedrawScene();
         }
 
         public void ExtraRendering()
@@ -170,7 +160,6 @@ namespace Elmanager.EditorTools
                         LevEditor.UpdateSelectionInfo();
                         foreach (Polygon x in _smoothPolys)
                             x.UpdateDecomposition();
-                        Renderer.RedrawScene();
                     }
                     else if (nearestVertexIndex >= -1)
                     {
@@ -204,7 +193,6 @@ namespace Elmanager.EditorTools
                 }
                 else
                     ChangeToDefaultCursorIfHand();
-                Renderer.RedrawScene();
             }
             else
                 ChangeToDefaultCursorIfHand();
@@ -213,7 +201,6 @@ namespace Elmanager.EditorTools
         public void MouseOutOfEditor()
         {
             ResetHighlight();
-            Renderer.RedrawScene();
         }
 
         public void MouseUp(MouseEventArgs mouseData)
@@ -250,7 +237,6 @@ namespace Elmanager.EditorTools
             if (!Smoothing) return;
             Smoothing = false;
             ResetHighlight();
-            Renderer.RedrawScene();
         }
 
         private void UpdatePolygonSmooth()
@@ -271,7 +257,8 @@ namespace Elmanager.EditorTools
                     ? _currentPolygon.Unsmoothen(_unsmoothAngle, _unsmoothLength, false)
                     : _currentPolygon.Smoothen(_smoothSteps, _smoothVertexOffset/100.0, false));
             }
-            Renderer.RedrawScene();
         }
+
+        public override bool Busy => Smoothing;
     }
 }

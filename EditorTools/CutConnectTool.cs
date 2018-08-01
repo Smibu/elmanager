@@ -9,26 +9,16 @@ namespace Elmanager.EditorTools
     internal class CutConnectTool : ToolBase, IEditorTool
     {
         private Vector _start;
-        private bool _startSelected;
 
         internal CutConnectTool(LevelEditor editor) : base(editor)
         {
         }
 
-        private bool StartSelected
-        {
-            get { return _startSelected; }
-            set
-            {
-                _startSelected = value;
-                _Busy = value;
-            }
-        }
+        private bool StartSelected { get; set; }
 
         public void Activate()
         {
             UpdateHelp();
-            Renderer.RedrawScene();
         }
 
         public void ExtraRendering()
@@ -68,7 +58,6 @@ namespace Elmanager.EditorTools
                     StartSelected = false;
                     break;
             }
-            Renderer.RedrawScene();
             UpdateHelp();
         }
 
@@ -76,8 +65,6 @@ namespace Elmanager.EditorTools
         {
             CurrentPos = p;
             AdjustForGrid(CurrentPos);
-            if (StartSelected)
-                Renderer.RedrawScene();
         }
 
         public void MouseOutOfEditor()
@@ -140,5 +127,7 @@ namespace Elmanager.EditorTools
             }
             return anythingConnected;
         }
+
+        public override bool Busy => StartSelected;
     }
 }

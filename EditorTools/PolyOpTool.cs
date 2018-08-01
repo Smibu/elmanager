@@ -14,27 +14,17 @@ namespace Elmanager.EditorTools
     {
         private PolygonOperationType _currentOpType = PolygonOperationType.Union;
         private Polygon _firstPolygon;
-        private bool _firstSelected;
 
         internal PolyOpTool(LevelEditor editor)
             : base(editor)
         {
         }
 
-        private bool FirstSelected
-        {
-            get { return _firstSelected; }
-            set
-            {
-                _firstSelected = value;
-                _Busy = value;
-            }
-        }
+        private bool FirstSelected { get; set; }
 
         public void Activate()
         {
             UpdateHelp();
-            Renderer.RedrawScene();
         }
 
         public void UpdateHelp()
@@ -114,7 +104,6 @@ namespace Elmanager.EditorTools
                                     Utils.ShowError(e.Message);
                                 }
                                 ResetPolygonMarks();
-                                Renderer.RedrawScene();
                                 UpdateHelp();
                             }
                         }
@@ -126,7 +115,6 @@ namespace Elmanager.EditorTools
                             FirstSelected = true;
                             _firstPolygon = NearestPolygon;
                             _firstPolygon.Mark = PolygonMark.Selected;
-                            Renderer.RedrawScene();
                             UpdateHelp();
                         }
                     }
@@ -136,7 +124,6 @@ namespace Elmanager.EditorTools
                     {
                         FirstSelected = false;
                         ResetPolygonMarks();
-                        Renderer.RedrawScene();
                         UpdateHelp();
                     }
                     break;
@@ -156,20 +143,18 @@ namespace Elmanager.EditorTools
             }
             else
                 ChangeToDefaultCursorIfHand();
-            Renderer.RedrawScene();
         }
 
         public void MouseOutOfEditor()
         {
             ResetHighlight();
-            Renderer.RedrawScene();
         }
 
         public void MouseUp(MouseEventArgs mouseData)
         {
         }
 
-        public static void PolyOpSelected(PolygonOperationType opType, List<Polygon> polygons, Action ifChanged = null)
+        public static bool PolyOpSelected(PolygonOperationType opType, List<Polygon> polygons)
         {
             var polys = polygons.GetSelectedPolygons().ToList();
             Func<IGeometry, IGeometry, IGeometry> symDiff = (g, p) => p.SymmetricDifference(g);
@@ -184,7 +169,7 @@ namespace Elmanager.EditorTools
             
             if (!touching.Any())
             {
-                return;
+                return false;
             }
             var others = touching.ToIPolygons().Aggregate(symDiff);
             var remaining = polygons.Where(p =>
@@ -222,7 +207,7 @@ namespace Elmanager.EditorTools
             catch (TopologyException)
             {
                 Utils.ShowError("Could not perform this operation. Make sure the polygons don't have self-intersections.");
-                return;
+                return false;
             }
 
             touching.ForEach(p => polygons.Remove(p));
@@ -245,7 +230,10 @@ namespace Elmanager.EditorTools
                 polygons.AddRange(polys);
                 polygons.AddRange(touching);
             }
-            ifChanged?.Invoke();
+
+            return true;
         }
+
+        public override bool Busy => FirstSelected;
     }
 }

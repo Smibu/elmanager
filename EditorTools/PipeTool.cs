@@ -15,7 +15,6 @@ namespace Elmanager.EditorTools
         private int _appleAmount = 20;
         private double _appleDistance = 3.0;
         private List<Level.Object> _apples;
-        private bool _creatingPipe;
         private Polygon _pipe;
         private PipeMode _pipeMode = PipeMode.NoApples;
         private double _pipeRadius = 1.0;
@@ -34,22 +33,13 @@ namespace Elmanager.EditorTools
         {
         }
 
-        private bool CreatingPipe
-        {
-            get { return _creatingPipe; }
-            set
-            {
-                _creatingPipe = value;
-                _Busy = value;
-            }
-        }
+        private bool CreatingPipe => _pipeline != null;
 
         public void Activate()
         {
             _pipeRadius = Global.AppSettings.LevelEditor.PipeRadius;
             UpdateHelp();
             Renderer.AdditionalPolys = ExtraPolys;
-            Renderer.RedrawScene();
         }
 
         public void ExtraRendering()
@@ -72,7 +62,7 @@ namespace Elmanager.EditorTools
 
         public void InActivate()
         {
-            CreatingPipe = false;
+            _pipeline = null;
             Renderer.AdditionalPolys = null;
             Global.AppSettings.LevelEditor.PipeRadius = _pipeRadius;
         }
@@ -146,7 +136,6 @@ namespace Elmanager.EditorTools
             if (CreatingPipe)
             {
                 UpdatePipe(_pipeline);
-                Renderer.RedrawScene();
             }
             UpdateHelp();
         }
@@ -160,7 +149,6 @@ namespace Elmanager.EditorTools
                         _pipeline.Add(CurrentPos);
                     else
                     {
-                        CreatingPipe = true;
                         _pipeline = new Polygon();
                         _apples = new List<Level.Object>();
                         _pipeline.Add(CurrentPos);
@@ -172,17 +160,22 @@ namespace Elmanager.EditorTools
                     {
                         _pipeline.RemoveLastVertex();
                         UpdatePipe(_pipeline);
-                        CreatingPipe = false;
                         if (_pipeline.Count > 1)
                         {
                             Lev.Polygons.Add(_pipe);
                             Lev.Objects.AddRange(_apples);
                             LevEditor.Modified = true;
                         }
-                        Renderer.RedrawScene();
+                        _pipeline = null;
                     }
                     break;
             }
+
+            if (CreatingPipe)
+            {
+                UpdatePipe(_pipeline);
+            }
+            
             UpdateHelp();
         }
 
@@ -194,7 +187,6 @@ namespace Elmanager.EditorTools
             {
                 _pipeline.Vertices[_pipeline.Vertices.Count - 1] = CurrentPos;
                 UpdatePipe(_pipeline);
-                Renderer.RedrawScene();
             }
         }
 
@@ -296,5 +288,7 @@ namespace Elmanager.EditorTools
                     break;
             }
         }
+
+        public override bool Busy => CreatingPipe;
     }
 }

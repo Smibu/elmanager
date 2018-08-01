@@ -9,7 +9,6 @@ namespace Elmanager.EditorTools
 {
     internal class EllipseTool : ToolBase, IEditorTool
     {
-        private bool _creatingEllipse;
         private Polygon _ellipse;
         private Vector _ellipseCenter;
         private int _ellipseSteps = 10;
@@ -19,22 +18,15 @@ namespace Elmanager.EditorTools
         {
         }
 
-        private bool CreatingEllipse
-        {
-            get { return _creatingEllipse; }
-            set
-            {
-                _creatingEllipse = value;
-                _Busy = value;
-            }
-        }
+        public override bool Busy => CreatingEllipse;
+
+        private bool CreatingEllipse => (object)_ellipseCenter != null;
 
         public void Activate()
         {
             _ellipseSteps = Math.Max(Global.AppSettings.LevelEditor.EllipseSteps, 3);
             UpdateHelp();
             Renderer.AdditionalPolys = ExtraPolys;
-            Renderer.RedrawScene();
         }
 
         public void ExtraRendering()
@@ -48,8 +40,7 @@ namespace Elmanager.EditorTools
         {
             Global.AppSettings.LevelEditor.EllipseSteps = _ellipseSteps;
             if (!CreatingEllipse) return;
-            CreatingEllipse = false;
-            Renderer.RedrawScene();
+            _ellipseCenter = null;
         }
 
         public void KeyDown(KeyEventArgs key)
@@ -79,22 +70,20 @@ namespace Elmanager.EditorTools
                 case MouseButtons.Left:
                     if (CreatingEllipse)
                     {
-                        CreatingEllipse = false;
+                        _ellipseCenter = null;
                         Lev.Polygons.Add(_ellipse);
                         LevEditor.Modified = true;
-                        Renderer.RedrawScene();
                     }
                     else
                     {
                         _ellipseCenter = CurrentPos;
-                        CreatingEllipse = true;
+                        UpdateEllipse();
                     }
                     break;
                 case MouseButtons.Right:
                     if (CreatingEllipse)
                     {
-                        CreatingEllipse = false;
-                        Renderer.RedrawScene();
+                        _ellipseCenter = null;
                     }
                     break;
             }
@@ -143,7 +132,6 @@ namespace Elmanager.EditorTools
             else
                 _ellipse = Polygon.Ellipse(_ellipseCenter, CurrentPos.X - _ellipseCenter.X,
                                            CurrentPos.Y - _ellipseCenter.Y, 0, _ellipseSteps);
-            Renderer.RedrawScene();
         }
     }
 }

@@ -10,7 +10,6 @@ namespace Elmanager.EditorTools
     {
         private const double GrassHeight = 1.0;
         private const double MaximumGrassAngle = 60.0;
-        private bool _autoGrassPolygonSelected;
         private Polygon _currentPolygon;
         private List<Polygon> _currentAutograssPolys;
 
@@ -19,20 +18,11 @@ namespace Elmanager.EditorTools
         {
         }
 
-        private bool AutoGrassPolygonSelected
-        {
-            get { return _autoGrassPolygonSelected; }
-            set
-            {
-                _autoGrassPolygonSelected = value;
-                _Busy = value;
-            }
-        }
+        private bool AutoGrassPolygonSelected { get; set; }
 
         public void Activate()
         {
             UpdateHelp();
-            Renderer.RedrawScene();
         }
 
         public void CancelAutoGrass()
@@ -40,12 +30,11 @@ namespace Elmanager.EditorTools
             if (!AutoGrassPolygonSelected) return;
             AutoGrassPolygonSelected = false;
             ResetPolygonMarks();
-            Renderer.RedrawScene();
         }
 
         public void ExtraRendering()
         {
-            if (_autoGrassPolygonSelected)
+            if (AutoGrassPolygonSelected)
             {
                 _currentAutograssPolys.ForEach(poly => Renderer.DrawLineStrip(poly, Color.Red));
             }
@@ -78,9 +67,7 @@ namespace Elmanager.EditorTools
                 {
                     _currentAutograssPolys = AutoGrass(_currentPolygon);
                     UpdateHelp();
-                    Renderer.RedrawScene();
                 }
-                
             }
         }
 
@@ -111,7 +98,6 @@ namespace Elmanager.EditorTools
                     break;
             }
             UpdateHelp();
-            Renderer.RedrawScene();
         }
 
         public void MouseMove(Vector p)
@@ -128,7 +114,6 @@ namespace Elmanager.EditorTools
                 }
                 else
                     ChangeToDefaultCursorIfHand();
-                Renderer.RedrawScene();
             }
             else
                 ChangeToDefaultCursorIfHand();
@@ -138,7 +123,6 @@ namespace Elmanager.EditorTools
         {
             if (AutoGrassPolygonSelected) return;
             ResetHighlight();
-            Renderer.RedrawScene();
         }
 
         public void MouseUp(MouseEventArgs mouseData)
@@ -324,5 +308,7 @@ namespace Elmanager.EditorTools
             }
             return grassPolys;
         }
+
+        public override bool Busy => AutoGrassPolygonSelected;
     }
 }
