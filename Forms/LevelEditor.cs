@@ -1120,7 +1120,8 @@ namespace Elmanager.Forms
             topologyList.Text = "";
             _errorPoints.Clear();
             Renderer.UpdateGroundAndSky(Global.AppSettings.LevelEditor.RenderingSettings.DefaultGroundAndSky);
-            Renderer.RedrawScene();
+            CurrentTool.InActivate();
+            ActivateCurrentAndRedraw();
             UpdateLabels();
             SetModified(_savedIndex != _historyIndex, false);
         }
