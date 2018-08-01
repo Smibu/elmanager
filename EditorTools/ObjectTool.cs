@@ -17,7 +17,7 @@ namespace Elmanager.EditorTools
         public void Activate()
         {
             UpdateHelp();
-            CurrentPos = new Vector(0, 0);
+            CurrentPos = CurrentPos ?? new Vector(0, 0);
         }
 
         public void ExtraRendering()
