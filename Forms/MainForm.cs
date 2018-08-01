@@ -63,7 +63,7 @@ namespace Elmanager.Forms
 
         private void linkLabel2_LinkClicked(object sender, LinkLabelLinkClickedEventArgs e)
         {
-            Process.Start("http://radimrehurek.com/");
+            Process.Start("https://radimrehurek.com/");
         }
 
         private void levelManagerButton_Click(object sender, EventArgs e)

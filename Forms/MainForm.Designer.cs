@@ -159,7 +159,7 @@
             this.linkLabel2.TabIndex = 6;
             this.linkLabel2.TabStop = true;
             this.linkLabel2.Text = "Vectrast: Radim Řehůřek";
-            this.toolTip1.SetToolTip(this.linkLabel2, "http://radimrehurek.com/");
+            this.toolTip1.SetToolTip(this.linkLabel2, "https://radimrehurek.com/");
             this.linkLabel2.UseCompatibleTextRendering = true;
             this.linkLabel2.LinkClicked += new System.Windows.Forms.LinkLabelLinkClickedEventHandler(this.linkLabel2_LinkClicked);
             // 
