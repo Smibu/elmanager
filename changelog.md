@@ -1,5 +1,12 @@
 # Elmanager changelog
 
+## 1.8.2018
+* SLE: Levels without flowers are now allowed but they must have at least one object to pass topology check.
+* SLE: Bugfix: Topology error message about too many vertices was sometimes inaccurate.
+* SLE: Bugfix: Select tool didn't always prefer selected elements.
+* SLE: Bugfix: Saving level after changing filename reverted back to old filename.
+* SLE: Bugfix: Crosshair did not work with some tools.
+
 ## 5.1.2018
 * SLE: Improved Picture tool usability.
 * SLE: Added support for high DPI monitors.
