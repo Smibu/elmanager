@@ -7,7 +7,6 @@ namespace Elmanager
         public LevelException(string message)
             : base(message)
         {
-            
         }
     }
 }

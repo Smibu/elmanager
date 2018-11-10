@@ -71,7 +71,7 @@ namespace Elmanager.Forms
 
         internal int IterationCount => iterationsTextBox.Value;
 
-        internal int MinHeight => (int)((AutoTextureMode ? 293 : 185) * _dpiY);
+        internal int MinHeight => (int) ((AutoTextureMode ? 293 : 185) * _dpiY);
 
         internal bool AllowMultiple { get; set; }
 
@@ -95,8 +95,10 @@ namespace Elmanager.Forms
             }
         }
 
-        internal bool AnyMultipleSelected => MultipleClippingSelected || MultipleDistanceSelected || (MultipleMaskSelected && TextureSelected) ||
-                                             (MultiplePicturesSelected && !TextureSelected) || (MultipleTexturesSelected && TextureSelected);
+        internal bool AnyMultipleSelected => MultipleClippingSelected || MultipleDistanceSelected ||
+                                             (MultipleMaskSelected && TextureSelected) ||
+                                             (MultiplePicturesSelected && !TextureSelected) ||
+                                             (MultipleTexturesSelected && TextureSelected);
 
         private void UpdatePictureLists()
         {
@@ -128,16 +130,19 @@ namespace Elmanager.Forms
                         break;
                 }
             }
-            foreach (var c in new[] { MaskComboBox, PictureComboBox, TextureComboBox, ClippingComboBox })
+
+            foreach (var c in new[] {MaskComboBox, PictureComboBox, TextureComboBox, ClippingComboBox})
             {
                 c.Items.Add(MultipleValues);
             }
+
             if (MaskItemCount > 1)
                 MaskComboBox.SelectedIndex = 1;
             else
             {
                 MaskComboBox.Enabled = false;
             }
+
             if (PictureItemCount > 1)
             {
                 PictureComboBox.SelectedIndex = 1;
@@ -145,6 +150,7 @@ namespace Elmanager.Forms
             }
             else
                 PictureButton.Enabled = false;
+
             if (TextureItemCount > 1)
             {
                 TextureComboBox.SelectedIndex = 1;
@@ -152,6 +158,7 @@ namespace Elmanager.Forms
             }
             else
                 TextureButton.Enabled = false;
+
             OKButton.Enabled = PictureButton.Enabled || TextureButton.Enabled;
             DistanceBox.Enabled = OKButton.Enabled;
             ClippingComboBox.Enabled = OKButton.Enabled;
@@ -167,6 +174,7 @@ namespace Elmanager.Forms
             {
                 return false;
             }
+
             return c.SelectedItem.ToString() == MultipleValues;
         }
 
@@ -176,7 +184,8 @@ namespace Elmanager.Forms
             {
                 PictureButton.Checked = true;
                 PictureComboBox.SelectedItem = picture.Name;
-            }else
+            }
+            else
             {
                 TextureButton.Checked = true;
                 TextureComboBox.SelectedItem = picture.TextureName;
@@ -192,12 +201,16 @@ namespace Elmanager.Forms
             if (pictures.TrueForAll(p => p.IsPicture))
             {
                 PictureButton.Checked = true;
-                PictureComboBox.SelectedItem = pictures.TrueForAll(p => p.Name == pictures[0].Name) ? pictures[0].Name : MultipleValues;
+                PictureComboBox.SelectedItem = pictures.TrueForAll(p => p.Name == pictures[0].Name)
+                    ? pictures[0].Name
+                    : MultipleValues;
             }
             else if (pictures.TrueForAll(p => !p.IsPicture))
             {
                 TextureButton.Checked = true;
-                TextureComboBox.SelectedItem = pictures.TrueForAll(p => p.TextureName == pictures[0].TextureName) ? pictures[0].TextureName : MultipleValues;
+                TextureComboBox.SelectedItem = pictures.TrueForAll(p => p.TextureName == pictures[0].TextureName)
+                    ? pictures[0].TextureName
+                    : MultipleValues;
 
                 if (pictures.TrueForAll(p => p.Name == pictures[0].Name))
                 {
@@ -217,11 +230,13 @@ namespace Elmanager.Forms
                 TextureButton.Checked = false;
             }
 
-            DistanceBox.Text = pictures.TrueForAll(p => p.Distance == pictures[0].Distance) ? pictures[0].Distance.ToString() : MultipleValues;
+            DistanceBox.Text = pictures.TrueForAll(p => p.Distance == pictures[0].Distance)
+                ? pictures[0].Distance.ToString()
+                : MultipleValues;
 
             if (pictures.TrueForAll(p => p.Clipping == pictures[0].Clipping))
             {
-                ClippingComboBox.SelectedIndex = (int)(pictures[0].Clipping);
+                ClippingComboBox.SelectedIndex = (int) (pictures[0].Clipping);
             }
             else
             {
@@ -238,6 +253,7 @@ namespace Elmanager.Forms
                 {
                     SetDefaultDistanceAndClipping();
                 }
+
                 UpdatePicture(selectedPicture.Bmp);
             }
         }
@@ -263,6 +279,7 @@ namespace Elmanager.Forms
                 {
                     SetDefaultDistanceAndClipping();
                 }
+
                 UpdatePicture(selectedTexture.Bmp);
             }
         }
@@ -293,7 +310,8 @@ namespace Elmanager.Forms
             ImageBox.Image = bmp;
             ImageBox.Width = bmp.Width;
             ImageBox.Height = bmp.Height;
-            SetClientSizeCore(ImageBox.Location.X + bmp.Width + 5, Math.Max(ImageBox.Location.Y + bmp.Height, MinHeight) + 5);
+            SetClientSizeCore(ImageBox.Location.X + bmp.Width + 5,
+                Math.Max(ImageBox.Location.Y + bmp.Height, MinHeight) + 5);
         }
 
         private void PreventClose(object sender, CancelEventArgs e)
@@ -320,17 +338,20 @@ namespace Elmanager.Forms
                         Utils.ShowError("You have to select at least one mask.");
                         return;
                     }
+
                     if (IterationCount <= 0)
                     {
                         Utils.ShowError("Iteration count must be at least 1.");
                         return;
                     }
+
                     if (MinCoverPercentage <= 0 || MinCoverPercentage > 100)
                     {
                         Utils.ShowError("Min cover % must be greater than 0 and less than or equal to 100.");
                         return;
                     }
                 }
+
                 TextureSelected = TextureButton.Checked;
                 if (!AllowMultiple)
                 {
@@ -339,6 +360,7 @@ namespace Elmanager.Forms
                         Utils.ShowError("You cannot select multiple values at this point.");
                         return;
                     }
+
                     try
                     {
                         Distance = int.Parse(DistanceBox.Text);
@@ -364,18 +386,22 @@ namespace Elmanager.Forms
                     {
                         Picture = _currentLgr.ImageFromName(PictureComboBox.SelectedItem.ToString());
                     }
+
                     if (!MultipleTexturesSelected)
                     {
                         Texture = _currentLgr.ImageFromName(TextureComboBox.SelectedItem.ToString());
                     }
+
                     if (!MultipleMaskSelected)
                     {
                         Mask = _currentLgr.ImageFromName(MaskComboBox.SelectedItem.ToString());
                     }
+
                     if (!MultipleClippingSelected)
                     {
-                        Clipping = (Level.ClippingType)ClippingComboBox.SelectedIndex;
+                        Clipping = (Level.ClippingType) ClippingComboBox.SelectedIndex;
                     }
+
                     if (!MultipleDistanceSelected)
                     {
                         try
@@ -388,9 +414,9 @@ namespace Elmanager.Forms
                             return;
                         }
                     }
+
                     CloseAndAccept(true);
                 }
-                
             }
             else
             {
@@ -437,7 +463,7 @@ namespace Elmanager.Forms
             if (element != null)
             {
                 DistanceBox.Text = element.Distance.ToString();
-                ClippingComboBox.SelectedIndex = (int)element.ClippingType;
+                ClippingComboBox.SelectedIndex = (int) element.ClippingType;
             }
         }
     }

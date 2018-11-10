@@ -47,13 +47,13 @@ namespace Elmanager.EditorTools
 
                     if (_currentPicture != null)
                     {
-                        
                         _currentPicture = _currentPicture.Clone();
                         Lev.Pictures.Add(_currentPicture);
                         LevEditor.Modified = true;
                     }
                     else
                         OpenDialog();
+
                     break;
                 case MouseButtons.Right:
                     OpenDialog();
@@ -106,16 +106,17 @@ namespace Elmanager.EditorTools
                 if (LevEditor.PicForm.TextureSelected)
                 {
                     _currentPicture = new Level.Picture(LevEditor.PicForm.Clipping, LevEditor.PicForm.Distance,
-                                                        CurrentPos,
-                                                        Renderer.DrawableImageFromName(LevEditor.PicForm.Texture.Name),
-                                                        Renderer.DrawableImageFromName(LevEditor.PicForm.Mask.Name));
+                        CurrentPos,
+                        Renderer.DrawableImageFromName(LevEditor.PicForm.Texture.Name),
+                        Renderer.DrawableImageFromName(LevEditor.PicForm.Mask.Name));
                 }
                 else
                 {
                     _currentPicture = new Level.Picture(Renderer.DrawableImageFromName(LevEditor.PicForm.Picture.Name),
-                                                        CurrentPos, LevEditor.PicForm.Distance,
-                                                        LevEditor.PicForm.Clipping);
+                        CurrentPos, LevEditor.PicForm.Distance,
+                        LevEditor.PicForm.Clipping);
                 }
+
                 AddCurrent();
             }
         }

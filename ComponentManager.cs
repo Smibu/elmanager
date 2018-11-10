@@ -14,10 +14,10 @@ namespace Elmanager
         internal static void LaunchLevelEditor(string levPath = null)
         {
             StartThread(() =>
-                            {
-                                LevelEditor le = levPath != null ? new LevelEditor(levPath) : new LevelEditor();
-                                AddAndRun(le);
-                            });
+            {
+                LevelEditor le = levPath != null ? new LevelEditor(levPath) : new LevelEditor();
+                AddAndRun(le);
+            });
         }
 
         internal static void LaunchMainForm()
@@ -33,10 +33,10 @@ namespace Elmanager
         internal static void LaunchReplayViewer(Replay replay)
         {
             StartThread(() =>
-                            {
-                                ReplayViewer rv = new ReplayViewer(replay);
-                                AddAndRun(rv);
-                            });
+            {
+                ReplayViewer rv = new ReplayViewer(replay);
+                AddAndRun(rv);
+            });
         }
 
         internal static void ShowConfiguration(int defaultTabIndex = 0)
@@ -78,6 +78,7 @@ namespace Elmanager
             {
                 Global.AppSettings.Save();
             }
+
             _threads.Remove(Thread.CurrentThread);
         }
 
@@ -93,10 +94,7 @@ namespace Elmanager
         {
             LevelManager.My.MySettings.Default.LevelDirectory = Global.AppSettings.General.LevelDirectory;
             LevelManager.My.MySettings.Default.ReplayDirectory = Global.AppSettings.General.ReplayDirectory;
-            StartThread(() =>
-            {
-                AddAndRun(new LevelManager.MainForm());
-            });
+            StartThread(() => { AddAndRun(new LevelManager.MainForm()); });
         }
     }
 }

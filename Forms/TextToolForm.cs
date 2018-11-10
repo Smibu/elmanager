@@ -39,15 +39,15 @@ namespace Elmanager.Forms
                 Font = _font,
                 Text = textBox.Text,
                 Smoothness = Math.Pow(1.1, -smoothnessBar.Value),
-                LineHeight = lineHeightBar.Value/LineHeightFactor,
+                LineHeight = lineHeightBar.Value / LineHeightFactor,
                 FontStyleName = _fontStyleName
             };
             set
             {
                 _font = value.Font;
                 textBox.Text = value.Text;
-                smoothnessBar.Value = (int) Math.Round(Math.Log(1/value.Smoothness)/Math.Log(1.1));
-                lineHeightBar.Value = (int) Math.Round(value.LineHeight*LineHeightFactor);
+                smoothnessBar.Value = (int) Math.Round(Math.Log(1 / value.Smoothness) / Math.Log(1.1));
+                lineHeightBar.Value = (int) Math.Round(value.LineHeight * LineHeightFactor);
                 EnteredTextChanged(Result);
             }
         }
@@ -85,6 +85,7 @@ namespace Elmanager.Forms
                 _font = dialog.Font;
                 _fontStyleName = dialog.FontStyleName;
             }
+
             EnteredTextChanged(Result);
         }
 

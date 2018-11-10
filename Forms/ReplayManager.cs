@@ -28,14 +28,15 @@ namespace Elmanager.Forms
         internal ReplayManager()
         {
             InitializeComponent();
-            MemberInfo[] replayMembers = typeof (Replay).GetMembers(BindingFlags.Public | BindingFlags.Instance);
+            MemberInfo[] replayMembers = typeof(Replay).GetMembers(BindingFlags.Public | BindingFlags.Instance);
             for (int i = 0; i <= 8; i++)
             {
                 RList.GetColumn(i).AspectName = replayMembers[i + 6].Name;
                 RList.GetColumn(i).Text =
                     ((DescriptionAttribute)
-                     replayMembers[i + 6].GetCustomAttributes(typeof (DescriptionAttribute), false)[0]).Description;
+                        replayMembers[i + 6].GetCustomAttributes(typeof(DescriptionAttribute), false)[0]).Description;
             }
+
             RList.GetColumn(0).AspectToStringConverter = GetFileNameWithoutExtension;
             RList.GetColumn(5).AspectToStringConverter =
                 Utils.GetPossiblyInternal;
@@ -52,10 +53,12 @@ namespace Elmanager.Forms
                 RList.CellToolTip.ReshowDelay = 0;
                 RList.CellToolTip.Title = "Details";
             }
+
             if (Global.AppSettings.ReplayManager.ReplayListState != null)
             {
                 RList.RestoreState(Global.AppSettings.ReplayManager.ReplayListState);
             }
+
             PatternBox.Text = Global.AppSettings.ReplayManager.SearchPattern;
             Location = Global.AppSettings.ReplayManager.Location;
             Size = Global.AppSettings.ReplayManager.Size;
@@ -79,6 +82,7 @@ namespace Elmanager.Forms
                     x++;
                 T = char.ConvertFromUtf32(x);
             }
+
             try
             {
                 string fileName = newName + T;
@@ -115,6 +119,7 @@ namespace Elmanager.Forms
             {
                 replayFileMatcher = new Regex(string.Empty, RegexOptions.IgnoreCase);
             }
+
             return replays.Where(x => replayFileMatcher.IsMatch(Path.GetFileNameWithoutExtension(x))).ToArray();
         }
 
@@ -158,6 +163,7 @@ namespace Elmanager.Forms
                 if (newName != null)
                     e.Control.Text = newName;
             }
+
             _cellEditing = false;
         }
 
@@ -180,6 +186,7 @@ namespace Elmanager.Forms
                 Utils.ShowError("At least two replays must be selected!");
                 return;
             }
+
             if (!IsDiffLevelOrMulti())
             {
                 var cf = new CompareForm(GetPropertiesOfSelected());
@@ -197,15 +204,16 @@ namespace Elmanager.Forms
                 Utils.ShowError(NoReplaysSelected);
                 return;
             }
+
             if (!_cellEditing &&
                 (!Global.AppSettings.ReplayManager.ConfirmDelete ||
                  MessageBox.Show("Are you sure you want to delete the selected replays?", "Warning",
-                                 MessageBoxButtons.YesNo, MessageBoxIcon.Question, MessageBoxDefaultButton.Button1,
-                                 0, false) == DialogResult.Yes))
+                     MessageBoxButtons.YesNo, MessageBoxIcon.Question, MessageBoxDefaultButton.Button1,
+                     0, false) == DialogResult.Yes))
             {
                 RecycleOption recycleOpt = Global.AppSettings.ReplayManager.DelToRecycle
-                                               ? RecycleOption.SendToRecycleBin
-                                               : RecycleOption.DeletePermanently;
+                    ? RecycleOption.SendToRecycleBin
+                    : RecycleOption.DeletePermanently;
                 ToolStripProgressBar1.Maximum = RList.SelectedObjects.Count;
                 ToolStripProgressBar1.Value = 0;
                 foreach (Replay x in RList.SelectedObjects)
@@ -221,6 +229,7 @@ namespace Elmanager.Forms
                     {
                     }
                 }
+
                 RemoveReplays();
                 statusLabel.Text = "Ready";
                 ToolStripProgressBar1.Value = 0;
@@ -253,7 +262,7 @@ namespace Elmanager.Forms
             if (Utils.LevRecDirectoriesExist())
             {
                 string[] replayFiles = Directory.GetFiles(Global.AppSettings.General.ReplayDirectory, "*.rec",
-                                                          SearchOption.AllDirectories);
+                    SearchOption.AllDirectories);
                 replayFiles = GetMatches(replayFiles, "");
                 var replayFilesNoPaths = new string[replayFiles.Length];
                 RList.ClearObjects();
@@ -274,6 +283,7 @@ namespace Elmanager.Forms
                             RList.AddObject(dupRp);
                     }
                 }
+
                 statusLabel.Text = "Ready";
                 DisplaySelectionInfo();
             }
@@ -283,14 +293,14 @@ namespace Elmanager.Forms
 
         private void DuplicateReplaySearch(object sender, EventArgs e)
         {
-            var replayLengths = new int[] {};
+            var replayLengths = new int[] { };
             if (Utils.LevRecDirectoriesExist())
             {
                 RList.ClearObjects();
                 string[] replayFiles = Directory.GetFiles(Global.AppSettings.General.ReplayDirectory, "*.rec",
-                                                          Global.AppSettings.ReplayManager.SearchRecSubDirs
-                                                              ? SearchOption.AllDirectories
-                                                              : SearchOption.TopDirectoryOnly);
+                    Global.AppSettings.ReplayManager.SearchRecSubDirs
+                        ? SearchOption.AllDirectories
+                        : SearchOption.TopDirectoryOnly);
                 replayFiles = GetMatches(replayFiles, "");
                 statusLabel.Text = "Searching...";
                 Refresh();
@@ -311,6 +321,7 @@ namespace Elmanager.Forms
                             isDifferent = true;
                             break;
                         }
+
                         if (isDifferent) continue;
                         var dupRp = new Replay(replayFiles[i]);
                         if (!ReplayListContains(dupRp))
@@ -320,6 +331,7 @@ namespace Elmanager.Forms
                             RList.AddObject(dupRp);
                     }
                 }
+
                 DisplaySelectionInfo();
                 statusLabel.Text = "Ready";
             }
@@ -368,7 +380,8 @@ namespace Elmanager.Forms
         {
             var firstReplay = GetSelectedReplay();
             return
-                RList.SelectedObjects.Cast<Replay>().Any(x => x.IsMulti || !x.LevelFilename.CompareWith(firstReplay.LevelFilename));
+                RList.SelectedObjects.Cast<Replay>()
+                    .Any(x => x.IsMulti || !x.LevelFilename.CompareWith(firstReplay.LevelFilename));
         }
 
         private void K10XnetToolStripMenuItemClick(object sender, EventArgs e)
@@ -393,6 +406,7 @@ namespace Elmanager.Forms
                         "The selected replays must have the same level and they must be singleplayer replays.");
                     return;
                 }
+
                 byte[][] replays;
                 try
                 {
@@ -403,6 +417,7 @@ namespace Elmanager.Forms
                     Utils.ShowError(ex.Message);
                     return;
                 }
+
                 var newReplay = new byte[replays[0].Length + replays[1].Length];
                 Buffer.BlockCopy(replays[0], 0, newReplay, 0, replays[0].Length);
                 Buffer.BlockCopy(replays[1], 0, newReplay, replays[0].Length, replays[1].Length);
@@ -425,6 +440,7 @@ namespace Elmanager.Forms
                 Utils.ShowError(NoReplaysSelected);
                 return;
             }
+
             bool move = sender.Equals(MoveToToolStripMenuItem);
             FolderBrowserDialog1.Description = move ? "Move to..." : "Copy to...";
             if (FolderBrowserDialog1.ShowDialog() != DialogResult.OK) return;
@@ -435,12 +451,12 @@ namespace Elmanager.Forms
                     if (move)
                     {
                         FileSystem.MoveFile(replay.Path, FolderBrowserDialog1.SelectedPath + "\\" + replay.FileName,
-                                            true);
+                            true);
                         replay.Path = FolderBrowserDialog1.SelectedPath + "\\" + replay.FileName;
                     }
                     else
                         FileSystem.CopyFile(replay.Path, FolderBrowserDialog1.SelectedPath + "\\" + replay.FileName,
-                                            true);
+                            true);
                 }
                 catch (FileNotFoundException ex)
                 {
@@ -461,11 +477,13 @@ namespace Elmanager.Forms
                     {
                         _allLevelFiles = Utils.GetLevelFiles(true);
                     }
+
                     if (!selectedReplay.LevelExists)
                     {
                         Utils.ShowError("Level file doesn\'t exist!");
                         return;
                     }
+
                     int i;
                     for (i = 0; i < _allLevelFiles.Count; i++)
                         if (Path.GetFileName(_allLevelFiles[i]).CompareWith(levelFile))
@@ -495,6 +513,7 @@ namespace Elmanager.Forms
                     Utils.ShowError(ex.Message);
                     return;
                 }
+
                 if (!IsDiffLevel(rps))
                 {
                     if (rps[0].LevelExists)
@@ -514,8 +533,9 @@ namespace Elmanager.Forms
                         catch (FileFormatException ex)
                         {
                             Utils.ShowError("An error occurred when loading replay viewer. Exception text:" + "\r\n" +
-                                                ex.Message);
+                                            ex.Message);
                         }
+
                         Cursor = Cursors.Default;
                     }
                     else
@@ -528,7 +548,7 @@ namespace Elmanager.Forms
                 Utils.ShowError(NoReplaysSelected);
         }
 
-        private void RemoveReplays(object sender=null, EventArgs e=null)
+        private void RemoveReplays(object sender = null, EventArgs e = null)
         {
             if (RList.SelectedObjects.Count > 0)
             {
@@ -542,8 +562,10 @@ namespace Elmanager.Forms
                         {
                             index--;
                         }
+
                         RList.Items[index].Selected = true;
                     }
+
                     DisplaySelectionInfo();
                 }
             }
@@ -568,7 +590,7 @@ namespace Elmanager.Forms
             if (RList.SelectedObjects.Count > 0)
             {
                 var rForm = new RenameForm(RList.SelectedObjects, this)
-                                {Location = new Point(MousePosition.X, MousePosition.Y)};
+                    {Location = new Point(MousePosition.X, MousePosition.Y)};
                 rForm.ShowDialog();
             }
             else
@@ -593,6 +615,7 @@ namespace Elmanager.Forms
                     {
                         _currentViewer.SetReplays(selectedRp);
                     }
+
                     Cursor = Cursors.Default;
                 }
             }
@@ -639,6 +662,7 @@ namespace Elmanager.Forms
                         break;
                     }
                 }
+
                 //Get maximum text length for each column
                 var maxColTextLength = new int[columnOrder.Length];
                 for (int i = 0; i < columnOrder.Length; i++)
@@ -648,6 +672,7 @@ namespace Elmanager.Forms
                         if (maxColTextLength[i] < j.SubItems[columnOrder[i]].Text.Length)
                             maxColTextLength[i] = j.SubItems[columnOrder[i]].Text.Length;
                 }
+
                 for (int i = 0; i < columnOrder.Length; i++)
                     if (maxColTextLength[i] > 0)
                         file.Write(" - " + RList.Columns[columnOrder[i]].Text);
@@ -667,16 +692,18 @@ namespace Elmanager.Forms
                             for (int k = 0; k < columnWidth; k++)
                                 file.Write(' ');
                     }
+
                     file.WriteLine();
                     ToolStripProgressBar1.Value++;
                 }
+
                 file.WriteLine();
                 file.Write("Total time: ");
                 double totalTime = GetTotalTimeOfSelected();
                 file.Write(totalTime.ToTimeString().Substring(0,
-                                                              totalTime.ToTimeString().Length -
-                                                              Utils.BooleanToInteger(
-                                                                  !Global.AppSettings.ReplayManager.Decimal3Shown)));
+                    totalTime.ToTimeString().Length -
+                    Utils.BooleanToInteger(
+                        !Global.AppSettings.ReplayManager.Decimal3Shown)));
 
                 statusLabel.Text = "Ready";
                 ToolStripProgressBar1.Value = 0;
@@ -707,9 +734,10 @@ namespace Elmanager.Forms
                 _searchInProgress = false;
                 return;
             }
+
             string searchPattern = PatternBox.Text;
             string levelPattern = LevPatternBox.Text;
-            var replayFiles = new string[] {};
+            var replayFiles = new string[] { };
             var errorFiles = new List<string>();
             bool nonExistantReplaysFound = false;
             List<Replay> replayDataBaseMatches = null;
@@ -727,6 +755,7 @@ namespace Elmanager.Forms
                 searchForAllReplays = true;
                 searchForFastestReplays = false;
             }
+
             bool searchOnlyMissingLev = clickedButton.Equals(ReplaysWithoutLevFileButton);
             bool searchOnlyWrongLev = clickedButton.Equals(ReplaysIncorrectLevButton);
 
@@ -735,6 +764,7 @@ namespace Elmanager.Forms
                 Utils.ShowError(Constants.RecDirNotFound);
                 return;
             }
+
             var p1Apples = new Bound<int>(TextBox1.ValueAsInt, TextBox14.ValueAsInt);
             var p2Apples = new Bound<int>(TextBox3.ValueAsInt, TextBox16.ValueAsInt);
             var p1Turns = new Bound<int>(TextBox2.ValueAsInt, TextBox23.ValueAsInt);
@@ -751,7 +781,7 @@ namespace Elmanager.Forms
             try
             {
                 time = new Bound<double>(Utils.StringToTime(TimeMinBox.Text),
-                                         Utils.StringToTime(TimeMaxBox.Text));
+                    Utils.StringToTime(TimeMaxBox.Text));
             }
             catch (Exception)
             {
@@ -770,57 +800,60 @@ namespace Elmanager.Forms
             {
                 levFilenameMatcher = new Regex(String.Empty, RegexOptions.IgnoreCase);
             }
+
             var searchParams = new SearchParameters
-                                   {
-                                       InternalRec = GetSearchParamFromOption(intExtSelect),
-                                       AcrossLev = GetSearchParamFromOption(elmaAcrossSelect),
-                                       Date = new Bound<DateTime>(minDateTime.Value, maxDateTime.Value),
-                                       Finished = GetSearchParamFromOption(finishedSelect),
-                                       LevExists = RSearchOption.Dontcare,
-                                       WrongLev = RSearchOption.Dontcare,
-                                       LevFilenameMatcher = levFilenameMatcher,
-                                       MultiPlayer = GetSearchParamFromOption(singleMultiSelect),
-                                       Size = size,
-                                       Time = time,
-                                       P1Bounds =
-                                           new SearchParameters.PlayerBounds
-                                               {
-                                                   Apples = p1Apples,
-                                                   GroundTouches = p1Gt,
-                                                   LeftVolts = p1Lv,
-                                                   RightVolts = p1Rv,
-                                                   SuperVolts = p1Sv,
-                                                   Turns = p1Turns
-                                               },
-                                       P2Bounds =
-                                           new SearchParameters.PlayerBounds
-                                               {
-                                                   Apples = p2Apples,
-                                                   GroundTouches = p2Gt,
-                                                   LeftVolts = p2Lv,
-                                                   RightVolts = p2Rv,
-                                                   SuperVolts = p2Sv,
-                                                   Turns = p2Turns
-                                               }
-                                   };
+            {
+                InternalRec = GetSearchParamFromOption(intExtSelect),
+                AcrossLev = GetSearchParamFromOption(elmaAcrossSelect),
+                Date = new Bound<DateTime>(minDateTime.Value, maxDateTime.Value),
+                Finished = GetSearchParamFromOption(finishedSelect),
+                LevExists = RSearchOption.Dontcare,
+                WrongLev = RSearchOption.Dontcare,
+                LevFilenameMatcher = levFilenameMatcher,
+                MultiPlayer = GetSearchParamFromOption(singleMultiSelect),
+                Size = size,
+                Time = time,
+                P1Bounds =
+                    new SearchParameters.PlayerBounds
+                    {
+                        Apples = p1Apples,
+                        GroundTouches = p1Gt,
+                        LeftVolts = p1Lv,
+                        RightVolts = p1Rv,
+                        SuperVolts = p1Sv,
+                        Turns = p1Turns
+                    },
+                P2Bounds =
+                    new SearchParameters.PlayerBounds
+                    {
+                        Apples = p2Apples,
+                        GroundTouches = p2Gt,
+                        LeftVolts = p2Lv,
+                        RightVolts = p2Rv,
+                        SuperVolts = p2Sv,
+                        Turns = p2Turns
+                    }
+            };
             if (searchOnlyMissingLev)
             {
                 searchParams.ResetOptions();
                 searchParams.LevExists = RSearchOption.False;
             }
+
             if (searchOnlyWrongLev)
             {
                 searchParams.ResetOptions();
                 searchParams.WrongLev = RSearchOption.True;
             }
+
             int i;
             int replayCount;
             if (!Global.AppSettings.ReplayManager.UseDataBase)
             {
                 replayFiles = Directory.GetFiles(Global.AppSettings.General.ReplayDirectory, "*.rec",
-                                                 Global.AppSettings.ReplayManager.SearchRecSubDirs
-                                                     ? SearchOption.AllDirectories
-                                                     : SearchOption.TopDirectoryOnly);
+                    Global.AppSettings.ReplayManager.SearchRecSubDirs
+                        ? SearchOption.AllDirectories
+                        : SearchOption.TopDirectoryOnly);
                 if (!(searchOnlyMissingLev || searchOnlyWrongLev))
                     replayFiles = GetMatches(replayFiles, searchPattern);
                 replayCount = replayFiles.Length;
@@ -834,6 +867,7 @@ namespace Elmanager.Forms
                     if (!Utils.LoadDataBase())
                         return;
                 }
+
                 replayDataBaseMatches = new List<Replay>();
                 Regex replayFileMatcher;
                 try
@@ -844,11 +878,13 @@ namespace Elmanager.Forms
                 {
                     replayFileMatcher = new Regex(string.Empty, RegexOptions.IgnoreCase);
                 }
+
                 for (i = 0; i < Global.ReplayDataBase.Count; i++)
                     if (replayFileMatcher.IsMatch(Path.GetFileNameWithoutExtension(Global.ReplayDataBase[i].FileName)))
                         replayDataBaseMatches.Add(Global.ReplayDataBase[i]);
                 replayCount = replayDataBaseMatches.Count;
             }
+
             RList.ClearObjects();
             string oldButtonText = clickedButton.Text;
             _searchInProgress = true;
@@ -878,6 +914,7 @@ namespace Elmanager.Forms
                     errorFiles.Add(replayFiles[i]);
                     continue;
                 }
+
                 if (srp.IsNitro)
                 {
                     if (Global.AppSettings.ReplayManager.NitroReplays)
@@ -900,6 +937,7 @@ namespace Elmanager.Forms
                             match = true;
                             break;
                         }
+
                         if (!match)
                             recsByLevel.Add(new ReplaysByLevel(srp));
                     }
@@ -917,6 +955,7 @@ namespace Elmanager.Forms
                 if (!_searchInProgress)
                     break;
             }
+
             if (!searchForAllReplays)
             {
                 ToolStripProgressBar1.Maximum = recsByLevel.Count;
@@ -948,6 +987,7 @@ namespace Elmanager.Forms
                                 matchedReplay = z;
                         }
                     }
+
                     if (searchForFastestReplays || recsByLevel[i].Replays.Count > 1)
                         foundReplays.Add(matchedReplay);
                     statusLabel.Text = "Phase 2: " + foundReplays.Count + " replays";
@@ -957,6 +997,7 @@ namespace Elmanager.Forms
                         break;
                 }
             }
+
             RList.SetObjects(foundReplays);
             _oldText = "Ready";
             statusLabel.Text = _oldText;
@@ -972,6 +1013,7 @@ namespace Elmanager.Forms
                 var ef = new ErrorForm(errorFiles);
                 ef.ShowDialog();
             }
+
             if (nonExistantReplaysFound && Global.AppSettings.ReplayManager.WarnAboutOldDb)
                 Utils.ShowError(
                     "The replay database contains replays that have been deleted or moved. It is recommended to update the database.",

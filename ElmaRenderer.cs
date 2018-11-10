@@ -25,7 +25,7 @@ namespace Elmanager
         internal Action AfterDrawing;
         internal Lgr CurrentLgr;
         internal Action CustomRendering;
-        internal Color[] DrivingLineColors = new Color[] {};
+        internal Color[] DrivingLineColors = new Color[] { };
         internal Level Lev;
         internal bool Playing;
         internal List<int> VisiblePlayerIndices = new List<int>();
@@ -239,12 +239,13 @@ namespace Elmanager
                 int height = _viewPort[3];
                 snapShotBmp = new Bitmap(width, height);
                 BitmapData bmpData = snapShotBmp.LockBits(new Rectangle(0, 0, width, height), ImageLockMode.WriteOnly,
-                                                          PixelFormat.Format24bppRgb);
+                    PixelFormat.Format24bppRgb);
                 GL.ReadPixels(0, 0, width, height, OpenTK.Graphics.OpenGL.PixelFormat.Bgr, PixelType.UnsignedByte,
-                              bmpData.Scan0);
+                    bmpData.Scan0);
                 snapShotBmp.UnlockBits(bmpData);
                 snapShotBmp.RotateFlip(RotateFlipType.RotateNoneFlipY);
             }
+
             return snapShotBmp;
         }
 
@@ -269,7 +270,7 @@ namespace Elmanager
             GL.Begin(PrimitiveType.LineLoop);
             for (int i = 0; i <= accuracy; i++)
                 GL.Vertex2(x + Math.Cos(i * 360 / (double) accuracy * Math.PI / 180) * radius,
-                           y + Math.Sin(i * 360 / (double) accuracy * Math.PI / 180) * radius);
+                    y + Math.Sin(i * 360 / (double) accuracy * Math.PI / 180) * radius);
             GL.End();
         }
 
@@ -285,10 +286,10 @@ namespace Elmanager
             GL.Enable(EnableCap.AlphaTest);
             GL.Enable(EnableCap.DepthTest);
             DrawPlayer(leftWheelx + Level.GlobalBodyDifferenceFromLeftWheelX,
-                       leftWheely + Level.GlobalBodyDifferenceFromLeftWheelY, leftWheelx, leftWheely,
-                       leftWheelx + Level.RightWheelDifferenceFromLeftWheelX, leftWheely, 0, 0,
-                       leftWheelx + Level.HeadDifferenceFromLeftWheelX, leftWheely - Level.HeadDifferenceFromLeftWheelY,
-                       0, Direction.Left, 0, active, useGraphics);
+                leftWheely + Level.GlobalBodyDifferenceFromLeftWheelY, leftWheelx, leftWheely,
+                leftWheelx + Level.RightWheelDifferenceFromLeftWheelX, leftWheely, 0, 0,
+                leftWheelx + Level.HeadDifferenceFromLeftWheelX, leftWheely - Level.HeadDifferenceFromLeftWheelY,
+                0, Direction.Left, 0, active, useGraphics);
             GL.Scale(1, -1, 1);
         }
 
@@ -297,8 +298,8 @@ namespace Elmanager
             const double depth = ZFar - (ZFar - ZNear) * SkyDepth;
             GL.Begin(PrimitiveType.Triangles);
             foreach (Vector[] triangle in triangles)
-                foreach (Vector x in triangle)
-                    GL.Vertex3(x.X, x.Y, depth);
+            foreach (Vector x in triangle)
+                GL.Vertex3(x.X, x.Y, depth);
             GL.End();
         }
 
@@ -354,7 +355,7 @@ namespace Elmanager
         }
 
         internal void DrawPicture(int pic, double startx, double starty, double endx, double endy, double width,
-                                  double dist, bool mirror, double offset = 0.0)
+            double dist, bool mirror, double offset = 0.0)
         {
             double lx = endx - startx;
             double ly = endy - starty;
@@ -474,7 +475,9 @@ namespace Elmanager
             {
                 GL.Ortho(XMin, XMax, YMin, YMax, ZNear, ZFar);
             }
-            GL.Clear(ClearBufferMask.DepthBufferBit | ClearBufferMask.StencilBufferBit | ClearBufferMask.ColorBufferBit);
+
+            GL.Clear(ClearBufferMask.DepthBufferBit | ClearBufferMask.StencilBufferBit |
+                     ClearBufferMask.ColorBufferBit);
             GL.Scale(1.0, -1.0, 1.0);
             GL.Enable(EnableCap.StencilTest);
             GL.Disable(EnableCap.Texture2D);
@@ -524,7 +527,7 @@ namespace Elmanager
                         GL.TexCoord2(texminx + TextureZoomConst / gtW / ZoomLevel, texminy);
                         GL.Vertex3(_midX + TextureVertexConst, _midY - TextureVertexConst, depth);
                         GL.TexCoord2(texminx + TextureZoomConst / gtW / ZoomLevel,
-                                     texminy + TextureZoomConst / gtW * gtW / gtH / ZoomLevel);
+                            texminy + TextureZoomConst / gtW * gtW / gtH / ZoomLevel);
                         GL.Vertex3(_midX + TextureVertexConst, _midY + TextureVertexConst, depth);
                         GL.TexCoord2(texminx, texminy + TextureZoomConst / gtW * gtW / gtH / ZoomLevel);
                         GL.Vertex3(_midX - TextureVertexConst, _midY + TextureVertexConst, depth);
@@ -544,6 +547,7 @@ namespace Elmanager
                     GL.Enable(EnableCap.Texture2D);
                 }
             }
+
             GL.StencilFunc(StencilFunction.Equal, SkyStencil, StencilMask);
             if (_settings.SkyTextureEnabled && LgrGraphicsLoaded)
             {
@@ -557,7 +561,7 @@ namespace Elmanager
                     GL.TexCoord2(TextureCoordConst / _skyTexture.Width, 0);
                     GL.Vertex3(CenterX / 2 + TextureVertexConst, CenterY - TextureVertexConst, depth);
                     GL.TexCoord2(TextureCoordConst / _skyTexture.Width,
-                                 TextureCoordConst / _skyTexture.Width * _skyTexture.Width / _skyTexture.Height);
+                        TextureCoordConst / _skyTexture.Width * _skyTexture.Width / _skyTexture.Height);
                     GL.Vertex3(CenterX / 2 + TextureVertexConst, CenterY + TextureVertexConst, depth);
                     GL.TexCoord2(0, TextureCoordConst / _skyTexture.Width * _skyTexture.Width / _skyTexture.Height);
                     GL.Vertex3(CenterX / 2 - TextureVertexConst, CenterY + TextureVertexConst, depth);
@@ -565,25 +569,26 @@ namespace Elmanager
                 }
                 else
                 {
-                    double xdelta = CenterX /_skyTexture.Width;
+                    double xdelta = CenterX / _skyTexture.Width;
                     GL.PushMatrix();
                     GL.LoadIdentity();
                     GL.Ortho(0, 1, 0, 1, ZNear, ZFar);
                     GL.Begin(PrimitiveType.Quads);
                     GL.TexCoord2(xdelta, 0);
-                    GL.Vertex3(0,1,depth);
+                    GL.Vertex3(0, 1, depth);
                     GL.TexCoord2(2 + xdelta, 0);
-                    GL.Vertex3(1,1,depth);
+                    GL.Vertex3(1, 1, depth);
                     GL.TexCoord2(2 + xdelta,
-                                  2 / _aspectRatio);
-                    GL.Vertex3(1,0, depth);
+                        2 / _aspectRatio);
+                    GL.Vertex3(1, 0, depth);
                     GL.TexCoord2(xdelta,
-                                  2 / _aspectRatio);
-                    GL.Vertex3(0,0, depth);
+                        2 / _aspectRatio);
+                    GL.Vertex3(0, 0, depth);
                     GL.End();
                     GL.PopMatrix();
                 }
             }
+
             GL.Scale(1.0, -1.0, 1.0);
             GL.Enable(EnableCap.AlphaTest);
             if (LgrGraphicsLoaded)
@@ -609,10 +614,12 @@ namespace Elmanager
                                 GL.StencilFunc(StencilFunction.Equal, GroundStencil, StencilMask);
                                 break;
                         }
+
                         DrawPicture(picture.Id, picture.Position.X, picture.Position.Y, picture.Width, picture.Height,
                             (picture.Distance / 1000.0 * (ZFar - ZNear)) + ZNear);
                     }
                 }
+
                 foreach (var picture in Lev.Pictures)
                 {
                     DoPictureScissor(picture);
@@ -631,6 +638,7 @@ namespace Elmanager
                                 GL.StencilFunc(StencilFunction.Gequal, 5, StencilMask);
                                 break;
                         }
+
                         double depth = (picture.Distance / 1000.0 * (ZFar - ZNear)) + ZNear;
                         DrawPicture(picture.Id, picture.Position.X, picture.Position.Y, picture.Width, picture.Height,
                             depth + 0.001);
@@ -671,16 +679,19 @@ namespace Elmanager
                         }
                     }
                 }
+
                 GL.Disable(EnableCap.ScissorTest);
                 GL.DepthFunc(DepthFunction.Gequal);
             }
+
             GL.Disable(EnableCap.StencilTest);
             GL.Scale(1.0, -1.0, 1.0);
             GL.Translate(-fixx, -fixy, 0);
             DrawPlayers(ActivePlayerIndices, VisiblePlayerIndices);
             GL.Translate(fixx, fixy, 0);
             GL.Scale(1.0, -1.0, 1.0);
-            if (_settings.ShowObjects && LgrGraphicsLoaded) //BUG Drawing order should be: 1. killers, 2. apples, 3. flowers.
+            if (_settings.ShowObjects && LgrGraphicsLoaded
+            ) //BUG Drawing order should be: 1. killers, 2. apples, 3. flowers.
             {
                 double depth = _picturesInBackground ? 0 : 0.5 * (ZFar - ZNear) + ZNear;
                 foreach (var x in Lev.Objects)
@@ -702,9 +713,11 @@ namespace Elmanager
                             {
                                 DrawDummyPlayer(x.Position.X, -x.Position.Y, true, !_drawOnlyPlayerFrames);
                             }
+
                             break;
                     }
                 }
+
                 if (!_wrongLevVersion && ActivePlayerIndices.Count > 0)
                 {
                     int i = 0;
@@ -715,17 +728,19 @@ namespace Elmanager
                         Level.Object z = Lev.Apples[_currentPlayerAppleEvents[j].Info];
                         DrawObject(GetApple(z.AnimationNumber), z.Position);
                     }
+
                     foreach (Level.Object x in _notTakenApples)
                         DrawObject(GetApple(x.AnimationNumber), x.Position);
                 }
             }
+
             DisableCaps();
             if (_settings.ShowGrid)
                 DrawGrid();
             if (_settings.ShowMaxDimensions)
             {
                 GL.Enable(EnableCap.LineStipple);
-                GL.LineStipple((int)_settings.LineWidth * 2, LinePattern);
+                GL.LineStipple((int) _settings.LineWidth * 2, LinePattern);
                 double centerX = (Lev.XMin + Lev.XMax) / 2;
                 double centerY = (Lev.YMin + Lev.YMax) / 2;
                 DrawRectangle(centerX - Level.MaximumSize / 2,
@@ -736,11 +751,13 @@ namespace Elmanager
                 GL.Disable(EnableCap.LineStipple);
                 GL.LineWidth(_settings.LineWidth);
             }
+
             if (_settings.ShowObjectFrames)
                 DrawObjectFrames();
             if (_settings.ShowObjectCenters)
                 DrawObjectCenters();
-            if (_settings.ShowGravityAppleArrows && (_settings.ShowObjectFrames || (_lgrGraphicsLoaded && _settings.ShowObjects)))
+            if (_settings.ShowGravityAppleArrows &&
+                (_settings.ShowObjectFrames || (_lgrGraphicsLoaded && _settings.ShowObjects)))
             {
                 if (_wrongLevVersion || ActivePlayerIndices.Count == 0)
                     foreach (var o in Lev.Objects)
@@ -757,10 +774,12 @@ namespace Elmanager
                         var z = Lev.Apples[_currentPlayerAppleEvents[j].Info];
                         DrawGravityArrowMaybe(z);
                     }
+
                     foreach (var x in _notTakenApples)
                         DrawGravityArrowMaybe(x);
                 }
             }
+
             foreach (Polygon x in Lev.Polygons)
             {
                 if (x.IsGrass)
@@ -792,6 +811,7 @@ namespace Elmanager
                         continue;
                     GL.Color4(_settings.TextureFrameColor);
                 }
+
                 DrawRectangle(z.Position.X, z.Position.Y, z.Position.X + z.Width, z.Position.Y + z.Height);
             }
 
@@ -814,8 +834,9 @@ namespace Elmanager
                     foreach (Polygon x in Lev.Polygons)
                         if ((showGrassVertices && x.IsGrass) || (showGroundVertices && !x.IsGrass))
                             foreach (Vector z in x.Vertices)
-                                DrawEquilateralTriangleFast(z, _viewSettings.ZoomLevel*_settings.VertexSize);
+                                DrawEquilateralTriangleFast(z, _viewSettings.ZoomLevel * _settings.VertexSize);
                 }
+
                 GL.End();
             }
 
@@ -835,6 +856,7 @@ namespace Elmanager
                     }
                 }
             }
+
             _gfxContext.SwapBuffers();
             AfterDrawing?.Invoke();
         }
@@ -871,6 +893,7 @@ namespace Elmanager
                     default:
                         throw new ArgumentOutOfRangeException();
                 }
+
                 const double arrowThickness = 0.4;
                 GL.PushMatrix();
                 GL.Translate(o.Position.X, o.Position.Y, 0.0);
@@ -911,9 +934,9 @@ namespace Elmanager
         private void DrawEquilateralTriangleFast(Vector center, double side)
         {
             const double factor = 1 / (1.7320508075688772935274463415059 * 2);
-            GL.Vertex3(center.X + side/2, center.Y - side*factor, 0);
-            GL.Vertex3(center.X, center.Y + side/Math.Sqrt(3), 0);
-            GL.Vertex3(center.X - side/2, center.Y - side*factor, 0);
+            GL.Vertex3(center.X + side / 2, center.Y - side * factor, 0);
+            GL.Vertex3(center.X, center.Y + side / Math.Sqrt(3), 0);
+            GL.Vertex3(center.X - side / 2, center.Y - side * factor, 0);
         }
 
         internal DrawableImage DrawableImageFromName(string name)
@@ -942,9 +965,9 @@ namespace Elmanager
         internal Vector GetBikeCoordinates()
         {
             return ActivePlayerIndices.Count > 0
-                       ? new Vector(_players[ActivePlayerIndices[0]].GlobalBodyX,
-                                    _players[ActivePlayerIndices[0]].GlobalBodyY)
-                       : new Vector();
+                ? new Vector(_players[ActivePlayerIndices[0]].GlobalBodyX,
+                    _players[ActivePlayerIndices[0]].GlobalBodyY)
+                : new Vector();
         }
 
         internal double GetSpeed()
@@ -979,6 +1002,7 @@ namespace Elmanager
                         MaxTime = t.Player2.FrameCount;
                 }
             }
+
             MaxTime /= 30.0;
             CurrentTime = 0.0;
             InitializeLevel(replays[0].GetLevel());
@@ -989,6 +1013,7 @@ namespace Elmanager
             {
                 x.InitializeForPlaying(killerObjectCount);
             }
+
             _wrongLevVersion = replays[0].WrongLevelVersion;
         }
 
@@ -1057,11 +1082,13 @@ namespace Elmanager
                 Playing = false;
                 return;
             }
+
             if (CurrentTime > MaxTime)
             {
                 CurrentTime = 0;
                 DrawSceneDefault();
             }
+
             Playing = true;
             double elapsedTime = 0;
             _initialTime = CurrentTime;
@@ -1082,11 +1109,13 @@ namespace Elmanager
                         ymin = Math.Min(_players[i].GlobalBodyY, ymin);
                         ymax = Math.Max(_players[i].GlobalBodyY, ymax);
                     }
+
                     CenterX = (xmin + xmax) / 2;
                     CenterY = (ymin + ymax) / 2;
                     ZoomLevel = Math.Max((xmax + 5 - CenterX) / _aspectRatio, ymax + 5 - CenterY);
                     ZoomLevel = Math.Max(ZoomLevel, 5);
                 }
+
                 if (CurrentTime > MaxTime)
                 {
                     if (_loopPlaying)
@@ -1101,11 +1130,13 @@ namespace Elmanager
                         break;
                     }
                 }
+
                 DrawSceneDefault();
                 Application.DoEvents();
                 Application.RaiseIdle(null);
                 elapsedTime = _playTimer.ElapsedMilliseconds / 1000.0 * _playBackSpeed;
             }
+
             Playing = false;
             _playTimer.Stop();
         }
@@ -1131,6 +1162,7 @@ namespace Elmanager
                         _skyTexture = x;
                 }
             }
+
             if (_groundTexture == null)
             {
                 foreach (DrawableImage x in DrawableImages)
@@ -1142,6 +1174,7 @@ namespace Elmanager
                     }
                 }
             }
+
             if (_skyTexture == null)
             {
                 foreach (DrawableImage x in DrawableImages)
@@ -1191,9 +1224,10 @@ namespace Elmanager
             {
                 UpdateGroundAndSky(newSettings.DefaultGroundAndSky);
             }
+
             GL.ClearColor(newSettings.SkyFillColor);
             GL.LineWidth(newSettings.LineWidth);
-            GL.PointSize((float)(newSettings.VertexSize * 300));
+            GL.PointSize((float) (newSettings.VertexSize * 300));
             _settings = newSettings.Clone();
         }
 
@@ -1222,6 +1256,7 @@ namespace Elmanager
                 CenterX = x;
                 CenterY = y;
             }
+
             x -= (x - (XMax + XMin) / 2) * i;
             y -= (y - (YMax + YMin) / 2) * i;
             PerformZoom(ZoomLevel * i, x, y);
@@ -1252,6 +1287,7 @@ namespace Elmanager
                     x2 = startPoint.X;
                     x1 = endPoint.X;
                 }
+
                 double y1;
                 double y2;
                 if (startPoint.Y < endPoint.Y)
@@ -1264,6 +1300,7 @@ namespace Elmanager
                     y2 = startPoint.Y;
                     y1 = endPoint.Y;
                 }
+
                 double i = (y2 - y1) / 2;
                 double rectAspectRatio = (x2 - x1) / (y2 - y1);
                 if (rectAspectRatio > _aspectRatio)
@@ -1283,16 +1320,18 @@ namespace Elmanager
                 {
                     // Dispose managed resources.
                 }
+
                 // Release unmanaged resources. If disposing is false,
                 // only the following code is executed.
                 _gfxContext.Dispose();
                 _ctrlWindowInfo.Dispose();
             }
+
             _disposed = true;
         }
 
         private static void CalculateMiddle(double startx, double starty, double endx, double endy, double minWidth,
-                                            bool mirror, out double midx, out double midy)
+            bool mirror, out double midx, out double midy)
         {
             double distanceToFoot = Math.Sqrt((startx - endx) * (startx - endx) + (starty - endy) * (starty - endy));
             if (minWidth * 2 > distanceToFoot)
@@ -1326,8 +1365,8 @@ namespace Elmanager
         private static void DrawFilledTrianglesFast(IEnumerable<Vector[]> triangles, double depth = 0.0)
         {
             foreach (Vector[] triangle in triangles)
-                foreach (Vector x in triangle)
-                    GL.Vertex3(x.X, x.Y, depth);
+            foreach (Vector x in triangle)
+                GL.Vertex3(x.X, x.Y, depth);
         }
 
         private static void DrawObject(int picture, double x, double y, double depth = 0.5 * (ZFar - ZNear) + ZNear)
@@ -1372,7 +1411,7 @@ namespace Elmanager
             var newBmp = new Bitmap(srcRect.Width, srcRect.Height, pcx.Bmp.PixelFormat);
             Graphics gfx = Graphics.FromImage(newBmp);
             gfx.DrawImage(pcx.Bmp, new Rectangle(0, 0, srcRect.Width, srcRect.Height), srcRect.X, srcRect.Y,
-                          srcRect.Width, srcRect.Height, GraphicsUnit.Pixel);
+                srcRect.Width, srcRect.Height, GraphicsUnit.Pixel);
             gfx.Dispose();
             return LoadTexture(newBmp);
         }
@@ -1388,15 +1427,15 @@ namespace Elmanager
             GL.BindTexture(TextureTarget.Texture2D, textureIdentifier);
             bmp.RotateFlip(flip);
             BitmapData bmpData = bmp.LockBits(new Rectangle(0, 0, bmp.Width, bmp.Height), ImageLockMode.ReadOnly,
-                                              PixelFormat.Format32bppArgb);
+                PixelFormat.Format32bppArgb);
             GL.TexParameter(TextureTarget.Texture2D, TextureParameterName.TextureMinFilter,
-                            (float) TextureMinFilter.Linear);
+                (float) TextureMinFilter.Linear);
             GL.TexParameter(TextureTarget.Texture2D, TextureParameterName.TextureMagFilter,
-                            (float) TextureMagFilter.Nearest);
+                (float) TextureMagFilter.Nearest);
             GL.TexParameter(TextureTarget.Texture2D, TextureParameterName.TextureWrapS, (float) TextureWrapMode.Repeat);
             GL.TexParameter(TextureTarget.Texture2D, TextureParameterName.TextureWrapT, (float) TextureWrapMode.Repeat);
             GL.TexImage2D(TextureTarget.Texture2D, 0, PixelInternalFormat.Rgba, bmpData.Width, bmpData.Height, 0,
-                          OpenTK.Graphics.OpenGL.PixelFormat.Bgra, PixelType.UnsignedByte, bmpData.Scan0);
+                OpenTK.Graphics.OpenGL.PixelFormat.Bgra, PixelType.UnsignedByte, bmpData.Scan0);
             bmp.UnlockBits(bmpData);
             return textureIdentifier;
         }
@@ -1406,13 +1445,13 @@ namespace Elmanager
             _activePlayerColor = Color.Black;
             _inActivePlayerColor = Color.Green;
             _bikePicTranslateXFacingLeft = BikePicXFacingLeft * Math.Cos(BikePicRotationConst * Constants.DegToRad) +
-                                          BikePicYFacingLeft * Math.Sin(BikePicRotationConst * Constants.DegToRad);
+                                           BikePicYFacingLeft * Math.Sin(BikePicRotationConst * Constants.DegToRad);
             _bikePicTranslateYFacingLeft = BikePicXFacingLeft * Math.Sin(BikePicRotationConst * Constants.DegToRad) +
-                                          BikePicYFacingLeft * Math.Cos(BikePicRotationConst * Constants.DegToRad);
+                                           BikePicYFacingLeft * Math.Cos(BikePicRotationConst * Constants.DegToRad);
             _bikePicTranslateXFacingRight = BikePicXFacingRight * Math.Cos(-BikePicRotationConst * Constants.DegToRad) +
-                                           BikePicYFacingRight * Math.Sin(-BikePicRotationConst * Constants.DegToRad);
+                                            BikePicYFacingRight * Math.Sin(-BikePicRotationConst * Constants.DegToRad);
             _bikePicTranslateYFacingRight = BikePicXFacingRight * Math.Sin(-BikePicRotationConst * Constants.DegToRad) +
-                                           BikePicYFacingRight * Math.Cos(-BikePicRotationConst * Constants.DegToRad);
+                                            BikePicYFacingRight * Math.Cos(-BikePicRotationConst * Constants.DegToRad);
             _aspectRatio = renderingTarget.Width / (double) renderingTarget.Height;
             _ctrlWindowInfo = Utilities.CreateWindowsWindowInfo(renderingTarget.Handle);
             InitializeOpengl(disableFrameBuffer: settings.DisableFrameBuffer);
@@ -1429,6 +1468,7 @@ namespace Elmanager
                 {
                     GL.DeleteTexture(apple);
                 }
+
                 _applePics.Clear();
                 GL.DeleteTexture(_headPic);
                 GL.DeleteTexture(_killerPic);
@@ -1445,6 +1485,7 @@ namespace Elmanager
                     if (x != null)
                         GL.DeleteTexture(x.TextureIdentifier);
             }
+
             _groundTexture = null;
             _skyTexture = null;
         }
@@ -1462,10 +1503,12 @@ namespace Elmanager
 
         internal void SetGridSizeWithMouse(double newSize, Vector mouseCoords)
         {
-            GridOffset.X = (GridOffset.X + GetFirstGridLine(newSize, GridOffset.X, XMin) 
-                - mouseCoords.X + GetGridMouseRatio(_settings.GridSize, GridOffset.X, XMin, mouseCoords.X) * newSize) % newSize;
+            GridOffset.X = (GridOffset.X + GetFirstGridLine(newSize, GridOffset.X, XMin)
+                            - mouseCoords.X + GetGridMouseRatio(_settings.GridSize, GridOffset.X, XMin, mouseCoords.X) *
+                            newSize) % newSize;
             GridOffset.Y = (GridOffset.Y + GetFirstGridLine(newSize, GridOffset.Y, YMin)
-                - mouseCoords.Y + GetGridMouseRatio(_settings.GridSize, GridOffset.Y, YMin, mouseCoords.Y) * newSize) % newSize;
+                            - mouseCoords.Y + GetGridMouseRatio(_settings.GridSize, GridOffset.Y, YMin, mouseCoords.Y) *
+                            newSize) % newSize;
             _settings.GridSize = newSize;
             RedrawScene();
         }
@@ -1487,7 +1530,7 @@ namespace Elmanager
         {
             double current = GetFirstGridLine(_settings.GridSize, GridOffset.X, XMin);
             GL.Enable(EnableCap.LineStipple);
-            GL.LineStipple((int)_settings.LineWidth, LinePattern);
+            GL.LineStipple((int) _settings.LineWidth, LinePattern);
             GL.Scale(1.0, -1.0, 1.0);
             GL.Color3(_settings.GridColor);
             GL.Begin(PrimitiveType.Lines);
@@ -1496,12 +1539,14 @@ namespace Elmanager
                 DrawLineFast(current, YMin, current, YMax);
                 current += _settings.GridSize;
             }
+
             current = GetFirstGridLine(_settings.GridSize, GridOffset.Y, YMin);
             while (!(current > YMax))
             {
                 DrawLineFast(XMin, current, XMax, current);
                 current += _settings.GridSize;
             }
+
             GL.End();
             GL.Scale(1.0, -1.0, 1.0);
             GL.Disable(EnableCap.LineStipple);
@@ -1529,14 +1574,16 @@ namespace Elmanager
                         {
                             DrawPoint(x.Position, _settings.StartColor);
                             DrawPoint(x.Position.X + Level.RightWheelDifferenceFromLeftWheelX, x.Position.Y,
-                                      Global.AppSettings.LevelEditor.RenderingSettings.StartColor);
+                                Global.AppSettings.LevelEditor.RenderingSettings.StartColor);
                             DrawPoint(x.Position.X + Level.HeadDifferenceFromLeftWheelX,
-                                      x.Position.Y + Level.HeadDifferenceFromLeftWheelY,
-                                      Global.AppSettings.LevelEditor.RenderingSettings.StartColor);
+                                x.Position.Y + Level.HeadDifferenceFromLeftWheelY,
+                                Global.AppSettings.LevelEditor.RenderingSettings.StartColor);
                         }
+
                         break;
                 }
             }
+
             if (!_wrongLevVersion && ActivePlayerIndices.Count > 0)
             {
                 int i = 0;
@@ -1544,7 +1591,7 @@ namespace Elmanager
                     i++;
                 for (int j = i; j < _currentPlayerAppleEvents.Length; j++)
                     DrawCircle(Lev.Apples[_currentPlayerAppleEvents[j].Info].Position, ObjectRadius,
-                               _settings.AppleColor);
+                        _settings.AppleColor);
                 foreach (Level.Object x in _notTakenApples)
                     DrawCircle(x.Position, ObjectRadius, _settings.AppleColor);
             }
@@ -1570,13 +1617,15 @@ namespace Elmanager
                         if (!_hideStartObject)
                         {
                             DrawPlayerFrames(x.Position.X + Level.HeadDifferenceFromLeftWheelX,
-                                             x.Position.Y + Level.HeadDifferenceFromLeftWheelY, 0, false, x.Position.X,
-                                             x.Position.Y, x.Position.X + Level.RightWheelDifferenceFromLeftWheelX,
-                                             x.Position.Y, 0, 0, _settings.StartColor);
+                                x.Position.Y + Level.HeadDifferenceFromLeftWheelY, 0, false, x.Position.X,
+                                x.Position.Y, x.Position.X + Level.RightWheelDifferenceFromLeftWheelX,
+                                x.Position.Y, 0, 0, _settings.StartColor);
                         }
+
                         break;
                 }
             }
+
             if (!_wrongLevVersion && ActivePlayerIndices.Count > 0)
             {
                 int i = 0;
@@ -1584,7 +1633,7 @@ namespace Elmanager
                     i++;
                 for (int j = i; j < _currentPlayerAppleEvents.Length; j++)
                     DrawCircle(Lev.Apples[_currentPlayerAppleEvents[j].Info].Position, ObjectRadius,
-                               _settings.AppleColor);
+                        _settings.AppleColor);
                 foreach (Level.Object x in _notTakenApples)
                     DrawCircle(x.Position, ObjectRadius, _settings.AppleColor);
             }
@@ -1593,14 +1642,15 @@ namespace Elmanager
         private void DrawPlayer(Player player, bool isActive = true)
         {
             DrawPlayer(player.GlobalBodyX, player.GlobalBodyY, player.LeftWheelX, player.LeftWheelY, player.RightWheelX,
-                       player.RightWheelY, player.LeftWheelRotation, player.RightWheelRotation, player.HeadX,
-                       player.HeadY, player.BikeRotation, player.Dir, player.ArmRotation, isActive || !_drawInActiveAsTransparent, !_drawOnlyPlayerFrames);
+                player.RightWheelY, player.LeftWheelRotation, player.RightWheelRotation, player.HeadX,
+                player.HeadY, player.BikeRotation, player.Dir, player.ArmRotation,
+                isActive || !_drawInActiveAsTransparent, !_drawOnlyPlayerFrames);
         }
 
         private void DrawPlayer(double globalBodyX, double globalBodyY, double leftWheelx, double leftWheely,
-                                double rightWheelx, double rightWheely, double leftWheelRotation,
-                                double rightWheelRotation, double headX, double headY, double bikeRotation,
-                                Direction direction, double armRotation, bool isActive, bool useGraphics)
+            double rightWheelx, double rightWheely, double leftWheelRotation,
+            double rightWheelRotation, double headX, double headY, double bikeRotation,
+            Direction direction, double armRotation, bool isActive, bool useGraphics)
         {
             double distance = ((_picturesInBackground ? 1 : BikeDistance) - Utils.BooleanToInteger(isActive)) /
                               1000.0 * (ZFar - ZNear) + ZNear;
@@ -1646,6 +1696,7 @@ namespace Elmanager
                         wheelXpos = rightWheelx;
                         wheelYpos = rightWheely;
                     }
+
                     double xDiff = xPos - wheelXpos;
                     double yDiff = yPos - wheelYpos;
                     double angle = Math.Atan2(yDiff, xDiff) * Constants.RadToDeg;
@@ -1674,7 +1725,7 @@ namespace Elmanager
                     GL.Scale(-1.0, 1.0, 1.0);
                 GL.Translate(-headX, -headY, 0);
                 DrawPicture(_headPic, headX - Constants.HeadDiameter / 2.0, headY - Constants.HeadDiameter / 2.0,
-                            Constants.HeadDiameter, Constants.HeadDiameter, distance);
+                    Constants.HeadDiameter, Constants.HeadDiameter, distance);
                 GL.PopMatrix();
 
                 //Bike
@@ -1695,9 +1746,10 @@ namespace Elmanager
                     bikePicTranslateX = _bikePicTranslateXFacingRight;
                     bikePicTranslateY = _bikePicTranslateYFacingRight;
                 }
+
                 DrawPicture(_bikePic, -BikePicAspectRatio * BikePicSize / 2 + bikePicTranslateX,
-                            -BikePicSize / 2 + bikePicTranslateY, BikePicSize * BikePicAspectRatio, BikePicSize,
-                            distance);
+                    -BikePicSize / 2 + bikePicTranslateY, BikePicSize * BikePicAspectRatio, BikePicSize,
+                    distance);
                 GL.PopMatrix();
 
                 //Thigh
@@ -1710,15 +1762,16 @@ namespace Elmanager
                 {
                     thighsx *= -1;
                 }
+
                 const double thighsy = -0.55;
                 double footx = globalBodyX + footsx * rotationCos - footsy * rotationSin;
                 double footy = globalBodyY + footsx * rotationSin + footsy * rotationCos;
                 double thighstartx = headX + thighsx * rotationCos - thighsy * rotationSin;
                 double thighstarty = headY + thighsx * rotationSin + thighsy * rotationCos;
                 CalculateMiddle(thighstartx, thighstarty, footx, footy, legMinimumWidth, isright, out var thighendx,
-                                out var thighendy);
+                    out var thighendy);
                 DrawPicture(_thighPic, thighstartx, thighstarty, thighendx, thighendy, thighHeight, distance, isright,
-                            0.05);
+                    0.05);
 
                 //Leg
                 const double legHeight = 0.4;
@@ -1738,6 +1791,7 @@ namespace Elmanager
                 {
                     GL.Rotate(bikeRotation - BodyRotation, 0, 0, 1);
                 }
+
                 DrawPicture(_bodyPic, offsetx, offsety, BodyWidth, BodyHeight, distance);
                 GL.PopMatrix();
 
@@ -1757,6 +1811,7 @@ namespace Elmanager
                     armsx = 0.12;
                     handsx = -0.5;
                 }
+
                 double armsy = -0.2;
                 double armx = headX + armsx * rotationCos - armsy * rotationSin;
                 double army = headY + armsx * rotationSin + armsy * rotationCos;
@@ -1772,6 +1827,7 @@ namespace Elmanager
                 {
                     armAngle = Math.Atan2(initialy - army, initialx - armx) + armRotation * Constants.DegToRad;
                 }
+
                 double angleCos = Math.Cos(armAngle);
                 double angleSin = Math.Sin(armAngle);
                 double handx = armx + dist * angleCos;
@@ -1793,23 +1849,25 @@ namespace Elmanager
                 if (!isActive)
                 {
                     GL.Enable(EnableCap.LineStipple);
-                    GL.LineStipple((int)_settings.LineWidth, LinePattern);
+                    GL.LineStipple((int) _settings.LineWidth, LinePattern);
                 }
+
                 DrawPlayerFrames(headX, headY, bikeRotation, isright, leftWheelx, leftWheely, rightWheelx, rightWheely,
-                                 leftWheelRotation, rightWheelRotation,
-                                 isActive ? _activePlayerColor : _inActivePlayerColor);
+                    leftWheelRotation, rightWheelRotation,
+                    isActive ? _activePlayerColor : _inActivePlayerColor);
                 if (!isActive)
                 {
                     GL.Disable(EnableCap.LineStipple);
                 }
+
                 GL.Enable(EnableCap.Texture2D);
                 GL.Enable(EnableCap.DepthTest);
             }
         }
 
         private void DrawPlayerFrames(double headX, double headY, double bikeRotation, bool isright, double leftWheelx,
-                                      double leftWheely, double rightWheelx, double rightWheely,
-                                      double leftWheelRotation, double rightWheelRotation, Color playerColor)
+            double leftWheely, double rightWheelx, double rightWheely,
+            double leftWheelRotation, double rightWheelRotation, Color playerColor)
         {
             double headCos = Math.Cos(bikeRotation * Constants.DegToRad);
             double headSin = Math.Sin(bikeRotation * Constants.DegToRad);
@@ -1841,9 +1899,10 @@ namespace Elmanager
 
                     GL.Vertex2(wheelx, wheely);
                     GL.Vertex2(wheelx + ObjectRadius * Math.Cos(wheelrot + j * Math.PI / 2),
-                               wheely + ObjectRadius * Math.Sin(wheelrot + j * Math.PI / 2));
+                        wheely + ObjectRadius * Math.Sin(wheelrot + j * Math.PI / 2));
                 }
             }
+
             GL.End();
             DrawCircle(headX, headY, Constants.HeadDiameter / 2, playerColor);
             GL.Begin(PrimitiveType.Lines);
@@ -1944,6 +2003,7 @@ namespace Elmanager
                 Utils.ShowError("Error occurred when loading LGR file! Reason:\r\n\r\n" + ex.Message);
                 return;
             }
+
             var firstFrameRect = new Rectangle(0, 0, 40, 40);
             foreach (Lgr.LgrImage x in CurrentLgr.LgrImages)
             {
@@ -1994,25 +2054,27 @@ namespace Elmanager
                         break;
                     case "q1susp1":
                         _suspensions[0] = new Suspension(LoadTexture(x, RotateFlipType.RotateNoneFlipY), -0.5, 0.35,
-                                                        x.Bmp.Height * Suspension1Factor,
-                                                        x.Bmp.Height * Suspension1Factor / 2.0, 0);
+                            x.Bmp.Height * Suspension1Factor,
+                            x.Bmp.Height * Suspension1Factor / 2.0, 0);
                         break;
                     case "q1susp2":
                         _suspensions[1] = new Suspension(LoadTexture(x, RotateFlipType.Rotate180FlipY), 0.0, -0.4,
-                                                        x.Bmp.Height * Suspension2Factor,
-                                                        x.Bmp.Height * Suspension2Factor / 1.3, 1);
+                            x.Bmp.Height * Suspension2Factor,
+                            x.Bmp.Height * Suspension2Factor / 1.3, 1);
                         break;
                     default:
                         isSpecial = false;
                         break;
                 }
+
                 if (!isSpecial)
                 {
                     DrawableImages.Add(new DrawableImage(LoadTexture(x), x.Bmp.Width * PictureFactor,
-                                                         x.Bmp.Height * PictureFactor, x.ClippingType, x.Distance,
-                                                         x.Name, x.Type));
+                        x.Bmp.Height * PictureFactor, x.ClippingType, x.Distance,
+                        x.Name, x.Type));
                 }
             }
+
             _lgrGraphicsLoaded = true;
         }
 
@@ -2054,8 +2116,10 @@ namespace Elmanager
                 }
                 else
                     DrawSceneNoDriverFocus();
+
                 elapsedTime = zoomTimer.ElapsedMilliseconds;
             }
+
             zoomTimer.Stop();
             //Draw the last frame separately to make sure the zoom was made correctly
             ZoomLevel = newZoomLevel;
@@ -2065,6 +2129,7 @@ namespace Elmanager
                 CenterY = newCenterY;
                 DrawSceneNoDriverFocus();
             }
+
             _smoothZoomInProgress = false;
         }
 
@@ -2078,8 +2143,9 @@ namespace Elmanager
             internal readonly Lgr.ImageType Type;
             internal readonly double Width;
 
-            internal DrawableImage(int textureId, double width, double height, Level.ClippingType clipping, int distance,
-                                   string name, Lgr.ImageType type)
+            internal DrawableImage(int textureId, double width, double height, Level.ClippingType clipping,
+                int distance,
+                string name, Lgr.ImageType type)
             {
                 TextureIdentifier = textureId;
                 Width = width;
@@ -2090,7 +2156,7 @@ namespace Elmanager
                 Type = type;
             }
 
-            internal double WidthMinusMargin => Width - 2*EmptyPixelXMargin;
+            internal double WidthMinusMargin => Width - 2 * EmptyPixelXMargin;
 
             internal double HeightMinusMargin => Height - 2 * EmptyPixelYMargin;
 
@@ -2159,7 +2225,7 @@ namespace Elmanager
         public void DrawDashLine(double x1, double y1, double x2, double y2, Color color)
         {
             GL.Enable(EnableCap.LineStipple);
-            GL.LineStipple((int)_settings.LineWidth, LinePattern);
+            GL.LineStipple((int) _settings.LineWidth, LinePattern);
             DrawLine(x1, y1, x2, y2, color);
             GL.Disable(EnableCap.LineStipple);
             GL.LineWidth(_settings.LineWidth);

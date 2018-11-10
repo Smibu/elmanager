@@ -37,8 +37,8 @@ namespace Elmanager.EditorTools
         public void UpdateHelp()
         {
             LevEditor.InfoLabel.Text = Framing
-                                           ? "Mouse left: create frame; mouse right: cancel; +/-: adjust width; Space: Change type - " + _frameType
-                                           : "Click the polygon to frame.";
+                ? "Mouse left: create frame; mouse right: cancel; +/-: adjust width; Space: Change type - " + _frameType
+                : "Click the polygon to frame.";
         }
 
         public void ExtraRendering()
@@ -70,6 +70,7 @@ namespace Elmanager.EditorTools
                     {
                         _frameRadius -= 0.05;
                     }
+
                     break;
                 case Keys.Space:
                     switch (_frameType)
@@ -86,9 +87,11 @@ namespace Elmanager.EditorTools
                         default:
                             throw new ArgumentOutOfRangeException();
                     }
+
                     UpdateHelp();
                     break;
             }
+
             UpdateFrame();
         }
 
@@ -106,6 +109,7 @@ namespace Elmanager.EditorTools
                         {
                             _currentPolygon.ChangeOrientation();
                         }
+
                         _currentPolygon.Mark = PolygonMark.Selected;
                         Lev.Polygons.Remove(_currentPolygon);
                         _frames = new List<Polygon>();
@@ -118,12 +122,14 @@ namespace Elmanager.EditorTools
                         Framing = false;
                         LevEditor.Modified = true;
                     }
+
                     break;
                 case MouseButtons.Right:
                     if (Framing)
                         CancelFraming();
                     break;
             }
+
             UpdateHelp();
         }
 
@@ -180,7 +186,7 @@ namespace Elmanager.EditorTools
 
         private List<Polygon> MakeClosedPipe(Polygon pipeLine, double radius)
         {
-            List<Polygon> p = new List<Polygon> { new Polygon(), new Polygon() };
+            List<Polygon> p = new List<Polygon> {new Polygon(), new Polygon()};
             if (pipeLine.Vertices.Count < 2)
                 return p;
             for (int i = 0; i < pipeLine.Vertices.Count; i++)
@@ -202,8 +208,8 @@ namespace Elmanager.EditorTools
                     default:
                         throw new ArgumentOutOfRangeException();
                 }
-
             }
+
             p[0].UpdateDecomposition();
             p[1].UpdateDecomposition();
             return p;

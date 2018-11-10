@@ -24,6 +24,7 @@ namespace Elmanager.CustomControls
                     KeyDownEvent?.Invoke(null, new KeyEventArgs(keyData));
                     return true;
             }
+
             return base.IsInputKey(keyData);
         }
 
@@ -40,6 +41,7 @@ namespace Elmanager.CustomControls
 
                 return;
             }
+
             base.WndProc(ref m);
         }
 

@@ -6,7 +6,6 @@ namespace Elmanager
     {
         public SettingsException(string message) : base(message)
         {
-            
         }
     }
 }

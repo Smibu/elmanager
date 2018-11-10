@@ -63,6 +63,7 @@ namespace Elmanager.EditorTools
                         changed = false;
                         break;
                 }
+
                 if (changed)
                 {
                     _currentAutograssPolys = AutoGrass(_currentPolygon);
@@ -92,11 +93,13 @@ namespace Elmanager.EditorTools
                         AutoGrassPolygonSelected = false;
                         LevEditor.Modified = true;
                     }
+
                     break;
                 case MouseButtons.Right:
                     CancelAutoGrass();
                     break;
             }
+
             UpdateHelp();
         }
 
@@ -132,9 +135,9 @@ namespace Elmanager.EditorTools
         public void UpdateHelp()
         {
             LevEditor.InfoLabel.Text = AutoGrassPolygonSelected
-                                           ? "Left mouse: apply AutoGrass, right mouse: cancel. Thickness: "
-                                           + Global.AppSettings.LevelEditor.AutoGrassThickness.ToString("F3")
-                                           : "Click the ground polygon to create grass polygon for.";
+                ? "Left mouse: apply AutoGrass, right mouse: cancel. Thickness: "
+                  + Global.AppSettings.LevelEditor.AutoGrassThickness.ToString("F3")
+                : "Click the ground polygon to create grass polygon for.";
         }
 
         internal List<Polygon> AutoGrass(Polygon p)
@@ -152,6 +155,7 @@ namespace Elmanager.EditorTools
                 if (Math.Abs(v.Angle) > MaximumGrassAngle)
                     break;
             }
+
             for (j = i; j < p.Vertices.Count; j++)
                 if (Math.Abs((p[j + 1] - p[j]).Angle) <= MaximumGrassAngle)
                     break;
@@ -167,16 +171,17 @@ namespace Elmanager.EditorTools
                     if (exploredVerts.Contains(j))
                         return grassPolys;
                 }
+
                 exploredVerts.Add(j);
                 Vector directionVector = p[j + 1] - p[j];
                 Vector previousDirectionVector = p[j] - p[j - 1];
                 Vector previousDirectionVectorNeg = -previousDirectionVector;
                 Vector firstGrassVertex;
                 Vector a = new Vector(p[j].X,
-                                      p[j].Y + autoGrassThickness / Math.Cos(directionVector.Angle * Constants.DegToRad));
+                    p[j].Y + autoGrassThickness / Math.Cos(directionVector.Angle * Constants.DegToRad));
                 Vector b = new Vector(p[j + 1].X,
-                                      p[j + 1].Y +
-                                      autoGrassThickness / Math.Cos(directionVector.Angle * Constants.DegToRad));
+                    p[j + 1].Y +
+                    autoGrassThickness / Math.Cos(directionVector.Angle * Constants.DegToRad));
                 if (previousDirectionVectorNeg.Angle > -90 && previousDirectionVectorNeg.Angle < directionVector.Angle)
                 {
                     Vector c = new Vector(p[j].X, p[j].Y + GrassHeight);
@@ -211,7 +216,7 @@ namespace Elmanager.EditorTools
                 else if (previousDirectionVectorNeg.Angle < -90)
                     firstGrassVertex =
                         new Vector(p[j].X,
-                                   p[j].Y + autoGrassThickness / Math.Cos(directionVector.Angle * Constants.DegToRad)) +
+                            p[j].Y + autoGrassThickness / Math.Cos(directionVector.Angle * Constants.DegToRad)) +
                         directionVector.Unit() * 0.0;
                 else if (previousDirectionVectorNeg.Angle > 90)
                 {
@@ -223,8 +228,9 @@ namespace Elmanager.EditorTools
                 else
                     firstGrassVertex =
                         new Vector(p[j].X,
-                                   p[j].Y + autoGrassThickness / Math.Cos(directionVector.Angle * Constants.DegToRad)) +
+                            p[j].Y + autoGrassThickness / Math.Cos(directionVector.Angle * Constants.DegToRad)) +
                         directionVector.Unit() * 0.0;
+
                 grassPolys.Add(new Polygon());
                 grassPolys[grassPolys.Count - 1].IsGrass = true;
                 grassPolys[grassPolys.Count - 1].Add(firstGrassVertex);
@@ -235,8 +241,9 @@ namespace Elmanager.EditorTools
                     {
                         j++;
                         grassPolys[grassPolys.Count - 1].Add(Geometry.FindPoint(p[j - 1], p[j], p[j + 1],
-                                                                                autoGrassThickness));
+                            autoGrassThickness));
                     }
+
                     j++;
                     found = true;
                 }
@@ -245,13 +252,15 @@ namespace Elmanager.EditorTools
                     grassPolys[grassPolys.Count - 1].Add(firstGrassVertex + directionVector.Unit() * 0.1);
                     j++;
                 }
+
                 j = j % p.Vertices.Count;
                 directionVector = p[j] - p[j - 1];
                 Vector nextDirectionVector = p[j + 1] - p[j];
                 Vector lastGrassVertex;
                 a = new Vector(p[j - 1].X,
-                               p[j - 1].Y + autoGrassThickness / Math.Cos(directionVector.Angle * Constants.DegToRad));
-                b = new Vector(p[j].X, p[j].Y + autoGrassThickness / Math.Cos(directionVector.Angle * Constants.DegToRad));
+                    p[j - 1].Y + autoGrassThickness / Math.Cos(directionVector.Angle * Constants.DegToRad));
+                b = new Vector(p[j].X,
+                    p[j].Y + autoGrassThickness / Math.Cos(directionVector.Angle * Constants.DegToRad));
                 if ((nextDirectionVector.Angle < -90 || nextDirectionVector.Angle > 90) &&
                     nextDirectionVector.AnglePositive > (-directionVector).AnglePositive)
                 {
@@ -291,7 +300,7 @@ namespace Elmanager.EditorTools
                 else if (nextDirectionVector.AnglePositive > 270)
                     lastGrassVertex =
                         new Vector(p[j].X,
-                                   p[j].Y + autoGrassThickness / Math.Cos(directionVector.Angle * Constants.DegToRad)) -
+                            p[j].Y + autoGrassThickness / Math.Cos(directionVector.Angle * Constants.DegToRad)) -
                         directionVector.Unit() * 0.1;
                 else if (nextDirectionVector.AnglePositive < 90)
                 {
@@ -302,10 +311,12 @@ namespace Elmanager.EditorTools
                 }
                 else
                     lastGrassVertex = new Vector(p[j].X,
-                                                 p[j].Y +
-                                                 autoGrassThickness / Math.Cos(directionVector.Angle * Constants.DegToRad));
+                        p[j].Y +
+                        autoGrassThickness / Math.Cos(directionVector.Angle * Constants.DegToRad));
+
                 grassPolys[grassPolys.Count - 1].Add(lastGrassVertex);
             }
+
             return grassPolys;
         }
 

@@ -11,7 +11,9 @@ namespace Elmanager
     {
         internal readonly List<LgrImage> LgrImages = new List<LgrImage>();
         internal readonly List<ListedImage> ListedImages = new List<ListedImage>();
-        private static readonly HashSet<string> TransparencyIgnoreSet = new HashSet<string>(Enumerable.Range(0, 18).SelectMany(TransparencyIgnoreHelper));
+
+        private static readonly HashSet<string> TransparencyIgnoreSet =
+            new HashSet<string>(Enumerable.Range(0, 18).SelectMany(TransparencyIgnoreHelper));
 
         internal enum ImageType
         {
@@ -48,6 +50,7 @@ namespace Elmanager
                         yield return listedImage;
                     }
                 }
+
                 var grassImg = GetImage("QGRASS");
                 if (grassImg != null)
                 {
@@ -78,20 +81,21 @@ namespace Elmanager
             for (int i = 0; i < numberOfOptPcXs; i++)
             {
                 ListedImages.Add(new ListedImage
-                                      {
-                                          Name = Utils.ReadNullTerminatedString(lgrData, i * 10 + 17, 10).ToLower(),
-                                          Type =
-                                              (ImageType)
-                                              BitConverter.ToInt32(lgrData, 17 + numberOfOptPcXs * 10 + i * 4),
-                                          Distance = BitConverter.ToInt32(lgrData, 17 + numberOfOptPcXs * 14 + i * 4),
-                                          ClippingType =
-                                              (Level.ClippingType)
-                                              BitConverter.ToInt32(lgrData, 17 + numberOfOptPcXs * 18 + i * 4),
-                                          Transparency =
-                                              (Transparency)
-                                              BitConverter.ToInt32(lgrData, 17 + numberOfOptPcXs * 22 + i * 4)
+                {
+                    Name = Utils.ReadNullTerminatedString(lgrData, i * 10 + 17, 10).ToLower(),
+                    Type =
+                        (ImageType)
+                        BitConverter.ToInt32(lgrData, 17 + numberOfOptPcXs * 10 + i * 4),
+                    Distance = BitConverter.ToInt32(lgrData, 17 + numberOfOptPcXs * 14 + i * 4),
+                    ClippingType =
+                        (Level.ClippingType)
+                        BitConverter.ToInt32(lgrData, 17 + numberOfOptPcXs * 18 + i * 4),
+                    Transparency =
+                        (Transparency)
+                        BitConverter.ToInt32(lgrData, 17 + numberOfOptPcXs * 22 + i * 4)
                 });
             }
+
             int sp = 17 + numberOfOptPcXs * 26;
             for (int i = 0; i < numberOfPcXs; i++)
             {
@@ -100,7 +104,7 @@ namespace Elmanager
                 var isGrass = lgrImageName == "qgrass";
                 ImageType imgType = isGrass ? ImageType.Texture : ImageType.Picture;
                 int imgDistance = 500;
-                Level.ClippingType imgClippingType = isGrass? Level.ClippingType.Ground : Level.ClippingType.Unclipped;
+                Level.ClippingType imgClippingType = isGrass ? Level.ClippingType.Ground : Level.ClippingType.Unclipped;
                 var transparency = Transparency.TopLeft;
                 foreach (ListedImage x in ListedImages)
                 {
@@ -115,6 +119,7 @@ namespace Elmanager
                         }
                     }
                 }
+
                 sp += 24;
                 int sizeOfPcx = BitConverter.ToInt32(lgrData, sp - 4);
                 byte[] data = new byte[sizeOfPcx];
@@ -134,7 +139,7 @@ namespace Elmanager
                                 break;
                             // If the transparency field value is invalid, we'll assume Transparency.TopLeft as it is the most common case.
                             default:
-                            // case Transparency.TopLeft:
+                                // case Transparency.TopLeft:
                                 bmp.MakeTransparent(bmp.GetPixel(0, 0));
                                 break;
                             case Transparency.TopRight:
@@ -148,12 +153,14 @@ namespace Elmanager
                                 break;
                         }
                     }
+
                     LgrImages.Add(new LgrImage(lgrImageName, bmp, imgType, imgDistance, imgClippingType));
                 }
                 finally
                 {
                     memStream.Close();
                 }
+
                 sp += sizeOfPcx;
             }
         }
@@ -174,7 +181,8 @@ namespace Elmanager
 
         internal struct ListedImage
         {
-            private static readonly string[] BodyPartNames = { "body", "thigh", "leg", "bike", "wheel", "susp1", "susp2", "forarm", "up_arm", "head" };
+            private static readonly string[] BodyPartNames =
+                {"body", "thigh", "leg", "bike", "wheel", "susp1", "susp2", "forarm", "up_arm", "head"};
 
             private static IEnumerable<string> EnumSpecialNames()
             {
@@ -185,6 +193,7 @@ namespace Elmanager
                         yield return $"q{i}{bodyPartName}";
                     }
                 }
+
                 yield return "qflag";
                 yield return "qkiller";
                 yield return "qexit";
@@ -193,7 +202,9 @@ namespace Elmanager
                 yield return "qgrass";
             }
 
-            private static readonly HashSet<string> SpecialNames = new HashSet<string>(EnumSpecialNames().Union(TransparencyIgnoreSet));
+            private static readonly HashSet<string> SpecialNames =
+                new HashSet<string>(EnumSpecialNames().Union(TransparencyIgnoreSet));
+
             internal Level.ClippingType ClippingType;
             internal int Distance;
             internal string Name;

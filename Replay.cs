@@ -98,6 +98,7 @@ namespace Elmanager
                 Finished = Player1.Finished;
                 Time = Player1.Time;
             }
+
             if (IsInternal)
             {
                 LevelExists = true;
@@ -132,6 +133,7 @@ namespace Elmanager
                                 AcrossLevel = true;
                                 levelStream.Seek(5, SeekOrigin.Begin);
                             }
+
                             for (int i = 0; i <= 3; i++)
                             {
                                 if (levelStream.ReadByte() != rawData[16 + i])
@@ -143,6 +145,7 @@ namespace Elmanager
                         }
                         else
                             LevelExists = false;
+
                         levelStream.Close();
                         break;
                     }
@@ -170,12 +173,15 @@ namespace Elmanager
                     while (Global.Internals == null)
                     {
                     }
+
                     return Global.Internals[InternalIndex - 1];
                 }
+
                 var lev = new Level();
                 lev.LoadFromPath(LevelPath);
                 return lev;
             }
+
             throw (new FileNotFoundException("The level file does not exist!", LevelFilename));
         }
 

@@ -6,7 +6,6 @@ namespace Elmanager
     {
         public VectrastException(string message) : base(message)
         {
-            
         }
     }
 }

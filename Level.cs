@@ -24,6 +24,7 @@ namespace Elmanager
         private const int EndOfFileMagicNumber = 0x845D52;
         private const double MagicDouble = 0.4643643;
         private const double MagicDouble2 = 0.2345672;
+
         internal static readonly string[] InternalTitles =
         {
             "Warm Up", "Flat Track", "Twin Peaks", "Over and Under",
@@ -34,10 +35,8 @@ namespace Elmanager
             "Turnaround", "Upside Down", "Hangman", "Slalom",
             "Quick Round", "Ramp Frenzy", "Precarious", "Circuitous",
             "Shelf Life", "Bounce Back", "Headbanger", "Pipe",
-            "Animal Farm", "Steep Corner", "Zig-Zag", "Bumpy Journey"
-            ,
-            "Labyrinth Pro", "Fruit in the Den", "Jaws", "Curvaceous"
-            ,
+            "Animal Farm", "Steep Corner", "Zig-Zag", "Bumpy Journey",
+            "Labyrinth Pro", "Fruit in the Den", "Jaws", "Curvaceous",
             "Haircut", "Double Trouble", "Framework", "Enduro",
             "He He",
             "Freefall", "Sink", "Bowling", "Enigma", "Downhill",
@@ -69,7 +68,6 @@ namespace Elmanager
 
         internal Level()
         {
-            
         }
 
         internal Level(Polygon startPolygon, Vector startPosition, Vector exitPosition)
@@ -88,7 +86,8 @@ namespace Elmanager
             _identifier = Encoding.UTF8.GetString(level, 0, 5);
             if (!IsElmaLevel && !IsAcrossLevel && !IsLeb)
             {
-                throw new LevelException("Unknown file type. This is neither an Elma level, an Across level nor a LEB file.");
+                throw new LevelException(
+                    "Unknown file type. This is neither an Elma level, an Across level nor a LEB file.");
             }
 
             int sp = 7;
@@ -101,6 +100,7 @@ namespace Elmanager
                 Integrity[i] = BitConverter.ToDouble(level, sp);
                 sp += 8;
             }
+
             Title = Utils.ReadNullTerminatedString(level, sp, 60);
             if (IsAcrossLevel)
                 sp = 100;
@@ -114,14 +114,16 @@ namespace Elmanager
                 SkyTextureName = Utils.ReadNullTerminatedString(level, sp, 12).ToLower();
                 sp += 10;
             }
+
             int polygonCount = (int) Math.Round(BitConverter.ToDouble(level, sp) - MagicDouble);
             sp += 8;
             int objectCount = -1;
             if (IsLeb)
             {
-                objectCount = (int)Math.Round(BitConverter.ToDouble(level, sp) - MagicDouble);
+                objectCount = (int) Math.Round(BitConverter.ToDouble(level, sp) - MagicDouble);
                 sp += 8;
             }
+
             bool isGrassPolygon = false;
             Polygons = new List<Polygon>();
             for (int i = 0; i < polygonCount; i++)
@@ -138,6 +140,7 @@ namespace Elmanager
                     sp += 8;
                     isGrassPolygon = level[sp - 8] == 1;
                 }
+
                 var poly = new Polygon();
                 for (int j = 0; j < numVertice; j++)
                 {
@@ -146,14 +149,17 @@ namespace Elmanager
                     poly.Add(new Vector(x, y));
                     sp += 16;
                 }
+
                 poly.IsGrass = isGrassPolygon;
                 Polygons.Add(poly);
             }
+
             if (!IsLeb)
             {
                 objectCount = (int) Math.Round(BitConverter.ToDouble(level, sp) - MagicDouble);
                 sp += 8;
             }
+
             Apples = new List<Object>();
             bool startFound = false;
             for (int i = 0; i < objectCount; i++)
@@ -165,6 +171,7 @@ namespace Elmanager
                 {
                     startFound = true;
                 }
+
                 AppleTypes appleType = AppleTypes.Normal;
                 int animNum = 0;
                 if (!IsAcrossLevel)
@@ -175,15 +182,18 @@ namespace Elmanager
                 }
                 else
                     sp += 20;
+
                 var objectToAdd = new Object(new Vector(x, y), objectType, appleType, animNum + 1);
                 Objects.Add(objectToAdd);
                 if (objectType == ObjectType.Apple)
                     Apples.Add(objectToAdd);
             }
+
             if (!startFound)
             {
                 Objects.Add(new Object(new Vector(0, 0), ObjectType.Start, AppleTypes.Normal));
             }
+
             if (!IsAcrossLevel)
             {
                 int numberOfPicturesPlusTextures = (int) Math.Round(BitConverter.ToDouble(level, sp) - MagicDouble2);
@@ -206,6 +216,7 @@ namespace Elmanager
                     sp += 54;
                 }
             }
+
             if (sp != level.Length)
             {
                 sp += 4; //Skip end of data magic number
@@ -219,9 +230,11 @@ namespace Elmanager
                 {
                     Top10.SinglePlayer = new List<Top10Entry>();
                     Top10.MultiPlayer = new List<Top10Entry>();
-                    throw new LevelException("Top 10 list is corrupted. The list will be cleared if you save the level.");
+                    throw new LevelException(
+                        "Top 10 list is corrupted. The list will be cleared if you save the level.");
                 }
             }
+
             UpdateBounds();
         }
 
@@ -315,6 +328,7 @@ namespace Elmanager
                     x.Mark = PolygonMark.Erroneous;
                     foundTooLarge = true;
                 }
+
                 return foundTooLarge;
             }
         }
@@ -332,6 +346,7 @@ namespace Elmanager
                     }
                 }
             }
+
             return result;
         }
 
@@ -341,8 +356,10 @@ namespace Elmanager
 
         internal bool HasTooManyVertices => GroundVertexCount > MaximumGroundVertexCount;
 
-        internal bool HasTopologyErrors => HasTooLargePolygons || HasTooManyObjects || HasTooFewObjects || HasTooManyPolygons || HasTooManyVertices || HasTooManyPictures ||
-                                           WheelLiesOnEdge || HasTexturesOutOfBounds || HeadTouchesGround || TooTall || TooWide || GetIntersectionPoints().Count > 0 || GetTooShortEdges().Count > 0;
+        internal bool HasTopologyErrors => HasTooLargePolygons || HasTooManyObjects || HasTooFewObjects ||
+                                           HasTooManyPolygons || HasTooManyVertices || HasTooManyPictures ||
+                                           WheelLiesOnEdge || HasTexturesOutOfBounds || HeadTouchesGround || TooTall ||
+                                           TooWide || GetIntersectionPoints().Count > 0 || GetTooShortEdges().Count > 0;
 
         internal bool HasTooManyPictures => PictureTextureCount > MaximumPictureTextureCount;
 
@@ -366,7 +383,9 @@ namespace Elmanager
                 Vector leftWheel = Objects.First(x => x.Type == ObjectType.Start).Position;
                 Vector rightWheel = new Vector(leftWheel.X + RightWheelDifferenceFromLeftWheelX, leftWheel.Y);
                 const double wheelTolerance = 1e-6;
-                return Polygons.Where(poly => !poly.IsGrass).Any(x => x.DistanceFromPoint(leftWheel) < wheelTolerance || x.DistanceFromPoint(rightWheel) < wheelTolerance);
+                return Polygons.Where(poly => !poly.IsGrass).Any(x =>
+                    x.DistanceFromPoint(leftWheel) < wheelTolerance ||
+                    x.DistanceFromPoint(rightWheel) < wheelTolerance);
             }
         }
 
@@ -375,11 +394,11 @@ namespace Elmanager
             get
             {
                 double padding = 11.898;
-                return Pictures.Where(p => !p.IsPicture).Any(p => 
-                p.Position.X < _polygonXMin - padding ||
-                p.Position.X > _polygonXMax + padding ||
-                p.Position.Y < _polygonYMin - padding ||
-                p.Position.Y > _polygonYMax + padding);
+                return Pictures.Where(p => !p.IsPicture).Any(p =>
+                    p.Position.X < _polygonXMin - padding ||
+                    p.Position.X > _polygonXMax + padding ||
+                    p.Position.Y < _polygonYMin - padding ||
+                    p.Position.Y > _polygonYMax + padding);
             }
         }
 
@@ -452,6 +471,7 @@ namespace Elmanager
                     for (int i = 0; i < x.Count; i++)
                         sum += x.Vertices[i].X + x.Vertices[i].Y;
                 }
+
                 return sum;
             }
         }
@@ -471,6 +491,7 @@ namespace Elmanager
                 int index = int.Parse(level.Substring(6, 2));
                 return index + " - " + InternalTitles[index - 1];
             }
+
             return System.IO.Path.GetFileNameWithoutExtension(level);
         }
 
@@ -508,7 +529,7 @@ namespace Elmanager
         {
             UpdateBounds();
             other.UpdateBounds();
-            
+
             double xDiff = XMax - other.XMin + 5;
             double yDiff = YMax - other.YMax;
 
@@ -570,11 +591,16 @@ namespace Elmanager
             double yMax = double.NegativeInfinity;
             foreach (Polygon x in Polygons.Where(p => p.Vertices.Any(v => v.Mark == Geometry.VectorMark.Selected)))
             {
-                xMin = Math.Min(xMin, x.Vertices.Where(v => v.Mark == Geometry.VectorMark.Selected).Select(v => v.X).Min());
-                xMax = Math.Max(xMax, x.Vertices.Where(v => v.Mark == Geometry.VectorMark.Selected).Select(v => v.X).Max());
-                yMax = Math.Max(yMax, x.Vertices.Where(v => v.Mark == Geometry.VectorMark.Selected).Select(v => v.Y).Max());
-                yMin = Math.Min(yMin, x.Vertices.Where(v => v.Mark == Geometry.VectorMark.Selected).Select(v => v.Y).Min());
+                xMin = Math.Min(xMin,
+                    x.Vertices.Where(v => v.Mark == Geometry.VectorMark.Selected).Select(v => v.X).Min());
+                xMax = Math.Max(xMax,
+                    x.Vertices.Where(v => v.Mark == Geometry.VectorMark.Selected).Select(v => v.X).Max());
+                yMax = Math.Max(yMax,
+                    x.Vertices.Where(v => v.Mark == Geometry.VectorMark.Selected).Select(v => v.Y).Max());
+                yMin = Math.Min(yMin,
+                    x.Vertices.Where(v => v.Mark == Geometry.VectorMark.Selected).Select(v => v.Y).Min());
             }
+
             foreach (Object x in Objects.Where(o => o.Position.Mark == Geometry.VectorMark.Selected))
             {
                 xMin = Math.Min(xMin, x.Position.X);
@@ -582,6 +608,7 @@ namespace Elmanager
                 yMax = Math.Max(yMax, x.Position.Y);
                 yMin = Math.Min(yMin, x.Position.Y);
             }
+
             foreach (Picture x in Pictures.Where(p => p.Position.Mark == Geometry.VectorMark.Selected))
             {
                 xMin = Math.Min(xMin, x.Position.X);
@@ -589,6 +616,7 @@ namespace Elmanager
                 yMax = Math.Max(yMax, x.Position.Y + x.Height);
                 yMin = Math.Min(yMin, x.Position.Y);
             }
+
             Matrix mirrorMatrix = Matrix.Identity;
             mirrorMatrix.Translate(-(xMax + xMin) / 2, -(yMax + yMin) / 2);
             switch (mirrorOption)
@@ -602,6 +630,7 @@ namespace Elmanager
                 default:
                     throw new ArgumentOutOfRangeException(nameof(mirrorOption), mirrorOption, null);
             }
+
             mirrorMatrix.Translate((xMax + xMin) / 2, (yMax + yMin) / 2);
             Transform(mirrorMatrix, v => v.Mark == Geometry.VectorMark.Selected);
         }
@@ -614,6 +643,7 @@ namespace Elmanager
                     t.Transform(matrix);
                 x.UpdateDecomposition();
             }
+
             foreach (Object t in Objects.Where(o => selector(o.Position)))
             {
                 Vector z = t.Position;
@@ -625,6 +655,7 @@ namespace Elmanager
                 else
                     t.Position.Transform(matrix);
             }
+
             foreach (Picture z in Pictures.Where(p => selector(p.Position)))
             {
                 var fix = new Vector(z.Width / 2, z.Height / 2);
@@ -673,6 +704,7 @@ namespace Elmanager
                     levelFile.AddRange(BitConverter.GetBytes(z.Y));
                 }
             }
+
             levelFile.AddRange(BitConverter.GetBytes(Objects.Count + MagicDouble));
             foreach (Object x in Objects)
             {
@@ -682,6 +714,7 @@ namespace Elmanager
                 levelFile.AddRange(BitConverter.GetBytes((int) x.AppleType));
                 levelFile.AddRange(BitConverter.GetBytes(x.AnimationNumber - 1));
             }
+
             levelFile.AddRange(BitConverter.GetBytes(_textureData.Count + MagicDouble2));
             foreach (LevelFileTexture x in _textureData)
             {
@@ -698,11 +731,13 @@ namespace Elmanager
                     levelFile.AddRange(GetByteArrayFromString(x.Name, 10));
                     levelFile.AddRange(GetByteArrayFromString(x.MaskName, 10));
                 }
+
                 levelFile.AddRange(BitConverter.GetBytes(x.Position.X));
                 levelFile.AddRange(BitConverter.GetBytes(x.Position.Y));
                 levelFile.AddRange(BitConverter.GetBytes(x.Distance));
                 levelFile.AddRange(BitConverter.GetBytes((int) x.Clipping));
             }
+
             levelFile.AddRange(BitConverter.GetBytes(EndOfDataMagicNumber));
             for (int i = 1; i <= 688; i++)
                 levelFile.Add(0);
@@ -730,6 +765,7 @@ namespace Elmanager
                 YMax = Math.Max(YMax, x.YMax);
                 YMin = Math.Min(YMin, x.YMin);
             }
+
             _polygonXMin = XMin;
             _polygonYMin = YMin;
             _polygonXMax = XMax;
@@ -741,6 +777,7 @@ namespace Elmanager
                 YMax = Math.Max(YMax, x.Position.Y);
                 YMin = Math.Min(YMin, x.Position.Y);
             }
+
             foreach (Picture x in Pictures)
             {
                 XMin = Math.Min(XMin, x.Position.X);
@@ -765,9 +802,11 @@ namespace Elmanager
                 {
                     foreach (ElmaRenderer.DrawableImage z in lgrImages)
                     {
-                        if (z.Type == Lgr.ImageType.Picture && fileTexture.Name.Equals(z.Name, StringComparison.InvariantCultureIgnoreCase))
+                        if (z.Type == Lgr.ImageType.Picture &&
+                            fileTexture.Name.Equals(z.Name, StringComparison.InvariantCultureIgnoreCase))
                         {
-                            Pictures.Add(new Picture(z, fileTexture.Position, fileTexture.Distance, fileTexture.Clipping));
+                            Pictures.Add(new Picture(z, fileTexture.Position, fileTexture.Distance,
+                                fileTexture.Clipping));
                             pictureFound = true;
                             break;
                         }
@@ -777,24 +816,30 @@ namespace Elmanager
                 {
                     foreach (ElmaRenderer.DrawableImage texture in lgrImages)
                     {
-                        if (texture.Type == Lgr.ImageType.Texture && fileTexture.Name.Equals(texture.Name, StringComparison.InvariantCultureIgnoreCase))
+                        if (texture.Type == Lgr.ImageType.Texture &&
+                            fileTexture.Name.Equals(texture.Name, StringComparison.InvariantCultureIgnoreCase))
                         {
                             pictureFound = true;
                             foreach (ElmaRenderer.DrawableImage mask in lgrImages)
                             {
-                                if (mask.Type == Lgr.ImageType.Mask && mask.Name.Equals(fileTexture.MaskName, StringComparison.InvariantCultureIgnoreCase))
+                                if (mask.Type == Lgr.ImageType.Mask && mask.Name.Equals(fileTexture.MaskName,
+                                        StringComparison.InvariantCultureIgnoreCase))
                                 {
-                                    Pictures.Add(new Picture(fileTexture.Clipping, fileTexture.Distance, fileTexture.Position, texture, mask));
+                                    Pictures.Add(new Picture(fileTexture.Clipping, fileTexture.Distance,
+                                        fileTexture.Position, texture, mask));
                                     break;
                                 }
                             }
+
                             break;
                         }
                     }
                 }
+
                 if (!pictureFound)
                     AllPicturesFound = false;
             }
+
             SortPictures();
         }
 
@@ -867,7 +912,8 @@ namespace Elmanager
             internal string Name;
             internal Vector Position;
 
-            internal LevelFileTexture(string name, string maskName, Vector position, int distance, ClippingType clipping)
+            internal LevelFileTexture(string name, string maskName, Vector position, int distance,
+                ClippingType clipping)
             {
                 Name = name;
                 MaskName = maskName;

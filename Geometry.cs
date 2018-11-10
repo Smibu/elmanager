@@ -76,6 +76,7 @@ namespace Elmanager
                     numberOfIntersectionsP1C++;
                 }
             }
+
             if (numberOfIntersectionsP1C != 1)
                 return null;
             for (int i = 0; i < p2.Vertices.Count; i++)
@@ -88,6 +89,7 @@ namespace Elmanager
                     numberOfIntersectionsP2C++;
                 }
             }
+
             Vector.MarkDefault = VectorMark.None;
             if (numberOfIntersectionsP2C != 1)
                 return null;
@@ -112,12 +114,14 @@ namespace Elmanager
                         {
                             return null;
                         }
+
                         p1ConnectVector *= connectRadius /
                                            Math.Sin(p1AngleAbs * Constants.DegToRad);
                         double distance1 = (p1C[p1Index + 1] - p1C[p1Index]).Length;
                         double distance2 = (p1C[p1Index] - p1C[p1Index - 1]).Length;
                         if (p1ConnectVector.Length > Math.Min(distance1, distance2))
-                            p1ConnectVector = p1ConnectVector / p1ConnectVector.Length * Math.Min(distance1, distance2) /
+                            p1ConnectVector = p1ConnectVector / p1ConnectVector.Length *
+                                              Math.Min(distance1, distance2) /
                                               2;
                         result.Add(p1IsectPoint - p1ConnectVector);
 
@@ -128,6 +132,7 @@ namespace Elmanager
                         {
                             return null;
                         }
+
                         p2ConnectVector *= connectRadius /
                                            Math.Sin(p2AngleAbs * Constants.DegToRad);
                         double dist1 = (p2C[p2Index + 1] - p2C[p2Index]).Length;
@@ -139,6 +144,7 @@ namespace Elmanager
                         p2Index++;
                         p1CCurrent = false;
                     }
+
                     p1Index++;
                     p1Index = p1Index % p1C.Count;
                 }
@@ -152,9 +158,11 @@ namespace Elmanager
                         result.Add(p1IsectPoint + p1ConnectVector);
                         p1CCurrent = true;
                     }
+
                     p2Index++;
                 }
             }
+
             result.UpdateDecomposition();
             return result;
         }
@@ -179,6 +187,7 @@ namespace Elmanager
             {
                 return false;
             }
+
             double uaT = b2Minusb1X * a1Minusb1Y - b2Minusb1Y * a1Minusb1X;
             double ubT = a2Minusa1X * a1Minusb1Y - a2Minusa1Y * a1Minusb1X;
             double uB = b2Minusb1Y * a2Minusa1X - b2Minusb1X * a2Minusa1Y;
@@ -191,6 +200,7 @@ namespace Elmanager
                 //X = a1.x + ua * (a2.x - a1.x);
                 //Y = a1.y + ua * (a2.y - a1.y);
             }
+
             if (Math.Round(ubT, RoundingPrecision) != 0)
                 return false;
             return Math.Round(uaT, RoundingPrecision) != 0;
@@ -215,6 +225,7 @@ namespace Elmanager
                     return new Vector(a1.X + ua * (a2.X - a1.X), a1.Y + ua * (a2.Y - a1.Y));
                 return null;
             }
+
             return null;
         }
 
@@ -234,6 +245,7 @@ namespace Elmanager
                 double v4 = py - ay + r * aMinusBy;
                 return Math.Sqrt(v3 * v3 + v4 * v4);
             }
+
             double v5 = px - ax;
             double v6 = py - ay;
             double v7 = Math.Sqrt(v5 * v5 + v6 * v6);
@@ -353,7 +365,8 @@ namespace Elmanager
             return isects;
         }
 
-        internal static IEnumerable<Polygon> GetSelectedPolygons(this IEnumerable<Polygon> polys, bool includeGrass = false)
+        internal static IEnumerable<Polygon> GetSelectedPolygons(this IEnumerable<Polygon> polys,
+            bool includeGrass = false)
         {
             return polys.Where(p => (includeGrass || !p.IsGrass) && p.Vertices.Any(v => v.Mark == VectorMark.Selected));
         }
@@ -372,7 +385,9 @@ namespace Elmanager
             return selection;
         }
 
-        internal static IEnumerable<Envelope> FindCovering(this IGeometry g, IEnumerable<Envelope> rectangles, CancellationToken token, IProgress<double> progress, int iterations = 2, double minRectCover = 0.33, double minCoverBreak = 0.9)
+        internal static IEnumerable<Envelope> FindCovering(this IGeometry g, IEnumerable<Envelope> rectangles,
+            CancellationToken token, IProgress<double> progress, int iterations = 2, double minRectCover = 0.33,
+            double minCoverBreak = 0.9)
         {
             var sortedRectangles = rectangles.ToList();
             sortedRectangles.Sort((b, a) => a.Area.CompareTo(b.Area));
@@ -397,6 +412,7 @@ namespace Elmanager
                     if (p.Y > c.Y)
                         p = c;
                 }
+
                 foreach (var rectangle in sortedRectangles)
                 {
                     var bestArea = 0.0;
@@ -405,11 +421,12 @@ namespace Elmanager
                     var bestymin = -1.0;
                     var bestxmax = -1.0;
                     var bestymax = -1.0;
-                    const string errorMsg = "Could not texturize the selected polygon(s). Make sure they don't have topology errors.";
+                    const string errorMsg =
+                        "Could not texturize the selected polygon(s). Make sure they don't have topology errors.";
                     for (var x = -iterations; x <= iterations; x++)
                     {
-                        rectangle.Translate(p.X - rectangle.Centre.X + x* rectangle.Width/(iterations * 2),
-                            p.Y - rectangle.Centre.Y + iterations* rectangle.Height/(iterations * 2));
+                        rectangle.Translate(p.X - rectangle.Centre.X + x * rectangle.Width / (iterations * 2),
+                            p.Y - rectangle.Centre.Y + iterations * rectangle.Height / (iterations * 2));
                         var rectg = f.ToGeometry(rectangle);
 
                         IGeometry isect;
@@ -421,6 +438,7 @@ namespace Elmanager
                         {
                             throw new PolygonException(errorMsg);
                         }
+
                         if (isect.Area > bestArea)
                         {
                             bestArea = isect.Area;
@@ -429,17 +447,19 @@ namespace Elmanager
                             bestymin = rectangle.MinY;
                             bestxmax = rectangle.MaxX;
                             bestymax = rectangle.MaxY;
-                            if (bestArea/bestRect.Area > minCoverBreak)
+                            if (bestArea / bestRect.Area > minCoverBreak)
                             {
                                 x = iterations;
                             }
                         }
                     }
+
                     if (bestRect == null)
                     {
                         throw new PolygonException(errorMsg);
                     }
-                    if (bestArea/bestRect.Area > minRectCover || rectangle.Equals(lastRect))
+
+                    if (bestArea / bestRect.Area > minRectCover || rectangle.Equals(lastRect))
                     {
                         // we need to call Buffer(0) to remove any possible degenerate parts from the intersection result
                         remaining = remaining.Difference(bestRect).Buffer(0);
@@ -447,12 +467,13 @@ namespace Elmanager
                         progress.Report(coveredArea / totalArea);
                         yield return new Envelope(
                             bestxmin - translationx,
-                            bestxmax - translationx, 
+                            bestxmax - translationx,
                             bestymin - translationy,
                             bestymax - translationy);
                         break;
                     }
                 }
+
                 token.ThrowIfCancellationRequested();
             }
         }

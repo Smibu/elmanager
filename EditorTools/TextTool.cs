@@ -57,8 +57,10 @@ namespace Elmanager.EditorTools
                         {
                             LevEditor.Modified = true;
                         }
+
                         LevEditor.UpdateSelectionInfo();
                     }
+
                     Renderer.RedrawScene();
                     break;
                 case MouseButtons.None:
@@ -128,6 +130,7 @@ namespace Elmanager.EditorTools
             {
                 decorations.Add(TextDecorations.Strikethrough);
             }
+
             if (options.Font.Underline)
             {
                 decorations.Add(TextDecorations.Underline);
@@ -136,9 +139,9 @@ namespace Elmanager.EditorTools
             var polys = new List<Polygon>();
             const double sizeFactor = 0.1;
             var formattedText = new FormattedText(options.Text, CultureInfo.InvariantCulture,
-                FlowDirection.LeftToRight, typeface, options.Font.SizeInPoints*sizeFactor, Brushes.Black)
+                FlowDirection.LeftToRight, typeface, options.Font.SizeInPoints * sizeFactor, Brushes.Black)
             {
-                LineHeight = options.LineHeight*options.Font.SizeInPoints*sizeFactor
+                LineHeight = options.LineHeight * options.Font.SizeInPoints * sizeFactor
             };
             formattedText.SetTextDecorations(decorations);
             var isCached = _minSmoothnesses.TryGetValue(options.Font, out var cached);
@@ -146,6 +149,7 @@ namespace Elmanager.EditorTools
             {
                 cached = options.Smoothness;
             }
+
             var smoothness = Math.Min(options.Smoothness, cached);
             var outlinedGeometry = formattedText.BuildGeometry(new Point(0, 0))
                 .GetOutlinedPathGeometry(0.005, ToleranceType.Absolute);
@@ -158,25 +162,28 @@ namespace Elmanager.EditorTools
                     opt.Text = "Unable to render\nthis font without\ntopology errors.";
                     return RenderString(opt, offset);
                 }
+
                 polys.Clear();
                 var poly = outlinedGeometry.GetFlattenedPathGeometry(smoothness, ToleranceType.Absolute);
                 polys.AddRange(
                     poly.Figures.Select(
                         figure => new Polygon(
                             figure.Segments
-                            .Select(segment => segment as PolyLineSegment)
-                            .SelectMany(polysegment => polysegment.Points)
-                            .Select(p => new Vector(p.X + offset.X, p.Y + offset.Y, Geometry.VectorMark.Selected))
+                                .Select(segment => segment as PolyLineSegment)
+                                .SelectMany(polysegment => polysegment.Points)
+                                .Select(p => new Vector(p.X + offset.X, p.Y + offset.Y, Geometry.VectorMark.Selected))
                         )
                     )
                 );
                 smoothness *= 0.5;
                 ++iterations;
             } while (polys.Any(p => p.Count < 3 || !p.IsSimple));
+
             if (iterations > 1)
             {
-                _minSmoothnesses[options.Font] = smoothness*2;
+                _minSmoothnesses[options.Font] = smoothness * 2;
             }
+
             var isects = Geometry.GetIntersectionPoints(polys);
             if (isects.Count > 0)
             {
@@ -186,7 +193,8 @@ namespace Elmanager.EditorTools
                 IGeometry union = f.CreateMultiPolygon(iarray);
                 try
                 {
-                    union = isects.Aggregate(union, (current, vector) => current.Union(f.CreatePoint(vector).Buffer(0.0001, 1)));
+                    union = isects.Aggregate(union,
+                        (current, vector) => current.Union(f.CreatePoint(vector).Buffer(0.0001, 1)));
                 }
                 catch (TopologyException)
                 {
@@ -204,11 +212,14 @@ namespace Elmanager.EditorTools
                 {
                     if (union is IMultiPolygon multiPolygon)
                     {
-                        polys.AddRange(multiPolygon.Geometries.Select(geometry => geometry as IPolygon).SelectMany(poly => poly.ToElmaPolygons()));
+                        polys.AddRange(multiPolygon.Geometries.Select(geometry => geometry as IPolygon)
+                            .SelectMany(poly => poly.ToElmaPolygons()));
                     }
                 }
+
                 polys.ForEach(p => p.MarkVectorsAs(Geometry.VectorMark.Selected));
             }
+
             polys.ForEach(p => p.UpdateDecomposition());
             return polys;
         }
@@ -220,7 +231,7 @@ namespace Elmanager.EditorTools
             foreach (var familyTypeface in fontfamily.GetTypefaces())
             {
                 var faceName = familyTypeface.FaceNames[XmlLanguage.GetLanguage("en-US")];
-                
+
                 var styleName =
                     options.Font.Style.ToString()
                         .Replace(",", "")
@@ -228,28 +239,32 @@ namespace Elmanager.EditorTools
                         .Replace("Strikeout", "")
                         .Trim();
                 var fixedStyleName = familyTypeface.Weight + " " + familyTypeface.Style;
-                
+
                 if (familyTypeface.Style.ToString() == styleName)
                 {
                     typeface = familyTypeface;
                     break;
                 }
+
                 if (fixedStyleName == options.FontStyleName)
                 {
                     typeface = familyTypeface;
                     break;
                 }
+
                 if (fixedStyleName == options.FontStyleName.Replace(faceName, "").Trim())
                 {
                     typeface = familyTypeface;
                     break;
                 }
+
                 if (synonymMap.Any(v => faceName == styleName.Replace(v.Key, v.Value)))
                 {
                     typeface = familyTypeface;
                     break;
                 }
             }
+
             return typeface;
         }
 

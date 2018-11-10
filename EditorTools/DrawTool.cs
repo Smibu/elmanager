@@ -52,8 +52,10 @@ namespace Elmanager.EditorTools
                     {
                         Global.AppSettings.LevelEditor.DrawStep -= ThresholdAdjustStep;
                     }
+
                     break;
             }
+
             UpdateHelp();
         }
 

@@ -60,6 +60,7 @@ namespace Elmanager
                 lev.Pictures = null;
                 Internals[i] = lev;
             }
+
             var ms = new FileStream("e:\\intres.dat", FileMode.Create);
             var x = new BinaryFormatter();
             x.Serialize(ms, Internals);
@@ -126,6 +127,7 @@ namespace Elmanager
             {
                 ThreadPool.QueueUserWorkItem(UpdateChecker.CheckForUpdates);
             }
+
             ParseCommandLine(args);
             ComponentManager.WaitAllThreads();
         }

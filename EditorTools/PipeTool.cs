@@ -53,7 +53,7 @@ namespace Elmanager.EditorTools
                 {
                     if (Global.AppSettings.LevelEditor.RenderingSettings.ShowObjectFrames)
                         Renderer.DrawCircle(x.Position, ElmaRenderer.ObjectRadius,
-                                            Global.AppSettings.LevelEditor.RenderingSettings.AppleColor);
+                            Global.AppSettings.LevelEditor.RenderingSettings.AppleColor);
                     if (Renderer.LgrGraphicsLoaded && Global.AppSettings.LevelEditor.RenderingSettings.ShowObjects)
                         Renderer.DrawApple(x.Position);
                 }
@@ -93,6 +93,7 @@ namespace Elmanager.EditorTools
                     }
                     else
                         _pipeRadius += radiusStep;
+
                     break;
                 case Constants.DecreaseBig:
                     radiusStep *= 10;
@@ -117,6 +118,7 @@ namespace Elmanager.EditorTools
                     }
                     else if (_pipeRadius > radiusStep)
                         _pipeRadius -= radiusStep;
+
                     break;
                 case Keys.Space:
                     switch (_pipeMode)
@@ -131,12 +133,15 @@ namespace Elmanager.EditorTools
                             _pipeMode = PipeMode.NoApples;
                             break;
                     }
+
                     break;
             }
+
             if (CreatingPipe)
             {
                 UpdatePipe(_pipeline);
             }
+
             UpdateHelp();
         }
 
@@ -154,6 +159,7 @@ namespace Elmanager.EditorTools
                         _pipeline.Add(CurrentPos);
                         _pipeline.Add(CurrentPos);
                     }
+
                     break;
                 case MouseButtons.Right:
                     if (CreatingPipe)
@@ -166,8 +172,10 @@ namespace Elmanager.EditorTools
                             Lev.Objects.AddRange(_apples);
                             LevEditor.Modified = true;
                         }
+
                         _pipeline = null;
                     }
+
                     break;
             }
 
@@ -175,7 +183,7 @@ namespace Elmanager.EditorTools
             {
                 UpdatePipe(_pipeline);
             }
-            
+
             UpdateHelp();
         }
 
@@ -205,13 +213,18 @@ namespace Elmanager.EditorTools
             switch (_pipeMode)
             {
                 case PipeMode.NoApples:
-                    LevEditor.InfoLabel.Text += string.Format("Mode: No apples - Pipe radius: {0:F2} {1}", _pipeRadius, help);
+                    LevEditor.InfoLabel.Text +=
+                        string.Format("Mode: No apples - Pipe radius: {0:F2} {1}", _pipeRadius, help);
                     break;
                 case PipeMode.ApplesDistance:
-                    LevEditor.InfoLabel.Text += string.Format("Mode: Apples (distance: {0:F2} (adjust with Ctrl + +/-)) - Pipe radius: {1:F2} {2}", _appleDistance, _pipeRadius, help);
+                    LevEditor.InfoLabel.Text +=
+                        string.Format(
+                            "Mode: Apples (distance: {0:F2} (adjust with Ctrl + +/-)) - Pipe radius: {1:F2} {2}",
+                            _appleDistance, _pipeRadius, help);
                     break;
                 case PipeMode.ApplesAmount:
-                    LevEditor.InfoLabel.Text += string.Format("Mode: {0} apples - Pipe radius: {1:F2} {2}", _appleAmount, _pipeRadius, help);
+                    LevEditor.InfoLabel.Text += string.Format("Mode: {0} apples - Pipe radius: {1:F2} {2}",
+                        _appleAmount, _pipeRadius, help);
                     break;
             }
         }
@@ -231,14 +244,16 @@ namespace Elmanager.EditorTools
                     while (!(currVectorTrip > currVectorLength))
                     {
                         apples.Add(new Level.Object(_pipeline[i] + zUnit * currVectorTrip, Level.ObjectType.Apple,
-                                                         Level.AppleTypes.Normal));
+                            Level.AppleTypes.Normal));
                         currVectorTrip += distance;
                     }
+
                     currentDistanceToApple = currVectorTrip - currVectorLength;
                 }
                 else
                     currentDistanceToApple -= currVectorLength;
             }
+
             return apples;
         }
 
@@ -262,6 +277,7 @@ namespace Elmanager.EditorTools
                 Vector point = Geometry.FindPoint(pipeLine[i - 1], pipeLine[i], pipeLine[i + 1], -_pipeRadius);
                 p.Add(point);
             }
+
             p.Add(pipeLine.GetLastVertex() - new Vector(angle + 90) * _pipeRadius);
             p.Add(pipeLine.GetLastVertex() + new Vector(angle + 90) * _pipeRadius);
             for (int i = pipeLine.Count - 2; i >= 1; i--)
@@ -269,6 +285,7 @@ namespace Elmanager.EditorTools
                 Vector point = Geometry.FindPoint(pipeLine[i - 1], pipeLine[i], pipeLine[i + 1], _pipeRadius);
                 p.Add(point);
             }
+
             _pipe = p;
             _pipe.UpdateDecomposition();
             switch (_pipeMode)

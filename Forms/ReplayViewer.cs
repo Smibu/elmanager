@@ -16,20 +16,20 @@ namespace Elmanager.Forms
     partial class ReplayViewer
     {
         private readonly uint[] _colourValues = new[]
-                                                    {
-                                                        0xFFFF0000, 0xFF00FF00, 0xFF0000FF, 0xFFFFFF00, 0xFFFF00FF,
-                                                        0xFF00FFFF, 0xFF000000, 0xFF800000, 0xFF008000, 0xFF000080,
-                                                        0xFF808000, 0xFF800080, 0xFF008080, 0xFF808080, 0xFFC00000,
-                                                        0xFF00C000, 0xFF0000C0, 0xFFC0C000, 0xFFC000C0, 0xFF00C0C0,
-                                                        0xFFC0C0C0, 0xFF400000, 0xFF004000, 0xFF000040, 0xFF404000,
-                                                        0xFF400040, 0xFF004040, 0xFF404040, 0xFF200000, 0xFF002000,
-                                                        0xFF000020, 0xFF202000, 0xFF200020, 0xFF002020, 0xFF202020,
-                                                        0xFF600000, 0xFF006000, 0xFF000060, 0xFF606000, 0xFF600060,
-                                                        0xFF006060, 0xFF606060, 0xFFA00000, 0xFF00A000, 0xFF0000A0,
-                                                        0xFFA0A000, 0xFFA000A0, 0xFF00A0A0, 0xFFA0A0A0, 0xFFE00000,
-                                                        0xFF00E000, 0xFF0000E0, 0xFFE0E000, 0xFFE000E0, 0xFF00E0E0,
-                                                        0xFFE0E0E0
-                                                    };
+        {
+            0xFFFF0000, 0xFF00FF00, 0xFF0000FF, 0xFFFFFF00, 0xFFFF00FF,
+            0xFF00FFFF, 0xFF000000, 0xFF800000, 0xFF008000, 0xFF000080,
+            0xFF808000, 0xFF800080, 0xFF008080, 0xFF808080, 0xFFC00000,
+            0xFF00C000, 0xFF0000C0, 0xFFC0C000, 0xFFC000C0, 0xFF00C0C0,
+            0xFFC0C0C0, 0xFF400000, 0xFF004000, 0xFF000040, 0xFF404000,
+            0xFF400040, 0xFF004040, 0xFF404040, 0xFF200000, 0xFF002000,
+            0xFF000020, 0xFF202000, 0xFF200020, 0xFF002020, 0xFF202020,
+            0xFF600000, 0xFF006000, 0xFF000060, 0xFF606000, 0xFF600060,
+            0xFF006060, 0xFF606060, 0xFFA00000, 0xFF00A000, 0xFF0000A0,
+            0xFFA0A000, 0xFFA000A0, 0xFF00A0A0, 0xFFA0A0A0, 0xFFE00000,
+            0xFF00E000, 0xFF0000E0, 0xFFE0E000, 0xFFE000E0, 0xFF00E0E0,
+            0xFFE0E0E0
+        };
 
         private PlayerEvent[] _currentEvents;
         private bool _draggingScreen;
@@ -72,11 +72,12 @@ namespace Elmanager.Forms
             foreach (Replay replay in replays)
             {
                 _playListReplays.Add(new PlayListObject(Path.GetFileNameWithoutExtension(replay.FileName), 1,
-                                                        replay.Player1));
+                    replay.Player1));
                 if (replay.IsMulti)
                     _playListReplays.Add(new PlayListObject(Path.GetFileNameWithoutExtension(replay.FileName), 2,
-                                                            replay.Player2));
+                        replay.Player2));
             }
+
             timeBar.Value = 0;
             _renderer.InitializeReplays(replays);
             _renderer.DrivingLineColors = new Color[_playListReplays.Count];
@@ -127,6 +128,7 @@ namespace Elmanager.Forms
                     else
                         return;
                 }
+
                 RenderingOptionsChanged();
             }
         }
@@ -183,14 +185,14 @@ namespace Elmanager.Forms
         {
             Point mousePosNoTr = ViewerBox.PointToClient(MousePosition);
             var mousePos = new Vector
-                               {
-                                   X =
-                                       _renderer.XMin +
-                                       mousePosNoTr.X * (_renderer.XMax - _renderer.XMin) / ViewerBox.Width,
-                                   Y =
-                                       _renderer.YMax -
-                                       mousePosNoTr.Y * (_renderer.YMax - _renderer.YMin) / ViewerBox.Height
-                               };
+            {
+                X =
+                    _renderer.XMin +
+                    mousePosNoTr.X * (_renderer.XMax - _renderer.XMin) / ViewerBox.Width,
+                Y =
+                    _renderer.YMax -
+                    mousePosNoTr.Y * (_renderer.YMax - _renderer.YMin) / ViewerBox.Height
+            };
             return mousePos;
         }
 
@@ -213,7 +215,7 @@ namespace Elmanager.Forms
         private void Initialize()
         {
             MemberInfo[] playListObjectMembers =
-                typeof (PlayListObject).GetMembers(BindingFlags.Public | BindingFlags.Instance);
+                typeof(PlayListObject).GetMembers(BindingFlags.Public | BindingFlags.Instance);
             for (int i = 0; i <= 1; i++)
                 PlayList.GetColumn(i).AspectName = playListObjectMembers[i + 4].Name;
             _renderer = new ElmaRenderer(ViewerBox, Global.AppSettings.ReplayViewer.RenderingSettings);
@@ -227,6 +229,7 @@ namespace Elmanager.Forms
                 if (resolution.Equals(DisplayDevice.Default.SelectResolution(1, 1, 1, 1)))
                     ResolutionBox.SelectedIndex = ResolutionBox.Items.Count - 1;
             }
+
             Size = Global.AppSettings.ReplayViewer.Size;
             playbackSpeedBar.Value = 0;
             FollowDriverBox.Checked = Global.AppSettings.ReplayViewer.FollowDriver;
@@ -263,6 +266,7 @@ namespace Elmanager.Forms
                         break;
                 }
             }
+
             return base.ProcessCmdKey(ref m, keyData);
         }
 
@@ -288,6 +292,7 @@ namespace Elmanager.Forms
                         Resize += ViewerResized;
                         ViewerResized();
                     }
+
                     break;
                 case Keys.Space:
                     _renderer.TogglePlay();
@@ -375,6 +380,7 @@ namespace Elmanager.Forms
                 DrivingLinePanel.Enabled = true;
                 UpdateControlColor(DrivingLinePanel, _renderer.DrivingLineColors[i]);
             }
+
             UpdateEventsLists();
             _renderer.DrawSceneDefault();
         }
@@ -393,10 +399,10 @@ namespace Elmanager.Forms
         {
             var settingsForm = new RenderingSettingsForm(Global.AppSettings.ReplayViewer.RenderingSettings);
             settingsForm.Changed += x =>
-                                        {
-                                            _renderer.UpdateSettings(x);
-                                            _renderer.RedrawScene();
-                                        };
+            {
+                _renderer.UpdateSettings(x);
+                _renderer.RedrawScene();
+            };
             settingsForm.ShowDialog();
         }
 
@@ -470,8 +476,8 @@ namespace Elmanager.Forms
             if (e.Location == _lastLocation)
                 return;
             toolTip1.SetToolTip(timeBar,
-                                (_renderer.MaxTime * ((e.Location.X - 13) / (double) (timeBar.Width - 27))).ToTimeString
-                                    ());
+                (_renderer.MaxTime * ((e.Location.X - 13) / (double) (timeBar.Width - 27))).ToTimeString
+                    ());
             _lastLocation = e.Location;
         }
 
@@ -519,11 +525,12 @@ namespace Elmanager.Forms
                     typesToShow.Add(ReplayEventType.GroundTouch);
                 _currentEvents = _playListReplays[i].Player.GetEvents(typesToShow.ToArray());
                 Utils.PutEventsToList(_playListReplays[i].Player, EventListBox,
-                                          _playListReplays[0].Player.Finished || _playListReplays[i].Player.FakeFinish,
-                                          _currentEvents);
+                    _playListReplays[0].Player.Finished || _playListReplays[i].Player.FakeFinish,
+                    _currentEvents);
             }
             else
                 EventListBox.Items.Clear();
+
             if (sender != null)
             {
                 contextMenuStrip1.Show();
@@ -553,6 +560,7 @@ namespace Elmanager.Forms
                     else
                         Zoom(e.Button == MouseButtons.Left,
                             1 - Global.AppSettings.ReplayViewer.MouseClickStep / 100.0);
+
                     break;
                 case MouseButtons.Right:
                     Zoom(e.Button == MouseButtons.Left,
@@ -586,16 +594,18 @@ namespace Elmanager.Forms
                 _zoomRecting = false;
                 _renderer.ZoomRect(_zoomRectStartPoint, GetMouseCoordinates());
             }
+
             _draggingScreen = false;
         }
 
         private void ViewerResized(object sender = null, EventArgs e = null)
         {
-            if (sender!=null)
+            if (sender != null)
             {
                 viewerSizeXBox.Text = ViewerBox.Width.ToString();
                 viewerSizeYBox.Text = ViewerBox.Height.ToString();
             }
+
             if (_renderer != null)
             {
                 _renderer.ResetViewport(ViewerBox.Width, ViewerBox.Height);
@@ -631,6 +641,7 @@ namespace Elmanager.Forms
                 {
                     _renderer.ZoomLevel /= 1.05;
                 }
+
                 _renderer.RedrawScene();
                 _lastMouseX = MousePosition.X;
                 Global.AppSettings.ReplayViewer.ZoomLevel = _renderer.ZoomLevel;
@@ -647,6 +658,7 @@ namespace Elmanager.Forms
 // ReSharper disable UnaccessedField.Local
             public string FileName;
             public int PlayerNum;
+
             internal Player Player;
 // ReSharper restore UnaccessedField.Local
 

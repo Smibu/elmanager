@@ -51,6 +51,7 @@ namespace Elmanager.Forms
                     eventTimes[i][eventTimes[i].Length - 1] = _comparingRps[i].Time;
                 }
             }
+
             if (AppleButton.Checked)
             {
                 //Initialize CheckPoints()() automatically for apple comparison
@@ -60,10 +61,12 @@ namespace Elmanager.Forms
                     for (int j = 0; j < eventTimes[i].Length; j++)
                         appleCheckPoints[i][j] = j;
                 }
+
                 checkPoints = appleCheckPoints;
             }
             else
                 checkPoints = _touchCheckPoints;
+
             //Find out maximum number of checkpoints
             int maxCheckPoints = 0;
             int k = 0;
@@ -80,6 +83,7 @@ namespace Elmanager.Forms
                     return;
                 }
             }
+
             ResultsBox.Items.Clear();
             double combinedTime = 0;
             for (int i = 0; i < maxCheckPoints; i++)
@@ -97,12 +101,14 @@ namespace Elmanager.Forms
                         else
                             time = 3600;
                     }
+
                     if (time < bestTimeBetweenEvents)
                     {
                         bestTimeBetweenEvents = time;
                         k = x; //Save the number of the best replay
                     }
                 }
+
                 combinedTime += bestTimeBetweenEvents;
                 if (i == 0)
                     ResultsBox.Items.Add("Start to Checkpoint 1: " + bestTimeBetweenEvents.ToTimeString() +
@@ -111,6 +117,7 @@ namespace Elmanager.Forms
                     ResultsBox.Items.Add("Checkpoint " + i + " to Checkpoint " + (i + 1) + ": " +
                                          bestTimeBetweenEvents.ToTimeString() + " in " + CRBox.Items[k]);
             }
+
             ResultsBox.Visible = true;
             Label19.Visible = true;
             Label4.Visible = true;

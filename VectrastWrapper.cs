@@ -25,6 +25,7 @@ namespace Elmanager
             {
                 throw new VectrastException(string.Format("The image file {0} is invalid.", imageFileName));
             }
+
             try
             {
                 vr.collapseVectors(vr.createVectors(pixelOn, bmp));
@@ -33,7 +34,8 @@ namespace Elmanager
             {
                 throw new VectrastException(e.Message);
             }
-            transformMatrix = Matrix2D.translationM(-bmp.Width/2.0, -bmp.Height/2.0)*transformMatrix;
+
+            transformMatrix = Matrix2D.translationM(-bmp.Width / 2.0, -bmp.Height / 2.0) * transformMatrix;
             transformMatrix = transformMatrix * Matrix2D.scaleM(0.1, 0.1);
             bmp.Dispose();
 
@@ -58,6 +60,7 @@ namespace Elmanager
                 {
                     elmaPolygon.Add(new Vector(vertex.x, vertex.y));
                 }
+
                 lev.Polygons.Add(elmaPolygon);
             }
 

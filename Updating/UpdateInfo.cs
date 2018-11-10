@@ -7,7 +7,7 @@ namespace Elmanager.Updating
     {
         public string Link { get; set; }
 
-        [JsonConverter(typeof (UpdateInfoDateTimeConverter))]
+        [JsonConverter(typeof(UpdateInfoDateTimeConverter))]
         public DateTime Date { get; set; }
     }
 }

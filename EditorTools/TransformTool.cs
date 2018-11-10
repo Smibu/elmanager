@@ -74,17 +74,20 @@ namespace Elmanager.EditorTools
                         _originalTransformPolygons.Add(new Polygon(x));
                         foundMarked = true;
                     }
+
                     IncrementMarked(z);
                 }
             }
+
             foreach (Level.Object x in Lev.Objects)
             {
                 if (x.Position.Mark != Geometry.VectorMark.Selected) continue;
                 _originalTransformObjects.Add(new Level.Object(x.Position, x.Type, x.AppleType,
-                                                                    x.AnimationNumber));
+                    x.AnimationNumber));
                 transformObjectReferences.Add(x);
                 IncrementMarked(x.Position);
             }
+
             foreach (Level.Picture x in Lev.Pictures)
             {
                 if (x.Position.Mark != Geometry.VectorMark.Selected)
@@ -93,6 +96,7 @@ namespace Elmanager.EditorTools
                 transformTextureReferences.Add(x);
                 IncrementMarked(x.Position);
             }
+
             if (numberOfMarked > 1)
             {
                 _transformRectangle = new Polygon();
@@ -106,16 +110,19 @@ namespace Elmanager.EditorTools
                     Lev.Polygons.Remove(x);
                     Lev.Polygons.Add(x);
                 }
+
                 foreach (Level.Object x in transformObjectReferences)
                 {
                     Lev.Objects.Remove(x);
                     Lev.Objects.Add(x);
                 }
+
                 foreach (Level.Picture x in transformTextureReferences)
                 {
                     Lev.Pictures.Remove(x);
                     Lev.Pictures.Add(x);
                 }
+
                 UpdateHelp();
             }
             else
@@ -126,9 +133,9 @@ namespace Elmanager.EditorTools
         {
             Renderer.DrawPolygon(_transformRectangle, Color.Blue);
             Renderer.DrawLine((_transformRectangle.Vertices[0] + _transformRectangle.Vertices[1]) / 2,
-                              (_transformRectangle.Vertices[2] + _transformRectangle.Vertices[3]) / 2, Color.Blue);
+                (_transformRectangle.Vertices[2] + _transformRectangle.Vertices[3]) / 2, Color.Blue);
             Renderer.DrawLine((_transformRectangle.Vertices[1] + _transformRectangle.Vertices[2]) / 2,
-                              (_transformRectangle.Vertices[3] + _transformRectangle.Vertices[0]) / 2, Color.Blue);
+                (_transformRectangle.Vertices[3] + _transformRectangle.Vertices[0]) / 2, Color.Blue);
         }
 
         public void InActivate()
@@ -162,6 +169,7 @@ namespace Elmanager.EditorTools
                         Transforming = true;
                         break;
                     }
+
                     if (((_transformRectangle[i] + _transformRectangle[i + 1]) / 2 - CurrentPos).Length <
                         Global.AppSettings.LevelEditor.CaptureRadius * Renderer.ZoomLevel)
                     {
@@ -170,8 +178,9 @@ namespace Elmanager.EditorTools
                         break;
                     }
                 }
+
                 if (((_transformRectangle[0] + _transformRectangle[2]) / 2 - CurrentPos).Length <
-                        Global.AppSettings.LevelEditor.CaptureRadius * Renderer.ZoomLevel)
+                    Global.AppSettings.LevelEditor.CaptureRadius * Renderer.ZoomLevel)
                 {
                     _transformPolygonIndex = 8;
                     Transforming = true;
@@ -196,6 +205,7 @@ namespace Elmanager.EditorTools
                     scaleFactor = (p - center).Length / (z - center).Length;
                     transformMatrix.Scale(scaleFactor, scaleFactor);
                 }
+
                 if (!DisableRotation)
                     transformMatrix.Rotate(-(p - center).AngleBetween(z - center));
             }
@@ -215,13 +225,16 @@ namespace Elmanager.EditorTools
                         transformMatrix.Scale(scaleFactor, 1);
                     transformMatrix.Rotate(-rotated);
                 }
+
                 if (!DisableRotation)
                     transformMatrix.Rotate(-(p - center).AngleBetween(z - center));
-            } else
+            }
+            else
             {
                 var v = p - center;
                 transformMatrix.Translate(v.X, v.Y);
             }
+
             transformMatrix.Translate(center.X, center.Y);
             _transformRectangle = _originalRectangle.ApplyTransformation(transformMatrix);
             for (int i = 0; i < _originalTransformPolygons.Count; i++)
@@ -230,6 +243,7 @@ namespace Elmanager.EditorTools
                     _originalTransformPolygons[i].ApplyTransformation(transformMatrix, true);
                 Lev.Polygons[Lev.Polygons.Count - 1 - i].UpdateDecomposition();
             }
+
             for (int i = 0; i < _originalTransformObjects.Count; i++)
                 Lev.Objects[Lev.Objects.Count - 1 - i].Position =
                     _originalTransformObjects[_originalTransformObjects.Count - 1 - i].Position * transformMatrix;
@@ -267,6 +281,7 @@ namespace Elmanager.EditorTools
                 _originalTransformObjects[_originalTransformObjects.Count - 1 - i] = new Level.Object(
                     x.Position, x.Type, x.AppleType, x.AnimationNumber);
             }
+
             for (int i = 0; i < _originalTransformTextures.Count; i++)
                 _originalTransformTextures[i] = Lev.Pictures[Lev.Pictures.Count - 1 - i].Clone();
             _originalRectangle = new Polygon(_transformRectangle);

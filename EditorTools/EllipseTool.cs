@@ -20,7 +20,7 @@ namespace Elmanager.EditorTools
 
         public override bool Busy => CreatingEllipse;
 
-        private bool CreatingEllipse => (object)_ellipseCenter != null;
+        private bool CreatingEllipse => (object) _ellipseCenter != null;
 
         public void Activate()
         {
@@ -58,8 +58,10 @@ namespace Elmanager.EditorTools
                         _ellipseSteps--;
                         UpdateEllipse();
                     }
+
                     break;
             }
+
             UpdateHelp();
         }
 
@@ -79,14 +81,17 @@ namespace Elmanager.EditorTools
                         _ellipseCenter = CurrentPos;
                         UpdateEllipse();
                     }
+
                     break;
                 case MouseButtons.Right:
                     if (CreatingEllipse)
                     {
                         _ellipseCenter = null;
                     }
+
                     break;
             }
+
             UpdateHelp();
         }
 
@@ -131,7 +136,7 @@ namespace Elmanager.EditorTools
             }
             else
                 _ellipse = Polygon.Ellipse(_ellipseCenter, CurrentPos.X - _ellipseCenter.X,
-                                           CurrentPos.Y - _ellipseCenter.Y, 0, _ellipseSteps);
+                    CurrentPos.Y - _ellipseCenter.Y, 0, _ellipseSteps);
         }
     }
 }

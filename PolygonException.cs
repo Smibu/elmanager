@@ -6,7 +6,6 @@ namespace Elmanager
     {
         public PolygonException(string message) : base(message)
         {
-            
         }
     }
 }

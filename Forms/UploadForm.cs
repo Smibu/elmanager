@@ -16,18 +16,19 @@ namespace Elmanager.Forms
         {
             BeginUpload();
             NameValueCollection parameters = new NameValueCollection
-                                                 {{"MAX_FILE_SIZE", "512000"}, {"upload", "Upload!"}};
+                {{"MAX_FILE_SIZE", "512000"}, {"upload", "Upload!"}};
             string response = Utils.HttpUploadFile("http://zworqy.com/up/index.php", file, "uploadfile",
-                                                       "application/octet-stream", parameters);
+                "application/octet-stream", parameters);
             Regex r = new Regex("You have successfully uploaded this file");
             if (response == null)
             {
                 uploadLabel.Text = "Upload failed!";
                 return;
             }
+
             uploadLabel.Text = r.IsMatch(response)
-                                   ? "Upload succeeded!"
-                                   : "Upload failed probably! You can try anyway to get the file:";
+                ? "Upload succeeded!"
+                : "Upload failed probably! You can try anyway to get the file:";
             urlBox.Text = "http://zworqy.com/up/files/" + Path.GetFileName(file);
         }
 
@@ -35,13 +36,15 @@ namespace Elmanager.Forms
         {
             BeginUpload();
             NameValueCollection parameters = new NameValueCollection {{"submit", "Upload"}};
-            string response = Utils.HttpUploadFile("http://www.jappe2.net/upload/", file, "file", "application/octet-stream",
-                                                       parameters);
+            string response = Utils.HttpUploadFile("http://www.jappe2.net/upload/", file, "file",
+                "application/octet-stream",
+                parameters);
             if (response == null)
             {
                 uploadLabel.Text = "Upload failed!";
                 return;
             }
+
             Regex r = new Regex(@"(http://jappe2\.net/upload/[a-z]+/" + Regex.Escape(Path.GetFileName(file)) + ")");
             if (r.IsMatch(response))
             {

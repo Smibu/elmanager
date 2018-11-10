@@ -92,13 +92,15 @@ namespace Elmanager.EditorTools
 
         private void UpdateAnimNumbers(int animNum)
         {
-            var selected = Lev.Objects.Where(obj => obj.Type == Level.ObjectType.Apple && obj.Position.Mark == Geometry.VectorMark.Selected).ToList();
+            var selected = Lev.Objects.Where(obj =>
+                obj.Type == Level.ObjectType.Apple && obj.Position.Mark == Geometry.VectorMark.Selected).ToList();
             bool updated = selected.Any(obj => obj.AnimationNumber != animNum);
             selected.ForEach(obj => obj.AnimationNumber = animNum);
             if (updated)
             {
                 LevEditor.Modified = true;
             }
+
             ShowObjectInfo(GetNearestObjectIndex(CurrentPos));
         }
 
@@ -118,12 +120,14 @@ namespace Elmanager.EditorTools
                         {
                             MarkAllAs(Geometry.VectorMark.None);
                         }
+
                         NearestPolygon.MarkVectorsAs(Geometry.VectorMark.Selected);
                         var inearest = NearestPolygon.ToIPolygon();
                         foreach (var polygon in Lev.Polygons.Where(polygon => polygon.ToIPolygon().Within(inearest)))
                         {
                             polygon.MarkVectorsAs(Geometry.VectorMark.Selected);
                         }
+
                         foreach (var obj in Lev.Objects)
                         {
                             if (NearestPolygon.AreaHasPoint(obj.Position))
@@ -131,6 +135,7 @@ namespace Elmanager.EditorTools
                                 obj.Position.Mark = Geometry.VectorMark.Selected;
                             }
                         }
+
                         foreach (var pic in Lev.Pictures)
                         {
                             if (NearestPolygon.AreaHasPoint(pic.Position))
@@ -138,6 +143,7 @@ namespace Elmanager.EditorTools
                                 pic.Position.Mark = Geometry.VectorMark.Selected;
                             }
                         }
+
                         EndSelectionHandling();
                     }
                     else if (nearestVertexIndex >= 0)
@@ -175,6 +181,7 @@ namespace Elmanager.EditorTools
                                     NearestPolygon.MarkVectorsAs(Geometry.VectorMark.Selected);
                                 }
                             }
+
                             if (Keyboard.IsKeyDown(Key.LeftCtrl))
                             {
                                 NearestPolygon.MarkVectorsAs(
@@ -183,6 +190,7 @@ namespace Elmanager.EditorTools
                                         : Geometry.VectorMark.Selected);
                             }
                         }
+
                         EndSelectionHandling();
                     }
                     else if (nearestObjectIndex >= 0)
@@ -196,6 +204,7 @@ namespace Elmanager.EditorTools
                             MarkAllAs(Geometry.VectorMark.None);
                             LevEditor.PreserveSelection();
                         }
+
                         if (Keyboard.IsKeyDown(Key.LeftShift))
                         {
                             FreeSelecting = true;
@@ -210,6 +219,7 @@ namespace Elmanager.EditorTools
                             RectSelecting = true;
                         }
                     }
+
                     LevEditor.UpdateSelectionInfo();
                     break;
                 case MouseButtons.Right:
@@ -234,6 +244,7 @@ namespace Elmanager.EditorTools
                             ? _lockNext
                             : _lockPrev, p);
                 }
+
                 Vector delta = p - _moveStartPosition;
                 if (delta.Length > 0)
                     _anythingMoved = true;
@@ -247,17 +258,21 @@ namespace Elmanager.EditorTools
                         x.Vertices[i] += delta;
                         anythingMoved = true;
                     }
+
                     if (anythingMoved)
                         x.UpdateDecomposition();
                 }
+
                 foreach (Level.Object x in Lev.Objects.Where(x => x.Position.Mark == Geometry.VectorMark.Selected))
                 {
                     x.Position += delta;
                 }
+
                 foreach (Level.Picture z in Lev.Pictures.Where(z => z.Position.Mark == Geometry.VectorMark.Selected))
                 {
                     z.Position += delta;
                 }
+
                 Vector.MarkDefault = Geometry.VectorMark.None;
                 _moveStartPosition = p;
             }
@@ -327,7 +342,6 @@ namespace Elmanager.EditorTools
         {
             if (RectSelecting || FreeSelecting)
             {
-                
                 double selectionxMin = 0;
                 double selectionxMax = 0;
                 double selectionyMax = 0;
@@ -339,6 +353,7 @@ namespace Elmanager.EditorTools
                     selectionyMax = Math.Max(CurrentPos.Y, _selectionStartPoint.Y);
                     selectionyMin = Math.Min(CurrentPos.Y, _selectionStartPoint.Y);
                 }
+
                 var grassFilter = LevEditor.EffectiveGrassFilter;
                 var groundFilter = LevEditor.EffectiveGroundFilter;
                 var appleFilter = LevEditor.EffectiveAppleFilter;
@@ -359,6 +374,7 @@ namespace Elmanager.EditorTools
                             }
                     }
                 }
+
                 foreach (Level.Object t in Lev.Objects)
                 {
                     Level.ObjectType type = t.Type;
@@ -373,6 +389,7 @@ namespace Elmanager.EditorTools
                             MarkSelectedInArea(t.Position, _selectionPoly);
                         }
                 }
+
                 foreach (Level.Picture z in Lev.Pictures)
                 {
                     if ((z.IsPicture && pictureFilter) || (!z.IsPicture && textureFilter))
@@ -383,6 +400,7 @@ namespace Elmanager.EditorTools
                             MarkSelectedInArea(z.Position, _selectionPoly);
                         }
                 }
+
                 LevEditor.UpdateSelectionInfo();
                 LevEditor.PreserveSelection();
                 RectSelecting = false;
@@ -453,6 +471,7 @@ namespace Elmanager.EditorTools
                     ? Geometry.VectorMark.Selected
                     : Geometry.VectorMark.None;
             }
+
             EndSelectionHandling();
         }
 
@@ -470,6 +489,7 @@ namespace Elmanager.EditorTools
             {
                 return;
             }
+
             Level.Object currObj = Lev.Objects[currentObjectIndex];
             switch (currObj.Type)
             {
@@ -493,6 +513,7 @@ namespace Elmanager.EditorTools
                             LevEditor.HighlightLabel.Text += "Gravity right";
                             break;
                     }
+
                     LevEditor.HighlightLabel.Text += ", animation number: " + currObj.AnimationNumber;
                     break;
                 case Level.ObjectType.Killer:

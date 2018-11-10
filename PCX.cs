@@ -81,6 +81,7 @@ namespace Elmanager
                                 uncompressedDataPtr[total] = data;
                                 total++;
                             }
+
                             subTotal += count;
                         }
                         else
@@ -106,14 +107,16 @@ namespace Elmanager
                             int blue = pb.ReadByte();
                             palettePtr[i] = (red << 16) + (green << 8) + (blue << 0);
                         }
+
                         for (int i = 0; i < Height; i++)
-                            for (int j = 0; j < Width; j++)
-                                pixelDataPtr[i * Width + j] = palettePtr[uncompressedDataPtr[i * BytesPerLine + j]];
+                        for (int j = 0; j < Width; j++)
+                            pixelDataPtr[i * Width + j] = palettePtr[uncompressedDataPtr[i * BytesPerLine + j]];
                     }
                 }
                 else
                     throw (new Exception("This version of PCX file is not supported!"));
             }
+
             pb.Close();
         }
 

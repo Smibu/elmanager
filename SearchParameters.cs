@@ -32,7 +32,7 @@ namespace Elmanager
         internal RSearchOption AcrossLev = RSearchOption.Dontcare;
 
         internal Bound<DateTime> Date = new Bound<DateTime>(new DateTime(1, 1, 1, 0, 0, 0),
-                                                            new DateTime(9999, 1, 1, 0, 0, 0));
+            new DateTime(9999, 1, 1, 0, 0, 0));
 
         internal RSearchOption Finished = RSearchOption.Dontcare;
         internal RSearchOption InternalRec = RSearchOption.Dontcare;
@@ -68,7 +68,7 @@ namespace Elmanager
             AcrossLev = RSearchOption.Dontcare;
 
             Date = new Bound<DateTime>(new DateTime(1, 1, 1, 0, 0, 0),
-                                       new DateTime(9999, 1, 1, 0, 0, 0));
+                new DateTime(9999, 1, 1, 0, 0, 0));
 
             Finished = RSearchOption.Dontcare;
             InternalRec = RSearchOption.Dontcare;

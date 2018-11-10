@@ -14,7 +14,10 @@ namespace Elmanager
     {
         private const string SettingsFileDateFormat = "ddMMyyyy";
         private const string SettingsFileBaseName = "Elmanager";
-        private static string _settingsFile = SettingsFileBaseName + Global.Version.ToString(SettingsFileDateFormat) + ".dat";
+
+        private static string _settingsFile =
+            SettingsFileBaseName + Global.Version.ToString(SettingsFileDateFormat) + ".dat";
+
         public GeneralSettings General = new GeneralSettings();
         public LevelEditorSettings LevelEditor = new LevelEditorSettings();
         public ReplayManagerSettings ReplayManager = new ReplayManagerSettings();
@@ -26,24 +29,28 @@ namespace Elmanager
             {
                 return GetSettings(_settingsFile);
             }
+
             var oldSettingFiles = Directory.GetFiles(Application.StartupPath, "Elmanager*.dat");
             try
             {
                 if (oldSettingFiles.Length > 0)
                 {
                     var oldFileDate = oldSettingFiles.Select(
-                        path =>
-                            DateTime.ParseExact(Path.GetFileNameWithoutExtension(path).Substring(SettingsFileBaseName.Length),
-                                SettingsFileDateFormat, CultureInfo.InvariantCulture))
+                            path =>
+                                DateTime.ParseExact(
+                                    Path.GetFileNameWithoutExtension(path).Substring(SettingsFileBaseName.Length),
+                                    SettingsFileDateFormat, CultureInfo.InvariantCulture))
                         .Max()
                         .ToString(SettingsFileDateFormat);
-                    return GetSettings(Path.Combine(Application.StartupPath, SettingsFileBaseName + oldFileDate + ".dat"));
+                    return GetSettings(Path.Combine(Application.StartupPath,
+                        SettingsFileBaseName + oldFileDate + ".dat"));
                 }
             }
             catch (Exception)
             {
                 Utils.ShowError("Could not load old settings. You need to set them again.");
             }
+
             return new ElmanagerSettings();
         }
 
@@ -65,6 +72,7 @@ namespace Elmanager
             {
                 loadedSettings.ReplayViewer.ZoomLevel = 5.0;
             }
+
             return loadedSettings;
         }
 
@@ -120,6 +128,7 @@ namespace Elmanager
                 {
                     throw new SettingsException("The level template is null.");
                 }
+
                 if (File.Exists(text))
                 {
                     Level template = new Level();
@@ -134,11 +143,14 @@ namespace Elmanager
                         throw new SettingsException("The level template file is not a valid Elma level file.");
                     }
                 }
+
                 var regex = new Regex(@"^(\d+),(\d+)$");
                 if (!regex.IsMatch(text))
                 {
-                    throw new SettingsException("The level template is neither a file nor a string of the form \"width,height\".");
+                    throw new SettingsException(
+                        "The level template is neither a file nor a string of the form \"width,height\".");
                 }
+
                 double width = int.Parse(regex.Match(text).Groups[1].Value);
                 double height = int.Parse(regex.Match(text).Groups[2].Value);
                 return Level.FromDimensions(width, height);

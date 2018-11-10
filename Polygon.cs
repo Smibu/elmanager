@@ -60,7 +60,8 @@ namespace Elmanager
 
         internal int Count => Vertices.Count;
 
-        internal Vector this[int index] => index < 0 ? Vertices[Vertices.Count + index] : Vertices[index % Vertices.Count];
+        internal Vector this[int index] =>
+            index < 0 ? Vertices[Vertices.Count + index] : Vertices[index % Vertices.Count];
 
         internal double SignedArea
         {
@@ -140,10 +141,11 @@ namespace Elmanager
                         if (i == 0 && j == Vertices.Count - 1)
                             continue;
                         if (Geometry.SegmentsIntersect(Vertices[i], Vertices[i + 1], Vertices[j],
-                                                       Vertices[(j + 1) % Vertices.Count]))
+                            Vertices[(j + 1) % Vertices.Count]))
                             return false;
                     }
                 }
+
                 return true;
             }
         }
@@ -164,6 +166,7 @@ namespace Elmanager
                         longestIndex = i;
                     }
                 }
+
                 SetBeginPoint(longestIndex + 1);
             }
         }
@@ -171,9 +174,9 @@ namespace Elmanager
         internal static Polygon Rectangle(Vector lowerLeftCorner, double width, double height)
         {
             return new Polygon(new Vector(lowerLeftCorner.X, lowerLeftCorner.Y),
-                               new Vector(lowerLeftCorner.X + width, lowerLeftCorner.Y),
-                               new Vector(lowerLeftCorner.X + width, lowerLeftCorner.Y + height),
-                               new Vector(lowerLeftCorner.X, lowerLeftCorner.Y + height));
+                new Vector(lowerLeftCorner.X + width, lowerLeftCorner.Y),
+                new Vector(lowerLeftCorner.X + width, lowerLeftCorner.Y + height),
+                new Vector(lowerLeftCorner.X, lowerLeftCorner.Y + height));
         }
 
         internal static Polygon Ellipse(Vector mid, double a, double b, double angle, int steps)
@@ -189,8 +192,9 @@ namespace Elmanager
                 double sinAlpha = Math.Sin(alpha);
                 double cosAlpha = Math.Cos(alpha);
                 p.Add(new Vector(mid.X + a * cosAlpha * cosBeta - b * sinAlpha * sinBeta,
-                                 mid.Y + a * cosAlpha * sinBeta + b * sinAlpha * cosBeta));
+                    mid.Y + a * cosAlpha * sinBeta + b * sinAlpha * cosBeta));
             }
+
             p.UpdateDecomposition();
             return p;
         }
@@ -231,7 +235,11 @@ namespace Elmanager
 
         internal void Move(Vector delta)
         {
-            Vertices.ForEach(vertex => { vertex.X += delta.X; vertex.Y += delta.Y; });
+            Vertices.ForEach(vertex =>
+            {
+                vertex.X += delta.X;
+                vertex.Y += delta.Y;
+            });
         }
 
         internal double DistanceFromPoint(Vector p)
@@ -242,10 +250,11 @@ namespace Elmanager
             for (int i = 0; i < c; i++)
             {
                 current = Geometry.DistanceFromSegment(Vertices[i].X, Vertices[i].Y, Vertices[i + 1].X,
-                                                       Vertices[i + 1].Y, p.X, p.Y);
+                    Vertices[i + 1].Y, p.X, p.Y);
                 if (current < smallest)
                     smallest = current;
             }
+
             if (!IsGrass || Global.AppSettings.LevelEditor.RenderingSettings.ShowInactiveGrassEdges)
             {
                 current = Geometry.DistanceFromSegment(Vertices[c].X, Vertices[c].Y, Vertices[0].X, Vertices[0].Y, p.X,
@@ -253,6 +262,7 @@ namespace Elmanager
                 if (current < smallest)
                     smallest = current;
             }
+
             return smallest;
         }
 
@@ -297,6 +307,7 @@ namespace Elmanager
                     smallestIndex = i;
                 }
             }
+
             return smallestIndex;
         }
 
@@ -308,26 +319,28 @@ namespace Elmanager
         internal int GetNearestSegmentIndex(Vector p)
         {
             double smallest = Geometry.DistanceFromSegment(Vertices[0].X, Vertices[0].Y, Vertices[1].X,
-                                                           Vertices[1].Y, p.X, p.Y);
+                Vertices[1].Y, p.X, p.Y);
             int smallestIndex = 0;
             double current;
             int c = Vertices.Count - 1;
             for (int i = 1; i < c; i++)
             {
                 current = Geometry.DistanceFromSegment(Vertices[i].X, Vertices[i].Y, Vertices[i + 1].X,
-                                                       Vertices[i + 1].Y, p.X, p.Y);
+                    Vertices[i + 1].Y, p.X, p.Y);
                 if (current < smallest)
                 {
                     smallest = current;
                     smallestIndex = i;
                 }
             }
+
             current = Geometry.DistanceFromSegment(Vertices[c].X, Vertices[c].Y, Vertices[0].X, Vertices[0].Y, p.X,
-                                                   p.Y);
+                p.Y);
             if (current < smallest)
             {
                 smallestIndex = c;
             }
+
             return smallestIndex;
         }
 
@@ -338,18 +351,20 @@ namespace Elmanager
             {
                 if (
                     Geometry.DistanceFromSegment(Vertices[i].X, Vertices[i].Y, Vertices[i + 1].X, Vertices[i + 1].Y,
-                                                 p.X, p.Y) < delta)
+                        p.X, p.Y) < delta)
                 {
                     Insert(i + 1, p);
                     return;
                 }
             }
+
             if (Geometry.DistanceFromSegment(Vertices[c].X, Vertices[c].Y, Vertices[0].X, Vertices[0].Y, p.X, p.Y) <
                 delta)
             {
                 Vertices.Add(p);
                 return;
             }
+
             Utils.ShowError("Failed to add intersection!!");
         }
 
@@ -359,6 +374,7 @@ namespace Elmanager
             {
                 return Clone();
             }
+
             var smoothPoly = new Polygon();
             for (int i = 0; i < Vertices.Count; i++)
             {
@@ -376,17 +392,20 @@ namespace Elmanager
                             break;
                         }
                     }
+
                     if (j < 3)
                         continue;
-                    if (this[i-1].Mark != Geometry.VectorMark.Selected)
+                    if (this[i - 1].Mark != Geometry.VectorMark.Selected)
                         smoothPoly.Add(this[i].Clone());
                 }
+
                 Vector startPoint = this[i] + (this[i + 1] - this[i]) * vertexOffset;
                 Vector endPoint = this[i + 1] + (this[i + 2] - this[i + 1]) * (1.0 - vertexOffset);
                 Vector midPoint = this[i + 1];
 
                 int numPoints = steps;
-                if (Math.Abs(vertexOffset - 0.5) < Constants.Tolerance && (!onlySelected || (this[i + 3].Mark == Geometry.VectorMark.Selected)))
+                if (Math.Abs(vertexOffset - 0.5) < Constants.Tolerance &&
+                    (!onlySelected || (this[i + 3].Mark == Geometry.VectorMark.Selected)))
                 {
                     numPoints--;
                 }
@@ -398,6 +417,7 @@ namespace Elmanager
                                    t * t * endPoint);
                 }
             }
+
             return smoothPoly;
         }
 
@@ -417,9 +437,11 @@ namespace Elmanager
                     if (j < 3)
                         continue;
                 }
+
                 if (
                     Math.Abs(
-                        (unsmoothPoly[i + 1] - unsmoothPoly[i]).AngleBetween(unsmoothPoly[i + 2] - unsmoothPoly[i + 1])) <
+                        (unsmoothPoly[i + 1] - unsmoothPoly[i]).AngleBetween(
+                            unsmoothPoly[i + 2] - unsmoothPoly[i + 1])) <
                     angle)
                     unsmoothPoly.Vertices.RemoveAt((i + 1) % unsmoothPoly.Count);
                 else if ((unsmoothPoly[i + 1] - unsmoothPoly[i]).Length < length)
@@ -429,6 +451,7 @@ namespace Elmanager
                 if (unsmoothPoly.Count == 3)
                     break;
             }
+
             return unsmoothPoly;
         }
 
@@ -438,6 +461,7 @@ namespace Elmanager
             {
                 throw new PolygonException("Both polygons must be non-self-intersecting.");
             }
+
             IGeometry resultPolys;
             switch (type)
             {
@@ -456,6 +480,7 @@ namespace Elmanager
                 default:
                     throw new PolygonException("Unsupported operation type.");
             }
+
             var multiPolygon = resultPolys as IMultiPolygon;
             var results = new List<Polygon>();
             if (multiPolygon != null)
@@ -467,6 +492,7 @@ namespace Elmanager
             {
                 results.AddRange(polygon.ToElmaPolygons());
             }
+
             foreach (var x in results)
                 x.UpdateDecomposition();
             return results;
@@ -487,9 +513,9 @@ namespace Elmanager
             int i;
             int j = 0;
             for (i = 0; i <= Vertices.Count - 2; i++)
-                for (j = 0; j <= p.Vertices.Count - 2; j++)
-                    if (Geometry.SegmentsIntersect(Vertices[i], Vertices[i + 1], p.Vertices[j], p.Vertices[j + 1]))
-                        return true;
+            for (j = 0; j <= p.Vertices.Count - 2; j++)
+                if (Geometry.SegmentsIntersect(Vertices[i], Vertices[i + 1], p.Vertices[j], p.Vertices[j + 1]))
+                    return true;
             for (i = 0; i <= Vertices.Count - 2; i++)
                 if (Geometry.SegmentsIntersect(Vertices[i], Vertices[i + 1], p.Vertices[j], p.Vertices[0]))
                     return true;
@@ -538,6 +564,7 @@ namespace Elmanager
                     }
                 }
             }
+
             //Last edge
             int f = Count - 1;
             x1 = Vertices[0].X;
@@ -555,6 +582,7 @@ namespace Elmanager
                         isInside = !isInside;
                 }
             }
+
             return isInside;
         }
 
@@ -572,6 +600,7 @@ namespace Elmanager
                     numberOfIntersections++;
                 }
             }
+
             Vector.MarkDefault = Geometry.VectorMark.None;
             if (numberOfIntersections % 2 == 0 && numberOfIntersections > 0)
             {
@@ -589,6 +618,7 @@ namespace Elmanager
                         {
                             return null;
                         }
+
                         cutVector *= cutRadius / Math.Sin(angleAbs * Constants.DegToRad);
                         double distance1 = (clone[k + 1] - clone[k]).Length;
                         double distance2 = (clone[k] - clone[k - 1]).Length;
@@ -605,6 +635,7 @@ namespace Elmanager
                             result[result.Count - 1].Add(clone.Vertices[k] + cutVector);
                             result[0].Add(clone.Vertices[k] - cutVector);
                         }
+
                         isBeginning = !isBeginning;
                     }
                     else
@@ -614,11 +645,14 @@ namespace Elmanager
                         else
                             result[result.Count - 1].Add(clone.Vertices[k]);
                     }
+
                     k++;
                 }
+
                 result.ForEach(p => p.IsGrass = IsGrass);
                 return result.Any(polygon => polygon.Count < 3) ? null : result;
             }
+
             return null;
         }
 

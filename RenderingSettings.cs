@@ -164,7 +164,7 @@ namespace Elmanager
             }
         }
 
-        [DisplayName("LGR file"), Editor(typeof (CustomFileNameEditor), typeof (UITypeEditor))]
+        [DisplayName("LGR file"), Editor(typeof(CustomFileNameEditor), typeof(UITypeEditor))]
         public string LgrFile
         {
             get => _lgrFile;
@@ -216,8 +216,7 @@ namespace Elmanager
         [DisplayName("Use circles for vertices")]
         public bool UseCirclesForVertices { get; set; }
 
-        [DisplayName("Smooth zoom enabled")]
-        public bool SmoothZoomEnabled { get; set; }
+        [DisplayName("Smooth zoom enabled")] public bool SmoothZoomEnabled { get; set; }
 
         [Category("Visibility"), DisplayName("Ground")]
         public bool ShowGround { get; set; }
@@ -276,8 +275,7 @@ namespace Elmanager
         [Category("Visibility"), DisplayName("Inactive grass edges")]
         public bool ShowInactiveGrassEdges { get; set; }
 
-        [DisplayName("Zoom textures")]
-        public bool ZoomTextures { get; set; }
+        [DisplayName("Zoom textures")] public bool ZoomTextures { get; set; }
 
         [Category("Workarounds"), DisplayName("Disable framebuffer usage")]
         public bool DisableFrameBuffer { get; set; }

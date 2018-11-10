@@ -21,7 +21,7 @@ namespace Elmanager
         private static bool _scrollInProgress;
 
         public static string HttpUploadFile(string url, string file, string paramName, string contentType,
-                                            NameValueCollection nvc = null)
+            NameValueCollection nvc = null)
         {
             string boundary = "---------------------------" + DateTime.Now.Ticks.ToString("x");
             byte[] boundarybytes = Encoding.ASCII.GetBytes("\r\n--" + boundary + "\r\n");
@@ -42,6 +42,7 @@ namespace Elmanager
                     rs.Write(formitembytes, 0, formitembytes.Length);
                 }
             }
+
             rs.Write(boundarybytes, 0, boundarybytes.Length);
             const string headerTemplate =
                 "Content-Disposition: form-data; name=\"{0}\"; filename=\"{1}\"\r\nContent-Type: {2}\r\n\r\n";
@@ -55,6 +56,7 @@ namespace Elmanager
             {
                 rs.Write(buffer, 0, bytesRead);
             }
+
             fileStream.Close();
             byte[] trailer = Encoding.ASCII.GetBytes("\r\n--" + boundary + "--\r\n");
             rs.Write(trailer, 0, trailer.Length);
@@ -98,23 +100,28 @@ namespace Elmanager
                 {
                     renderer.CenterY += timeDelta / 200.0 * renderer.ZoomLevel;
                 }
+
                 if (Keyboard.IsKeyDown(Key.Down))
                 {
                     renderer.CenterY -= timeDelta / 200.0 * renderer.ZoomLevel;
                 }
+
                 if (Keyboard.IsKeyDown(Key.Right))
                 {
                     renderer.CenterX += timeDelta / 200.0 * renderer.ZoomLevel;
                 }
+
                 if (Keyboard.IsKeyDown(Key.Left))
                 {
                     renderer.CenterX -= timeDelta / 200.0 * renderer.ZoomLevel;
                 }
+
                 lastTime = timer.ElapsedMilliseconds;
                 renderer.RedrawScene();
                 Thread.Sleep(1);
                 Application.DoEvents();
             }
+
             timer.Stop();
             _scrollInProgress = false;
         }
@@ -135,7 +142,7 @@ namespace Elmanager
         }
 
         internal static void DownloadAndOpenFile(string uri, string destFile, string username = null,
-                                                 string password = null)
+            string password = null)
         {
             var wc = new WebClient();
             if (username != null && password != null)
@@ -156,14 +163,15 @@ namespace Elmanager
             if (Directory.Exists(Global.AppSettings.General.LevelDirectory))
             {
                 string[] files = Directory.GetFiles(Global.AppSettings.General.LevelDirectory, Constants.AllLevs,
-                                                    searchSubDirs
-                                                        ? SearchOption.AllDirectories
-                                                        : SearchOption.TopDirectoryOnly);
+                    searchSubDirs
+                        ? SearchOption.AllDirectories
+                        : SearchOption.TopDirectoryOnly);
                 Array.Sort(files);
                 List<string> stringList = new List<string>();
                 stringList.AddRange(files);
                 return stringList;
             }
+
             return new List<string>();
         }
 
@@ -208,7 +216,8 @@ namespace Elmanager
             }
             catch (FileNotFoundException)
             {
-                ShowError("The specified database file " + Global.AppSettings.ReplayManager.DbFile + " doesn\'t exist!");
+                ShowError("The specified database file " + Global.AppSettings.ReplayManager.DbFile +
+                          " doesn\'t exist!");
                 return false;
             }
             catch (Exception)
@@ -219,7 +228,7 @@ namespace Elmanager
         }
 
         internal static void PutEventsToList(Player player, ListBox listBox, bool finished,
-                                             PlayerEvent[] selectedEvents)
+            PlayerEvent[] selectedEvents)
         {
             int turnCounter = 0;
             int leftVoltCounter = 0;
@@ -262,10 +271,12 @@ namespace Elmanager
                     default:
                         throw new Exception("Unknown ReplayEventType.");
                 }
+
                 listBox.Items.Add(strToAdd + ": " + eventTime.ToTimeString() + " + " +
                                   (eventTime - lastEventTime).ToTimeString());
                 lastEventTime = eventTime;
             }
+
             if ((finished && player.FakeFinish) || player.Finished)
                 listBox.Items.Add("Flower: " + ToTimeString(player.Time) + " + " +
                                   (player.Time - lastEventTime).ToTimeString());
@@ -284,6 +295,7 @@ namespace Elmanager
                     break;
                 }
             }
+
             return Encoding.ASCII.GetString(tempBytes);
         }
 
@@ -342,6 +354,7 @@ namespace Elmanager
                 timeStr.Append(":");
                 minutes -= 60 * hours;
             }
+
             double timeVar = T - (60 * minutes + 3600 * hours);
             timeStr.Append(minutes.ToString("D2"));
             timeStr.Append(":");
@@ -356,6 +369,7 @@ namespace Elmanager
                 default:
                     throw new Exception("Invalid number of digits!");
             }
+
             if (time < 0)
                 timeStr.Insert(0, '-');
             return timeStr.ToString();
@@ -372,10 +386,10 @@ namespace Elmanager
             do
             {
                 propInfo = type.GetProperty(propertyName,
-                       BindingFlags.Instance | BindingFlags.Public | BindingFlags.NonPublic);
+                    BindingFlags.Instance | BindingFlags.Public | BindingFlags.NonPublic);
                 type = type.BaseType;
-            }
-            while (propInfo == null && type != null);
+            } while (propInfo == null && type != null);
+
             return propInfo;
         }
 

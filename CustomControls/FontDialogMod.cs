@@ -18,7 +18,7 @@ namespace Elmanager.CustomControls
 
         [DllImport("user32.dll", SetLastError = true)]
         private static extern uint GetDlgItemText(IntPtr hDlg, int nIdDlgItem,
-           [Out] StringBuilder lpString, int nMaxCount);
+            [Out] StringBuilder lpString, int nMaxCount);
 
         public FontDialogMod()
         {
@@ -56,15 +56,17 @@ namespace Elmanager.CustomControls
                         case 0x50472: // font size changed with textbox
                         case 0x10470: // font face selected with listbox
                         case 0x10471: // font style selected with listbox
-                        case 0x410:   // strikeout effect toggled
-                        case 0x411:   // underline effect toggled
+                        case 0x410: // strikeout effect toggled
+                        case 0x411: // underline effect toggled
 
                             // simulates Apply button click
                             PostMessage(hWnd, WmCommand, _applyCommand, IntPtr.Zero);
                             break;
                     }
+
                     break;
             }
+
             try
             {
                 return base.HookProc(hWnd, msg, wparam, lparam);

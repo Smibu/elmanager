@@ -43,6 +43,7 @@ namespace Elmanager.Forms
                         return;
                     }
                 }
+
                 foreach (Replay rp in _replaysToRename)
                 {
                     string timePart = rp.Time.ToTimeString();
@@ -59,6 +60,7 @@ namespace Elmanager.Forms
                             break;
                         }
                     }
+
                     j = 0;
                     while (j < timePart.Length)
                     {
@@ -66,12 +68,15 @@ namespace Elmanager.Forms
                         {
                             timePart = timePart.Remove(j, 1);
                         }
+
                         j++;
                     }
+
                     if (timePart[0] == '0')
                     {
                         timePart = timePart.Remove(0, 1);
                     }
+
                     string newName = string.Empty;
                     for (j = 0; j < PatternBox.TextLength; j++)
                     {
@@ -86,6 +91,7 @@ namespace Elmanager.Forms
                                 {
                                     newName += Strings.Left(rp.LevelFilename, rp.LevelFilename.Length - 4);
                                 }
+
                                 break;
                             case 'N':
                                 newName += NickBox.Text;
@@ -98,11 +104,13 @@ namespace Elmanager.Forms
                                 break;
                         }
                     }
+
                     if (!rp.FileName.CompareWith(newName + Constants.RecExtension))
                     {
                         _rm.Rename(rp, newName);
                     }
                 }
+
                 Close();
             }
             else

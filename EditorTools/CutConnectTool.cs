@@ -34,7 +34,6 @@ namespace Elmanager.EditorTools
 
         public void KeyDown(KeyEventArgs key)
         {
-
         }
 
         public void MouseDown(MouseEventArgs mouseData)
@@ -53,11 +52,13 @@ namespace Elmanager.EditorTools
                         if (!TryConnect(_start, CurrentPos))
                             Cut(_start, CurrentPos);
                     }
+
                     break;
                 case MouseButtons.Right:
                     StartSelected = false;
                     break;
             }
+
             UpdateHelp();
         }
 
@@ -97,6 +98,7 @@ namespace Elmanager.EditorTools
                 foreach (Polygon z in cutPolygons)
                     z.UpdateDecomposition();
             }
+
             StartSelected = false;
             if (anythingCut)
                 LevEditor.Modified = true;
@@ -111,7 +113,7 @@ namespace Elmanager.EditorTools
             if (intersectingPolygons.Count == 2)
             {
                 Polygon connected = Geometry.Connect(intersectingPolygons[0], intersectingPolygons[1], _start,
-                                                     CurrentPos, Renderer.ZoomLevel * 0.01);
+                    CurrentPos, Renderer.ZoomLevel * 0.01);
                 if (connected != null)
                 {
                     Lev.Polygons.Remove(intersectingPolygons[0]);
@@ -120,11 +122,13 @@ namespace Elmanager.EditorTools
                     anythingConnected = true;
                 }
             }
+
             StartSelected = false;
             if (anythingConnected)
             {
                 LevEditor.Modified = true;
             }
+
             return anythingConnected;
         }
 

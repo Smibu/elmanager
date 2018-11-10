@@ -84,6 +84,7 @@ namespace Elmanager.EditorTools
                                     _unsmoothLength += 0.1;
                             }
                         }
+
                         break;
                     case Constants.Decrease:
                         if (!_unsmooth)
@@ -112,8 +113,10 @@ namespace Elmanager.EditorTools
                                     _unsmoothLength -= 0.1;
                             }
                         }
+
                         break;
                 }
+
                 UpdateHelp();
                 UpdatePolygonSmooth();
             }
@@ -130,6 +133,7 @@ namespace Elmanager.EditorTools
                             UpdateHelp();
                             UpdatePolygonSmooth();
                         }
+
                         break;
                 }
             }
@@ -154,6 +158,7 @@ namespace Elmanager.EditorTools
                         }
                         else
                             Lev.Polygons.Remove(_currentPolygon);
+
                         Lev.Polygons.AddRange(_smoothPolys);
                         Smoothing = false;
                         LevEditor.Modified = true;
@@ -171,11 +176,13 @@ namespace Elmanager.EditorTools
                         UpdateHelp();
                         UpdatePolygonSmooth();
                     }
+
                     break;
                 case MouseButtons.Right:
                     CancelSmoothing();
                     break;
             }
+
             UpdateHelp();
         }
 
@@ -213,7 +220,8 @@ namespace Elmanager.EditorTools
             {
                 LevEditor.InfoLabel.Text = "Left click: apply; right click: cancel; (Ctrl) + +/-: adjust parameters.";
                 if (!_unsmooth)
-                    LevEditor.InfoLabel.Text += " (" + _smoothSteps + ", " + (_smoothVertexOffset/100.0).ToString("F2") +
+                    LevEditor.InfoLabel.Text += " (" + _smoothSteps + ", " +
+                                                (_smoothVertexOffset / 100.0).ToString("F2") +
                                                 ")";
                 else
                     LevEditor.InfoLabel.Text += " (" + _unsmoothLength.ToString("F2") + ", " +
@@ -247,7 +255,7 @@ namespace Elmanager.EditorTools
                 foreach (Polygon x in Lev.Polygons.Where(IsSmoothable))
                 {
                     _smoothPolys.Add(!_unsmooth
-                        ? x.Smoothen(_smoothSteps, _smoothVertexOffset/100.0, true)
+                        ? x.Smoothen(_smoothSteps, _smoothVertexOffset / 100.0, true)
                         : x.Unsmoothen(_unsmoothAngle, _unsmoothLength, true));
                 }
             }
@@ -255,7 +263,7 @@ namespace Elmanager.EditorTools
             {
                 _smoothPolys.Add(_unsmooth
                     ? _currentPolygon.Unsmoothen(_unsmoothAngle, _unsmoothLength, false)
-                    : _currentPolygon.Smoothen(_smoothSteps, _smoothVertexOffset/100.0, false));
+                    : _currentPolygon.Smoothen(_smoothSteps, _smoothVertexOffset / 100.0, false));
             }
         }
 

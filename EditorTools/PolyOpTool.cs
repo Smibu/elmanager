@@ -42,6 +42,7 @@ namespace Elmanager.EditorTools
                     LevEditor.InfoLabel.Text = "(This mode is not yet implemented.)";
                     break;
             }
+
             if (!FirstSelected)
             {
                 LevEditor.InfoLabel.Text += " Space: Change mode.";
@@ -74,6 +75,7 @@ namespace Elmanager.EditorTools
                     _currentOpType = PolygonOperationType.Union;
                     break;
             }
+
             UpdateHelp();
         }
 
@@ -93,7 +95,8 @@ namespace Elmanager.EditorTools
                                 FirstSelected = false;
                                 try
                                 {
-                                    Lev.Polygons.AddRange(NearestPolygon.PolygonOperationWith(_firstPolygon, _currentOpType));
+                                    Lev.Polygons.AddRange(
+                                        NearestPolygon.PolygonOperationWith(_firstPolygon, _currentOpType));
                                     Lev.Polygons.RemoveAll(p => p.Vertices.Count < 3);
                                     Lev.Polygons.Remove(_firstPolygon);
                                     Lev.Polygons.Remove(NearestPolygon);
@@ -103,6 +106,7 @@ namespace Elmanager.EditorTools
                                 {
                                     Utils.ShowError(e.Message);
                                 }
+
                                 ResetPolygonMarks();
                                 UpdateHelp();
                             }
@@ -118,6 +122,7 @@ namespace Elmanager.EditorTools
                             UpdateHelp();
                         }
                     }
+
                     break;
                 case MouseButtons.Right:
                     if (FirstSelected)
@@ -126,6 +131,7 @@ namespace Elmanager.EditorTools
                         ResetPolygonMarks();
                         UpdateHelp();
                     }
+
                     break;
             }
         }
@@ -166,11 +172,12 @@ namespace Elmanager.EditorTools
                 var ip = p.ToIPolygon();
                 return !polys.Contains(p) && ip.Intersects(selection) && !ip.Contains(selection);
             }).ToList();
-            
+
             if (!touching.Any())
             {
                 return false;
             }
+
             var others = touching.ToIPolygons().Aggregate((Func<IGeometry, IGeometry, IGeometry>) SymDiff);
             var remaining = polygons.Where(p =>
             {
@@ -181,7 +188,7 @@ namespace Elmanager.EditorTools
             }).ToList();
 
             others = remaining.ToIPolygons().Aggregate(others, (Func<IGeometry, IGeometry, IGeometry>) SymDiff);
-            
+
             IGeometry result;
             try
             {
@@ -206,7 +213,8 @@ namespace Elmanager.EditorTools
             }
             catch (TopologyException)
             {
-                Utils.ShowError("Could not perform this operation. Make sure the polygons don't have self-intersections.");
+                Utils.ShowError(
+                    "Could not perform this operation. Make sure the polygons don't have self-intersections.");
                 return false;
             }
 
@@ -224,6 +232,7 @@ namespace Elmanager.EditorTools
             {
                 polygons.AddRange(polygon1.ToElmaPolygons());
             }
+
             if (!polygons.Any())
             {
                 Utils.ShowError("The level would become empty after this operation.");

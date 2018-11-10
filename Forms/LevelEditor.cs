@@ -88,7 +88,8 @@ namespace Elmanager.Forms
             }
             catch (LevelException ex)
             {
-                Utils.ShowError("Error occurred while loading level file: " + ex.Message, "Warning", MessageBoxIcon.Exclamation);
+                Utils.ShowError("Error occurred while loading level file: " + ex.Message, "Warning",
+                    MessageBoxIcon.Exclamation);
                 SetBlankLevel();
             }
             catch (Exception ex) when (ex is FileNotFoundException || ex is DirectoryNotFoundException)
@@ -107,6 +108,7 @@ namespace Elmanager.Forms
             }
             else
                 SetBlankLevel();
+
             Initialize();
         }
 
@@ -116,19 +118,31 @@ namespace Elmanager.Forms
             set => SetModified(value);
         }
 
-        internal bool EffectiveAppleFilter => _appleFilter && (ShowObjectFramesButton.Checked || (ShowObjectsButton.Checked && _pictureToolAvailable));
+        internal bool EffectiveAppleFilter => _appleFilter &&
+                                              (ShowObjectFramesButton.Checked ||
+                                               (ShowObjectsButton.Checked && _pictureToolAvailable));
 
-        internal bool EffectiveKillerFilter => _killerFilter && (ShowObjectFramesButton.Checked || (ShowObjectsButton.Checked && _pictureToolAvailable));
+        internal bool EffectiveKillerFilter => _killerFilter &&
+                                               (ShowObjectFramesButton.Checked ||
+                                                (ShowObjectsButton.Checked && _pictureToolAvailable));
 
-        internal bool EffectiveFlowerFilter => _flowerFilter && (ShowObjectFramesButton.Checked || (ShowObjectsButton.Checked && _pictureToolAvailable));
+        internal bool EffectiveFlowerFilter => _flowerFilter &&
+                                               (ShowObjectFramesButton.Checked ||
+                                                (ShowObjectsButton.Checked && _pictureToolAvailable));
 
         internal bool EffectiveGrassFilter => _grassFilter && (ShowGrassEdgesButton.Checked);
 
-        internal bool EffectiveGroundFilter => _groundFilter && (ShowGroundEdgesButton.Checked || (ShowGroundButton.Checked && _pictureToolAvailable));
+        internal bool EffectiveGroundFilter => _groundFilter &&
+                                               (ShowGroundEdgesButton.Checked ||
+                                                (ShowGroundButton.Checked && _pictureToolAvailable));
 
-        internal bool EffectiveTextureFilter => _textureFilter && (ShowTextureFramesButton.Checked || (ShowTexturesButton.Checked && _pictureToolAvailable));
+        internal bool EffectiveTextureFilter => _textureFilter &&
+                                                (ShowTextureFramesButton.Checked ||
+                                                 (ShowTexturesButton.Checked && _pictureToolAvailable));
 
-        internal bool EffectivePictureFilter => _pictureFilter && (ShowPictureFramesButton.Checked || (ShowPicturesButton.Checked && _pictureToolAvailable));
+        internal bool EffectivePictureFilter => _pictureFilter &&
+                                                (ShowPictureFramesButton.Checked ||
+                                                 (ShowPicturesButton.Checked && _pictureToolAvailable));
 
         private int SelectedElementCount => _selectedObjectCount + _selectedPictureCount + _selectedVerticeCount +
                                             _selectedTextureCount;
@@ -152,7 +166,7 @@ namespace Elmanager.Forms
                 CurrentTool.InActivate();
                 CurrentTool = Tools[12];
                 ActivateCurrentAndRedraw();
-                
+
                 // if not busy, there's nothing to transform
                 if (!CurrentTool.Busy)
                 {
@@ -213,9 +227,11 @@ namespace Elmanager.Forms
                         _selectedVerticeCount++;
                     }
                 }
+
                 if (hasSelectedVertices)
                     _selectedPolygonCount++;
             }
+
             foreach (Level.Object x in Lev.Objects)
                 if (x.Position.Mark == Geometry.VectorMark.Selected)
                     _selectedObjectCount++;
@@ -238,12 +254,14 @@ namespace Elmanager.Forms
                 _history.RemoveRange(_historyIndex + 1, _history.Count - _historyIndex - 1);
                 _historyIndex = _history.Count - 1;
             }
+
             _history.Add(Lev.Clone());
             _historyIndex++;
             if (_historyIndex <= _savedIndex)
             {
                 _savedIndex = -1;
             }
+
             UpdateUndoRedo();
         }
 
@@ -276,6 +294,7 @@ namespace Elmanager.Forms
                 Lev.Pictures.RemoveAt(_selectedPictureIndex);
                 Lev.Pictures.Insert(0, obj);
             }
+
             Modified = true;
         }
 
@@ -296,7 +315,7 @@ namespace Elmanager.Forms
             if (!Lev.AllPicturesFound)
             {
                 const string text = "Some pictures or textures could not be found in the LGR file. " +
-                                               "You will lose these pictures if you save this level.";
+                                    "You will lose these pictures if you save this level.";
                 ShowWarning(text);
             }
         }
@@ -320,7 +339,8 @@ namespace Elmanager.Forms
                 ToolStrip2.Refresh();
                 _errorPoints.Clear();
                 if (Lev.TooWide)
-                    items.Add("Level is too wide. Current width: " + Lev.Width + ", maximum width: " + Level.MaximumSize);
+                    items.Add(
+                        "Level is too wide. Current width: " + Lev.Width + ", maximum width: " + Level.MaximumSize);
                 if (Lev.TooTall)
                     items.Add("Level is too tall. Current height: " + Lev.Height + ", maximum height: " +
                               Level.MaximumSize);
@@ -332,13 +352,16 @@ namespace Elmanager.Forms
                 if (Lev.HasTooFewObjects)
                     items.Add("There must be at least one object in the level (in addition to the start object).");
                 if (Lev.HasTooManyPolygons)
-                    items.Add("There are too many polygons in the level. Current: " + Lev.Polygons.Count + ", maximum: " +
+                    items.Add("There are too many polygons in the level. Current: " + Lev.Polygons.Count +
+                              ", maximum: " +
                               Level.MaximumPolygonCount);
                 if (Lev.HasTooManyVertices)
-                    items.Add("There are too many ground vertices in the level. Current: " + Lev.GroundVertexCount + ", maximum: " +
+                    items.Add("There are too many ground vertices in the level. Current: " + Lev.GroundVertexCount +
+                              ", maximum: " +
                               Level.MaximumGroundVertexCount);
                 if (Lev.HasTooManyPictures)
-                    items.Add("There are too many pictures and textures in the level. Current: " + Lev.PictureTextureCount + ", maximum: " +
+                    items.Add("There are too many pictures and textures in the level. Current: " +
+                              Lev.PictureTextureCount + ", maximum: " +
                               Level.MaximumPictureTextureCount);
                 if (Lev.HeadTouchesGround)
                     items.Add("The driver\'s head is touching ground.");
@@ -382,6 +405,7 @@ namespace Elmanager.Forms
                     {
                         topologyList.Text = "1 problem was found!";
                     }
+
                     topologyList.ForeColor = Color.Red;
                     topologyList.Font = new Font(topologyList.Font, FontStyle.Bold);
                 }
@@ -419,10 +443,12 @@ namespace Elmanager.Forms
             {
                 InactivateCurrentAndRedraw();
             }
+
             if (WindowState == FormWindowState.Normal)
             {
                 Global.AppSettings.LevelEditor.Size = Size;
             }
+
             Global.AppSettings.LevelEditor.WindowState = WindowState;
             Global.AppSettings.LevelEditor.LastLevel = Lev.Path;
         }
@@ -433,10 +459,9 @@ namespace Elmanager.Forms
             var copiedObjects = new List<Level.Object>();
             var copiedTextures = new List<Level.Picture>();
             Vector.MarkDefault = Geometry.VectorMark.Selected;
-            var delta = Keyboard.IsKeyDown(Key.LeftShift) ? 
-                Global.AppSettings.LevelEditor.RenderingSettings.GridSize
-                :
-                Renderer.ZoomLevel * 0.1;
+            var delta = Keyboard.IsKeyDown(Key.LeftShift)
+                ? Global.AppSettings.LevelEditor.RenderingSettings.GridSize
+                : Renderer.ZoomLevel * 0.1;
             foreach (Polygon x in Lev.Polygons)
             {
                 var copy = new Polygon();
@@ -449,6 +474,7 @@ namespace Elmanager.Forms
                             z.Y + delta));
                     }
                 }
+
                 if (copy.Count > 2)
                 {
                     copiedPolygons.Add(copy);
@@ -456,6 +482,7 @@ namespace Elmanager.Forms
                     copy.UpdateDecomposition();
                 }
             }
+
             foreach (Level.Object x in Lev.Objects)
             {
                 if (x.Position.Mark == Geometry.VectorMark.Selected && x.Type != Level.ObjectType.Start)
@@ -469,6 +496,7 @@ namespace Elmanager.Forms
                             x.AnimationNumber));
                 }
             }
+
             foreach (Level.Picture x in Lev.Pictures)
             {
                 if (x.Position.Mark == Geometry.VectorMark.Selected)
@@ -480,6 +508,7 @@ namespace Elmanager.Forms
                     x.Position.Mark = Geometry.VectorMark.None;
                 }
             }
+
             Vector.MarkDefault = Geometry.VectorMark.None;
             Lev.Polygons.AddRange(copiedPolygons);
             Lev.Objects.AddRange(copiedObjects);
@@ -506,9 +535,10 @@ namespace Elmanager.Forms
                     -Renderer.YMin, Global.AppSettings.LevelEditor.CrosshairColor);
             }
 
-            Action<Vector, Color> drawAction = Global.AppSettings.LevelEditor.RenderingSettings.UseCirclesForVertices ?
-                    (Action<Vector, Color>)((pt, color) => Renderer.DrawPoint(pt, color))
-                    : ((pt, color) => Renderer.DrawEquilateralTriangle(pt, Renderer.ZoomLevel * Global.AppSettings.LevelEditor.RenderingSettings.VertexSize, color));
+            Action<Vector, Color> drawAction = Global.AppSettings.LevelEditor.RenderingSettings.UseCirclesForVertices
+                ? (Action<Vector, Color>) ((pt, color) => Renderer.DrawPoint(pt, color))
+                : ((pt, color) => Renderer.DrawEquilateralTriangle(pt,
+                    Renderer.ZoomLevel * Global.AppSettings.LevelEditor.RenderingSettings.VertexSize, color));
 
             foreach (Polygon x in Lev.Polygons)
             {
@@ -521,11 +551,13 @@ namespace Elmanager.Forms
                                 Renderer.DrawLineStrip(x, Global.AppSettings.LevelEditor.HighlightColor);
                                 if (Global.AppSettings.LevelEditor.RenderingSettings.ShowInactiveGrassEdges)
                                 {
-                                    Renderer.DrawDashLine(x.Vertices.First(), x.Vertices.Last(), Global.AppSettings.LevelEditor.HighlightColor);
+                                    Renderer.DrawDashLine(x.Vertices.First(), x.Vertices.Last(),
+                                        Global.AppSettings.LevelEditor.HighlightColor);
                                 }
                             }
                             else
                                 Renderer.DrawPolygon(x, Global.AppSettings.LevelEditor.HighlightColor);
+
                         break;
                     case PolygonMark.Selected:
                         Renderer.DrawPolygon(x, Color.Red);
@@ -549,6 +581,7 @@ namespace Elmanager.Forms
                     }
                 }
             }
+
             foreach (Level.Object t in Lev.Objects)
             {
                 Vector z = t.Position;
@@ -563,6 +596,7 @@ namespace Elmanager.Forms
                         break;
                 }
             }
+
             foreach (Level.Picture t in Lev.Pictures)
             {
                 Vector z = t.Position;
@@ -578,14 +612,16 @@ namespace Elmanager.Forms
                         break;
                 }
             }
+
             foreach (Vector x in _errorPoints)
-                Renderer.DrawSquare(x, Renderer.ZoomLevel/25, Color.Red);
-            if ((object)_savedStartPosition != null)
+                Renderer.DrawSquare(x, Renderer.ZoomLevel / 25, Color.Red);
+            if ((object) _savedStartPosition != null)
             {
                 if (Global.AppSettings.LevelEditor.RenderingSettings.ShowObjects)
                 {
                     Renderer.DrawDummyPlayer(_savedStartPosition.X, -_savedStartPosition.Y, false, true);
                 }
+
                 if (Global.AppSettings.LevelEditor.RenderingSettings.ShowObjectFrames)
                 {
                     Renderer.DrawDummyPlayer(_savedStartPosition.X, -_savedStartPosition.Y, false, false);
@@ -607,6 +643,7 @@ namespace Elmanager.Forms
                 if (x.IsGrass)
                     Lev.Polygons.Remove(x);
             }
+
             Modified = true;
             Renderer.RedrawScene();
         }
@@ -630,11 +667,13 @@ namespace Elmanager.Forms
                             polyModified = true;
                         }
                     }
+
                     if (x.Vertices.Count < 3)
                         Lev.Polygons.Remove(x);
                     else if (polyModified)
                         x.UpdateDecomposition();
                 }
+
                 for (int i = Lev.Objects.Count - 1; i >= 0; i--)
                 {
                     if (Lev.Objects[i].Position.Mark == Geometry.VectorMark.Selected)
@@ -646,6 +685,7 @@ namespace Elmanager.Forms
                         }
                     }
                 }
+
                 for (int i = Lev.Pictures.Count - 1; i >= 0; i--)
                 {
                     Level.Picture x = Lev.Pictures[i];
@@ -655,6 +695,7 @@ namespace Elmanager.Forms
                         anythingDeleted = true;
                     }
                 }
+
                 if (anythingDeleted)
                 {
                     Modified = true;
@@ -700,6 +741,7 @@ namespace Elmanager.Forms
                     polygon.MarkVectorsAs(Geometry.VectorMark.None);
                 }
             }
+
             foreach (var o in Lev.Objects)
             {
                 switch (o.Type)
@@ -709,18 +751,21 @@ namespace Elmanager.Forms
                         {
                             o.Position.Mark = Geometry.VectorMark.None;
                         }
+
                         break;
                     case Level.ObjectType.Apple:
                         if (!_appleFilter)
                         {
                             o.Position.Mark = Geometry.VectorMark.None;
                         }
+
                         break;
                     case Level.ObjectType.Killer:
                         if (!_killerFilter)
                         {
                             o.Position.Mark = Geometry.VectorMark.None;
                         }
+
                         break;
                     case Level.ObjectType.Start:
                         break;
@@ -728,6 +773,7 @@ namespace Elmanager.Forms
                         throw new ArgumentOutOfRangeException();
                 }
             }
+
             foreach (var picture in Lev.Pictures)
             {
                 if (picture.IsPicture && !_pictureFilter)
@@ -739,6 +785,7 @@ namespace Elmanager.Forms
                     picture.Position.Mark = Geometry.VectorMark.None;
                 }
             }
+
             Renderer.RedrawScene();
             SelectionFilterToolStripMenuItem.ShowDropDown();
         }
@@ -756,10 +803,10 @@ namespace Elmanager.Forms
             {
                 X =
                     Renderer.XMin +
-                    mousePosNoTr.X*(Renderer.XMax - Renderer.XMin)/EditorControl.Width,
+                    mousePosNoTr.X * (Renderer.XMax - Renderer.XMin) / EditorControl.Width,
                 Y =
                     Renderer.YMax -
-                    mousePosNoTr.Y*(Renderer.YMax - Renderer.YMin)/EditorControl.Height
+                    mousePosNoTr.Y * (Renderer.YMax - Renderer.YMin) / EditorControl.Height
             };
             return mousePos;
         }
@@ -771,10 +818,10 @@ namespace Elmanager.Forms
             {
                 X =
                     Renderer.XMin +
-                    mousePosNoTr.X*(Renderer.XMax - Renderer.XMin)/EditorControl.Width,
+                    mousePosNoTr.X * (Renderer.XMax - Renderer.XMin) / EditorControl.Width,
                 Y =
                     -Renderer.YMax +
-                    mousePosNoTr.Y*(Renderer.YMax - Renderer.YMin)/EditorControl.Height
+                    mousePosNoTr.Y * (Renderer.YMax - Renderer.YMin) / EditorControl.Height
             };
             return mousePos;
         }
@@ -786,6 +833,7 @@ namespace Elmanager.Forms
             {
                 polys.Add(ToolBase.NearestPolygon);
             }
+
             polys.ForEach(p =>
             {
                 p.IsGrass = !p.IsGrass;
@@ -813,7 +861,7 @@ namespace Elmanager.Forms
             if (currApple.Position.Mark == Geometry.VectorMark.Selected)
             {
                 Lev.Objects.Where(
-                    obj => obj.Position.Mark == Geometry.VectorMark.Selected && obj.Type == Level.ObjectType.Apple)
+                        obj => obj.Position.Mark == Geometry.VectorMark.Selected && obj.Type == Level.ObjectType.Apple)
                     .ToList()
                     .ForEach(apple => apple.AppleType = chosenAppleType);
             }
@@ -842,8 +890,8 @@ namespace Elmanager.Forms
             var graphics = CreateGraphics();
             _dpiX = graphics.DpiX / 96;
             _dpiY = graphics.DpiY / 96;
-            var dpiXint = (int)_dpiX;
-            var dpiYint = (int)_dpiY;
+            var dpiXint = (int) _dpiX;
+            var dpiYint = (int) _dpiY;
             ToolStrip1.ImageScalingSize = new Size(32 * dpiXint, 32 * dpiYint);
             ToolStrip2.ImageScalingSize = new Size(32 * dpiXint, 32 * dpiYint);
             MenuStrip1.ImageScalingSize = new Size(16 * dpiXint, 16 * dpiYint);
@@ -924,6 +972,7 @@ namespace Elmanager.Forms
                     e = new KeyEventArgs(Constants.Decrease);
                     break;
             }
+
             CurrentTool.KeyDown(e);
             var wasModified = false;
             switch (e.KeyCode)
@@ -943,6 +992,7 @@ namespace Elmanager.Forms
                         _lockMouseX = true;
                         _lockCoord = MousePosition.X;
                     }
+
                     break;
                 case Keys.X:
                     if (!_lockMouseY)
@@ -950,6 +1000,7 @@ namespace Elmanager.Forms
                         _lockMouseY = true;
                         _lockCoord = MousePosition.Y;
                     }
+
                     break;
                 case Keys.Delete:
                     DeleteSelected(null, null);
@@ -967,10 +1018,12 @@ namespace Elmanager.Forms
                     wasModified = PolyOpTool.PolyOpSelected(PolygonOperationType.SymmetricDifference, Lev.Polygons);
                     break;
             }
+
             if (wasModified)
             {
                 Modified = true;
             }
+
             Renderer.RedrawScene();
         }
 
@@ -978,9 +1031,11 @@ namespace Elmanager.Forms
         {
             if (!_pictureToolAvailable)
             {
-                Utils.ShowError("You need to select LGR file from settings before you can use texturize tool.", "Note", MessageBoxIcon.Information);
+                Utils.ShowError("You need to select LGR file from settings before you can use texturize tool.", "Note",
+                    MessageBoxIcon.Information);
                 return;
             }
+
             var selected = Lev.Polygons.GetSelectedPolygonsAsMultiPolygon();
             if (selected.IsEmpty)
             {
@@ -996,19 +1051,22 @@ namespace Elmanager.Forms
             {
                 return;
             }
+
             var masks = PicForm.SelectedMasks.Select(x => Renderer.DrawableImageFromName(x.Name)).ToList();
-            var texture = Renderer.DrawableImages.First(i => i.Type == Lgr.ImageType.Texture && i.Name == PicForm.Texture.Name);
+            var texture =
+                Renderer.DrawableImages.First(i => i.Type == Lgr.ImageType.Texture && i.Name == PicForm.Texture.Name);
             var rects = masks
                 .Select(i => new Envelope(0, i.WidthMinusMargin, 0, i.HeightMinusMargin));
-            
+
             var src = new CancellationTokenSource();
 
             var progress = new Progress<double>();
-            var task = Task.Factory.StartNew(() => selected.FindCovering(rects, src.Token, progress, iterations: PicForm.IterationCount,
-                minRectCover: PicForm.MinCoverPercentage/100).ToList(), src.Token);
+            var task = Task.Factory.StartNew(() => selected.FindCovering(rects, src.Token, progress,
+                iterations: PicForm.IterationCount,
+                minRectCover: PicForm.MinCoverPercentage / 100).ToList(), src.Token);
 
             var progressForm = new ProgressDialog(task, src, progress);
-            BeginInvoke(new Action(()=> { progressForm.ShowDialog(); }));
+            BeginInvoke(new Action(() => { progressForm.ShowDialog(); }));
             List<Envelope> covering;
             try
             {
@@ -1023,8 +1081,10 @@ namespace Elmanager.Forms
             {
                 return;
             }
+
             var selmasks =
-                covering.Select(env => masks.First(m => Math.Abs(m.WidthMinusMargin*m.HeightMinusMargin - env.Area) < 0.001));
+                covering.Select(env =>
+                    masks.First(m => Math.Abs(m.WidthMinusMargin * m.HeightMinusMargin - env.Area) < 0.001));
             var pics = selmasks.Zip(covering,
                 (m, c) =>
                     new Level.Picture(PicForm.Clipping, PicForm.Distance,
@@ -1082,6 +1142,7 @@ namespace Elmanager.Forms
                     Renderer.UpdateGroundAndSky(Global.AppSettings.LevelEditor.RenderingSettings.DefaultGroundAndSky);
                     Renderer.RedrawScene();
                 }
+
                 Modified = true;
             }
         }
@@ -1145,6 +1206,7 @@ namespace Elmanager.Forms
                             convertToToolStripMenuItem.Visible = true;
                             picturesConvertItem.Visible = _editorLgr != null;
                         }
+
                         TransformMenuItem.Visible = SelectedElementCount > 1;
                         _selectedObjectIndex = nearestObjectIndex;
                         if (nearestObjectIndex >= 0)
@@ -1177,6 +1239,7 @@ namespace Elmanager.Forms
                                             UpdateGravityMenu(GravityRightMenuItem);
                                             break;
                                     }
+
                                     break;
                                 case Level.ObjectType.Flower:
                                     break;
@@ -1184,19 +1247,22 @@ namespace Elmanager.Forms
                                     break;
                                 case Level.ObjectType.Start:
                                     saveStartPositionToolStripMenuItem.Visible = true;
-                                    if ((object)_savedStartPosition != null)
+                                    if ((object) _savedStartPosition != null)
                                     {
                                         restoreStartPositionToolStripMenuItem.Visible = true;
                                     }
+
                                     break;
                                 default:
                                     throw new ArgumentOutOfRangeException();
                             }
                         }
+
                         if (nearestVertexIndex >= -1)
                         {
                             GrassMenuItem.Visible = true;
                         }
+
                         _selectedPictureIndex = nearestPictureIndex;
                         if (nearestPictureIndex >= 0)
                         {
@@ -1204,8 +1270,10 @@ namespace Elmanager.Forms
                             bringToFrontToolStripMenuItem.Visible = true;
                             sendToBackToolStripMenuItem.Visible = true;
                         }
+
                         EditorMenuStrip.Show(MousePosition);
                     }
+
                     break;
                 case MouseButtons.Middle:
                     if (Keyboard.IsKeyDown(Key.LeftCtrl))
@@ -1217,9 +1285,11 @@ namespace Elmanager.Forms
                     {
                         _draggingScreen = true;
                     }
+
                     _moveStartPosition = GetMouseCoordinates();
                     break;
             }
+
             CurrentTool.MouseDown(e);
             Renderer.RedrawScene();
         }
@@ -1246,10 +1316,11 @@ namespace Elmanager.Forms
                 }
                 else
                 {
-                    Renderer.CenterX = (Renderer.XMax + Renderer.XMin)/2 - (z.X - _moveStartPosition.X);
-                    Renderer.CenterY = (Renderer.YMax + Renderer.YMin)/2 - (z.Y - _moveStartPosition.Y);
+                    Renderer.CenterX = (Renderer.XMax + Renderer.XMin) / 2 - (z.X - _moveStartPosition.X);
+                    Renderer.CenterY = (Renderer.YMax + Renderer.YMin) / 2 - (z.Y - _moveStartPosition.Y);
                 }
             }
+
             CurrentTool.MouseMove(GetMouseCoordinatesFixed());
             Renderer.RedrawScene();
         }
@@ -1341,12 +1412,13 @@ namespace Elmanager.Forms
             {
                 if (!_pictureToolAvailable)
                 {
-                    Utils.ShowError("You need to select LGR file from settings before you can use picture tool.", "Note", MessageBoxIcon.Information);
+                    Utils.ShowError("You need to select LGR file from settings before you can use picture tool.",
+                        "Note", MessageBoxIcon.Information);
                     SelectButton.Checked = true;
                 }
                 else
                 {
-                    ChangeToolTo(13);    
+                    ChangeToolTo(13);
                 }
             }
         }
@@ -1364,7 +1436,7 @@ namespace Elmanager.Forms
             {
                 PicForm.AllowMultiple = false;
                 selectedPics = new List<Level.Picture> {Lev.Pictures[_selectedPictureIndex]};
-                PicForm.SelectElement(Lev.Pictures[_selectedPictureIndex]);    
+                PicForm.SelectElement(Lev.Pictures[_selectedPictureIndex]);
             }
 
             PicForm.AutoTextureMode = false;
@@ -1375,21 +1447,26 @@ namespace Elmanager.Forms
                 {
                     var clipping = PicForm.MultipleClippingSelected ? selected.Clipping : PicForm.Clipping;
                     var distance = PicForm.MultipleDistanceSelected ? selected.Distance : PicForm.Distance;
-                    var mask = PicForm.MultipleMaskSelected ? Renderer.DrawableImageFromName(selected.Name)
-                                                            : Renderer.DrawableImageFromName(PicForm.Mask.Name);
+                    var mask = PicForm.MultipleMaskSelected
+                        ? Renderer.DrawableImageFromName(selected.Name)
+                        : Renderer.DrawableImageFromName(PicForm.Mask.Name);
                     var position = selected.Position;
-                    var texture = PicForm.MultipleTexturesSelected ? Renderer.DrawableImageFromName(selected.TextureName)
-                                                            : Renderer.DrawableImageFromName(PicForm.Texture.Name);
-                    var picture = PicForm.MultiplePicturesSelected ? Renderer.DrawableImageFromName(selected.Name)
-                                                            : Renderer.DrawableImageFromName(PicForm.Picture.Name);
+                    var texture = PicForm.MultipleTexturesSelected
+                        ? Renderer.DrawableImageFromName(selected.TextureName)
+                        : Renderer.DrawableImageFromName(PicForm.Texture.Name);
+                    var picture = PicForm.MultiplePicturesSelected
+                        ? Renderer.DrawableImageFromName(selected.Name)
+                        : Renderer.DrawableImageFromName(PicForm.Picture.Name);
 
                     if ((PicForm.TextureSelected && !PicForm.MultipleTexturesSelected))
                     {
                         if (selected.IsPicture)
                         {
                             // need to set proper mask; otherwise the mask name will be picture name
-                            mask = Renderer.DrawableImageFromName(_editorLgr.ListedImages.Where(i => i.Type == Lgr.ImageType.Mask).First().Name);
+                            mask = Renderer.DrawableImageFromName(_editorLgr.ListedImages
+                                .Where(i => i.Type == Lgr.ImageType.Mask).First().Name);
                         }
+
                         selected.SetTexture(clipping, distance, position, texture,
                             mask);
                     }
@@ -1405,12 +1482,12 @@ namespace Elmanager.Forms
                         {
                             selected.SetPicture(picture, position,
                                 distance,
-                                clipping);    
+                                clipping);
                         }
                         else
                         {
                             selected.SetTexture(clipping, distance, position, texture,
-                                mask);    
+                                mask);
                         }
                     }
                 }
@@ -1455,6 +1532,7 @@ namespace Elmanager.Forms
                             if (i >= CurrLevDirFiles.Count)
                                 i = 0;
                         }
+
                         OpenLevel(CurrLevDirFiles[i]);
                     }
                 }
@@ -1478,6 +1556,7 @@ namespace Elmanager.Forms
                         return false;
                 }
             }
+
             return true;
         }
 
@@ -1489,6 +1568,7 @@ namespace Elmanager.Forms
                 if (!x.IsGrass)
                     Lev.Polygons.AddRange(((AutoGrassTool) (Tools[11])).AutoGrass(x));
             }
+
             Modified = true;
             Renderer.RedrawScene();
         }
@@ -1529,6 +1609,7 @@ namespace Elmanager.Forms
                         }
                     }
                 }
+
                 try
                 {
                     int newNumber;
@@ -1540,14 +1621,17 @@ namespace Elmanager.Forms
                     {
                         newNumber = lowestNumber - 1;
                     }
+
                     suggestion = filenameStart + newNumber.ToString(Global.AppSettings.LevelEditor.NumberFormat);
                 }
                 catch (FormatException)
                 {
                     Utils.ShowError("Invalid format string!");
                 }
+
                 SaveFileDialog1.FileName = suggestion;
             }
+
             SaveFileDialog1.InitialDirectory = Global.AppSettings.General.LevelDirectory;
             if (SaveFileDialog1.ShowDialog() == DialogResult.OK)
             {
@@ -1585,6 +1669,7 @@ namespace Elmanager.Forms
                 {
                     Lev.Title = Path.GetFileNameWithoutExtension(SaveFileDialog1.FileName);
                 }
+
                 try
                 {
                     Lev.Save(_savePath);
@@ -1595,6 +1680,7 @@ namespace Elmanager.Forms
                         Global.LevelFiles.Add(_savePath);
                         UpdateCurrLevDirFiles(force: true);
                     }
+
                     UpdateLabels();
                     UpdateButtons();
                     Modified = false;
@@ -1604,6 +1690,7 @@ namespace Elmanager.Forms
                     Utils.ShowError("Error when saving level: " + ex.Message);
                 }
             }
+
             ActivateCurrentAndRedraw();
         }
 
@@ -1614,6 +1701,7 @@ namespace Elmanager.Forms
                 if ((polygon.IsGrass && _grassFilter) || (!polygon.IsGrass && _groundFilter))
                     polygon.MarkVectorsAs(Geometry.VectorMark.Selected);
             }
+
             foreach (var levelObject in Lev.Objects)
             {
                 switch (levelObject.Type)
@@ -1663,6 +1751,7 @@ namespace Elmanager.Forms
                 Lev.Pictures.RemoveAt(_selectedPictureIndex);
                 Lev.Pictures.Add(obj);
             }
+
             Modified = true;
         }
 
@@ -1734,7 +1823,8 @@ namespace Elmanager.Forms
             SkyComboBox.SelectedIndexChanged += LevelPropertyModified;
             TitleBox.TextChanged += LevelPropertyModified;
             ToolPanel.MouseWheel += MouseWheelZoom; // Windows 8.1 and earlier
-            EditorControl.MouseWheel += MouseWheelZoom; // Windows 10 with the option "Scroll inactive windows when I hover over them" enabled
+            EditorControl.MouseWheel +=
+                MouseWheelZoom; // Windows 10 with the option "Scroll inactive windows when I hover over them" enabled
             previousLevelToolStripMenuItem.Click += PrevNextButtonClick;
             nextLevelToolStripMenuItem.Click += PrevNextButtonClick;
             foreach (var x in ToolStrip2.Items)
@@ -1744,6 +1834,7 @@ namespace Elmanager.Forms
                     button.CheckedChanged += SettingChanged;
                 }
             }
+
             foreach (RadioButtonMod x in ToolPanel.Controls)
             {
                 x.KeyDown += KeyHandlerDown;
@@ -1819,10 +1910,12 @@ namespace Elmanager.Forms
             {
                 return;
             }
+
             if (force || _currLevDirFiles == null || _loadedLevFilesDir != levDir)
             {
                 _currLevDirFiles = Directory.GetFiles(levDir, "*.*", SearchOption.TopDirectoryOnly)
-                    .Where(s => s.EndsWith(Constants.LevExtension, StringComparison.OrdinalIgnoreCase) || s.EndsWith(Constants.LebExtension, StringComparison.OrdinalIgnoreCase)).ToList();
+                    .Where(s => s.EndsWith(Constants.LevExtension, StringComparison.OrdinalIgnoreCase) ||
+                                s.EndsWith(Constants.LebExtension, StringComparison.OrdinalIgnoreCase)).ToList();
                 _loadedLevFilesDir = levDir;
             }
         }
@@ -1852,6 +1945,7 @@ namespace Elmanager.Forms
                 deleteButton.Enabled = true;
                 deleteLevMenuItem.Enabled = true;
             }
+
             _programmaticPropertyChange = true;
             TitleBox.Text = Lev.Title;
             LGRBox.Text = Lev.LgrFile;
@@ -1877,11 +1971,13 @@ namespace Elmanager.Forms
                     PicForm = new PictureForm(_editorLgr);
                 SkyComboBox.Items.Clear();
                 GroundComboBox.Items.Clear();
-                foreach (var texture in _editorLgr.ListedImagesExcludingSpecial.Where(image => image.Type == Lgr.ImageType.Texture))
+                foreach (var texture in _editorLgr.ListedImagesExcludingSpecial.Where(image =>
+                    image.Type == Lgr.ImageType.Texture))
                 {
                     SkyComboBox.Items.Add(texture.Name);
                     GroundComboBox.Items.Add(texture.Name);
                 }
+
                 UpdateLabels();
             }
             else
@@ -1891,6 +1987,7 @@ namespace Elmanager.Forms
                 SkyComboBox.Enabled = false;
                 GroundComboBox.Enabled = false;
             }
+
             CheckForPictureLoss();
         }
 
@@ -1931,8 +2028,10 @@ namespace Elmanager.Forms
         private void TitleBoxTextChanged(object sender, EventArgs e)
         {
             int width = TextRenderer.MeasureText(TitleBox.Text, TitleBox.Font).Width;
-            TitleBox.Width = Math.Max(width + 5, 120 * (int)_dpiX);
-            TitleBox.BackColor = Regex.IsMatch(TitleBox.Text, "[^a-zA-Z0-9!\"%&/()=?`^*-_,.;:<>\\[\\]+# ]") ? Color.Red : Color.White;
+            TitleBox.Width = Math.Max(width + 5, 120 * (int) _dpiX);
+            TitleBox.BackColor = Regex.IsMatch(TitleBox.Text, "[^a-zA-Z0-9!\"%&/()=?`^*-_,.;:<>\\[\\]+# ]")
+                ? Color.Red
+                : Color.White;
         }
 
         public void PreserveSelection()
@@ -1962,6 +2061,7 @@ namespace Elmanager.Forms
                                 "Warning",
                                 MessageBoxIcon.Exclamation);
                         }
+
                         lev.UpdateImages(Renderer.DrawableImages);
                     }
                     else
@@ -1976,6 +2076,7 @@ namespace Elmanager.Forms
                             return;
                         }
                     }
+
                     Lev.Import(lev);
                 });
                 Modified = true;
@@ -1993,9 +2094,12 @@ namespace Elmanager.Forms
 
         private void ConvertClicked(object sender, EventArgs e)
         {
-            var selectedVertices = Lev.Polygons.SelectMany(p => p.Vertices.Where(v => v.Mark == Geometry.VectorMark.Selected)).ToList();
+            var selectedVertices = Lev.Polygons
+                .SelectMany(p => p.Vertices.Where(v => v.Mark == Geometry.VectorMark.Selected)).ToList();
             selectedVertices.AddRange(
-                Lev.Objects.Where(v => v.Position.Mark == Geometry.VectorMark.Selected && v.Type != Level.ObjectType.Start).Select(o => o.Position));
+                Lev.Objects.Where(v =>
+                        v.Position.Mark == Geometry.VectorMark.Selected && v.Type != Level.ObjectType.Start)
+                    .Select(o => o.Position));
             selectedVertices.AddRange(
                 Lev.Pictures.Where(v => v.Position.Mark == Geometry.VectorMark.Selected).Select(p => p.Position));
 
@@ -2009,7 +2113,8 @@ namespace Elmanager.Forms
                     Lev.Polygons.Add(first);
                 }
 
-                Lev.Objects.RemoveAll(o => o.Position.Mark == Geometry.VectorMark.Selected && o.Type != Level.ObjectType.Start);
+                Lev.Objects.RemoveAll(o =>
+                    o.Position.Mark == Geometry.VectorMark.Selected && o.Type != Level.ObjectType.Start);
                 Lev.Pictures.RemoveAll(p => p.Position.Mark == Geometry.VectorMark.Selected);
             }
 
@@ -2054,6 +2159,7 @@ namespace Elmanager.Forms
                         }
                     }
                 }
+
                 Modified = true;
                 return;
             }
@@ -2065,6 +2171,7 @@ namespace Elmanager.Forms
                 var obj = new Level.Object(selectedVertex, objType, Level.AppleTypes.Normal);
                 Lev.Objects.Add(obj);
             }
+
             Modified = true;
         }
 
@@ -2087,11 +2194,13 @@ namespace Elmanager.Forms
             {
                 return;
             }
-            if (MessageBox.Show("Are you sure you want to delete this level?", "Confirmation", MessageBoxButtons.YesNo, MessageBoxIcon.Question) == DialogResult.Yes)
+
+            if (MessageBox.Show("Are you sure you want to delete this level?", "Confirmation", MessageBoxButtons.YesNo,
+                    MessageBoxIcon.Question) == DialogResult.Yes)
             {
                 UpdateCurrLevDirFiles();
                 File.Delete(Lev.Path);
-                
+
                 int levIndex = GetCurrentLevelIndex();
                 CurrLevDirFiles.RemoveAt(levIndex);
                 if (levIndex < CurrLevDirFiles.Count)
@@ -2108,7 +2217,7 @@ namespace Elmanager.Forms
         private int GetCurrentLevelIndex()
         {
             return CurrLevDirFiles.FindIndex(
-                        path => string.Compare(path, Lev.Path, StringComparison.OrdinalIgnoreCase) == 0);
+                path => string.Compare(path, Lev.Path, StringComparison.OrdinalIgnoreCase) == 0);
         }
 
         private void deleteButton_Click(object sender, EventArgs e)
@@ -2119,8 +2228,8 @@ namespace Elmanager.Forms
         private void filenameBox_TextChanged(object sender = null, EventArgs e = null)
         {
             bool showButtons = string.Compare(filenameBox.Text,
-                Lev.FileNameWithoutExtension,
-                StringComparison.InvariantCulture) != 0 && Lev.Path != null;
+                                   Lev.FileNameWithoutExtension,
+                                   StringComparison.InvariantCulture) != 0 && Lev.Path != null;
             filenameOkButton.Visible = showButtons;
             filenameCancelButton.Visible = showButtons;
         }
@@ -2137,6 +2246,7 @@ namespace Elmanager.Forms
                 Utils.ShowError("The filename cannot be empty.");
                 return;
             }
+
             try
             {
                 var newPath = Path.Combine(Path.GetDirectoryName(Lev.Path), filenameBox.Text + ".lev");
@@ -2147,6 +2257,7 @@ namespace Elmanager.Forms
                     int index = GetCurrentLevelIndex();
                     CurrLevDirFiles[index] = newPath;
                 }
+
                 Lev.Path = newPath;
                 _savePath = newPath;
                 UpdateLabels();
@@ -2168,6 +2279,7 @@ namespace Elmanager.Forms
             {
                 return;
             }
+
             switch (e.KeyCode)
             {
                 case Keys.Enter:

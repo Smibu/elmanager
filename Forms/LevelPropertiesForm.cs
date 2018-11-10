@@ -25,7 +25,7 @@ namespace Elmanager.Forms
                                    "Killers: " + _level.KillerObjectCount + "\r\n" +
                                    "Flowers: " + _level.ExitObjectCount + "\r\n" +
                                    "Pictures: " + _level.PictureCount + "\r\n" +
-                                   "Textures: " + _level.TextureCount + "\r\n" + 
+                                   "Textures: " + _level.TextureCount + "\r\n" +
                                    "Width: " + _level.Width.ToString("F3") + "\r\n" +
                                    "Height: " + _level.Height.ToString("F3") + "\r\n";
             SinglePlayerTimesBox.Text = "";
@@ -35,6 +35,7 @@ namespace Elmanager.Forms
                     SinglePlayerTimesBox.Text += " ";
                 SinglePlayerTimesBox.Text += (i + 1) + ". " + _level.Top10.GetSinglePlayerString(i) + "\r\n";
             }
+
             SinglePlayerTimesBox.Text += "Average: " + _level.Top10.GetSinglePlayerAverage().ToTimeString();
             MultiPlayerTimesBox.Text = "";
             for (int i = 0; i <= 9; i++)
@@ -43,6 +44,7 @@ namespace Elmanager.Forms
                     MultiPlayerTimesBox.Text += " ";
                 MultiPlayerTimesBox.Text += (i + 1) + ". " + _level.Top10.GetMultiPlayerString(i) + "\r\n";
             }
+
             MultiPlayerTimesBox.Text += "Average: " + _level.Top10.GetMultiPlayerAverage().ToTimeString();
         }
 

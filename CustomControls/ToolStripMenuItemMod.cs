@@ -16,7 +16,7 @@ namespace Elmanager.CustomControls
                 var renderer = Owner.Renderer;
                 var rightToLeft = RightToLeft == RightToLeft.Yes;
                 var textColor = SystemColors.MenuText;
-                var textRect = (Rectangle)this.GetPropertyValue("InternalLayout").GetPropertyValue("TextRectangle");
+                var textRect = (Rectangle) this.GetPropertyValue("InternalLayout").GetPropertyValue("TextRectangle");
                 var g = e.Graphics;
                 if ((DisplayStyle & ToolStripItemDisplayStyle.Text) == ToolStripItemDisplayStyle.Text)
                 {

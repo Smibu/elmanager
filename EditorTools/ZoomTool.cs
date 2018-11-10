@@ -34,7 +34,7 @@ namespace Elmanager.EditorTools
                 case MouseButtons.Left:
                 case MouseButtons.Right:
                     Renderer.Zoom(CurrentPos, mouseData.Button == MouseButtons.Left,
-                                  1 - Global.AppSettings.LevelEditor.MouseClickStep / 100.0);
+                        1 - Global.AppSettings.LevelEditor.MouseClickStep / 100.0);
                     break;
             }
         }

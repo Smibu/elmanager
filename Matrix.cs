@@ -50,7 +50,7 @@ namespace Elmanager
             double sin = Math.Sin(angle);
             double cos = Math.Cos(angle);
             return new Matrix(cos, -sin, sin, cos, centerX * cos - centerX + centerY * sin,
-                              centerY * cos - centerY - centerX * sin);
+                centerY * cos - centerY - centerX * sin);
         }
 
         internal static Matrix CreateScaling(double scaleX, double scaleY)
@@ -66,19 +66,19 @@ namespace Elmanager
         internal static Matrix MultiplyMatrix(Matrix matrix1, Matrix matrix2)
         {
             return new Matrix(((matrix1.M11 * matrix2.M11) + (matrix1.M12 * matrix2.M21)),
-                              ((matrix1.M11 * matrix2.M12) + (matrix1.M12 * matrix2.M22)),
-                              ((matrix1.M21 * matrix2.M11) + (matrix1.M22 * matrix2.M21)),
-                              ((matrix1.M21 * matrix2.M12) + (matrix1.M22 * matrix2.M22)),
-                              (((matrix1.OffsetX * matrix2.M11) + (matrix1.OffsetY * matrix2.M21)) +
-                               matrix2.OffsetX),
-                              (((matrix1.OffsetX * matrix2.M12) + (matrix1.OffsetY * matrix2.M22)) +
-                               matrix2.OffsetY));
+                ((matrix1.M11 * matrix2.M12) + (matrix1.M12 * matrix2.M22)),
+                ((matrix1.M21 * matrix2.M11) + (matrix1.M22 * matrix2.M21)),
+                ((matrix1.M21 * matrix2.M12) + (matrix1.M22 * matrix2.M22)),
+                (((matrix1.OffsetX * matrix2.M11) + (matrix1.OffsetY * matrix2.M21)) +
+                 matrix2.OffsetX),
+                (((matrix1.OffsetX * matrix2.M12) + (matrix1.OffsetY * matrix2.M22)) +
+                 matrix2.OffsetY));
         }
 
         internal Vector MultiplyVector(Vector v)
         {
             Vector z = v.Clone();
-            z.X = v.X * M11 + v.Y * M21 + OffsetX; 
+            z.X = v.X * M11 + v.Y * M21 + OffsetX;
             z.Y = v.Y * M22 + v.X * M12 + OffsetY;
             return z;
         }

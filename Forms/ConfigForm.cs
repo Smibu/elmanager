@@ -64,6 +64,7 @@ namespace Elmanager.Forms
             {
                 DisableFrameBufferUsageCheckBox.CheckState = CheckState.Unchecked;
             }
+
             alwaysSetDefaultsInPictureTool.Checked = Global.AppSettings.LevelEditor.AlwaysSetDefaultsInPictureTool;
             FilenameSuggestionBoxCheckedChanged(null, null);
             SameAsFilenameBoxCheckedChanged(null, null);
@@ -76,6 +77,7 @@ namespace Elmanager.Forms
                 string defaultlgr = Global.AppSettings.General.LgrDirectory + "\\Default.lgr";
                 return File.Exists(defaultlgr) ? defaultlgr : lgrFiles[0];
             }
+
             return string.Empty;
         }
 
@@ -84,7 +86,7 @@ namespace Elmanager.Forms
             if (Directory.Exists(Global.AppSettings.General.LgrDirectory))
             {
                 string[] lgrFiles = Directory.GetFiles(Global.AppSettings.General.LgrDirectory, "*.lgr",
-                                                       SearchOption.AllDirectories);
+                    SearchOption.AllDirectories);
                 if (lgrFiles.Length > 0)
                 {
                     if (Global.AppSettings.LevelEditor.RenderingSettings.LgrFile == string.Empty)
@@ -106,11 +108,13 @@ namespace Elmanager.Forms
                     Global.AppSettings.General.LevelDirectory = LevTextBox.Text;
                     _levelDirectoryChanged = true;
                 }
+
                 if (Directory.Exists(FolderBrowserDialog1.SelectedPath + "\\Rec"))
                 {
                     RecTextBox.Text = FolderBrowserDialog1.SelectedPath + "\\Rec";
                     Global.AppSettings.General.ReplayDirectory = RecTextBox.Text;
                 }
+
                 if (Directory.Exists(FolderBrowserDialog1.SelectedPath + "\\Lgr"))
                 {
                     LGRTextBox.Text = FolderBrowserDialog1.SelectedPath + "\\Lgr";
@@ -172,13 +176,14 @@ namespace Elmanager.Forms
                 Utils.ShowError("Database file is not specified!");
                 return;
             }
+
             if (Utils.LevRecDirectoriesExist())
             {
                 Global.LevelFiles = Utils.GetLevelFiles(SearchLevSubDirsBox.Checked);
                 string[] replayFiles = Directory.GetFiles(Global.AppSettings.General.ReplayDirectory, "*.*",
-                                                          Global.AppSettings.ReplayManager.SearchRecSubDirs
-                                                              ? SearchOption.AllDirectories
-                                                              : SearchOption.TopDirectoryOnly);
+                    Global.AppSettings.ReplayManager.SearchRecSubDirs
+                        ? SearchOption.AllDirectories
+                        : SearchOption.TopDirectoryOnly);
                 int replayCount = replayFiles.Length - 1;
                 Global.ReplayDataBase = new List<Replay>();
                 for (int i = 0; i <= replayCount; i++)
@@ -192,13 +197,15 @@ namespace Elmanager.Forms
                     {
                         continue;
                     }
+
                     if (srp.IsNitro)
                         continue;
                     Global.ReplayDataBase.Add(srp);
-                    Label1.Text = "Gathering replay files... " + Math.Round(i/(double) replayCount*100.0) + "%";
+                    Label1.Text = "Gathering replay files... " + Math.Round(i / (double) replayCount * 100.0) + "%";
                     Application.DoEvents();
                     totalSizeOfReplays += (int) (FileSystem.GetFileInfo(replayFiles[i]).Length);
                 }
+
                 BinaryFormatter binFormatter = new BinaryFormatter();
                 MemoryStream fs = new MemoryStream();
                 byte[] serializedData;
@@ -206,7 +213,7 @@ namespace Elmanager.Forms
                 Label1.Refresh();
                 try
                 {
-                    fs.Capacity = totalSizeOfReplays/10;
+                    fs.Capacity = totalSizeOfReplays / 10;
                     binFormatter.Serialize(fs, Global.ReplayDataBase);
                     serializedData = fs.ToArray();
                 }
@@ -214,6 +221,7 @@ namespace Elmanager.Forms
                 {
                     fs.Close();
                 }
+
                 File.WriteAllBytes(DBTextBox.Text, serializedData);
                 CheckBox6.Enabled = File.Exists(DBTextBox.Text);
                 Label1.Text = "Done!";
@@ -233,14 +241,14 @@ namespace Elmanager.Forms
         private void GenerateNativeImage(object sender, EventArgs e)
         {
             Process p = new Process
-                            {
-                                StartInfo =
-                                    {
-                                        FileName = RuntimeEnvironment.GetRuntimeDirectory() + "ngen.exe",
-                                        Arguments = "install \"" + Application.ExecutablePath + "\"",
-                                        Verb = "runas"
-                                    }
-                            };
+            {
+                StartInfo =
+                {
+                    FileName = RuntimeEnvironment.GetRuntimeDirectory() + "ngen.exe",
+                    Arguments = "install \"" + Application.ExecutablePath + "\"",
+                    Verb = "runas"
+                }
+            };
             try
             {
                 p.Start();
@@ -277,7 +285,7 @@ namespace Elmanager.Forms
         {
             if (
                 MessageBox.Show("Reset all settings to default - are you sure?", "Elmanager", MessageBoxButtons.YesNo,
-                                MessageBoxIcon.Question) == DialogResult.Yes)
+                    MessageBoxIcon.Question) == DialogResult.Yes)
             {
                 Global.AppSettings = new ElmanagerSettings();
                 Close();
@@ -335,6 +343,7 @@ namespace Elmanager.Forms
                 Global.AppSettings.ReplayViewer.RenderingSettings.DisableFrameBuffer =
                     DisableFrameBufferUsageCheckBox.Checked;
             }
+
             Global.AppSettings.LevelEditor.AlwaysSetDefaultsInPictureTool = alwaysSetDefaultsInPictureTool.Checked;
             try
             {
@@ -344,6 +353,7 @@ namespace Elmanager.Forms
             {
                 Utils.ShowError("Capture radius value was in an incorrect format!");
             }
+
             if (_levelDirectoryChanged)
                 Global.LevelFiles = Utils.GetLevelFiles();
         }

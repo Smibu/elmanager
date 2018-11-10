@@ -11,8 +11,8 @@ namespace Elmanager
             unchecked
             {
                 int hashCode = 1;
-                hashCode = (hashCode*397) ^ X.GetHashCode();
-                hashCode = (hashCode*397) ^ Y.GetHashCode();
+                hashCode = (hashCode * 397) ^ X.GetHashCode();
+                hashCode = (hashCode * 397) ^ Y.GetHashCode();
                 return hashCode;
             }
         }
@@ -88,7 +88,7 @@ namespace Elmanager
 
         public void Transform(Matrix m)
         {
-            var transformed = this*m;
+            var transformed = this * m;
             X = transformed.X;
             Y = transformed.Y;
         }

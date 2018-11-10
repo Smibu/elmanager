@@ -30,18 +30,19 @@ namespace Elmanager.EditorTools
                 {
                     case Level.ObjectType.Killer:
                         Renderer.DrawCircle(CurrentPos, ElmaRenderer.ObjectRadius,
-                                            Global.AppSettings.LevelEditor.RenderingSettings.KillerColor);
+                            Global.AppSettings.LevelEditor.RenderingSettings.KillerColor);
                         break;
                     case Level.ObjectType.Apple:
                         Renderer.DrawCircle(CurrentPos, ElmaRenderer.ObjectRadius,
-                                            Global.AppSettings.LevelEditor.RenderingSettings.AppleColor);
+                            Global.AppSettings.LevelEditor.RenderingSettings.AppleColor);
                         break;
                     case Level.ObjectType.Flower:
                         Renderer.DrawCircle(CurrentPos, ElmaRenderer.ObjectRadius,
-                                            Global.AppSettings.LevelEditor.RenderingSettings.FlowerColor);
+                            Global.AppSettings.LevelEditor.RenderingSettings.FlowerColor);
                         break;
                 }
             }
+
             if (!Global.AppSettings.LevelEditor.RenderingSettings.ShowObjects || !Renderer.LgrGraphicsLoaded)
                 return;
             switch (_currentObjectType)
@@ -79,6 +80,7 @@ namespace Elmanager.EditorTools
                             _currentObjectType = Level.ObjectType.Apple;
                             break;
                     }
+
                     UpdateHelp();
                     break;
                 case Keys.D1:
@@ -149,6 +151,7 @@ namespace Elmanager.EditorTools
                     LevEditor.InfoLabel.Text += "flower;";
                     break;
             }
+
             LevEditor.InfoLabel.Text += " Space: change object type.";
         }
 

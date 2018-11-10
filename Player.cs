@@ -62,6 +62,7 @@ namespace Elmanager
                 FrameCount = BitConverter.ToInt32(rec, _pOffset);
                 EventCount = BitConverter.ToInt32(rec, _pOffset + FrameCount * 27 + 36);
             }
+
             Events = new List<PlayerEvent>(EventCount);
             if (EventCount > 0)
             {
@@ -94,6 +95,7 @@ namespace Elmanager
                                 RightVolts++;
                                 Events.Add(new PlayerEvent(ReplayEventType.RightVolt, eventTime));
                             }
+
                             break;
                         case (byte) ReplayEventType.LeftVolt:
                             LeftVolts++;
@@ -111,6 +113,7 @@ namespace Elmanager
                             someOtherEventAdded = false;
                             break;
                     }
+
                     if (consecutiveSimultaneousAppletakes > 0)
                     {
                         double appleTime = BitConverter.ToDouble(rec, sp + EventSize * j - 26);
@@ -133,6 +136,7 @@ namespace Elmanager
                         }
                         else
                             k = 0;
+
                         int lastAppleIndex = -1;
                         for (int i = 0; i < consecutiveSimultaneousAppletakes; i++)
                         {
@@ -143,21 +147,24 @@ namespace Elmanager
                                 Apples++;
                                 if (Events.Count > 0 && someOtherEventAdded)
                                     Events.Insert(Events.Count - 1,
-                                                  new PlayerEvent(ReplayEventType.AppleTake, appleTime * TimeConst,
-                                                                  currentAppleIndex));
+                                        new PlayerEvent(ReplayEventType.AppleTake, appleTime * TimeConst,
+                                            currentAppleIndex));
                                 else
                                     Events.Add(new PlayerEvent(ReplayEventType.AppleTake, appleTime * TimeConst,
-                                                               currentAppleIndex));
+                                        currentAppleIndex));
                             }
                             else
                                 BugApples++;
+
                             lastAppleIndex = currentAppleIndex;
                         }
                     }
+
                     consecutiveSimultaneousAppletakes = 0;
                     if (lastEventSuperVolt)
                         j++;
                 }
+
                 //Check if player finished
                 sp = _pOffset + 27 * FrameCount + 24 + EventSize * EventCount; //Points to start of last event
                 if (rec[sp + 10] != 0)
@@ -178,7 +185,8 @@ namespace Elmanager
                 else
                 {
                     //Make sure the second-last event isn't finishing event too
-                    if (rec[sp - 6] == 0 && BitConverter.ToDouble(rec, sp) != BitConverter.ToDouble(rec, sp - EventSize) &&
+                    if (rec[sp - 6] == 0 &&
+                        BitConverter.ToDouble(rec, sp) != BitConverter.ToDouble(rec, sp - EventSize) &&
                         EventCount > 1) //Real finish can't have two finish events
 
                         FakeFinish = true; //If the finishevents' times are the same, player finished with two wheels
@@ -188,6 +196,7 @@ namespace Elmanager
                     Time = Math.Floor(Time * 1000) / 1000;
                 }
             }
+
             if ((!Finished && !FakeFinish) || Time == 0)
                 Time = Math.Round(FrameCount / 30.0, 3);
             TopSpeed = 0;
@@ -214,6 +223,7 @@ namespace Elmanager
                                 return MaxArmRotation * difference / ArmForwardTime;
                             return -MaxArmRotation * difference / ArmForwardTime;
                         }
+
                         if (VoltEvents[currIndex].Type == ReplayEventType.RightVolt)
                             return (MaxArmRotation -
                                     MaxArmRotation * (difference - ArmForwardTime) /
@@ -223,6 +233,7 @@ namespace Elmanager
                               MaxArmRotation * (difference - ArmForwardTime) /
                               (ArmRotationDelay - ArmForwardTime));
                     }
+
                     if (currTime < CurrentTime)
                     {
                         lowerIndex = currIndex;
@@ -231,10 +242,12 @@ namespace Elmanager
                     {
                         upperIndex = currIndex;
                     }
+
                     if (lastIndex == currIndex)
                         lowerIndex++;
                     lastIndex = currIndex;
                 }
+
                 return 0.0;
             }
         }
@@ -266,9 +279,11 @@ namespace Elmanager
 
         internal Direction Dir => _direction[FirstInterpolationIndex];
 
-        internal double GlobalBodyX => Interpolate(_globalBody[FirstInterpolationIndex].X, _globalBody[SecondInterpolationIndex].X);
+        internal double GlobalBodyX =>
+            Interpolate(_globalBody[FirstInterpolationIndex].X, _globalBody[SecondInterpolationIndex].X);
 
-        internal double GlobalBodyY => Interpolate(_globalBody[FirstInterpolationIndex].Y, _globalBody[SecondInterpolationIndex].Y);
+        internal double GlobalBodyY =>
+            Interpolate(_globalBody[FirstInterpolationIndex].Y, _globalBody[SecondInterpolationIndex].Y);
 
         internal double HeadX => Interpolate(_head[FirstInterpolationIndex].X, _head[SecondInterpolationIndex].X);
 
@@ -288,9 +303,11 @@ namespace Elmanager
             }
         }
 
-        internal double LeftWheelX => Interpolate(_leftWheel[FirstInterpolationIndex].X, _leftWheel[SecondInterpolationIndex].X);
+        internal double LeftWheelX =>
+            Interpolate(_leftWheel[FirstInterpolationIndex].X, _leftWheel[SecondInterpolationIndex].X);
 
-        internal double LeftWheelY => Interpolate(_leftWheel[FirstInterpolationIndex].Y, _leftWheel[SecondInterpolationIndex].Y);
+        internal double LeftWheelY =>
+            Interpolate(_leftWheel[FirstInterpolationIndex].Y, _leftWheel[SecondInterpolationIndex].Y);
 
         internal double RightWheelRotation
         {
@@ -306,9 +323,11 @@ namespace Elmanager
             }
         }
 
-        internal double RightWheelX => Interpolate(_rightWheel[FirstInterpolationIndex].X, _rightWheel[SecondInterpolationIndex].X);
+        internal double RightWheelX =>
+            Interpolate(_rightWheel[FirstInterpolationIndex].X, _rightWheel[SecondInterpolationIndex].X);
 
-        internal double RightWheelY => Interpolate(_rightWheel[FirstInterpolationIndex].Y, _rightWheel[SecondInterpolationIndex].Y);
+        internal double RightWheelY =>
+            Interpolate(_rightWheel[FirstInterpolationIndex].Y, _rightWheel[SecondInterpolationIndex].Y);
 
         internal double Speed
         {
@@ -318,12 +337,14 @@ namespace Elmanager
                     return 0.0;
                 return
                     Math.Sqrt(Math.Pow((_globalBody[_currentFrameIndex].X - _globalBody[_currentFrameIndex - 1].X), 2) +
-                              Math.Pow((_globalBody[_currentFrameIndex].Y - _globalBody[_currentFrameIndex - 1].Y), 2)) *
+                              Math.Pow((_globalBody[_currentFrameIndex].Y - _globalBody[_currentFrameIndex - 1].Y),
+                                  2)) *
                     Constants.SpeedConst;
             }
         }
 
-        private int FirstInterpolationIndex => _currentFrameIndex > _maxFrameIndex ? _maxFrameIndex : _currentFrameIndex;
+        private int FirstInterpolationIndex =>
+            _currentFrameIndex > _maxFrameIndex ? _maxFrameIndex : _currentFrameIndex;
 
         private int SecondInterpolationIndex
         {
@@ -338,8 +359,8 @@ namespace Elmanager
         internal double[] GetEventTimes(params ReplayEventType[] eventTypes)
         {
             return (from x in Events
-                    where eventTypes.Contains(x.Type)
-                    select x.Time).ToArray();
+                where eventTypes.Contains(x.Type)
+                select x.Time).ToArray();
         }
 
         internal PlayerEvent[] GetEvents(params ReplayEventType[] eventTypes)
@@ -372,6 +393,7 @@ namespace Elmanager
                         TopSpeed = speed;
                 }
             }
+
             TopSpeed *= Constants.SpeedConst;
 
             var globalBody = new Vector[FrameCount];
@@ -385,7 +407,7 @@ namespace Elmanager
             for (int i = 0; i < FrameCount; i++)
             {
                 globalBody[i] = new Vector(BitConverter.ToSingle(_rawData, _pOffset + 36 + i * 4),
-                                           BitConverter.ToSingle(_rawData, _pOffset + 36 + i * 4 + FrameCount * 4));
+                    BitConverter.ToSingle(_rawData, _pOffset + 36 + i * 4 + FrameCount * 4));
                 leftWheel[i] =
                     new Vector(
                         globalBody[i].X +
@@ -429,10 +451,12 @@ namespace Elmanager
                     headY += headSin * HeadDiff;
                     directions[i] = Direction.Right;
                 }
+
                 head[i] = new Vector(headX, headY);
             }
+
             SetFrameData(globalBody, leftWheel, rightWheel, leftWheelRotation, rightWheelRotation,
-                         bikeRotation, head, directions);
+                bikeRotation, head, directions);
             _frameDataInitialized = true;
         }
 
@@ -453,9 +477,9 @@ namespace Elmanager
         }
 
         private void SetFrameData(Vector[] globalBody, Vector[] leftWheel, Vector[] rightWheel,
-                                   double[] leftWheelRotation,
-                                   double[] rightWheelRotation, double[] bikeRotation, Vector[] head,
-                                   Direction[] directions)
+            double[] leftWheelRotation,
+            double[] rightWheelRotation, double[] bikeRotation, Vector[] head,
+            Direction[] directions)
         {
             _globalBody = globalBody;
             _leftWheel = leftWheel;

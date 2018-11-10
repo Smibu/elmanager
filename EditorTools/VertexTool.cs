@@ -52,7 +52,8 @@ namespace Elmanager.EditorTools
             {
                 if (Global.AppSettings.LevelEditor.UseHighlight && _nearestSegmentIndex >= 0)
                 {
-                    Renderer.DrawLine(NearestPolygon[_nearestSegmentIndex], NearestPolygon[_nearestSegmentIndex + 1], Color.Yellow);
+                    Renderer.DrawLine(NearestPolygon[_nearestSegmentIndex], NearestPolygon[_nearestSegmentIndex + 1],
+                        Color.Yellow);
                 }
             }
         }
@@ -87,6 +88,7 @@ namespace Elmanager.EditorTools
                         LevEditor.Modified = true;
                         return;
                     }
+
                     if (!CreatingVertex)
                     {
                         if (Keyboard.IsKeyDown(Key.LeftShift))
@@ -118,6 +120,7 @@ namespace Elmanager.EditorTools
                             _currentPolygon.UpdateDecomposition(false);
                         }
                     }
+
                     break;
                 case MouseButtons.Right:
                     FinishVertexCreation();
@@ -136,7 +139,7 @@ namespace Elmanager.EditorTools
                     _currentPolygon.UpdateDecomposition(false);
                 UpdateHelp();
             }
-            else if(!CreatingRectangle)
+            else if (!CreatingRectangle)
             {
                 ResetHighlight();
                 int nearestVertex = GetNearestVertexIndex(p);
