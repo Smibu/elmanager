@@ -389,6 +389,14 @@ namespace Elmanager.Forms
                         _errorPoints.Add(errObj.Position);
                     items.Add("Some apples and/or flowers are inside ground.");
                 }
+
+                var shortEdges = Lev.GetTooShortEdges();
+                if (shortEdges.Count > 0)
+                {
+                    _errorPoints.AddRange(shortEdges);
+                    items.Add("Some polygon edges are too short.");
+                }
+
                 var c = items.Count;
                 if (c == 0)
                 {

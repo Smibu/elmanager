@@ -328,6 +328,22 @@ namespace Elmanager
             }
         }
 
+        internal List<Vector> GetTooShortEdges()
+        {
+            var result = new List<Vector>();
+            foreach (var p in Polygons)
+            {
+                for (int i = 0; i < p.Count; i++)
+                {
+                    if ((p[i] - p[i + 1]).Length < 0.00000001)
+                    {
+                        result.Add(p[i]);
+                    }
+                }
+            }
+            return result;
+        }
+
         internal bool HasTooManyObjects
         {
             get { return Objects.Count > MaximumObjectCount; }
@@ -348,7 +364,7 @@ namespace Elmanager
             get
             {
                 return HasTooLargePolygons || HasTooManyObjects || HasTooFewObjects || HasTooManyPolygons || HasTooManyVertices || HasTooManyPictures ||
-                       WheelLiesOnEdge || HasTexturesOutOfBounds || HeadTouchesGround || TooTall || TooWide || GetIntersectionPoints().Count > 0;
+                       WheelLiesOnEdge || HasTexturesOutOfBounds || HeadTouchesGround || TooTall || TooWide || GetIntersectionPoints().Count > 0 || GetTooShortEdges().Count > 0;
             }
         }
 
