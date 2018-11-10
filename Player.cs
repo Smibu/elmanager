@@ -261,33 +261,18 @@ namespace Elmanager
                 _interpolationStep = value * 30 - _currentFrameIndex;
                 _currentTime = value;
             }
-            get { return _currentTime; }
+            get => _currentTime;
         }
 
-        internal Direction Dir
-        {
-            get { return _direction[FirstInterpolationIndex]; }
-        }
+        internal Direction Dir => _direction[FirstInterpolationIndex];
 
-        internal double GlobalBodyX
-        {
-            get { return Interpolate(_globalBody[FirstInterpolationIndex].X, _globalBody[SecondInterpolationIndex].X); }
-        }
+        internal double GlobalBodyX => Interpolate(_globalBody[FirstInterpolationIndex].X, _globalBody[SecondInterpolationIndex].X);
 
-        internal double GlobalBodyY
-        {
-            get { return Interpolate(_globalBody[FirstInterpolationIndex].Y, _globalBody[SecondInterpolationIndex].Y); }
-        }
+        internal double GlobalBodyY => Interpolate(_globalBody[FirstInterpolationIndex].Y, _globalBody[SecondInterpolationIndex].Y);
 
-        internal double HeadX
-        {
-            get { return Interpolate(_head[FirstInterpolationIndex].X, _head[SecondInterpolationIndex].X); }
-        }
+        internal double HeadX => Interpolate(_head[FirstInterpolationIndex].X, _head[SecondInterpolationIndex].X);
 
-        internal double HeadY
-        {
-            get { return Interpolate(_head[FirstInterpolationIndex].Y, _head[SecondInterpolationIndex].Y); }
-        }
+        internal double HeadY => Interpolate(_head[FirstInterpolationIndex].Y, _head[SecondInterpolationIndex].Y);
 
         internal double LeftWheelRotation
         {
@@ -303,15 +288,9 @@ namespace Elmanager
             }
         }
 
-        internal double LeftWheelX
-        {
-            get { return Interpolate(_leftWheel[FirstInterpolationIndex].X, _leftWheel[SecondInterpolationIndex].X); }
-        }
+        internal double LeftWheelX => Interpolate(_leftWheel[FirstInterpolationIndex].X, _leftWheel[SecondInterpolationIndex].X);
 
-        internal double LeftWheelY
-        {
-            get { return Interpolate(_leftWheel[FirstInterpolationIndex].Y, _leftWheel[SecondInterpolationIndex].Y); }
-        }
+        internal double LeftWheelY => Interpolate(_leftWheel[FirstInterpolationIndex].Y, _leftWheel[SecondInterpolationIndex].Y);
 
         internal double RightWheelRotation
         {
@@ -327,15 +306,9 @@ namespace Elmanager
             }
         }
 
-        internal double RightWheelX
-        {
-            get { return Interpolate(_rightWheel[FirstInterpolationIndex].X, _rightWheel[SecondInterpolationIndex].X); }
-        }
+        internal double RightWheelX => Interpolate(_rightWheel[FirstInterpolationIndex].X, _rightWheel[SecondInterpolationIndex].X);
 
-        internal double RightWheelY
-        {
-            get { return Interpolate(_rightWheel[FirstInterpolationIndex].Y, _rightWheel[SecondInterpolationIndex].Y); }
-        }
+        internal double RightWheelY => Interpolate(_rightWheel[FirstInterpolationIndex].Y, _rightWheel[SecondInterpolationIndex].Y);
 
         internal double Speed
         {
@@ -350,10 +323,7 @@ namespace Elmanager
             }
         }
 
-        private int FirstInterpolationIndex
-        {
-            get { return _currentFrameIndex > _maxFrameIndex ? _maxFrameIndex : _currentFrameIndex; }
-        }
+        private int FirstInterpolationIndex => _currentFrameIndex > _maxFrameIndex ? _maxFrameIndex : _currentFrameIndex;
 
         private int SecondInterpolationIndex
         {

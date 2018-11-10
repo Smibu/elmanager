@@ -150,14 +150,14 @@ namespace Elmanager.EditorTools
             ResetHighlight();
         }
 
-        public void MouseUp(MouseEventArgs mouseData)
+        public void MouseUp()
         {
         }
 
         public static bool PolyOpSelected(PolygonOperationType opType, List<Polygon> polygons)
         {
             var polys = polygons.GetSelectedPolygons().ToList();
-            Func<IGeometry, IGeometry, IGeometry> symDiff = (g, p) => p.SymmetricDifference(g);
+            IGeometry SymDiff(IGeometry g, IGeometry p) => p.SymmetricDifference(g);
             var selection = polygons.GetSelectedPolygonsAsMultiPolygon();
             var touching = polygons.Where(p =>
             {
@@ -171,7 +171,7 @@ namespace Elmanager.EditorTools
             {
                 return false;
             }
-            var others = touching.ToIPolygons().Aggregate(symDiff);
+            var others = touching.ToIPolygons().Aggregate((Func<IGeometry, IGeometry, IGeometry>) SymDiff);
             var remaining = polygons.Where(p =>
             {
                 if (p.IsGrass)
@@ -180,7 +180,7 @@ namespace Elmanager.EditorTools
                 return !touching.Contains(p) && !polys.Contains(p) && ipoly.Within(others);
             }).ToList();
 
-            others = remaining.ToIPolygons().Aggregate(others, symDiff);
+            others = remaining.ToIPolygons().Aggregate(others, (Func<IGeometry, IGeometry, IGeometry>) SymDiff);
             
             IGeometry result;
             try
@@ -213,16 +213,16 @@ namespace Elmanager.EditorTools
             touching.ForEach(p => polygons.Remove(p));
             polys.ForEach(p => polygons.Remove(p));
             remaining.ForEach(p => polygons.Remove(p));
-            if (result is MultiPolygon)
+            if (result is MultiPolygon polygon)
             {
-                foreach (var geometry in (result as MultiPolygon).Geometries.Cast<IPolygon>().Where(p => !p.IsEmpty))
+                foreach (var geometry in polygon.Geometries.Cast<IPolygon>().Where(p => !p.IsEmpty))
                 {
                     polygons.AddRange(geometry.ToElmaPolygons());
                 }
             }
-            else if (result is IPolygon && !result.IsEmpty)
+            else if (result is IPolygon polygon1 && !polygon1.IsEmpty)
             {
-                polygons.AddRange((result as IPolygon).ToElmaPolygons());
+                polygons.AddRange(polygon1.ToElmaPolygons());
             }
             if (!polygons.Any())
             {

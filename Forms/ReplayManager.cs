@@ -467,7 +467,7 @@ namespace Elmanager.Forms
                         return;
                     }
                     int i;
-                    for (i = 0; i < _allLevelFiles.Count(); i++)
+                    for (i = 0; i < _allLevelFiles.Count; i++)
                         if (Path.GetFileName(_allLevelFiles[i]).CompareWith(levelFile))
                             break;
                     Process.Start(_allLevelFiles[i]);
@@ -823,7 +823,7 @@ namespace Elmanager.Forms
                                                      : SearchOption.TopDirectoryOnly);
                 if (!(searchOnlyMissingLev || searchOnlyWrongLev))
                     replayFiles = GetMatches(replayFiles, searchPattern);
-                replayCount = replayFiles.Count();
+                replayCount = replayFiles.Length;
             }
             else
             {

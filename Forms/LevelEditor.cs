@@ -112,58 +112,28 @@ namespace Elmanager.Forms
 
         internal bool Modified
         {
-            get { return _modified; }
-            set { SetModified(value); }
+            get => _modified;
+            set => SetModified(value);
         }
 
-        internal bool EffectiveAppleFilter
-        {
-            get { return _appleFilter && (ShowObjectFramesButton.Checked || (ShowObjectsButton.Checked && _pictureToolAvailable)); }
-        }
+        internal bool EffectiveAppleFilter => _appleFilter && (ShowObjectFramesButton.Checked || (ShowObjectsButton.Checked && _pictureToolAvailable));
 
-        internal bool EffectiveKillerFilter
-        {
-            get { return _killerFilter && (ShowObjectFramesButton.Checked || (ShowObjectsButton.Checked && _pictureToolAvailable)); }
-        }
+        internal bool EffectiveKillerFilter => _killerFilter && (ShowObjectFramesButton.Checked || (ShowObjectsButton.Checked && _pictureToolAvailable));
 
-        internal bool EffectiveFlowerFilter
-        {
-            get { return _flowerFilter && (ShowObjectFramesButton.Checked || (ShowObjectsButton.Checked && _pictureToolAvailable)); }
-        }
+        internal bool EffectiveFlowerFilter => _flowerFilter && (ShowObjectFramesButton.Checked || (ShowObjectsButton.Checked && _pictureToolAvailable));
 
-        internal bool EffectiveGrassFilter
-        {
-            get { return _grassFilter && (ShowGrassEdgesButton.Checked); }
-        }
+        internal bool EffectiveGrassFilter => _grassFilter && (ShowGrassEdgesButton.Checked);
 
-        internal bool EffectiveGroundFilter
-        {
-            get { return _groundFilter && (ShowGroundEdgesButton.Checked || (ShowGroundButton.Checked && _pictureToolAvailable)); }
-        }
+        internal bool EffectiveGroundFilter => _groundFilter && (ShowGroundEdgesButton.Checked || (ShowGroundButton.Checked && _pictureToolAvailable));
 
-        internal bool EffectiveTextureFilter
-        {
-            get { return _textureFilter && (ShowTextureFramesButton.Checked || (ShowTexturesButton.Checked && _pictureToolAvailable)); }
-        }
+        internal bool EffectiveTextureFilter => _textureFilter && (ShowTextureFramesButton.Checked || (ShowTexturesButton.Checked && _pictureToolAvailable));
 
-        internal bool EffectivePictureFilter
-        {
-            get { return _pictureFilter && (ShowPictureFramesButton.Checked || (ShowPicturesButton.Checked && _pictureToolAvailable)); }
-        }
+        internal bool EffectivePictureFilter => _pictureFilter && (ShowPictureFramesButton.Checked || (ShowPicturesButton.Checked && _pictureToolAvailable));
 
-        private int SelectedElementCount
-        {
-            get
-            {
-                return _selectedObjectCount + _selectedPictureCount + _selectedVerticeCount +
-                       _selectedTextureCount;
-            }
-        }
+        private int SelectedElementCount => _selectedObjectCount + _selectedPictureCount + _selectedVerticeCount +
+                                            _selectedTextureCount;
 
-        private ToolBase ToolBase
-        {
-            get { return ((ToolBase) CurrentTool); }
-        }
+        private ToolBase ToolBase => ((ToolBase) CurrentTool);
 
         private List<string> CurrLevDirFiles
         {
@@ -172,7 +142,6 @@ namespace Elmanager.Forms
                 UpdateCurrLevDirFiles();
                 return _currLevDirFiles;
             }
-            set { _currLevDirFiles = value; }
         }
 
         internal void TransformMenuItemClick(object sender = null, EventArgs e = null)
@@ -1287,7 +1256,7 @@ namespace Elmanager.Forms
 
         private void MouseUpEvent(object sender, MouseEventArgs e)
         {
-            CurrentTool.MouseUp(e);
+            CurrentTool.MouseUp();
             _draggingScreen = false;
             _draggingGrid = false;
             Renderer.RedrawScene();
@@ -1552,8 +1521,7 @@ namespace Elmanager.Forms
                     string x = Path.GetFileNameWithoutExtension(levelFile);
                     if (x.StartsWith(filenameStart, StringComparison.OrdinalIgnoreCase))
                     {
-                        int levelNumber;
-                        bool isNum = int.TryParse(x.Substring(filenameStart.Length), out levelNumber);
+                        bool isNum = int.TryParse(x.Substring(filenameStart.Length), out var levelNumber);
                         if (isNum)
                         {
                             highestNumber = Math.Max(highestNumber, levelNumber);
@@ -1771,8 +1739,7 @@ namespace Elmanager.Forms
             nextLevelToolStripMenuItem.Click += PrevNextButtonClick;
             foreach (var x in ToolStrip2.Items)
             {
-                var button = x as ToolStripButton;
-                if (button != null)
+                if (x is ToolStripButton button)
                 {
                     button.CheckedChanged += SettingChanged;
                 }
@@ -2032,7 +1999,7 @@ namespace Elmanager.Forms
             selectedVertices.AddRange(
                 Lev.Pictures.Where(v => v.Position.Mark == Geometry.VectorMark.Selected).Select(p => p.Position));
 
-            Action removeSelected = () =>
+            void RemoveSelected()
             {
                 var first = Lev.Polygons.First().Clone();
                 Lev.Polygons.ForEach(p => p.Vertices.RemoveAll(v => v.Mark == Geometry.VectorMark.Selected));
@@ -2042,10 +2009,10 @@ namespace Elmanager.Forms
                     Lev.Polygons.Add(first);
                 }
 
-                Lev.Objects.RemoveAll(
-                    o => o.Position.Mark == Geometry.VectorMark.Selected && o.Type != Level.ObjectType.Start);
+                Lev.Objects.RemoveAll(o => o.Position.Mark == Geometry.VectorMark.Selected && o.Type != Level.ObjectType.Start);
                 Lev.Pictures.RemoveAll(p => p.Position.Mark == Geometry.VectorMark.Selected);
-            };
+            }
+
             var objType = Level.ObjectType.Apple;
             if (sender.Equals(applesConvertItem))
             {
@@ -2069,7 +2036,7 @@ namespace Elmanager.Forms
                 PicForm.ShowDialog();
                 if (PicForm.OkButtonPressed)
                 {
-                    removeSelected();
+                    RemoveSelected();
                     foreach (var selectedVertex in selectedVertices)
                     {
                         if (PicForm.TextureSelected)
@@ -2091,7 +2058,7 @@ namespace Elmanager.Forms
                 return;
             }
 
-            removeSelected();
+            RemoveSelected();
 
             foreach (var selectedVertex in selectedVertices)
             {

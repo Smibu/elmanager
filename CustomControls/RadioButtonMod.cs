@@ -9,8 +9,8 @@ namespace Elmanager.CustomControls
 
         internal new event KeyDownEventHandler KeyDown
         {
-            add { KeyDownEvent = (KeyDownEventHandler) Delegate.Combine(KeyDownEvent, value); }
-            remove { KeyDownEvent = (KeyDownEventHandler) Delegate.Remove(KeyDownEvent, value); }
+            add => KeyDownEvent = (KeyDownEventHandler) Delegate.Combine(KeyDownEvent, value);
+            remove => KeyDownEvent = (KeyDownEventHandler) Delegate.Remove(KeyDownEvent, value);
         }
 
         protected override bool IsInputKey(Keys keyData)
@@ -21,8 +21,7 @@ namespace Elmanager.CustomControls
                 case Keys.Down:
                 case Keys.Left:
                 case Keys.Right:
-                    if (KeyDownEvent != null)
-                        KeyDownEvent(null, new KeyEventArgs(keyData));
+                    KeyDownEvent?.Invoke(null, new KeyEventArgs(keyData));
                     return true;
             }
             return base.IsInputKey(keyData);
@@ -35,8 +34,10 @@ namespace Elmanager.CustomControls
                 var pressedKey = (Keys) m.WParam;
                 if (pressedKey != Keys.Up && pressedKey != Keys.Down && pressedKey != Keys.Left &&
                     pressedKey != Keys.Right)
-                    if (KeyDownEvent != null)
-                        KeyDownEvent(null, new KeyEventArgs(pressedKey));
+                {
+                    KeyDownEvent?.Invoke(null, new KeyEventArgs(pressedKey));
+                }
+
                 return;
             }
             base.WndProc(ref m);

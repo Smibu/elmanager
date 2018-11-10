@@ -158,7 +158,7 @@ namespace Elmanager.EditorTools
             ResetHighlight();
         }
 
-        public void MouseUp(MouseEventArgs mouseData)
+        public void MouseUp()
         {
         }
 

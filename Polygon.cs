@@ -58,15 +58,9 @@ namespace Elmanager
             }
         }
 
-        internal int Count
-        {
-            get { return Vertices.Count; }
-        }
+        internal int Count => Vertices.Count;
 
-        internal Vector this[int index]
-        {
-            get { return index < 0 ? Vertices[Vertices.Count + index] : Vertices[index % Vertices.Count]; }
-        }
+        internal Vector this[int index] => index < 0 ? Vertices[Vertices.Count + index] : Vertices[index % Vertices.Count];
 
         internal double SignedArea
         {
@@ -77,10 +71,7 @@ namespace Elmanager
             }
         }
 
-        internal bool IsCounterClockwise
-        {
-            get { return SignedArea > 0; }
-        }
+        internal bool IsCounterClockwise => SignedArea > 0;
 
         internal double XMin
         {
@@ -177,14 +168,6 @@ namespace Elmanager
             }
         }
 
-        internal static Polygon Square(Vector lowerLeftCorner, double side)
-        {
-            return new Polygon(new Vector(lowerLeftCorner.X, lowerLeftCorner.Y),
-                               new Vector(lowerLeftCorner.X + side, lowerLeftCorner.Y),
-                               new Vector(lowerLeftCorner.X + side, lowerLeftCorner.Y + side),
-                               new Vector(lowerLeftCorner.X, lowerLeftCorner.Y + side));
-        }
-
         internal static Polygon Rectangle(Vector lowerLeftCorner, double width, double height)
         {
             return new Polygon(new Vector(lowerLeftCorner.X, lowerLeftCorner.Y),
@@ -210,11 +193,6 @@ namespace Elmanager
             }
             p.UpdateDecomposition();
             return p;
-        }
-
-        internal void Delete(int index)
-        {
-            Vertices.RemoveAt(GetIndex(index));
         }
 
         internal void Add(Vector p)
@@ -375,17 +353,6 @@ namespace Elmanager
             Utils.ShowError("Failed to add intersection!!");
         }
 
-        private bool HasEdgeIntersectionsWith(Polygon p)
-        {
-            for (int i = 0; i < p.Vertices.Count; i++)
-            {
-                for (int j = 0; j < Vertices.Count; j++)
-                    if (Geometry.IsEdgeIntersection(p[i], p[i + 1], this[j], this[j+1]))
-                        return true;
-            }
-            return false;
-        }
-
         internal Polygon Smoothen(int steps, double vertexOffset, bool onlySelected) //0.5 <= VertexOffset <= 1.0
         {
             if (Math.Abs(vertexOffset - 1.0) < Constants.Tolerance)
@@ -495,8 +462,8 @@ namespace Elmanager
             {
                 results.AddRange(multiPolygon.Geometries.Cast<IPolygon>().SelectMany(poly => poly.ToElmaPolygons()));
             }
-            var polygon = resultPolys as IPolygon;
-            if (polygon != null)
+
+            if (resultPolys is IPolygon polygon)
             {
                 results.AddRange(polygon.ToElmaPolygons());
             }
@@ -510,43 +477,9 @@ namespace Elmanager
             return Vertices.IndexOf(v);
         }
 
-        internal Polygon GetBoundingRectangle()
-        {
-            double xMin = Vertices[0].X;
-            double xMax = xMin;
-            double yMin = Vertices[0].Y;
-            double yMax = yMin;
-            foreach (Vector z in Vertices)
-            {
-                if (z.X < xMin)
-                    xMin = z.X;
-                if (z.X > xMax)
-                    xMax = z.X;
-                if (z.Y < yMin)
-                    yMin = z.Y;
-                if (z.Y > yMax)
-                    yMax = z.Y;
-            }
-            return
-                new Polygon(new List<Vector>
-                                {
-                                    new Vector(xMin, yMin),
-                                    new Vector(xMax, yMin),
-                                    new Vector(xMax, yMax),
-                                    new Vector(xMin, yMax)
-                                });
-        }
-
         internal void ChangeOrientation()
         {
             Vertices.Reverse();
-        }
-
-        internal Vector GetCentroid()
-        {
-            var centroid = new Vector(0, 0);
-            centroid = Vertices.Aggregate(centroid, (current, z) => current + z);
-            return centroid / Vertices.Count;
         }
 
         internal bool IntersectsWith(Polygon p)
@@ -689,16 +622,6 @@ namespace Elmanager
             return null;
         }
 
-        internal Polygon Rotate(double angle, Vector center)
-        {
-            var rotated = new Polygon(this);
-            Matrix rotationMatrix = Matrix.Identity;
-            rotationMatrix.RotateAt(angle, center.X, center.Y);
-            for (int i = 0; i < Vertices.Count; i++)
-                rotated.Vertices[i] = rotationMatrix.Transform(Vertices[i]);
-            return rotated;
-        }
-
         internal Polygon ApplyTransformation(Matrix matrix, bool applySelectedOnly = false)
         {
             var transformed = new Polygon(this);
@@ -706,68 +629,6 @@ namespace Elmanager
                 if (!applySelectedOnly || Vertices[i].Mark == Geometry.VectorMark.Selected)
                     transformed.Vertices[i] = matrix.Transform(Vertices[i]);
             return transformed;
-        }
-
-        internal Polygon Scale(double x, double y, Vector center)
-        {
-            var scaled = new Polygon(this);
-            Matrix rotationMatrix = Matrix.Identity;
-            rotationMatrix.ScaleAt(x, y, center.X, center.Y);
-            for (int i = 0; i < Vertices.Count; i++)
-                scaled.Vertices[i] = rotationMatrix.Transform(Vertices[i]);
-            return scaled;
-        }
-
-        internal List<Vector> GetSelfInterSections()
-        {
-            var isects = new List<Vector>();
-            for (int i = 0; i <= Vertices.Count - 2; i++)
-            {
-                for (int j = i + 2; j < Vertices.Count; j++)
-                {
-                    if (i == 0 && j == Vertices.Count - 1)
-                        continue;
-                    Vector isectPoint = Geometry.GetIntersectionPoint(Vertices[i], Vertices[i + 1], Vertices[j],
-                                                                      Vertices[(j + 1) % Vertices.Count]);
-                    if ((object) isectPoint != null)
-                        isects.Add(isectPoint);
-                }
-            }
-            return isects;
-        }
-
-        internal List<Vector> GetIntersectionsWith(Polygon p)
-        {
-            var isects = new List<Vector>();
-            Vector isect;
-            int i;
-            int j = 0;
-            for (i = 0; i <= Vertices.Count - 2; i++)
-            {
-                for (j = 0; j <= p.Vertices.Count - 2; j++)
-                {
-                    isect = Geometry.GetIntersectionPoint(Vertices[i], Vertices[i + 1], p.Vertices[j],
-                                                          p.Vertices[j + 1]);
-                    if ((object) isect != null)
-                        isects.Add(isect);
-                }
-            }
-            for (i = 0; i <= Vertices.Count - 2; i++)
-            {
-                isect = Geometry.GetIntersectionPoint(Vertices[i], Vertices[i + 1], p.Vertices[j], p.Vertices[0]);
-                if ((object) isect != null)
-                    isects.Add(isect);
-            }
-            for (j = 0; j <= p.Vertices.Count - 2; j++)
-            {
-                isect = Geometry.GetIntersectionPoint(Vertices[i], Vertices[0], p.Vertices[j], p.Vertices[j + 1]);
-                if ((object) isect != null)
-                    isects.Add(isect);
-            }
-            isect = Geometry.GetIntersectionPoint(Vertices[i], Vertices[0], p.Vertices[j], p.Vertices[0]);
-            if ((object) isect != null)
-                isects.Add(isect);
-            return isects;
         }
 
         public Polygon Clone()

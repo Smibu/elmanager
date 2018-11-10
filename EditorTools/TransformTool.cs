@@ -42,24 +42,26 @@ namespace Elmanager.EditorTools
             double xMax = 0;
             double yMin = 0;
             double yMax = 0;
-            LambdaOneParam incrementMarked = z =>
-                                                 {
-                                                     numberOfMarked++;
-                                                     if (numberOfMarked == 1)
-                                                     {
-                                                         xMin = z.X;
-                                                         xMax = z.X;
-                                                         yMin = z.Y;
-                                                         yMax = z.Y;
-                                                     }
-                                                     else
-                                                     {
-                                                         xMin = Math.Min(xMin, z.X);
-                                                         xMax = Math.Max(xMax, z.X);
-                                                         yMin = Math.Min(yMin, z.Y);
-                                                         yMax = Math.Max(yMax, z.Y);
-                                                     }
-                                                 };
+
+            void IncrementMarked(Vector z)
+            {
+                numberOfMarked++;
+                if (numberOfMarked == 1)
+                {
+                    xMin = z.X;
+                    xMax = z.X;
+                    yMin = z.Y;
+                    yMax = z.Y;
+                }
+                else
+                {
+                    xMin = Math.Min(xMin, z.X);
+                    xMax = Math.Max(xMax, z.X);
+                    yMin = Math.Min(yMin, z.Y);
+                    yMax = Math.Max(yMax, z.Y);
+                }
+            }
+
             foreach (Polygon x in Lev.Polygons)
             {
                 bool foundMarked = false;
@@ -72,7 +74,7 @@ namespace Elmanager.EditorTools
                         _originalTransformPolygons.Add(new Polygon(x));
                         foundMarked = true;
                     }
-                    incrementMarked(z);
+                    IncrementMarked(z);
                 }
             }
             foreach (Level.Object x in Lev.Objects)
@@ -81,7 +83,7 @@ namespace Elmanager.EditorTools
                 _originalTransformObjects.Add(new Level.Object(x.Position, x.Type, x.AppleType,
                                                                     x.AnimationNumber));
                 transformObjectReferences.Add(x);
-                incrementMarked(x.Position);
+                IncrementMarked(x.Position);
             }
             foreach (Level.Picture x in Lev.Pictures)
             {
@@ -89,7 +91,7 @@ namespace Elmanager.EditorTools
                     continue;
                 _originalTransformTextures.Add(x.Clone());
                 transformTextureReferences.Add(x);
-                incrementMarked(x.Position);
+                IncrementMarked(x.Position);
             }
             if (numberOfMarked > 1)
             {
@@ -243,7 +245,7 @@ namespace Elmanager.EditorTools
         {
         }
 
-        public void MouseUp(MouseEventArgs mouseData)
+        public void MouseUp()
         {
             EndTransforming();
         }
@@ -270,8 +272,6 @@ namespace Elmanager.EditorTools
             _originalRectangle = new Polygon(_transformRectangle);
             LevEditor.Modified = true;
         }
-
-        private delegate void LambdaOneParam(Vector x);
 
         public override bool Busy => true;
     }

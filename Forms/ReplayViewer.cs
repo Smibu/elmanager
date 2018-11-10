@@ -3,9 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Drawing;
-using System.Drawing.Imaging;
 using System.IO;
-using System.Linq;
 using System.Reflection;
 using System.Windows.Forms;
 using System.Windows.Input;
@@ -83,7 +81,7 @@ namespace Elmanager.Forms
             _renderer.InitializeReplays(replays);
             _renderer.DrivingLineColors = new Color[_playListReplays.Count];
             for (int i = 0; i < _renderer.DrivingLineColors.Length; i++)
-                _renderer.DrivingLineColors[i] = Color.FromArgb((int) _colourValues[i % _colourValues.Count()]);
+                _renderer.DrivingLineColors[i] = Color.FromArgb((int) _colourValues[i % _colourValues.Length]);
             UpdateControlColor(DrivingLinePanel, _renderer.DrivingLineColors[0]);
             PlayList.SetObjects(_playListReplays);
             Text = Utils.GetPossiblyInternal(replays[0].LevelFilename) + " - Replay viewer";
@@ -157,7 +155,7 @@ namespace Elmanager.Forms
             int i = EventListBox.SelectedIndex;
             if (!_renderer.Playing)
             {
-                if (i == _currentEvents.Count())
+                if (i == _currentEvents.Length)
                     UpdateCurrFrameFromTime(_playListReplays[GetSelectedIndex()].Player.Time);
                 else if (i >= 0)
                     UpdateCurrFrameFromTime(_currentEvents[i].Time);

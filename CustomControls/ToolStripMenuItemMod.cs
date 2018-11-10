@@ -39,7 +39,7 @@ namespace Elmanager.CustomControls
         [Description("Gets or sets the custom shortcut text.")]
         public string ShortcutText
         {
-            get { return _shortcutText; }
+            get => _shortcutText;
             set
             {
                 _shortcutText = value;

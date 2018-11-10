@@ -18,8 +18,8 @@ namespace Elmanager.Forms
 
         public ProgressDialog(Task task, CancellationTokenSource cancelSrc, Progress<double> progress) : this()
         {
-            this._cancelSrc = cancelSrc;
-            this._task = task;
+            _cancelSrc = cancelSrc;
+            _task = task;
             progress.ProgressChanged += (sender, d) => { progressBar1.Value = (int) (d*1000); };
         }
 

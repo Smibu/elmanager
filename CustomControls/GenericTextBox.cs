@@ -19,8 +19,8 @@ namespace Elmanager.CustomControls
         [Description("Gets or sets the default value.")]
         public T DefaultValue
         {
-            get { return _defaultValue; }
-            set { _defaultValue = value; }
+            get => _defaultValue;
+            set => _defaultValue = value;
         }
 
         public T Value

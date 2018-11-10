@@ -194,7 +194,7 @@ namespace Elmanager.EditorTools
         {
         }
 
-        public void MouseUp(MouseEventArgs mouseData)
+        public void MouseUp()
         {
         }
 

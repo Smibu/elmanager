@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using System.Collections.Specialized;
 using System.Diagnostics;
 using System.IO;
-using System.Linq;
 using System.Net;
 using System.Reflection;
 using System.Runtime.InteropServices;
@@ -72,10 +71,7 @@ namespace Elmanager
             }
             catch (Exception)
             {
-                if (wresp != null)
-                {
-                    wresp.Close();
-                }
+                wresp?.Close();
                 return null;
             }
         }
@@ -222,11 +218,6 @@ namespace Elmanager
             }
         }
 
-        internal static string Plural(this string str, int count)
-        {
-            return count == 1 ? str : str + "s";
-        }
-
         internal static void PutEventsToList(Player player, ListBox listBox, bool finished,
                                              PlayerEvent[] selectedEvents)
         {
@@ -238,11 +229,11 @@ namespace Elmanager
             int appleCounter = 0;
             double lastEventTime = 0;
             listBox.Items.Clear();
-            for (int i = 0; i < selectedEvents.Count(); i++)
+            foreach (var e in selectedEvents)
             {
-                double eventTime = selectedEvents[i].Time;
+                double eventTime = e.Time;
                 string strToAdd;
-                switch (selectedEvents[i].Type)
+                switch (e.Type)
                 {
                     case ReplayEventType.AppleTake:
                         appleCounter++;
@@ -377,7 +368,7 @@ namespace Elmanager
 
         private static PropertyInfo GetPropertyInfo(Type type, string propertyName)
         {
-            PropertyInfo propInfo = null;
+            PropertyInfo propInfo;
             do
             {
                 propInfo = type.GetProperty(propertyName,

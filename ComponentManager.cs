@@ -9,7 +9,7 @@ namespace Elmanager
     {
         private static bool _config;
         private static List<Thread> _threads = new List<Thread>();
-        private static List<Form> _windows = new List<Form>();
+        private static readonly List<Form> Windows = new List<Form>();
 
         internal static void LaunchLevelEditor(string levPath = null)
         {
@@ -35,19 +35,6 @@ namespace Elmanager
             StartThread(() =>
                             {
                                 ReplayViewer rv = new ReplayViewer(replay);
-                                AddAndRun(rv);
-                            });
-        }
-
-        /// <summary>
-        /// Not used atm.
-        /// </summary>
-        /// <param name="replays"></param>
-        internal static void LaunchReplayViewer(List<Replay> replays)
-        {
-            StartThread(() =>
-                            {
-                                ReplayViewer rv = new ReplayViewer(replays);
                                 AddAndRun(rv);
                             });
         }
@@ -79,14 +66,14 @@ namespace Elmanager
 
         private static void AddAndRun(Form form)
         {
-            _windows.Add(form);
+            Windows.Add(form);
             form.FormClosed += FormClosed;
             Application.Run(form);
         }
 
         private static void FormClosed(object sender, FormClosedEventArgs formClosedEventArgs)
         {
-            _windows.Remove((Form) sender);
+            Windows.Remove((Form) sender);
             if (_threads.Count == 1)
             {
                 Global.AppSettings.Save();

@@ -134,7 +134,7 @@ namespace Elmanager
                                 break;
                             // If the transparency field value is invalid, we'll assume Transparency.TopLeft as it is the most common case.
                             default:
-                            case Transparency.TopLeft:
+                            // case Transparency.TopLeft:
                                 bmp.MakeTransparent(bmp.GetPixel(0, 0));
                                 break;
                             case Transparency.TopRight:

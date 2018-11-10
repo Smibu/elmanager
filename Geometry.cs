@@ -1,7 +1,5 @@
 using System;
-using System.CodeDom;
 using System.Collections.Generic;
-using System.Diagnostics;
 using System.Linq;
 using System.Threading;
 using GeoAPI.Geometries;
@@ -198,46 +196,6 @@ namespace Elmanager
             return Math.Round(uaT, RoundingPrecision) != 0;
         }
 
-        internal static bool IsEdgeIntersection(Vector a1, Vector a2, Vector b1, Vector b2)
-        {
-            double b2Minusb1X = b2.X - b1.X;
-            double b2Minusb1Y = b2.Y - b1.Y;
-            double a2Minusa1X = a2.X - a1.X;
-            double a2Minusa1Y = a2.Y - a1.Y;
-            double a1Minusb1X = a1.X - b1.X;
-            double a1Minusb1Y = a1.Y - b1.Y;
-            double uaT = b2Minusb1X * a1Minusb1Y - b2Minusb1Y * a1Minusb1X;
-            double ubT = a2Minusa1X * a1Minusb1Y - a2Minusa1Y * a1Minusb1X;
-            double uB = b2Minusb1Y * a2Minusa1X - b2Minusb1X * a2Minusa1Y;
-            if (Math.Round(uB, RoundingPrecision) != 0)
-            {
-                double ua = uaT / uB;
-                double ub = ubT / uB;
-                if (0 <= ua && ua <= 1 && 0 <= ub && ub <= 1)
-                    return 0 == ua || ua == 1 || 0 == ub || ub == 1;
-                return false;
-            }
-            if (Math.Round(ubT, RoundingPrecision) != 0)
-                return false;
-            return Math.Round(uaT, RoundingPrecision) != 0;
-        }
-
-        /// <summary>
-        ///   Determines whether the intersection is inbound.
-        /// </summary>
-        /// <param name = "p"></param>
-        /// <param name = "r"></param>
-        /// <param name = "q"></param>
-        /// <param name = "s"></param>
-        /// <returns></returns>
-        internal static bool IsInboundIntersection(Vector p, Vector r, Vector q, Vector s)
-        {
-            r -= p;
-            s -= q;
-            var e = new Vector(s.Angle - 90);
-            return r * e < 0;
-        }
-
         internal static Vector GetIntersectionPoint(Vector a1, Vector a2, Vector b1, Vector b2)
         {
             double b2Minusb1X = b2.X - b1.X;
@@ -333,26 +291,6 @@ namespace Elmanager
             return OrthogonalProjection(a.X, a.Y, b.X, b.Y, p.X, p.Y);
         }
 
-        internal static double SignedArea(Polygon poly, int i, int j, int k)
-        {
-            double result = (poly.Vertices[j].X - poly.Vertices[i].X) * (poly.Vertices[k].Y - poly.Vertices[i].Y) -
-                            (poly.Vertices[k].X - poly.Vertices[i].X) * (poly.Vertices[j].Y - poly.Vertices[i].Y);
-            return result;
-        }
-
-        internal static bool IsCounterClockwise(Polygon poly, int i, int j, int k)
-        {
-            return SignedArea(poly, i, j, k) >= 0;
-        }
-
-        internal static bool Inside(Polygon poly, int i, int p, int q, int r)
-        {
-            bool a = IsCounterClockwise(poly, i, p, q);
-            bool b = IsCounterClockwise(poly, i, q, r);
-            bool c = IsCounterClockwise(poly, i, r, p);
-            return (a && b && c) || (!(a || b || c));
-        }
-
         internal static void Decompose(List<Polygon> polygons)
         {
             for (int i = 0; i < polygons.Count; i++)
@@ -385,8 +323,7 @@ namespace Elmanager
         {
             None = 0,
             Selected = 1,
-            Highlight = 2,
-            Visited = 3
+            Highlight = 2
         }
 
         internal static List<Vector> GetIntersectionPoints(List<Polygon> polygons)
@@ -418,7 +355,7 @@ namespace Elmanager
 
         internal static IEnumerable<Polygon> GetSelectedPolygons(this IEnumerable<Polygon> polys, bool includeGrass = false)
         {
-            return polys.Where(p => (includeGrass || !p.IsGrass) && p.Vertices.Any(v => v.Mark == Geometry.VectorMark.Selected));
+            return polys.Where(p => (includeGrass || !p.IsGrass) && p.Vertices.Any(v => v.Mark == VectorMark.Selected));
         }
 
         internal static IGeometry GetSelectedPolygonsAsMultiPolygon(this IEnumerable<Polygon> px)
@@ -429,8 +366,9 @@ namespace Elmanager
             {
                 return multipoly;
             }
-            Func<IGeometry, IGeometry, IGeometry> symDiff = (g, p) => p.SymmetricDifference(g);
-            var selection = multipoly.Geometries.Aggregate(symDiff);
+
+            IGeometry SymDiff(IGeometry g, IGeometry p) => p.SymmetricDifference(g);
+            var selection = multipoly.Geometries.Aggregate(SymDiff);
             return selection;
         }
 

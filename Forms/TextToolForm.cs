@@ -16,16 +16,15 @@ namespace Elmanager.Forms
         public TextToolForm()
         {
             InitializeComponent();
-            EventHandler handleChange = (sender, e) => EnteredTextChanged(Result);
-            textBox.TextChanged += handleChange;
-            smoothnessBar.ValueChanged += handleChange;
-            lineHeightBar.ValueChanged += handleChange;
+            void HandleChange(object sender, EventArgs e) => EnteredTextChanged(Result);
+            textBox.TextChanged += HandleChange;
+            smoothnessBar.ValueChanged += HandleChange;
+            lineHeightBar.ValueChanged += HandleChange;
         }
 
         public static TextToolOptions? ShowDefault(TextToolOptions options, Action<TextToolOptions> handler)
         {
-            var prompt = new TextToolForm();
-            prompt.Result = options;
+            var prompt = new TextToolForm {Result = options};
             prompt.EnteredTextChanged += handler;
             prompt.EnteredTextChanged(prompt.Result);
             if (prompt.ShowDialog() == DialogResult.OK)
@@ -35,17 +34,14 @@ namespace Elmanager.Forms
 
         public TextToolOptions Result
         {
-            get
+            get => new TextToolOptions
             {
-                return new TextToolOptions
-                {
-                    Font = _font,
-                    Text = textBox.Text,
-                    Smoothness = Math.Pow(1.1, -smoothnessBar.Value),
-                    LineHeight = lineHeightBar.Value/LineHeightFactor,
-                    FontStyleName = _fontStyleName
-                };
-            }
+                Font = _font,
+                Text = textBox.Text,
+                Smoothness = Math.Pow(1.1, -smoothnessBar.Value),
+                LineHeight = lineHeightBar.Value/LineHeightFactor,
+                FontStyleName = _fontStyleName
+            };
             set
             {
                 _font = value.Font;

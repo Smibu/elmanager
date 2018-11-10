@@ -141,7 +141,7 @@ namespace Elmanager
         [DisplayName("Smooth zoom duration")]
         public int SmoothZoomDuration
         {
-            get { return _smoothZoomDuration; }
+            get => _smoothZoomDuration;
             set
             {
                 if (value > 0 && value <= 2000)
@@ -154,7 +154,7 @@ namespace Elmanager
         [DisplayName("Circle drawing accuracy"), Description("The number of vertices used to draw a circle.")]
         public int CircleDrawingAccuracy
         {
-            get { return _circleDrawingAccuracy; }
+            get => _circleDrawingAccuracy;
             set
             {
                 if (value >= 3 && value <= 100)
@@ -167,7 +167,7 @@ namespace Elmanager
         [DisplayName("LGR file"), Editor(typeof (CustomFileNameEditor), typeof (UITypeEditor))]
         public string LgrFile
         {
-            get { return _lgrFile; }
+            get => _lgrFile;
             set
             {
                 if (value != string.Empty)
@@ -183,7 +183,7 @@ namespace Elmanager
         [DisplayName("Grid size")]
         public double GridSize
         {
-            get { return _gridSize; }
+            get => _gridSize;
             set
             {
                 if (value > 0)
@@ -196,7 +196,7 @@ namespace Elmanager
         [DisplayName("Line width")]
         public float LineWidth
         {
-            get { return _lineWidth; }
+            get => _lineWidth;
             set
             {
                 if (value > 0)
@@ -209,10 +209,8 @@ namespace Elmanager
         [DisplayName("Vertex size")]
         public double VertexSize
         {
-            get { return _vertexSize; }
-            set {
-                _vertexSize = value > 0 ? value : 0.02;
-            }
+            get => _vertexSize;
+            set => _vertexSize = value > 0 ? value : 0.02;
         }
 
         [DisplayName("Use circles for vertices")]

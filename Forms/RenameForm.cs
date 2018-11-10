@@ -98,7 +98,7 @@ namespace Elmanager.Forms
                                 break;
                         }
                     }
-                    if (!Utils.CompareWith(rp.FileName, newName + Constants.RecExtension))
+                    if (!rp.FileName.CompareWith(newName + Constants.RecExtension))
                     {
                         _rm.Rename(rp, newName);
                     }

@@ -8,9 +8,6 @@ namespace Elmanager.CustomControls
         {
             DefaultValue = 0;
         }
-        public int ValueAsInt
-        {
-            get { return (int) Value; }
-        }
+        public int ValueAsInt => (int) Value;
     }
 }

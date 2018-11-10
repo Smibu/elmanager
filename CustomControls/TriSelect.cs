@@ -1,6 +1,4 @@
-﻿using System;
-using System.ComponentModel;
-using System.Drawing;
+﻿using System.ComponentModel;
 using System.Windows.Forms;
 
 namespace Elmanager.CustomControls
@@ -41,31 +39,22 @@ namespace Elmanager.CustomControls
         [Description("Gets or sets the text for the first option."), DefaultValue("Option 1")]
         public string Option1Text
         {
-            get { return OptionButton1.Text; }
-            set
-            {
-                OptionButton1.Text = value;
-            }
+            get => OptionButton1.Text;
+            set => OptionButton1.Text = value;
         }
 
         [Description("Gets or sets the text for the second option."), DefaultValue("Option 2")]
         public string Option2Text
         {
-            get { return OptionButton2.Text; }
-            set
-            {
-                OptionButton2.Text = value;
-            }
+            get => OptionButton2.Text;
+            set => OptionButton2.Text = value;
         }
 
         [Description("Gets or sets the text for the third option."), DefaultValue("Option 3")]
         public string Option3Text
         {
-            get { return OptionButton3.Text; }
-            set
-            {
-                OptionButton3.Text = value;
-            }
+            get => OptionButton3.Text;
+            set => OptionButton3.Text = value;
         }
     }
 }

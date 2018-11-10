@@ -3,9 +3,6 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Text;
-using GeoAPI.Geometries;
-using NetTopologySuite.Geometries;
-using NetTopologySuite.Operation.Valid;
 
 namespace Elmanager
 {
@@ -256,7 +253,7 @@ namespace Elmanager
 
         public string FileName
         {
-            get { return _fileName; }
+            get => _fileName;
             set
             {
                 _fileName = value;
@@ -266,7 +263,7 @@ namespace Elmanager
 
         public string Path
         {
-            get { return _path; }
+            get => _path;
             set
             {
                 _path = value;
@@ -284,15 +281,9 @@ namespace Elmanager
             get { return Objects.Count(x => x.Type == ObjectType.Flower); }
         }
 
-        internal string FileNameWithoutExtension
-        {
-            get { return System.IO.Path.GetFileNameWithoutExtension(_fileName); }
-        }
+        internal string FileNameWithoutExtension => System.IO.Path.GetFileNameWithoutExtension(_fileName);
 
-        internal int PolygonCount
-        {
-            get { return Polygons.Count; }
-        }
+        internal int PolygonCount => Polygons.Count;
 
         internal int GrassPolygonCount
         {
@@ -344,31 +335,16 @@ namespace Elmanager
             return result;
         }
 
-        internal bool HasTooManyObjects
-        {
-            get { return Objects.Count > MaximumObjectCount; }
-        }
+        internal bool HasTooManyObjects => Objects.Count > MaximumObjectCount;
 
-        internal bool HasTooManyPolygons
-        {
-            get { return Polygons.Count > MaximumPolygonCount; }
-        }
+        internal bool HasTooManyPolygons => Polygons.Count > MaximumPolygonCount;
 
-        internal bool HasTooManyVertices
-        {
-            get { return GroundVertexCount > MaximumGroundVertexCount; }
-        }
+        internal bool HasTooManyVertices => GroundVertexCount > MaximumGroundVertexCount;
 
-        internal bool HasTopologyErrors
-        {
-            get
-            {
-                return HasTooLargePolygons || HasTooManyObjects || HasTooFewObjects || HasTooManyPolygons || HasTooManyVertices || HasTooManyPictures ||
-                       WheelLiesOnEdge || HasTexturesOutOfBounds || HeadTouchesGround || TooTall || TooWide || GetIntersectionPoints().Count > 0 || GetTooShortEdges().Count > 0;
-            }
-        }
+        internal bool HasTopologyErrors => HasTooLargePolygons || HasTooManyObjects || HasTooFewObjects || HasTooManyPolygons || HasTooManyVertices || HasTooManyPictures ||
+                                           WheelLiesOnEdge || HasTexturesOutOfBounds || HeadTouchesGround || TooTall || TooWide || GetIntersectionPoints().Count > 0 || GetTooShortEdges().Count > 0;
 
-        internal bool HasTooManyPictures { get { return PictureTextureCount > MaximumPictureTextureCount; } }
+        internal bool HasTooManyPictures => PictureTextureCount > MaximumPictureTextureCount;
 
         internal bool HeadTouchesGround
         {
@@ -407,10 +383,7 @@ namespace Elmanager
             }
         }
 
-        internal double Height
-        {
-            get { return YMax - YMin; }
-        }
+        internal double Height => YMax - YMin;
 
         internal int KillerObjectCount
         {
@@ -427,17 +400,11 @@ namespace Elmanager
             get { return Pictures.Count(texture => texture.IsPicture); }
         }
 
-        internal int PictureTextureCount
-        {
-            get
-            {
-                return Pictures.Count;
-            }
-        }
+        internal int PictureTextureCount => Pictures.Count;
 
         internal string Title
         {
-            get { return _title; }
+            get => _title;
             set
             {
                 if (value.Length > 50)
@@ -446,25 +413,16 @@ namespace Elmanager
             }
         }
 
-        internal bool TooTall
-        {
-            get { return _polygonYMax - _polygonYMin >= MaximumSize; }
-        }
+        internal bool TooTall => _polygonYMax - _polygonYMin >= MaximumSize;
 
-        internal bool TooWide
-        {
-            get { return _polygonXMax - _polygonXMin >= MaximumSize; }
-        }
+        internal bool TooWide => _polygonXMax - _polygonXMin >= MaximumSize;
 
         internal int VertexCount
         {
             get { return Polygons.Sum(x => x.Count); }
         }
 
-        internal double Width
-        {
-            get { return XMax - XMin; }
-        }
+        internal double Width => XMax - XMin;
 
         internal double XMax { get; private set; }
 
@@ -518,7 +476,7 @@ namespace Elmanager
 
         internal static bool IsInternalLevel(string levStr)
         {
-            return levStr.Length == 12 && Utils.CompareWith(levStr.Substring(0, 6), "QWQUU0");
+            return levStr.Length == 12 && levStr.Substring(0, 6).CompareWith("QWQUU0");
         }
 
         internal Level Clone()
@@ -674,11 +632,6 @@ namespace Elmanager
             }
         }
 
-        internal void Save()
-        {
-            Save(Path);
-        }
-
         internal void Save(string savePath)
         {
             Path = savePath;
@@ -801,7 +754,7 @@ namespace Elmanager
         ///     This method should only be called once (when loading level).
         /// </summary>
         /// <param name="lgrImages"></param>
-        internal void UpdateImages(IEnumerable<ElmaRenderer.DrawableImage> lgrImages)
+        internal void UpdateImages(List<ElmaRenderer.DrawableImage> lgrImages)
         {
             Pictures = new List<Picture>();
             AllPicturesFound = true;
@@ -942,10 +895,8 @@ namespace Elmanager
 
             internal void Clear()
             {
-                if (SinglePlayer != null)
-                    SinglePlayer.Clear();
-                if (MultiPlayer != null)
-                    MultiPlayer.Clear();
+                SinglePlayer?.Clear();
+                MultiPlayer?.Clear();
             }
 
             internal double GetMultiPlayerAverage()
@@ -1073,15 +1024,9 @@ namespace Elmanager
                 TextureHeight = T.TextureHeight;
             }
 
-            internal double AspectRatio
-            {
-                get { return TextureWidth / TextureHeight; }
-            }
+            internal double AspectRatio => TextureWidth / TextureHeight;
 
-            internal bool IsPicture
-            {
-                get { return TextureName == null; }
-            }
+            internal bool IsPicture => TextureName == null;
 
             internal Picture Clone()
             {

@@ -6,7 +6,6 @@ namespace Elmanager
     static class Constants
     {
         internal const string AllLevs = "*" + LevExtension;
-        internal const string AllRecs = "*" + RecExtension;
         internal const Keys Decrease = Keys.OemMinus;
         internal const Keys DecreaseBig = Keys.PageDown;
         internal const double DegToRad = Math.PI / 180;

@@ -18,12 +18,6 @@ namespace Elmanager
         {
             return _min.CompareTo(x) <= 0 && _max.CompareTo(x) >= 0;
         }
-
-        internal void Set(T min, T max)
-        {
-            _min = min;
-            _max = max;
-        }
     }
 
     internal enum RSearchOption

@@ -69,15 +69,9 @@ namespace Elmanager
             }
         }
 
-        internal double Length
-        {
-            get { return Math.Sqrt(X * X + Y * Y); }
-        }
+        internal double Length => Math.Sqrt(X * X + Y * Y);
 
-        internal double LengthSquared
-        {
-            get { return X * X + Y * Y; }
-        }
+        internal double LengthSquared => X * X + Y * Y;
 
         public override bool Equals(object obj)
         {

@@ -1,7 +1,6 @@
 using System;
 using System.ComponentModel;
 using System.IO;
-using System.Linq;
 
 namespace Elmanager
 {
@@ -49,26 +48,25 @@ namespace Elmanager
         internal Player Player1;
         internal Player Player2;
 
-        private readonly byte[] _rawData;
         private string _fileName; //Filename of the replay, this can change
 
         internal Replay(string replayPath)
         {
-            _rawData = File.ReadAllBytes(replayPath);
+            var rawData = File.ReadAllBytes(replayPath);
             Path = replayPath;
             _fileName = System.IO.Path.GetFileName(Path);
-            Size = _rawData.Count();
+            Size = rawData.Length;
             DateModified = File.GetLastWriteTime(replayPath);
-            IsNitro = BitConverter.ToInt32(_rawData, 4) != 0x83;
+            IsNitro = BitConverter.ToInt32(rawData, 4) != 0x83;
             if (IsNitro)
                 return;
-            LevelFilename = Utils.ReadNullTerminatedString(_rawData, 20, 12);
+            LevelFilename = Utils.ReadNullTerminatedString(rawData, 20, 12);
             IsInternal = Level.IsInternalLevel(LevelFilename);
-            IsMulti = _rawData[8] == 1;
-            Player1 = new Player(_rawData, false);
+            IsMulti = rawData[8] == 1;
+            Player1 = new Player(rawData, false);
             if (IsMulti)
             {
-                Player2 = new Player(_rawData, true);
+                Player2 = new Player(rawData, true);
                 if (!Player1.Finished)
                 {
                     if (Player1.FakeFinish && Player2.IsLastEventApple)
@@ -136,7 +134,7 @@ namespace Elmanager
                             }
                             for (int i = 0; i <= 3; i++)
                             {
-                                if (levelStream.ReadByte() != _rawData[16 + i])
+                                if (levelStream.ReadByte() != rawData[16 + i])
                                 {
                                     WrongLevelVersion = true;
                                     break;
@@ -155,7 +153,7 @@ namespace Elmanager
         [Description("File name")]
         public string FileName
         {
-            get { return _fileName; }
+            get => _fileName;
             set
             {
                 _fileName = value + Constants.RecExtension;

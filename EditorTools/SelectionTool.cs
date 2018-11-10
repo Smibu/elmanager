@@ -177,14 +177,10 @@ namespace Elmanager.EditorTools
                             }
                             if (Keyboard.IsKeyDown(Key.LeftCtrl))
                             {
-                                if (NearestPolygon.Vertices.TrueForAll(v => v.Mark == Geometry.VectorMark.Selected))
-                                {
-                                    NearestPolygon.MarkVectorsAs(Geometry.VectorMark.None);
-                                }
-                                else
-                                {
-                                    NearestPolygon.MarkVectorsAs(Geometry.VectorMark.Selected);
-                                }
+                                NearestPolygon.MarkVectorsAs(
+                                    NearestPolygon.Vertices.TrueForAll(v => v.Mark == Geometry.VectorMark.Selected)
+                                        ? Geometry.VectorMark.None
+                                        : Geometry.VectorMark.Selected);
                             }
                         }
                         EndSelectionHandling();
@@ -327,7 +323,7 @@ namespace Elmanager.EditorTools
             ResetHighlight();
         }
 
-        public void MouseUp(MouseEventArgs mouseData)
+        public void MouseUp()
         {
             if (RectSelecting || FreeSelecting)
             {

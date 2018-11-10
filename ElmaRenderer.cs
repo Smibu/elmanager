@@ -136,7 +136,7 @@ namespace Elmanager
 
         internal double CenterX
         {
-            get { return _viewSettings.CenterX; }
+            get => _viewSettings.CenterX;
             set
             {
                 if (value < _zoomFillxMin - XSize)
@@ -149,7 +149,7 @@ namespace Elmanager
 
         internal double CenterY
         {
-            get { return _viewSettings.CenterY; }
+            get => _viewSettings.CenterY;
             set
             {
                 if (value < _zoomFillyMin - YSize)
@@ -162,7 +162,7 @@ namespace Elmanager
 
         internal double CurrentTime
         {
-            get { return _currentTime; }
+            get => _currentTime;
             set
             {
                 _currentTime = value;
@@ -172,39 +172,21 @@ namespace Elmanager
 
         internal double MaxTime { get; private set; }
 
-        internal double XMax
-        {
-            get { return CenterX + ZoomLevel * _aspectRatio; }
-        }
+        internal double XMax => CenterX + ZoomLevel * _aspectRatio;
 
-        internal double XMin
-        {
-            get { return CenterX - ZoomLevel * _aspectRatio; }
-        }
+        internal double XMin => CenterX - ZoomLevel * _aspectRatio;
 
-        internal double XSize
-        {
-            get { return XMax - XMin; }
-        }
+        internal double XSize => XMax - XMin;
 
-        internal double YMax
-        {
-            get { return CenterY + ZoomLevel; }
-        }
+        internal double YMax => CenterY + ZoomLevel;
 
-        internal double YMin
-        {
-            get { return CenterY - ZoomLevel; }
-        }
+        internal double YMin => CenterY - ZoomLevel;
 
-        internal double YSize
-        {
-            get { return YMax - YMin; }
-        }
+        internal double YSize => YMax - YMin;
 
         internal double ZoomLevel
         {
-            get { return _viewSettings.ZoomLevel; }
+            get => _viewSettings.ZoomLevel;
             set
             {
                 if (value > MaxDimension * 2)
@@ -215,15 +197,9 @@ namespace Elmanager
             }
         }
 
-        private double MaxDimension
-        {
-            get { return Math.Max(_zoomFillxMax - _zoomFillxMin, _zoomFillyMax - _zoomFillyMin); }
-        }
+        private double MaxDimension => Math.Max(_zoomFillxMax - _zoomFillxMin, _zoomFillyMax - _zoomFillyMin);
 
-        internal bool LgrGraphicsLoaded
-        {
-            get { return _lgrGraphicsLoaded; }
-        }
+        internal bool LgrGraphicsLoaded => _lgrGraphicsLoaded;
 
         public void Dispose()
         {
@@ -274,8 +250,7 @@ namespace Elmanager
 
         private int GetApple(int animNum)
         {
-            int apple;
-            return _applePics.TryGetValue(animNum, out apple) ? apple : _applePics[1];
+            return _applePics.TryGetValue(animNum, out var apple) ? apple : _applePics[1];
         }
 
         internal void DrawApple(Vector v, int animNum = 1)
@@ -474,16 +449,6 @@ namespace Elmanager
             GL.End();
         }
 
-        internal void DrawRectangle(Vector v1, Vector v2)
-        {
-            GL.Begin(PrimitiveType.LineLoop);
-            GL.Vertex2(v1.X, v1.Y);
-            GL.Vertex2(v2.X, v1.Y);
-            GL.Vertex2(v2.X, v2.Y);
-            GL.Vertex2(v1.X, v2.Y);
-            GL.End();
-        }
-
         internal void DrawScene(bool zoomToDriver, bool showDriverPath)
         {
             GL.LoadIdentity();
@@ -521,8 +486,7 @@ namespace Elmanager
                 if (!k.IsGrass)
                     DrawFilledTrianglesFast(k.Decomposition, ZFar - (ZFar - ZNear) * SkyDepth);
             GL.End();
-            if (AdditionalPolys != null)
-                AdditionalPolys();
+            AdditionalPolys?.Invoke();
             GL.ColorMask(true, true, true, true);
             GL.Enable(EnableCap.Texture2D);
             GL.Enable(EnableCap.DepthTest);
@@ -649,9 +613,8 @@ namespace Elmanager
                             (picture.Distance / 1000.0 * (ZFar - ZNear)) + ZNear);
                     }
                 }
-                for (int i = 0; i < Lev.Pictures.Count; ++i)
+                foreach (var picture in Lev.Pictures)
                 {
-                    var picture = Lev.Pictures[i];
                     DoPictureScissor(picture);
                     if (!picture.IsPicture && _settings.ShowTextures)
                     {
@@ -670,7 +633,7 @@ namespace Elmanager
                         }
                         double depth = (picture.Distance / 1000.0 * (ZFar - ZNear)) + ZNear;
                         DrawPicture(picture.Id, picture.Position.X, picture.Position.Y, picture.Width, picture.Height,
-                                    depth + 0.001);
+                            depth + 0.001);
 
                         GL.BindTexture(TextureTarget.Texture2D, picture.TextureId);
                         GL.StencilFunc(StencilFunction.Lequal, 5, StencilMask);
@@ -684,7 +647,7 @@ namespace Elmanager
                             GL.TexCoord2(TextureCoordConst / picture.TextureWidth, 0);
                             GL.Vertex3(_midX + TextureVertexConst, ymin, depth);
                             GL.TexCoord2(TextureCoordConst / picture.TextureWidth,
-                                         TextureCoordConst / picture.TextureWidth * picture.AspectRatio);
+                                TextureCoordConst / picture.TextureWidth * picture.AspectRatio);
                             GL.Vertex3(_midX + TextureVertexConst, ymax, depth);
                             GL.TexCoord2(0, TextureCoordConst / picture.TextureWidth * picture.AspectRatio);
                             GL.Vertex3(_midX - TextureVertexConst, ymax, depth);
@@ -700,7 +663,7 @@ namespace Elmanager
                             GL.TexCoord2(TextureZoomConst / picture.TextureWidth / ZoomLevel, 0);
                             GL.Vertex3(_midX + TextureVertexConst, ymin, depth);
                             GL.TexCoord2(TextureZoomConst / picture.TextureWidth / ZoomLevel,
-                                         TextureZoomConst / picture.TextureWidth * picture.AspectRatio / ZoomLevel);
+                                TextureZoomConst / picture.TextureWidth * picture.AspectRatio / ZoomLevel);
                             GL.Vertex3(_midX + TextureVertexConst, ymax, depth);
                             GL.TexCoord2(0, TextureZoomConst / picture.TextureWidth * picture.AspectRatio / ZoomLevel);
                             GL.Vertex3(_midX - TextureVertexConst, ymax, depth);
@@ -745,9 +708,9 @@ namespace Elmanager
                 if (!_wrongLevVersion && ActivePlayerIndices.Count > 0)
                 {
                     int i = 0;
-                    while (!(i >= _currentPlayerAppleEvents.Count() || _currentPlayerAppleEvents[i].Time >= CurrentTime))
+                    while (!(i >= _currentPlayerAppleEvents.Length || _currentPlayerAppleEvents[i].Time >= CurrentTime))
                         i++;
-                    for (int j = i; j < _currentPlayerAppleEvents.Count(); j++)
+                    for (int j = i; j < _currentPlayerAppleEvents.Length; j++)
                     {
                         Level.Object z = Lev.Apples[_currentPlayerAppleEvents[j].Info];
                         DrawObject(GetApple(z.AnimationNumber), z.Position);
@@ -855,8 +818,8 @@ namespace Elmanager
                 }
                 GL.End();
             }
-            if (CustomRendering != null)
-                CustomRendering();
+
+            CustomRendering?.Invoke();
             GL.Scale(1.0, -1.0, 1.0);
             if (ActivePlayerIndices.Count > 0 && showDriverPath)
             {
@@ -873,8 +836,7 @@ namespace Elmanager
                 }
             }
             _gfxContext.SwapBuffers();
-            if (AfterDrawing != null)
-                AfterDrawing();
+            AfterDrawing?.Invoke();
         }
 
         private void DoPictureScissor(Level.Picture picture)
@@ -891,7 +853,7 @@ namespace Elmanager
             if (o.Type == Level.ObjectType.Apple && o.AppleType != Level.AppleTypes.Normal)
             {
                 GL.Color3(_settings.AppleGravityArrowColor);
-                double arrowRotation = 0.0;
+                double arrowRotation;
                 switch (o.AppleType)
                 {
                     case Level.AppleTypes.GravityUp:
@@ -1214,8 +1176,7 @@ namespace Elmanager
         {
             if (_settings.LgrFile != newSettings.LgrFile)
             {
-                if (CurrentLgr != null)
-                    CurrentLgr.Dispose();
+                CurrentLgr?.Dispose();
                 if (File.Exists(newSettings.LgrFile))
                 {
                     LoadLgrGraphics(newSettings.LgrFile);
@@ -1490,7 +1451,7 @@ namespace Elmanager
 
         public Vector GridOffset
         {
-            get { return _gridOffset; }
+            get => _gridOffset;
             set
             {
                 _gridOffset = value;
@@ -1579,9 +1540,9 @@ namespace Elmanager
             if (!_wrongLevVersion && ActivePlayerIndices.Count > 0)
             {
                 int i = 0;
-                while (!(i >= _currentPlayerAppleEvents.Count() || _currentPlayerAppleEvents[i].Time >= CurrentTime))
+                while (!(i >= _currentPlayerAppleEvents.Length || _currentPlayerAppleEvents[i].Time >= CurrentTime))
                     i++;
-                for (int j = i; j < _currentPlayerAppleEvents.Count(); j++)
+                for (int j = i; j < _currentPlayerAppleEvents.Length; j++)
                     DrawCircle(Lev.Apples[_currentPlayerAppleEvents[j].Info].Position, ObjectRadius,
                                _settings.AppleColor);
                 foreach (Level.Object x in _notTakenApples)
@@ -1619,9 +1580,9 @@ namespace Elmanager
             if (!_wrongLevVersion && ActivePlayerIndices.Count > 0)
             {
                 int i = 0;
-                while (!(i >= _currentPlayerAppleEvents.Count() || _currentPlayerAppleEvents[i].Time >= CurrentTime))
+                while (!(i >= _currentPlayerAppleEvents.Length || _currentPlayerAppleEvents[i].Time >= CurrentTime))
                     i++;
-                for (int j = i; j < _currentPlayerAppleEvents.Count(); j++)
+                for (int j = i; j < _currentPlayerAppleEvents.Length; j++)
                     DrawCircle(Lev.Apples[_currentPlayerAppleEvents[j].Info].Position, ObjectRadius,
                                _settings.AppleColor);
                 foreach (Level.Object x in _notTakenApples)
@@ -1754,10 +1715,8 @@ namespace Elmanager
                 double footy = globalBodyY + footsx * rotationSin + footsy * rotationCos;
                 double thighstartx = headX + thighsx * rotationCos - thighsy * rotationSin;
                 double thighstarty = headY + thighsx * rotationSin + thighsy * rotationCos;
-                double thighendx;
-                double thighendy;
-                CalculateMiddle(thighstartx, thighstarty, footx, footy, legMinimumWidth, isright, out thighendx,
-                                out thighendy);
+                CalculateMiddle(thighstartx, thighstarty, footx, footy, legMinimumWidth, isright, out var thighendx,
+                                out var thighendy);
                 DrawPicture(_thighPic, thighstartx, thighstarty, thighendx, thighendy, thighHeight, distance, isright,
                             0.05);
 
@@ -1817,9 +1776,7 @@ namespace Elmanager
                 double angleSin = Math.Sin(armAngle);
                 double handx = armx + dist * angleCos;
                 double handy = army + dist * angleSin;
-                double armendx;
-                double armendy;
-                CalculateMiddle(armx, army, handx, handy, armMinimumWidth, !isright, out armendx, out armendy);
+                CalculateMiddle(armx, army, handx, handy, armMinimumWidth, !isright, out var armendx, out var armendy);
                 DrawPicture(_armPic, armx, army, armendx, armendy, upArmHeight, distance, !isright, 0.05);
 
                 //Lower arm
@@ -2131,10 +2088,6 @@ namespace Elmanager
                 DefaultDistance = distance;
                 Name = name;
                 Type = type;
-            }
-            internal double AspectRatio
-            {
-                get { return Width / Height; }
             }
 
             internal double WidthMinusMargin => Width - 2*EmptyPixelXMargin;

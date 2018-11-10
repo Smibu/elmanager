@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Diagnostics;
 using System.Drawing;
 using System.Globalization;
 using System.Linq;
@@ -14,7 +13,6 @@ using NetTopologySuite.Geometries;
 using Brushes = System.Windows.Media.Brushes;
 using Color = System.Drawing.Color;
 using FlowDirection = System.Windows.FlowDirection;
-using FontFamily = System.Drawing.FontFamily;
 using Point = System.Windows.Point;
 
 namespace Elmanager.EditorTools
@@ -84,7 +82,7 @@ namespace Elmanager.EditorTools
             Renderer.RedrawScene();
         }
 
-        public void MouseUp(MouseEventArgs mouseData)
+        public void MouseUp()
         {
         }
 
@@ -143,8 +141,7 @@ namespace Elmanager.EditorTools
                 LineHeight = options.LineHeight*options.Font.SizeInPoints*sizeFactor
             };
             formattedText.SetTextDecorations(decorations);
-            double cached;
-            var isCached = _minSmoothnesses.TryGetValue(options.Font, out cached);
+            var isCached = _minSmoothnesses.TryGetValue(options.Font, out var cached);
             if (!isCached)
             {
                 cached = options.Smoothness;
@@ -198,15 +195,14 @@ namespace Elmanager.EditorTools
                     _minSmoothnesses[options.Font] = smoothness;
                     return RenderString(opt, offset);
                 }
-                var polygon = union as IPolygon;
-                if (polygon != null)
+
+                if (union is IPolygon polygon)
                 {
                     polys.AddRange(polygon.ToElmaPolygons());
                 }
                 else
                 {
-                    var multiPolygon = union as IMultiPolygon;
-                    if (multiPolygon != null)
+                    if (union is IMultiPolygon multiPolygon)
                     {
                         polys.AddRange(multiPolygon.Geometries.Select(geometry => geometry as IPolygon).SelectMany(poly => poly.ToElmaPolygons()));
                     }

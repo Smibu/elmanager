@@ -182,7 +182,7 @@ namespace Elmanager.EditorTools
             return -2; //Indicates that mouse wasn't near any edge nor vertex
         }
 
-        protected virtual void ResetHighlight()
+        protected void ResetHighlight()
         {
             if (!Global.AppSettings.LevelEditor.UseHighlight)
                 return;
@@ -202,7 +202,7 @@ namespace Elmanager.EditorTools
                     z.Position.Mark = Geometry.VectorMark.None;
         }
 
-        protected virtual void ResetPolygonMarks()
+        protected void ResetPolygonMarks()
         {
             foreach (Polygon x in Lev.Polygons)
                 x.Mark = PolygonMark.None;

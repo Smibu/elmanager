@@ -130,7 +130,7 @@ namespace Elmanager.EditorTools
             _hasFocus = false;
         }
 
-        public void MouseUp(MouseEventArgs mouseData)
+        public void MouseUp()
         {
         }
 

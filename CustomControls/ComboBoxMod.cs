@@ -9,16 +9,15 @@ namespace Elmanager.CustomControls
 
         internal new event MouseWheelEventHandler MouseWheel
         {
-            add { _mouseWheelEvent = (MouseWheelEventHandler) Delegate.Combine(_mouseWheelEvent, value); }
-            remove { _mouseWheelEvent = (MouseWheelEventHandler) Delegate.Remove(_mouseWheelEvent, value); }
+            add => _mouseWheelEvent = (MouseWheelEventHandler) Delegate.Combine(_mouseWheelEvent, value);
+            remove => _mouseWheelEvent = (MouseWheelEventHandler) Delegate.Remove(_mouseWheelEvent, value);
         }
 
         protected override void WndProc(ref Message m)
         {
             if (m.Msg == 0x20A) //WM_MOUSEWHEEL
             {
-                if (_mouseWheelEvent != null)
-                    _mouseWheelEvent(m.WParam.ToInt32());
+                _mouseWheelEvent?.Invoke(m.WParam.ToInt32());
             }
             else
             {

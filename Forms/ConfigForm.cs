@@ -3,10 +3,8 @@ using System.Collections.Generic;
 using System.ComponentModel;
 using System.Diagnostics;
 using System.IO;
-using System.Linq;
 using System.Runtime.InteropServices;
 using System.Runtime.Serialization.Formatters.Binary;
-using System.Text.RegularExpressions;
 using System.Windows.Forms;
 using Microsoft.VisualBasic.FileIO;
 using SearchOption = System.IO.SearchOption;
@@ -87,7 +85,7 @@ namespace Elmanager.Forms
             {
                 string[] lgrFiles = Directory.GetFiles(Global.AppSettings.General.LgrDirectory, "*.lgr",
                                                        SearchOption.AllDirectories);
-                if (lgrFiles.Count() > 0)
+                if (lgrFiles.Length > 0)
                 {
                     if (Global.AppSettings.LevelEditor.RenderingSettings.LgrFile == string.Empty)
                         Global.AppSettings.LevelEditor.RenderingSettings.LgrFile = GetDefaultLgrFile(lgrFiles);

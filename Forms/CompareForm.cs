@@ -1,6 +1,5 @@
 ﻿using System;
 using System.IO;
-using System.Linq;
 using System.Windows.Forms;
 
 namespace Elmanager.Forms
@@ -125,7 +124,7 @@ namespace Elmanager.Forms
             {
                 CPListBox.Items.Clear();
                 double[] groundTouches = _comparingRps[j].Player1.GetEventTimes(ReplayEventType.GroundTouch);
-                for (int i = 0; i < groundTouches.Count(); i++)
+                for (int i = 0; i < groundTouches.Length; i++)
                     CPListBox.Items.Add("Touch " + (i + 1) + ": " + groundTouches[i].ToTimeString());
                 if (_comparingRps[j].Finished)
                     CPListBox.Items.Add("Flower: " + _comparingRps[j].Time.ToTimeString());
