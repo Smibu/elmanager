@@ -1,5 +1,6 @@
 .vs/
 bin/
+doc/
 obj/
 packages/
 *.suo
