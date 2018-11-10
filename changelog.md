@@ -1,5 +1,8 @@
 # Elmanager changelog
 
+## 10.11.2018
+* SLE: Bugfix: Topology check did not detect too short edges.
+
 ## 1.8.2018
 * SLE: Levels without flowers are now allowed but they must have at least one object to pass topology check.
 * SLE: Bugfix: Topology error message about too many vertices was sometimes inaccurate.
