@@ -14,7 +14,7 @@ namespace Elmanager
     {
         private const string SettingsFileDateFormat = "ddMMyyyy";
         private const string SettingsFileBaseName = "Elmanager";
-        private static string SettingsFile = SettingsFileBaseName + Global.Version.ToString(SettingsFileDateFormat) + ".dat";
+        private static string _settingsFile = SettingsFileBaseName + Global.Version.ToString(SettingsFileDateFormat) + ".dat";
         public GeneralSettings General = new GeneralSettings();
         public LevelEditorSettings LevelEditor = new LevelEditorSettings();
         public ReplayManagerSettings ReplayManager = new ReplayManagerSettings();
@@ -22,9 +22,9 @@ namespace Elmanager
 
         public static ElmanagerSettings Load()
         {
-            if (File.Exists(Path.Combine(Application.StartupPath, SettingsFile)))
+            if (File.Exists(Path.Combine(Application.StartupPath, _settingsFile)))
             {
-                return GetSettings(SettingsFile);
+                return GetSettings(_settingsFile);
             }
             var oldSettingFiles = Directory.GetFiles(Application.StartupPath, "Elmanager*.dat");
             try
@@ -49,7 +49,7 @@ namespace Elmanager
 
         public void Save()
         {
-            var appSettingsFile = new FileStream(Path.Combine(Application.StartupPath, SettingsFile), FileMode.Create);
+            var appSettingsFile = new FileStream(Path.Combine(Application.StartupPath, _settingsFile), FileMode.Create);
             var binFormatter = new BinaryFormatter();
             binFormatter.Serialize(appSettingsFile, this);
             appSettingsFile.Close();

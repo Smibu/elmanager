@@ -74,7 +74,7 @@ namespace Elmanager
                 if ((object) isectPoint != null)
                 {
                     p1IsectPoint = isectPoint;
-                    p1C.InsertIntersection(p1IsectPoint, Constants.TOLERANCE);
+                    p1C.InsertIntersection(p1IsectPoint, Constants.Tolerance);
                     numberOfIntersectionsP1C++;
                 }
             }
@@ -86,7 +86,7 @@ namespace Elmanager
                 if ((object) isectPoint != null)
                 {
                     p2IsectPoint = isectPoint;
-                    p2C.InsertIntersection(p2IsectPoint, Constants.TOLERANCE);
+                    p2C.InsertIntersection(p2IsectPoint, Constants.Tolerance);
                     numberOfIntersectionsP2C++;
                 }
             }
@@ -110,7 +110,7 @@ namespace Elmanager
                         p1ConnectVector = p1C[p1Index + 1] - p1C[p1Index - 1];
                         p1ConnectVector /= p1ConnectVector.Length;
                         var p1AngleAbs = Math.Abs(p1ConnectVector.AngleBetween(v2 - v1));
-                        if (p1AngleAbs < Constants.TOLERANCE)
+                        if (p1AngleAbs < Constants.Tolerance)
                         {
                             return null;
                         }
@@ -126,7 +126,7 @@ namespace Elmanager
                         p2ConnectVector = p2C[p2Index + 1] - p2C[p2Index - 1];
                         p2ConnectVector /= p2ConnectVector.Length;
                         var p2AngleAbs = Math.Abs(p2ConnectVector.AngleBetween(v2 - v1));
-                        if (p2AngleAbs < Constants.TOLERANCE)
+                        if (p2AngleAbs < Constants.Tolerance)
                         {
                             return null;
                         }

@@ -64,11 +64,11 @@ namespace Elmanager
         private int _randomNumber;
         private List<LevelFileTexture> _textureData = new List<LevelFileTexture>();
         private string _title = "New level";
-        private double polygonXMin;
-        private double polygonYMin;
-        private double polygonXMax;
-        private double polygonYMax;
-        private string identifier;
+        private double _polygonXMin;
+        private double _polygonYMin;
+        private double _polygonXMax;
+        private double _polygonYMax;
+        private string _identifier;
 
         internal Level()
         {
@@ -88,7 +88,7 @@ namespace Elmanager
             byte[] level = File.ReadAllBytes(levelPath);
             Path = levelPath;
             IsInternal = IsInternalLevel(_fileName);
-            identifier = Encoding.UTF8.GetString(level, 0, 5);
+            _identifier = Encoding.UTF8.GetString(level, 0, 5);
             if (!IsElmaLevel && !IsAcrossLevel && !IsLeb)
             {
                 throw new LevelException("Unknown file type. This is neither an Elma level, an Across level nor a LEB file.");
@@ -233,7 +233,7 @@ namespace Elmanager
             Path = lev.Path;
             _fileName = lev._fileName;
             IsInternal = lev.IsInternal;
-            identifier = lev.identifier;
+            _identifier = lev._identifier;
             foreach (Object x in lev.Objects)
                 Objects.Add(x.Clone());
             foreach (Polygon x in lev.Polygons)
@@ -400,10 +400,10 @@ namespace Elmanager
             {
                 double padding = 11.898;
                 return Pictures.Where(p => !p.IsPicture).Any(p => 
-                p.Position.X < polygonXMin - padding ||
-                p.Position.X > polygonXMax + padding ||
-                p.Position.Y < polygonYMin - padding ||
-                p.Position.Y > polygonYMax + padding);
+                p.Position.X < _polygonXMin - padding ||
+                p.Position.X > _polygonXMax + padding ||
+                p.Position.Y < _polygonYMin - padding ||
+                p.Position.Y > _polygonYMax + padding);
             }
         }
 
@@ -448,12 +448,12 @@ namespace Elmanager
 
         internal bool TooTall
         {
-            get { return polygonYMax - polygonYMin >= MaximumSize; }
+            get { return _polygonYMax - _polygonYMin >= MaximumSize; }
         }
 
         internal bool TooWide
         {
-            get { return polygonXMax - polygonXMin >= MaximumSize; }
+            get { return _polygonXMax - _polygonXMin >= MaximumSize; }
         }
 
         internal int VertexCount
@@ -498,11 +498,11 @@ namespace Elmanager
             }
         }
 
-        internal bool IsElmaLevel => identifier == "POT14";
+        internal bool IsElmaLevel => _identifier == "POT14";
 
-        internal bool IsAcrossLevel => identifier == "POT06";
+        internal bool IsAcrossLevel => _identifier == "POT06";
 
-        internal bool IsLeb => identifier == "@@^!@";
+        internal bool IsLeb => _identifier == "@@^!@";
 
         internal bool HasTooFewObjects => Objects.Count < 2;
 
@@ -777,10 +777,10 @@ namespace Elmanager
                 YMax = Math.Max(YMax, x.YMax);
                 YMin = Math.Min(YMin, x.YMin);
             }
-            polygonXMin = XMin;
-            polygonYMin = YMin;
-            polygonXMax = XMax;
-            polygonYMax = YMax;
+            _polygonXMin = XMin;
+            _polygonYMin = YMin;
+            _polygonXMax = XMax;
+            _polygonYMax = YMax;
             foreach (Object x in Objects)
             {
                 XMin = Math.Min(XMin, x.Position.X);

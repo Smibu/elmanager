@@ -9,7 +9,7 @@ namespace Elmanager.EditorTools
     internal abstract class ToolBase : IEditorToolBase
     {
         protected Vector CurrentPos;
-        private Control EditorControl;
+        private Control _editorControl;
         protected LevelEditor LevEditor;
         internal Polygon NearestPolygon;
         protected ElmaRenderer Renderer;
@@ -19,7 +19,7 @@ namespace Elmanager.EditorTools
         {
             LevEditor = editor;
             Renderer = editor.Renderer;
-            EditorControl = editor.EditorControl;
+            _editorControl = editor.EditorControl;
         }
 
         protected Level Lev => LevEditor.Lev;
@@ -233,19 +233,19 @@ namespace Elmanager.EditorTools
         {
             var ctor = typeof(Cursor).GetConstructor(BindingFlags.NonPublic | BindingFlags.Instance, null,
                 new[] {typeof(int), typeof(int)}, null);
-            const int IDC_HAND = 32649;
-            return (Cursor)ctor.Invoke(new object[] { IDC_HAND, 0 });
+            const int idcHand = 32649;
+            return (Cursor)ctor.Invoke(new object[] { idcHand, 0 });
         }
 
         protected void ChangeCursorToHand()
         {
             if (Global.AppSettings.LevelEditor.UseHighlight)
-                EditorControl.Cursor = Hand;
+                _editorControl.Cursor = Hand;
         }
 
         protected void ChangeToDefaultCursorIfHand()
         {
-            if (EditorControl.Cursor == Hand)
+            if (_editorControl.Cursor == Hand)
                 LevEditor.ChangeToDefaultCursor();
         }
 

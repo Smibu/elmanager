@@ -10,7 +10,7 @@ namespace Elmanager.EditorTools
     internal class VertexTool : ToolBase, IEditorTool
     {
         private Polygon _currentPolygon;
-        private int nearestSegmentIndex = -1;
+        private int _nearestSegmentIndex = -1;
         private Vector _rectangleStart;
 
         internal VertexTool(LevelEditor editor)
@@ -50,9 +50,9 @@ namespace Elmanager.EditorTools
             }
             else
             {
-                if (Global.AppSettings.LevelEditor.UseHighlight && nearestSegmentIndex >= 0)
+                if (Global.AppSettings.LevelEditor.UseHighlight && _nearestSegmentIndex >= 0)
                 {
-                    Renderer.DrawLine(NearestPolygon[nearestSegmentIndex], NearestPolygon[nearestSegmentIndex + 1], Color.Yellow);
+                    Renderer.DrawLine(NearestPolygon[_nearestSegmentIndex], NearestPolygon[_nearestSegmentIndex + 1], Color.Yellow);
                 }
             }
         }
@@ -99,9 +99,9 @@ namespace Elmanager.EditorTools
                             CreatingVertex = true;
                             if (nearestIndex >= -1)
                             {
-                                nearestSegmentIndex = NearestPolygon.GetNearestSegmentIndex(CurrentPos);
+                                _nearestSegmentIndex = NearestPolygon.GetNearestSegmentIndex(CurrentPos);
                                 _currentPolygon = NearestPolygon;
-                                _currentPolygon.SetBeginPoint(nearestSegmentIndex + 1);
+                                _currentPolygon.SetBeginPoint(_nearestSegmentIndex + 1);
                                 _currentPolygon.Add(CurrentPos);
                                 ChangeToDefaultCursorIfHand();
                             }
@@ -142,13 +142,13 @@ namespace Elmanager.EditorTools
                 int nearestVertex = GetNearestVertexIndex(p);
                 if (nearestVertex >= -1)
                 {
-                    nearestSegmentIndex = NearestPolygon.GetNearestSegmentIndex(p);
+                    _nearestSegmentIndex = NearestPolygon.GetNearestSegmentIndex(p);
                     ChangeCursorToHand();
                 }
                 else
                 {
                     ChangeToDefaultCursorIfHand();
-                    nearestSegmentIndex = -1;
+                    _nearestSegmentIndex = -1;
                 }
             }
         }

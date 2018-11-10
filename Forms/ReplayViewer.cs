@@ -252,8 +252,8 @@ namespace Elmanager.Forms
 
         protected override bool ProcessCmdKey(ref Message m, Keys keyData)
         {
-            const int WM_KEYDOWN = 0x100;
-            if (m.Msg == WM_KEYDOWN)
+            const int wmKeydown = 0x100;
+            if (m.Msg == wmKeydown)
             {
                 switch (keyData)
                 {

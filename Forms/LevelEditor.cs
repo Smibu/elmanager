@@ -28,13 +28,13 @@ namespace Elmanager.Forms
         private const string LevEditorName = "SLE";
         private const int MouseWheelStep = 20;
         private readonly List<Level> _history = new List<Level>();
-        private bool AppleFilter = true;
-        private bool FlowerFilter = true;
-        private bool GrassFilter = true;
-        private bool GroundFilter = true;
-        private bool KillerFilter = true;
-        private bool PictureFilter = true;
-        private bool TextureFilter = true;
+        private bool _appleFilter = true;
+        private bool _flowerFilter = true;
+        private bool _grassFilter = true;
+        private bool _groundFilter = true;
+        private bool _killerFilter = true;
+        private bool _pictureFilter = true;
+        private bool _textureFilter = true;
         internal IEditorTool CurrentTool;
         internal Level Lev;
         internal PictureForm PicForm;
@@ -66,8 +66,8 @@ namespace Elmanager.Forms
         private Vector _gridStartOffset;
         private bool _programmaticPropertyChange;
         private Vector _savedStartPosition;
-        private float dpiX;
-        private float dpiY;
+        private float _dpiX;
+        private float _dpiY;
 
         internal LevelEditor(string levPath)
         {
@@ -118,37 +118,37 @@ namespace Elmanager.Forms
 
         internal bool EffectiveAppleFilter
         {
-            get { return AppleFilter && (ShowObjectFramesButton.Checked || (ShowObjectsButton.Checked && _pictureToolAvailable)); }
+            get { return _appleFilter && (ShowObjectFramesButton.Checked || (ShowObjectsButton.Checked && _pictureToolAvailable)); }
         }
 
         internal bool EffectiveKillerFilter
         {
-            get { return KillerFilter && (ShowObjectFramesButton.Checked || (ShowObjectsButton.Checked && _pictureToolAvailable)); }
+            get { return _killerFilter && (ShowObjectFramesButton.Checked || (ShowObjectsButton.Checked && _pictureToolAvailable)); }
         }
 
         internal bool EffectiveFlowerFilter
         {
-            get { return FlowerFilter && (ShowObjectFramesButton.Checked || (ShowObjectsButton.Checked && _pictureToolAvailable)); }
+            get { return _flowerFilter && (ShowObjectFramesButton.Checked || (ShowObjectsButton.Checked && _pictureToolAvailable)); }
         }
 
         internal bool EffectiveGrassFilter
         {
-            get { return GrassFilter && (ShowGrassEdgesButton.Checked); }
+            get { return _grassFilter && (ShowGrassEdgesButton.Checked); }
         }
 
         internal bool EffectiveGroundFilter
         {
-            get { return GroundFilter && (ShowGroundEdgesButton.Checked || (ShowGroundButton.Checked && _pictureToolAvailable)); }
+            get { return _groundFilter && (ShowGroundEdgesButton.Checked || (ShowGroundButton.Checked && _pictureToolAvailable)); }
         }
 
         internal bool EffectiveTextureFilter
         {
-            get { return TextureFilter && (ShowTextureFramesButton.Checked || (ShowTexturesButton.Checked && _pictureToolAvailable)); }
+            get { return _textureFilter && (ShowTextureFramesButton.Checked || (ShowTexturesButton.Checked && _pictureToolAvailable)); }
         }
 
         internal bool EffectivePictureFilter
         {
-            get { return PictureFilter && (ShowPictureFramesButton.Checked || (ShowPicturesButton.Checked && _pictureToolAvailable)); }
+            get { return _pictureFilter && (ShowPictureFramesButton.Checked || (ShowPicturesButton.Checked && _pictureToolAvailable)); }
         }
 
         private int SelectedElementCount
@@ -713,20 +713,20 @@ namespace Elmanager.Forms
 
         private void FilterChanged(object sender, EventArgs e)
         {
-            GroundFilter = GroundPolygonsToolStripMenuItem.Checked;
-            GrassFilter = GrassPolygonsToolStripMenuItem.Checked;
-            AppleFilter = ApplesToolStripMenuItem.Checked;
-            KillerFilter = KillersToolStripMenuItem.Checked;
-            FlowerFilter = FlowersToolStripMenuItem.Checked;
-            PictureFilter = PicturesToolStripMenuItem.Checked;
-            TextureFilter = TexturesToolStripMenuItem.Checked;
+            _groundFilter = GroundPolygonsToolStripMenuItem.Checked;
+            _grassFilter = GrassPolygonsToolStripMenuItem.Checked;
+            _appleFilter = ApplesToolStripMenuItem.Checked;
+            _killerFilter = KillersToolStripMenuItem.Checked;
+            _flowerFilter = FlowersToolStripMenuItem.Checked;
+            _pictureFilter = PicturesToolStripMenuItem.Checked;
+            _textureFilter = TexturesToolStripMenuItem.Checked;
             foreach (var polygon in Lev.Polygons)
             {
-                if (polygon.IsGrass && !GrassFilter)
+                if (polygon.IsGrass && !_grassFilter)
                 {
                     polygon.MarkVectorsAs(Geometry.VectorMark.None);
                 }
-                else if (!polygon.IsGrass && !GroundFilter)
+                else if (!polygon.IsGrass && !_groundFilter)
                 {
                     polygon.MarkVectorsAs(Geometry.VectorMark.None);
                 }
@@ -736,19 +736,19 @@ namespace Elmanager.Forms
                 switch (o.Type)
                 {
                     case Level.ObjectType.Flower:
-                        if (!FlowerFilter)
+                        if (!_flowerFilter)
                         {
                             o.Position.Mark = Geometry.VectorMark.None;
                         }
                         break;
                     case Level.ObjectType.Apple:
-                        if (!AppleFilter)
+                        if (!_appleFilter)
                         {
                             o.Position.Mark = Geometry.VectorMark.None;
                         }
                         break;
                     case Level.ObjectType.Killer:
-                        if (!KillerFilter)
+                        if (!_killerFilter)
                         {
                             o.Position.Mark = Geometry.VectorMark.None;
                         }
@@ -761,11 +761,11 @@ namespace Elmanager.Forms
             }
             foreach (var picture in Lev.Pictures)
             {
-                if (picture.IsPicture && !PictureFilter)
+                if (picture.IsPicture && !_pictureFilter)
                 {
                     picture.Position.Mark = Geometry.VectorMark.None;
                 }
-                else if (!picture.IsPicture && !TextureFilter)
+                else if (!picture.IsPicture && !_textureFilter)
                 {
                     picture.Position.Mark = Geometry.VectorMark.None;
                 }
@@ -871,10 +871,10 @@ namespace Elmanager.Forms
         private void Initialize()
         {
             var graphics = CreateGraphics();
-            dpiX = graphics.DpiX / 96;
-            dpiY = graphics.DpiY / 96;
-            var dpiXint = (int)dpiX;
-            var dpiYint = (int)dpiY;
+            _dpiX = graphics.DpiX / 96;
+            _dpiY = graphics.DpiY / 96;
+            var dpiXint = (int)_dpiX;
+            var dpiYint = (int)_dpiY;
             ToolStrip1.ImageScalingSize = new Size(32 * dpiXint, 32 * dpiYint);
             ToolStrip2.ImageScalingSize = new Size(32 * dpiXint, 32 * dpiYint);
             MenuStrip1.ImageScalingSize = new Size(16 * dpiXint, 16 * dpiYint);
@@ -1643,7 +1643,7 @@ namespace Elmanager.Forms
         {
             foreach (var polygon in Lev.Polygons)
             {
-                if ((polygon.IsGrass && GrassFilter) || (!polygon.IsGrass && GroundFilter))
+                if ((polygon.IsGrass && _grassFilter) || (!polygon.IsGrass && _groundFilter))
                     polygon.MarkVectorsAs(Geometry.VectorMark.Selected);
             }
             foreach (var levelObject in Lev.Objects)
@@ -1651,15 +1651,15 @@ namespace Elmanager.Forms
                 switch (levelObject.Type)
                 {
                     case Level.ObjectType.Apple:
-                        if (AppleFilter)
+                        if (_appleFilter)
                             levelObject.Position.Select();
                         break;
                     case Level.ObjectType.Killer:
-                        if (KillerFilter)
+                        if (_killerFilter)
                             levelObject.Position.Select();
                         break;
                     case Level.ObjectType.Flower:
-                        if (FlowerFilter)
+                        if (_flowerFilter)
                             levelObject.Position.Select();
                         break;
                 }
@@ -1667,7 +1667,7 @@ namespace Elmanager.Forms
 
             foreach (var texture in Lev.Pictures)
             {
-                if ((TextureFilter && !texture.IsPicture) || (PictureFilter && texture.IsPicture))
+                if ((_textureFilter && !texture.IsPicture) || (_pictureFilter && texture.IsPicture))
                     texture.Position.Select();
             }
 
@@ -1964,7 +1964,7 @@ namespace Elmanager.Forms
         private void TitleBoxTextChanged(object sender, EventArgs e)
         {
             int width = TextRenderer.MeasureText(TitleBox.Text, TitleBox.Font).Width;
-            TitleBox.Width = Math.Max(width + 5, 120 * (int)dpiX);
+            TitleBox.Width = Math.Max(width + 5, 120 * (int)_dpiX);
             TitleBox.BackColor = Regex.IsMatch(TitleBox.Text, "[^a-zA-Z0-9!\"%&/()=?`^*-_,.;:<>\\[\\]+# ]") ? Color.Red : Color.White;
         }
 

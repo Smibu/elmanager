@@ -28,6 +28,6 @@ namespace Elmanager
 
         internal const string VersionUri = "https://mkl.io/Elma/elmanager/check_update";
         internal const string ChangelogUri = "https://gitlab.com/Smibu/elmanager/blob/master/changelog.md";
-        public const double TOLERANCE = 0.00000001;
+        public const double Tolerance = 0.00000001;
     }
 }

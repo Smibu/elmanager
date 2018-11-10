@@ -8,8 +8,8 @@ namespace Elmanager.Forms
 {
     public partial class ProgressDialog : Form
     {
-        private readonly CancellationTokenSource cancelSrc;
-        private readonly Task task;
+        private readonly CancellationTokenSource _cancelSrc;
+        private readonly Task _task;
 
         public ProgressDialog()
         {
@@ -18,21 +18,21 @@ namespace Elmanager.Forms
 
         public ProgressDialog(Task task, CancellationTokenSource cancelSrc, Progress<double> progress) : this()
         {
-            this.cancelSrc = cancelSrc;
-            this.task = task;
+            this._cancelSrc = cancelSrc;
+            this._task = task;
             progress.ProgressChanged += (sender, d) => { progressBar1.Value = (int) (d*1000); };
         }
 
         private void cancelButton_Click(object sender, EventArgs e)
         {
-            cancelSrc.Cancel();
+            _cancelSrc.Cancel();
             cancelButton.Enabled = false;
             cancelButton.Text = "Canceling...";
         }
 
         private void ProgressDialog_Shown(object sender, EventArgs e)
         {
-            task.ContinueWith(t => { Close(); }, TaskScheduler.FromCurrentSynchronizationContext());
+            _task.ContinueWith(t => { Close(); }, TaskScheduler.FromCurrentSynchronizationContext());
         }
     }
 }

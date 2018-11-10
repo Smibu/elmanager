@@ -8,17 +8,17 @@ namespace Elmanager.CustomControls
 {
     internal class FontDialogMod : FontDialog
     {
-        private const int APPLY_CLICK = 0x402;
-        private readonly IntPtr _applyCommand = new IntPtr(APPLY_CLICK);
+        private const int ApplyClick = 0x402;
+        private readonly IntPtr _applyCommand = new IntPtr(ApplyClick);
         public string FontStyleName { get; private set; }
-        private const int WM_COMMAND = 0x0111;
+        private const int WmCommand = 0x0111;
 
         [return: MarshalAs(UnmanagedType.Bool)]
         [DllImport("user32.dll")]
         private static extern bool PostMessage(IntPtr hWnd, int wMsg, IntPtr wParam, IntPtr lParam);
 
         [DllImport("user32.dll", SetLastError = true)]
-        private static extern uint GetDlgItemText(IntPtr hDlg, int nIDDlgItem,
+        private static extern uint GetDlgItemText(IntPtr hDlg, int nIdDlgItem,
            [Out] StringBuilder lpString, int nMaxCount);
 
         public FontDialogMod()
@@ -45,10 +45,10 @@ namespace Elmanager.CustomControls
         {
             switch (msg)
             {
-                case WM_COMMAND:
+                case WmCommand:
                     switch ((int) wparam)
                     {
-                        case APPLY_CLICK:
+                        case ApplyClick:
                             var sb = new StringBuilder();
                             GetDlgItemText(hWnd, 0x471, sb, 100);
                             FontStyleName = sb.ToString();
@@ -61,7 +61,7 @@ namespace Elmanager.CustomControls
                         case 0x411:   // underline effect toggled
 
                             // simulates Apply button click
-                            PostMessage(hWnd, WM_COMMAND, _applyCommand, IntPtr.Zero);
+                            PostMessage(hWnd, WmCommand, _applyCommand, IntPtr.Zero);
                             break;
                     }
                     break;

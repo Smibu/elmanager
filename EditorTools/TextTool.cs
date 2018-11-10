@@ -33,7 +33,7 @@ namespace Elmanager.EditorTools
             {"Demibold", "Bold"}
         };
 
-        private Dictionary<Font, double> minSmoothnesses = new Dictionary<Font, double>();
+        private Dictionary<Font, double> _minSmoothnesses = new Dictionary<Font, double>();
 
         internal TextTool(LevelEditor editor) : base(editor)
         {
@@ -144,7 +144,7 @@ namespace Elmanager.EditorTools
             };
             formattedText.SetTextDecorations(decorations);
             double cached;
-            var isCached = minSmoothnesses.TryGetValue(options.Font, out cached);
+            var isCached = _minSmoothnesses.TryGetValue(options.Font, out cached);
             if (!isCached)
             {
                 cached = options.Smoothness;
@@ -178,7 +178,7 @@ namespace Elmanager.EditorTools
             } while (polys.Any(p => p.Count < 3 || !p.IsSimple));
             if (iterations > 1)
             {
-                minSmoothnesses[options.Font] = smoothness*2;
+                _minSmoothnesses[options.Font] = smoothness*2;
             }
             var isects = Geometry.GetIntersectionPoints(polys);
             if (isects.Count > 0)
@@ -195,7 +195,7 @@ namespace Elmanager.EditorTools
                 {
                     var opt = options;
                     opt.Smoothness = smoothness;
-                    minSmoothnesses[options.Font] = smoothness;
+                    _minSmoothnesses[options.Font] = smoothness;
                     return RenderString(opt, offset);
                 }
                 var polygon = union as IPolygon;

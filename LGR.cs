@@ -11,7 +11,7 @@ namespace Elmanager
     {
         internal readonly List<LgrImage> LgrImages = new List<LgrImage>();
         internal readonly List<ListedImage> ListedImages = new List<ListedImage>();
-        private static readonly HashSet<string> _transparencyIgnoreSet = new HashSet<string>(Enumerable.Range(0, 18).SelectMany(TransparencyIgnoreHelper));
+        private static readonly HashSet<string> TransparencyIgnoreSet = new HashSet<string>(Enumerable.Range(0, 18).SelectMany(TransparencyIgnoreHelper));
 
         internal enum ImageType
         {
@@ -109,7 +109,7 @@ namespace Elmanager
                         imgType = x.Type;
                         imgClippingType = x.ClippingType;
                         imgDistance = x.Distance;
-                        if (!_transparencyIgnoreSet.Contains(x.Name))
+                        if (!TransparencyIgnoreSet.Contains(x.Name))
                         {
                             transparency = x.Transparency;
                         }
@@ -193,7 +193,7 @@ namespace Elmanager
                 yield return "qgrass";
             }
 
-            private static readonly HashSet<string> SpecialNames = new HashSet<string>(EnumSpecialNames().Union(_transparencyIgnoreSet));
+            private static readonly HashSet<string> SpecialNames = new HashSet<string>(EnumSpecialNames().Union(TransparencyIgnoreSet));
             internal Level.ClippingType ClippingType;
             internal int Distance;
             internal string Name;

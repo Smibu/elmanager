@@ -7,11 +7,11 @@ namespace Elmanager.Forms
 {
     public partial class NewVersionForm : Form
     {
-        private readonly UpdateInfo updateInfo;
+        private readonly UpdateInfo _updateInfo;
 
         public NewVersionForm(UpdateInfo info)
         {
-            updateInfo = info;
+            _updateInfo = info;
             InitializeComponent();
         }
 
@@ -25,7 +25,7 @@ namespace Elmanager.Forms
             downloadButton.Text = "Downloading...";
             downloadButton.Enabled = false;
             downloadButton.Refresh();
-            Utils.DownloadAndOpenFile(updateInfo.Link, Application.StartupPath + "\\Elmanager.zip");
+            Utils.DownloadAndOpenFile(_updateInfo.Link, Application.StartupPath + "\\Elmanager.zip");
             Environment.Exit(0);
         }
 

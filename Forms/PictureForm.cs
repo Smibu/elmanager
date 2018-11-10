@@ -9,7 +9,7 @@ namespace Elmanager.Forms
 {
     partial class PictureForm
     {
-        private const string _multipleValues = "<multiple>";
+        private const string MultipleValues = "<multiple>";
         internal Level.ClippingType Clipping;
         internal int Distance;
         internal Lgr.LgrImage Mask;
@@ -19,16 +19,16 @@ namespace Elmanager.Forms
         internal bool TextureSelected;
         private Lgr _currentLgr;
         private bool _autoTextureMode;
-        private readonly float dpiX;
-        private readonly float dpiY;
+        private readonly float _dpiX;
+        private readonly float _dpiY;
 
         internal PictureForm(Lgr currentLgr)
         {
             InitializeComponent();
             UpdateLgr(currentLgr);
             var graphics = CreateGraphics();
-            dpiX = graphics.DpiX / 96;
-            dpiY = graphics.DpiY / 96;
+            _dpiX = graphics.DpiX / 96;
+            _dpiY = graphics.DpiY / 96;
             graphics.Dispose();
         }
 
@@ -71,7 +71,7 @@ namespace Elmanager.Forms
 
         internal int IterationCount => iterationsTextBox.Value;
 
-        internal int MinHeight => (int)((AutoTextureMode ? 293 : 185) * dpiY);
+        internal int MinHeight => (int)((AutoTextureMode ? 293 : 185) * _dpiY);
 
         internal bool AllowMultiple { get; set; }
 
@@ -79,22 +79,22 @@ namespace Elmanager.Forms
 
         internal bool MultiplePicturesSelected
         {
-            get { return PictureComboBox.SelectedItem.ToString() == _multipleValues; }
+            get { return PictureComboBox.SelectedItem.ToString() == MultipleValues; }
         }
 
         internal bool MultipleTexturesSelected
         {
-            get { return TextureComboBox.SelectedItem.ToString() == _multipleValues; }
+            get { return TextureComboBox.SelectedItem.ToString() == MultipleValues; }
         }
 
         internal bool MultipleMaskSelected
         {
-            get { return MaskComboBox.SelectedItem.ToString() == _multipleValues; }
+            get { return MaskComboBox.SelectedItem.ToString() == MultipleValues; }
         }
 
         internal bool MultipleDistanceSelected
         {
-            get { return DistanceBox.Text == _multipleValues; }
+            get { return DistanceBox.Text == MultipleValues; }
         }
 
         internal bool MultipleClippingSelected
@@ -103,7 +103,7 @@ namespace Elmanager.Forms
             {
                 if (ClippingComboBox.SelectedItem == null)
                     return false;
-                return ClippingComboBox.SelectedItem.ToString() == _multipleValues;
+                return ClippingComboBox.SelectedItem.ToString() == MultipleValues;
             }
         }
 
@@ -148,7 +148,7 @@ namespace Elmanager.Forms
             }
             foreach (var c in new[] { MaskComboBox, PictureComboBox, TextureComboBox, ClippingComboBox })
             {
-                c.Items.Add(_multipleValues);
+                c.Items.Add(MultipleValues);
             }
             if (MaskItemCount > 1)
                 MaskComboBox.SelectedIndex = 1;
@@ -185,7 +185,7 @@ namespace Elmanager.Forms
             {
                 return false;
             }
-            return c.SelectedItem.ToString() == _multipleValues;
+            return c.SelectedItem.ToString() == MultipleValues;
         }
 
         internal void SelectElement(Level.Picture picture)
@@ -216,7 +216,7 @@ namespace Elmanager.Forms
                 }
                 else
                 {
-                    PictureComboBox.SelectedItem = _multipleValues;
+                    PictureComboBox.SelectedItem = MultipleValues;
                 }
             }
             else if (pictures.TrueForAll(p => !p.IsPicture))
@@ -228,7 +228,7 @@ namespace Elmanager.Forms
                 }
                 else
                 {
-                    TextureComboBox.SelectedItem = _multipleValues;
+                    TextureComboBox.SelectedItem = MultipleValues;
                 }
 
                 if (pictures.TrueForAll(p => p.Name == pictures[0].Name))
@@ -237,14 +237,14 @@ namespace Elmanager.Forms
                 }
                 else
                 {
-                    TextureComboBox.SelectedItem = _multipleValues;
+                    TextureComboBox.SelectedItem = MultipleValues;
                 }
             }
             else
             {
-                PictureComboBox.SelectedItem = _multipleValues;
-                TextureComboBox.SelectedItem = _multipleValues;
-                MaskComboBox.SelectedItem = _multipleValues;
+                PictureComboBox.SelectedItem = MultipleValues;
+                TextureComboBox.SelectedItem = MultipleValues;
+                MaskComboBox.SelectedItem = MultipleValues;
                 PictureButton.Checked = false;
                 TextureButton.Checked = false;
             }
@@ -255,7 +255,7 @@ namespace Elmanager.Forms
             }
             else
             {
-                DistanceBox.Text = _multipleValues;
+                DistanceBox.Text = MultipleValues;
             }
 
             if (pictures.TrueForAll(p => p.Clipping == pictures[0].Clipping))
@@ -264,7 +264,7 @@ namespace Elmanager.Forms
             }
             else
             {
-                ClippingComboBox.SelectedItem = _multipleValues;
+                ClippingComboBox.SelectedItem = MultipleValues;
             }
         }
 
