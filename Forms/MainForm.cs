@@ -48,12 +48,6 @@ namespace Elmanager.Forms
 
         private void StartUp(object sender, EventArgs e)
         {
-            IntPtr z = Marshal.AllocHGlobal(Resources.Arial_Rounded_MT.Length);
-            Marshal.Copy(Resources.Arial_Rounded_MT, 0, z, Resources.Arial_Rounded_MT.Length);
-            Global.ElmaFonts.AddMemoryFont(z, Resources.Arial_Rounded_MT.Length);
-            Marshal.FreeHGlobal(z);
-            Font elmaFont = new Font(Global.ElmaFonts.Families[0], 36, FontStyle.Bold);
-            titleLabel.Font = elmaFont;
         }
 
         private void LinkLabel1LinkClicked(object sender, LinkLabelLinkClickedEventArgs e)

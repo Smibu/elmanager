@@ -2,7 +2,6 @@ using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Diagnostics;
-using System.Drawing.Text;
 using System.IO;
 using System.IO.Compression;
 using System.Reflection;
@@ -17,7 +16,6 @@ namespace Elmanager
 {
     public static class Global
     {
-        internal static readonly PrivateFontCollection ElmaFonts = new PrivateFontCollection();
         internal static ElmanagerSettings AppSettings; //TODO Settings should not be global
         internal static DateTime BuildDate;
         internal static Level[] Internals;
