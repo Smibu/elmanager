@@ -384,18 +384,6 @@ namespace Elmanager.Forms
                     .Any(x => x.IsMulti || !x.LevelFilename.CompareWith(firstReplay.LevelFilename));
         }
 
-        private void K10XnetToolStripMenuItemClick(object sender, EventArgs e)
-        {
-            if (RList.SelectedObjects.Count > 0)
-            {
-                string replayFile = GetSelectedReplay().Path;
-                UploadForm u = new UploadForm();
-                u.UploadTok10X(replayFile);
-            }
-            else
-                Utils.ShowError(NoReplaysSelected);
-        }
-
         private void MergeReplays(object sender, EventArgs e)
         {
             if (RList.SelectedObjects.Count == 2)
@@ -1018,18 +1006,6 @@ namespace Elmanager.Forms
                 Utils.ShowError(
                     "The replay database contains replays that have been deleted or moved. It is recommended to update the database.",
                     "Warning", MessageBoxIcon.Exclamation);
-        }
-
-        private void UploadToZworqyToolStripMenuItemClick(object sender, EventArgs e)
-        {
-            if (RList.SelectedObjects.Count > 0)
-            {
-                string replayFile = GetSelectedReplay().Path;
-                UploadForm u = new UploadForm();
-                u.UploadToZworqy(replayFile);
-            }
-            else
-                Utils.ShowError(NoReplaysSelected);
         }
 
         private struct ReplaysByLevel

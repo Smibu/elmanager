@@ -45,9 +45,6 @@ namespace Elmanager.Forms
             this.MergeToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.SaveListToTextFileToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.DeleteToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.uploadToZworqyToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.zworqyToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.k10xnetToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.SearchButton = new System.Windows.Forms.Button();
             this.PatternLabel = new System.Windows.Forms.Label();
             this.PatternBox = new System.Windows.Forms.TextBox();
@@ -172,10 +169,9 @@ namespace Elmanager.Forms
             this.OpenViewerMenuItem,
             this.MergeToolStripMenuItem,
             this.SaveListToTextFileToolStripMenuItem,
-            this.DeleteToolStripMenuItem,
-            this.uploadToZworqyToolStripMenuItem});
+            this.DeleteToolStripMenuItem});
             this.ContextMenuStrip1.Name = "ContextMenuStrip1";
-            this.ContextMenuStrip1.Size = new System.Drawing.Size(357, 508);
+            this.ContextMenuStrip1.Size = new System.Drawing.Size(357, 472);
             // 
             // SelectAllToolStripMenuItem
             // 
@@ -280,29 +276,6 @@ namespace Elmanager.Forms
             this.DeleteToolStripMenuItem.Size = new System.Drawing.Size(356, 36);
             this.DeleteToolStripMenuItem.Text = "Delete";
             this.DeleteToolStripMenuItem.Click += new System.EventHandler(this.DeleteReplays);
-            // 
-            // uploadToZworqyToolStripMenuItem
-            // 
-            this.uploadToZworqyToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
-            this.zworqyToolStripMenuItem,
-            this.k10xnetToolStripMenuItem});
-            this.uploadToZworqyToolStripMenuItem.Name = "uploadToZworqyToolStripMenuItem";
-            this.uploadToZworqyToolStripMenuItem.Size = new System.Drawing.Size(356, 36);
-            this.uploadToZworqyToolStripMenuItem.Text = "Upload to";
-            // 
-            // zworqyToolStripMenuItem
-            // 
-            this.zworqyToolStripMenuItem.Name = "zworqyToolStripMenuItem";
-            this.zworqyToolStripMenuItem.Size = new System.Drawing.Size(365, 38);
-            this.zworqyToolStripMenuItem.Text = "zworqy.com/up";
-            this.zworqyToolStripMenuItem.Click += new System.EventHandler(this.UploadToZworqyToolStripMenuItemClick);
-            // 
-            // k10xnetToolStripMenuItem
-            // 
-            this.k10xnetToolStripMenuItem.Name = "k10xnetToolStripMenuItem";
-            this.k10xnetToolStripMenuItem.Size = new System.Drawing.Size(365, 38);
-            this.k10xnetToolStripMenuItem.Text = "www.jappe2.net/upload";
-            this.k10xnetToolStripMenuItem.Click += new System.EventHandler(this.K10XnetToolStripMenuItemClick);
             // 
             // SearchButton
             // 
@@ -1537,9 +1510,6 @@ namespace Elmanager.Forms
         private TriSelect finishedSelect;
         private TriSelect fastestSlowestSelect;
         private TriSelect elmaAcrossSelect;
-        private ToolStripMenuItem uploadToZworqyToolStripMenuItem;
-        private ToolStripMenuItem zworqyToolStripMenuItem;
-        private ToolStripMenuItem k10xnetToolStripMenuItem;
         private ToolTip toolTip1;
         private TableLayoutPanel tableLayoutPanel1;
         private Panel panel1;
