@@ -4,6 +4,7 @@ using System.Collections.ObjectModel;
 using System.Diagnostics;
 using System.IO;
 using System.IO.Compression;
+using System.Net;
 using System.Reflection;
 using System.Runtime.Serialization.Formatters.Binary;
 using System.Threading;
@@ -35,6 +36,7 @@ namespace Elmanager
         [STAThread]
         static void Main(string[] args)
         {
+            ServicePointManager.SecurityProtocol = (SecurityProtocolType)3072; // use TLS 1.2; required for GitLab https downloads to work
             Version = BuildDate;
             Debug.Listeners.Add(new TextWriterTraceListener(Console.Out));
             Debug.AutoFlush = true;
