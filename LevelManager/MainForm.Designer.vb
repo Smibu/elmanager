@@ -524,7 +524,7 @@ Partial Class MainForm
         'ListBox2
         '
         Me.ListBox2.FormattingEnabled = True
-        Me.ListBox2.Items.AddRange(New Object() {"Ground polygons: 1-10000", "Grass polygons: 0-10000", "Ground vertices: 3-10000", "Grass vertices: 0-10000", "Apples: 0-10000", "Gravity up apples: 0-10000", "Gravity down apples: 0-10000", "Gravity left apples: 0-10000", "Gravity right apples: 0-10000", "Killers: 0-10000", "Flowers: 1-10000", "Pictures: 0-10000", "Textures: 0-10000", "Times in singleplayer top 10: 0-10", "Times in multiplayer top 10: 0-10"})
+        Me.ListBox2.Items.AddRange(New Object() {"Ground polygons: 1-10000", "Grass polygons: 0-10000", "Ground vertices: 3-10000", "Grass vertices: 0-10000", "Apples: 0-10000", "Gravity up apples: 0-10000", "Gravity down apples: 0-10000", "Gravity left apples: 0-10000", "Gravity right apples: 0-10000", "Killers: 0-10000", "Flowers: 0-10000", "Pictures: 0-10000", "Textures: 0-10000", "Times in singleplayer top 10: 0-10", "Times in multiplayer top 10: 0-10"})
         Me.ListBox2.Location = New System.Drawing.Point(9, 252)
         Me.ListBox2.Name = "ListBox2"
         Me.ListBox2.Size = New System.Drawing.Size(208, 108)

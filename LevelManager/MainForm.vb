@@ -103,7 +103,7 @@
         My.Settings.Save()
     End Sub
     Sub ResetBounds(ByVal sender As System.Object, ByVal e As System.EventArgs) Handles Me.Shown, ResetButton.Click
-        SearchAmountsLow = New Integer() {1, 0, 3, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0}
+        SearchAmountsLow = New Integer() {1, 0, 3, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0}
         SearchAmountsHigh = New Integer() {10000, 10000, 10000, 10000, 10000, 10000, 10000, 10000, 10000, 10000, 10000, 10000, 10000, 10, 10}
         ChangeEventDisabled = True
         If sender.Equals(ResetButton) Then
