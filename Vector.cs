@@ -75,7 +75,7 @@ namespace Elmanager
 
         public override bool Equals(object obj)
         {
-            if (ReferenceEquals(null, obj)) return false;
+            if (obj is null) return false;
             if (ReferenceEquals(this, obj)) return true;
             if (obj.GetType() != GetType()) return false;
             return Equals((Vector) obj);
@@ -83,6 +83,7 @@ namespace Elmanager
 
         protected bool Equals(Vector p)
         {
+            if (p is null) return false;
             return X.Equals(p.X) && Y.Equals(p.Y);
         }
 

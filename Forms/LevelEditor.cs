@@ -68,6 +68,7 @@ namespace Elmanager.Forms
         private Vector _savedStartPosition;
         private float _dpiX;
         private float _dpiY;
+        private Vector _contextMenuClickPosition;
 
         internal LevelEditor(string levPath)
         {
@@ -2362,6 +2363,20 @@ namespace Elmanager.Forms
             Lev.MirrorSelected(Level.MirrorOption.Vertical);
             Modified = true;
             Renderer.RedrawScene();
+        }
+
+        private void MoveStartHereToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            var s = Lev.Objects.Find(o => o.Type == Level.ObjectType.Start);
+            if (s != null && _contextMenuClickPosition != null)
+            {
+                s.Position = _contextMenuClickPosition;
+            }
+        }
+
+        private void EditorMenuStrip_Opening(object sender, CancelEventArgs e)
+        {
+            _contextMenuClickPosition = GetMouseCoordinatesFixed();
         }
     }
 }

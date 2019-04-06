@@ -61,8 +61,14 @@ namespace Elmanager.Forms
             this.copyAndSnapToGridMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.MirrorHorizontallyToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.MirrorVerticallyToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.DeleteSelectedMenuItem = new Elmanager.CustomControls.ToolStripMenuItemMod();
             this.toolStripSeparator14 = new System.Windows.Forms.ToolStripSeparator();
+            this.unionToolStripMenuItem = new Elmanager.CustomControls.ToolStripMenuItemMod();
+            this.differenceToolStripMenuItem = new Elmanager.CustomControls.ToolStripMenuItemMod();
+            this.intersectionToolStripMenuItem = new Elmanager.CustomControls.ToolStripMenuItemMod();
+            this.symmetricDifferenceToolStripMenuItem = new Elmanager.CustomControls.ToolStripMenuItemMod();
             this.toolStripSeparator15 = new System.Windows.Forms.ToolStripSeparator();
+            this.texturizeMenuItem = new Elmanager.CustomControls.ToolStripMenuItemMod();
             this.SelectionFilterToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.EnableAllToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.DisableAllToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
@@ -160,6 +166,7 @@ namespace Elmanager.Forms
             this.picturesConvertItem = new System.Windows.Forms.ToolStripMenuItem();
             this.saveStartPositionToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.restoreStartPositionToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.moveStartHereToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.saveAsPictureDialog = new System.Windows.Forms.SaveFileDialog();
             this.importFileDialog = new System.Windows.Forms.OpenFileDialog();
             this.ToolPanel = new Elmanager.CustomControls.PanelMod();
@@ -177,12 +184,6 @@ namespace Elmanager.Forms
             this.DrawButton = new Elmanager.CustomControls.RadioButtonMod();
             this.VertexButton = new Elmanager.CustomControls.RadioButtonMod();
             this.SelectButton = new Elmanager.CustomControls.RadioButtonMod();
-            this.DeleteSelectedMenuItem = new Elmanager.CustomControls.ToolStripMenuItemMod();
-            this.unionToolStripMenuItem = new Elmanager.CustomControls.ToolStripMenuItemMod();
-            this.differenceToolStripMenuItem = new Elmanager.CustomControls.ToolStripMenuItemMod();
-            this.intersectionToolStripMenuItem = new Elmanager.CustomControls.ToolStripMenuItemMod();
-            this.symmetricDifferenceToolStripMenuItem = new Elmanager.CustomControls.ToolStripMenuItemMod();
-            this.texturizeMenuItem = new Elmanager.CustomControls.ToolStripMenuItemMod();
             this.MenuStrip1.SuspendLayout();
             this.StatusStrip1.SuspendLayout();
             this.ToolStripPanel1.SuspendLayout();
@@ -471,15 +472,64 @@ namespace Elmanager.Forms
             this.MirrorVerticallyToolStripMenuItem.Text = "Mirror vertically";
             this.MirrorVerticallyToolStripMenuItem.Click += new System.EventHandler(this.MirrorVerticallyToolStripMenuItem_Click);
             // 
+            // DeleteSelectedMenuItem
+            // 
+            this.DeleteSelectedMenuItem.Image = global::My.Resources.Resources.Delete;
+            this.DeleteSelectedMenuItem.Name = "DeleteSelectedMenuItem";
+            this.DeleteSelectedMenuItem.ShortcutText = "Del";
+            this.DeleteSelectedMenuItem.Size = new System.Drawing.Size(452, 38);
+            this.DeleteSelectedMenuItem.Text = "Delete";
+            this.DeleteSelectedMenuItem.Click += new System.EventHandler(this.DeleteSelected);
+            // 
             // toolStripSeparator14
             // 
             this.toolStripSeparator14.Name = "toolStripSeparator14";
             this.toolStripSeparator14.Size = new System.Drawing.Size(449, 6);
             // 
+            // unionToolStripMenuItem
+            // 
+            this.unionToolStripMenuItem.Name = "unionToolStripMenuItem";
+            this.unionToolStripMenuItem.ShortcutText = ",";
+            this.unionToolStripMenuItem.Size = new System.Drawing.Size(452, 38);
+            this.unionToolStripMenuItem.Text = "Union";
+            this.unionToolStripMenuItem.Click += new System.EventHandler(this.unionToolStripMenuItem_Click);
+            // 
+            // differenceToolStripMenuItem
+            // 
+            this.differenceToolStripMenuItem.Name = "differenceToolStripMenuItem";
+            this.differenceToolStripMenuItem.ShortcutText = ".";
+            this.differenceToolStripMenuItem.Size = new System.Drawing.Size(452, 38);
+            this.differenceToolStripMenuItem.Text = "Difference";
+            this.differenceToolStripMenuItem.Click += new System.EventHandler(this.differenceToolStripMenuItem_Click);
+            // 
+            // intersectionToolStripMenuItem
+            // 
+            this.intersectionToolStripMenuItem.Name = "intersectionToolStripMenuItem";
+            this.intersectionToolStripMenuItem.ShortcutText = "Enter";
+            this.intersectionToolStripMenuItem.Size = new System.Drawing.Size(452, 38);
+            this.intersectionToolStripMenuItem.Text = "Intersection";
+            this.intersectionToolStripMenuItem.Click += new System.EventHandler(this.intersectionToolStripMenuItem_Click);
+            // 
+            // symmetricDifferenceToolStripMenuItem
+            // 
+            this.symmetricDifferenceToolStripMenuItem.Name = "symmetricDifferenceToolStripMenuItem";
+            this.symmetricDifferenceToolStripMenuItem.ShortcutText = "\'";
+            this.symmetricDifferenceToolStripMenuItem.Size = new System.Drawing.Size(452, 38);
+            this.symmetricDifferenceToolStripMenuItem.Text = "Symmetric difference";
+            this.symmetricDifferenceToolStripMenuItem.Click += new System.EventHandler(this.symmetricDifferenceToolStripMenuItem_Click);
+            // 
             // toolStripSeparator15
             // 
             this.toolStripSeparator15.Name = "toolStripSeparator15";
             this.toolStripSeparator15.Size = new System.Drawing.Size(449, 6);
+            // 
+            // texturizeMenuItem
+            // 
+            this.texturizeMenuItem.Name = "texturizeMenuItem";
+            this.texturizeMenuItem.ShortcutText = "§";
+            this.texturizeMenuItem.Size = new System.Drawing.Size(452, 38);
+            this.texturizeMenuItem.Text = "Texturize";
+            this.texturizeMenuItem.Click += new System.EventHandler(this.texturizeMenuItem_Click);
             // 
             // SelectionFilterToolStripMenuItem
             // 
@@ -1261,9 +1311,11 @@ namespace Elmanager.Forms
             this.sendToBackToolStripMenuItem,
             this.convertToToolStripMenuItem,
             this.saveStartPositionToolStripMenuItem,
-            this.restoreStartPositionToolStripMenuItem});
+            this.restoreStartPositionToolStripMenuItem,
+            this.moveStartHereToolStripMenuItem});
             this.EditorMenuStrip.Name = "SelectedMenuStrip";
-            this.EditorMenuStrip.Size = new System.Drawing.Size(316, 574);
+            this.EditorMenuStrip.Size = new System.Drawing.Size(316, 656);
+            this.EditorMenuStrip.Opening += new System.ComponentModel.CancelEventHandler(this.EditorMenuStrip_Opening);
             // 
             // CopyMenuItem
             // 
@@ -1408,6 +1460,13 @@ namespace Elmanager.Forms
             this.restoreStartPositionToolStripMenuItem.Size = new System.Drawing.Size(315, 38);
             this.restoreStartPositionToolStripMenuItem.Text = "Restore start position";
             this.restoreStartPositionToolStripMenuItem.Click += new System.EventHandler(this.restoreStartPositionToolStripMenuItem_Click);
+            // 
+            // moveStartHereToolStripMenuItem
+            // 
+            this.moveStartHereToolStripMenuItem.Name = "moveStartHereToolStripMenuItem";
+            this.moveStartHereToolStripMenuItem.Size = new System.Drawing.Size(315, 38);
+            this.moveStartHereToolStripMenuItem.Text = "Move start here";
+            this.moveStartHereToolStripMenuItem.Click += new System.EventHandler(this.MoveStartHereToolStripMenuItem_Click);
             // 
             // saveAsPictureDialog
             // 
@@ -1645,55 +1704,6 @@ namespace Elmanager.Forms
             this.SelectButton.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
             this.SelectButton.UseVisualStyleBackColor = true;
             // 
-            // DeleteSelectedMenuItem
-            // 
-            this.DeleteSelectedMenuItem.Image = global::My.Resources.Resources.Delete;
-            this.DeleteSelectedMenuItem.Name = "DeleteSelectedMenuItem";
-            this.DeleteSelectedMenuItem.ShortcutText = "Del";
-            this.DeleteSelectedMenuItem.Size = new System.Drawing.Size(452, 38);
-            this.DeleteSelectedMenuItem.Text = "Delete";
-            this.DeleteSelectedMenuItem.Click += new System.EventHandler(this.DeleteSelected);
-            // 
-            // unionToolStripMenuItem
-            // 
-            this.unionToolStripMenuItem.Name = "unionToolStripMenuItem";
-            this.unionToolStripMenuItem.ShortcutText = ",";
-            this.unionToolStripMenuItem.Size = new System.Drawing.Size(452, 38);
-            this.unionToolStripMenuItem.Text = "Union";
-            this.unionToolStripMenuItem.Click += new System.EventHandler(this.unionToolStripMenuItem_Click);
-            // 
-            // differenceToolStripMenuItem
-            // 
-            this.differenceToolStripMenuItem.Name = "differenceToolStripMenuItem";
-            this.differenceToolStripMenuItem.ShortcutText = ".";
-            this.differenceToolStripMenuItem.Size = new System.Drawing.Size(452, 38);
-            this.differenceToolStripMenuItem.Text = "Difference";
-            this.differenceToolStripMenuItem.Click += new System.EventHandler(this.differenceToolStripMenuItem_Click);
-            // 
-            // intersectionToolStripMenuItem
-            // 
-            this.intersectionToolStripMenuItem.Name = "intersectionToolStripMenuItem";
-            this.intersectionToolStripMenuItem.ShortcutText = "Enter";
-            this.intersectionToolStripMenuItem.Size = new System.Drawing.Size(452, 38);
-            this.intersectionToolStripMenuItem.Text = "Intersection";
-            this.intersectionToolStripMenuItem.Click += new System.EventHandler(this.intersectionToolStripMenuItem_Click);
-            // 
-            // symmetricDifferenceToolStripMenuItem
-            // 
-            this.symmetricDifferenceToolStripMenuItem.Name = "symmetricDifferenceToolStripMenuItem";
-            this.symmetricDifferenceToolStripMenuItem.ShortcutText = "\'";
-            this.symmetricDifferenceToolStripMenuItem.Size = new System.Drawing.Size(452, 38);
-            this.symmetricDifferenceToolStripMenuItem.Text = "Symmetric difference";
-            this.symmetricDifferenceToolStripMenuItem.Click += new System.EventHandler(this.symmetricDifferenceToolStripMenuItem_Click);
-            // 
-            // texturizeMenuItem
-            // 
-            this.texturizeMenuItem.Name = "texturizeMenuItem";
-            this.texturizeMenuItem.ShortcutText = "§";
-            this.texturizeMenuItem.Size = new System.Drawing.Size(452, 38);
-            this.texturizeMenuItem.Text = "Texturize";
-            this.texturizeMenuItem.Click += new System.EventHandler(this.texturizeMenuItem_Click);
-            // 
             // LevelEditor
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(12F, 25F);
@@ -1884,6 +1894,7 @@ namespace Elmanager.Forms
         private ToolStripMenuItem saveStartPositionToolStripMenuItem;
         private ToolStripMenuItem restoreStartPositionToolStripMenuItem;
         internal ToolStripMenuItem MirrorVerticallyToolStripMenuItem;
+        private ToolStripMenuItem moveStartHereToolStripMenuItem;
     }
 	
 }
