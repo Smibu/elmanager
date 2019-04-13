@@ -21,6 +21,7 @@ namespace Elmanager.Forms
         private bool _autoTextureMode;
         private readonly float _dpiX;
         private readonly float _dpiY;
+        private static HashSet<string> _knownMaskNames = new HashSet<string> {"maskbig", "maskhor", "masklitt"};
 
         internal PictureForm(Lgr currentLgr)
         {
@@ -120,7 +121,7 @@ namespace Elmanager.Forms
                 {
                     case Lgr.ImageType.Mask:
                         MaskComboBox.Items.Add(x.Name);
-                        maskListBox.Items.Add(x.Name, true);
+                        maskListBox.Items.Add(x.Name, _knownMaskNames.Contains(x.Name));
                         break;
                     case Lgr.ImageType.Picture:
                         PictureComboBox.Items.Add(x.Name);
@@ -464,6 +465,14 @@ namespace Elmanager.Forms
             {
                 DistanceBox.Text = element.Distance.ToString();
                 ClippingComboBox.SelectedIndex = (int) element.ClippingType;
+            }
+        }
+
+        private void MaskListBox_ItemCheck(object sender, ItemCheckEventArgs e)
+        {
+            if (e.NewValue == CheckState.Checked && !_knownMaskNames.Contains(maskListBox.Items[e.Index]))
+            {
+                Utils.ShowError("Custom masks may not work accurately with texturization, but you can still try to use them.", "Warning", MessageBoxIcon.Exclamation);
             }
         }
     }

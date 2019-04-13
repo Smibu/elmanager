@@ -2173,7 +2173,7 @@ namespace Elmanager
                         case "maskbig":
                             return 0.092;
                         default:
-                            throw new Exception("Unknown mask.");
+                            return 0.092;
                     }
                 }
             }
@@ -2191,7 +2191,7 @@ namespace Elmanager
                         case "maskbig":
                             return 0.112;
                         default:
-                            throw new Exception("Unknown mask.");
+                            return 0.112;
                     }
                 }
             }

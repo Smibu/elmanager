@@ -207,6 +207,7 @@
             this.maskListBox.Name = "maskListBox";
             this.maskListBox.Size = new System.Drawing.Size(121, 49);
             this.maskListBox.TabIndex = 11;
+            this.maskListBox.ItemCheck += new System.Windows.Forms.ItemCheckEventHandler(this.MaskListBox_ItemCheck);
             // 
             // masksLabel
             // 
