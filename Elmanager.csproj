@@ -465,7 +465,6 @@
     <None Include="changelog.md" />
     <None Include="OpenTK.dll.config" />
     <None Include="packages.config" />
-    <None Include="Resources\Arial_Rounded_MT.ttf" />
     <None Include="Resources\IntComp.dat" />
     <None Include="Resources\IntRes.dat" />
     <None Include="Vectrast\LICENSE" />
