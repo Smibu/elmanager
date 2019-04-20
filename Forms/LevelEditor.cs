@@ -2371,6 +2371,7 @@ namespace Elmanager.Forms
             if (s != null && _contextMenuClickPosition != null)
             {
                 s.Position = _contextMenuClickPosition;
+                Modified = true;
             }
         }
 
