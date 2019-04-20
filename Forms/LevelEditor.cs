@@ -1324,6 +1324,7 @@ namespace Elmanager.Forms
 
             CurrentTool.MouseMove(GetMouseCoordinatesFixed());
             Renderer.RedrawScene();
+            StatusStrip1.Refresh();
         }
 
         private void MouseUpEvent(object sender, MouseEventArgs e)
