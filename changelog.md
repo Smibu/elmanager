@@ -1,5 +1,13 @@
 # Elmanager changelog
 
+## 20.4.2019
+* Replay upload functions (to zworqy and Jappe2) have been removed because the upload functions no longer exist.
+* LM: Default lower bound for flowers is now 0 (instead of 1).
+* SLE: Added "Move start here" context menu option.
+* Bugfix: New version download was not working because of [GitLab removing support of older TLS](https://about.gitlab.com/2018/10/15/gitlab-to-deprecate-older-tls/).
+* SLE: Bugfix: Texturization tool crashed on custom masks. It now gives a warning about them not being totally supported but still allows them to be used.
+* SLE: Bugfix: Status bar texts were not being updated during mouse movement. (They were updated only after mouse stopped moving.)
+
 ## 10.11.2018
 * SLE: Bugfix: Topology check did not detect too short edges.
 
