@@ -16,6 +16,7 @@ using Microsoft;
 using NetTopologySuite.Geometries;
 using SharpVectors.Converters;
 using SharpVectors.Renderers.Wpf;
+using SvgNet.SvgGdi;
 using Color = System.Drawing.Color;
 using Cursor = System.Windows.Forms.Cursor;
 using Cursors = System.Windows.Forms.Cursors;
@@ -2140,7 +2141,48 @@ namespace Elmanager.Forms
         {
             saveAsPictureDialog.FileName = Lev.FileNameWithoutExtension ?? "Untitled";
             if (saveAsPictureDialog.ShowDialog() == DialogResult.OK)
-                Renderer.SaveSnapShot(saveAsPictureDialog.FileName);
+            {
+                if (saveAsPictureDialog.FilterIndex == 0)
+                {
+                    Renderer.SaveSnapShot(saveAsPictureDialog.FileName);
+                }
+                else
+                {
+                    var g = new SvgGraphics(Color.LightGray);
+                    var pen = Pens.Black;
+                    const int scale = 10;
+                    var m = Matrix.CreateTranslation(-Lev.XMin + 1, -Lev.YMin + 1) * Matrix.CreateScaling(scale, scale);
+                    var objOffset = new Vector(-0.4, -0.4);
+                    const float oSize = (float)0.8 * scale;
+                    Lev.Polygons.ForEach(p => g.DrawPolygon(pen, p
+                        .ApplyTransformation(m)
+                        .Vertices.Select(v => new PointF((float)v.X, (float)v.Y)).ToArray()));
+                    Lev.Objects.ForEach(o =>
+                    {
+                        var pos = (o.Position + objOffset) * m;
+                        switch (o.Type)
+                        {
+                            case Level.ObjectType.Flower:
+                                g.DrawEllipse(Pens.White, (float)pos.X, (float)pos.Y, oSize, oSize);
+                                break;
+                            case Level.ObjectType.Apple:
+                                g.DrawEllipse(Pens.Red, (float)pos.X, (float)pos.Y, oSize, oSize);
+                                break;
+                            case Level.ObjectType.Killer:
+                                g.DrawEllipse(Pens.Brown, (float)pos.X, (float)pos.Y, oSize, oSize);
+                                break;
+                            case Level.ObjectType.Start:
+                                g.DrawEllipse(Pens.Blue, (float)pos.X, (float)pos.Y, oSize, oSize);
+                                break;
+                            default:
+                                throw new ArgumentOutOfRangeException();
+                        }
+                    });
+
+                    var svgBody = g.WriteSVGString();
+                    File.WriteAllText(saveAsPictureDialog.FileName, svgBody);
+                }
+            }
         }
 
         private void ConvertClicked(object sender, EventArgs e)

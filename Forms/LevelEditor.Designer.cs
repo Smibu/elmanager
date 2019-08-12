@@ -1472,7 +1472,7 @@ namespace Elmanager.Forms
             // 
             this.saveAsPictureDialog.DefaultExt = "png";
             this.saveAsPictureDialog.FileName = "Untitled";
-            this.saveAsPictureDialog.Filter = "Portable Network Graphics (*.png)|*.png";
+            this.saveAsPictureDialog.Filter = "Portable Network Graphics (*.png)|*.png|Scalable Vector Graphics (*.svg)|*.svg";
             // 
             // importFileDialog
             // 
