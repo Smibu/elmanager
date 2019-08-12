@@ -13,6 +13,10 @@ using Elmanager.CustomControls;
 using Elmanager.EditorTools;
 using GeoAPI.Geometries;
 using Microsoft;
+using NetTopologySuite.Geometries;
+using SharpVectors.Converters;
+using SharpVectors.Renderers.Wpf;
+using Color = System.Drawing.Color;
 using Cursor = System.Windows.Forms.Cursor;
 using Cursors = System.Windows.Forms.Cursors;
 using KeyEventArgs = System.Windows.Forms.KeyEventArgs;
@@ -69,6 +73,7 @@ namespace Elmanager.Forms
         private float _dpiX;
         private float _dpiY;
         private Vector _contextMenuClickPosition;
+        private SvgImportOptions _svgImportOptions = SvgImportOptions.Default;
 
         internal LevelEditor(string levPath)
         {
@@ -2049,7 +2054,7 @@ namespace Elmanager.Forms
                 importFileDialog.FileNames.ToList().ForEach(file =>
                 {
                     Level lev;
-                    if (file.EndsWith(".lev", StringComparison.InvariantCultureIgnoreCase))
+                    if (file.EndsWith(".lev"))
                     {
                         lev = new Level();
                         try
@@ -2065,6 +2070,50 @@ namespace Elmanager.Forms
                         }
 
                         lev.UpdateImages(Renderer.DrawableImages);
+                    }
+                    else if (file.EndsWith(".svg") || file.EndsWith(".svgz"))
+                    {
+                        var result = SvgImportSettingsForm.ShowDefault(_svgImportOptions, file);
+                        if (!result.HasValue)
+                        {
+                            return;
+                        }
+
+                        var newOpts = result.Value;
+                        _svgImportOptions = newOpts;
+                        var settings = new WpfDrawingSettings { IncludeRuntime = false, TextAsGeometry = true, IgnoreRootViewbox = true };
+                        using (var converter = new FileSvgReader(settings))
+                        {
+                            var drawingGroup = converter.Read(file);
+                            List<Polygon> polys;
+                            try
+                            {
+                                (polys, _, _) = TextTool.BuildPolygons(
+                                    TextTool.CreateGeometry(drawingGroup, newOpts.FillRule, newOpts.Smoothness),
+                                    new Vector(),
+                                    newOpts.Smoothness, 
+                                    newOpts.UseOutlinedGeometry);
+                            }
+                            catch (PolygonException)
+                            {
+                                Utils.ShowError($"Failed to import SVG {file}. Invalid or animated SVGs are not supported.");
+                                return;
+                            }
+                            try
+                            {
+                                TextTool.FinalizePolygons(polys);
+                            }
+                            catch (TopologyException)
+                            {
+                            }
+                            catch (ArgumentException)
+                            {
+                            }
+                            var m = Matrix.CreateScaling(1 / 10.0, 1 / 10.0);
+                            polys = polys.Select(p => p.ApplyTransformation(m)).ToList();
+                            lev = new Level();
+                            lev.Polygons.AddRange(polys);
+                        }
                     }
                     else
                     {

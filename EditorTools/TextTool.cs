@@ -13,6 +13,7 @@ using NetTopologySuite.Geometries;
 using Brushes = System.Windows.Media.Brushes;
 using Color = System.Drawing.Color;
 using FlowDirection = System.Windows.FlowDirection;
+using LineSegment = System.Windows.Media.LineSegment;
 using Point = System.Windows.Point;
 
 namespace Elmanager.EditorTools
@@ -136,7 +137,6 @@ namespace Elmanager.EditorTools
                 decorations.Add(TextDecorations.Underline);
             }
 
-            var polys = new List<Polygon>();
             const double sizeFactor = 0.1;
             var formattedText = new FormattedText(options.Text, CultureInfo.InvariantCulture,
                 FlowDirection.LeftToRight, typeface, options.Font.SizeInPoints * sizeFactor, Brushes.Black)
@@ -151,77 +151,119 @@ namespace Elmanager.EditorTools
             }
 
             var smoothness = Math.Min(options.Smoothness, cached);
-            var outlinedGeometry = formattedText.BuildGeometry(new Point(0, 0))
-                .GetOutlinedPathGeometry(0.005, ToleranceType.Absolute);
-            int iterations = 0;
-            do
-            {
-                if (smoothness < 0.0001)
-                {
-                    var opt = TextToolOptions.Default;
-                    opt.Text = "Unable to render\nthis font without\ntopology errors.";
-                    return RenderString(opt, offset);
-                }
+            var geom = formattedText.BuildGeometry(new Point(0, 0));
 
-                polys.Clear();
-                var poly = outlinedGeometry.GetFlattenedPathGeometry(smoothness, ToleranceType.Absolute);
-                polys.AddRange(
-                    poly.Figures.Select(
-                        figure => new Polygon(
-                            figure.Segments
-                                .Select(segment => segment as PolyLineSegment)
-                                .SelectMany(polysegment => polysegment.Points)
-                                .Select(p => new Vector(p.X + offset.X, p.Y + offset.Y, Geometry.VectorMark.Selected))
-                        )
-                    )
-                );
-                smoothness *= 0.5;
-                ++iterations;
-            } while (polys.Any(p => p.Count < 3 || !p.IsSimple));
+            List<Polygon> polys;
+            int iterations;
+            try
+            {
+                (polys, iterations, smoothness) = BuildPolygons(geom, offset, smoothness);
+            }
+            catch (PolygonException e)
+            {
+                var opt = TextToolOptions.Default;
+                opt.Text = e.Message;
+                return RenderString(opt, offset);
+            }
 
             if (iterations > 1)
             {
                 _minSmoothnesses[options.Font] = smoothness * 2;
             }
 
-            var isects = Geometry.GetIntersectionPoints(polys);
-            if (isects.Count > 0)
+            try
             {
-                var f = GeometryFactory.Floating;
-                var iarray = polys.Select(p => p.ToIPolygon()).ToArray();
-                polys.Clear();
-                IGeometry union = f.CreateMultiPolygon(iarray);
-                try
+                FinalizePolygons(polys);
+                return polys;
+            }
+            catch (TopologyException)
+            {
+                var opt = options;
+                opt.Smoothness = smoothness;
+                _minSmoothnesses[options.Font] = smoothness;
+                return RenderString(opt, offset);
+            }
+        }
+
+        public static void FinalizePolygons(List<Polygon> polys)
+        {
+            polys.ForEach(p => p.RemoveDuplicateVertices());
+            polys.RemoveAll(p => p.Count < 3);
+            try
+            {
+                var isects = Geometry.GetIntersectionPoints(polys);
+                if (isects.Count > 0)
                 {
+                    var f = GeometryFactory.Floating;
+                    var iarray = polys.Select(p => p.ToIPolygon()).ToArray();
+
+                    IGeometry union = f.CreateMultiPolygon(iarray);
                     union = isects.Aggregate(union,
                         (current, vector) => current.Union(f.CreatePoint(vector).Buffer(0.0001, 1)));
-                }
-                catch (TopologyException)
-                {
-                    var opt = options;
-                    opt.Smoothness = smoothness;
-                    _minSmoothnesses[options.Font] = smoothness;
-                    return RenderString(opt, offset);
-                }
-
-                if (union is IPolygon polygon)
-                {
-                    polys.AddRange(polygon.ToElmaPolygons());
-                }
-                else
-                {
-                    if (union is IMultiPolygon multiPolygon)
+                    polys.Clear();
+                    switch (union)
                     {
-                        polys.AddRange(multiPolygon.Geometries.Select(geometry => geometry as IPolygon)
-                            .SelectMany(poly => poly.ToElmaPolygons()));
+                        case IPolygon polygon:
+                            polys.AddRange(polygon.ToElmaPolygons());
+                            break;
+                        case IMultiPolygon multiPolygon:
+                            polys.AddRange(multiPolygon.Geometries.Select(geometry => geometry as IPolygon)
+                                .SelectMany(poly => poly.ToElmaPolygons()));
+                            break;
                     }
+
+                    polys.ForEach(p => p.MarkVectorsAs(Geometry.VectorMark.Selected));
+                }
+            }
+            finally
+            {
+                polys.ForEach(p => p.UpdateDecomposition());
+            }
+        }
+
+        public static (List<Polygon> polys, int iterations, double smoothness) BuildPolygons(
+            System.Windows.Media.Geometry geom, Vector offset, double smoothness, bool useOutlined = true)
+        {
+            var outlinedGeometry = useOutlined ? geom.GetOutlinedPathGeometry(0.005, ToleranceType.Absolute) : geom;
+
+            var iterations = 0;
+            var polys = new List<Polygon>();
+            do
+            {
+                if (smoothness < 0.0001)
+                {
+                    throw new PolygonException("Unable to render\nwithout\ntopology errors.");
                 }
 
-                polys.ForEach(p => p.MarkVectorsAs(Geometry.VectorMark.Selected));
-            }
+                polys.Clear();
+                var poly = outlinedGeometry.GetFlattenedPathGeometry(smoothness, ToleranceType.Absolute);
+                polys.AddRange(
+                    poly.Figures
+                        .Select(
+                            figure => new Polygon(
+                                figure.Segments
+                                    .SelectMany(segment =>
+                                    {
+                                        switch (segment)
+                                        {
+                                            case PolyLineSegment s:
+                                                return s.Points.ToArray();
+                                            case LineSegment l:
+                                                return new[] {l.Point};
+                                            default:
+                                                throw new TopologyException("Segment wasn't flattened?");
+                                        }
+                                    })
+                                    .Select(p =>
+                                        new Vector(p.X + offset.X, p.Y + offset.Y, Geometry.VectorMark.Selected))
+                            )
+                        )
+                );
+                smoothness *= 0.5;
+                ++iterations;
+            } while (polys.Any(p => p.Count < 3 || false));
 
-            polys.ForEach(p => p.UpdateDecomposition());
-            return polys;
+            return (polys, iterations, smoothness);
         }
 
         private static Typeface FindTypeface(TextToolOptions options, System.Windows.Media.FontFamily fontfamily,
@@ -266,6 +308,102 @@ namespace Elmanager.EditorTools
             }
 
             return typeface;
+        }
+
+        public static System.Windows.Media.Geometry CreateGeometry(DrawingGroup drawingGroup, FillRule fillRule, double smoothness)
+        {
+            var geometry = new GeometryGroup {FillRule = fillRule};
+            foreach (var drawing in drawingGroup.Children)
+            {
+                switch (drawing)
+                {
+                    case GeometryDrawing gd:
+                        HandleGeometry(gd.Geometry, geometry, gd, smoothness);
+                        break;
+                    case GlyphRunDrawing grd:
+                        geometry.Children.Add(grd.GlyphRun.BuildGeometry());
+                        break;
+                    case DrawingGroup dg:
+                        geometry.Children.Add(CreateGeometry(dg, FillRule.EvenOdd, smoothness));
+                        break;
+                }
+            }
+
+            geometry.Transform = drawingGroup.Transform;
+            return geometry;
+        }
+
+        private static void HandleGeometry(System.Windows.Media.Geometry g, GeometryGroup geometry, GeometryDrawing gd, double smoothness)
+        {
+            switch (g)
+            {
+                case CombinedGeometry cg:
+                    geometry.Children.Add(cg);
+                    break;
+                case EllipseGeometry eg:
+                    if (gd.Pen != null)
+                    {
+                        geometry.Children.Add(eg.GetWidenedPathGeometry(gd.Pen, smoothness, ToleranceType.Absolute).GetOutlinedPathGeometry(smoothness, ToleranceType.Absolute));
+                    }
+                    else
+                    {
+                        geometry.Children.Add(eg);
+                    }
+
+                    break;
+                case GeometryGroup gg:
+                    foreach (var c in gg.Children)
+                    {
+                        HandleGeometry(c, geometry, gd, smoothness);
+                    }
+
+                    break;
+                case LineGeometry lg:
+                    geometry.Children.Add(lg.GetWidenedPathGeometry(gd.Pen, smoothness, ToleranceType.Absolute));
+                    break;
+                case PathGeometry pg:
+                    foreach (var f in pg.Figures.Where(f => f.Segments.Count == 1))
+                    {
+                        switch (f.Segments[0])
+                        {
+                            case ArcSegment arcSegment:
+                                if (gd.Pen != null)
+                                {
+                                    geometry.Children.Add(pg.GetWidenedPathGeometry(gd.Pen, smoothness, ToleranceType.Absolute));
+                                    return;
+                                }
+
+                                break;
+                            case LineSegment lineSegment:
+                                if (gd.Pen != null)
+                                {
+                                    geometry.Children.Add(pg.GetWidenedPathGeometry(gd.Pen, smoothness, ToleranceType.Absolute));
+                                    return;
+                                }
+
+                                break;
+                        }
+                    }
+
+                    geometry.Children.Add(pg);
+                    break;
+                case RectangleGeometry rg:
+                    if (gd.Pen != null)
+                    {
+                        geometry.Children.Add(rg.GetWidenedPathGeometry(gd.Pen, smoothness, ToleranceType.Absolute).GetOutlinedPathGeometry(smoothness, ToleranceType.Absolute));
+                    }
+                    else
+                    {
+                        geometry.Children.Add(rg);
+                    }
+                    break;
+                case StreamGeometry sg:
+                    geometry.Children.Add(sg);
+                    break;
+                default:
+                    geometry.Children.Add(gd.Geometry);
+                    break;
+            }
         }
 
         public void UpdateHelp()

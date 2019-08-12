@@ -1476,8 +1476,8 @@ namespace Elmanager.Forms
             // 
             // importFileDialog
             // 
-            this.importFileDialog.Filter = "Elasto Mania level or image (*.lev, *.bmp, *.png, *.gif, *.tiff, *.exif)|*.lev;*." +
-    "bmp;*.png;*.gif;*.tiff;*.exif";
+            this.importFileDialog.Filter = "Elasto Mania level or image (*.lev, *.bmp, *.png, *.gif, *.tiff, *.exif, *.svg, *.svgz)|*.lev;*." +
+    "bmp;*.png;*.gif;*.tiff;*.exif;*.svg;*.svgz";
             this.importFileDialog.Multiselect = true;
             // 
             // ToolPanel

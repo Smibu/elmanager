@@ -682,5 +682,16 @@ namespace Elmanager
             ring.Add(ring.First());
             return GeometryFactory.Floating.CreatePolygon(ring.ToArray());
         }
+
+        public void RemoveDuplicateVertices()
+        {
+            for (int i = Vertices.Count; i >= 1; i--)
+            {
+                if ((this[i] - this[i - 1]).LengthSquared < 0.0001)
+                {
+                    Vertices.RemoveAt(i % Vertices.Count);
+                }
+            }
+        }
     }
 }
