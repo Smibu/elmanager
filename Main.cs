@@ -36,7 +36,13 @@ namespace Elmanager
         [STAThread]
         static void Main(string[] args)
         {
-            ServicePointManager.SecurityProtocol = (SecurityProtocolType)3072; // use TLS 1.2; required for GitLab https downloads to work
+            try
+            {
+                ServicePointManager.SecurityProtocol = (SecurityProtocolType)3072; // use TLS 1.2; required for GitLab https downloads to work
+            }
+            catch (NotSupportedException)
+            {
+            }
             Version = BuildDate;
             Debug.Listeners.Add(new TextWriterTraceListener(Console.Out));
             Debug.AutoFlush = true;
