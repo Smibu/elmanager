@@ -71,7 +71,8 @@ namespace Elmanager.Forms
                 Font = _font,
                 FontMustExist = true,
                 ShowEffects = true,
-                MinSize = 1
+                MinSize = 1,
+                MaxSize = 100
             };
             dialog.Apply += (s, ev) =>
             {
