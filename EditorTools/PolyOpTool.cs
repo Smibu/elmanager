@@ -221,16 +221,26 @@ namespace Elmanager.EditorTools
             touching.ForEach(p => polygons.Remove(p));
             polys.ForEach(p => polygons.Remove(p));
             remaining.ForEach(p => polygons.Remove(p));
-            if (result is MultiPolygon polygon)
+            switch (result)
             {
-                foreach (var geometry in polygon.Geometries.Cast<IPolygon>().Where(p => !p.IsEmpty))
-                {
-                    polygons.AddRange(geometry.ToElmaPolygons());
-                }
-            }
-            else if (result is IPolygon polygon1 && !polygon1.IsEmpty)
-            {
-                polygons.AddRange(polygon1.ToElmaPolygons());
+                case MultiPolygon polygon:
+                    {
+                        foreach (var geometry in polygon.Geometries.Cast<IPolygon>().Where(p => !p.IsEmpty))
+                        {
+                            var newPolys = geometry.ToElmaPolygons().ToList();
+                            newPolys.ForEach(p => p.RemoveDuplicateVertices());
+                            polygons.AddRange(newPolys);
+                        }
+
+                        break;
+                    }
+                case IPolygon polygon1 when !polygon1.IsEmpty:
+                    {
+                        var newPolys = polygon1.ToElmaPolygons().ToList();
+                        newPolys.ForEach(p => p.RemoveDuplicateVertices());
+                        polygons.AddRange(newPolys);
+                        break;
+                    }
             }
 
             if (!polygons.Any())
