@@ -595,8 +595,18 @@
   </Target>
   -->
   <PropertyGroup>
-    <PostBuildEvent>
-    </PostBuildEvent>
+    <PostBuildEvent>goto :$(Configuration)
+
+:Release
+    MKDIR bin
+    MOVE /Y *.dll bin
+    MOVE /Y *.xml bin
+    DEL /F /Q /S *.pdb
+    goto :Exit
+
+:Debug
+
+:Exit</PostBuildEvent>
   </PropertyGroup>
   <PropertyGroup />
   <PropertyGroup>
