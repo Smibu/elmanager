@@ -600,8 +600,8 @@
 :Release
     MKDIR bin
     MOVE /Y *.dll bin
-    MOVE /Y *.xml bin
-    DEL /F /Q /S *.pdb
+    DEL /Q *.xml
+    DEL /Q *.pdb
     goto :Exit
 
 :Debug
