@@ -54,7 +54,7 @@
     <DebugType>full</DebugType>
     <DefineDebug>false</DefineDebug>
     <DefineTrace>false</DefineTrace>
-    <OutputPath>..\</OutputPath>
+    <OutputPath>bin\Debug\</OutputPath>
     <DocumentationFile>
     </DocumentationFile>
     <NOWARN>1591,660,661</NOWARN>
@@ -74,7 +74,7 @@
     <DefineDebug>false</DefineDebug>
     <DefineTrace>false</DefineTrace>
     <Optimize>true</Optimize>
-    <OutputPath>..\</OutputPath>
+    <OutputPath>bin\Release\</OutputPath>
     <DocumentationFile>
     </DocumentationFile>
     <NOWARN>1591,660,661</NOWARN>
