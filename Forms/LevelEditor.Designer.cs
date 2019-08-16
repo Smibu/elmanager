@@ -665,8 +665,10 @@ namespace Elmanager.Forms
             this.EditorControl.Name = "EditorControl";
             this.EditorControl.Size = new System.Drawing.Size(1690, 720);
             this.EditorControl.TabIndex = 2;
-            this.EditorControl.DragDrop += new System.Windows.Forms.DragEventHandler(this.LevelDropped);
+            this.EditorControl.DragDrop += new System.Windows.Forms.DragEventHandler(this.ItemsDropped);
             this.EditorControl.DragEnter += new System.Windows.Forms.DragEventHandler(this.StartingDrop);
+            this.EditorControl.DragOver += new System.Windows.Forms.DragEventHandler(this.EditorControl_DragOver);
+            this.EditorControl.DragLeave += new System.EventHandler(this.EditorControl_DragLeave);
             this.EditorControl.MouseDown += new System.Windows.Forms.MouseEventHandler(this.MouseDownEvent);
             this.EditorControl.MouseLeave += new System.EventHandler(this.MouseLeaveEvent);
             this.EditorControl.MouseMove += new System.Windows.Forms.MouseEventHandler(this.MouseMoveEvent);

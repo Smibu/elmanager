@@ -12,5 +12,6 @@ namespace Elmanager.EditorTools
         void ExtraRendering();
         void InActivate();
         void Activate();
+        void UpdateHelp();
     }
 }

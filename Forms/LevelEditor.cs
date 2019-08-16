@@ -75,6 +75,7 @@ namespace Elmanager.Forms
         private float _dpiY;
         private Vector _contextMenuClickPosition;
         private SvgImportOptions _svgImportOptions = SvgImportOptions.Default;
+        private bool _maybeOpenOnDrop;
 
         internal LevelEditor(string levPath)
         {
@@ -1119,10 +1120,20 @@ namespace Elmanager.Forms
             }
         }
 
-        private void LevelDropped(object sender, DragEventArgs e)
+        private void ItemsDropped(object sender, DragEventArgs e)
         {
-            string filePath = ((Array) (e.Data.GetData(DataFormats.FileDrop))).GetValue(0).ToString();
-            OpenLevel(filePath);
+            var data = e.Data.GetData(DataFormats.FileDrop);
+            if (data is string[] files)
+            {
+                if (ShouldOpenOnDrop())
+                {
+                    OpenLevel(files[0]);
+                }
+                else
+                {
+                    ImportFiles(files);
+                }
+            }
         }
 
         private void LevelPropertiesToolStripMenuItemClick(object sender, EventArgs e)
@@ -1870,10 +1881,16 @@ namespace Elmanager.Forms
 
         private void StartingDrop(object sender, DragEventArgs e)
         {
-            string filePath = ((Array) (e.Data.GetData(DataFormats.FileDrop))).GetValue(0).ToString();
-            if (File.Exists(filePath))
-                if (Constants.LevLebExtensions.Any(ext => Path.GetExtension(filePath).CompareWith(ext)))
+            var data = e.Data.GetData(DataFormats.FileDrop);
+            if (data is string[] files)
+            {
+                if (files.All(filePath => File.Exists(filePath) && Constants.ImportableExtensions.Any(ext => Path.GetExtension(filePath).CompareWith(ext))))
+                {
                     e.Effect = DragDropEffects.Copy;
+                }
+
+                _maybeOpenOnDrop = files.Length == 1 && Path.GetExtension(files[0]) == ".lev";
+            }
         }
 
         private void Undo(object sender, EventArgs e)
@@ -2052,85 +2069,98 @@ namespace Elmanager.Forms
             importFileDialog.InitialDirectory = Global.AppSettings.General.LevelDirectory;
             if (importFileDialog.ShowDialog() == DialogResult.OK)
             {
-                importFileDialog.FileNames.ToList().ForEach(file =>
+                ImportFiles(importFileDialog.FileNames);
+            }
+        }
+
+        private void ImportFiles(string[] files)
+        {
+            int imported = 0;
+            files.ToList().ForEach(file =>
+            {
+                Level lev;
+                if (file.EndsWith(".lev"))
                 {
-                    Level lev;
-                    if (file.EndsWith(".lev"))
+                    lev = new Level();
+                    try
                     {
+                        lev.LoadFromPath(file);
+                    }
+                    catch (LevelException exception)
+                    {
+                        Utils.ShowError(
+                            string.Format("Imported level {0} with errors: {1}", file, exception.Message),
+                            "Warning",
+                            MessageBoxIcon.Exclamation);
+                    }
+
+                    lev.UpdateImages(Renderer.DrawableImages);
+                }
+                else if (file.EndsWith(".svg") || file.EndsWith(".svgz"))
+                {
+                    var result = SvgImportSettingsForm.ShowDefault(_svgImportOptions, file);
+                    if (!result.HasValue)
+                    {
+                        return;
+                    }
+
+                    var newOpts = result.Value;
+                    _svgImportOptions = newOpts;
+                    var settings = new WpfDrawingSettings
+                        {IncludeRuntime = false, TextAsGeometry = true, IgnoreRootViewbox = true};
+                    using (var converter = new FileSvgReader(settings))
+                    {
+                        var drawingGroup = converter.Read(file);
+                        List<Polygon> polys;
+                        try
+                        {
+                            (polys, _, _) = TextTool.BuildPolygons(
+                                TextTool.CreateGeometry(drawingGroup, newOpts.FillRule, newOpts.Smoothness),
+                                new Vector(),
+                                newOpts.Smoothness,
+                                newOpts.UseOutlinedGeometry);
+                        }
+                        catch (PolygonException)
+                        {
+                            Utils.ShowError($"Failed to import SVG {file}. Invalid or animated SVGs are not supported.");
+                            return;
+                        }
+
+                        try
+                        {
+                            TextTool.FinalizePolygons(polys);
+                        }
+                        catch (TopologyException)
+                        {
+                        }
+                        catch (ArgumentException)
+                        {
+                        }
+
+                        var m = Matrix.CreateScaling(1 / 10.0, 1 / 10.0);
+                        polys = polys.Select(p => p.ApplyTransformation(m)).ToList();
                         lev = new Level();
-                        try
-                        {
-                            lev.LoadFromPath(file);
-                        }
-                        catch (LevelException exception)
-                        {
-                            Utils.ShowError(
-                                string.Format("Imported level {0} with errors: {1}", file, exception.Message),
-                                "Warning",
-                                MessageBoxIcon.Exclamation);
-                        }
-
-                        lev.UpdateImages(Renderer.DrawableImages);
+                        lev.Polygons.AddRange(polys);
                     }
-                    else if (file.EndsWith(".svg") || file.EndsWith(".svgz"))
+                }
+                else
+                {
+                    try
                     {
-                        var result = SvgImportSettingsForm.ShowDefault(_svgImportOptions, file);
-                        if (!result.HasValue)
-                        {
-                            return;
-                        }
-
-                        var newOpts = result.Value;
-                        _svgImportOptions = newOpts;
-                        var settings = new WpfDrawingSettings { IncludeRuntime = false, TextAsGeometry = true, IgnoreRootViewbox = true };
-                        using (var converter = new FileSvgReader(settings))
-                        {
-                            var drawingGroup = converter.Read(file);
-                            List<Polygon> polys;
-                            try
-                            {
-                                (polys, _, _) = TextTool.BuildPolygons(
-                                    TextTool.CreateGeometry(drawingGroup, newOpts.FillRule, newOpts.Smoothness),
-                                    new Vector(),
-                                    newOpts.Smoothness, 
-                                    newOpts.UseOutlinedGeometry);
-                            }
-                            catch (PolygonException)
-                            {
-                                Utils.ShowError($"Failed to import SVG {file}. Invalid or animated SVGs are not supported.");
-                                return;
-                            }
-                            try
-                            {
-                                TextTool.FinalizePolygons(polys);
-                            }
-                            catch (TopologyException)
-                            {
-                            }
-                            catch (ArgumentException)
-                            {
-                            }
-                            var m = Matrix.CreateScaling(1 / 10.0, 1 / 10.0);
-                            polys = polys.Select(p => p.ApplyTransformation(m)).ToList();
-                            lev = new Level();
-                            lev.Polygons.AddRange(polys);
-                        }
+                        lev = VectrastWrapper.LoadLevelFromImage(file);
                     }
-                    else
+                    catch (VectrastException ex)
                     {
-                        try
-                        {
-                            lev = VectrastWrapper.LoadLevelFromImage(file);
-                        }
-                        catch (VectrastException ex)
-                        {
-                            Utils.ShowError(ex.Message);
-                            return;
-                        }
+                        Utils.ShowError(ex.Message);
+                        return;
                     }
+                }
 
-                    Lev.Import(lev);
-                });
+                imported++;
+                Lev.Import(lev);
+            });
+            if (imported > 0)
+            {
                 Modified = true;
                 Renderer.UpdateZoomFillBounds();
                 Renderer.ZoomFill();
@@ -2470,6 +2500,25 @@ namespace Elmanager.Forms
         private void EditorMenuStrip_Opening(object sender, CancelEventArgs e)
         {
             _contextMenuClickPosition = GetMouseCoordinatesFixed();
+        }
+
+        private void EditorControl_DragLeave(object sender, EventArgs e)
+        {
+            CurrentTool.UpdateHelp();
+        }
+
+        private bool ShouldOpenOnDrop()
+        {
+            return _maybeOpenOnDrop && EditorControl.PointToClient(MousePosition).X < EditorControl.Width / 2;
+        }
+
+        private void EditorControl_DragOver(object sender, DragEventArgs e)
+        {
+            if (_maybeOpenOnDrop)
+            {
+                InfoLabel.Text = "Left side: open, right side: import. Current: ";
+                InfoLabel.Text += ShouldOpenOnDrop() ? "open" : "import";
+            }
         }
     }
 }

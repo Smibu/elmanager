@@ -16,6 +16,7 @@ namespace Elmanager
         internal const string LevExtension = ".lev";
         internal const string LebExtension = ".leb";
         internal static readonly string[] LevLebExtensions = {LevExtension, LebExtension};
+        internal static readonly string[] ImportableExtensions = { LevExtension, LebExtension, ".bmp", ".png", ".gif", ".tiff", ".exif", ".svg", ".svgz" };
 
         internal const string LevOrRecDirNotFound =
             "Replay or level directory are not specified or they doesn\'t exist!";
