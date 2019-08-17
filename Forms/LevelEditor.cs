@@ -1167,7 +1167,9 @@ namespace Elmanager.Forms
 
         private void LoadFromHistory()
         {
+            var oldPath = Lev.Path;
             Lev = _history[_historyIndex].Clone();
+            Lev.Path = oldPath;
             Renderer.Lev = Lev;
             Lev.DecomposeGroundPolygons();
             Renderer.UpdateZoomFillBounds();
