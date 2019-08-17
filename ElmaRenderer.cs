@@ -1664,7 +1664,7 @@ namespace Elmanager
                 if (!isActive)
                 {
                     GL.Enable(EnableCap.Blend);
-                    GL.BlendFunc(BlendingFactorSrc.One, BlendingFactorDest.OneMinusDstColor);
+                    GL.BlendFunc(BlendingFactor.One, BlendingFactor.OneMinusDstColor);
                 }
 
                 //Wheels
