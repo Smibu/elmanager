@@ -2116,7 +2116,7 @@ namespace Elmanager.Forms
                         List<Polygon> polys;
                         try
                         {
-                            (polys, _, _) = TextTool.BuildPolygons(
+                            (polys, _) = TextTool.BuildPolygons(
                                 TextTool.CreateGeometry(drawingGroup, newOpts.FillRule, newOpts.Smoothness),
                                 new Vector(),
                                 newOpts.Smoothness,

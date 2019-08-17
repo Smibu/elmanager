@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Drawing;
 using System.Globalization;
 using System.Linq;
 using System.Windows;
@@ -31,8 +30,6 @@ namespace Elmanager.EditorTools
             {"Italic", "Oblique"},
             {"Demibold", "Bold"}
         };
-
-        private Dictionary<Font, double> _minSmoothnesses = new Dictionary<Font, double>();
 
         internal TextTool(LevelEditor editor) : base(editor)
         {
@@ -121,7 +118,7 @@ namespace Elmanager.EditorTools
 
         private List<Polygon> RenderString(TextToolOptions options, Vector offset)
         {
-            var fontfamily = new System.Windows.Media.FontFamily(options.Font.FontFamily.Name);
+            var fontfamily = new FontFamily(options.Font.FontFamily.Name);
 
             var typeface = FindTypeface(options, fontfamily, EmptySynonymMap) ??
                            FindTypeface(options, fontfamily, SynonymMap) ?? fontfamily.GetTypefaces().First();
@@ -144,31 +141,20 @@ namespace Elmanager.EditorTools
                 LineHeight = options.LineHeight * options.Font.SizeInPoints * sizeFactor
             };
             formattedText.SetTextDecorations(decorations);
-            var isCached = _minSmoothnesses.TryGetValue(options.Font, out var cached);
-            if (!isCached)
-            {
-                cached = options.Smoothness;
-            }
 
-            var smoothness = Math.Min(options.Smoothness, cached);
+            var smoothness = options.Smoothness;
             var geom = formattedText.BuildGeometry(new Point(0, 0));
 
             List<Polygon> polys;
-            int iterations;
             try
             {
-                (polys, iterations, smoothness) = BuildPolygons(geom, offset, smoothness);
+                (polys, smoothness) = BuildPolygons(geom, offset, smoothness);
             }
-            catch (PolygonException e)
+            catch (PolygonException)
             {
                 var opt = TextToolOptions.Default;
-                opt.Text = e.Message;
+                opt.Text = "Unable to render\nthis font without\ntopology errors.";
                 return RenderString(opt, offset);
-            }
-
-            if (iterations > 1)
-            {
-                _minSmoothnesses[options.Font] = smoothness * 2;
             }
 
             try
@@ -180,7 +166,6 @@ namespace Elmanager.EditorTools
             {
                 var opt = options;
                 opt.Smoothness = smoothness;
-                _minSmoothnesses[options.Font] = smoothness;
                 return RenderString(opt, offset);
             }
         }
@@ -221,18 +206,17 @@ namespace Elmanager.EditorTools
             }
         }
 
-        public static (List<Polygon> polys, int iterations, double smoothness) BuildPolygons(
+        public static (List<Polygon> polys, double smoothness) BuildPolygons(
             System.Windows.Media.Geometry geom, Vector offset, double smoothness, bool useOutlined = true)
         {
             var outlinedGeometry = useOutlined ? geom.GetOutlinedPathGeometry(0.005, ToleranceType.Absolute) : geom;
 
-            var iterations = 0;
             var polys = new List<Polygon>();
             do
             {
                 if (smoothness < 0.0001)
                 {
-                    throw new PolygonException("Unable to render\nwithout\ntopology errors.");
+                    throw new PolygonException("Smoothness limit reached.");
                 }
 
                 polys.Clear();
@@ -260,13 +244,12 @@ namespace Elmanager.EditorTools
                         )
                 );
                 smoothness *= 0.5;
-                ++iterations;
             } while (polys.Any(p => p.Count < 3 || false));
 
-            return (polys, iterations, smoothness);
+            return (polys, smoothness);
         }
 
-        private static Typeface FindTypeface(TextToolOptions options, System.Windows.Media.FontFamily fontfamily,
+        private static Typeface FindTypeface(TextToolOptions options, FontFamily fontfamily,
             Dictionary<string, string> synonymMap)
         {
             Typeface typeface = null;
