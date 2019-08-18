@@ -1123,17 +1123,21 @@ namespace Elmanager.Forms
         private void ItemsDropped(object sender, DragEventArgs e)
         {
             var data = e.Data.GetData(DataFormats.FileDrop);
-            if (data is string[] files)
+            // BeginInvoke is required for Wine
+            BeginInvoke(new Action(() =>
             {
-                if (ShouldOpenOnDrop())
+                if (data is string[] files)
                 {
-                    OpenLevel(files[0]);
+                    if (ShouldOpenOnDrop())
+                    {
+                        OpenLevel(files[0]);
+                    }
+                    else
+                    {
+                        ImportFiles(files);
+                    }
                 }
-                else
-                {
-                    ImportFiles(files);
-                }
-            }
+            }));
         }
 
         private void LevelPropertiesToolStripMenuItemClick(object sender, EventArgs e)
