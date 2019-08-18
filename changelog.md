@@ -1,5 +1,14 @@
 # Elmanager changelog
 
+## 18.8.2019
+* SLE: Added support for SVG import and export.
+* SLE: Added support for drag & drop import.
+* Elmanager DLLs now reside in "bin" directory, making EOL folder less messy if Elmanager.exe is in the same folder. (Contributed by tej!)
+* Bugfix: Elmanager failed to start in Wine.
+* SLE: Bugfix: Polygon operations would sometimes leave duplicate vertices in polygons.
+* SLE: Bugfix: When a level was saved under a different filename, an undo operation would restore the previous filename.
+* SLE: Bugfix: Font selection in text tool did not work in Wine.
+
 ## 20.4.2019
 * Replay upload functions (to zworqy and Jappe2) have been removed because the upload functions no longer exist.
 * LM: Default lower bound for flowers is now 0 (instead of 1).
