@@ -2100,7 +2100,7 @@ namespace Elmanager.Forms
                 }
                 else if (file.EndsWith(".svg") || file.EndsWith(".svgz"))
                 {
-                    var result = SvgImportSettingsForm.ShowDefault(_svgImportOptions, file);
+                    var result = SvgImportOptionsForm.ShowDefault(_svgImportOptions, file);
                     if (!result.HasValue)
                     {
                         return;
@@ -2117,7 +2117,7 @@ namespace Elmanager.Forms
                         try
                         {
                             (polys, _) = TextTool.BuildPolygons(
-                                TextTool.CreateGeometry(drawingGroup, newOpts.FillRule, newOpts.Smoothness),
+                                TextTool.CreateGeometry(drawingGroup, newOpts),
                                 new Vector(),
                                 newOpts.Smoothness,
                                 newOpts.UseOutlinedGeometry);

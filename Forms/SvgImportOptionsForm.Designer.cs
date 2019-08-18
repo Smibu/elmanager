@@ -1,6 +1,6 @@
 ﻿namespace Elmanager.Forms
 {
-    partial class SvgImportSettingsForm
+    partial class SvgImportOptionsForm
     {
         /// <summary>
         /// Required designer variable.
@@ -28,69 +28,77 @@
         /// </summary>
         private void InitializeComponent()
         {
-            this.groupBox1 = new System.Windows.Forms.GroupBox();
-            this.evenOddRadioButton = new System.Windows.Forms.RadioButton();
+            this.fillRuleGroupBox = new System.Windows.Forms.GroupBox();
             this.nonZeroRadioButton = new System.Windows.Forms.RadioButton();
+            this.evenOddRadioButton = new System.Windows.Forms.RadioButton();
             this.useOutlinedGeometryBox = new System.Windows.Forms.CheckBox();
             this.label1 = new System.Windows.Forms.Label();
             this.smoothnessBar = new System.Windows.Forms.TrackBar();
             this.okButton = new System.Windows.Forms.Button();
             this.cancelButton = new System.Windows.Forms.Button();
-            this.groupBox1.SuspendLayout();
+            this.neverWidenClosedPathsBox = new System.Windows.Forms.CheckBox();
+            this.fillRuleGroupBox.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.smoothnessBar)).BeginInit();
             this.SuspendLayout();
             // 
-            // groupBox1
+            // fillRuleGroupBox
             // 
-            this.groupBox1.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+            this.fillRuleGroupBox.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
-            this.groupBox1.Controls.Add(this.nonZeroRadioButton);
-            this.groupBox1.Controls.Add(this.evenOddRadioButton);
-            this.groupBox1.Location = new System.Drawing.Point(12, 12);
-            this.groupBox1.Name = "groupBox1";
-            this.groupBox1.Size = new System.Drawing.Size(646, 62);
-            this.groupBox1.TabIndex = 0;
-            this.groupBox1.TabStop = false;
-            this.groupBox1.Text = "Fill rule";
+            this.fillRuleGroupBox.Controls.Add(this.nonZeroRadioButton);
+            this.fillRuleGroupBox.Controls.Add(this.evenOddRadioButton);
+            this.fillRuleGroupBox.Location = new System.Drawing.Point(145, 11);
+            this.fillRuleGroupBox.Margin = new System.Windows.Forms.Padding(2);
+            this.fillRuleGroupBox.Name = "fillRuleGroupBox";
+            this.fillRuleGroupBox.Padding = new System.Windows.Forms.Padding(2);
+            this.fillRuleGroupBox.Size = new System.Drawing.Size(346, 46);
+            this.fillRuleGroupBox.TabIndex = 0;
+            this.fillRuleGroupBox.TabStop = false;
+            this.fillRuleGroupBox.Text = "Fill rule";
+            // 
+            // nonZeroRadioButton
+            // 
+            this.nonZeroRadioButton.AutoSize = true;
+            this.nonZeroRadioButton.Location = new System.Drawing.Point(81, 17);
+            this.nonZeroRadioButton.Margin = new System.Windows.Forms.Padding(2);
+            this.nonZeroRadioButton.Name = "nonZeroRadioButton";
+            this.nonZeroRadioButton.Size = new System.Drawing.Size(67, 17);
+            this.nonZeroRadioButton.TabIndex = 1;
+            this.nonZeroRadioButton.Text = "NonZero";
+            this.nonZeroRadioButton.UseVisualStyleBackColor = true;
             // 
             // evenOddRadioButton
             // 
             this.evenOddRadioButton.AutoSize = true;
             this.evenOddRadioButton.Checked = true;
-            this.evenOddRadioButton.Location = new System.Drawing.Point(6, 21);
+            this.evenOddRadioButton.Location = new System.Drawing.Point(4, 17);
+            this.evenOddRadioButton.Margin = new System.Windows.Forms.Padding(2);
             this.evenOddRadioButton.Name = "evenOddRadioButton";
-            this.evenOddRadioButton.Size = new System.Drawing.Size(96, 26);
+            this.evenOddRadioButton.Size = new System.Drawing.Size(70, 17);
             this.evenOddRadioButton.TabIndex = 0;
             this.evenOddRadioButton.TabStop = true;
             this.evenOddRadioButton.Text = "EvenOdd";
             this.evenOddRadioButton.UseVisualStyleBackColor = true;
             // 
-            // nonZeroRadioButton
-            // 
-            this.nonZeroRadioButton.AutoSize = true;
-            this.nonZeroRadioButton.Location = new System.Drawing.Point(108, 21);
-            this.nonZeroRadioButton.Name = "nonZeroRadioButton";
-            this.nonZeroRadioButton.Size = new System.Drawing.Size(92, 26);
-            this.nonZeroRadioButton.TabIndex = 1;
-            this.nonZeroRadioButton.Text = "NonZero";
-            this.nonZeroRadioButton.UseVisualStyleBackColor = true;
-            // 
             // useOutlinedGeometryBox
             // 
             this.useOutlinedGeometryBox.AutoSize = true;
-            this.useOutlinedGeometryBox.Location = new System.Drawing.Point(12, 80);
+            this.useOutlinedGeometryBox.Location = new System.Drawing.Point(11, 28);
+            this.useOutlinedGeometryBox.Margin = new System.Windows.Forms.Padding(2);
             this.useOutlinedGeometryBox.Name = "useOutlinedGeometryBox";
-            this.useOutlinedGeometryBox.Size = new System.Drawing.Size(175, 27);
+            this.useOutlinedGeometryBox.Size = new System.Drawing.Size(131, 17);
             this.useOutlinedGeometryBox.TabIndex = 1;
             this.useOutlinedGeometryBox.Text = "Use outlined geometry";
             this.useOutlinedGeometryBox.UseVisualStyleBackColor = true;
+            this.useOutlinedGeometryBox.CheckedChanged += new System.EventHandler(this.UseOutlinedGeometryBox_CheckedChanged);
             // 
             // label1
             // 
             this.label1.AutoSize = true;
-            this.label1.Location = new System.Drawing.Point(9, 128);
+            this.label1.Location = new System.Drawing.Point(7, 104);
+            this.label1.Margin = new System.Windows.Forms.Padding(2, 0, 2, 0);
             this.label1.Name = "label1";
-            this.label1.Size = new System.Drawing.Size(86, 16);
+            this.label1.Size = new System.Drawing.Size(68, 13);
             this.label1.TabIndex = 2;
             this.label1.Text = "Smoothness:";
             // 
@@ -98,19 +106,21 @@
             // 
             this.smoothnessBar.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
-            this.smoothnessBar.Location = new System.Drawing.Point(101, 103);
+            this.smoothnessBar.Location = new System.Drawing.Point(79, 90);
+            this.smoothnessBar.Margin = new System.Windows.Forms.Padding(2);
             this.smoothnessBar.Maximum = 100;
             this.smoothnessBar.Name = "smoothnessBar";
-            this.smoothnessBar.Size = new System.Drawing.Size(557, 90);
+            this.smoothnessBar.Size = new System.Drawing.Size(418, 45);
             this.smoothnessBar.TabIndex = 3;
             this.smoothnessBar.Value = 38;
             // 
             // okButton
             // 
             this.okButton.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-            this.okButton.Location = new System.Drawing.Point(502, 212);
+            this.okButton.Location = new System.Drawing.Point(341, 167);
+            this.okButton.Margin = new System.Windows.Forms.Padding(2);
             this.okButton.Name = "okButton";
-            this.okButton.Size = new System.Drawing.Size(75, 23);
+            this.okButton.Size = new System.Drawing.Size(73, 23);
             this.okButton.TabIndex = 4;
             this.okButton.Text = "OK";
             this.okButton.UseVisualStyleBackColor = true;
@@ -119,31 +129,48 @@
             // cancelButton
             // 
             this.cancelButton.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-            this.cancelButton.Location = new System.Drawing.Point(583, 212);
+            this.cancelButton.DialogResult = System.Windows.Forms.DialogResult.Cancel;
+            this.cancelButton.Location = new System.Drawing.Point(418, 167);
+            this.cancelButton.Margin = new System.Windows.Forms.Padding(2);
             this.cancelButton.Name = "cancelButton";
-            this.cancelButton.Size = new System.Drawing.Size(75, 23);
+            this.cancelButton.Size = new System.Drawing.Size(73, 23);
             this.cancelButton.TabIndex = 5;
             this.cancelButton.Text = "Cancel";
             this.cancelButton.UseVisualStyleBackColor = true;
             this.cancelButton.Click += new System.EventHandler(this.CancelButton_Click);
             // 
-            // SvgImportSettingsForm
+            // neverWidenClosedPathsBox
             // 
-            this.AutoScaleDimensions = new System.Drawing.SizeF(8F, 16F);
+            this.neverWidenClosedPathsBox.AutoSize = true;
+            this.neverWidenClosedPathsBox.Location = new System.Drawing.Point(11, 69);
+            this.neverWidenClosedPathsBox.Margin = new System.Windows.Forms.Padding(2);
+            this.neverWidenClosedPathsBox.Name = "neverWidenClosedPathsBox";
+            this.neverWidenClosedPathsBox.Size = new System.Drawing.Size(149, 17);
+            this.neverWidenClosedPathsBox.TabIndex = 6;
+            this.neverWidenClosedPathsBox.Text = "Never widen closed paths";
+            this.neverWidenClosedPathsBox.UseVisualStyleBackColor = true;
+            // 
+            // SvgImportOptionsForm
+            // 
+            this.AcceptButton = this.okButton;
+            this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(670, 247);
+            this.CancelButton = this.cancelButton;
+            this.ClientSize = new System.Drawing.Size(502, 201);
+            this.Controls.Add(this.neverWidenClosedPathsBox);
             this.Controls.Add(this.cancelButton);
             this.Controls.Add(this.okButton);
             this.Controls.Add(this.smoothnessBar);
             this.Controls.Add(this.label1);
             this.Controls.Add(this.useOutlinedGeometryBox);
-            this.Controls.Add(this.groupBox1);
+            this.Controls.Add(this.fillRuleGroupBox);
             this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedDialog;
-            this.Name = "SvgImportSettingsForm";
+            this.Margin = new System.Windows.Forms.Padding(2);
+            this.Name = "SvgImportOptionsForm";
             this.ShowIcon = false;
-            this.Text = "SVG import settings";
-            this.groupBox1.ResumeLayout(false);
-            this.groupBox1.PerformLayout();
+            this.Text = "SVG import options";
+            this.fillRuleGroupBox.ResumeLayout(false);
+            this.fillRuleGroupBox.PerformLayout();
             ((System.ComponentModel.ISupportInitialize)(this.smoothnessBar)).EndInit();
             this.ResumeLayout(false);
             this.PerformLayout();
@@ -152,7 +179,7 @@
 
         #endregion
 
-        private System.Windows.Forms.GroupBox groupBox1;
+        private System.Windows.Forms.GroupBox fillRuleGroupBox;
         private System.Windows.Forms.RadioButton nonZeroRadioButton;
         private System.Windows.Forms.RadioButton evenOddRadioButton;
         private System.Windows.Forms.CheckBox useOutlinedGeometryBox;
@@ -160,5 +187,6 @@
         private System.Windows.Forms.TrackBar smoothnessBar;
         private System.Windows.Forms.Button okButton;
         private System.Windows.Forms.Button cancelButton;
+        private System.Windows.Forms.CheckBox neverWidenClosedPathsBox;
     }
 }

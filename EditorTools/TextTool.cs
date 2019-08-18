@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Drawing;
 using System.Globalization;
 using System.Linq;
 using System.Windows;
@@ -9,10 +10,13 @@ using System.Windows.Media;
 using Elmanager.Forms;
 using GeoAPI.Geometries;
 using NetTopologySuite.Geometries;
+using SvgNet;
 using Brushes = System.Windows.Media.Brushes;
 using Color = System.Drawing.Color;
 using FlowDirection = System.Windows.FlowDirection;
+using FontFamily = System.Windows.Media.FontFamily;
 using LineSegment = System.Windows.Media.LineSegment;
+using Pen = System.Windows.Media.Pen;
 using Point = System.Windows.Point;
 
 namespace Elmanager.EditorTools
@@ -293,21 +297,28 @@ namespace Elmanager.EditorTools
             return typeface;
         }
 
-        public static System.Windows.Media.Geometry CreateGeometry(DrawingGroup drawingGroup, FillRule fillRule, double smoothness)
+        public static System.Windows.Media.Geometry CreateGeometry(DrawingGroup drawingGroup, SvgImportOptions opts)
         {
-            var geometry = new GeometryGroup {FillRule = fillRule};
+            var geometry = new GeometryGroup {FillRule = opts.FillRule};
+            var defaultPen = new Pen(new SolidColorBrush(System.Windows.Media.Color.FromRgb(0,0,0)), 1);
             foreach (var drawing in drawingGroup.Children)
             {
                 switch (drawing)
                 {
                     case GeometryDrawing gd:
-                        HandleGeometry(gd.Geometry, geometry, gd, smoothness);
+                        HandleGeometry(gd.Geometry, geometry, gd, opts, defaultPen);
                         break;
                     case GlyphRunDrawing grd:
                         geometry.Children.Add(grd.GlyphRun.BuildGeometry());
                         break;
                     case DrawingGroup dg:
-                        geometry.Children.Add(CreateGeometry(dg, FillRule.EvenOdd, smoothness));
+                        var c = new SvgImportOptions {
+                            FillRule = FillRule.EvenOdd,
+                            Smoothness = opts.Smoothness,
+                            UseOutlinedGeometry = opts.UseOutlinedGeometry,
+                            NeverWidenClosedPaths = opts.NeverWidenClosedPaths
+                        };
+                        geometry.Children.Add(CreateGeometry(dg, c));
                         break;
                 }
             }
@@ -316,7 +327,7 @@ namespace Elmanager.EditorTools
             return geometry;
         }
 
-        private static void HandleGeometry(System.Windows.Media.Geometry g, GeometryGroup geometry, GeometryDrawing gd, double smoothness)
+        private static void HandleGeometry(System.Windows.Media.Geometry g, GeometryGroup geometry, GeometryDrawing gd, SvgImportOptions opts, Pen defaultPen)
         {
             switch (g)
             {
@@ -324,9 +335,9 @@ namespace Elmanager.EditorTools
                     geometry.Children.Add(cg);
                     break;
                 case EllipseGeometry eg:
-                    if (gd.Pen != null)
+                    if (gd.Pen != null && !opts.NeverWidenClosedPaths)
                     {
-                        geometry.Children.Add(eg.GetWidenedPathGeometry(gd.Pen, smoothness, ToleranceType.Absolute).GetOutlinedPathGeometry(smoothness, ToleranceType.Absolute));
+                        geometry.Children.Add(eg.GetWidenedPathGeometry(gd.Pen, opts.Smoothness, ToleranceType.Absolute).GetOutlinedPathGeometry(opts.Smoothness, ToleranceType.Absolute));
                     }
                     else
                     {
@@ -337,43 +348,32 @@ namespace Elmanager.EditorTools
                 case GeometryGroup gg:
                     foreach (var c in gg.Children)
                     {
-                        HandleGeometry(c, geometry, gd, smoothness);
+                        HandleGeometry(c, geometry, gd, opts, defaultPen);
                     }
 
                     break;
                 case LineGeometry lg:
-                    geometry.Children.Add(lg.GetWidenedPathGeometry(gd.Pen, smoothness, ToleranceType.Absolute));
+                    geometry.Children.Add(lg.GetWidenedPathGeometry(gd.Pen, opts.Smoothness, ToleranceType.Absolute));
                     break;
                 case PathGeometry pg:
-                    foreach (var f in pg.Figures.Where(f => f.Segments.Count == 1))
+                    for (int i = pg.Figures.Count - 1; i >= 0; i--)
                     {
-                        switch (f.Segments[0])
+                        if (!pg.Figures[i].IsClosed || (gd.Pen != null && !opts.NeverWidenClosedPaths))
                         {
-                            case ArcSegment arcSegment:
-                                if (gd.Pen != null)
-                                {
-                                    geometry.Children.Add(pg.GetWidenedPathGeometry(gd.Pen, smoothness, ToleranceType.Absolute));
-                                    return;
-                                }
-
-                                break;
-                            case LineSegment lineSegment:
-                                if (gd.Pen != null)
-                                {
-                                    geometry.Children.Add(pg.GetWidenedPathGeometry(gd.Pen, smoothness, ToleranceType.Absolute));
-                                    return;
-                                }
-
-                                break;
+                            var penToUse = gd.Pen ?? defaultPen;
+                            pg.AddGeometry(new PathGeometry(new List<PathFigure> {pg.Figures[i]})
+                                .GetWidenedPathGeometry(penToUse, opts.Smoothness, ToleranceType.Absolute)
+                                .GetOutlinedPathGeometry(opts.Smoothness, ToleranceType.Absolute));
+                            pg.Figures.RemoveAt(i);
                         }
                     }
 
                     geometry.Children.Add(pg);
                     break;
                 case RectangleGeometry rg:
-                    if (gd.Pen != null)
+                    if (gd.Pen != null && !opts.NeverWidenClosedPaths)
                     {
-                        geometry.Children.Add(rg.GetWidenedPathGeometry(gd.Pen, smoothness, ToleranceType.Absolute).GetOutlinedPathGeometry(smoothness, ToleranceType.Absolute));
+                        geometry.Children.Add(rg.GetWidenedPathGeometry(gd.Pen, opts.Smoothness, ToleranceType.Absolute).GetOutlinedPathGeometry(opts.Smoothness, ToleranceType.Absolute));
                     }
                     else
                     {
