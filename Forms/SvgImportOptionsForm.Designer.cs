@@ -28,6 +28,7 @@
         /// </summary>
         private void InitializeComponent()
         {
+            System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(SvgImportOptionsForm));
             this.fillRuleGroupBox = new System.Windows.Forms.GroupBox();
             this.nonZeroRadioButton = new System.Windows.Forms.RadioButton();
             this.evenOddRadioButton = new System.Windows.Forms.RadioButton();
@@ -47,11 +48,11 @@
             | System.Windows.Forms.AnchorStyles.Right)));
             this.fillRuleGroupBox.Controls.Add(this.nonZeroRadioButton);
             this.fillRuleGroupBox.Controls.Add(this.evenOddRadioButton);
-            this.fillRuleGroupBox.Location = new System.Drawing.Point(145, 11);
+            this.fillRuleGroupBox.Location = new System.Drawing.Point(165, 11);
             this.fillRuleGroupBox.Margin = new System.Windows.Forms.Padding(2);
             this.fillRuleGroupBox.Name = "fillRuleGroupBox";
             this.fillRuleGroupBox.Padding = new System.Windows.Forms.Padding(2);
-            this.fillRuleGroupBox.Size = new System.Drawing.Size(346, 46);
+            this.fillRuleGroupBox.Size = new System.Drawing.Size(326, 46);
             this.fillRuleGroupBox.TabIndex = 0;
             this.fillRuleGroupBox.TabStop = false;
             this.fillRuleGroupBox.Text = "Fill rule";
@@ -59,7 +60,7 @@
             // nonZeroRadioButton
             // 
             this.nonZeroRadioButton.AutoSize = true;
-            this.nonZeroRadioButton.Location = new System.Drawing.Point(81, 17);
+            this.nonZeroRadioButton.Location = new System.Drawing.Point(78, 16);
             this.nonZeroRadioButton.Margin = new System.Windows.Forms.Padding(2);
             this.nonZeroRadioButton.Name = "nonZeroRadioButton";
             this.nonZeroRadioButton.Size = new System.Drawing.Size(67, 17);
@@ -71,7 +72,7 @@
             // 
             this.evenOddRadioButton.AutoSize = true;
             this.evenOddRadioButton.Checked = true;
-            this.evenOddRadioButton.Location = new System.Drawing.Point(4, 17);
+            this.evenOddRadioButton.Location = new System.Drawing.Point(4, 16);
             this.evenOddRadioButton.Margin = new System.Windows.Forms.Padding(2);
             this.evenOddRadioButton.Name = "evenOddRadioButton";
             this.evenOddRadioButton.Size = new System.Drawing.Size(70, 17);
@@ -164,8 +165,10 @@
             this.Controls.Add(this.label1);
             this.Controls.Add(this.useOutlinedGeometryBox);
             this.Controls.Add(this.fillRuleGroupBox);
-            this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedDialog;
+            this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedSingle;
+            this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
             this.Margin = new System.Windows.Forms.Padding(2);
+            this.MaximizeBox = false;
             this.Name = "SvgImportOptionsForm";
             this.ShowIcon = false;
             this.Text = "SVG import options";
