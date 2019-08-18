@@ -22,6 +22,8 @@ namespace Elmanager
         internal PolygonMark Mark;
         internal List<Vector> Vertices;
 
+        internal const double BufferDistance = -1e-10;
+
         internal Polygon(IEnumerable<Vector> vertices)
         {
             Vertices = new List<Vector>();
@@ -475,7 +477,7 @@ namespace Elmanager
                     resultPolys = p.ToIPolygon().Difference(ToIPolygon());
                     break;
                 case PolygonOperationType.SymmetricDifference:
-                    resultPolys = p.ToIPolygon().SymmetricDifference(ToIPolygon()).Buffer(-0.000001);
+                    resultPolys = p.ToIPolygon().SymmetricDifference(ToIPolygon()).Buffer(BufferDistance);
                     break;
                 default:
                     throw new PolygonException("Unsupported operation type.");
@@ -687,7 +689,7 @@ namespace Elmanager
         {
             for (int i = Vertices.Count; i >= 1; i--)
             {
-                if ((this[i] - this[i - 1]).LengthSquared < 0.0001)
+                if ((this[i] - this[i - 1]).LengthSquared < 1e-16)
                 {
                     Vertices.RemoveAt(i % Vertices.Count);
                 }

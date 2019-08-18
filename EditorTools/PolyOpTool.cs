@@ -205,7 +205,7 @@ namespace Elmanager.EditorTools
                         break;
                     case PolygonOperationType.SymmetricDifference:
                         result = others.SymmetricDifference(selection)
-                            .Buffer(-0.000001, new BufferParameters(0, EndCapStyle.Flat, JoinStyle.Bevel, 1));
+                            .Buffer(Polygon.BufferDistance, new BufferParameters(0, EndCapStyle.Flat, JoinStyle.Bevel, 1));
                         break;
                     default:
                         throw new Exception("Unknown operation type.");
