@@ -2212,6 +2212,9 @@ namespace Elmanager.Forms
                     });
 
                     var svgBody = g.WriteSVGString();
+                    var width = (int) ((Lev.Width + 2) * scale);
+                    var height = (int) ((Lev.Height + 2) * scale);
+                    svgBody = svgBody.Replace("<svg ", $@"<svg width=""{width}"" height=""{height}"" ");
                     File.WriteAllText(saveAsPictureDialog.FileName, svgBody);
                 }
             }
