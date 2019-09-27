@@ -66,7 +66,7 @@ namespace Elmanager
         {
             var appSettingsFile = new FileStream(Path.Combine(Application.StartupPath, settingsFile), FileMode.Open);
             var binFormatter = new BinaryFormatter();
-            var loadedSettings = (ElmanagerSettings) (binFormatter.UnsafeDeserialize(appSettingsFile, null));
+            var loadedSettings = (ElmanagerSettings) (binFormatter.Deserialize(appSettingsFile));
             appSettingsFile.Close();
             if (loadedSettings.ReplayViewer.ZoomLevel <= 0)
             {

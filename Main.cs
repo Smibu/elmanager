@@ -1,7 +1,5 @@
 using System;
 using System.Collections.Generic;
-using System.Collections.ObjectModel;
-using System.Diagnostics;
 using System.IO;
 using System.IO.Compression;
 using System.Net;
@@ -10,7 +8,6 @@ using System.Runtime.Serialization.Formatters.Binary;
 using System.Threading;
 using System.Windows.Forms;
 using Elmanager.Updating;
-using Microsoft.VisualBasic.ApplicationServices;
 using My.Resources;
 
 namespace Elmanager
@@ -44,10 +41,7 @@ namespace Elmanager
             {
             }
             Version = BuildDate;
-            Debug.Listeners.Add(new TextWriterTraceListener(Console.Out));
-            Debug.AutoFlush = true;
-            var controller = new SingleInstanceController();
-            controller.Run(args);
+            Startup(args);
         }
 
         /// <summary>
@@ -89,7 +83,7 @@ namespace Elmanager
             }
         }
 
-        private static void ParseCommandLine(ReadOnlyCollection<string> args)
+        private static void ParseCommandLine(IList<string> args)
         {
             if (args.Count == 0)
                 ComponentManager.LaunchMainForm();
@@ -124,7 +118,7 @@ namespace Elmanager
                 Utils.ShowError("Invalid command line argument: " + args[0]);
         }
 
-        private static void Startup(ReadOnlyCollection<string> args)
+        private static void Startup(IList<string> args)
         {
             ThreadPool.QueueUserWorkItem(LoadInternals);
             Application.EnableVisualStyles();
@@ -136,25 +130,6 @@ namespace Elmanager
 
             ParseCommandLine(args);
             ComponentManager.WaitAllThreads();
-        }
-
-        private class SingleInstanceController : WindowsFormsApplicationBase
-        {
-            public SingleInstanceController()
-            {
-                IsSingleInstance = false; //disable single instance mode because there would be some bugs with it
-                StartupNextInstance += ThisStartupNextInstance;
-            }
-
-            protected override void OnRun()
-            {
-                Global.Startup(CommandLineArgs);
-            }
-
-            private void ThisStartupNextInstance(object sender, StartupNextInstanceEventArgs e)
-            {
-                ParseCommandLine(e.CommandLine);
-            }
         }
     }
 }
