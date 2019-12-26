@@ -8,11 +8,13 @@
     <GenerateAssemblyInfo>false</GenerateAssemblyInfo>
     <AssemblyName>Elmanager</AssemblyName>
     <RootNamespace>Elmanager</RootNamespace>
-    <ApplicationManifest>app.manifest</ApplicationManifest>
     <PublishTrimmed>true</PublishTrimmed>
     <PublishReadyToRun>false</PublishReadyToRun>
     <PublishSingleFile>true</PublishSingleFile>
     <RuntimeIdentifier>win7-x86</RuntimeIdentifier>
+    <ApplicationIcon>../Elmanager/Icons/Elma.ico</ApplicationIcon>
+    <Win32Resource />
+    <ApplicationManifest>app.manifest</ApplicationManifest>
   </PropertyGroup>
   <ItemGroup>
     <Compile Include="..\Elmanager\**\*.cs" />
