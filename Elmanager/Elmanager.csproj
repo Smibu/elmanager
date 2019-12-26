@@ -1,0 +1,579 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="12.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <ProductVersion>9.0.30729</ProductVersion>
+    <SchemaVersion>2.0</SchemaVersion>
+    <ProjectGuid>{43DD2B25-6D1D-4ECD-9193-C60535FD75F1}</ProjectGuid>
+    <OutputType>WinExe</OutputType>
+    <StartupObject>Elmanager.Global</StartupObject>
+    <RootNamespace>Elmanager</RootNamespace>
+    <AssemblyName>Elmanager</AssemblyName>
+    <FileAlignment>512</FileAlignment>
+    <MyType>WindowsFormsWithCustomSubMain</MyType>
+    <TargetFrameworkVersion>v4.7.2</TargetFrameworkVersion>
+    <OptionExplicit>On</OptionExplicit>
+    <OptionCompare>Binary</OptionCompare>
+    <OptionStrict>On</OptionStrict>
+    <OptionInfer>On</OptionInfer>
+    <IsWebBootstrapper>false</IsWebBootstrapper>
+    <ApplicationIcon>Icons\Elma.ico</ApplicationIcon>
+    <SignAssembly>false</SignAssembly>
+    <ManifestCertificateThumbprint>6CB91A966C2A1CD6B8A047402F244E401441ED7C</ManifestCertificateThumbprint>
+    <ManifestKeyFile>Replay manager_TemporaryKey.pfx</ManifestKeyFile>
+    <GenerateManifests>false</GenerateManifests>
+    <TargetZone>LocalIntranet</TargetZone>
+    <SignManifests>false</SignManifests>
+    <FileUpgradeFlags>
+    </FileUpgradeFlags>
+    <OldToolsVersion>3.5</OldToolsVersion>
+    <UpgradeBackupLocation />
+    <TargetFrameworkProfile>
+    </TargetFrameworkProfile>
+    <RunPostBuildEvent>OnBuildSuccess</RunPostBuildEvent>
+    <NuGetPackageImportStamp>
+    </NuGetPackageImportStamp>
+    <PublishUrl>publish\</PublishUrl>
+    <Install>true</Install>
+    <InstallFrom>Disk</InstallFrom>
+    <UpdateEnabled>false</UpdateEnabled>
+    <UpdateMode>Foreground</UpdateMode>
+    <UpdateInterval>7</UpdateInterval>
+    <UpdateIntervalUnits>Days</UpdateIntervalUnits>
+    <UpdatePeriodically>false</UpdatePeriodically>
+    <UpdateRequired>false</UpdateRequired>
+    <MapFileExtensions>true</MapFileExtensions>
+    <ApplicationRevision>1</ApplicationRevision>
+    <ApplicationVersion>1.0.0.%2a</ApplicationVersion>
+    <UseApplicationTrust>false</UseApplicationTrust>
+    <BootstrapperEnabled>true</BootstrapperEnabled>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>full</DebugType>
+    <DefineDebug>false</DefineDebug>
+    <DefineTrace>false</DefineTrace>
+    <OutputPath>bin\Debug\</OutputPath>
+    <DocumentationFile>
+    </DocumentationFile>
+    <NOWARN>1591,660,661</NOWARN>
+    <TreatWarningsAsErrors>false</TreatWarningsAsErrors>
+    <CodeAnalysisRuleSet>AllRules.ruleset</CodeAnalysisRuleSet>
+    <Optimize>false</Optimize>
+    <GenerateSerializationAssemblies>Off</GenerateSerializationAssemblies>
+    <RunCodeAnalysis>false</RunCodeAnalysis>
+    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
+    <UseVSHostingProcess>false</UseVSHostingProcess>
+    <DefineConstants>DEBUG</DefineConstants>
+    <Prefer32Bit>false</Prefer32Bit>
+    <PlatformTarget>AnyCPU</PlatformTarget>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <DebugType>None</DebugType>
+    <DefineDebug>false</DefineDebug>
+    <DefineTrace>false</DefineTrace>
+    <Optimize>true</Optimize>
+    <OutputPath>bin\Release\</OutputPath>
+    <DocumentationFile>
+    </DocumentationFile>
+    <NOWARN>1591,660,661</NOWARN>
+    <GenerateSerializationAssemblies>Off</GenerateSerializationAssemblies>
+    <TreatWarningsAsErrors>false</TreatWarningsAsErrors>
+    <CodeAnalysisRuleSet>AllRules.ruleset</CodeAnalysisRuleSet>
+    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
+    <UseVSHostingProcess>false</UseVSHostingProcess>
+    <Prefer32Bit>false</Prefer32Bit>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Debug|x86'">
+    <DebugSymbols>true</DebugSymbols>
+    <OutputPath>..\</OutputPath>
+    <DocumentationFile>
+    </DocumentationFile>
+    <Optimize>true</Optimize>
+    <NOWARN>1591,660,661</NOWARN>
+    <DebugType>Full</DebugType>
+    <PlatformTarget>x86</PlatformTarget>
+    <CodeAnalysisLogFile>..\ReplayManager.exe.CodeAnalysisLog.xml</CodeAnalysisLogFile>
+    <CodeAnalysisUseTypeNameInSuppression>true</CodeAnalysisUseTypeNameInSuppression>
+    <CodeAnalysisModuleSuppressionsFile>GlobalSuppressions.cs</CodeAnalysisModuleSuppressionsFile>
+    <GenerateSerializationAssemblies>Off</GenerateSerializationAssemblies>
+    <CodeAnalysisRuleSet>MinimumRecommendedRules.ruleset</CodeAnalysisRuleSet>
+    <CodeAnalysisRuleSetDirectories>;C:\Program Files\Microsoft Visual Studio 10.0\Team Tools\Static Analysis Tools\\Rule Sets</CodeAnalysisRuleSetDirectories>
+    <CodeAnalysisRuleDirectories>;C:\Program Files\Microsoft Visual Studio 10.0\Team Tools\Static Analysis Tools\FxCop\\Rules</CodeAnalysisRuleDirectories>
+    <RunCodeAnalysis>false</RunCodeAnalysis>
+    <RemoveIntegerChecks>true</RemoveIntegerChecks>
+    <UseVSHostingProcess>true</UseVSHostingProcess>
+    <DefineDebug>true</DefineDebug>
+    <Prefer32Bit>false</Prefer32Bit>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Release|x86'">
+    <OutputPath>..\</OutputPath>
+    <DocumentationFile>
+    </DocumentationFile>
+    <Optimize>false</Optimize>
+    <NOWARN>1591,660,661</NOWARN>
+    <DebugType>Full</DebugType>
+    <PlatformTarget>x86</PlatformTarget>
+    <CodeAnalysisLogFile>..\ReplayManager.exe.CodeAnalysisLog.xml</CodeAnalysisLogFile>
+    <CodeAnalysisUseTypeNameInSuppression>true</CodeAnalysisUseTypeNameInSuppression>
+    <CodeAnalysisModuleSuppressionsFile>GlobalSuppressions.cs</CodeAnalysisModuleSuppressionsFile>
+    <GenerateSerializationAssemblies>Off</GenerateSerializationAssemblies>
+    <CodeAnalysisRuleSet>MinimumRecommendedRules.ruleset</CodeAnalysisRuleSet>
+    <CodeAnalysisRuleSetDirectories>;C:\Program Files\Microsoft Visual Studio 10.0\Team Tools\Static Analysis Tools\\Rule Sets</CodeAnalysisRuleSetDirectories>
+    <CodeAnalysisIgnoreBuiltInRuleSets>true</CodeAnalysisIgnoreBuiltInRuleSets>
+    <CodeAnalysisRuleDirectories>;C:\Program Files\Microsoft Visual Studio 10.0\Team Tools\Static Analysis Tools\FxCop\\Rules</CodeAnalysisRuleDirectories>
+    <RunCodeAnalysis>false</RunCodeAnalysis>
+    <RemoveIntegerChecks>true</RemoveIntegerChecks>
+    <DebugSymbols>true</DebugSymbols>
+    <Prefer32Bit>false</Prefer32Bit>
+  </PropertyGroup>
+  <PropertyGroup>
+    <AssemblyOriginatorKeyFile>
+    </AssemblyOriginatorKeyFile>
+  </PropertyGroup>
+  <PropertyGroup>
+    <DelaySign>true</DelaySign>
+  </PropertyGroup>
+  <ItemGroup>
+    <Reference Include="Microsoft.VisualBasic" />
+    <Reference Include="mscorlib" />
+    <Reference Include="PresentationCore">
+      <Private>False</Private>
+    </Reference>
+    <Reference Include="System" />
+    <Reference Include="System.Core">
+      <RequiredTargetFramework>3.5</RequiredTargetFramework>
+    </Reference>
+    <Reference Include="System.Data" />
+    <Reference Include="System.Design" />
+    <Reference Include="System.Drawing" />
+    <Reference Include="System.IO.Compression" />
+    <Reference Include="System.Net" />
+    <Reference Include="System.Windows.Forms" />
+    <Reference Include="System.Xml" />
+    <Reference Include="WindowsBase">
+      <Private>False</Private>
+    </Reference>
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="AppContext.cs" />
+    <Compile Include="AppleType.cs" />
+    <Compile Include="BoolOption.cs" />
+    <Compile Include="ClippingType.cs" />
+    <Compile Include="CustomControls\FormMod.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="ElmaObject.cs" />
+    <Compile Include="ElmaTime.cs" />
+    <Compile Include="Forms\IManagerGui.cs" />
+    <Compile Include="Forms\Manager.cs" />
+    <Compile Include="Forms\MaybeOpened.cs" />
+    <Compile Include="LevelFileTexture.cs" />
+    <Compile Include="LevelTop10.cs" />
+    <Compile Include="LevObject.cs" />
+    <Compile Include="MirrorOption.cs" />
+    <Compile Include="ObjectType.cs" />
+    <Compile Include="Picture.cs" />
+    <Compile Include="PolygonOperationType.cs" />
+    <Compile Include="Range.cs" />
+    <Compile Include="CustomControls\FontDialogMod.cs">
+      <SubType>Component</SubType>
+    </Compile>
+    <Compile Include="CustomControls\IntTextBox.cs">
+      <SubType>Component</SubType>
+    </Compile>
+    <Compile Include="CustomControls\ToolStripMenuItemMod.cs">
+      <SubType>Component</SubType>
+    </Compile>
+    <Compile Include="EditorTools\SvgImportOptions.cs" />
+    <Compile Include="EditorTools\TextTool.cs" />
+    <Compile Include="EditorTools\TextToolOptions.cs" />
+    <Compile Include="ElmanagerSettings.cs" />
+    <Compile Include="ComponentManager.cs" />
+    <Compile Include="Constants.cs" />
+    <Compile Include="CustomControls\ComboBoxMod.cs">
+      <SubType>Component</SubType>
+    </Compile>
+    <Compile Include="CustomControls\NumericTextBox.cs">
+      <SubType>Component</SubType>
+    </Compile>
+    <Compile Include="CustomControls\PanelMod.cs">
+      <SubType>Component</SubType>
+    </Compile>
+    <Compile Include="CustomControls\TabControlMod.cs">
+      <SubType>Component</SubType>
+    </Compile>
+    <Compile Include="CustomControls\GenericTextBox.cs">
+      <SubType>Component</SubType>
+    </Compile>
+    <Compile Include="CustomControls\TimeTextBox.cs">
+      <SubType>Component</SubType>
+    </Compile>
+    <Compile Include="CustomControls\TrackBarMod.cs">
+      <SubType>Component</SubType>
+    </Compile>
+    <Compile Include="CustomControls\TriSelect.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="CustomControls\TriSelect.Designer.cs">
+      <DependentUpon>TriSelect.cs</DependentUpon>
+    </Compile>
+    <Compile Include="EditorTools\AutoGrassTool.cs" />
+    <Compile Include="EditorTools\CutConnectTool.cs" />
+    <Compile Include="EditorTools\DrawTool.cs" />
+    <Compile Include="EditorTools\EllipseTool.cs" />
+    <Compile Include="EditorTools\FrameTool.cs" />
+    <Compile Include="EditorTools\TransformTool.cs" />
+    <Compile Include="Forms\CompareForm.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Forms\CompareForm.Designer.cs">
+      <DependentUpon>CompareForm.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Forms\ConfigForm.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Forms\ConfigForm.Designer.cs">
+      <DependentUpon>ConfigForm.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Forms\ErrorForm.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Forms\ErrorForm.Designer.cs">
+      <DependentUpon>ErrorForm.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Forms\LevelEditor.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Forms\LevelEditor.Designer.cs">
+      <DependentUpon>LevelEditor.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Forms\LevelManager.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Forms\LevelManager.Designer.cs">
+      <DependentUpon>LevelManager.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Forms\LevelPropertiesForm.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Forms\LevelPropertiesForm.Designer.cs">
+      <DependentUpon>LevelPropertiesForm.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Forms\MainForm.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Forms\MainForm.Designer.cs">
+      <DependentUpon>MainForm.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Forms\NewVersionForm.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Forms\NewVersionForm.Designer.cs">
+      <DependentUpon>NewVersionForm.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Forms\PictureForm.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Forms\PictureForm.Designer.cs">
+      <DependentUpon>PictureForm.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Forms\ProgressDialog.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Forms\ProgressDialog.Designer.cs">
+      <DependentUpon>ProgressDialog.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Forms\SvgImportOptionsForm.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Forms\SvgImportOptionsForm.Designer.cs">
+      <DependentUpon>SvgImportOptionsForm.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Forms\TextToolForm.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Forms\TextToolForm.Designer.cs">
+      <DependentUpon>TextToolForm.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Forms\RenameForm.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Forms\RenameForm.Designer.cs">
+      <DependentUpon>RenameForm.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Forms\RenderingSettingsForm.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Forms\RenderingSettingsForm.Designer.cs">
+      <DependentUpon>RenderingSettingsForm.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Forms\ReplayManager.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Forms\ReplayManager.Designer.cs">
+      <DependentUpon>ReplayManager.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Forms\ReplayViewer.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Forms\ReplayViewer.Designer.cs">
+      <DependentUpon>ReplayViewer.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Forms\UploadForm.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Forms\UploadForm.Designer.cs">
+      <DependentUpon>UploadForm.cs</DependentUpon>
+    </Compile>
+    <Compile Include="GeometryUtils.cs" />
+    <Compile Include="EditorTools\IEditorTool.cs" />
+    <Compile Include="EditorTools\IEditorToolBase.cs" />
+    <Compile Include="LevelException.cs" />
+    <Compile Include="LevelSearchParameters.cs" />
+    <Compile Include="Matrix.cs" />
+    <Compile Include="ElmaRenderer.cs" />
+    <Compile Include="Level.cs" />
+    <Compile Include="LGR.cs" />
+    <Compile Include="EditorTools\ObjectTool.cs" />
+    <Compile Include="EditorTools\PipeTool.cs" />
+    <Compile Include="EditorTools\PolyOpTool.cs" />
+    <Compile Include="Player.cs" />
+    <Compile Include="PolygonException.cs" />
+    <Compile Include="RenderingSettings.cs" />
+    <Compile Include="PCX.cs" />
+    <Compile Include="EditorTools\PictureTool.cs" />
+    <Compile Include="Polygon.cs" />
+    <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Properties\Resources.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>Resources.resx</DependentUpon>
+    </Compile>
+    <Compile Include="Replay.cs" />
+    <Compile Include="Main.cs" />
+    <Compile Include="CustomControls\RadioButtonMod.cs">
+      <SubType>Component</SubType>
+    </Compile>
+    <Compile Include="EditorTools\ToolBase.cs" />
+    <Compile Include="EditorTools\SelectionTool.cs" />
+    <Compile Include="EditorTools\VertexTool.cs" />
+    <Compile Include="EditorTools\ZoomTool.cs" />
+    <Compile Include="EditorTools\SmoothenTool.cs" />
+    <Compile Include="ReplaySearchParameters.cs" />
+    <Compile Include="SearchParameters.cs" />
+    <Compile Include="SettingsException.cs" />
+    <Compile Include="Top10Entry.cs" />
+    <Compile Include="Top10EntryMulti.cs" />
+    <Compile Include="Top10EntrySingle.cs" />
+    <Compile Include="Updating\UpdateChecker.cs" />
+    <Compile Include="Updating\UpdateInfo.cs" />
+    <Compile Include="Updating\UpdateInfoDateTimeConverter.cs" />
+    <Compile Include="Utils.cs" />
+    <Compile Include="Vector.cs" />
+    <Compile Include="VectorMark.cs" />
+    <Compile Include="VectrastException.cs" />
+    <Compile Include="VectrastWrapper.cs" />
+    <Compile Include="Vectrast\Primitives.cs" />
+    <Compile Include="Vectrast\Vectrast.cs" />
+    <Compile Include="ViewSettings.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="CustomControls\TriSelect.resx">
+      <DependentUpon>TriSelect.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Forms\CompareForm.resx">
+      <DependentUpon>CompareForm.cs</DependentUpon>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Forms\ConfigForm.resx">
+      <DependentUpon>ConfigForm.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Forms\ErrorForm.resx">
+      <DependentUpon>ErrorForm.cs</DependentUpon>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Forms\LevelEditor.resx">
+      <DependentUpon>LevelEditor.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Forms\LevelManager.resx">
+      <DependentUpon>LevelManager.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Forms\LevelPropertiesForm.resx">
+      <DependentUpon>LevelPropertiesForm.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Forms\MainForm.resx">
+      <DependentUpon>MainForm.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Forms\NewVersionForm.resx">
+      <DependentUpon>NewVersionForm.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Forms\PictureForm.resx">
+      <DependentUpon>PictureForm.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Forms\ProgressDialog.resx">
+      <DependentUpon>ProgressDialog.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Forms\SvgImportOptionsForm.resx">
+      <DependentUpon>SvgImportOptionsForm.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Forms\TextToolForm.resx">
+      <DependentUpon>TextToolForm.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Forms\RenameForm.resx">
+      <DependentUpon>RenameForm.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Forms\RenderingSettingsForm.resx">
+      <DependentUpon>RenderingSettingsForm.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Forms\ReplayManager.resx">
+      <DependentUpon>ReplayManager.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Forms\ReplayViewer.resx">
+      <DependentUpon>ReplayViewer.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Forms\UploadForm.resx">
+      <DependentUpon>UploadForm.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Properties\Resources.resx">
+      <Generator>ResXFileCodeGenerator</Generator>
+      <LastGenOutput>Resources.Designer.cs</LastGenOutput>
+      <CustomToolNamespace>My.Resources</CustomToolNamespace>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="app.config" />
+    <None Include="app.manifest" />
+    <None Include="changelog.md" />
+    <None Include="Resources\IntComp.dat" />
+    <None Include="Resources\internals.zip" />
+    <None Include="Resources\IntRes.dat" />
+    <None Include="Vectrast\LICENSE" />
+  </ItemGroup>
+  <ItemGroup>
+    <BootstrapperPackage Include="Microsoft.Net.Client.3.5">
+      <Visible>False</Visible>
+      <ProductName>.NET Framework 3.5 SP1 Client Profile</ProductName>
+      <Install>false</Install>
+    </BootstrapperPackage>
+    <BootstrapperPackage Include="Microsoft.Net.Framework.2.0">
+      <Visible>False</Visible>
+      <ProductName>.NET Framework 2.0 %28x86%29</ProductName>
+      <Install>false</Install>
+    </BootstrapperPackage>
+    <BootstrapperPackage Include="Microsoft.Net.Framework.3.0">
+      <Visible>False</Visible>
+      <ProductName>.NET Framework 3.0 %28x86%29</ProductName>
+      <Install>false</Install>
+    </BootstrapperPackage>
+    <BootstrapperPackage Include="Microsoft.Net.Framework.3.5">
+      <Visible>False</Visible>
+      <ProductName>.NET Framework 3.5</ProductName>
+      <Install>true</Install>
+    </BootstrapperPackage>
+    <BootstrapperPackage Include="Microsoft.Net.Framework.3.5.SP1">
+      <Visible>False</Visible>
+      <ProductName>.NET Framework 3.5 SP1</ProductName>
+      <Install>false</Install>
+    </BootstrapperPackage>
+    <BootstrapperPackage Include="Microsoft.Windows.Installer.3.1">
+      <Visible>False</Visible>
+      <ProductName>Windows Installer 3.1</ProductName>
+      <Install>true</Install>
+    </BootstrapperPackage>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Icons\Snap.png" />
+    <None Include="Icons\Next.png" />
+    <None Include="Icons\Previous.png" />
+    <None Include="Icons\ZoomFill16.png" />
+    <None Include="Icons\New16.png" />
+    <None Include="Icons\SaveAs16.png" />
+    <None Include="Icons\Mirror16.png" />
+    <None Include="Icons\Exit16.png" />
+    <None Include="Icons\ZoomTexture.png" />
+    <None Include="Icons\ZoomReal.png" />
+    <None Include="Icons\ZoomOut.png" />
+    <None Include="Icons\ZoomIn.png" />
+    <None Include="Icons\ZoomFill.png" />
+    <None Include="Icons\Vertices.png" />
+    <None Include="Icons\Undo.png" />
+    <None Include="Icons\Topology.png" />
+    <None Include="Icons\TextureFrame.png" />
+    <None Include="Icons\Texture.png" />
+    <None Include="Icons\Sky.png" />
+    <None Include="Icons\SaveAs.png" />
+    <None Include="Icons\Save.png" />
+    <None Include="Icons\Redo.png" />
+    <None Include="Icons\PictureFrame.png" />
+    <None Include="Icons\Picture.png" />
+    <None Include="Icons\Open.png" />
+    <None Include="Icons\ObjectFrame.png" />
+    <None Include="Icons\Object.png" />
+    <None Include="Icons\New.png" />
+    <None Include="Icons\Mirror.png" />
+    <None Include="Icons\GroundSky.png" />
+    <None Include="Icons\GroundFill.png" />
+    <None Include="Icons\Ground.png" />
+    <None Include="Icons\Grid.png" />
+    <None Include="Icons\GrassOne.png" />
+    <None Include="Icons\GrassEdges.png" />
+    <None Include="Icons\GrassDelete.png" />
+    <None Include="Icons\GrassAll.png" />
+    <None Include="Icons\Grass.png" />
+    <None Include="Icons\Exit.png" />
+    <None Include="Icons\Delete.png" />
+    <None Include="Icons\Edges.png" />
+    <Content Include="Icons\AppleArrow.png" />
+    <Content Include="Icons\Crosshair2.png" />
+    <Content Include="Icons\Elma.ico" />
+  </ItemGroup>
+  <ItemGroup>
+    <PackageReference Include="NetTopologySuite">
+      <Version>2.0.0</Version>
+    </PackageReference>
+    <PackageReference Include="Newtonsoft.Json">
+      <Version>12.0.3</Version>
+    </PackageReference>
+    <PackageReference Include="ObjectListView.Official">
+      <Version>2.9.1</Version>
+    </PackageReference>
+    <PackageReference Include="OpenTK">
+      <Version>3.1.0</Version>
+    </PackageReference>
+    <PackageReference Include="SharpVectors.Reloaded">
+      <Version>1.5.0</Version>
+    </PackageReference>
+    <PackageReference Include="SvgNet">
+      <Version>2.0.4</Version>
+    </PackageReference>
+  </ItemGroup>
+  <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
+       Other similar extension points exist, see Microsoft.Common.targets.
+  <Target Name="BeforeBuild">
+  </Target>
+  <Target Name="AfterBuild">
+  </Target>
+  -->
+  <PropertyGroup>
+    <PostBuildEvent>goto :$(Configuration)
+
+:Release
+    MKDIR bin
+    MOVE /Y *.dll bin
+    DEL /Q *.xml
+    DEL /Q *.pdb
+    goto :Exit
+
+:Debug
+
+:Exit</PostBuildEvent>
+  </PropertyGroup>
+  <PropertyGroup />
+  <PropertyGroup>
+    <ApplicationManifest>app.manifest</ApplicationManifest>
+  </PropertyGroup>
+  <Import Project="$(MSBuildBinPath)/Microsoft.CSharp.targets" />
+</Project>

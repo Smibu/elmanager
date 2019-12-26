@@ -43,12 +43,6 @@
     <Compile Include="SLE.cs" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\LevelManager\Level manager.vbproj">
-      <Project>{B6C8AC80-EE67-467E-9094-6C18A924056B}</Project>
-      <Name>Level manager</Name>
-    </ProjectReference>
-  </ItemGroup>
-  <ItemGroup>
     <Reference Include="System" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
