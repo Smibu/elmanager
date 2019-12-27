@@ -310,7 +310,7 @@ namespace Elmanager
         private int? _appleObjectCount;
         [Description("Apples")] public int AppleObjectCount => (_appleObjectCount ?? (_appleObjectCount = Objects.Count(x => x.Type == ObjectType.Apple))).Value;
 
-        [Description("Gravity apples")]
+        [Description("Grav.")]
         public int GravApples => Objects.Count(x => x.Type == ObjectType.Apple && x.AppleType != AppleType.Normal);
 
         private int? _exitObjectCount;
