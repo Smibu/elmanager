@@ -73,6 +73,9 @@ Features:
 - Delete selected times from top 10
 - View replays in a level
 
+#### Screenshots
+![Main window](pictures/LM.png)
+
 ### Level editor (SLE)
 
 Features:
