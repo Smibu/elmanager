@@ -1,5 +1,10 @@
 # Elmanager changelog
 
+## x.x.xxxx
+* Level manager has been rewritten from scratch in C#, so it is now similar to replay manager.
+* Elmanager is now a single-file program and no longer requires .NET Framework.
+* SLE: Bugfix: Saving as picture always saved as SVG even if PNG format was chosen.
+
 ## 18.8.2019
 * SLE: Added support for SVG import and export.
 * SLE: Added support for drag & drop import.
