@@ -167,6 +167,12 @@
     <Compile Include="ElmaObject.cs" />
     <Compile Include="ElmaTime.cs" />
     <Compile Include="Forms\IManagerGui.cs" />
+    <Compile Include="Forms\LicenseForm.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Forms\LicenseForm.Designer.cs">
+      <DependentUpon>LicenseForm.cs</DependentUpon>
+    </Compile>
     <Compile Include="Forms\Manager.cs" />
     <Compile Include="Forms\MaybeOpened.cs" />
     <Compile Include="LevelFileTexture.cs" />
@@ -403,6 +409,9 @@
     <EmbeddedResource Include="Forms\LevelPropertiesForm.resx">
       <DependentUpon>LevelPropertiesForm.cs</DependentUpon>
     </EmbeddedResource>
+    <EmbeddedResource Include="Forms\LicenseForm.resx">
+      <DependentUpon>LicenseForm.cs</DependentUpon>
+    </EmbeddedResource>
     <EmbeddedResource Include="Forms\MainForm.resx">
       <DependentUpon>MainForm.cs</DependentUpon>
     </EmbeddedResource>
@@ -485,6 +494,8 @@
     </BootstrapperPackage>
   </ItemGroup>
   <ItemGroup>
+    <None Include="Resources\LICENSE-3RD-PARTY.txt" />
+    <None Include="Resources\LICENSE.txt" />
     <None Include="Icons\Snap.png" />
     <None Include="Icons\Next.png" />
     <None Include="Icons\Previous.png" />

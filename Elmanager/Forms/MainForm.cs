@@ -2,6 +2,7 @@
 using System.Diagnostics;
 using System.Windows.Forms;
 using Elmanager.CustomControls;
+using My.Resources;
 
 namespace Elmanager.Forms
 {
@@ -10,10 +11,15 @@ namespace Elmanager.Forms
         public MainForm()
         {
             InitializeComponent();
-            versionLabel.Text = $"Version: {Global.BuildDate.ToShortDateString()} ({ThisAssembly.GitCommitId.Substring(0, 8)})";
-#if DEBUG
-            versionLabel.Text += " [DEBUG BUILD]";
-#endif
+            versionLabel.Text =
+                $"Version: {Global.BuildDate.ToShortDateString()} ({ThisAssembly.GitCommitId.Substring(0, 8)})";
+            var conf = "Debug";
+            if (ThisAssembly.AssemblyConfiguration == conf)
+            {
+                versionLabel.Text += " [DEBUG BUILD]";
+            }
+            linkLabel2.Links.Add(new LinkLabel.Link(0, 7) {Name = "License"});
+            linkLabel2.Links.Add(new LinkLabel.Link(9, 9) {Name = "Libraries"});
         }
 
         private void ConfigButtonClick(object sender, EventArgs e)
@@ -53,7 +59,12 @@ namespace Elmanager.Forms
 
         private void linkLabel2_LinkClicked(object sender, LinkLabelLinkClickedEventArgs e)
         {
-            Process.Start(new ProcessStartInfo("https://radimrehurek.com/") {UseShellExecute = true});
+            var txt = e.Link.Name == "License" ? Resources.LICENSE : Resources.LICENSE_3RD_PARTY;
+
+            using (var f = new LicenseForm(e.Link.Name, txt))
+            {
+                f.ShowDialog();
+            }
         }
 
         private void levelManagerButton_Click(object sender, EventArgs e)

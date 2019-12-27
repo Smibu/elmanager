@@ -134,7 +134,7 @@ namespace Elmanager.Forms
             this.linkLabel1.LinkArea = new System.Windows.Forms.LinkArea(41, 6);
             this.linkLabel1.Location = new System.Drawing.Point(32, 274);
             this.linkLabel1.Name = "linkLabel1";
-            this.linkLabel1.Size = new System.Drawing.Size(248, 17);
+            this.linkLabel1.Size = new System.Drawing.Size(240, 17);
             this.linkLabel1.TabIndex = 5;
             this.linkLabel1.TabStop = true;
             this.linkLabel1.Text = "Testing && SLE toolbar graphics: Mawane (R.I.P.)";
@@ -153,15 +153,11 @@ namespace Elmanager.Forms
             // 
             this.linkLabel2.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
             this.linkLabel2.AutoSize = true;
-            this.linkLabel2.LinkArea = new System.Windows.Forms.LinkArea(10, 13);
-            this.linkLabel2.Location = new System.Drawing.Point(91, 291);
+            this.linkLabel2.Location = new System.Drawing.Point(112, 291);
             this.linkLabel2.Name = "linkLabel2";
-            this.linkLabel2.Size = new System.Drawing.Size(131, 17);
+            this.linkLabel2.Size = new System.Drawing.Size(88, 13);
             this.linkLabel2.TabIndex = 6;
-            this.linkLabel2.TabStop = true;
-            this.linkLabel2.Text = "Vectrast: Radim Řehůřek";
-            this.toolTip1.SetToolTip(this.linkLabel2, "https://radimrehurek.com/");
-            this.linkLabel2.UseCompatibleTextRendering = true;
+            this.linkLabel2.Text = "License (libraries)";
             this.linkLabel2.LinkClicked += new System.Windows.Forms.LinkLabelLinkClickedEventHandler(this.linkLabel2_LinkClicked);
             // 
             // levelManagerButton
