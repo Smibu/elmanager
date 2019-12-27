@@ -310,7 +310,7 @@ namespace Elmanager.Forms
             this.EventListBox.IntegralHeight = false;
             this.EventListBox.Location = new System.Drawing.Point(173, 192);
             this.EventListBox.Name = "EventListBox";
-            this.EventListBox.Size = new System.Drawing.Size(208, 108);
+            this.EventListBox.Size = new System.Drawing.Size(208, 58);
             this.EventListBox.TabIndex = 79;
             this.EventListBox.SelectedIndexChanged += new System.EventHandler(this.EventListBoxSelectedIndexChanged);
             this.EventListBox.MouseWheel += new System.Windows.Forms.MouseEventHandler(this.MouseWheelZoom);
