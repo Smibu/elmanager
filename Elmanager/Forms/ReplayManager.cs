@@ -782,8 +782,10 @@ namespace Elmanager.Forms
                 DisplaySelectionInfo();
                 if (errorFiles.Count > 0)
                 {
-                    var ef = new ErrorForm(errorFiles);
-                    ef.ShowDialog();
+                    using (var ef = new ErrorForm(errorFiles))
+                    {
+                        ef.ShowDialog();
+                    }
                 }
             }
         }

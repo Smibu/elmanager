@@ -254,9 +254,10 @@ namespace Elmanager.Forms
                 DisplaySelectionInfo();
                 if (errorFiles.Count > 0)
                 {
-                    Utils.ShowError(errorFiles.Count.ToString());
-                    var ef = new ErrorForm(errorFiles);
-                    ef.ShowDialog();
+                    using (var ef = new ErrorForm(errorFiles))
+                    {
+                        ef.ShowDialog();
+                    }
                 }
             }
         }

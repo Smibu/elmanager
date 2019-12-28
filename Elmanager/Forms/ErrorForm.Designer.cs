@@ -36,47 +36,50 @@ namespace Elmanager.Forms
             // 
             // Label16
             // 
-            this.Label16.Location = new System.Drawing.Point(36, 21);
+            this.Label16.AutoSize = true;
+            this.Label16.Location = new System.Drawing.Point(12, 9);
             this.Label16.Name = "Label16";
-            this.Label16.Size = new System.Drawing.Size(346, 45);
+            this.Label16.Size = new System.Drawing.Size(317, 13);
             this.Label16.TabIndex = 43;
-            this.Label16.Text = "Replay manager has detected that the following replays are erroneous. However, if" +
-    " you are able to play these replays with original Elma, send them to Smibu.";
+            this.Label16.Text = "The files below could not be loaded. They are probably corrupted.";
             // 
             // ErrorBox
             // 
-            this.ErrorBox.FormattingEnabled = true;
+            this.ErrorBox.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+            | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
             this.ErrorBox.HorizontalScrollbar = true;
-            this.ErrorBox.Location = new System.Drawing.Point(36, 69);
+            this.ErrorBox.IntegralHeight = false;
+            this.ErrorBox.Location = new System.Drawing.Point(13, 25);
             this.ErrorBox.Name = "ErrorBox";
             this.ErrorBox.SelectionMode = System.Windows.Forms.SelectionMode.None;
-            this.ErrorBox.Size = new System.Drawing.Size(346, 160);
+            this.ErrorBox.Size = new System.Drawing.Size(392, 122);
             this.ErrorBox.TabIndex = 44;
             // 
             // DeleteButton
             // 
-            this.DeleteButton.Location = new System.Drawing.Point(172, 235);
+            this.DeleteButton.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+            this.DeleteButton.Location = new System.Drawing.Point(330, 261);
             this.DeleteButton.Name = "DeleteButton";
             this.DeleteButton.Size = new System.Drawing.Size(75, 23);
             this.DeleteButton.TabIndex = 45;
             this.DeleteButton.Text = "Delete all";
             this.DeleteButton.UseVisualStyleBackColor = true;
-            this.DeleteButton.Click += new System.EventHandler(this.DeleteReplays);
+            this.DeleteButton.Click += new System.EventHandler(this.DeleteFiles);
             // 
             // ErrorForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(419, 267);
+            this.ClientSize = new System.Drawing.Size(419, 296);
             this.Controls.Add(this.DeleteButton);
             this.Controls.Add(this.ErrorBox);
             this.Controls.Add(this.Label16);
-            this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedDialog;
-            this.MaximizeBox = false;
             this.Name = "ErrorForm";
             this.StartPosition = System.Windows.Forms.FormStartPosition.CenterParent;
             this.Text = "Warning";
             this.ResumeLayout(false);
+            this.PerformLayout();
 
 		}
 		internal System.Windows.Forms.Label Label16;

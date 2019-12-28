@@ -7,15 +7,19 @@ namespace Elmanager.Forms
 {
     partial class ErrorForm : FormMod
     {
-        internal ErrorForm(IEnumerable<string> recFiles)
+        internal ErrorForm(IEnumerable<string> files)
         {
             InitializeComponent();
-            foreach (var file in recFiles)
+            foreach (var file in files)
                 ErrorBox.Items.Add(file);
         }
 
-        private void DeleteReplays(object sender, EventArgs e)
+        private void DeleteFiles(object sender, EventArgs e)
         {
+            if (!Utils.Confirm($"Delete the {ErrorBox.Items.Count} files?"))
+            {
+                return;
+            }
             foreach (string file in ErrorBox.Items)
                 File.Delete(file);
             Close();
