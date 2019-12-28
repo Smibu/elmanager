@@ -1,5 +1,7 @@
 # Elmanager
-Elmanager is a versatile tool for [Elasto Mania](http://www.elastomania.com) written in C#. Most important features include replay/level searching and viewing and a level editor.
+Elmanager is a tool for managing [Elasto Mania](http://www.elastomania.com) replays and levels. Most important features include replay/level searching and viewing and a level editor.
+
+Elmanager is written in C#.
 
 ## System requirements
 Windows 7/8/10.
