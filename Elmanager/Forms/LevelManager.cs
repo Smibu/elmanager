@@ -100,7 +100,12 @@ namespace Elmanager.Forms
                 Utils.ShowError(Constants.LevDirNotFound);
                 return;
             }
-
+            var res = GetRegexes();
+            if (!res.HasValue)
+            {
+                Utils.ShowError("Some of the search parameters have invalid syntax (regex).");
+                return;
+            }
 
             var allFiles = Directory.GetFiles(Global.AppSettings.General.LevelDirectory, "*.lev",
                 Global.AppSettings.LevelManager.LevDirSearchOption);
@@ -151,13 +156,6 @@ namespace Elmanager.Forms
             catch (OperationCanceledException)
             {
                 Finalize();
-                return;
-            }
-
-            var res = GetRegexes();
-            if (!res.HasValue)
-            {
-                Utils.ShowError("Some of the search parameters have invalid syntax (regex).");
                 return;
             }
 
