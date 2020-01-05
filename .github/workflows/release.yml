@@ -1,0 +1,44 @@
+name: Release
+
+on:
+  push:
+    tags:
+      - '[0-9]+.[0-9]+.[0-9]+'
+env:
+  DOTNET_CLI_TELEMETRY_OPTOUT: 1
+jobs:
+  build:
+
+    runs-on: [windows-latest]
+
+    steps:
+    - uses: actions/checkout@v1
+    - name: Setup .NET Core
+      uses: actions/setup-dotnet@v1
+      with:
+        dotnet-version: 3.1.100
+    - name: Build with dotnet
+      working-directory: ElmanagerCore
+      run: dotnet publish --configuration Release
+    - name: Create ZIP archive
+      run: Compress-Archive -LiteralPath ElmanagerCore/bin/Release/netcoreapp3.1/win7-x86/publish/Elmanager.exe -DestinationPath Elmanager.zip
+    - name: Create release
+      id: create_release
+      uses: actions/create-release@v1
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      with:
+        tag_name: ${{ github.ref }}
+        release_name: ${{ github.ref }}
+        body: 'See [changelog](https://github.com/Smibu/elmanager/blob/master/Elmanager/changelog.md).'
+        draft: false
+        prerelease: false
+    - name: Upload release asset
+      uses: actions/upload-release-asset@v1.0.1
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      with:
+        upload_url: ${{ steps.create_release.outputs.upload_url }}
+        asset_path: ./Elmanager.zip
+        asset_name: Elmanager.zip
+        asset_content_type: application/zip
