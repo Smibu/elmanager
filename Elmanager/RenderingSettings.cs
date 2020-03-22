@@ -279,5 +279,9 @@ namespace Elmanager
 
         [Category("Workarounds"), DisplayName("Disable framebuffer usage")]
         public bool DisableFrameBuffer { get; set; }
+
+        public bool ShowObjectsOrFrames => ShowObjects || ShowObjectFrames;
+        public bool ShowGrassOrEdges => ShowGrassEdges; // ShowGrass is not implemented.
+        public bool ShowGroundOrEdges => ShowGround || ShowGroundEdges;
     }
 }

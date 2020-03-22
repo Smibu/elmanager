@@ -2192,35 +2192,51 @@ namespace Elmanager.Forms
                 else if (saveAsPictureDialog.FileName.EndsWith(".svg"))
                 {
                     var g = new SvgGraphics(Color.LightGray);
-                    var pen = Pens.Black;
+                    var blackPen = Pens.Black;
+                    var greenPen = Pens.Green;
                     const int scale = 10;
                     var m = Matrix.CreateTranslation(-Lev.XMin + 1, -Lev.YMin + 1) * Matrix.CreateScaling(scale, scale);
                     var objOffset = new Vector(-0.4, -0.4);
                     const float oSize = (float)0.8 * scale;
-                    Lev.Polygons.ForEach(p => g.DrawPolygon(pen, p
-                        .ApplyTransformation(m)
-                        .Vertices.Select(v => new PointF((float)v.X, (float)v.Y)).ToArray()));
-                    Lev.Objects.ForEach(o =>
+                    Lev.Polygons.ForEach(p =>
                     {
-                        var pos = (o.Position + objOffset) * m;
-                        switch (o.Type)
+                        if (p.IsGrass && Global.AppSettings.LevelEditor.RenderingSettings.ShowGrassOrEdges)
                         {
-                            case ObjectType.Flower:
-                                g.DrawEllipse(Pens.White, (float)pos.X, (float)pos.Y, oSize, oSize);
-                                break;
-                            case ObjectType.Apple:
-                                g.DrawEllipse(Pens.Red, (float)pos.X, (float)pos.Y, oSize, oSize);
-                                break;
-                            case ObjectType.Killer:
-                                g.DrawEllipse(Pens.Brown, (float)pos.X, (float)pos.Y, oSize, oSize);
-                                break;
-                            case ObjectType.Start:
-                                g.DrawEllipse(Pens.Blue, (float)pos.X, (float)pos.Y, oSize, oSize);
-                                break;
-                            default:
-                                throw new ArgumentOutOfRangeException();
+                            g.DrawLines(greenPen, p
+                                .ApplyTransformation(m)
+                                .Vertices.Select(v => new PointF((float) v.X, (float) v.Y)).ToArray());
+                        }
+                        else if (!p.IsGrass && Global.AppSettings.LevelEditor.RenderingSettings.ShowGroundOrEdges)
+                        {
+                            g.DrawPolygon(blackPen, p
+                                .ApplyTransformation(m)
+                                .Vertices.Select(v => new PointF((float)v.X, (float)v.Y)).ToArray());
                         }
                     });
+                    if (Global.AppSettings.LevelEditor.RenderingSettings.ShowObjectsOrFrames)
+                    {
+                        Lev.Objects.ForEach(o =>
+                        {
+                            var pos = (o.Position + objOffset) * m;
+                            switch (o.Type)
+                            {
+                                case ObjectType.Flower:
+                                    g.DrawEllipse(Pens.White, (float)pos.X, (float)pos.Y, oSize, oSize);
+                                    break;
+                                case ObjectType.Apple:
+                                    g.DrawEllipse(Pens.Red, (float)pos.X, (float)pos.Y, oSize, oSize);
+                                    break;
+                                case ObjectType.Killer:
+                                    g.DrawEllipse(Pens.Brown, (float)pos.X, (float)pos.Y, oSize, oSize);
+                                    break;
+                                case ObjectType.Start:
+                                    g.DrawEllipse(Pens.Blue, (float)pos.X, (float)pos.Y, oSize, oSize);
+                                    break;
+                                default:
+                                    throw new ArgumentOutOfRangeException();
+                            }
+                        });
+                    }
 
                     var svgBody = g.WriteSVGString();
                     var width = (int) ((Lev.Width + 2) * scale);
