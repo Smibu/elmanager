@@ -160,35 +160,37 @@ namespace Elmanager.EditorTools
 
         public void MouseDown(MouseEventArgs mouseData)
         {
-            if (mouseData.Button != MouseButtons.Left) return;
-            if (!Transforming)
+            if (mouseData.Button != MouseButtons.Left
+                || Transforming
+                || _transformRectangle == null)
             {
-                int i;
-                for (i = 0; i < 4; i++)
-                {
-                    if ((_transformRectangle[i] - CurrentPos).Length <
-                        Global.AppSettings.LevelEditor.CaptureRadius * Renderer.ZoomLevel)
-                    {
-                        _transformPolygonIndex = i;
-                        Transforming = true;
-                        break;
-                    }
+                return;
+            }
 
-                    if (((_transformRectangle[i] + _transformRectangle[i + 1]) / 2 - CurrentPos).Length <
-                        Global.AppSettings.LevelEditor.CaptureRadius * Renderer.ZoomLevel)
-                    {
-                        _transformPolygonIndex = i + 4;
-                        Transforming = true;
-                        break;
-                    }
-                }
-
-                if (((_transformRectangle[0] + _transformRectangle[2]) / 2 - CurrentPos).Length <
+            for (int i = 0; i < 4; i++)
+            {
+                if ((_transformRectangle[i] - CurrentPos).Length <
                     Global.AppSettings.LevelEditor.CaptureRadius * Renderer.ZoomLevel)
                 {
-                    _transformPolygonIndex = 8;
+                    _transformPolygonIndex = i;
                     Transforming = true;
+                    break;
                 }
+
+                if (((_transformRectangle[i] + _transformRectangle[i + 1]) / 2 - CurrentPos).Length <
+                    Global.AppSettings.LevelEditor.CaptureRadius * Renderer.ZoomLevel)
+                {
+                    _transformPolygonIndex = i + 4;
+                    Transforming = true;
+                    break;
+                }
+            }
+
+            if (((_transformRectangle[0] + _transformRectangle[2]) / 2 - CurrentPos).Length <
+                Global.AppSettings.LevelEditor.CaptureRadius * Renderer.ZoomLevel)
+            {
+                _transformPolygonIndex = 8;
+                Transforming = true;
             }
         }
 
