@@ -91,7 +91,7 @@ namespace Elmanager
 
         internal Vector MultiplyVector(Vector v)
         {
-            return new Vector {X = v.X * _m11 + v.Y * _m21 + _offsetX, Y = v.Y * _m22 + v.X * _m12 + _offsetY};
+            return new Vector {X = v.X * _m11 + v.Y * _m21 + _offsetX, Y = v.Y * _m22 + v.X * _m12 + _offsetY, Mark = v.Mark};
         }
 
         internal void Rotate(double angle)
