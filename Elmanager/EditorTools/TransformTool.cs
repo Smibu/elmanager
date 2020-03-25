@@ -145,6 +145,9 @@ namespace Elmanager.EditorTools
         public void InActivate()
         {
             EndTransforming();
+            LevEditor.SelectButton.Select();
+            LevEditor.CurrentTool = LevEditor.Tools[0];
+            LevEditor.CurrentTool.Activate();
         }
 
         public void KeyDown(KeyEventArgs key)
@@ -152,9 +155,6 @@ namespace Elmanager.EditorTools
             if (key.KeyCode == Keys.Space)
             {
                 InActivate();
-                LevEditor.SelectButton.Select();
-                LevEditor.CurrentTool = LevEditor.Tools[0];
-                LevEditor.CurrentTool.Activate();
             }
         }
 
