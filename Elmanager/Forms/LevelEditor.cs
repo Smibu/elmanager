@@ -57,7 +57,6 @@ namespace Elmanager.Forms
         private bool _modified;
         private bool _fromScratch;
         private Vector _moveStartPosition;
-        private string _savePath;
         private int _selectedObjectCount;
         private int _selectedObjectIndex;
         private int _selectedPictureCount;
@@ -953,12 +952,10 @@ namespace Elmanager.Forms
             CurrentTool = Tools[0];
             ActivateCurrentAndRedraw();
             SetupEventHandlers();
-            _savePath = Lev.Path;
         }
 
         private void InitializeLevel()
         {
-            _savePath = Lev.Path;
             Modified = false;
             UpdateLabels();
             UpdateButtons();
@@ -1432,7 +1429,7 @@ namespace Elmanager.Forms
 
         private void OpenToolStripMenuItemClick(object sender, EventArgs e)
         {
-            OpenFileDialog1.InitialDirectory = Global.AppSettings.General.LevelDirectory;
+            OpenFileDialog1.InitialDirectory = GetInitialDir();
             OpenFileDialog1.Multiselect = false;
             if (OpenFileDialog1.ShowDialog() == DialogResult.OK)
                 OpenLevel(OpenFileDialog1.FileName);
@@ -1664,17 +1661,26 @@ namespace Elmanager.Forms
                 SaveFileDialog1.FileName = suggestion;
             }
 
-            SaveFileDialog1.InitialDirectory = Global.AppSettings.General.LevelDirectory;
+            SaveFileDialog1.InitialDirectory = GetInitialDir();
             if (SaveFileDialog1.ShowDialog() == DialogResult.OK)
             {
-                _savePath = SaveFileDialog1.FileName;
+                Lev.Path = SaveFileDialog1.FileName;
                 SaveLevel();
             }
         }
 
+        private string GetInitialDir()
+        {
+            if (Lev.Path != null)
+            {
+                return Path.GetDirectoryName(Lev.Path);
+            }
+            return Global.AppSettings.General.LevelDirectory;
+        }
+
         private void SaveClicked(object sender = null, EventArgs e = null)
         {
-            if (_savePath == null)
+            if (Lev.Path == null)
                 SaveAs();
             else
                 SaveLevel();
@@ -1704,12 +1710,12 @@ namespace Elmanager.Forms
 
                 try
                 {
-                    Lev.Save(_savePath);
+                    Lev.Save(Lev.Path);
                     _savedIndex = _historyIndex;
                     _fromScratch = false;
-                    if (!Global.GetLevelFiles().Contains(_savePath))
+                    if (!Global.GetLevelFiles().Contains(Lev.Path))
                     {
-                        Global.GetLevelFiles().Add(_savePath);
+                        Global.GetLevelFiles().Add(Lev.Path);
                         UpdateCurrLevDirFiles(force: true);
                     }
 
@@ -2079,7 +2085,7 @@ namespace Elmanager.Forms
 
         private void importLevelsToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            importFileDialog.InitialDirectory = Global.AppSettings.General.LevelDirectory;
+            importFileDialog.InitialDirectory = GetInitialDir();
             if (importFileDialog.ShowDialog() == DialogResult.OK)
             {
                 ImportFiles(importFileDialog.FileNames);
@@ -2418,7 +2424,6 @@ namespace Elmanager.Forms
                 }
 
                 Lev.Path = newPath;
-                _savePath = newPath;
                 UpdateLabels();
                 filenameBox_TextChanged();
             }
