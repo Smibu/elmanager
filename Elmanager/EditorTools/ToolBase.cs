@@ -1,6 +1,5 @@
 using System;
 using System.Linq;
-using System.Reflection;
 using System.Windows.Forms;
 using Elmanager.Forms;
 
@@ -13,7 +12,6 @@ namespace Elmanager.EditorTools
         protected LevelEditor LevEditor;
         internal Polygon NearestPolygon;
         protected ElmaRenderer Renderer;
-        private Cursor _hand;
 
         protected ToolBase(LevelEditor editor)
         {
@@ -247,25 +245,15 @@ namespace Elmanager.EditorTools
             p.Y -= y;
         }
 
-        private Cursor Hand => _hand ?? (_hand = CreateHandCursor());
-
-        private Cursor CreateHandCursor()
-        {
-            var ctor = typeof(Cursor).GetConstructor(BindingFlags.NonPublic | BindingFlags.Instance, null,
-                new[] {typeof(int), typeof(int)}, null);
-            const int idcHand = 32649;
-            return (Cursor) ctor.Invoke(new object[] {idcHand, 0});
-        }
-
         protected void ChangeCursorToHand()
         {
             if (Global.AppSettings.LevelEditor.UseHighlight)
-                _editorControl.Cursor = Hand;
+                _editorControl.Cursor = Cursors.Hand;
         }
 
         protected void ChangeToDefaultCursorIfHand()
         {
-            if (_editorControl.Cursor == Hand)
+            if (_editorControl.Cursor == Cursors.Hand)
                 LevEditor.ChangeToDefaultCursor();
         }
 
