@@ -35,9 +35,9 @@
             // uploadLabel
             // 
             this.uploadLabel.AutoSize = true;
-            this.uploadLabel.Location = new System.Drawing.Point(12, 9);
+            this.uploadLabel.Location = new System.Drawing.Point(12, 7);
             this.uploadLabel.Name = "uploadLabel";
-            this.uploadLabel.Size = new System.Drawing.Size(64, 13);
+            this.uploadLabel.Size = new System.Drawing.Size(71, 15);
             this.uploadLabel.TabIndex = 0;
             this.uploadLabel.Text = "Uploading...";
             // 
@@ -46,16 +46,17 @@
             this.urlBox.Location = new System.Drawing.Point(15, 25);
             this.urlBox.Name = "urlBox";
             this.urlBox.ReadOnly = true;
-            this.urlBox.Size = new System.Drawing.Size(281, 20);
+            this.urlBox.Size = new System.Drawing.Size(281, 23);
             this.urlBox.TabIndex = 1;
             // 
             // UploadForm
             // 
-            this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
-            this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
+            this.AutoScaleDimensions = new System.Drawing.SizeF(96F, 96F);
+            this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Dpi;
             this.ClientSize = new System.Drawing.Size(308, 105);
             this.Controls.Add(this.urlBox);
             this.Controls.Add(this.uploadLabel);
+            this.Font = new System.Drawing.Font("Segoe UI", 9F);
             this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedSingle;
             this.MaximizeBox = false;
             this.Name = "UploadForm";

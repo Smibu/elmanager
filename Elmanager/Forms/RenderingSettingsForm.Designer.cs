@@ -55,17 +55,18 @@ namespace Elmanager.Forms
             // 
             // RenderingSettingsForm
             // 
-            this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
-            this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
+            this.AutoScaleDimensions = new System.Drawing.SizeF(96F, 96F);
+            this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Dpi;
             this.CancelButton = this.CloseButton;
             this.ClientSize = new System.Drawing.Size(426, 436);
             this.Controls.Add(this.SettingsGrid);
             this.Controls.Add(this.CloseButton);
+            this.Font = new System.Drawing.Font("Segoe UI", 9F);
             this.Name = "RenderingSettingsForm";
             this.Text = "Rendering settings";
             this.ResumeLayout(false);
 
-		}
+        }
 		internal System.Windows.Forms.PropertyGrid SettingsGrid;
 		internal System.Windows.Forms.Button CloseButton;
 	}

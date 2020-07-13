@@ -40,15 +40,16 @@
             this.textBox1.Name = "textBox1";
             this.textBox1.ReadOnly = true;
             this.textBox1.ScrollBars = System.Windows.Forms.ScrollBars.Vertical;
-            this.textBox1.Size = new System.Drawing.Size(800, 450);
+            this.textBox1.Size = new System.Drawing.Size(933, 519);
             this.textBox1.TabIndex = 0;
             // 
             // LicenseForm
             // 
-            this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
-            this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(800, 450);
+            this.AutoScaleDimensions = new System.Drawing.SizeF(96F, 96F);
+            this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Dpi;
+            this.ClientSize = new System.Drawing.Size(933, 519);
             this.Controls.Add(this.textBox1);
+            this.Font = new System.Drawing.Font("Segoe UI", 9F);
             this.Name = "LicenseForm";
             this.Text = "License";
             this.ResumeLayout(false);

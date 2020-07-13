@@ -37,9 +37,10 @@
             // downloadButton
             // 
             this.downloadButton.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
-            this.downloadButton.Location = new System.Drawing.Point(14, 52);
+            this.downloadButton.AutoSize = true;
+            this.downloadButton.Location = new System.Drawing.Point(14, 50);
             this.downloadButton.Name = "downloadButton";
-            this.downloadButton.Size = new System.Drawing.Size(108, 23);
+            this.downloadButton.Size = new System.Drawing.Size(108, 25);
             this.downloadButton.TabIndex = 2;
             this.downloadButton.Text = "Download";
             this.downloadButton.UseVisualStyleBackColor = true;
@@ -48,10 +49,11 @@
             // notYetButton
             // 
             this.notYetButton.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
+            this.notYetButton.AutoSize = true;
             this.notYetButton.DialogResult = System.Windows.Forms.DialogResult.Cancel;
-            this.notYetButton.Location = new System.Drawing.Point(128, 52);
+            this.notYetButton.Location = new System.Drawing.Point(128, 50);
             this.notYetButton.Name = "notYetButton";
-            this.notYetButton.Size = new System.Drawing.Size(108, 23);
+            this.notYetButton.Size = new System.Drawing.Size(108, 25);
             this.notYetButton.TabIndex = 3;
             this.notYetButton.Text = "Not yet";
             this.notYetButton.UseVisualStyleBackColor = true;
@@ -63,7 +65,7 @@
             this.label2.AutoSize = true;
             this.label2.Location = new System.Drawing.Point(11, 78);
             this.label2.Name = "label2";
-            this.label2.Size = new System.Drawing.Size(316, 13);
+            this.label2.Size = new System.Drawing.Size(360, 15);
             this.label2.TabIndex = 4;
             this.label2.Text = "Note: Elmanager will automatically exit if you choose to download.";
             // 
@@ -73,7 +75,7 @@
             this.linkLabel1.LinkArea = new System.Windows.Forms.LinkArea(39, 50);
             this.linkLabel1.Location = new System.Drawing.Point(12, 9);
             this.linkLabel1.Name = "linkLabel1";
-            this.linkLabel1.Size = new System.Drawing.Size(266, 17);
+            this.linkLabel1.Size = new System.Drawing.Size(285, 21);
             this.linkLabel1.TabIndex = 5;
             this.linkLabel1.TabStop = true;
             this.linkLabel1.Text = "New version of Elmanager is available! What\'s new?";
@@ -82,14 +84,15 @@
             // 
             // NewVersionForm
             // 
-            this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
-            this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
+            this.AutoScaleDimensions = new System.Drawing.SizeF(96F, 96F);
+            this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Dpi;
             this.CancelButton = this.notYetButton;
-            this.ClientSize = new System.Drawing.Size(358, 100);
+            this.ClientSize = new System.Drawing.Size(379, 100);
             this.Controls.Add(this.linkLabel1);
             this.Controls.Add(this.label2);
             this.Controls.Add(this.notYetButton);
             this.Controls.Add(this.downloadButton);
+            this.Font = new System.Drawing.Font("Segoe UI", 9F);
             this.Name = "NewVersionForm";
             this.Text = "New version available";
             this.Load += new System.EventHandler(this.NewVersionForm_Load);

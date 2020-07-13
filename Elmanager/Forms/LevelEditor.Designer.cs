@@ -144,6 +144,8 @@ namespace Elmanager.Forms
             this.toolStripSeparator12 = new System.Windows.Forms.ToolStripSeparator();
             this.BestTimeLabel = new System.Windows.Forms.ToolStripLabel();
             this.topologyList = new System.Windows.Forms.ToolStripDropDownButton();
+            this.toolStrip3 = new System.Windows.Forms.ToolStrip();
+            this.InfoLabel = new System.Windows.Forms.ToolStripLabel();
             this.EditorMenuStrip = new System.Windows.Forms.ContextMenuStrip(this.components);
             this.CopyMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.TransformMenuItem = new System.Windows.Forms.ToolStripMenuItem();
@@ -182,22 +184,19 @@ namespace Elmanager.Forms
             this.DrawButton = new Elmanager.CustomControls.RadioButtonMod();
             this.VertexButton = new Elmanager.CustomControls.RadioButtonMod();
             this.SelectButton = new Elmanager.CustomControls.RadioButtonMod();
-            this.toolStrip3 = new System.Windows.Forms.ToolStrip();
-            this.InfoLabel = new System.Windows.Forms.ToolStripLabel();
             this.MenuStrip1.SuspendLayout();
             this.StatusStrip1.SuspendLayout();
             this.ToolStripPanel1.SuspendLayout();
             this.ToolStrip1.SuspendLayout();
             this.ToolStrip2.SuspendLayout();
+            this.toolStrip3.SuspendLayout();
             this.EditorMenuStrip.SuspendLayout();
             this.ToolPanel.SuspendLayout();
-            this.toolStrip3.SuspendLayout();
             this.SuspendLayout();
             // 
             // MenuStrip1
             // 
             this.MenuStrip1.BackColor = System.Drawing.SystemColors.Control;
-            this.MenuStrip1.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F);
             this.MenuStrip1.ImageScalingSize = new System.Drawing.Size(15, 15);
             this.MenuStrip1.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.FileToolStripMenuItem,
@@ -222,7 +221,7 @@ namespace Elmanager.Forms
             this.deleteLevMenuItem,
             this.ExitToolStripMenuItem});
             this.FileToolStripMenuItem.Name = "FileToolStripMenuItem";
-            this.FileToolStripMenuItem.Size = new System.Drawing.Size(35, 20);
+            this.FileToolStripMenuItem.Size = new System.Drawing.Size(37, 20);
             this.FileToolStripMenuItem.Text = "File";
             // 
             // NewToolStripMenuItem
@@ -230,7 +229,7 @@ namespace Elmanager.Forms
             this.NewToolStripMenuItem.Image = global::My.Resources.Resources.New16;
             this.NewToolStripMenuItem.Name = "NewToolStripMenuItem";
             this.NewToolStripMenuItem.ShortcutKeys = ((System.Windows.Forms.Keys)((System.Windows.Forms.Keys.Control | System.Windows.Forms.Keys.N)));
-            this.NewToolStripMenuItem.Size = new System.Drawing.Size(192, 22);
+            this.NewToolStripMenuItem.Size = new System.Drawing.Size(202, 22);
             this.NewToolStripMenuItem.Text = "New";
             this.NewToolStripMenuItem.Click += new System.EventHandler(this.NewLevel);
             // 
@@ -239,7 +238,7 @@ namespace Elmanager.Forms
             this.OpenToolStripMenuItem.Image = global::My.Resources.Resources.Open;
             this.OpenToolStripMenuItem.Name = "OpenToolStripMenuItem";
             this.OpenToolStripMenuItem.ShortcutKeys = ((System.Windows.Forms.Keys)((System.Windows.Forms.Keys.Control | System.Windows.Forms.Keys.O)));
-            this.OpenToolStripMenuItem.Size = new System.Drawing.Size(192, 22);
+            this.OpenToolStripMenuItem.Size = new System.Drawing.Size(202, 22);
             this.OpenToolStripMenuItem.Text = "Open";
             this.OpenToolStripMenuItem.Click += new System.EventHandler(this.OpenToolStripMenuItemClick);
             // 
@@ -249,7 +248,7 @@ namespace Elmanager.Forms
             this.SaveToolStripMenuItem.Image = global::My.Resources.Resources.Save;
             this.SaveToolStripMenuItem.Name = "SaveToolStripMenuItem";
             this.SaveToolStripMenuItem.ShortcutKeys = ((System.Windows.Forms.Keys)((System.Windows.Forms.Keys.Control | System.Windows.Forms.Keys.S)));
-            this.SaveToolStripMenuItem.Size = new System.Drawing.Size(192, 22);
+            this.SaveToolStripMenuItem.Size = new System.Drawing.Size(202, 22);
             this.SaveToolStripMenuItem.Text = "Save";
             this.SaveToolStripMenuItem.Click += new System.EventHandler(this.SaveClicked);
             // 
@@ -257,7 +256,7 @@ namespace Elmanager.Forms
             // 
             this.SaveAsToolStripMenuItem.Image = global::My.Resources.Resources.SaveAs16;
             this.SaveAsToolStripMenuItem.Name = "SaveAsToolStripMenuItem";
-            this.SaveAsToolStripMenuItem.Size = new System.Drawing.Size(192, 22);
+            this.SaveAsToolStripMenuItem.Size = new System.Drawing.Size(202, 22);
             this.SaveAsToolStripMenuItem.Text = "Save as...";
             this.SaveAsToolStripMenuItem.Click += new System.EventHandler(this.SaveAs);
             // 
@@ -265,7 +264,7 @@ namespace Elmanager.Forms
             // 
             this.saveAsPictureToolStripMenuItem.Name = "saveAsPictureToolStripMenuItem";
             this.saveAsPictureToolStripMenuItem.ShortcutKeys = ((System.Windows.Forms.Keys)((System.Windows.Forms.Keys.Control | System.Windows.Forms.Keys.P)));
-            this.saveAsPictureToolStripMenuItem.Size = new System.Drawing.Size(192, 22);
+            this.saveAsPictureToolStripMenuItem.Size = new System.Drawing.Size(202, 22);
             this.saveAsPictureToolStripMenuItem.Text = "Save as picture...";
             this.saveAsPictureToolStripMenuItem.Click += new System.EventHandler(this.saveAsPictureToolStripMenuItem_Click);
             // 
@@ -273,7 +272,7 @@ namespace Elmanager.Forms
             // 
             this.deleteLevMenuItem.Image = global::My.Resources.Resources.Delete;
             this.deleteLevMenuItem.Name = "deleteLevMenuItem";
-            this.deleteLevMenuItem.Size = new System.Drawing.Size(192, 22);
+            this.deleteLevMenuItem.Size = new System.Drawing.Size(202, 22);
             this.deleteLevMenuItem.Text = "Delete";
             this.deleteLevMenuItem.Click += new System.EventHandler(this.deleteLevMenuItem_Click);
             // 
@@ -281,7 +280,7 @@ namespace Elmanager.Forms
             // 
             this.ExitToolStripMenuItem.Image = global::My.Resources.Resources.Exit16;
             this.ExitToolStripMenuItem.Name = "ExitToolStripMenuItem";
-            this.ExitToolStripMenuItem.Size = new System.Drawing.Size(192, 22);
+            this.ExitToolStripMenuItem.Size = new System.Drawing.Size(202, 22);
             this.ExitToolStripMenuItem.Text = "Exit";
             this.ExitToolStripMenuItem.Click += new System.EventHandler(this.ExitToolStripMenuItemClick);
             // 
@@ -303,7 +302,7 @@ namespace Elmanager.Forms
             this.selectAllToolStripMenuItem,
             this.importLevelsToolStripMenuItem});
             this.ActionsMenuItem.Name = "ActionsMenuItem";
-            this.ActionsMenuItem.Size = new System.Drawing.Size(45, 20);
+            this.ActionsMenuItem.Size = new System.Drawing.Size(46, 20);
             this.ActionsMenuItem.Text = "Tools";
             // 
             // QuickGrassToolStripMenuItem
@@ -311,7 +310,7 @@ namespace Elmanager.Forms
             this.QuickGrassToolStripMenuItem.Image = global::My.Resources.Resources.GrassAll;
             this.QuickGrassToolStripMenuItem.Name = "QuickGrassToolStripMenuItem";
             this.QuickGrassToolStripMenuItem.ShortcutKeys = ((System.Windows.Forms.Keys)((System.Windows.Forms.Keys.Control | System.Windows.Forms.Keys.G)));
-            this.QuickGrassToolStripMenuItem.Size = new System.Drawing.Size(227, 22);
+            this.QuickGrassToolStripMenuItem.Size = new System.Drawing.Size(251, 22);
             this.QuickGrassToolStripMenuItem.Text = "QuickGrass";
             this.QuickGrassToolStripMenuItem.Click += new System.EventHandler(this.QuickGrassToolStripMenuItemClick);
             // 
@@ -320,7 +319,7 @@ namespace Elmanager.Forms
             this.DeleteAllGrassToolStripMenuItem.Image = global::My.Resources.Resources.GrassDelete;
             this.DeleteAllGrassToolStripMenuItem.Name = "DeleteAllGrassToolStripMenuItem";
             this.DeleteAllGrassToolStripMenuItem.ShortcutKeys = ((System.Windows.Forms.Keys)((System.Windows.Forms.Keys.Control | System.Windows.Forms.Keys.D)));
-            this.DeleteAllGrassToolStripMenuItem.Size = new System.Drawing.Size(227, 22);
+            this.DeleteAllGrassToolStripMenuItem.Size = new System.Drawing.Size(251, 22);
             this.DeleteAllGrassToolStripMenuItem.Text = "Delete all grass";
             this.DeleteAllGrassToolStripMenuItem.Click += new System.EventHandler(this.DeleteAllGrassToolStripMenuItemClick);
             // 
@@ -329,7 +328,7 @@ namespace Elmanager.Forms
             this.UndoToolStripMenuItem.Image = global::My.Resources.Resources.Undo;
             this.UndoToolStripMenuItem.Name = "UndoToolStripMenuItem";
             this.UndoToolStripMenuItem.ShortcutKeys = ((System.Windows.Forms.Keys)((System.Windows.Forms.Keys.Control | System.Windows.Forms.Keys.Z)));
-            this.UndoToolStripMenuItem.Size = new System.Drawing.Size(227, 22);
+            this.UndoToolStripMenuItem.Size = new System.Drawing.Size(251, 22);
             this.UndoToolStripMenuItem.Text = "Undo";
             this.UndoToolStripMenuItem.Click += new System.EventHandler(this.Undo);
             // 
@@ -339,21 +338,21 @@ namespace Elmanager.Forms
             this.RedoToolStripMenuItem.Name = "RedoToolStripMenuItem";
             this.RedoToolStripMenuItem.ShortcutKeyDisplayString = "";
             this.RedoToolStripMenuItem.ShortcutKeys = ((System.Windows.Forms.Keys)((System.Windows.Forms.Keys.Control | System.Windows.Forms.Keys.Y)));
-            this.RedoToolStripMenuItem.Size = new System.Drawing.Size(227, 22);
+            this.RedoToolStripMenuItem.Size = new System.Drawing.Size(251, 22);
             this.RedoToolStripMenuItem.Text = "Redo";
             this.RedoToolStripMenuItem.Click += new System.EventHandler(this.Redo);
             // 
             // ToolStripSeparator8
             // 
             this.ToolStripSeparator8.Name = "ToolStripSeparator8";
-            this.ToolStripSeparator8.Size = new System.Drawing.Size(224, 6);
+            this.ToolStripSeparator8.Size = new System.Drawing.Size(248, 6);
             // 
             // ZoomFillToolStripMenuItem
             // 
             this.ZoomFillToolStripMenuItem.Image = global::My.Resources.Resources.ZoomFill16;
             this.ZoomFillToolStripMenuItem.Name = "ZoomFillToolStripMenuItem";
             this.ZoomFillToolStripMenuItem.ShortcutKeys = System.Windows.Forms.Keys.F5;
-            this.ZoomFillToolStripMenuItem.Size = new System.Drawing.Size(227, 22);
+            this.ZoomFillToolStripMenuItem.Size = new System.Drawing.Size(251, 22);
             this.ZoomFillToolStripMenuItem.Text = "Zoom fill";
             this.ZoomFillToolStripMenuItem.Click += new System.EventHandler(this.ZoomFillToolStripMenuItemClick);
             // 
@@ -362,7 +361,7 @@ namespace Elmanager.Forms
             this.CheckTopologyMenuItem.Image = global::My.Resources.Resources.Topology;
             this.CheckTopologyMenuItem.Name = "CheckTopologyMenuItem";
             this.CheckTopologyMenuItem.ShortcutKeys = System.Windows.Forms.Keys.F6;
-            this.CheckTopologyMenuItem.Size = new System.Drawing.Size(227, 22);
+            this.CheckTopologyMenuItem.Size = new System.Drawing.Size(251, 22);
             this.CheckTopologyMenuItem.Text = "Check topology";
             this.CheckTopologyMenuItem.Click += new System.EventHandler(this.CheckTopologyAndUpdate);
             // 
@@ -370,21 +369,21 @@ namespace Elmanager.Forms
             // 
             this.LevelPropertiesToolStripMenuItem.Name = "LevelPropertiesToolStripMenuItem";
             this.LevelPropertiesToolStripMenuItem.ShortcutKeys = System.Windows.Forms.Keys.F4;
-            this.LevelPropertiesToolStripMenuItem.Size = new System.Drawing.Size(227, 22);
+            this.LevelPropertiesToolStripMenuItem.Size = new System.Drawing.Size(251, 22);
             this.LevelPropertiesToolStripMenuItem.Text = "Level properties";
             this.LevelPropertiesToolStripMenuItem.Click += new System.EventHandler(this.LevelPropertiesToolStripMenuItemClick);
             // 
             // toolStripSeparator10
             // 
             this.toolStripSeparator10.Name = "toolStripSeparator10";
-            this.toolStripSeparator10.Size = new System.Drawing.Size(224, 6);
+            this.toolStripSeparator10.Size = new System.Drawing.Size(248, 6);
             // 
             // previousLevelToolStripMenuItem
             // 
             this.previousLevelToolStripMenuItem.Image = global::My.Resources.Resources.Previous;
             this.previousLevelToolStripMenuItem.Name = "previousLevelToolStripMenuItem";
             this.previousLevelToolStripMenuItem.ShortcutKeys = System.Windows.Forms.Keys.F2;
-            this.previousLevelToolStripMenuItem.Size = new System.Drawing.Size(227, 22);
+            this.previousLevelToolStripMenuItem.Size = new System.Drawing.Size(251, 22);
             this.previousLevelToolStripMenuItem.Text = "Previous level";
             // 
             // nextLevelToolStripMenuItem
@@ -392,19 +391,19 @@ namespace Elmanager.Forms
             this.nextLevelToolStripMenuItem.Image = global::My.Resources.Resources.Next;
             this.nextLevelToolStripMenuItem.Name = "nextLevelToolStripMenuItem";
             this.nextLevelToolStripMenuItem.ShortcutKeys = System.Windows.Forms.Keys.F3;
-            this.nextLevelToolStripMenuItem.Size = new System.Drawing.Size(227, 22);
+            this.nextLevelToolStripMenuItem.Size = new System.Drawing.Size(251, 22);
             this.nextLevelToolStripMenuItem.Text = "Next Level";
             // 
             // toolStripSeparator11
             // 
             this.toolStripSeparator11.Name = "toolStripSeparator11";
-            this.toolStripSeparator11.Size = new System.Drawing.Size(224, 6);
+            this.toolStripSeparator11.Size = new System.Drawing.Size(248, 6);
             // 
             // selectAllToolStripMenuItem
             // 
             this.selectAllToolStripMenuItem.Name = "selectAllToolStripMenuItem";
             this.selectAllToolStripMenuItem.ShortcutKeys = ((System.Windows.Forms.Keys)((System.Windows.Forms.Keys.Control | System.Windows.Forms.Keys.A)));
-            this.selectAllToolStripMenuItem.Size = new System.Drawing.Size(227, 22);
+            this.selectAllToolStripMenuItem.Size = new System.Drawing.Size(251, 22);
             this.selectAllToolStripMenuItem.Text = "Select all";
             this.selectAllToolStripMenuItem.Click += new System.EventHandler(this.SelectAllToolStripMenuItemClick);
             // 
@@ -412,7 +411,7 @@ namespace Elmanager.Forms
             // 
             this.importLevelsToolStripMenuItem.Name = "importLevelsToolStripMenuItem";
             this.importLevelsToolStripMenuItem.ShortcutKeys = ((System.Windows.Forms.Keys)((System.Windows.Forms.Keys.Control | System.Windows.Forms.Keys.V)));
-            this.importLevelsToolStripMenuItem.Size = new System.Drawing.Size(227, 22);
+            this.importLevelsToolStripMenuItem.Size = new System.Drawing.Size(251, 22);
             this.importLevelsToolStripMenuItem.Text = "Import level(s)/image(s)...";
             this.importLevelsToolStripMenuItem.Click += new System.EventHandler(this.importLevelsToolStripMenuItem_Click);
             // 
@@ -432,14 +431,14 @@ namespace Elmanager.Forms
             this.toolStripSeparator15,
             this.texturizeMenuItem});
             this.selectionToolStripMenuItem.Name = "selectionToolStripMenuItem";
-            this.selectionToolStripMenuItem.Size = new System.Drawing.Size(63, 20);
+            this.selectionToolStripMenuItem.Size = new System.Drawing.Size(67, 20);
             this.selectionToolStripMenuItem.Text = "Selection";
             // 
             // toolStripMenuItem1
             // 
             this.toolStripMenuItem1.Name = "toolStripMenuItem1";
             this.toolStripMenuItem1.ShortcutKeys = ((System.Windows.Forms.Keys)((System.Windows.Forms.Keys.Control | System.Windows.Forms.Keys.C)));
-            this.toolStripMenuItem1.Size = new System.Drawing.Size(239, 22);
+            this.toolStripMenuItem1.Size = new System.Drawing.Size(265, 22);
             this.toolStripMenuItem1.Text = "Copy";
             this.toolStripMenuItem1.Click += new System.EventHandler(this.CopyMenuItemClick);
             // 
@@ -448,7 +447,7 @@ namespace Elmanager.Forms
             this.copyAndSnapToGridMenuItem.Name = "copyAndSnapToGridMenuItem";
             this.copyAndSnapToGridMenuItem.ShortcutKeys = ((System.Windows.Forms.Keys)(((System.Windows.Forms.Keys.Control | System.Windows.Forms.Keys.Shift) 
             | System.Windows.Forms.Keys.C)));
-            this.copyAndSnapToGridMenuItem.Size = new System.Drawing.Size(239, 22);
+            this.copyAndSnapToGridMenuItem.Size = new System.Drawing.Size(265, 22);
             this.copyAndSnapToGridMenuItem.Text = "Copy and snap to grid";
             this.copyAndSnapToGridMenuItem.Click += new System.EventHandler(this.CopyMenuItemClick);
             // 
@@ -457,7 +456,7 @@ namespace Elmanager.Forms
             this.MirrorHorizontallyToolStripMenuItem.Image = global::My.Resources.Resources.Mirror16;
             this.MirrorHorizontallyToolStripMenuItem.Name = "MirrorHorizontallyToolStripMenuItem";
             this.MirrorHorizontallyToolStripMenuItem.ShortcutKeys = ((System.Windows.Forms.Keys)((System.Windows.Forms.Keys.Control | System.Windows.Forms.Keys.M)));
-            this.MirrorHorizontallyToolStripMenuItem.Size = new System.Drawing.Size(239, 22);
+            this.MirrorHorizontallyToolStripMenuItem.Size = new System.Drawing.Size(265, 22);
             this.MirrorHorizontallyToolStripMenuItem.Text = "Mirror horizontally";
             this.MirrorHorizontallyToolStripMenuItem.Click += new System.EventHandler(this.MirrorHorizontallyToolStripMenuItem_Click);
             // 
@@ -467,7 +466,7 @@ namespace Elmanager.Forms
             this.MirrorVerticallyToolStripMenuItem.Name = "MirrorVerticallyToolStripMenuItem";
             this.MirrorVerticallyToolStripMenuItem.ShortcutKeys = ((System.Windows.Forms.Keys)(((System.Windows.Forms.Keys.Control | System.Windows.Forms.Keys.Shift) 
             | System.Windows.Forms.Keys.M)));
-            this.MirrorVerticallyToolStripMenuItem.Size = new System.Drawing.Size(239, 22);
+            this.MirrorVerticallyToolStripMenuItem.Size = new System.Drawing.Size(265, 22);
             this.MirrorVerticallyToolStripMenuItem.Text = "Mirror vertically";
             this.MirrorVerticallyToolStripMenuItem.Click += new System.EventHandler(this.MirrorVerticallyToolStripMenuItem_Click);
             // 
@@ -476,20 +475,20 @@ namespace Elmanager.Forms
             this.DeleteSelectedMenuItem.Image = global::My.Resources.Resources.Delete;
             this.DeleteSelectedMenuItem.Name = "DeleteSelectedMenuItem";
             this.DeleteSelectedMenuItem.ShortcutText = "Del";
-            this.DeleteSelectedMenuItem.Size = new System.Drawing.Size(239, 22);
+            this.DeleteSelectedMenuItem.Size = new System.Drawing.Size(265, 22);
             this.DeleteSelectedMenuItem.Text = "Delete";
             this.DeleteSelectedMenuItem.Click += new System.EventHandler(this.DeleteSelected);
             // 
             // toolStripSeparator14
             // 
             this.toolStripSeparator14.Name = "toolStripSeparator14";
-            this.toolStripSeparator14.Size = new System.Drawing.Size(236, 6);
+            this.toolStripSeparator14.Size = new System.Drawing.Size(262, 6);
             // 
             // unionToolStripMenuItem
             // 
             this.unionToolStripMenuItem.Name = "unionToolStripMenuItem";
             this.unionToolStripMenuItem.ShortcutText = ",";
-            this.unionToolStripMenuItem.Size = new System.Drawing.Size(239, 22);
+            this.unionToolStripMenuItem.Size = new System.Drawing.Size(265, 22);
             this.unionToolStripMenuItem.Text = "Union";
             this.unionToolStripMenuItem.Click += new System.EventHandler(this.unionToolStripMenuItem_Click);
             // 
@@ -497,7 +496,7 @@ namespace Elmanager.Forms
             // 
             this.differenceToolStripMenuItem.Name = "differenceToolStripMenuItem";
             this.differenceToolStripMenuItem.ShortcutText = ".";
-            this.differenceToolStripMenuItem.Size = new System.Drawing.Size(239, 22);
+            this.differenceToolStripMenuItem.Size = new System.Drawing.Size(265, 22);
             this.differenceToolStripMenuItem.Text = "Difference";
             this.differenceToolStripMenuItem.Click += new System.EventHandler(this.differenceToolStripMenuItem_Click);
             // 
@@ -505,7 +504,7 @@ namespace Elmanager.Forms
             // 
             this.intersectionToolStripMenuItem.Name = "intersectionToolStripMenuItem";
             this.intersectionToolStripMenuItem.ShortcutText = "Enter";
-            this.intersectionToolStripMenuItem.Size = new System.Drawing.Size(239, 22);
+            this.intersectionToolStripMenuItem.Size = new System.Drawing.Size(265, 22);
             this.intersectionToolStripMenuItem.Text = "Intersection";
             this.intersectionToolStripMenuItem.Click += new System.EventHandler(this.intersectionToolStripMenuItem_Click);
             // 
@@ -513,20 +512,20 @@ namespace Elmanager.Forms
             // 
             this.symmetricDifferenceToolStripMenuItem.Name = "symmetricDifferenceToolStripMenuItem";
             this.symmetricDifferenceToolStripMenuItem.ShortcutText = "\'";
-            this.symmetricDifferenceToolStripMenuItem.Size = new System.Drawing.Size(239, 22);
+            this.symmetricDifferenceToolStripMenuItem.Size = new System.Drawing.Size(265, 22);
             this.symmetricDifferenceToolStripMenuItem.Text = "Symmetric difference";
             this.symmetricDifferenceToolStripMenuItem.Click += new System.EventHandler(this.symmetricDifferenceToolStripMenuItem_Click);
             // 
             // toolStripSeparator15
             // 
             this.toolStripSeparator15.Name = "toolStripSeparator15";
-            this.toolStripSeparator15.Size = new System.Drawing.Size(236, 6);
+            this.toolStripSeparator15.Size = new System.Drawing.Size(262, 6);
             // 
             // texturizeMenuItem
             // 
             this.texturizeMenuItem.Name = "texturizeMenuItem";
             this.texturizeMenuItem.ShortcutText = "§";
-            this.texturizeMenuItem.Size = new System.Drawing.Size(239, 22);
+            this.texturizeMenuItem.Size = new System.Drawing.Size(265, 22);
             this.texturizeMenuItem.Text = "Texturize";
             this.texturizeMenuItem.Click += new System.EventHandler(this.texturizeMenuItem_Click);
             // 
@@ -543,20 +542,20 @@ namespace Elmanager.Forms
             this.PicturesToolStripMenuItem,
             this.TexturesToolStripMenuItem});
             this.SelectionFilterToolStripMenuItem.Name = "SelectionFilterToolStripMenuItem";
-            this.SelectionFilterToolStripMenuItem.Size = new System.Drawing.Size(85, 20);
+            this.SelectionFilterToolStripMenuItem.Size = new System.Drawing.Size(94, 20);
             this.SelectionFilterToolStripMenuItem.Text = "Selection filter";
             // 
             // EnableAllToolStripMenuItem
             // 
             this.EnableAllToolStripMenuItem.Name = "EnableAllToolStripMenuItem";
-            this.EnableAllToolStripMenuItem.Size = new System.Drawing.Size(154, 22);
+            this.EnableAllToolStripMenuItem.Size = new System.Drawing.Size(166, 22);
             this.EnableAllToolStripMenuItem.Text = "Enable all";
             this.EnableAllToolStripMenuItem.Click += new System.EventHandler(this.SetAllFilters);
             // 
             // DisableAllToolStripMenuItem
             // 
             this.DisableAllToolStripMenuItem.Name = "DisableAllToolStripMenuItem";
-            this.DisableAllToolStripMenuItem.Size = new System.Drawing.Size(154, 22);
+            this.DisableAllToolStripMenuItem.Size = new System.Drawing.Size(166, 22);
             this.DisableAllToolStripMenuItem.Text = "Disable all";
             this.DisableAllToolStripMenuItem.Click += new System.EventHandler(this.SetAllFilters);
             // 
@@ -566,7 +565,7 @@ namespace Elmanager.Forms
             this.GroundPolygonsToolStripMenuItem.CheckOnClick = true;
             this.GroundPolygonsToolStripMenuItem.CheckState = System.Windows.Forms.CheckState.Checked;
             this.GroundPolygonsToolStripMenuItem.Name = "GroundPolygonsToolStripMenuItem";
-            this.GroundPolygonsToolStripMenuItem.Size = new System.Drawing.Size(154, 22);
+            this.GroundPolygonsToolStripMenuItem.Size = new System.Drawing.Size(166, 22);
             this.GroundPolygonsToolStripMenuItem.Text = "Ground polygons";
             this.GroundPolygonsToolStripMenuItem.CheckedChanged += new System.EventHandler(this.FilterChanged);
             // 
@@ -576,7 +575,7 @@ namespace Elmanager.Forms
             this.GrassPolygonsToolStripMenuItem.CheckOnClick = true;
             this.GrassPolygonsToolStripMenuItem.CheckState = System.Windows.Forms.CheckState.Checked;
             this.GrassPolygonsToolStripMenuItem.Name = "GrassPolygonsToolStripMenuItem";
-            this.GrassPolygonsToolStripMenuItem.Size = new System.Drawing.Size(154, 22);
+            this.GrassPolygonsToolStripMenuItem.Size = new System.Drawing.Size(166, 22);
             this.GrassPolygonsToolStripMenuItem.Text = "Grass polygons";
             this.GrassPolygonsToolStripMenuItem.CheckedChanged += new System.EventHandler(this.FilterChanged);
             // 
@@ -586,7 +585,7 @@ namespace Elmanager.Forms
             this.ApplesToolStripMenuItem.CheckOnClick = true;
             this.ApplesToolStripMenuItem.CheckState = System.Windows.Forms.CheckState.Checked;
             this.ApplesToolStripMenuItem.Name = "ApplesToolStripMenuItem";
-            this.ApplesToolStripMenuItem.Size = new System.Drawing.Size(154, 22);
+            this.ApplesToolStripMenuItem.Size = new System.Drawing.Size(166, 22);
             this.ApplesToolStripMenuItem.Text = "Apples";
             this.ApplesToolStripMenuItem.CheckedChanged += new System.EventHandler(this.FilterChanged);
             // 
@@ -596,7 +595,7 @@ namespace Elmanager.Forms
             this.KillersToolStripMenuItem.CheckOnClick = true;
             this.KillersToolStripMenuItem.CheckState = System.Windows.Forms.CheckState.Checked;
             this.KillersToolStripMenuItem.Name = "KillersToolStripMenuItem";
-            this.KillersToolStripMenuItem.Size = new System.Drawing.Size(154, 22);
+            this.KillersToolStripMenuItem.Size = new System.Drawing.Size(166, 22);
             this.KillersToolStripMenuItem.Text = "Killers";
             this.KillersToolStripMenuItem.CheckedChanged += new System.EventHandler(this.FilterChanged);
             // 
@@ -606,7 +605,7 @@ namespace Elmanager.Forms
             this.FlowersToolStripMenuItem.CheckOnClick = true;
             this.FlowersToolStripMenuItem.CheckState = System.Windows.Forms.CheckState.Checked;
             this.FlowersToolStripMenuItem.Name = "FlowersToolStripMenuItem";
-            this.FlowersToolStripMenuItem.Size = new System.Drawing.Size(154, 22);
+            this.FlowersToolStripMenuItem.Size = new System.Drawing.Size(166, 22);
             this.FlowersToolStripMenuItem.Text = "Flowers";
             this.FlowersToolStripMenuItem.CheckedChanged += new System.EventHandler(this.FilterChanged);
             // 
@@ -616,7 +615,7 @@ namespace Elmanager.Forms
             this.PicturesToolStripMenuItem.CheckOnClick = true;
             this.PicturesToolStripMenuItem.CheckState = System.Windows.Forms.CheckState.Checked;
             this.PicturesToolStripMenuItem.Name = "PicturesToolStripMenuItem";
-            this.PicturesToolStripMenuItem.Size = new System.Drawing.Size(154, 22);
+            this.PicturesToolStripMenuItem.Size = new System.Drawing.Size(166, 22);
             this.PicturesToolStripMenuItem.Text = "Pictures";
             this.PicturesToolStripMenuItem.CheckedChanged += new System.EventHandler(this.FilterChanged);
             // 
@@ -626,7 +625,7 @@ namespace Elmanager.Forms
             this.TexturesToolStripMenuItem.CheckOnClick = true;
             this.TexturesToolStripMenuItem.CheckState = System.Windows.Forms.CheckState.Checked;
             this.TexturesToolStripMenuItem.Name = "TexturesToolStripMenuItem";
-            this.TexturesToolStripMenuItem.Size = new System.Drawing.Size(154, 22);
+            this.TexturesToolStripMenuItem.Size = new System.Drawing.Size(166, 22);
             this.TexturesToolStripMenuItem.Text = "Textures";
             this.TexturesToolStripMenuItem.CheckedChanged += new System.EventHandler(this.FilterChanged);
             // 
@@ -636,14 +635,14 @@ namespace Elmanager.Forms
             this.MainConfigMenuItem,
             this.RenderingSettingsToolStripMenuItem});
             this.ConfigurationToolStripMenuItem.Name = "ConfigurationToolStripMenuItem";
-            this.ConfigurationToolStripMenuItem.Size = new System.Drawing.Size(81, 20);
+            this.ConfigurationToolStripMenuItem.Size = new System.Drawing.Size(93, 20);
             this.ConfigurationToolStripMenuItem.Text = "Configuration";
             // 
             // MainConfigMenuItem
             // 
             this.MainConfigMenuItem.Name = "MainConfigMenuItem";
             this.MainConfigMenuItem.ShortcutKeys = System.Windows.Forms.Keys.F7;
-            this.MainConfigMenuItem.Size = new System.Drawing.Size(181, 22);
+            this.MainConfigMenuItem.Size = new System.Drawing.Size(191, 22);
             this.MainConfigMenuItem.Text = "Main";
             this.MainConfigMenuItem.Click += new System.EventHandler(this.OpenConfig);
             // 
@@ -651,7 +650,7 @@ namespace Elmanager.Forms
             // 
             this.RenderingSettingsToolStripMenuItem.Name = "RenderingSettingsToolStripMenuItem";
             this.RenderingSettingsToolStripMenuItem.ShortcutKeys = System.Windows.Forms.Keys.F8;
-            this.RenderingSettingsToolStripMenuItem.Size = new System.Drawing.Size(181, 22);
+            this.RenderingSettingsToolStripMenuItem.Size = new System.Drawing.Size(191, 22);
             this.RenderingSettingsToolStripMenuItem.Text = "Rendering settings";
             this.RenderingSettingsToolStripMenuItem.Click += new System.EventHandler(this.OpenRenderingSettings);
             // 
@@ -659,9 +658,9 @@ namespace Elmanager.Forms
             // 
             this.EditorControl.AllowDrop = true;
             this.EditorControl.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.EditorControl.Location = new System.Drawing.Point(84, 142);
+            this.EditorControl.Location = new System.Drawing.Point(84, 136);
             this.EditorControl.Name = "EditorControl";
-            this.EditorControl.Size = new System.Drawing.Size(845, 314);
+            this.EditorControl.Size = new System.Drawing.Size(845, 350);
             this.EditorControl.TabIndex = 2;
             this.EditorControl.DragDrop += new System.Windows.Forms.DragEventHandler(this.ItemsDropped);
             this.EditorControl.DragEnter += new System.Windows.Forms.DragEventHandler(this.StartingDrop);
@@ -678,13 +677,14 @@ namespace Elmanager.Forms
             // 
             // StatusStrip1
             // 
+            this.StatusStrip1.AutoSize = false;
             this.StatusStrip1.GripMargin = new System.Windows.Forms.Padding(0);
             this.StatusStrip1.ImageScalingSize = new System.Drawing.Size(32, 32);
             this.StatusStrip1.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.CoordinateLabel,
             this.SelectionLabel,
             this.HighlightLabel});
-            this.StatusStrip1.Location = new System.Drawing.Point(0, 456);
+            this.StatusStrip1.Location = new System.Drawing.Point(0, 486);
             this.StatusStrip1.Name = "StatusStrip1";
             this.StatusStrip1.ShowItemToolTips = true;
             this.StatusStrip1.Size = new System.Drawing.Size(929, 23);
@@ -700,7 +700,7 @@ namespace Elmanager.Forms
             | System.Windows.Forms.ToolStripStatusLabelBorderSides.Bottom)));
             this.CoordinateLabel.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Text;
             this.CoordinateLabel.Name = "CoordinateLabel";
-            this.CoordinateLabel.Size = new System.Drawing.Size(190, 18);
+            this.CoordinateLabel.Size = new System.Drawing.Size(190, 19);
             this.CoordinateLabel.Text = "Mouse X: Y:";
             this.CoordinateLabel.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
             // 
@@ -745,7 +745,7 @@ namespace Elmanager.Forms
             this.ToolStripPanel1.Name = "ToolStripPanel1";
             this.ToolStripPanel1.Orientation = System.Windows.Forms.Orientation.Horizontal;
             this.ToolStripPanel1.RowMargin = new System.Windows.Forms.Padding(0, 3, 0, 0);
-            this.ToolStripPanel1.Size = new System.Drawing.Size(929, 118);
+            this.ToolStripPanel1.Size = new System.Drawing.Size(929, 112);
             // 
             // ToolStrip1
             // 
@@ -787,7 +787,7 @@ namespace Elmanager.Forms
             this.SkyComboBox,
             this.ToolStripSeparator7});
             this.ToolStrip1.LayoutStyle = System.Windows.Forms.ToolStripLayoutStyle.HorizontalStackWithOverflow;
-            this.ToolStrip1.Location = new System.Drawing.Point(0, 6);
+            this.ToolStrip1.Location = new System.Drawing.Point(0, 3);
             this.ToolStrip1.Name = "ToolStrip1";
             this.ToolStrip1.Size = new System.Drawing.Size(929, 39);
             this.ToolStrip1.TabIndex = 14;
@@ -1071,9 +1071,9 @@ namespace Elmanager.Forms
             this.BestTimeLabel,
             this.topologyList});
             this.ToolStrip2.LayoutStyle = System.Windows.Forms.ToolStripLayoutStyle.HorizontalStackWithOverflow;
-            this.ToolStrip2.Location = new System.Drawing.Point(0, 48);
+            this.ToolStrip2.Location = new System.Drawing.Point(0, 45);
             this.ToolStrip2.Name = "ToolStrip2";
-            this.ToolStrip2.Size = new System.Drawing.Size(826, 39);
+            this.ToolStrip2.Size = new System.Drawing.Size(795, 39);
             this.ToolStrip2.TabIndex = 15;
             this.ToolStrip2.Text = "ToolStrip2";
             // 
@@ -1268,6 +1268,26 @@ namespace Elmanager.Forms
             this.topologyList.Name = "topologyList";
             this.topologyList.ShowDropDownArrow = false;
             this.topologyList.Size = new System.Drawing.Size(4, 36);
+            // 
+            // toolStrip3
+            // 
+            this.toolStrip3.BackColor = System.Drawing.SystemColors.Control;
+            this.toolStrip3.Dock = System.Windows.Forms.DockStyle.None;
+            this.toolStrip3.GripStyle = System.Windows.Forms.ToolStripGripStyle.Hidden;
+            this.toolStrip3.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.InfoLabel});
+            this.toolStrip3.Location = new System.Drawing.Point(0, 87);
+            this.toolStrip3.Name = "toolStrip3";
+            this.toolStrip3.Size = new System.Drawing.Size(929, 25);
+            this.toolStrip3.Stretch = true;
+            this.toolStrip3.TabIndex = 17;
+            // 
+            // InfoLabel
+            // 
+            this.InfoLabel.BackColor = System.Drawing.SystemColors.Control;
+            this.InfoLabel.Name = "InfoLabel";
+            this.InfoLabel.Size = new System.Drawing.Size(42, 22);
+            this.InfoLabel.Text = "Ready.";
             // 
             // EditorMenuStrip
             // 
@@ -1474,9 +1494,9 @@ namespace Elmanager.Forms
             this.ToolPanel.Controls.Add(this.VertexButton);
             this.ToolPanel.Controls.Add(this.SelectButton);
             this.ToolPanel.Dock = System.Windows.Forms.DockStyle.Left;
-            this.ToolPanel.Location = new System.Drawing.Point(0, 142);
+            this.ToolPanel.Location = new System.Drawing.Point(0, 136);
             this.ToolPanel.Name = "ToolPanel";
-            this.ToolPanel.Size = new System.Drawing.Size(84, 314);
+            this.ToolPanel.Size = new System.Drawing.Size(84, 350);
             this.ToolPanel.TabIndex = 3;
             this.ToolPanel.Text = "Tools";
             // 
@@ -1485,9 +1505,9 @@ namespace Elmanager.Forms
             this.TextButton.Appearance = System.Windows.Forms.Appearance.Button;
             this.TextButton.AutoSize = true;
             this.TextButton.Dock = System.Windows.Forms.DockStyle.Top;
-            this.TextButton.Location = new System.Drawing.Point(0, 299);
+            this.TextButton.Location = new System.Drawing.Point(0, 325);
             this.TextButton.Name = "TextButton";
-            this.TextButton.Size = new System.Drawing.Size(67, 23);
+            this.TextButton.Size = new System.Drawing.Size(84, 25);
             this.TextButton.TabIndex = 16;
             this.TextButton.Text = "&Text";
             this.TextButton.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
@@ -1499,9 +1519,9 @@ namespace Elmanager.Forms
             this.PictureButton.Appearance = System.Windows.Forms.Appearance.Button;
             this.PictureButton.AutoSize = true;
             this.PictureButton.Dock = System.Windows.Forms.DockStyle.Top;
-            this.PictureButton.Location = new System.Drawing.Point(0, 276);
+            this.PictureButton.Location = new System.Drawing.Point(0, 300);
             this.PictureButton.Name = "PictureButton";
-            this.PictureButton.Size = new System.Drawing.Size(67, 23);
+            this.PictureButton.Size = new System.Drawing.Size(84, 25);
             this.PictureButton.TabIndex = 15;
             this.PictureButton.Text = "P&icture";
             this.PictureButton.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
@@ -1512,9 +1532,9 @@ namespace Elmanager.Forms
             this.AutoGrassButton.Appearance = System.Windows.Forms.Appearance.Button;
             this.AutoGrassButton.AutoSize = true;
             this.AutoGrassButton.Dock = System.Windows.Forms.DockStyle.Top;
-            this.AutoGrassButton.Location = new System.Drawing.Point(0, 253);
+            this.AutoGrassButton.Location = new System.Drawing.Point(0, 275);
             this.AutoGrassButton.Name = "AutoGrassButton";
-            this.AutoGrassButton.Size = new System.Drawing.Size(67, 23);
+            this.AutoGrassButton.Size = new System.Drawing.Size(84, 25);
             this.AutoGrassButton.TabIndex = 14;
             this.AutoGrassButton.Text = "&AutoGrass";
             this.AutoGrassButton.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
@@ -1525,9 +1545,9 @@ namespace Elmanager.Forms
             this.CutConnectButton.Appearance = System.Windows.Forms.Appearance.Button;
             this.CutConnectButton.AutoSize = true;
             this.CutConnectButton.Dock = System.Windows.Forms.DockStyle.Top;
-            this.CutConnectButton.Location = new System.Drawing.Point(0, 230);
+            this.CutConnectButton.Location = new System.Drawing.Point(0, 250);
             this.CutConnectButton.Name = "CutConnectButton";
-            this.CutConnectButton.Size = new System.Drawing.Size(67, 23);
+            this.CutConnectButton.Size = new System.Drawing.Size(84, 25);
             this.CutConnectButton.TabIndex = 13;
             this.CutConnectButton.Text = "&Cut/connect";
             this.CutConnectButton.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
@@ -1538,9 +1558,9 @@ namespace Elmanager.Forms
             this.SmoothenButton.Appearance = System.Windows.Forms.Appearance.Button;
             this.SmoothenButton.AutoSize = true;
             this.SmoothenButton.Dock = System.Windows.Forms.DockStyle.Top;
-            this.SmoothenButton.Location = new System.Drawing.Point(0, 207);
+            this.SmoothenButton.Location = new System.Drawing.Point(0, 225);
             this.SmoothenButton.Name = "SmoothenButton";
-            this.SmoothenButton.Size = new System.Drawing.Size(67, 23);
+            this.SmoothenButton.Size = new System.Drawing.Size(84, 25);
             this.SmoothenButton.TabIndex = 12;
             this.SmoothenButton.Text = "(Un)s&moothen";
             this.SmoothenButton.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
@@ -1551,9 +1571,9 @@ namespace Elmanager.Forms
             this.FrameButton.Appearance = System.Windows.Forms.Appearance.Button;
             this.FrameButton.AutoSize = true;
             this.FrameButton.Dock = System.Windows.Forms.DockStyle.Top;
-            this.FrameButton.Location = new System.Drawing.Point(0, 184);
+            this.FrameButton.Location = new System.Drawing.Point(0, 200);
             this.FrameButton.Name = "FrameButton";
-            this.FrameButton.Size = new System.Drawing.Size(67, 23);
+            this.FrameButton.Size = new System.Drawing.Size(84, 25);
             this.FrameButton.TabIndex = 11;
             this.FrameButton.Text = "&Frame";
             this.FrameButton.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
@@ -1564,9 +1584,9 @@ namespace Elmanager.Forms
             this.PolyOpButton.Appearance = System.Windows.Forms.Appearance.Button;
             this.PolyOpButton.AutoSize = true;
             this.PolyOpButton.Dock = System.Windows.Forms.DockStyle.Top;
-            this.PolyOpButton.Location = new System.Drawing.Point(0, 161);
+            this.PolyOpButton.Location = new System.Drawing.Point(0, 175);
             this.PolyOpButton.Name = "PolyOpButton";
-            this.PolyOpButton.Size = new System.Drawing.Size(67, 23);
+            this.PolyOpButton.Size = new System.Drawing.Size(84, 25);
             this.PolyOpButton.TabIndex = 9;
             this.PolyOpButton.Text = "Po&lyOp";
             this.PolyOpButton.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
@@ -1577,9 +1597,9 @@ namespace Elmanager.Forms
             this.EllipseButton.Appearance = System.Windows.Forms.Appearance.Button;
             this.EllipseButton.AutoSize = true;
             this.EllipseButton.Dock = System.Windows.Forms.DockStyle.Top;
-            this.EllipseButton.Location = new System.Drawing.Point(0, 138);
+            this.EllipseButton.Location = new System.Drawing.Point(0, 150);
             this.EllipseButton.Name = "EllipseButton";
-            this.EllipseButton.Size = new System.Drawing.Size(67, 23);
+            this.EllipseButton.Size = new System.Drawing.Size(84, 25);
             this.EllipseButton.TabIndex = 8;
             this.EllipseButton.Text = "&Ellipse";
             this.EllipseButton.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
@@ -1590,9 +1610,9 @@ namespace Elmanager.Forms
             this.ZoomButton.Appearance = System.Windows.Forms.Appearance.Button;
             this.ZoomButton.AutoSize = true;
             this.ZoomButton.Dock = System.Windows.Forms.DockStyle.Top;
-            this.ZoomButton.Location = new System.Drawing.Point(0, 115);
+            this.ZoomButton.Location = new System.Drawing.Point(0, 125);
             this.ZoomButton.Name = "ZoomButton";
-            this.ZoomButton.Size = new System.Drawing.Size(67, 23);
+            this.ZoomButton.Size = new System.Drawing.Size(84, 25);
             this.ZoomButton.TabIndex = 7;
             this.ZoomButton.Text = "&Zoom";
             this.ZoomButton.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
@@ -1603,9 +1623,9 @@ namespace Elmanager.Forms
             this.PipeButton.Appearance = System.Windows.Forms.Appearance.Button;
             this.PipeButton.AutoSize = true;
             this.PipeButton.Dock = System.Windows.Forms.DockStyle.Top;
-            this.PipeButton.Location = new System.Drawing.Point(0, 92);
+            this.PipeButton.Location = new System.Drawing.Point(0, 100);
             this.PipeButton.Name = "PipeButton";
-            this.PipeButton.Size = new System.Drawing.Size(67, 23);
+            this.PipeButton.Size = new System.Drawing.Size(84, 25);
             this.PipeButton.TabIndex = 6;
             this.PipeButton.Text = "&Pipe";
             this.PipeButton.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
@@ -1616,9 +1636,9 @@ namespace Elmanager.Forms
             this.ObjectButton.Appearance = System.Windows.Forms.Appearance.Button;
             this.ObjectButton.AutoSize = true;
             this.ObjectButton.Dock = System.Windows.Forms.DockStyle.Top;
-            this.ObjectButton.Location = new System.Drawing.Point(0, 69);
+            this.ObjectButton.Location = new System.Drawing.Point(0, 75);
             this.ObjectButton.Name = "ObjectButton";
-            this.ObjectButton.Size = new System.Drawing.Size(67, 23);
+            this.ObjectButton.Size = new System.Drawing.Size(84, 25);
             this.ObjectButton.TabIndex = 3;
             this.ObjectButton.Text = "&Object";
             this.ObjectButton.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
@@ -1629,9 +1649,9 @@ namespace Elmanager.Forms
             this.DrawButton.Appearance = System.Windows.Forms.Appearance.Button;
             this.DrawButton.AutoSize = true;
             this.DrawButton.Dock = System.Windows.Forms.DockStyle.Top;
-            this.DrawButton.Location = new System.Drawing.Point(0, 46);
+            this.DrawButton.Location = new System.Drawing.Point(0, 50);
             this.DrawButton.Name = "DrawButton";
-            this.DrawButton.Size = new System.Drawing.Size(67, 23);
+            this.DrawButton.Size = new System.Drawing.Size(84, 25);
             this.DrawButton.TabIndex = 2;
             this.DrawButton.Text = "&Draw";
             this.DrawButton.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
@@ -1642,9 +1662,9 @@ namespace Elmanager.Forms
             this.VertexButton.Appearance = System.Windows.Forms.Appearance.Button;
             this.VertexButton.AutoSize = true;
             this.VertexButton.Dock = System.Windows.Forms.DockStyle.Top;
-            this.VertexButton.Location = new System.Drawing.Point(0, 23);
+            this.VertexButton.Location = new System.Drawing.Point(0, 25);
             this.VertexButton.Name = "VertexButton";
-            this.VertexButton.Size = new System.Drawing.Size(67, 23);
+            this.VertexButton.Size = new System.Drawing.Size(84, 25);
             this.VertexButton.TabIndex = 1;
             this.VertexButton.Text = "&Vertex";
             this.VertexButton.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
@@ -1658,43 +1678,24 @@ namespace Elmanager.Forms
             this.SelectButton.Dock = System.Windows.Forms.DockStyle.Top;
             this.SelectButton.Location = new System.Drawing.Point(0, 0);
             this.SelectButton.Name = "SelectButton";
-            this.SelectButton.Size = new System.Drawing.Size(67, 23);
+            this.SelectButton.Size = new System.Drawing.Size(84, 25);
             this.SelectButton.TabIndex = 0;
             this.SelectButton.TabStop = true;
             this.SelectButton.Text = "&Select";
             this.SelectButton.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
             this.SelectButton.UseVisualStyleBackColor = true;
             // 
-            // toolStrip3
-            // 
-            this.toolStrip3.BackColor = System.Drawing.SystemColors.Control;
-            this.toolStrip3.Dock = System.Windows.Forms.DockStyle.None;
-            this.toolStrip3.GripStyle = System.Windows.Forms.ToolStripGripStyle.Hidden;
-            this.toolStrip3.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
-            this.InfoLabel});
-            this.toolStrip3.Location = new System.Drawing.Point(0, 90);
-            this.toolStrip3.Name = "toolStrip3";
-            this.toolStrip3.Size = new System.Drawing.Size(929, 25);
-            this.toolStrip3.Stretch = true;
-            this.toolStrip3.TabIndex = 17;
-            // 
-            // InfoLabel
-            // 
-            this.InfoLabel.BackColor = System.Drawing.SystemColors.Control;
-            this.InfoLabel.Name = "InfoLabel";
-            this.InfoLabel.Size = new System.Drawing.Size(42, 22);
-            this.InfoLabel.Text = "Ready.";
-            // 
             // LevelEditor
             // 
-            this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
-            this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(929, 479);
+            this.AutoScaleDimensions = new System.Drawing.SizeF(96F, 96F);
+            this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Dpi;
+            this.ClientSize = new System.Drawing.Size(929, 509);
             this.Controls.Add(this.EditorControl);
             this.Controls.Add(this.ToolPanel);
             this.Controls.Add(this.StatusStrip1);
             this.Controls.Add(this.ToolStripPanel1);
             this.Controls.Add(this.MenuStrip1);
+            this.Font = new System.Drawing.Font("Segoe UI", 9F);
             this.MainMenuStrip = this.MenuStrip1;
             this.Name = "LevelEditor";
             this.Text = "SLE";
@@ -1712,15 +1713,15 @@ namespace Elmanager.Forms
             this.ToolStrip1.PerformLayout();
             this.ToolStrip2.ResumeLayout(false);
             this.ToolStrip2.PerformLayout();
+            this.toolStrip3.ResumeLayout(false);
+            this.toolStrip3.PerformLayout();
             this.EditorMenuStrip.ResumeLayout(false);
             this.ToolPanel.ResumeLayout(false);
             this.ToolPanel.PerformLayout();
-            this.toolStrip3.ResumeLayout(false);
-            this.toolStrip3.PerformLayout();
             this.ResumeLayout(false);
             this.PerformLayout();
 
-		}
+        }
 		internal System.Windows.Forms.MenuStrip MenuStrip1;
 		internal System.Windows.Forms.ToolStripMenuItem FileToolStripMenuItem;
 		internal System.Windows.Forms.ToolStripMenuItem NewToolStripMenuItem;

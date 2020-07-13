@@ -90,6 +90,8 @@ namespace Elmanager.Forms
             this.FollowDriverBox = new System.Windows.Forms.CheckBox();
             this.ShowDriverPathBox = new System.Windows.Forms.CheckBox();
             this.LoopPlayingBox = new System.Windows.Forms.CheckBox();
+            this.tableLayoutPanel1 = new System.Windows.Forms.TableLayoutPanel();
+            this.tableLayoutPanel2 = new System.Windows.Forms.TableLayoutPanel();
             this.contextMenuStrip1.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.playbackSpeedBar)).BeginInit();
             this.TabControl1.SuspendLayout();
@@ -97,6 +99,8 @@ namespace Elmanager.Forms
             ((System.ComponentModel.ISupportInitialize)(this.PlayList)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.timeBar)).BeginInit();
             this.TabPage2.SuspendLayout();
+            this.tableLayoutPanel1.SuspendLayout();
+            this.tableLayoutPanel2.SuspendLayout();
             this.SuspendLayout();
             // 
             // SaveFileDialog1
@@ -221,10 +225,10 @@ namespace Elmanager.Forms
             this.TabPage1.Controls.Add(this.NextFrameButton);
             this.TabPage1.Controls.Add(this.timeBar);
             this.TabPage1.Controls.Add(this.CoordinateLabel);
-            this.TabPage1.Location = new System.Drawing.Point(4, 22);
+            this.TabPage1.Location = new System.Drawing.Point(4, 24);
             this.TabPage1.Name = "TabPage1";
             this.TabPage1.Padding = new System.Windows.Forms.Padding(3);
-            this.TabPage1.Size = new System.Drawing.Size(386, 309);
+            this.TabPage1.Size = new System.Drawing.Size(386, 307);
             this.TabPage1.TabIndex = 0;
             this.TabPage1.Text = "Player";
             this.TabPage1.UseVisualStyleBackColor = true;
@@ -285,7 +289,7 @@ namespace Elmanager.Forms
             // 
             this.FullScreenButton.Location = new System.Drawing.Point(273, 35);
             this.FullScreenButton.Name = "FullScreenButton";
-            this.FullScreenButton.Size = new System.Drawing.Size(108, 23);
+            this.FullScreenButton.Size = new System.Drawing.Size(108, 25);
             this.FullScreenButton.TabIndex = 99;
             this.FullScreenButton.Text = "Full screen";
             this.FullScreenButton.UseVisualStyleBackColor = true;
@@ -295,7 +299,7 @@ namespace Elmanager.Forms
             // 
             this.SnapShotButton.Location = new System.Drawing.Point(173, 35);
             this.SnapShotButton.Name = "SnapShotButton";
-            this.SnapShotButton.Size = new System.Drawing.Size(93, 23);
+            this.SnapShotButton.Size = new System.Drawing.Size(93, 25);
             this.SnapShotButton.TabIndex = 98;
             this.SnapShotButton.Text = "Get snapshot";
             this.SnapShotButton.UseVisualStyleBackColor = true;
@@ -308,9 +312,10 @@ namespace Elmanager.Forms
             this.EventListBox.ContextMenuStrip = this.contextMenuStrip1;
             this.EventListBox.FormattingEnabled = true;
             this.EventListBox.IntegralHeight = false;
+            this.EventListBox.ItemHeight = 15;
             this.EventListBox.Location = new System.Drawing.Point(173, 192);
             this.EventListBox.Name = "EventListBox";
-            this.EventListBox.Size = new System.Drawing.Size(208, 58);
+            this.EventListBox.Size = new System.Drawing.Size(208, 107);
             this.EventListBox.TabIndex = 79;
             this.EventListBox.SelectedIndexChanged += new System.EventHandler(this.EventListBoxSelectedIndexChanged);
             this.EventListBox.MouseWheel += new System.Windows.Forms.MouseEventHandler(this.MouseWheelZoom);
@@ -320,7 +325,7 @@ namespace Elmanager.Forms
             this.SpeedLabel.AutoSize = true;
             this.SpeedLabel.Location = new System.Drawing.Point(172, 108);
             this.SpeedLabel.Name = "SpeedLabel";
-            this.SpeedLabel.Size = new System.Drawing.Size(41, 13);
+            this.SpeedLabel.Size = new System.Drawing.Size(42, 15);
             this.SpeedLabel.TabIndex = 96;
             this.SpeedLabel.Text = "Speed:";
             // 
@@ -328,7 +333,7 @@ namespace Elmanager.Forms
             // 
             this.PlayButton.Location = new System.Drawing.Point(94, 7);
             this.PlayButton.Name = "PlayButton";
-            this.PlayButton.Size = new System.Drawing.Size(72, 22);
+            this.PlayButton.Size = new System.Drawing.Size(75, 25);
             this.PlayButton.TabIndex = 53;
             this.PlayButton.Text = "Play/Pause";
             this.PlayButton.UseVisualStyleBackColor = true;
@@ -337,7 +342,7 @@ namespace Elmanager.Forms
             // 
             this.StopButton.Location = new System.Drawing.Point(309, 7);
             this.StopButton.Name = "StopButton";
-            this.StopButton.Size = new System.Drawing.Size(72, 22);
+            this.StopButton.Size = new System.Drawing.Size(72, 25);
             this.StopButton.TabIndex = 55;
             this.StopButton.Text = "Stop";
             this.StopButton.UseVisualStyleBackColor = true;
@@ -346,7 +351,7 @@ namespace Elmanager.Forms
             // 
             this.ZoomFillButton.Location = new System.Drawing.Point(0, 7);
             this.ZoomFillButton.Name = "ZoomFillButton";
-            this.ZoomFillButton.Size = new System.Drawing.Size(84, 22);
+            this.ZoomFillButton.Size = new System.Drawing.Size(84, 25);
             this.ZoomFillButton.TabIndex = 56;
             this.ZoomFillButton.Text = "Zoom fill";
             this.ZoomFillButton.UseVisualStyleBackColor = true;
@@ -355,7 +360,7 @@ namespace Elmanager.Forms
             // 
             this.TimeBox.Location = new System.Drawing.Point(210, 9);
             this.TimeBox.Name = "TimeBox";
-            this.TimeBox.Size = new System.Drawing.Size(56, 20);
+            this.TimeBox.Size = new System.Drawing.Size(56, 23);
             this.TimeBox.TabIndex = 60;
             this.TimeBox.Text = "00:00,000";
             this.TimeBox.KeyDown += new System.Windows.Forms.KeyEventHandler(this.KeyHandler);
@@ -364,7 +369,7 @@ namespace Elmanager.Forms
             // 
             this.PrevFrameButton.Location = new System.Drawing.Point(173, 7);
             this.PrevFrameButton.Name = "PrevFrameButton";
-            this.PrevFrameButton.Size = new System.Drawing.Size(29, 22);
+            this.PrevFrameButton.Size = new System.Drawing.Size(29, 25);
             this.PrevFrameButton.TabIndex = 61;
             this.PrevFrameButton.Text = "<";
             this.PrevFrameButton.UseVisualStyleBackColor = true;
@@ -373,7 +378,7 @@ namespace Elmanager.Forms
             // 
             this.NextFrameButton.Location = new System.Drawing.Point(273, 7);
             this.NextFrameButton.Name = "NextFrameButton";
-            this.NextFrameButton.Size = new System.Drawing.Size(29, 22);
+            this.NextFrameButton.Size = new System.Drawing.Size(29, 25);
             this.NextFrameButton.TabIndex = 62;
             this.NextFrameButton.Text = ">";
             this.NextFrameButton.UseVisualStyleBackColor = true;
@@ -398,7 +403,7 @@ namespace Elmanager.Forms
             this.CoordinateLabel.Cursor = System.Windows.Forms.Cursors.Hand;
             this.CoordinateLabel.Location = new System.Drawing.Point(172, 130);
             this.CoordinateLabel.Name = "CoordinateLabel";
-            this.CoordinateLabel.Size = new System.Drawing.Size(100, 13);
+            this.CoordinateLabel.Size = new System.Drawing.Size(111, 15);
             this.CoordinateLabel.TabIndex = 54;
             this.CoordinateLabel.Text = "Mouse coordinates:";
             this.CoordinateLabel.Click += new System.EventHandler(this.CoordinateLabelClick);
@@ -406,17 +411,8 @@ namespace Elmanager.Forms
             // 
             // TabPage2
             // 
-            this.TabPage2.Controls.Add(this.followAlsoWhenZooming);
-            this.TabPage2.Controls.Add(this.label2);
-            this.TabPage2.Controls.Add(this.viewerSizeYBox);
-            this.TabPage2.Controls.Add(this.viewerSizeXBox);
-            this.TabPage2.Controls.Add(this.label1);
-            this.TabPage2.Controls.Add(this.multiSpyBox);
-            this.TabPage2.Controls.Add(this.HideStartObjectBox);
-            this.TabPage2.Controls.Add(this.SelectNoPlayersBox);
-            this.TabPage2.Controls.Add(this.MouseClickZoomBox);
-            this.TabPage2.Controls.Add(this.MouseWheelZoomBox);
-            this.TabPage2.Controls.Add(this.PlayerFramesBox);
+            this.TabPage2.Controls.Add(this.tableLayoutPanel2);
+            this.TabPage2.Controls.Add(this.tableLayoutPanel1);
             this.TabPage2.Controls.Add(this.RenderingSettingsButton);
             this.TabPage2.Controls.Add(this.ActivePlayerPanel);
             this.TabPage2.Controls.Add(this.InActivePlayerPanel);
@@ -424,20 +420,10 @@ namespace Elmanager.Forms
             this.TabPage2.Controls.Add(this.DrivingLineLabel);
             this.TabPage2.Controls.Add(this.ActivePLabel);
             this.TabPage2.Controls.Add(this.InactivePLabel);
-            this.TabPage2.Controls.Add(this.ResolutionBox);
-            this.TabPage2.Controls.Add(this.Label7);
-            this.TabPage2.Controls.Add(this.Label5);
-            this.TabPage2.Controls.Add(this.Label4);
-            this.TabPage2.Controls.Add(this.TransparentInactiveBox);
-            this.TabPage2.Controls.Add(this.PictBackGroundBox);
-            this.TabPage2.Controls.Add(this.LockedCamBox);
-            this.TabPage2.Controls.Add(this.FollowDriverBox);
-            this.TabPage2.Controls.Add(this.ShowDriverPathBox);
-            this.TabPage2.Controls.Add(this.LoopPlayingBox);
-            this.TabPage2.Location = new System.Drawing.Point(4, 22);
+            this.TabPage2.Location = new System.Drawing.Point(4, 24);
             this.TabPage2.Name = "TabPage2";
             this.TabPage2.Padding = new System.Windows.Forms.Padding(3);
-            this.TabPage2.Size = new System.Drawing.Size(386, 309);
+            this.TabPage2.Size = new System.Drawing.Size(386, 307);
             this.TabPage2.TabIndex = 1;
             this.TabPage2.Text = "Options";
             this.TabPage2.UseVisualStyleBackColor = true;
@@ -445,19 +431,21 @@ namespace Elmanager.Forms
             // followAlsoWhenZooming
             // 
             this.followAlsoWhenZooming.AutoSize = true;
-            this.followAlsoWhenZooming.Location = new System.Drawing.Point(6, 44);
+            this.followAlsoWhenZooming.Location = new System.Drawing.Point(0, 38);
+            this.followAlsoWhenZooming.Margin = new System.Windows.Forms.Padding(0);
             this.followAlsoWhenZooming.Name = "followAlsoWhenZooming";
-            this.followAlsoWhenZooming.Size = new System.Drawing.Size(125, 17);
+            this.followAlsoWhenZooming.Size = new System.Drawing.Size(138, 19);
             this.followAlsoWhenZooming.TabIndex = 146;
             this.followAlsoWhenZooming.Text = "...also when zooming";
             this.followAlsoWhenZooming.UseVisualStyleBackColor = true;
             // 
             // label2
             // 
+            this.label2.Anchor = System.Windows.Forms.AnchorStyles.None;
             this.label2.AutoSize = true;
-            this.label2.Location = new System.Drawing.Point(188, 182);
+            this.label2.Location = new System.Drawing.Point(202, 65);
             this.label2.Name = "label2";
-            this.label2.Size = new System.Drawing.Size(12, 13);
+            this.label2.Size = new System.Drawing.Size(13, 15);
             this.label2.TabIndex = 145;
             this.label2.Text = "x";
             // 
@@ -465,9 +453,9 @@ namespace Elmanager.Forms
             // 
             this.viewerSizeYBox.BackColor = System.Drawing.SystemColors.Window;
             this.viewerSizeYBox.DefaultValue = 0D;
-            this.viewerSizeYBox.Location = new System.Drawing.Point(206, 179);
+            this.viewerSizeYBox.Location = new System.Drawing.Point(221, 61);
             this.viewerSizeYBox.Name = "viewerSizeYBox";
-            this.viewerSizeYBox.Size = new System.Drawing.Size(49, 20);
+            this.viewerSizeYBox.Size = new System.Drawing.Size(49, 23);
             this.viewerSizeYBox.TabIndex = 144;
             this.viewerSizeYBox.Text = "1";
             this.viewerSizeYBox.KeyUp += new System.Windows.Forms.KeyEventHandler(this.ViewerSizeBoxKeyUp);
@@ -476,28 +464,30 @@ namespace Elmanager.Forms
             // 
             this.viewerSizeXBox.BackColor = System.Drawing.SystemColors.Window;
             this.viewerSizeXBox.DefaultValue = 0D;
-            this.viewerSizeXBox.Location = new System.Drawing.Point(133, 179);
+            this.viewerSizeXBox.Location = new System.Drawing.Point(147, 61);
             this.viewerSizeXBox.Name = "viewerSizeXBox";
-            this.viewerSizeXBox.Size = new System.Drawing.Size(49, 20);
+            this.viewerSizeXBox.Size = new System.Drawing.Size(49, 23);
             this.viewerSizeXBox.TabIndex = 143;
             this.viewerSizeXBox.Text = "1";
             this.viewerSizeXBox.KeyUp += new System.Windows.Forms.KeyEventHandler(this.ViewerSizeBoxKeyUp);
             // 
             // label1
             // 
+            this.label1.Anchor = System.Windows.Forms.AnchorStyles.Right;
             this.label1.AutoSize = true;
-            this.label1.Location = new System.Drawing.Point(64, 182);
+            this.label1.Location = new System.Drawing.Point(74, 65);
             this.label1.Name = "label1";
-            this.label1.Size = new System.Drawing.Size(63, 13);
+            this.label1.Size = new System.Drawing.Size(67, 15);
             this.label1.TabIndex = 142;
             this.label1.Text = "Viewer size:";
             // 
             // multiSpyBox
             // 
             this.multiSpyBox.AutoSize = true;
-            this.multiSpyBox.Location = new System.Drawing.Point(147, 82);
+            this.multiSpyBox.Location = new System.Drawing.Point(148, 76);
+            this.multiSpyBox.Margin = new System.Windows.Forms.Padding(0);
             this.multiSpyBox.Name = "multiSpyBox";
-            this.multiSpyBox.Size = new System.Drawing.Size(67, 17);
+            this.multiSpyBox.Size = new System.Drawing.Size(75, 19);
             this.multiSpyBox.TabIndex = 141;
             this.multiSpyBox.Text = "Multi spy";
             this.multiSpyBox.UseVisualStyleBackColor = true;
@@ -505,9 +495,10 @@ namespace Elmanager.Forms
             // HideStartObjectBox
             // 
             this.HideStartObjectBox.AutoSize = true;
-            this.HideStartObjectBox.Location = new System.Drawing.Point(6, 101);
+            this.HideStartObjectBox.Location = new System.Drawing.Point(0, 95);
+            this.HideStartObjectBox.Margin = new System.Windows.Forms.Padding(0);
             this.HideStartObjectBox.Name = "HideStartObjectBox";
-            this.HideStartObjectBox.Size = new System.Drawing.Size(103, 17);
+            this.HideStartObjectBox.Size = new System.Drawing.Size(113, 19);
             this.HideStartObjectBox.TabIndex = 140;
             this.HideStartObjectBox.Text = "Hide start object";
             this.HideStartObjectBox.UseVisualStyleBackColor = true;
@@ -515,9 +506,10 @@ namespace Elmanager.Forms
             // SelectNoPlayersBox
             // 
             this.SelectNoPlayersBox.AutoSize = true;
-            this.SelectNoPlayersBox.Location = new System.Drawing.Point(147, 63);
+            this.SelectNoPlayersBox.Location = new System.Drawing.Point(148, 57);
+            this.SelectNoPlayersBox.Margin = new System.Windows.Forms.Padding(0);
             this.SelectNoPlayersBox.Name = "SelectNoPlayersBox";
-            this.SelectNoPlayersBox.Size = new System.Drawing.Size(156, 17);
+            this.SelectNoPlayersBox.Size = new System.Drawing.Size(170, 19);
             this.SelectNoPlayersBox.TabIndex = 139;
             this.SelectNoPlayersBox.Text = "Select no players by default";
             this.SelectNoPlayersBox.UseVisualStyleBackColor = true;
@@ -526,9 +518,9 @@ namespace Elmanager.Forms
             // 
             this.MouseClickZoomBox.BackColor = System.Drawing.SystemColors.Window;
             this.MouseClickZoomBox.DefaultValue = 0D;
-            this.MouseClickZoomBox.Location = new System.Drawing.Point(133, 153);
+            this.MouseClickZoomBox.Location = new System.Drawing.Point(147, 32);
             this.MouseClickZoomBox.Name = "MouseClickZoomBox";
-            this.MouseClickZoomBox.Size = new System.Drawing.Size(49, 20);
+            this.MouseClickZoomBox.Size = new System.Drawing.Size(49, 23);
             this.MouseClickZoomBox.TabIndex = 138;
             this.MouseClickZoomBox.Text = "1";
             this.MouseClickZoomBox.TextChanged += new System.EventHandler(this.MouseClickZoomBoxTextChanged);
@@ -537,9 +529,9 @@ namespace Elmanager.Forms
             // 
             this.MouseWheelZoomBox.BackColor = System.Drawing.SystemColors.Window;
             this.MouseWheelZoomBox.DefaultValue = 0D;
-            this.MouseWheelZoomBox.Location = new System.Drawing.Point(133, 127);
+            this.MouseWheelZoomBox.Location = new System.Drawing.Point(147, 3);
             this.MouseWheelZoomBox.Name = "MouseWheelZoomBox";
-            this.MouseWheelZoomBox.Size = new System.Drawing.Size(49, 20);
+            this.MouseWheelZoomBox.Size = new System.Drawing.Size(49, 23);
             this.MouseWheelZoomBox.TabIndex = 137;
             this.MouseWheelZoomBox.Text = "1";
             this.MouseWheelZoomBox.TextChanged += new System.EventHandler(this.MouseWheelZoomBoxTextChanged);
@@ -547,18 +539,19 @@ namespace Elmanager.Forms
             // PlayerFramesBox
             // 
             this.PlayerFramesBox.AutoSize = true;
-            this.PlayerFramesBox.Location = new System.Drawing.Point(6, 82);
+            this.PlayerFramesBox.Location = new System.Drawing.Point(0, 76);
+            this.PlayerFramesBox.Margin = new System.Windows.Forms.Padding(0);
             this.PlayerFramesBox.Name = "PlayerFramesBox";
-            this.PlayerFramesBox.Size = new System.Drawing.Size(111, 17);
+            this.PlayerFramesBox.Size = new System.Drawing.Size(123, 19);
             this.PlayerFramesBox.TabIndex = 136;
             this.PlayerFramesBox.Text = "Player frames only";
             this.PlayerFramesBox.UseVisualStyleBackColor = true;
             // 
             // RenderingSettingsButton
             // 
-            this.RenderingSettingsButton.Location = new System.Drawing.Point(271, 6);
+            this.RenderingSettingsButton.Location = new System.Drawing.Point(126, 274);
             this.RenderingSettingsButton.Name = "RenderingSettingsButton";
-            this.RenderingSettingsButton.Size = new System.Drawing.Size(112, 23);
+            this.RenderingSettingsButton.Size = new System.Drawing.Size(115, 25);
             this.RenderingSettingsButton.TabIndex = 135;
             this.RenderingSettingsButton.Text = "Rendering settings";
             this.RenderingSettingsButton.UseVisualStyleBackColor = true;
@@ -600,7 +593,7 @@ namespace Elmanager.Forms
             this.DrivingLineLabel.Cursor = System.Windows.Forms.Cursors.Default;
             this.DrivingLineLabel.Location = new System.Drawing.Point(152, 247);
             this.DrivingLineLabel.Name = "DrivingLineLabel";
-            this.DrivingLineLabel.Size = new System.Drawing.Size(132, 13);
+            this.DrivingLineLabel.Size = new System.Drawing.Size(152, 15);
             this.DrivingLineLabel.TabIndex = 131;
             this.DrivingLineLabel.Text = "Current player\'s driving line";
             // 
@@ -610,7 +603,7 @@ namespace Elmanager.Forms
             this.ActivePLabel.Cursor = System.Windows.Forms.Cursors.Default;
             this.ActivePLabel.Location = new System.Drawing.Point(32, 247);
             this.ActivePLabel.Name = "ActivePLabel";
-            this.ActivePLabel.Size = new System.Drawing.Size(68, 13);
+            this.ActivePLabel.Size = new System.Drawing.Size(75, 15);
             this.ActivePLabel.TabIndex = 129;
             this.ActivePLabel.Text = "Active player";
             // 
@@ -620,52 +613,58 @@ namespace Elmanager.Forms
             this.InactivePLabel.Cursor = System.Windows.Forms.Cursors.Default;
             this.InactivePLabel.Location = new System.Drawing.Point(32, 280);
             this.InactivePLabel.Name = "InactivePLabel";
-            this.InactivePLabel.Size = new System.Drawing.Size(76, 13);
+            this.InactivePLabel.Size = new System.Drawing.Size(83, 15);
             this.InactivePLabel.TabIndex = 130;
             this.InactivePLabel.Text = "Inactive player";
             // 
             // ResolutionBox
             // 
+            this.tableLayoutPanel2.SetColumnSpan(this.ResolutionBox, 4);
+            this.ResolutionBox.Dock = System.Windows.Forms.DockStyle.Fill;
             this.ResolutionBox.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
             this.ResolutionBox.FormattingEnabled = true;
-            this.ResolutionBox.Location = new System.Drawing.Point(133, 216);
+            this.ResolutionBox.Location = new System.Drawing.Point(147, 90);
             this.ResolutionBox.Name = "ResolutionBox";
-            this.ResolutionBox.Size = new System.Drawing.Size(250, 21);
+            this.ResolutionBox.Size = new System.Drawing.Size(137, 23);
             this.ResolutionBox.TabIndex = 128;
             // 
             // Label7
             // 
+            this.Label7.Anchor = System.Windows.Forms.AnchorStyles.Right;
             this.Label7.AutoSize = true;
-            this.Label7.Location = new System.Drawing.Point(18, 219);
+            this.Label7.Location = new System.Drawing.Point(19, 94);
             this.Label7.Name = "Label7";
-            this.Label7.Size = new System.Drawing.Size(109, 13);
+            this.Label7.Size = new System.Drawing.Size(122, 15);
             this.Label7.TabIndex = 127;
             this.Label7.Text = "Full screen resolution:";
             // 
             // Label5
             // 
+            this.Label5.Anchor = System.Windows.Forms.AnchorStyles.Right;
             this.Label5.AutoSize = true;
-            this.Label5.Location = new System.Drawing.Point(9, 156);
+            this.Label5.Location = new System.Drawing.Point(10, 36);
             this.Label5.Name = "Label5";
-            this.Label5.Size = new System.Drawing.Size(118, 13);
+            this.Label5.Size = new System.Drawing.Size(131, 15);
             this.Label5.TabIndex = 123;
             this.Label5.Text = "Mouse click zoom step:";
             // 
             // Label4
             // 
+            this.Label4.Anchor = System.Windows.Forms.AnchorStyles.Right;
             this.Label4.AutoSize = true;
-            this.Label4.Location = new System.Drawing.Point(3, 130);
+            this.Label4.Location = new System.Drawing.Point(3, 7);
             this.Label4.Name = "Label4";
-            this.Label4.Size = new System.Drawing.Size(124, 13);
+            this.Label4.Size = new System.Drawing.Size(138, 15);
             this.Label4.TabIndex = 121;
             this.Label4.Text = "Mouse wheel zoom step:";
             // 
             // TransparentInactiveBox
             // 
             this.TransparentInactiveBox.AutoSize = true;
-            this.TransparentInactiveBox.Location = new System.Drawing.Point(147, 44);
+            this.TransparentInactiveBox.Location = new System.Drawing.Point(148, 38);
+            this.TransparentInactiveBox.Margin = new System.Windows.Forms.Padding(0);
             this.TransparentInactiveBox.Name = "TransparentInactiveBox";
-            this.TransparentInactiveBox.Size = new System.Drawing.Size(159, 17);
+            this.TransparentInactiveBox.Size = new System.Drawing.Size(171, 19);
             this.TransparentInactiveBox.TabIndex = 113;
             this.TransparentInactiveBox.Text = "Transparent inactive players";
             this.TransparentInactiveBox.UseVisualStyleBackColor = true;
@@ -673,9 +672,10 @@ namespace Elmanager.Forms
             // PictBackGroundBox
             // 
             this.PictBackGroundBox.AutoSize = true;
-            this.PictBackGroundBox.Location = new System.Drawing.Point(6, 63);
+            this.PictBackGroundBox.Location = new System.Drawing.Point(0, 57);
+            this.PictBackGroundBox.Margin = new System.Windows.Forms.Padding(0);
             this.PictBackGroundBox.Name = "PictBackGroundBox";
-            this.PictBackGroundBox.Size = new System.Drawing.Size(135, 17);
+            this.PictBackGroundBox.Size = new System.Drawing.Size(148, 19);
             this.PictBackGroundBox.TabIndex = 112;
             this.PictBackGroundBox.Text = "Pictures in background";
             this.PictBackGroundBox.UseVisualStyleBackColor = true;
@@ -683,9 +683,10 @@ namespace Elmanager.Forms
             // LockedCamBox
             // 
             this.LockedCamBox.AutoSize = true;
-            this.LockedCamBox.Location = new System.Drawing.Point(147, 6);
+            this.LockedCamBox.Location = new System.Drawing.Point(148, 0);
+            this.LockedCamBox.Margin = new System.Windows.Forms.Padding(0);
             this.LockedCamBox.Name = "LockedCamBox";
-            this.LockedCamBox.Size = new System.Drawing.Size(100, 17);
+            this.LockedCamBox.Size = new System.Drawing.Size(106, 19);
             this.LockedCamBox.TabIndex = 108;
             this.LockedCamBox.Text = "Locked camera";
             this.LockedCamBox.UseVisualStyleBackColor = true;
@@ -693,9 +694,10 @@ namespace Elmanager.Forms
             // FollowDriverBox
             // 
             this.FollowDriverBox.AutoSize = true;
-            this.FollowDriverBox.Location = new System.Drawing.Point(6, 25);
+            this.FollowDriverBox.Location = new System.Drawing.Point(0, 19);
+            this.FollowDriverBox.Margin = new System.Windows.Forms.Padding(0);
             this.FollowDriverBox.Name = "FollowDriverBox";
-            this.FollowDriverBox.Size = new System.Drawing.Size(85, 17);
+            this.FollowDriverBox.Size = new System.Drawing.Size(94, 19);
             this.FollowDriverBox.TabIndex = 54;
             this.FollowDriverBox.Text = "Follow driver";
             this.FollowDriverBox.UseVisualStyleBackColor = true;
@@ -703,9 +705,10 @@ namespace Elmanager.Forms
             // ShowDriverPathBox
             // 
             this.ShowDriverPathBox.AutoSize = true;
-            this.ShowDriverPathBox.Location = new System.Drawing.Point(6, 6);
+            this.ShowDriverPathBox.Location = new System.Drawing.Point(0, 0);
+            this.ShowDriverPathBox.Margin = new System.Windows.Forms.Padding(0);
             this.ShowDriverPathBox.Name = "ShowDriverPathBox";
-            this.ShowDriverPathBox.Size = new System.Drawing.Size(106, 17);
+            this.ShowDriverPathBox.Size = new System.Drawing.Size(115, 19);
             this.ShowDriverPathBox.TabIndex = 52;
             this.ShowDriverPathBox.Text = "Show driver path";
             this.ShowDriverPathBox.UseVisualStyleBackColor = true;
@@ -713,20 +716,82 @@ namespace Elmanager.Forms
             // LoopPlayingBox
             // 
             this.LoopPlayingBox.AutoSize = true;
-            this.LoopPlayingBox.Location = new System.Drawing.Point(147, 25);
+            this.LoopPlayingBox.Location = new System.Drawing.Point(148, 19);
+            this.LoopPlayingBox.Margin = new System.Windows.Forms.Padding(0);
             this.LoopPlayingBox.Name = "LoopPlayingBox";
-            this.LoopPlayingBox.Size = new System.Drawing.Size(86, 17);
+            this.LoopPlayingBox.Size = new System.Drawing.Size(95, 19);
             this.LoopPlayingBox.TabIndex = 72;
             this.LoopPlayingBox.Text = "Loop playing";
             this.LoopPlayingBox.UseVisualStyleBackColor = true;
             // 
+            // tableLayoutPanel1
+            // 
+            this.tableLayoutPanel1.AutoSize = true;
+            this.tableLayoutPanel1.AutoSizeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink;
+            this.tableLayoutPanel1.ColumnCount = 2;
+            this.tableLayoutPanel1.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle());
+            this.tableLayoutPanel1.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle());
+            this.tableLayoutPanel1.Controls.Add(this.ShowDriverPathBox, 0, 0);
+            this.tableLayoutPanel1.Controls.Add(this.followAlsoWhenZooming, 0, 2);
+            this.tableLayoutPanel1.Controls.Add(this.LockedCamBox, 1, 0);
+            this.tableLayoutPanel1.Controls.Add(this.FollowDriverBox, 0, 1);
+            this.tableLayoutPanel1.Controls.Add(this.LoopPlayingBox, 1, 1);
+            this.tableLayoutPanel1.Controls.Add(this.HideStartObjectBox, 0, 5);
+            this.tableLayoutPanel1.Controls.Add(this.multiSpyBox, 1, 4);
+            this.tableLayoutPanel1.Controls.Add(this.TransparentInactiveBox, 1, 2);
+            this.tableLayoutPanel1.Controls.Add(this.PictBackGroundBox, 0, 3);
+            this.tableLayoutPanel1.Controls.Add(this.SelectNoPlayersBox, 1, 3);
+            this.tableLayoutPanel1.Controls.Add(this.PlayerFramesBox, 0, 4);
+            this.tableLayoutPanel1.Location = new System.Drawing.Point(6, 6);
+            this.tableLayoutPanel1.Name = "tableLayoutPanel1";
+            this.tableLayoutPanel1.RowCount = 6;
+            this.tableLayoutPanel1.RowStyles.Add(new System.Windows.Forms.RowStyle());
+            this.tableLayoutPanel1.RowStyles.Add(new System.Windows.Forms.RowStyle());
+            this.tableLayoutPanel1.RowStyles.Add(new System.Windows.Forms.RowStyle());
+            this.tableLayoutPanel1.RowStyles.Add(new System.Windows.Forms.RowStyle());
+            this.tableLayoutPanel1.RowStyles.Add(new System.Windows.Forms.RowStyle());
+            this.tableLayoutPanel1.RowStyles.Add(new System.Windows.Forms.RowStyle());
+            this.tableLayoutPanel1.Size = new System.Drawing.Size(319, 114);
+            this.tableLayoutPanel1.TabIndex = 147;
+            // 
+            // tableLayoutPanel2
+            // 
+            this.tableLayoutPanel2.AutoSize = true;
+            this.tableLayoutPanel2.AutoSizeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink;
+            this.tableLayoutPanel2.ColumnCount = 5;
+            this.tableLayoutPanel2.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle());
+            this.tableLayoutPanel2.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle());
+            this.tableLayoutPanel2.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle());
+            this.tableLayoutPanel2.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle());
+            this.tableLayoutPanel2.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle());
+            this.tableLayoutPanel2.Controls.Add(this.Label4, 0, 0);
+            this.tableLayoutPanel2.Controls.Add(this.MouseWheelZoomBox, 1, 0);
+            this.tableLayoutPanel2.Controls.Add(this.viewerSizeYBox, 3, 2);
+            this.tableLayoutPanel2.Controls.Add(this.label2, 2, 2);
+            this.tableLayoutPanel2.Controls.Add(this.Label5, 0, 1);
+            this.tableLayoutPanel2.Controls.Add(this.MouseClickZoomBox, 1, 1);
+            this.tableLayoutPanel2.Controls.Add(this.viewerSizeXBox, 1, 2);
+            this.tableLayoutPanel2.Controls.Add(this.label1, 0, 2);
+            this.tableLayoutPanel2.Controls.Add(this.Label7, 0, 3);
+            this.tableLayoutPanel2.Controls.Add(this.ResolutionBox, 1, 3);
+            this.tableLayoutPanel2.Location = new System.Drawing.Point(6, 123);
+            this.tableLayoutPanel2.Name = "tableLayoutPanel2";
+            this.tableLayoutPanel2.RowCount = 4;
+            this.tableLayoutPanel2.RowStyles.Add(new System.Windows.Forms.RowStyle());
+            this.tableLayoutPanel2.RowStyles.Add(new System.Windows.Forms.RowStyle());
+            this.tableLayoutPanel2.RowStyles.Add(new System.Windows.Forms.RowStyle());
+            this.tableLayoutPanel2.RowStyles.Add(new System.Windows.Forms.RowStyle());
+            this.tableLayoutPanel2.Size = new System.Drawing.Size(287, 116);
+            this.tableLayoutPanel2.TabIndex = 148;
+            // 
             // ReplayViewer
             // 
-            this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
-            this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
+            this.AutoScaleDimensions = new System.Drawing.SizeF(96F, 96F);
+            this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Dpi;
             this.ClientSize = new System.Drawing.Size(733, 335);
             this.Controls.Add(this.ViewerBox);
             this.Controls.Add(this.TabControl1);
+            this.Font = new System.Drawing.Font("Segoe UI", 9F);
             this.KeyPreview = true;
             this.MinimumSize = new System.Drawing.Size(749, 371);
             this.Name = "ReplayViewer";
@@ -743,9 +808,13 @@ namespace Elmanager.Forms
             ((System.ComponentModel.ISupportInitialize)(this.timeBar)).EndInit();
             this.TabPage2.ResumeLayout(false);
             this.TabPage2.PerformLayout();
+            this.tableLayoutPanel1.ResumeLayout(false);
+            this.tableLayoutPanel1.PerformLayout();
+            this.tableLayoutPanel2.ResumeLayout(false);
+            this.tableLayoutPanel2.PerformLayout();
             this.ResumeLayout(false);
 
-		}
+        }
 		internal System.Windows.Forms.Label CoordinateLabel;
 		internal TrackBarMod timeBar;
 		internal System.Windows.Forms.CheckBox LoopPlayingBox;
@@ -806,6 +875,8 @@ namespace Elmanager.Forms
         internal NumericTextBox viewerSizeXBox;
         private Label label1;
         internal CheckBox followAlsoWhenZooming;
+        private TableLayoutPanel tableLayoutPanel1;
+        private TableLayoutPanel tableLayoutPanel2;
     }
 	
 }

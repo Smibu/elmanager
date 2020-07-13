@@ -37,9 +37,9 @@ namespace Elmanager.Forms
             // Label16
             // 
             this.Label16.AutoSize = true;
-            this.Label16.Location = new System.Drawing.Point(12, 9);
+            this.Label16.Location = new System.Drawing.Point(10, 7);
             this.Label16.Name = "Label16";
-            this.Label16.Size = new System.Drawing.Size(317, 13);
+            this.Label16.Size = new System.Drawing.Size(352, 15);
             this.Label16.TabIndex = 43;
             this.Label16.Text = "The files below could not be loaded. They are probably corrupted.";
             // 
@@ -50,6 +50,7 @@ namespace Elmanager.Forms
             | System.Windows.Forms.AnchorStyles.Right)));
             this.ErrorBox.HorizontalScrollbar = true;
             this.ErrorBox.IntegralHeight = false;
+            this.ErrorBox.ItemHeight = 15;
             this.ErrorBox.Location = new System.Drawing.Point(13, 25);
             this.ErrorBox.Name = "ErrorBox";
             this.ErrorBox.SelectionMode = System.Windows.Forms.SelectionMode.None;
@@ -59,9 +60,10 @@ namespace Elmanager.Forms
             // DeleteButton
             // 
             this.DeleteButton.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-            this.DeleteButton.Location = new System.Drawing.Point(330, 261);
+            this.DeleteButton.AutoSize = true;
+            this.DeleteButton.Location = new System.Drawing.Point(330, 259);
             this.DeleteButton.Name = "DeleteButton";
-            this.DeleteButton.Size = new System.Drawing.Size(75, 23);
+            this.DeleteButton.Size = new System.Drawing.Size(75, 25);
             this.DeleteButton.TabIndex = 45;
             this.DeleteButton.Text = "Delete all";
             this.DeleteButton.UseVisualStyleBackColor = true;
@@ -69,19 +71,20 @@ namespace Elmanager.Forms
             // 
             // ErrorForm
             // 
-            this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
-            this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
+            this.AutoScaleDimensions = new System.Drawing.SizeF(96F, 96F);
+            this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Dpi;
             this.ClientSize = new System.Drawing.Size(419, 296);
             this.Controls.Add(this.DeleteButton);
             this.Controls.Add(this.ErrorBox);
             this.Controls.Add(this.Label16);
+            this.Font = new System.Drawing.Font("Segoe UI", 9F);
             this.Name = "ErrorForm";
             this.StartPosition = System.Windows.Forms.FormStartPosition.CenterParent;
             this.Text = "Warning";
             this.ResumeLayout(false);
             this.PerformLayout();
 
-		}
+        }
 		internal System.Windows.Forms.Label Label16;
 		internal System.Windows.Forms.ListBox ErrorBox;
 		internal System.Windows.Forms.Button DeleteButton;

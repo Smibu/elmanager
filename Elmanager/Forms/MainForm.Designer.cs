@@ -47,9 +47,10 @@ namespace Elmanager.Forms
             // 
             this.rmButton.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
+            this.rmButton.AutoSize = true;
             this.rmButton.Location = new System.Drawing.Point(87, 146);
             this.rmButton.Name = "rmButton";
-            this.rmButton.Size = new System.Drawing.Size(138, 23);
+            this.rmButton.Size = new System.Drawing.Size(138, 25);
             this.rmButton.TabIndex = 1;
             this.rmButton.Text = "Replay manager";
             this.rmButton.UseVisualStyleBackColor = true;
@@ -59,9 +60,10 @@ namespace Elmanager.Forms
             // 
             this.levelEditorButton.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
+            this.levelEditorButton.AutoSize = true;
             this.levelEditorButton.Location = new System.Drawing.Point(87, 204);
             this.levelEditorButton.Name = "levelEditorButton";
-            this.levelEditorButton.Size = new System.Drawing.Size(138, 23);
+            this.levelEditorButton.Size = new System.Drawing.Size(138, 25);
             this.levelEditorButton.TabIndex = 3;
             this.levelEditorButton.Text = "SLE";
             this.levelEditorButton.UseVisualStyleBackColor = true;
@@ -84,9 +86,10 @@ namespace Elmanager.Forms
             // 
             this.byLabel.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
-            this.byLabel.Location = new System.Drawing.Point(12, 55);
+            this.byLabel.AutoSize = true;
+            this.byLabel.Location = new System.Drawing.Point(128, 55);
             this.byLabel.Name = "byLabel";
-            this.byLabel.Size = new System.Drawing.Size(288, 13);
+            this.byLabel.Size = new System.Drawing.Size(57, 15);
             this.byLabel.TabIndex = 4;
             this.byLabel.Text = "by Smibu";
             this.byLabel.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
@@ -119,9 +122,10 @@ namespace Elmanager.Forms
             // 
             this.configButton.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
+            this.configButton.AutoSize = true;
             this.configButton.Location = new System.Drawing.Point(87, 233);
             this.configButton.Name = "configButton";
-            this.configButton.Size = new System.Drawing.Size(138, 23);
+            this.configButton.Size = new System.Drawing.Size(138, 25);
             this.configButton.TabIndex = 4;
             this.configButton.Text = "Configuration";
             this.configButton.UseVisualStyleBackColor = true;
@@ -134,7 +138,7 @@ namespace Elmanager.Forms
             this.linkLabel1.LinkArea = new System.Windows.Forms.LinkArea(41, 6);
             this.linkLabel1.Location = new System.Drawing.Point(32, 274);
             this.linkLabel1.Name = "linkLabel1";
-            this.linkLabel1.Size = new System.Drawing.Size(240, 17);
+            this.linkLabel1.Size = new System.Drawing.Size(259, 21);
             this.linkLabel1.TabIndex = 5;
             this.linkLabel1.TabStop = true;
             this.linkLabel1.Text = "Testing && SLE toolbar graphics: Mawane (R.I.P.)";
@@ -155,8 +159,9 @@ namespace Elmanager.Forms
             this.linkLabel2.AutoSize = true;
             this.linkLabel2.Location = new System.Drawing.Point(112, 291);
             this.linkLabel2.Name = "linkLabel2";
-            this.linkLabel2.Size = new System.Drawing.Size(88, 13);
+            this.linkLabel2.Size = new System.Drawing.Size(98, 15);
             this.linkLabel2.TabIndex = 6;
+            this.linkLabel2.TabStop = true;
             this.linkLabel2.Text = "License (libraries)";
             this.linkLabel2.LinkClicked += new System.Windows.Forms.LinkLabelLinkClickedEventHandler(this.linkLabel2_LinkClicked);
             // 
@@ -164,9 +169,10 @@ namespace Elmanager.Forms
             // 
             this.levelManagerButton.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
+            this.levelManagerButton.AutoSize = true;
             this.levelManagerButton.Location = new System.Drawing.Point(87, 175);
             this.levelManagerButton.Name = "levelManagerButton";
-            this.levelManagerButton.Size = new System.Drawing.Size(138, 23);
+            this.levelManagerButton.Size = new System.Drawing.Size(138, 25);
             this.levelManagerButton.TabIndex = 2;
             this.levelManagerButton.Text = "Level manager";
             this.levelManagerButton.UseVisualStyleBackColor = true;
@@ -174,8 +180,8 @@ namespace Elmanager.Forms
             // 
             // MainForm
             // 
-            this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
-            this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
+            this.AutoScaleDimensions = new System.Drawing.SizeF(96F, 96F);
+            this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Dpi;
             this.ClientSize = new System.Drawing.Size(312, 321);
             this.Controls.Add(this.levelManagerButton);
             this.Controls.Add(this.linkLabel2);
@@ -187,6 +193,7 @@ namespace Elmanager.Forms
             this.Controls.Add(this.titleLabel);
             this.Controls.Add(this.levelEditorButton);
             this.Controls.Add(this.rmButton);
+            this.Font = new System.Drawing.Font("Segoe UI", 9F);
             this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedSingle;
             this.MaximizeBox = false;
             this.Name = "MainForm";
@@ -196,7 +203,7 @@ namespace Elmanager.Forms
             this.ResumeLayout(false);
             this.PerformLayout();
 
-		}
+        }
 		internal System.Windows.Forms.Button rmButton;
 		internal System.Windows.Forms.Button levelEditorButton;
 		internal System.Windows.Forms.Label titleLabel;

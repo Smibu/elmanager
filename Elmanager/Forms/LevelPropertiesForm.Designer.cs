@@ -1,8 +1,9 @@
 ﻿using System.Windows.Forms;
+using Elmanager.CustomControls;
 
 namespace Elmanager.Forms
 {
-	public sealed partial class LevelPropertiesForm : System.Windows.Forms.Form
+	public sealed partial class LevelPropertiesForm : FormMod
 		{
 		
 		//Form overrides dispose to clean up the component list.
@@ -45,15 +46,15 @@ namespace Elmanager.Forms
             this.PropertiesLabel.Multiline = true;
             this.PropertiesLabel.Name = "PropertiesLabel";
             this.PropertiesLabel.ReadOnly = true;
-            this.PropertiesLabel.Size = new System.Drawing.Size(138, 191);
+            this.PropertiesLabel.Size = new System.Drawing.Size(138, 238);
             this.PropertiesLabel.TabIndex = 0;
             // 
             // Label2
             // 
             this.Label2.AutoSize = true;
-            this.Label2.Location = new System.Drawing.Point(203, 9);
+            this.Label2.Location = new System.Drawing.Point(196, 9);
             this.Label2.Name = "Label2";
-            this.Label2.Size = new System.Drawing.Size(91, 13);
+            this.Label2.Size = new System.Drawing.Size(103, 15);
             this.Label2.TabIndex = 1;
             this.Label2.Text = "Singleplayer times";
             // 
@@ -62,7 +63,7 @@ namespace Elmanager.Forms
             this.Label3.AutoSize = true;
             this.Label3.Location = new System.Drawing.Point(447, 9);
             this.Label3.Name = "Label3";
-            this.Label3.Size = new System.Drawing.Size(84, 13);
+            this.Label3.Size = new System.Drawing.Size(99, 15);
             this.Label3.TabIndex = 3;
             this.Label3.Text = "Multiplayer times";
             // 
@@ -70,10 +71,11 @@ namespace Elmanager.Forms
             // 
             this.OKButton.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
+            this.OKButton.AutoSize = true;
             this.OKButton.DialogResult = System.Windows.Forms.DialogResult.Cancel;
-            this.OKButton.Location = new System.Drawing.Point(278, 177);
+            this.OKButton.Location = new System.Drawing.Point(278, 222);
             this.OKButton.Name = "OKButton";
-            this.OKButton.Size = new System.Drawing.Size(87, 23);
+            this.OKButton.Size = new System.Drawing.Size(87, 25);
             this.OKButton.TabIndex = 5;
             this.OKButton.Text = "OK";
             this.OKButton.UseVisualStyleBackColor = true;
@@ -88,7 +90,7 @@ namespace Elmanager.Forms
             this.SinglePlayerTimesBox.Multiline = true;
             this.SinglePlayerTimesBox.Name = "SinglePlayerTimesBox";
             this.SinglePlayerTimesBox.ReadOnly = true;
-            this.SinglePlayerTimesBox.Size = new System.Drawing.Size(182, 142);
+            this.SinglePlayerTimesBox.Size = new System.Drawing.Size(182, 189);
             this.SinglePlayerTimesBox.TabIndex = 6;
             // 
             // MultiPlayerTimesBox
@@ -96,25 +98,26 @@ namespace Elmanager.Forms
             this.MultiPlayerTimesBox.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
             | System.Windows.Forms.AnchorStyles.Left)));
             this.MultiPlayerTimesBox.Font = new System.Drawing.Font("Lucida Console", 9F);
-            this.MultiPlayerTimesBox.Location = new System.Drawing.Point(360, 29);
+            this.MultiPlayerTimesBox.Location = new System.Drawing.Point(367, 29);
             this.MultiPlayerTimesBox.Multiline = true;
             this.MultiPlayerTimesBox.Name = "MultiPlayerTimesBox";
             this.MultiPlayerTimesBox.ReadOnly = true;
-            this.MultiPlayerTimesBox.Size = new System.Drawing.Size(258, 142);
+            this.MultiPlayerTimesBox.Size = new System.Drawing.Size(258, 189);
             this.MultiPlayerTimesBox.TabIndex = 7;
             // 
             // LevelPropertiesForm
             // 
-            this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
-            this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
+            this.AutoScaleDimensions = new System.Drawing.SizeF(96F, 96F);
+            this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Dpi;
             this.CancelButton = this.OKButton;
-            this.ClientSize = new System.Drawing.Size(642, 212);
+            this.ClientSize = new System.Drawing.Size(642, 259);
             this.Controls.Add(this.MultiPlayerTimesBox);
             this.Controls.Add(this.SinglePlayerTimesBox);
             this.Controls.Add(this.OKButton);
             this.Controls.Add(this.Label3);
             this.Controls.Add(this.Label2);
             this.Controls.Add(this.PropertiesLabel);
+            this.Font = new System.Drawing.Font("Segoe UI", 9F);
             this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedToolWindow;
             this.Name = "LevelPropertiesForm";
             this.Text = "Level properties";
@@ -122,7 +125,7 @@ namespace Elmanager.Forms
             this.ResumeLayout(false);
             this.PerformLayout();
 
-		}
+        }
         internal System.Windows.Forms.TextBox PropertiesLabel;
         internal System.Windows.Forms.Label Label2;
 		internal System.Windows.Forms.Label Label3;

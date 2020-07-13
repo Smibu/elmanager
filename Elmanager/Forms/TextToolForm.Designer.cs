@@ -57,9 +57,10 @@
             // okButton
             // 
             this.okButton.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-            this.okButton.Location = new System.Drawing.Point(188, 282);
+            this.okButton.AutoSize = true;
+            this.okButton.Location = new System.Drawing.Point(188, 280);
             this.okButton.Name = "okButton";
-            this.okButton.Size = new System.Drawing.Size(75, 23);
+            this.okButton.Size = new System.Drawing.Size(75, 25);
             this.okButton.TabIndex = 2;
             this.okButton.Text = "OK";
             this.okButton.UseVisualStyleBackColor = true;
@@ -68,10 +69,11 @@
             // cancelButton
             // 
             this.cancelButton.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+            this.cancelButton.AutoSize = true;
             this.cancelButton.DialogResult = System.Windows.Forms.DialogResult.Cancel;
-            this.cancelButton.Location = new System.Drawing.Point(269, 282);
+            this.cancelButton.Location = new System.Drawing.Point(269, 280);
             this.cancelButton.Name = "cancelButton";
-            this.cancelButton.Size = new System.Drawing.Size(75, 23);
+            this.cancelButton.Size = new System.Drawing.Size(75, 25);
             this.cancelButton.TabIndex = 3;
             this.cancelButton.Text = "Cancel";
             this.cancelButton.UseVisualStyleBackColor = true;
@@ -80,9 +82,10 @@
             // fontButton
             // 
             this.fontButton.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
-            this.fontButton.Location = new System.Drawing.Point(12, 282);
+            this.fontButton.AutoSize = true;
+            this.fontButton.Location = new System.Drawing.Point(12, 280);
             this.fontButton.Name = "fontButton";
-            this.fontButton.Size = new System.Drawing.Size(75, 23);
+            this.fontButton.Size = new System.Drawing.Size(75, 25);
             this.fontButton.TabIndex = 4;
             this.fontButton.Text = "Font...";
             this.fontButton.UseVisualStyleBackColor = true;
@@ -94,7 +97,7 @@
             this.label2.AutoSize = true;
             this.label2.Location = new System.Drawing.Point(9, 243);
             this.label2.Name = "label2";
-            this.label2.Size = new System.Drawing.Size(68, 13);
+            this.label2.Size = new System.Drawing.Size(75, 15);
             this.label2.TabIndex = 6;
             this.label2.Text = "Smoothness:";
             // 
@@ -129,14 +132,14 @@
             this.label1.AutoSize = true;
             this.label1.Location = new System.Drawing.Point(15, 192);
             this.label1.Name = "label1";
-            this.label1.Size = new System.Drawing.Size(62, 13);
+            this.label1.Size = new System.Drawing.Size(69, 15);
             this.label1.TabIndex = 9;
             this.label1.Text = "Line height:";
             // 
             // TextToolForm
             // 
-            this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
-            this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
+            this.AutoScaleDimensions = new System.Drawing.SizeF(96F, 96F);
+            this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Dpi;
             this.CancelButton = this.cancelButton;
             this.ClientSize = new System.Drawing.Size(356, 317);
             this.Controls.Add(this.label1);
@@ -147,6 +150,7 @@
             this.Controls.Add(this.cancelButton);
             this.Controls.Add(this.okButton);
             this.Controls.Add(this.textBox);
+            this.Font = new System.Drawing.Font("Segoe UI", 9F);
             this.KeyPreview = true;
             this.MaximizeBox = false;
             this.MinimizeBox = false;

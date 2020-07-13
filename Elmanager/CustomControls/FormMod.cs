@@ -1,5 +1,4 @@
-﻿using System.Drawing;
-using System.Windows.Forms;
+﻿using System.Windows.Forms;
 using My.Resources;
 
 namespace Elmanager.CustomControls
@@ -9,7 +8,6 @@ namespace Elmanager.CustomControls
         protected FormMod()
         {
             Icon = Resources.Elma;
-            Font = new Font(new FontFamily("Microsoft Sans Serif"), 8f);
         }
     }
 }

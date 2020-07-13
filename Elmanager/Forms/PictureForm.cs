@@ -19,18 +19,12 @@ namespace Elmanager.Forms
         internal bool TextureSelected;
         private Lgr _currentLgr;
         private bool _autoTextureMode;
-        private readonly float _dpiX;
-        private readonly float _dpiY;
         private static HashSet<string> _knownMaskNames = new HashSet<string> {"maskbig", "maskhor", "masklitt"};
 
         internal PictureForm(Lgr currentLgr)
         {
             InitializeComponent();
             UpdateLgr(currentLgr);
-            var graphics = CreateGraphics();
-            _dpiX = graphics.DpiX / 96;
-            _dpiY = graphics.DpiY / 96;
-            graphics.Dispose();
         }
 
         internal void UpdateLgr(Lgr newLgr)
@@ -71,8 +65,6 @@ namespace Elmanager.Forms
         internal double MinCoverPercentage => minCoverTextBox.Value;
 
         internal int IterationCount => iterationsTextBox.Value;
-
-        internal int MinHeight => (int) ((AutoTextureMode ? 293 : 185) * _dpiY);
 
         internal bool AllowMultiple { get; set; }
 
@@ -311,8 +303,6 @@ namespace Elmanager.Forms
             ImageBox.Image = bmp;
             ImageBox.Width = bmp.Width;
             ImageBox.Height = bmp.Height;
-            SetClientSizeCore(ImageBox.Location.X + bmp.Width + 5,
-                Math.Max(ImageBox.Location.Y + bmp.Height, MinHeight) + 5);
         }
 
         private void PreventClose(object sender, CancelEventArgs e)
