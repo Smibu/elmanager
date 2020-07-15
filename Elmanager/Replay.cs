@@ -6,12 +6,25 @@ namespace Elmanager
 {
     internal enum ReplayEventType
     {
+        ObjectTouch = 0,
         GroundTouch = 1,
         AppleTake = 4,
         Turn = 5,
         RightVolt = 6,
-        LeftVolt = 7,
-        SuperVolt = 8
+        LeftVolt = 7
+    }
+
+    internal enum LogicalEventType
+    {
+        Finish,
+        FlowerTouch,
+        KillerTouch,
+        GroundTouch,
+        AppleTake,
+        Turn,
+        RightVolt,
+        LeftVolt,
+        SuperVolt
     }
 
     internal enum Direction
@@ -32,8 +45,7 @@ namespace Elmanager
 
         public readonly string LevelFilename; //Filename of the level of the replay
 
-        [Description("Time")]
-        public string TimeStr => Time.ToTimeString();
+        [Description("Time")] public string TimeStr => Time.ToTimeString();
 
         public readonly double Time; //Time of the replay
 
@@ -48,21 +60,33 @@ namespace Elmanager
 
         internal Replay(string replayPath)
         {
-            var rawData = File.ReadAllBytes(replayPath);
             Path = replayPath;
-            Size = rawData.Length;
+            Size = (int) new FileInfo(replayPath).Length;
             DateModified = File.GetLastWriteTime(replayPath);
-            var invalid = BitConverter.ToInt32(rawData, 4) != 0x83;
-            if (invalid)
-                return;
-            LevId = BitConverter.ToInt32(rawData, 16);
-            LevelFilename = Utils.ReadNullTerminatedString(rawData, 20, 12);
-            IsInternal = Level.IsInternalLevel(LevelFilename);
-            IsMulti = rawData[8] == 1;
-            Player1 = new Player(rawData, false);
+            using (var stream = File.OpenRead(replayPath))
+            {
+                var rec = new BinaryReader(stream);
+                var frames = rec.ReadInt32();
+                var invalid = rec.ReadInt32() != 0x83;
+                if (invalid)
+                    return;
+                IsMulti = rec.ReadInt32() == 1;
+                var isFlagtag = rec.ReadInt32() == 1;
+                LevId = rec.ReadInt32();
+                LevelFilename = rec.ReadNullTerminatedString(12);
+                rec.ReadInt32();
+                IsInternal = Level.IsInternalLevel(LevelFilename);
+                Player1 = new Player(rec, frames);
+                if (IsMulti)
+                {
+                    frames = rec.ReadInt32();
+                    rec.BaseStream.Seek(32, SeekOrigin.Current);
+                    Player2 = new Player(rec, frames);
+                }
+            }
+
             if (IsMulti)
             {
-                Player2 = new Player(rawData, true);
                 if (!Player1.Finished)
                 {
                     if (Player1.FakeFinish && Player2.IsLastEventApple)
@@ -111,7 +135,7 @@ namespace Elmanager
                     {
                         LevelExists = true;
                         LevelPath = levelFile;
-                        var fileStream = new FileStream(levelFile, FileMode.Open, FileAccess.Read);
+                        var fileStream = File.OpenRead(levelFile);
                         var levelStream = new BinaryReader(fileStream);
                         fileStream.Seek(3, SeekOrigin.Begin);
                         //Check also the version of the level
@@ -145,7 +169,7 @@ namespace Elmanager
             }
         }
 
-        public int LevId { get; set; }
+        public int LevId { get; }
 
         internal Level GetLevel()
         {
@@ -165,22 +189,15 @@ namespace Elmanager
 
             throw new FileNotFoundException("The level file does not exist!", LevelFilename);
         }
-
-        internal void InitializeFrameData()
-        {
-            Player1.InitializeFrameData();
-            if (IsMulti)
-                Player2.InitializeFrameData();
-        }
     }
 
-    internal class PlayerEvent
+    internal class PlayerEvent<T>
     {
         internal int Info;
         internal double Time;
-        internal ReplayEventType Type;
+        internal T Type;
 
-        internal PlayerEvent(ReplayEventType eventType, double eventTime, int info = 0)
+        internal PlayerEvent(T eventType, double eventTime, int info = 0)
         {
             Type = eventType;
             Time = eventTime;

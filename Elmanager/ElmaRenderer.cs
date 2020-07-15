@@ -71,7 +71,7 @@ namespace Elmanager
         private double _bikePicTranslateYFacingRight;
         private int _bodyPic;
         private IWindowInfo _ctrlWindowInfo;
-        private PlayerEvent[] _currentPlayerAppleEvents;
+        private PlayerEvent<LogicalEventType>[] _currentPlayerAppleEvents;
         private bool _disposed;
         private bool _drawInActiveAsTransparent;
         private bool _drawOnlyPlayerFrames;
@@ -468,7 +468,7 @@ namespace Elmanager
                 if (_lockedCamera)
                 {
                     GL.Translate(CenterX, CenterY, 0);
-                    GL.Rotate(-_players[ActivePlayerIndices[0]].BikeRotation, 0, 0, 1);
+                    GL.Rotate(-_players[ActivePlayerIndices[0]].BikeRotationDegrees, 0, 0, 1);
                     GL.Translate(-CenterX, -CenterY, 0);
                 }
             }
@@ -691,8 +691,7 @@ namespace Elmanager
             DrawPlayers(ActivePlayerIndices, VisiblePlayerIndices);
             GL.Translate(fixx, fixy, 0);
             GL.Scale(1.0, -1.0, 1.0);
-            if (_settings.ShowObjects && LgrGraphicsLoaded
-            ) //BUG Drawing order should be: 1. killers, 2. apples, 3. flowers.
+            if (_settings.ShowObjects && LgrGraphicsLoaded)
             {
                 var depth = _picturesInBackground ? 0 : 0.5 * (ZFar - ZNear) + ZNear;
                 foreach (var x in Lev.Objects)
@@ -726,7 +725,7 @@ namespace Elmanager
                         i++;
                     for (var j = i; j < _currentPlayerAppleEvents.Length; j++)
                     {
-                        var z = Lev.Apples[_currentPlayerAppleEvents[j].Info];
+                        var z = Lev.Objects[_currentPlayerAppleEvents[j].Info];
                         DrawObject(GetApple(z.AnimationNumber), z.Position);
                     }
 
@@ -772,7 +771,7 @@ namespace Elmanager
                         i++;
                     for (var j = i; j < _currentPlayerAppleEvents.Length; j++)
                     {
-                        var z = Lev.Apples[_currentPlayerAppleEvents[j].Info];
+                        var z = Lev.Objects[_currentPlayerAppleEvents[j].Info];
                         DrawGravityArrowMaybe(z);
                     }
 
@@ -949,16 +948,16 @@ namespace Elmanager
         {
             if (!_wrongLevVersion && ActivePlayerIndices.Count > 0)
             {
-                _currentPlayerAppleEvents = _players[ActivePlayerIndices[0]].GetEvents(ReplayEventType.AppleTake);
+                _currentPlayerAppleEvents = _players[ActivePlayerIndices[0]].GetEvents(LogicalEventType.AppleTake);
                 _notTakenApples = new List<LevObject>();
-                for (var i = 0; i < Lev.Apples.Count; i++)
+                for (var i = 0; i < Lev.Objects.Count; i++)
                 {
-                    if (Lev.Apples[i].Type != ObjectType.Apple)
+                    if (Lev.Objects[i].Type != ObjectType.Apple)
                         continue;
                     var i1 = i;
                     var isTaken = _currentPlayerAppleEvents.Any(x => x.Info == i1);
                     if (!isTaken)
-                        _notTakenApples.Add(Lev.Apples[i]);
+                        _notTakenApples.Add(Lev.Objects[i]);
                 }
             }
         }
@@ -979,6 +978,21 @@ namespace Elmanager
         internal void InitializeLevel(Level level)
         {
             Lev = level;
+            Lev.Objects = Lev.Objects.OrderBy(o => {
+                switch (o.Type)
+                {
+                    case ObjectType.Flower:
+                        return 3;
+                    case ObjectType.Apple:
+                        return 2;
+                    case ObjectType.Killer:
+                        return 1;
+                    case ObjectType.Start:
+                        return 4;
+                    default:
+                        throw new ArgumentOutOfRangeException();
+                }
+            }).ToList();
             Lev.DecomposeGroundPolygons();
             Lev.UpdateImages(DrawableImages);
             Lev.UpdateBounds();
@@ -1009,11 +1023,6 @@ namespace Elmanager
             InitializeLevel(replays[0].GetLevel());
             ActivePlayerIndices = new List<int>();
             VisiblePlayerIndices = new List<int>();
-            var killerObjectCount = Lev.KillerObjectCount;
-            foreach (var x in _players)
-            {
-                x.InitializeForPlaying(killerObjectCount);
-            }
 
             _wrongLevVersion = replays[0].WrongLevelVersion;
         }
@@ -1602,10 +1611,10 @@ namespace Elmanager
                 while (!(i >= _currentPlayerAppleEvents.Length || _currentPlayerAppleEvents[i].Time >= CurrentTime))
                     i++;
                 for (var j = i; j < _currentPlayerAppleEvents.Length; j++)
-                    DrawCircle(Lev.Apples[_currentPlayerAppleEvents[j].Info].Position, ObjectRadius,
+                    DrawPoint(Lev.Objects[_currentPlayerAppleEvents[j].Info].Position,
                         _settings.AppleColor);
                 foreach (var x in _notTakenApples)
-                    DrawCircle(x.Position, ObjectRadius, _settings.AppleColor);
+                    DrawPoint(x.Position, _settings.AppleColor);
             }
         }
 
@@ -1644,7 +1653,7 @@ namespace Elmanager
                 while (!(i >= _currentPlayerAppleEvents.Length || _currentPlayerAppleEvents[i].Time >= CurrentTime))
                     i++;
                 for (var j = i; j < _currentPlayerAppleEvents.Length; j++)
-                    DrawCircle(Lev.Apples[_currentPlayerAppleEvents[j].Info].Position, ObjectRadius,
+                    DrawCircle(Lev.Objects[_currentPlayerAppleEvents[j].Info].Position, ObjectRadius,
                         _settings.AppleColor);
                 foreach (var x in _notTakenApples)
                     DrawCircle(x.Position, ObjectRadius, _settings.AppleColor);
@@ -1655,7 +1664,7 @@ namespace Elmanager
         {
             DrawPlayer(player.GlobalBodyX, player.GlobalBodyY, player.LeftWheelX, player.LeftWheelY, player.RightWheelX,
                 player.RightWheelY, player.LeftWheelRotation, player.RightWheelRotation, player.HeadX,
-                player.HeadY, player.BikeRotation, player.Dir, player.ArmRotation,
+                player.HeadY, player.BikeRotationDegrees, player.Dir, player.ArmRotation,
                 isActive || !_drawInActiveAsTransparent, !_drawOnlyPlayerFrames);
         }
 

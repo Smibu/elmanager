@@ -48,7 +48,6 @@ namespace Elmanager
         };
 
         internal bool AllPicturesFound = true;
-        internal List<LevObject> Apples;
         internal string GroundTextureName = "ground";
         private double[] Integrity = new double[4];
         private bool IsInternal;
@@ -87,101 +86,76 @@ namespace Elmanager
 
         internal static Level FromPath(string levelPath)
         {
-            var levelData = File.ReadAllBytes(levelPath);
-            var lev = FromBytes(levelData);
-            lev.Path = levelPath;
-            lev.IsInternal = IsInternalLevel(lev.FileName);
-            lev.DateModified = File.GetLastWriteTime(levelPath);
-            return lev;
-        }
-
-        internal static Level FromBytes(byte[] level)
-        {
-            var lvl = new Level();
-            lvl.LoadFromBytes(level);
-            return lvl;
+            using (var stream = File.OpenRead(levelPath))
+            {
+                var lev = FromStream(stream);
+                lev.Size = (int)new FileInfo(levelPath).Length;
+                lev.Path = levelPath;
+                lev.IsInternal = IsInternalLevel(lev.FileName);
+                lev.DateModified = File.GetLastWriteTime(levelPath);
+                return lev;
+            }
         }
 
         internal static Level FromStream(Stream data)
         {
             var lvl = new Level();
-            using (var ms = new MemoryStream())
-            {
-                data.CopyTo(ms);
-                lvl.LoadFromBytes(ms.ToArray());
-            }
-
+            lvl.LoadFromStream(data);
             return lvl;
         }
 
-        private void LoadFromBytes(byte[] level)
+        private void LoadFromStream(Stream data)
         {
-            Size = level.Length;
-            LevStartMagic = Encoding.UTF8.GetString(level, 0, 5);
+            var lev = new BinaryReader(data, Encoding.ASCII);
+            LevStartMagic = lev.ReadString(5);
             if (!IsElmaLevel && !IsAcrossLevel && !IsLeb)
             {
                 throw new LevelException(
                     "Unknown file type. This is neither an Elma level, an Across level nor a LEB file.");
             }
 
-            var sp = 7;
-            if (IsAcrossLevel)
-                sp -= 2;
-            Identifier = BitConverter.ToInt32(level, sp);
-            sp += 4;
-            for (var i = 0; i <= 3; i++)
+            if (!IsAcrossLevel)
             {
-                Integrity[i] = BitConverter.ToDouble(level, sp);
-                sp += 8;
+                lev.ReadInt16();
             }
 
-            Title = Utils.ReadNullTerminatedString(level, sp, 60);
-            if (IsAcrossLevel)
-                sp = 100;
-            else
+            Identifier = lev.ReadInt32();
+            for (var i = 0; i < 4; i++)
             {
-                sp = 94;
-                LgrFile = Utils.ReadNullTerminatedString(level, sp, 16);
-                sp += 16;
-                GroundTextureName = Utils.ReadNullTerminatedString(level, sp, 12).ToLower();
-                sp += 10;
-                SkyTextureName = Utils.ReadNullTerminatedString(level, sp, 12).ToLower();
-                sp += 10;
+                Integrity[i] = lev.ReadDouble();
             }
 
-            var polygonCount = (int) Math.Round(BitConverter.ToDouble(level, sp) - MagicDouble);
-            sp += 8;
+            Title = lev.ReadNullTerminatedString(IsAcrossLevel ? 59 : 51);
+            if (!IsAcrossLevel)
+            {
+                LgrFile = lev.ReadNullTerminatedString(16);
+                GroundTextureName = lev.ReadNullTerminatedString(10).ToLower();
+                SkyTextureName = lev.ReadNullTerminatedString(10).ToLower();
+            }
+
+            var polygonCount = (int) Math.Round(lev.ReadDouble() - MagicDouble);
             var objectCount = -1;
             if (IsLeb)
             {
-                objectCount = (int) Math.Round(BitConverter.ToDouble(level, sp) - MagicDouble);
-                sp += 8;
+                objectCount = (int) Math.Round(lev.ReadDouble() - MagicDouble);
             }
-
-            var isGrassPolygon = false;
+            
             Polygons = new List<Polygon>();
             for (var i = 0; i < polygonCount; i++)
             {
-                int numVertice;
-                if (IsAcrossLevel)
+                var isGrassPolygon = false;
+                if (!IsAcrossLevel)
                 {
-                    numVertice = level[sp] + 256 * level[sp + 1];
-                    sp += 4;
-                }
-                else
-                {
-                    numVertice = level[sp + 4] + 256 * level[sp + 5];
-                    sp += 8;
-                    isGrassPolygon = level[sp - 8] == 1;
+                    isGrassPolygon = lev.ReadInt32() == 1;
                 }
 
+                var numVertice = lev.ReadInt32();
                 var poly = new Polygon();
                 for (var j = 0; j < numVertice; j++)
                 {
-                    var x = BitConverter.ToDouble(level, sp);
-                    var y = BitConverter.ToDouble(level, sp + 8);
+                    var x = lev.ReadDouble();
+                    var y = lev.ReadDouble();
                     poly.Add(new Vector(x, y));
-                    sp += 16;
                 }
 
                 poly.IsGrass = isGrassPolygon;
@@ -190,17 +164,15 @@ namespace Elmanager
 
             if (!IsLeb)
             {
-                objectCount = (int) Math.Round(BitConverter.ToDouble(level, sp) - MagicDouble);
-                sp += 8;
+                objectCount = (int) Math.Round(lev.ReadDouble() - MagicDouble);
             }
 
-            Apples = new List<LevObject>();
             var startFound = false;
             for (var i = 0; i < objectCount; i++)
             {
-                var x = BitConverter.ToDouble(level, sp);
-                var y = BitConverter.ToDouble(level, sp + 8);
-                var objectType = (ObjectType) (level[sp + 16]);
+                var x = lev.ReadDouble();
+                var y = lev.ReadDouble();
+                var objectType = (ObjectType) lev.ReadInt32();
                 if (objectType == ObjectType.Start)
                 {
                     startFound = true;
@@ -210,17 +182,12 @@ namespace Elmanager
                 var animNum = 0;
                 if (!IsAcrossLevel)
                 {
-                    appleType = (AppleType) (BitConverter.ToInt32(level, sp + 20));
-                    animNum = BitConverter.ToInt32(level, sp + 24);
-                    sp += 28;
+                    appleType = (AppleType) lev.ReadInt32();
+                    animNum = lev.ReadInt32();
                 }
-                else
-                    sp += 20;
 
                 var objectToAdd = new LevObject(new Vector(x, y), objectType, appleType, animNum + 1);
                 Objects.Add(objectToAdd);
-                if (objectType == ObjectType.Apple)
-                    Apples.Add(objectToAdd);
             }
 
             if (!startFound)
@@ -230,44 +197,62 @@ namespace Elmanager
 
             if (!IsAcrossLevel)
             {
-                var numberOfPicturesPlusTextures = (int) Math.Round(BitConverter.ToDouble(level, sp) - MagicDouble2);
-                sp += 8;
+                var numberOfPicturesPlusTextures = (int) Math.Round(lev.ReadDouble() - MagicDouble2);
                 for (var i = 0; i < numberOfPicturesPlusTextures; i++)
                 {
-                    if (level[sp] == 0)
-                        _textureData.Add(new LevelFileTexture(Utils.ReadNullTerminatedString(level, sp + 10, 10),
-                            Utils.ReadNullTerminatedString(level, sp + 20, 10),
-                            new Vector(BitConverter.ToDouble(level, sp + 30),
-                                BitConverter.ToDouble(level, sp + 38)),
-                            BitConverter.ToInt32(level, sp + 46),
-                            ((ClippingType) (BitConverter.ToInt32(level, sp + 50)))));
+                    var pictureName = lev.ReadNullTerminatedString(10);
+                    var textureName = lev.ReadNullTerminatedString(10);
+                    var maskName = lev.ReadNullTerminatedString(10);
+                    var x = lev.ReadDouble();
+                    var y = lev.ReadDouble();
+                    var distance = lev.ReadInt32();
+                    var clipping = (ClippingType) lev.ReadInt32();
+                    if (pictureName == "")
+                        _textureData.Add(new LevelFileTexture(textureName,
+                            maskName, new Vector(x, y),
+                            distance,
+                            clipping));
                     else
-                        _textureData.Add(new LevelFileTexture(Utils.ReadNullTerminatedString(level, sp, 10), null,
-                            new Vector(BitConverter.ToDouble(level, sp + 30),
-                                BitConverter.ToDouble(level, sp + 38)),
-                            BitConverter.ToInt32(level, sp + 46),
-                            ((ClippingType) (BitConverter.ToInt32(level, sp + 50)))));
-                    sp += 54;
+                        _textureData.Add(new LevelFileTexture(pictureName,
+                            null, new Vector(x, y),
+                            distance,
+                            clipping));
                 }
             }
 
-            if (sp != level.Length)
-            {
-                sp += 4; //Skip end of data magic number
-                CryptTop10(level, sp);
-                try
-                {
-                    Top10.SinglePlayer = ReadTop10Part(level, sp, (a, b, t) => new Top10EntrySingle(a, b, t));
-                    Top10.MultiPlayer = ReadTop10Part(level, sp + 344, (a, b, t) => new Top10EntryMulti(a, b, t));
-                }
-                catch (IndexOutOfRangeException)
-                {
-                    throw new LevelException(
-                        "Top 10 list is corrupted. The list will be cleared if you save the level.");
-                }
-            }
-
+            HandleLevEndRead(lev);
             UpdateBounds();
+        }
+
+        private void HandleLevEndRead(BinaryReader lev)
+        {
+            int endOfData;
+            try
+            {
+                endOfData = lev.ReadInt32();
+            }
+            catch (EndOfStreamException)
+            {
+                return;
+            }
+
+            if (endOfData != EndOfDataMagicNumber)
+            {
+                throw new LevelException($"Wrong end of data marker: {endOfData}");
+            }
+
+            try
+            {
+                var top10data = lev.ReadBytes(688);
+                CryptTop10(top10data, 0);
+                Top10.SinglePlayer = ReadTop10Part(top10data, 0, (a, b, t) => new Top10EntrySingle(a, b, t));
+                Top10.MultiPlayer = ReadTop10Part(top10data, 0 + 344, (a, b, t) => new Top10EntryMulti(a, b, t));
+            }
+            catch (IndexOutOfRangeException)
+            {
+                throw new LevelException(
+                    "Top 10 list is corrupted. The list will be cleared if you save the level.");
+            }
         }
 
         private Level(Level lev)

@@ -131,7 +131,7 @@ namespace Elmanager
         }
 
         internal static void PutEventsToList(Player player, ListBox listBox, bool finished,
-            PlayerEvent[] selectedEvents)
+            PlayerEvent<LogicalEventType>[] selectedEvents)
         {
             int turnCounter = 0;
             int leftVoltCounter = 0;
@@ -147,27 +147,27 @@ namespace Elmanager
                 string strToAdd;
                 switch (e.Type)
                 {
-                    case ReplayEventType.AppleTake:
+                    case LogicalEventType.AppleTake:
                         appleCounter++;
                         strToAdd = "Apple " + appleCounter;
                         break;
-                    case ReplayEventType.SuperVolt:
+                    case LogicalEventType.SuperVolt:
                         superVoltCounter++;
                         strToAdd = "Supervolt " + superVoltCounter;
                         break;
-                    case ReplayEventType.LeftVolt:
+                    case LogicalEventType.LeftVolt:
                         leftVoltCounter++;
                         strToAdd = "Left volt " + leftVoltCounter;
                         break;
-                    case ReplayEventType.RightVolt:
+                    case LogicalEventType.RightVolt:
                         rightVoltCounter++;
                         strToAdd = "Right volt " + rightVoltCounter;
                         break;
-                    case ReplayEventType.Turn:
+                    case LogicalEventType.Turn:
                         turnCounter++;
                         strToAdd = "Turn " + turnCounter;
                         break;
-                    case ReplayEventType.GroundTouch:
+                    case LogicalEventType.GroundTouch:
                         gtCounter++;
                         strToAdd = "Touch " + gtCounter;
                         break;
@@ -200,6 +200,17 @@ namespace Elmanager
             }
 
             return Encoding.ASCII.GetString(tempBytes);
+        }
+
+        internal static string ReadNullTerminatedString(this BinaryReader reader, int count)
+        {
+            var chars = reader.ReadChars(count);
+            return new string(chars.TakeWhile(c => c != '\0').ToArray());
+        }
+
+        internal static string ReadString(this BinaryReader reader, int count)
+        {
+            return new string(reader.ReadChars(count));
         }
 
         internal static bool RecDirectoryExists()

@@ -32,7 +32,7 @@ namespace Elmanager.Forms
             0xFFE0E0E0
         };
 
-        private PlayerEvent[] _currentEvents;
+        private PlayerEvent<LogicalEventType>[] _currentEvents;
         private bool _draggingScreen;
         private bool _fullScreen;
         private Point _lastLocation;
@@ -86,7 +86,6 @@ namespace Elmanager.Forms
 
         internal void SetReplays(List<Replay> replays)
         {
-            replays.ForEach(r => r.InitializeFrameData());
             _playListReplays = new List<PlayListObject>();
             foreach (Replay replay in replays)
             {
@@ -533,19 +532,19 @@ namespace Elmanager.Forms
             int i = GetSelectedIndex();
             if (i >= 0)
             {
-                var typesToShow = new List<ReplayEventType>();
+                var typesToShow = new List<LogicalEventType>();
                 if (applesToolStripMenuItem.Checked)
-                    typesToShow.Add(ReplayEventType.AppleTake);
+                    typesToShow.Add(LogicalEventType.AppleTake);
                 if (supervoltsToolStripMenuItem.Checked)
-                    typesToShow.Add(ReplayEventType.SuperVolt);
+                    typesToShow.Add(LogicalEventType.SuperVolt);
                 if (leftVoltsToolStripMenuItem.Checked)
-                    typesToShow.Add(ReplayEventType.LeftVolt);
+                    typesToShow.Add(LogicalEventType.LeftVolt);
                 if (rightVoltsToolStripMenuItem.Checked)
-                    typesToShow.Add(ReplayEventType.RightVolt);
+                    typesToShow.Add(LogicalEventType.RightVolt);
                 if (turnsToolStripMenuItem.Checked)
-                    typesToShow.Add(ReplayEventType.Turn);
+                    typesToShow.Add(LogicalEventType.Turn);
                 if (groundtouchesToolStripMenuItem.Checked)
-                    typesToShow.Add(ReplayEventType.GroundTouch);
+                    typesToShow.Add(LogicalEventType.GroundTouch);
                 _currentEvents = _playListReplays[i].Player.GetEvents(typesToShow.ToArray());
                 Utils.PutEventsToList(_playListReplays[i].Player, EventListBox,
                     _playListReplays[0].Player.Finished || _playListReplays[i].Player.FakeFinish,

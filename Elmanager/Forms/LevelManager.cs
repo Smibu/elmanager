@@ -208,7 +208,7 @@ namespace Elmanager.Forms
                         {
                             srp = Level.FromPath(levFile);
                         }
-                        catch (ArgumentException)
+                        catch (LevelException)
                         {
                             errorFiles.Add(levFile);
                             continue;

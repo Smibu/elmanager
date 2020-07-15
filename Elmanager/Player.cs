@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 
 namespace Elmanager
@@ -7,15 +8,10 @@ namespace Elmanager
     internal class Player
     {
         internal const double TimeConst = 625.0 / 273.0;
-        internal int Apples; //Number of appletakes and bugapples
-        internal int BugApples;
-        internal int EventCount; //Number of events (appletake = 2 events)
-        internal List<PlayerEvent> Events;
-        internal bool FakeFinish;
-        internal bool Finished;
-        internal int FrameCount;
+        internal int Apples; // Number of appletakes and bugapples
+        internal List<PlayerEvent<ReplayEventType>> RawEvents = new List<PlayerEvent<ReplayEventType>>();
+        internal List<PlayerEvent<LogicalEventType>> Events = new List<PlayerEvent<LogicalEventType>>();
         internal int GroundTouches;
-        internal bool IsLastEventApple;
         internal int LeftVolts;
         internal int RightVolts;
         internal int SuperVolts;
@@ -23,207 +19,280 @@ namespace Elmanager
         internal double TopSpeed;
         internal double Trip;
         internal int Turns;
-        internal PlayerEvent[] VoltEvents;
+        private PlayerEvent<LogicalEventType>[] _voltEvents;
         private const double ArmForwardTime = 0.2;
         private const double ArmRotationDelay = 0.916;
-        private const int EventSize = 16;
         private const double HeadDiff = 0.0915;
         private const double HeightConst = 0.632;
         private const double MaxArmRotation = 95;
         private const double WheelRotationFactor = 1 / 250.0;
-        private readonly int _pOffset;
-        private readonly byte[] _rawData;
 
-        private double[] _bikeRotation;
+        private List<Vector> _globalBody = new List<Vector>();
+        private List<double> _bikeRotation = new List<double>();
+        private List<Direction> _direction = new List<Direction>();
+        private List<Vector> _head = new List<Vector>();
+        private List<Vector> _leftWheel = new List<Vector>();
+        private List<double> _leftWheelRotation = new List<double>();
+        private List<Vector> _rightWheel = new List<Vector>();
+        private List<double> _rightWheelRotation = new List<double>();
         private int _currentFrameIndex;
         private double _currentTime;
-        private Direction[] _direction;
-        private bool _frameDataInitialized;
-        private Vector[] _globalBody;
-        private Vector[] _head;
         private double _interpolationStep;
-        private Vector[] _leftWheel;
-        private double[] _leftWheelRotation;
-        private int _maxFrameIndex;
-        private Vector[] _rightWheel;
-        private double[] _rightWheelRotation;
-        private bool _playingInitialized;
 
-        internal Player(byte[] rec, bool p2)
+        internal int FrameCount => _globalBody.Count;
+        private int MaxFrameIndex => FrameCount - 1;
+
+        internal Player(BinaryReader rec, int frames)
         {
-            _rawData = rec;
-            int consecutiveSimultaneousAppletakes = 0;
-            FrameCount = BitConverter.ToInt32(rec, 0);
-            EventCount = BitConverter.ToInt32(rec, FrameCount * 27 + 36);
-            if (p2)
+            var frameCount = frames;
+
+            for (int i = 0; i < frameCount; i++)
             {
-                _pOffset = EventCount * EventSize + FrameCount * 27 + 44;
-                FrameCount = BitConverter.ToInt32(rec, _pOffset);
-                EventCount = BitConverter.ToInt32(rec, _pOffset + FrameCount * 27 + 36);
+                _globalBody.Add(new Vector(rec.ReadSingle(), 0));
             }
 
-            Events = new List<PlayerEvent>(EventCount);
-            if (EventCount > 0)
+            foreach (var b in _globalBody)
             {
-                int sp = _pOffset + 50 + FrameCount * 27;
-                for (int j = 0; j < EventCount; j++)
+                b.Y = rec.ReadSingle();
+            }
+
+            // TODO: Compute trip and top speed
+
+            foreach (var part in new[] {_leftWheel, _rightWheel, _head})
+            {
+                foreach (var b in _globalBody)
                 {
-                    double eventTime = BitConverter.ToDouble(rec, sp + EventSize * j - 10) * TimeConst;
-                    bool lastEventSuperVolt = false;
-                    bool someOtherEventAdded = true;
-                    switch (rec[sp + EventSize * j])
-                    {
-                        case (byte) ReplayEventType.AppleTake:
-                            consecutiveSimultaneousAppletakes++;
-                            someOtherEventAdded = false;
-                            if (j < EventCount - 1)
-                                continue;
-                            j++;
-                            break;
-                        case (byte) ReplayEventType.RightVolt:
-                            if (rec.Length >= sp + EventSize * j + EventSize &&
-                                (BitConverter.ToDouble(rec, sp + EventSize * j + 6) * TimeConst == eventTime &&
-                                 rec[sp + EventSize * j + EventSize] == 7))
-                            {
-                                SuperVolts++;
-                                lastEventSuperVolt = true;
-                                Events.Add(new PlayerEvent(ReplayEventType.SuperVolt, eventTime));
-                            }
-                            else
-                            {
-                                RightVolts++;
-                                Events.Add(new PlayerEvent(ReplayEventType.RightVolt, eventTime));
-                            }
+                    part.Add(new Vector(b.X + rec.ReadInt16() / 1000.0, 0));
+                }
 
-                            break;
-                        case (byte) ReplayEventType.LeftVolt:
-                            LeftVolts++;
-                            Events.Add(new PlayerEvent(ReplayEventType.LeftVolt, eventTime));
-                            break;
-                        case (byte) ReplayEventType.Turn:
-                            Turns++;
-                            Events.Add(new PlayerEvent(ReplayEventType.Turn, eventTime));
-                            break;
-                        case (byte) ReplayEventType.GroundTouch:
-                            GroundTouches++;
-                            Events.Add(new PlayerEvent(ReplayEventType.GroundTouch, eventTime));
-                            break;
-                        default:
-                            someOtherEventAdded = false;
-                            break;
-                    }
+                foreach (var (b, w) in _globalBody.Zip(part, (x, y) => (x, y)))
+                {
+                    w.Y = b.Y + rec.ReadInt16() / 1000.0;
+                }
+            }
 
-                    if (consecutiveSimultaneousAppletakes > 0)
-                    {
-                        double appleTime = BitConverter.ToDouble(rec, sp + EventSize * j - 26);
-                        int k = 0;
-                        while (
-                            !(BitConverter.ToDouble(rec, sp + EventSize * j - 26 - EventSize * k) != appleTime ||
-                              (rec[sp + EventSize * j - EventSize - EventSize * k] != 4 &&
-                               rec[sp + EventSize * j - EventSize - EventSize * k] != 0)))
-                            k++;
-                        if (k > consecutiveSimultaneousAppletakes * 2 && j > 2)
-                            //If j <= 2 then this appletake is first event, which means k must be 0
+            for (int i = 0; i < frameCount; i++)
+            {
+                _bikeRotation.Add(rec.ReadInt16() / 10000.0 * 2 * Math.PI);
+            }
+
+            foreach (var part in new[] {_leftWheelRotation, _rightWheelRotation})
+            {
+                for (int i = 0; i < frameCount; i++)
+                {
+                    part.Add(rec.ReadByte() * 2 * Math.PI * WheelRotationFactor);
+                }
+            }
+
+            for (int i = 0; i < frameCount; i++)
+            {
+                var dirData = rec.ReadByte();
+                _direction.Add(dirData % 4 < 2 ? Direction.Left : Direction.Right);
+            }
+
+            // Compute final head position
+            for (int i = 0; i < frameCount; i++)
+            {
+                var dirf = 2 * (int) _direction[i] - 1; // 0 -> -1, 1 -> 1
+                _head[i].X += Math.Cos(_bikeRotation[i] + Math.PI / 2) * HeightConst +
+                              Math.Cos(_bikeRotation[i]) * HeadDiff * dirf;
+                _head[i].Y += Math.Sin(_bikeRotation[i] + Math.PI / 2) * HeightConst +
+                              Math.Sin(_bikeRotation[i]) * HeadDiff * dirf;
+            }
+
+            // Skip rotation speed and collision data - they're not needed for replay playing except for sounds.
+            rec.BaseStream.Seek(frameCount * 2, SeekOrigin.Current);
+
+            var eventCount = rec.ReadInt32();
+            for (int j = 0; j < eventCount; j++)
+            {
+                double eventTime = rec.ReadDouble() * TimeConst;
+                var info1 = rec.ReadByte();
+                var info2 = rec.ReadByte();
+                var eventType = (ReplayEventType) rec.ReadByte();
+                rec.ReadByte();
+                var info3 = rec.ReadSingle();
+                RawEvents.Add(new PlayerEvent<ReplayEventType>(eventType, eventTime, info1));
+            }
+
+            if (rec.ReadInt32() != 0x492f75)
+            {
+                throw new Exception("Invalid magic in replay");
+            }
+
+            var objectIndexFreqs = new Dictionary<int, int>();
+            var appleIndices = new HashSet<int>();
+
+            foreach (var e in RawEvents)
+            {
+                if (e.Type == ReplayEventType.ObjectTouch)
+                {
+                    objectIndexFreqs.TryGetValue(e.Info, out var freq);
+                    objectIndexFreqs[e.Info] = freq + 1;
+                }
+            }
+
+            for (var index = 0; index < RawEvents.Count; index++)
+            {
+                var e = RawEvents[index];
+                switch (e.Type)
+                {
+                    case ReplayEventType.ObjectTouch:
+                        Events.Add(new PlayerEvent<LogicalEventType>(LogicalEventType.FlowerTouch, e.Time, e.Info));
+                        break;
+                    case ReplayEventType.AppleTake:
+                        var consecutiveSimultaneousAppletakes = 1;
+                        for (var i = index + 1; i < RawEvents.Count; i++)
                         {
-                            int biggestIndex = 0;
-                            for (int i = 0; i < k - consecutiveSimultaneousAppletakes; i++)
-                                if (rec[sp + EventSize * j - EventSize * k + i * EventSize - 2] > biggestIndex)
-                                    biggestIndex = rec[sp + EventSize * j - EventSize * k + i * EventSize - 2];
-                            k = 0;
-                            while (rec[sp + EventSize * j - EventSize * k - 34] == biggestIndex)
-                                k++;
+                            if (RawEvents[i].Type != ReplayEventType.AppleTake)
+                            {
+                                break;
+                            }
+
+                            if (RawEvents[i].Time != e.Time)
+                            {
+                                throw new LevelException("Expected same time");
+                            }
+
+                            consecutiveSimultaneousAppletakes++;
+                        }
+
+                        // We have to find the ObjectTouch event that corresponds to the AppleTake event (to get the apple index).
+                        // That is not completely straightforward, as there may be interleaving flowertouch events
+                        // (e.g. when the player finishes by taking the last apple while touching a flower).
+                        // We use the objectIndexFreqs dictionary to determine which ObjectTouch events likely correspond to the flower touch,
+                        // and skip those.
+                        int skips = 0;
+                        for (var i = 0; i < consecutiveSimultaneousAppletakes; i++)
+                        {
+                            var rawEvent = RawEvents[index - 1 - i - skips];
+                            if (rawEvent.Type != ReplayEventType.ObjectTouch)
+                            {
+                                throw new LevelException("Expected ObjectTouch");
+                            }
+
+                            objectIndexFreqs.TryGetValue(rawEvent.Info, out var f);
+                            if (f > 2)
+                            {
+                                skips++;
+                                i--;
+                                continue;
+                            }
+
+                            appleIndices.Add(rawEvent.Info);
+                            Apples++;
+                            Events.Add(new PlayerEvent<LogicalEventType>(LogicalEventType.AppleTake, e.Time,
+                                rawEvent.Info));
+                        }
+
+                        index += consecutiveSimultaneousAppletakes - 1;
+                        break;
+                    case ReplayEventType.RightVolt:
+                        if (index + 1 < RawEvents.Count && RawEvents[index + 1].Type == ReplayEventType.LeftVolt &&
+                            RawEvents[index + 1].Time == e.Time)
+                        {
+                            SuperVolts++;
+                            index++;
+                            Events.Add(new PlayerEvent<LogicalEventType>(LogicalEventType.SuperVolt, e.Time));
                         }
                         else
-                            k = 0;
-
-                        int lastAppleIndex = -1;
-                        for (int i = 0; i < consecutiveSimultaneousAppletakes; i++)
                         {
-                            int currentAppleIndex =
-                                rec[sp + EventSize * j - 18 - EventSize * (consecutiveSimultaneousAppletakes + i + k)];
-                            if (currentAppleIndex != lastAppleIndex)
-                            {
-                                Apples++;
-                                if (Events.Count > 0 && someOtherEventAdded)
-                                    Events.Insert(Events.Count - 1,
-                                        new PlayerEvent(ReplayEventType.AppleTake, appleTime * TimeConst,
-                                            currentAppleIndex));
-                                else
-                                    Events.Add(new PlayerEvent(ReplayEventType.AppleTake, appleTime * TimeConst,
-                                        currentAppleIndex));
-                            }
-                            else
-                                BugApples++;
-
-                            lastAppleIndex = currentAppleIndex;
+                            RightVolts++;
+                            Events.Add(new PlayerEvent<LogicalEventType>(LogicalEventType.RightVolt, e.Time));
                         }
-                    }
 
-                    consecutiveSimultaneousAppletakes = 0;
-                    if (lastEventSuperVolt)
-                        j++;
+                        break;
+                    case ReplayEventType.LeftVolt:
+                        LeftVolts++;
+                        Events.Add(new PlayerEvent<LogicalEventType>(LogicalEventType.LeftVolt, e.Time));
+                        break;
+                    case ReplayEventType.Turn:
+                        Turns++;
+                        Events.Add(new PlayerEvent<LogicalEventType>(LogicalEventType.Turn, e.Time));
+                        break;
+                    case ReplayEventType.GroundTouch:
+                        GroundTouches++;
+                        Events.Add(new PlayerEvent<LogicalEventType>(LogicalEventType.GroundTouch, e.Time));
+                        break;
                 }
+            }
 
-                //Check if player finished
-                sp = _pOffset + 27 * FrameCount + 24 + EventSize * EventCount; //Points to start of last event
-                if (rec[sp + 10] != 0)
+            Events.RemoveAll(e => e.Type == LogicalEventType.FlowerTouch && appleIndices.Contains(e.Info));
+
+            // Try to detect whether the player finished or not.
+            if (Events.Count > 0)
+            {
+                var last = Events.Last();
+
+                var lastSameTimeFlowerEvents = 0;
+                var lastSameTimeAppleEvents = 0;
+                var flowerWaitAtEnd = false;
+                for (int i = Events.Count - 1; i >= 0; i--)
                 {
-                    //Check if the last event was appletaking. If so, check if the second-last event is finish and its time is same as appletake's
-                    if (rec[sp + 10] == (byte) ReplayEventType.AppleTake)
+                    var curr = Events[i];
+                    if (curr.Time == last.Time)
                     {
-                        IsLastEventApple = true;
-                        if (rec[sp - 22] == 0 && EventCount > 2)
-                            //There must be at least 3 events for this (appletake = 2 events)
+                        switch (curr.Type)
                         {
-                            Finished = BitConverter.ToDouble(rec, sp - 32) == BitConverter.ToDouble(rec, sp);
-                            Time = BitConverter.ToDouble(rec, sp - 32) * TimeConst;
-                            Time = Math.Floor(Time * 1000) / 1000;
+                            case LogicalEventType.FlowerTouch:
+                                lastSameTimeFlowerEvents++;
+                                break;
+                            case LogicalEventType.AppleTake:
+                                lastSameTimeAppleEvents++;
+                                break;
                         }
                     }
-                }
-                else
-                {
-                    //Make sure the second-last event isn't finishing event too
-                    if (rec[sp - 6] == 0 &&
-                        BitConverter.ToDouble(rec, sp) != BitConverter.ToDouble(rec, sp - EventSize) &&
-                        EventCount > 1) //Real finish can't have two finish events
-
-                        FakeFinish = true; //If the finishevents' times are the same, player finished with two wheels
                     else
-                        Finished = true;
-                    Time = BitConverter.ToDouble(rec, sp) * TimeConst;
-                    Time = Math.Floor(Time * 1000) / 1000;
+                    {
+                        flowerWaitAtEnd = curr.Type == LogicalEventType.FlowerTouch;
+                        break;
+                    }
                 }
+
+                if (lastSameTimeFlowerEvents > 0 && (lastSameTimeAppleEvents > 0 || !flowerWaitAtEnd))
+                {
+                    Events.Add(new PlayerEvent<LogicalEventType>(LogicalEventType.Finish, last.Time));
+                }
+
+                Time = Math.Floor(last.Time * 1000) / 1000;
             }
 
             if ((!Finished && !FakeFinish) || Time == 0)
-                Time = Math.Round(FrameCount / 30.0, 3);
-            TopSpeed = 0;
-            Trip = 0;
+                Time = Math.Round(frameCount / 30.0, 3);
         }
+
+        internal bool Finished => Events.Count > 0 && Events.Last().Type == LogicalEventType.Finish;
+        internal bool FakeFinish => Events.Count > 0 && Events.Last().Type == LogicalEventType.FlowerTouch;
+        internal bool IsLastEventApple => Events.Count > 0 && Events.Last().Type == LogicalEventType.AppleTake;
 
         internal double ArmRotation
         {
             get
             {
-                int upperIndex = VoltEvents.Length;
+                if (_voltEvents == null)
+                {
+                    _voltEvents = GetEvents(LogicalEventType.LeftVolt, LogicalEventType.RightVolt,
+                        LogicalEventType.SuperVolt);
+                }
+
+                int upperIndex = _voltEvents.Length;
                 int lowerIndex = 0;
                 int lastIndex = -1;
                 while (lowerIndex != upperIndex)
                 {
                     int currIndex = (lowerIndex + upperIndex) / 2;
-                    double currTime = VoltEvents[currIndex].Time;
+                    double currTime = _voltEvents[currIndex].Time;
                     double difference = CurrentTime - currTime;
                     if (difference > 0 && difference < ArmRotationDelay)
                     {
                         if (difference < ArmForwardTime)
                         {
-                            if (VoltEvents[currIndex].Type == ReplayEventType.RightVolt)
+                            if (_voltEvents[currIndex].Type == LogicalEventType.RightVolt)
                                 return MaxArmRotation * difference / ArmForwardTime;
                             return -MaxArmRotation * difference / ArmForwardTime;
                         }
 
-                        if (VoltEvents[currIndex].Type == ReplayEventType.RightVolt)
+                        if (_voltEvents[currIndex].Type == LogicalEventType.RightVolt)
                             return (MaxArmRotation -
                                     MaxArmRotation * (difference - ArmForwardTime) /
                                     (ArmRotationDelay - ArmForwardTime));
@@ -257,13 +326,15 @@ namespace Elmanager
             {
                 double bikeRotationBegin = _bikeRotation[FirstInterpolationIndex];
                 double bikeRotationEnd = _bikeRotation[SecondInterpolationIndex];
-                if (bikeRotationEnd - bikeRotationBegin > 300)
-                    bikeRotationEnd -= 360 + bikeRotationBegin;
-                if (bikeRotationBegin - bikeRotationEnd > 300)
-                    bikeRotationBegin -= 360 + bikeRotationEnd;
+                if (bikeRotationEnd - bikeRotationBegin > 5 * Math.PI / 3)
+                    bikeRotationEnd -= 2 * Math.PI + bikeRotationBegin;
+                if (bikeRotationBegin - bikeRotationEnd > 5 * Math.PI / 3)
+                    bikeRotationBegin -= 2 * Math.PI + bikeRotationEnd;
                 return Interpolate(bikeRotationBegin, bikeRotationEnd);
             }
         }
+
+        internal double BikeRotationDegrees => BikeRotation / (2 * Math.PI) * 360;
 
         internal double CurrentTime
         {
@@ -294,10 +365,10 @@ namespace Elmanager
             {
                 double lWheelRotateBegin = _leftWheelRotation[FirstInterpolationIndex];
                 double lWheelRotateEnd = _leftWheelRotation[SecondInterpolationIndex];
-                if (lWheelRotateEnd - lWheelRotateBegin > 4 / 3 * Math.PI)
-                    lWheelRotateEnd -= 2 * Math.PI + lWheelRotateBegin;
-                if (lWheelRotateBegin - lWheelRotateEnd > 4 / 3 * Math.PI)
-                    lWheelRotateBegin -= 2 * Math.PI + lWheelRotateEnd;
+                if (lWheelRotateEnd - lWheelRotateBegin > 4 / 3.0 * Math.PI)
+                    lWheelRotateEnd -= 2 * Math.PI;
+                if (lWheelRotateBegin - lWheelRotateEnd > 4 / 3.0 * Math.PI)
+                    lWheelRotateBegin -= 2 * Math.PI;
                 return Interpolate(lWheelRotateBegin, lWheelRotateEnd);
             }
         }
@@ -314,10 +385,10 @@ namespace Elmanager
             {
                 double rWheelRotateBegin = _rightWheelRotation[FirstInterpolationIndex];
                 double rWheelRotateEnd = _rightWheelRotation[SecondInterpolationIndex];
-                if (rWheelRotateEnd - rWheelRotateBegin > 4 / 3 * Math.PI)
-                    rWheelRotateEnd -= 2 * Math.PI + rWheelRotateBegin;
-                if (rWheelRotateBegin - rWheelRotateEnd > 4 / 3 * Math.PI)
-                    rWheelRotateBegin -= 2 * Math.PI + rWheelRotateEnd;
+                if (rWheelRotateEnd - rWheelRotateBegin > 4 / 3.0 * Math.PI)
+                    rWheelRotateEnd -= 2 * Math.PI;
+                if (rWheelRotateBegin - rWheelRotateEnd > 4 / 3.0 * Math.PI)
+                    rWheelRotateBegin -= 2 * Math.PI;
                 return Interpolate(rWheelRotateBegin, rWheelRotateEnd);
             }
         }
@@ -332,7 +403,7 @@ namespace Elmanager
         {
             get
             {
-                if (_currentFrameIndex == 0 || _currentFrameIndex > _maxFrameIndex)
+                if (_currentFrameIndex == 0 || _currentFrameIndex > MaxFrameIndex)
                     return 0.0;
                 return
                     Math.Sqrt(Math.Pow((_globalBody[_currentFrameIndex].X - _globalBody[_currentFrameIndex - 1].X), 2) +
@@ -343,26 +414,26 @@ namespace Elmanager
         }
 
         private int FirstInterpolationIndex =>
-            _currentFrameIndex > _maxFrameIndex ? _maxFrameIndex : _currentFrameIndex;
+            _currentFrameIndex > MaxFrameIndex ? MaxFrameIndex : _currentFrameIndex;
 
         private int SecondInterpolationIndex
         {
             get
             {
-                if (_currentFrameIndex < _maxFrameIndex)
+                if (_currentFrameIndex < MaxFrameIndex)
                     return _currentFrameIndex + 1;
                 return FirstInterpolationIndex;
             }
         }
 
-        internal double[] GetEventTimes(params ReplayEventType[] eventTypes)
+        internal double[] GetEventTimes(params LogicalEventType[] eventTypes)
         {
             return (from x in Events
                 where eventTypes.Contains(x.Type)
                 select x.Time).ToArray();
         }
 
-        internal PlayerEvent[] GetEvents(params ReplayEventType[] eventTypes)
+        internal PlayerEvent<LogicalEventType>[] GetEvents(params LogicalEventType[] eventTypes)
         {
             return Events.Where(x => eventTypes.Contains(x.Type)).ToArray();
         }
@@ -370,125 +441,6 @@ namespace Elmanager
         internal Vector GlobalBodyFromIndex(int index)
         {
             return _globalBody[index];
-        }
-
-        internal void InitializeFrameData()
-        {
-            if (_frameDataInitialized)
-                return;
-            if (FrameCount > 1)
-            {
-                int sp = _pOffset + 36; //Pointer to bike's x-coordinates
-                int sp2 = _pOffset + 36 + FrameCount * 4; //Pointer to bike's y-coordinates
-                for (int i = 0; i <= FrameCount - 2; i++)
-                {
-                    double x1 = BitConverter.ToSingle(_rawData, sp + i * 4);
-                    double x2 = BitConverter.ToSingle(_rawData, sp + i * 4 + 4);
-                    double y1 = BitConverter.ToSingle(_rawData, sp2 + i * 4);
-                    double y2 = BitConverter.ToSingle(_rawData, sp2 + i * 4 + 4);
-                    double speed = Math.Sqrt(Math.Pow((x1 - x2), 2) + Math.Pow((y1 - y2), 2));
-                    Trip += speed;
-                    if (speed > TopSpeed)
-                        TopSpeed = speed;
-                }
-            }
-
-            TopSpeed *= Constants.SpeedConst;
-
-            var globalBody = new Vector[FrameCount];
-            var head = new Vector[FrameCount];
-            var leftWheel = new Vector[FrameCount];
-            var leftWheelRotation = new double[FrameCount];
-            var rightWheel = new Vector[FrameCount];
-            var rightWheelRotation = new double[FrameCount];
-            var bikeRotation = new double[FrameCount];
-            var directions = new Direction[FrameCount];
-            for (int i = 0; i < FrameCount; i++)
-            {
-                globalBody[i] = new Vector(BitConverter.ToSingle(_rawData, _pOffset + 36 + i * 4),
-                    BitConverter.ToSingle(_rawData, _pOffset + 36 + i * 4 + FrameCount * 4));
-                leftWheel[i] =
-                    new Vector(
-                        globalBody[i].X +
-                        (BitConverter.ToInt16(_rawData, _pOffset + 36 + FrameCount * 8 + i * 2) / 1000.0),
-                        globalBody[i].Y +
-                        (BitConverter.ToInt16(_rawData, _pOffset + 36 + FrameCount * 10 + i * 2) / 1000.0));
-                rightWheel[i] =
-                    new Vector(
-                        globalBody[i].X +
-                        (BitConverter.ToInt16(_rawData, _pOffset + 36 + FrameCount * 12 + i * 2) / 1000.0),
-                        globalBody[i].Y +
-                        (BitConverter.ToInt16(_rawData, _pOffset + 36 + FrameCount * 14 + i * 2) / 1000.0));
-                leftWheelRotation[i] = _rawData[_pOffset + 36 + FrameCount * 22 + i] * 2 * Math.PI *
-                                       WheelRotationFactor;
-                rightWheelRotation[i] = _rawData[_pOffset + 36 + FrameCount * 23 + i] * 2 * Math.PI *
-                                        WheelRotationFactor;
-                if (leftWheelRotation[i] >= 2 * Math.PI)
-                    leftWheelRotation[i] = 0;
-                if (rightWheelRotation[i] >= 2 * Math.PI)
-                    rightWheelRotation[i] = 0;
-                double bikeRot = (BitConverter.ToInt16(_rawData, _pOffset + 36 + FrameCount * 20 + i * 2) / 10000.0 +
-                                  1 / 4.0) * 2 * Math.PI;
-                bikeRotation[i] = (BitConverter.ToInt16(_rawData, _pOffset + 36 + FrameCount * 20 + i * 2) / 10000.0) *
-                                  360 %
-                                  360;
-                double headCos = Math.Cos(bikeRot - Math.PI / 2);
-                double headSin = Math.Sin(bikeRot - Math.PI / 2);
-                double headX = BitConverter.ToInt16(_rawData, _pOffset + 36 + FrameCount * 16 + i * 2) / 1000.0 +
-                               globalBody[i].X + Math.Cos(bikeRot) * HeightConst;
-                double headY = BitConverter.ToInt16(_rawData, _pOffset + 36 + FrameCount * 18 + i * 2) / 1000.0 +
-                               globalBody[i].Y + Math.Sin(bikeRot) * HeightConst;
-                if (_rawData[_pOffset + 36 + FrameCount * 24 + i] % 4 < 2)
-                {
-                    headX -= headCos * HeadDiff;
-                    headY -= headSin * HeadDiff;
-                    directions[i] = Direction.Left;
-                }
-                else
-                {
-                    headX += headCos * HeadDiff;
-                    headY += headSin * HeadDiff;
-                    directions[i] = Direction.Right;
-                }
-
-                head[i] = new Vector(headX, headY);
-            }
-
-            SetFrameData(globalBody, leftWheel, rightWheel, leftWheelRotation, rightWheelRotation,
-                bikeRotation, head, directions);
-            _frameDataInitialized = true;
-        }
-
-        private void InitializeVoltEvents()
-        {
-            VoltEvents = GetEvents(ReplayEventType.LeftVolt, ReplayEventType.RightVolt, ReplayEventType.SuperVolt);
-        }
-
-        internal void InitializeForPlaying(int killerObjectCount)
-        {
-            if (_playingInitialized)
-                return;
-            PlayerEvent[] appleEvents = GetEvents(ReplayEventType.AppleTake);
-            foreach (PlayerEvent z in appleEvents)
-                z.Info -= killerObjectCount;
-            InitializeVoltEvents();
-            _playingInitialized = true;
-        }
-
-        private void SetFrameData(Vector[] globalBody, Vector[] leftWheel, Vector[] rightWheel,
-            double[] leftWheelRotation,
-            double[] rightWheelRotation, double[] bikeRotation, Vector[] head,
-            Direction[] directions)
-        {
-            _globalBody = globalBody;
-            _leftWheel = leftWheel;
-            _rightWheel = rightWheel;
-            _leftWheelRotation = leftWheelRotation;
-            _rightWheelRotation = rightWheelRotation;
-            _bikeRotation = bikeRotation;
-            _head = head;
-            _direction = directions;
-            _maxFrameIndex = globalBody.Length - 1;
         }
 
         private double Interpolate(double firstValue, double secondValue)

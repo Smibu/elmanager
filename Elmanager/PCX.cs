@@ -40,7 +40,7 @@ namespace Elmanager
         internal Pcx(Stream pcxStream)
         {
             BinaryReader pb = new BinaryReader(pcxStream);
-            pcxStream.Seek(0, SeekOrigin.Begin);
+            // pcxStream.Seek(0, SeekOrigin.Begin);
             Manufacturer = pb.ReadByte();
             Version = pb.ReadByte();
             Encoding = pb.ReadByte();
@@ -114,7 +114,7 @@ namespace Elmanager
                 throw new Exception("This version of PCX file is not supported!");
 
 
-            pb.Close();
+            // pb.Close();
         }
 
         /// <summary>

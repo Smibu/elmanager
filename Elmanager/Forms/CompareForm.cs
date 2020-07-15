@@ -44,9 +44,9 @@ namespace Elmanager.Forms
             for (int i = 0; i < _comparingRps.Count; i++)
             {
                 if (AppleButton.Checked)
-                    eventTimes[i] = _comparingRps[i].Player1.GetEventTimes(ReplayEventType.AppleTake);
+                    eventTimes[i] = _comparingRps[i].Player1.GetEventTimes(LogicalEventType.AppleTake);
                 else
-                    eventTimes[i] = _comparingRps[i].Player1.GetEventTimes(ReplayEventType.GroundTouch);
+                    eventTimes[i] = _comparingRps[i].Player1.GetEventTimes(LogicalEventType.GroundTouch);
                 if (_comparingRps[i].Finished)
                 {
                     Array.Resize(ref eventTimes[i], eventTimes[i].Length + 1);
@@ -132,7 +132,7 @@ namespace Elmanager.Forms
             if (GTButton.Checked && j >= 0)
             {
                 CPListBox.Items.Clear();
-                double[] groundTouches = _comparingRps[j].Player1.GetEventTimes(ReplayEventType.GroundTouch);
+                double[] groundTouches = _comparingRps[j].Player1.GetEventTimes(LogicalEventType.GroundTouch);
                 for (int i = 0; i < groundTouches.Length; i++)
                     CPListBox.Items.Add("Touch " + (i + 1) + ": " + groundTouches[i].ToTimeString());
                 if (_comparingRps[j].Finished)
