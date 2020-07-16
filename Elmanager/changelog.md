@@ -3,7 +3,12 @@
 ## x.x.xxxx
 * Level manager has been rewritten from scratch in C#, so it is now similar to replay manager.
 * Elmanager is now a single-file program and no longer requires .NET Framework.
+* SLE: Grass and object visibilities are respected in SVG export.
+* SLE: Use the path of the currently opened level (if available) as the initial directory in file dialogs
+  (which is usually the same as the level directory in settings but not always).
+* Bugfix: Textures were sometimes rendered upside down.
 * SLE: Bugfix: Saving as picture always saved as SVG even if PNG format was chosen.
+* SLE: Bugfix: Transform tool crashed in a certain situation. (Fixed by tej)
 
 ## 18.8.2019
 * SLE: Added support for SVG import and export.
