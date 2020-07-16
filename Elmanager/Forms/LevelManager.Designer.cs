@@ -1688,7 +1688,7 @@
             this.tableLayoutPanel3.RowCount = 2;
             this.tableLayoutPanel3.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 20F));
             this.tableLayoutPanel3.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 100F));
-            this.tableLayoutPanel3.Size = new System.Drawing.Size(372, 201);
+            this.tableLayoutPanel3.Size = new System.Drawing.Size(372, 247);
             this.tableLayoutPanel3.TabIndex = 62;
             // 
             // singleTop10List
@@ -1704,7 +1704,7 @@
             this.singleTop10List.Name = "singleTop10List";
             this.singleTop10List.OwnerDraw = false;
             this.singleTop10List.ShowGroups = false;
-            this.singleTop10List.Size = new System.Drawing.Size(180, 175);
+            this.singleTop10List.Size = new System.Drawing.Size(180, 221);
             this.singleTop10List.TabIndex = 0;
             this.singleTop10List.UseCompatibleStateImageBehavior = false;
             this.singleTop10List.View = System.Windows.Forms.View.Details;
@@ -1744,7 +1744,7 @@
             this.multiTop10List.Name = "multiTop10List";
             this.multiTop10List.OwnerDraw = false;
             this.multiTop10List.ShowGroups = false;
-            this.multiTop10List.Size = new System.Drawing.Size(180, 175);
+            this.multiTop10List.Size = new System.Drawing.Size(180, 221);
             this.multiTop10List.TabIndex = 1;
             this.multiTop10List.UseCompatibleStateImageBehavior = false;
             this.multiTop10List.View = System.Windows.Forms.View.Details;
