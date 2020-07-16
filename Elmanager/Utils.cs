@@ -86,7 +86,7 @@ namespace Elmanager
             try
             {
                 wc.DownloadFile(uri, destFile);
-                Process.Start(destFile);
+                Utils.ShellExecute(destFile);
             }
             catch (WebException)
             {
@@ -427,6 +427,13 @@ namespace Elmanager
         {
             return MessageBox.Show(text, "Elmanager", MessageBoxButtons.YesNo,
                        MessageBoxIcon.Question) == DialogResult.Yes;
+        }
+
+        internal static void ShellExecute(string url)
+        {
+            Process.Start(
+                new ProcessStartInfo(url)
+                    {UseShellExecute = true});
         }
     }
 }

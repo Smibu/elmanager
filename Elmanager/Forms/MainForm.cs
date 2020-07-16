@@ -29,7 +29,7 @@ namespace Elmanager.Forms
 
         private void HomePageClicked(object sender, LinkLabelLinkClickedEventArgs e)
         {
-            Process.Start(homePageLabel.Text);
+            Utils.ShellExecute(homePageLabel.Text);
         }
 
         private void OpenLevelEditor(object sender, EventArgs e)
@@ -52,9 +52,7 @@ namespace Elmanager.Forms
 
         private void LinkLabel1LinkClicked(object sender, LinkLabelLinkClickedEventArgs e)
         {
-            Process.Start(
-                new ProcessStartInfo("http://www.oscarstours.ca/avis-de-deces/m-marck-antoine-simoneau#defunt")
-                    {UseShellExecute = true});
+            Utils.ShellExecute("http://www.oscarstours.ca/avis-de-deces/m-marck-antoine-simoneau#defunt");
         }
 
         private void linkLabel2_LinkClicked(object sender, LinkLabelLinkClickedEventArgs e)

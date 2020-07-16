@@ -14,6 +14,7 @@ namespace Elmanager.Forms
         {
             _updateInfo = info;
             InitializeComponent();
+            versionInfoLabel.Text = $"Latest version: {info.Date.ToShortDateString()}. Your version: {Global.BuildDate.ToShortDateString()}";
         }
 
         private void NewVersionForm_Load(object sender, EventArgs e)
@@ -37,7 +38,7 @@ namespace Elmanager.Forms
 
         private void linkLabel1_LinkClicked(object sender, LinkLabelLinkClickedEventArgs e)
         {
-            Process.Start(Constants.ChangelogUri);
+            Utils.ShellExecute(Constants.ChangelogUri);
         }
     }
 }

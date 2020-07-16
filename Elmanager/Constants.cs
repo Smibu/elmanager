@@ -27,8 +27,8 @@ namespace Elmanager
         internal const string RecExtension = ".rec";
         internal const double SpeedConst = 10000.0 / 23.0;
 
-        internal const string VersionUri = "https://mkl.io/Elma/elmanager/check_update";
-        internal const string ChangelogUri = "https://gitlab.com/Smibu/elmanager/blob/master/changelog.md";
+        internal const string VersionUri = "https://api.github.com/repos/Smibu/elmanager/releases/latest";
+        internal const string ChangelogUri = "https://github.com/Smibu/elmanager/blob/master/Elmanager/changelog.md";
         public const double Tolerance = 0.00000001;
     }
 }

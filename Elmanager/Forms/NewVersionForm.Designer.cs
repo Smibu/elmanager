@@ -32,6 +32,7 @@
             this.notYetButton = new System.Windows.Forms.Button();
             this.label2 = new System.Windows.Forms.Label();
             this.linkLabel1 = new System.Windows.Forms.LinkLabel();
+            this.versionInfoLabel = new System.Windows.Forms.Label();
             this.SuspendLayout();
             // 
             // downloadButton
@@ -73,7 +74,7 @@
             // 
             this.linkLabel1.AutoSize = true;
             this.linkLabel1.LinkArea = new System.Windows.Forms.LinkArea(39, 50);
-            this.linkLabel1.Location = new System.Drawing.Point(12, 9);
+            this.linkLabel1.Location = new System.Drawing.Point(11, 9);
             this.linkLabel1.Name = "linkLabel1";
             this.linkLabel1.Size = new System.Drawing.Size(285, 21);
             this.linkLabel1.TabIndex = 5;
@@ -82,12 +83,23 @@
             this.linkLabel1.UseCompatibleTextRendering = true;
             this.linkLabel1.LinkClicked += new System.Windows.Forms.LinkLabelLinkClickedEventHandler(this.linkLabel1_LinkClicked);
             // 
+            // versionInfoLabel
+            // 
+            this.versionInfoLabel.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
+            this.versionInfoLabel.AutoSize = true;
+            this.versionInfoLabel.Location = new System.Drawing.Point(11, 30);
+            this.versionInfoLabel.Name = "versionInfoLabel";
+            this.versionInfoLabel.Size = new System.Drawing.Size(82, 15);
+            this.versionInfoLabel.TabIndex = 6;
+            this.versionInfoLabel.Text = "Latest version:";
+            // 
             // NewVersionForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(96F, 96F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Dpi;
             this.CancelButton = this.notYetButton;
             this.ClientSize = new System.Drawing.Size(379, 100);
+            this.Controls.Add(this.versionInfoLabel);
             this.Controls.Add(this.linkLabel1);
             this.Controls.Add(this.label2);
             this.Controls.Add(this.notYetButton);
@@ -106,5 +118,6 @@
         private System.Windows.Forms.Button notYetButton;
         private System.Windows.Forms.Label label2;
         private System.Windows.Forms.LinkLabel linkLabel1;
+        private System.Windows.Forms.Label versionInfoLabel;
     }
 }

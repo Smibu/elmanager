@@ -350,7 +350,7 @@ namespace Elmanager.Forms
             var file = Global.GetLevelFiles().FirstOrDefault(t => Path.GetFileName(t).CompareWith(levelFile));
             if (file != null)
             {
-                Process.Start(file);
+                Utils.ShellExecute(file);
             }
         }
 
