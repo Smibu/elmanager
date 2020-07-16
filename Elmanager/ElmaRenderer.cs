@@ -505,35 +505,23 @@ namespace Elmanager
                     GL.BindTexture(TextureTarget.Texture2D, _groundTexture.TextureIdentifier);
                     var gtW = _groundTexture.Width;
                     var gtH = _groundTexture.Height;
+                    var zl = ZoomLevel;
+                    var c = TextureZoomConst;
                     if (_settings.ZoomTextures)
                     {
-                        GL.Begin(PrimitiveType.Quads);
-                        GL.TexCoord2(0, 0);
-                        GL.Vertex3(_midX - TextureVertexConst, _midY - TextureVertexConst, depth);
-                        GL.TexCoord2(TextureCoordConst / gtW, 0);
-                        GL.Vertex3(_midX + TextureVertexConst, _midY - TextureVertexConst, depth);
-                        GL.TexCoord2(TextureCoordConst / gtW, TextureCoordConst / gtW * gtW / gtH);
-                        GL.Vertex3(_midX + TextureVertexConst, _midY + TextureVertexConst, depth);
-                        GL.TexCoord2(0, TextureCoordConst / gtW * gtW / gtH);
-                        GL.Vertex3(_midX - TextureVertexConst, _midY + TextureVertexConst, depth);
-                        GL.End();
+                        zl = 1;
+                        c = TextureCoordConst;
                     }
-                    else
-                    {
-                        GL.Begin(PrimitiveType.Quads);
-                        const double texminx = 0;
-                        const double texminy = 0;
-                        GL.TexCoord2(texminx, texminy);
-                        GL.Vertex3(_midX - TextureVertexConst, _midY - TextureVertexConst, depth);
-                        GL.TexCoord2(texminx + TextureZoomConst / gtW / ZoomLevel, texminy);
-                        GL.Vertex3(_midX + TextureVertexConst, _midY - TextureVertexConst, depth);
-                        GL.TexCoord2(texminx + TextureZoomConst / gtW / ZoomLevel,
-                            texminy + TextureZoomConst / gtW * gtW / gtH / ZoomLevel);
-                        GL.Vertex3(_midX + TextureVertexConst, _midY + TextureVertexConst, depth);
-                        GL.TexCoord2(texminx, texminy + TextureZoomConst / gtW * gtW / gtH / ZoomLevel);
-                        GL.Vertex3(_midX - TextureVertexConst, _midY + TextureVertexConst, depth);
-                        GL.End();
-                    }
+                    GL.Begin(PrimitiveType.Quads);
+                    GL.TexCoord2(0, c / gtW * gtW / gtH / zl);
+                    GL.Vertex3(_midX - TextureVertexConst, _midY - TextureVertexConst, depth);
+                    GL.TexCoord2(c / gtW / zl, c / gtW * gtW / gtH / zl);
+                    GL.Vertex3(_midX + TextureVertexConst, _midY - TextureVertexConst, depth);
+                    GL.TexCoord2(c / gtW / zl, 0);
+                    GL.Vertex3(_midX + TextureVertexConst, _midY + TextureVertexConst, depth);
+                    GL.TexCoord2(0, 0);
+                    GL.Vertex3(_midX - TextureVertexConst, _midY + TextureVertexConst, depth);
+                    GL.End();
                 }
                 else
                 {
@@ -557,14 +545,14 @@ namespace Elmanager
                 if (_settings.ZoomTextures)
                 {
                     GL.Begin(PrimitiveType.Quads);
-                    GL.TexCoord2(0, 0);
+                    GL.TexCoord2(0, TextureCoordConst / _skyTexture.Width * _skyTexture.Width / _skyTexture.Height);
                     GL.Vertex3(CenterX / 2 - TextureVertexConst, CenterY - TextureVertexConst, depth);
-                    GL.TexCoord2(TextureCoordConst / _skyTexture.Width, 0);
-                    GL.Vertex3(CenterX / 2 + TextureVertexConst, CenterY - TextureVertexConst, depth);
                     GL.TexCoord2(TextureCoordConst / _skyTexture.Width,
                         TextureCoordConst / _skyTexture.Width * _skyTexture.Width / _skyTexture.Height);
+                    GL.Vertex3(CenterX / 2 + TextureVertexConst, CenterY - TextureVertexConst, depth);
+                    GL.TexCoord2(TextureCoordConst / _skyTexture.Width, 0);
                     GL.Vertex3(CenterX / 2 + TextureVertexConst, CenterY + TextureVertexConst, depth);
-                    GL.TexCoord2(0, TextureCoordConst / _skyTexture.Width * _skyTexture.Width / _skyTexture.Height);
+                    GL.TexCoord2(0, 0);
                     GL.Vertex3(CenterX / 2 - TextureVertexConst, CenterY + TextureVertexConst, depth);
                     GL.End();
                 }
@@ -646,38 +634,25 @@ namespace Elmanager
 
                         GL.BindTexture(TextureTarget.Texture2D, picture.TextureId);
                         GL.StencilFunc(StencilFunction.Lequal, 5, StencilMask);
+                        var zl = ZoomLevel;
+                        var c = TextureZoomConst;
                         if (_settings.ZoomTextures)
                         {
-                            GL.Begin(PrimitiveType.Quads);
-                            var ymin = -(_midY - TextureVertexConst);
-                            var ymax = -(_midY + TextureVertexConst);
-                            GL.TexCoord2(0, 0);
-                            GL.Vertex3(_midX - TextureVertexConst, ymin, depth);
-                            GL.TexCoord2(TextureCoordConst / picture.TextureWidth, 0);
-                            GL.Vertex3(_midX + TextureVertexConst, ymin, depth);
-                            GL.TexCoord2(TextureCoordConst / picture.TextureWidth,
-                                TextureCoordConst / picture.TextureWidth * picture.AspectRatio);
-                            GL.Vertex3(_midX + TextureVertexConst, ymax, depth);
-                            GL.TexCoord2(0, TextureCoordConst / picture.TextureWidth * picture.AspectRatio);
-                            GL.Vertex3(_midX - TextureVertexConst, ymax, depth);
-                            GL.End();
+                            zl = 1;
+                            c = TextureCoordConst;
                         }
-                        else
-                        {
-                            GL.Begin(PrimitiveType.Quads);
-                            var ymin = -(_midY - TextureVertexConst);
-                            var ymax = -(_midY + TextureVertexConst);
-                            GL.TexCoord2(0, 0);
-                            GL.Vertex3(_midX - TextureVertexConst, ymin, depth);
-                            GL.TexCoord2(TextureZoomConst / picture.TextureWidth / ZoomLevel, 0);
-                            GL.Vertex3(_midX + TextureVertexConst, ymin, depth);
-                            GL.TexCoord2(TextureZoomConst / picture.TextureWidth / ZoomLevel,
-                                TextureZoomConst / picture.TextureWidth * picture.AspectRatio / ZoomLevel);
-                            GL.Vertex3(_midX + TextureVertexConst, ymax, depth);
-                            GL.TexCoord2(0, TextureZoomConst / picture.TextureWidth * picture.AspectRatio / ZoomLevel);
-                            GL.Vertex3(_midX - TextureVertexConst, ymax, depth);
-                            GL.End();
-                        }
+                        GL.Begin(PrimitiveType.Quads);
+                        var ymin = -(_midY - TextureVertexConst);
+                        var ymax = -(_midY + TextureVertexConst);
+                        GL.TexCoord2(0, c / picture.TextureWidth * picture.AspectRatio / zl);
+                        GL.Vertex3(_midX - TextureVertexConst, ymin, depth);
+                        GL.TexCoord2(c / picture.TextureWidth / zl, c / picture.TextureWidth * picture.AspectRatio / zl);
+                        GL.Vertex3(_midX + TextureVertexConst, ymin, depth);
+                        GL.TexCoord2(c / picture.TextureWidth / zl, 0);
+                        GL.Vertex3(_midX + TextureVertexConst, ymax, depth);
+                        GL.TexCoord2(0, 0);
+                        GL.Vertex3(_midX - TextureVertexConst, ymax, depth);
+                        GL.End();
                     }
                 }
 
