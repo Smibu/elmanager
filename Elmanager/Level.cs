@@ -100,7 +100,14 @@ namespace Elmanager
         internal static Level FromStream(Stream data)
         {
             var lvl = new Level();
-            lvl.LoadFromStream(data);
+            try
+            {
+                lvl.LoadFromStream(data);
+            }
+            catch (EndOfStreamException)
+            {
+                throw new BadFileException("Level file is corrupted");
+            }
             return lvl;
         }
 
@@ -110,7 +117,7 @@ namespace Elmanager
             LevStartMagic = lev.ReadString(5);
             if (!IsElmaLevel && !IsAcrossLevel && !IsLeb)
             {
-                throw new LevelException(
+                throw new BadFileException(
                     "Unknown file type. This is neither an Elma level, an Across level nor a LEB file.");
             }
 
@@ -238,7 +245,7 @@ namespace Elmanager
 
             if (endOfData != EndOfDataMagicNumber)
             {
-                throw new LevelException($"Wrong end of data marker: {endOfData}");
+                throw new BadFileException($"Wrong end of data marker: {endOfData}");
             }
 
             try
@@ -250,7 +257,7 @@ namespace Elmanager
             }
             catch (IndexOutOfRangeException)
             {
-                throw new LevelException(
+                throw new BadFileException(
                     "Top 10 list is corrupted. The list will be cleared if you save the level.");
             }
         }

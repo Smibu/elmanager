@@ -151,7 +151,7 @@ namespace Elmanager
 
                             if (RawEvents[i].Time != e.Time)
                             {
-                                throw new LevelException("Expected same time");
+                                throw new BadFileException("Expected same time");
                             }
 
                             consecutiveSimultaneousAppletakes++;
@@ -168,7 +168,7 @@ namespace Elmanager
                             var rawEvent = RawEvents[index - 1 - i - skips];
                             if (rawEvent.Type != ReplayEventType.ObjectTouch)
                             {
-                                throw new LevelException("Expected ObjectTouch");
+                                throw new BadFileException("Expected ObjectTouch");
                             }
 
                             objectIndexFreqs.TryGetValue(rawEvent.Info, out var f);

@@ -681,7 +681,7 @@ namespace Elmanager.Forms
                         {
                             srp = new Replay(replayFile);
                         }
-                        catch (ArgumentException)
+                        catch (BadFileException)
                         {
                             errorFiles.Add(replayFile);
                             continue;

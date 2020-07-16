@@ -137,7 +137,15 @@ namespace Elmanager.Forms
                     foreach (var f in recFiles)
                     {
                         iter++;
-                        var r = new Replay(f);
+                        Replay r;
+                        try
+                        {
+                            r = new Replay(f);
+                        }
+                        catch (BadFileException)
+                        {
+                            continue;
+                        }
                         var key = r.LevelFilename.ToLower() + r.LevId;
                         _recsByLevel.TryGetValue(key, out var list);
                         if (list == null)
@@ -208,7 +216,7 @@ namespace Elmanager.Forms
                         {
                             srp = Level.FromPath(levFile);
                         }
-                        catch (LevelException)
+                        catch (BadFileException)
                         {
                             errorFiles.Add(levFile);
                             continue;

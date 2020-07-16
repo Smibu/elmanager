@@ -2,9 +2,9 @@ using System;
 
 namespace Elmanager
 {
-    internal class LevelException : Exception
+    internal class BadFileException : Exception
     {
-        public LevelException(string message)
+        public BadFileException(string message)
             : base(message)
         {
         }

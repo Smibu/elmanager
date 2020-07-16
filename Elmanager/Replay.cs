@@ -66,22 +66,29 @@ namespace Elmanager
             using (var stream = File.OpenRead(replayPath))
             {
                 var rec = new BinaryReader(stream);
-                var frames = rec.ReadInt32();
-                var invalid = rec.ReadInt32() != 0x83;
-                if (invalid)
-                    return;
-                IsMulti = rec.ReadInt32() == 1;
-                var isFlagtag = rec.ReadInt32() == 1;
-                LevId = rec.ReadInt32();
-                LevelFilename = rec.ReadNullTerminatedString(12);
-                rec.ReadInt32();
-                IsInternal = Level.IsInternalLevel(LevelFilename);
-                Player1 = new Player(rec, frames);
-                if (IsMulti)
+                try
                 {
-                    frames = rec.ReadInt32();
-                    rec.BaseStream.Seek(32, SeekOrigin.Current);
-                    Player2 = new Player(rec, frames);
+                    var frames = rec.ReadInt32();
+                    var magic = rec.ReadInt32();
+                    if (magic != 0x83)
+                        throw new BadFileException($"Unexpected magic ({magic}) in replay file: {replayPath}");
+                    IsMulti = rec.ReadInt32() == 1;
+                    var isFlagtag = rec.ReadInt32() == 1;
+                    LevId = rec.ReadInt32();
+                    LevelFilename = rec.ReadNullTerminatedString(12);
+                    rec.ReadInt32();
+                    IsInternal = Level.IsInternalLevel(LevelFilename);
+                    Player1 = new Player(rec, frames);
+                    if (IsMulti)
+                    {
+                        frames = rec.ReadInt32();
+                        rec.BaseStream.Seek(32, SeekOrigin.Current);
+                        Player2 = new Player(rec, frames);
+                    }
+                }
+                catch (EndOfStreamException)
+                {
+                    throw new BadFileException($"Corrupted replay file: {replayPath}");
                 }
             }
 

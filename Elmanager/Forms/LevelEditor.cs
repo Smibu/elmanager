@@ -95,7 +95,7 @@ namespace Elmanager.Forms
                 var lev = Level.FromPath(levPath);
                 SetExistingLev(lev);
             }
-            catch (LevelException ex)
+            catch (BadFileException ex)
             {
                 Utils.ShowError("Error occurred while loading level file: " + ex.Message, "Warning",
                     MessageBoxIcon.Exclamation);
@@ -2104,7 +2104,7 @@ namespace Elmanager.Forms
                     {
                         lev = Level.FromPath(file);
                     }
-                    catch (LevelException exception)
+                    catch (BadFileException exception)
                     {
                         Utils.ShowError(
                             $"Imported level {file} with errors: {exception.Message}",

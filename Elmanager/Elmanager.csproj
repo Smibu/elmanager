@@ -336,7 +336,7 @@
     <Compile Include="GeometryUtils.cs" />
     <Compile Include="EditorTools\IEditorTool.cs" />
     <Compile Include="EditorTools\IEditorToolBase.cs" />
-    <Compile Include="LevelException.cs" />
+    <Compile Include="BadFileException.cs" />
     <Compile Include="LevelSearchParameters.cs" />
     <Compile Include="Matrix.cs" />
     <Compile Include="ElmaRenderer.cs" />
