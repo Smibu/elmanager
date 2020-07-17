@@ -64,7 +64,7 @@ namespace Elmanager.Forms
         private int _selectedPolygonCount;
         private int _selectedTextureCount;
         private int _selectedVerticeCount;
-        private bool _pictureToolAvailable;
+        private bool PictureToolAvailable => _editorLgr != null;
         private bool _draggingGrid;
         private Vector _gridStartOffset;
         private bool _programmaticPropertyChange;
@@ -136,29 +136,29 @@ namespace Elmanager.Forms
 
         internal bool EffectiveAppleFilter => _appleFilter &&
                                               (ShowObjectFramesButton.Checked ||
-                                               (ShowObjectsButton.Checked && _pictureToolAvailable));
+                                               (ShowObjectsButton.Checked && PictureToolAvailable));
 
         internal bool EffectiveKillerFilter => _killerFilter &&
                                                (ShowObjectFramesButton.Checked ||
-                                                (ShowObjectsButton.Checked && _pictureToolAvailable));
+                                                (ShowObjectsButton.Checked && PictureToolAvailable));
 
         internal bool EffectiveFlowerFilter => _flowerFilter &&
                                                (ShowObjectFramesButton.Checked ||
-                                                (ShowObjectsButton.Checked && _pictureToolAvailable));
+                                                (ShowObjectsButton.Checked && PictureToolAvailable));
 
         internal bool EffectiveGrassFilter => _grassFilter && (ShowGrassEdgesButton.Checked);
 
         internal bool EffectiveGroundFilter => _groundFilter &&
                                                (ShowGroundEdgesButton.Checked ||
-                                                (ShowGroundButton.Checked && _pictureToolAvailable));
+                                                (ShowGroundButton.Checked && PictureToolAvailable));
 
         internal bool EffectiveTextureFilter => _textureFilter &&
                                                 (ShowTextureFramesButton.Checked ||
-                                                 (ShowTexturesButton.Checked && _pictureToolAvailable));
+                                                 (ShowTexturesButton.Checked && PictureToolAvailable));
 
         internal bool EffectivePictureFilter => _pictureFilter &&
                                                 (ShowPictureFramesButton.Checked ||
-                                                 (ShowPicturesButton.Checked && _pictureToolAvailable));
+                                                 (ShowPicturesButton.Checked && PictureToolAvailable));
 
         private int SelectedElementCount => _selectedObjectCount + _selectedPictureCount + _selectedVerticeCount +
                                             _selectedTextureCount;
@@ -284,8 +284,7 @@ namespace Elmanager.Forms
         private void AfterSettingsClosed(string oldLgr)
         {
             Renderer.UpdateSettings(Global.AppSettings.LevelEditor.RenderingSettings);
-            if (oldLgr != Global.AppSettings.LevelEditor.RenderingSettings.LgrFile)
-                UpdateLgrTools();
+            UpdateLgrTools();
             UpdateButtons();
             Renderer.RedrawScene();
         }
@@ -893,7 +892,7 @@ namespace Elmanager.Forms
         {
             if (Directory.Exists(Global.AppSettings.General.LgrDirectory))
             {
-                var lgr = Path.Combine(Global.AppSettings.General.LgrDirectory, Lev.LgrFile + ".lgr");
+                var lgr = Path.Combine(Global.AppSettings.General.LgrDirectory, Lev.LgrFile.ToLower() + ".lgr");
                 if (File.Exists(lgr))
                 {
                     Global.AppSettings.LevelEditor.RenderingSettings.LgrFile = lgr;
@@ -925,12 +924,11 @@ namespace Elmanager.Forms
             SelectButton.Select();
             UpdateButtons();
             Size = Global.AppSettings.LevelEditor.Size;
-            UpdateLgrFromLev();
-            Renderer = new ElmaRenderer(Lev, EditorControl, Global.AppSettings.LevelEditor.RenderingSettings);
-            UpdateLgrTools();
-            ClearHistory();
-            UpdateLabels();
-            Renderer.CustomRendering = CustomRendering;
+            Renderer = new ElmaRenderer(EditorControl, Global.AppSettings.LevelEditor.RenderingSettings)
+            {
+                CustomRendering = CustomRendering
+            };
+            
             Tools = new IEditorTool[]
             {
                 new SelectionTool(this),
@@ -950,15 +948,14 @@ namespace Elmanager.Forms
                 new TextTool(this)
             };
             CurrentTool = Tools[0];
-            ActivateCurrentAndRedraw();
             SetupEventHandlers();
+            InitializeLevel();
         }
 
         private void InitializeLevel()
         {
             Modified = false;
             UpdateLabels();
-            UpdateButtons();
             Renderer.InitializeLevel(Lev);
             Renderer.ZoomFill();
             UpdateLgrFromLev();
@@ -968,6 +965,7 @@ namespace Elmanager.Forms
             ResetTopologyListStyle();
             UpdateLgrTools();
             ClearHistory();
+            UpdatePrevNextButtons();
             CurrentTool.InActivate();
             ActivateCurrentAndRedraw();
             _errorPoints.Clear();
@@ -1041,7 +1039,7 @@ namespace Elmanager.Forms
 
         private async void TexturizeSelection()
         {
-            if (!_pictureToolAvailable)
+            if (!PictureToolAvailable)
             {
                 Utils.ShowError("You need to select LGR file from settings before you can use texturize tool.", "Note",
                     MessageBoxIcon.Information);
@@ -1439,7 +1437,7 @@ namespace Elmanager.Forms
         {
             if (PictureButton.Checked)
             {
-                if (!_pictureToolAvailable)
+                if (!PictureToolAvailable)
                 {
                     Utils.ShowError("You need to select LGR file from settings before you can use picture tool.",
                         "Note", MessageBoxIcon.Information);
@@ -1720,7 +1718,7 @@ namespace Elmanager.Forms
                     }
 
                     UpdateLabels();
-                    UpdateButtons();
+                    UpdatePrevNextButtons();
                     Modified = false;
                 }
                 catch (UnauthorizedAccessException ex)
@@ -1941,6 +1939,10 @@ namespace Elmanager.Forms
             ShowGravityAppleArrowsButton.Checked = settings.ShowGravityAppleArrows;
             snapToGridButton.Checked = Global.AppSettings.LevelEditor.SnapToGrid;
             showCrossHairButton.Checked = Global.AppSettings.LevelEditor.ShowCrossHair;
+        }
+
+        private void UpdatePrevNextButtons()
+        {
             PreviousButton.Enabled = CurrLevDirExists();
             NextButton.Enabled = PreviousButton.Enabled;
             previousLevelToolStripMenuItem.Enabled = PreviousButton.Enabled;
@@ -2002,10 +2004,9 @@ namespace Elmanager.Forms
 
         private void UpdateLgrTools()
         {
-            if (File.Exists(Global.AppSettings.LevelEditor.RenderingSettings.LgrFile) && Renderer.CurrentLgr != null)
+            if (Renderer.CurrentLgr != null && _editorLgr?.Path != Renderer.CurrentLgr.Path)
             {
                 _editorLgr = Renderer.CurrentLgr;
-                _pictureToolAvailable = true;
                 PicturePropertiesMenuItem.Enabled = true;
                 SkyComboBox.Enabled = true;
                 GroundComboBox.Enabled = true;
@@ -2021,12 +2022,9 @@ namespace Elmanager.Forms
                     SkyComboBox.Items.Add(texture.Name);
                     GroundComboBox.Items.Add(texture.Name);
                 }
-
-                UpdateLabels();
             }
-            else
+            else if (!PictureToolAvailable)
             {
-                _pictureToolAvailable = false;
                 PicturePropertiesMenuItem.Enabled = false;
                 SkyComboBox.Enabled = false;
                 GroundComboBox.Enabled = false;

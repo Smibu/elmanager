@@ -128,12 +128,6 @@ namespace Elmanager
             BaseInit(renderingTarget, settings);
         }
 
-        internal ElmaRenderer(Level level, Control renderingTarget, RenderingSettings settings)
-        {
-            BaseInit(renderingTarget, settings);
-            InitializeLevel(level);
-        }
-
         internal double CenterX
         {
             get => _viewSettings.CenterX;

@@ -11,6 +11,7 @@ namespace Elmanager
     {
         internal readonly List<LgrImage> LgrImages = new List<LgrImage>();
         internal readonly List<ListedImage> ListedImages = new List<ListedImage>();
+        internal readonly string Path;
 
         private static readonly HashSet<string> TransparencyIgnoreSet =
             new HashSet<string>(Enumerable.Range(0, 18).SelectMany(TransparencyIgnoreHelper));
@@ -75,6 +76,7 @@ namespace Elmanager
         {
             using (var stream = File.OpenRead(lgrFile))
             {
+                Path = lgrFile;
                 var lgr = new BinaryReader(stream, Encoding.ASCII);
                 if (lgr.ReadString(5) != "LGR12")
                     throw new Exception($"The LGR file {lgrFile} is not valid (magic start string not found)");
@@ -125,7 +127,7 @@ namespace Elmanager
 
                 for (int i = 0; i < numberOfPcXs; i++)
                 {
-                    string lgrImageName = Path.GetFileNameWithoutExtension(lgr.ReadNullTerminatedString(12)).ToLower();
+                    string lgrImageName = System.IO.Path.GetFileNameWithoutExtension(lgr.ReadNullTerminatedString(12)).ToLower();
                     var isGrass = lgrImageName == "qgrass";
                     ImageType imgType = isGrass ? ImageType.Texture : ImageType.Picture;
                     int imgDistance = 500;
