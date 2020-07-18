@@ -33,7 +33,7 @@ jobs:
         release_name: ${{ github.ref }}
         body: 'See [changelog](https://github.com/Smibu/elmanager/blob/master/Elmanager/changelog.md).'
         draft: false
-        prerelease: false
+        prerelease: true
     - name: Upload release asset
       uses: actions/upload-release-asset@v1.0.1
       env:
