@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.IO;
 using System.Linq;
 
@@ -16,8 +17,8 @@ namespace Elmanager
         internal int RightVolts;
         internal int SuperVolts;
         internal double Time;
-        internal double TopSpeed;
-        internal double Trip;
+        private double? _topSpeed;
+        private double? _trip;
         internal int Turns;
         private PlayerEvent<LogicalEventType>[] _voltEvents;
         private const double ArmForwardTime = 0.2;
@@ -55,8 +56,6 @@ namespace Elmanager
             {
                 b.Y = rec.ReadSingle();
             }
-
-            // TODO: Compute trip and top speed
 
             foreach (var part in new[] {_leftWheel, _rightWheel, _head})
             {
@@ -261,6 +260,21 @@ namespace Elmanager
                 Time = Math.Round(frameCount / 30.0, 3);
         }
 
+        private void ComputeTripAndTopSpeed()
+        {
+            var trip = 0.0;
+            var top = 0.0;
+            for (int i = 0; i < _globalBody.Count - 2; i++)
+            {
+                var curr = _globalBody[i].Dist(_globalBody[i + 1]);
+                trip += curr;
+                top = Math.Max(top, curr);
+            }
+
+            _trip = trip;
+            _topSpeed = top * Constants.SpeedConst;
+        }
+
         internal bool Finished => Events.Count > 0 && Events.Last().Type == LogicalEventType.Finish;
         internal bool FakeFinish => Events.Count > 0 && Events.Last().Type == LogicalEventType.FlowerTouch;
         internal bool IsLastEventApple => Events.Count > 0 && Events.Last().Type == LogicalEventType.AppleTake;
@@ -423,6 +437,34 @@ namespace Elmanager
                 if (_currentFrameIndex < MaxFrameIndex)
                     return _currentFrameIndex + 1;
                 return FirstInterpolationIndex;
+            }
+        }
+
+        internal double TopSpeed
+        {
+            get
+            {
+                if (_topSpeed == null)
+                {
+                    ComputeTripAndTopSpeed();
+                }
+
+                Debug.Assert(_topSpeed != null);
+                return _topSpeed.Value;
+            }
+        }
+
+        internal double Trip
+        {
+            get
+            {
+                if (_trip == null)
+                {
+                    ComputeTripAndTopSpeed();
+                }
+
+                Debug.Assert(_trip != null);
+                return _trip.Value;
             }
         }
 

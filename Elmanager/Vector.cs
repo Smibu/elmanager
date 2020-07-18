@@ -186,5 +186,12 @@ namespace Elmanager
         {
             return this / Length;
         }
+
+        internal double Dist(Vector other)
+        {
+            var xd = X - other.X;
+            var yd = Y - other.Y;
+            return Math.Sqrt(xd * xd + yd * yd);
+        }
     }
 }
