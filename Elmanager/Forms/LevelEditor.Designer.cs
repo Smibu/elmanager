@@ -700,7 +700,7 @@ namespace Elmanager.Forms
             | System.Windows.Forms.ToolStripStatusLabelBorderSides.Bottom)));
             this.CoordinateLabel.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Text;
             this.CoordinateLabel.Name = "CoordinateLabel";
-            this.CoordinateLabel.Size = new System.Drawing.Size(190, 19);
+            this.CoordinateLabel.Size = new System.Drawing.Size(190, 18);
             this.CoordinateLabel.Text = "Mouse X: Y:";
             this.CoordinateLabel.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
             // 
@@ -1562,7 +1562,7 @@ namespace Elmanager.Forms
             this.SmoothenButton.Name = "SmoothenButton";
             this.SmoothenButton.Size = new System.Drawing.Size(84, 25);
             this.SmoothenButton.TabIndex = 12;
-            this.SmoothenButton.Text = "(Un)s&moothen";
+            this.SmoothenButton.Text = "S&moothen";
             this.SmoothenButton.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
             this.SmoothenButton.UseVisualStyleBackColor = true;
             // 
