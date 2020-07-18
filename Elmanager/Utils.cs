@@ -234,11 +234,6 @@ namespace Elmanager
             MessageBox.Show(text, caption, MessageBoxButtons.OK, icon, MessageBoxDefaultButton.Button1, 0, false);
         }
 
-        internal static string SizeToString(object x)
-        {
-            return ((int) x / 1024.0).ToString("F2");
-        }
-
         /// <summary>
         ///   Converts the given string to a double number. The string must be of the form 00:00,000 or 00:00,00.
         /// </summary>

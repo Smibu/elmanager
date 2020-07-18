@@ -9,7 +9,7 @@ namespace Elmanager
         public int Size;
         internal string Path;
 
-        [Description("Size (kB)")] public string SizeInKb => Utils.SizeToString(Size);
+        [Description("Size (kB)")] public double SizeInKb => Size / 1024.0;
 
         [Description("File name")] public string FileNameNoExt => System.IO.Path.GetFileNameWithoutExtension(FileName);
 
