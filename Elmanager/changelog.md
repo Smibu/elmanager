@@ -1,6 +1,6 @@
 # Elmanager changelog
 
-## x.x.xxxx
+## 18.7.2020
 * Level manager has been rewritten from scratch in C#, so it is now similar to replay manager.
 * Elmanager is now a single-file program and no longer requires .NET Framework.
 * SLE: Grass and object visibilities are respected in SVG export.
