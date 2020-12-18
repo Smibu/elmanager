@@ -552,7 +552,7 @@ namespace Elmanager
                             DrawObject(GetApple(x.AnimationNumber), x.Position, depth);
                             break;
                         case ObjectType.Start:
-                            DrawDummyPlayer(x.Position.X, x.Position.Y, sceneSettings, new PlayerRenderOpts {isActive = true, useTransparency = false, useGraphics = true});
+                            DrawDummyPlayer(x.Position.X, x.Position.Y, sceneSettings, new PlayerRenderOpts {IsActive = true, UseTransparency = false, UseGraphics = true});
                             break;
                     }
                 }
@@ -1102,28 +1102,28 @@ namespace Elmanager
 
         internal void DrawPlayer(PlayerState player, PlayerRenderOpts opts, SceneSettings sceneSettings)
         {
-            var distance = ((sceneSettings.PicturesInBackground ? 1 : BikeDistance) - Utils.BooleanToInteger(opts.isActive)) /
+            var distance = ((sceneSettings.PicturesInBackground ? 1 : BikeDistance) - Utils.BooleanToInteger(opts.IsActive)) /
                            1000.0 * (ZFar - ZNear) + ZNear;
-            var isright = player.direction == Direction.Right;
-            if (opts.useGraphics && LgrGraphicsLoaded)
+            var isright = player.Direction == Direction.Right;
+            if (opts.UseGraphics && LgrGraphicsLoaded)
             {
                 GL.Enable(EnableCap.Texture2D);
                 GL.Enable(EnableCap.AlphaTest);
                 GL.Enable(EnableCap.DepthTest);
 
-                var rotation = player.bikeRotation * Constants.DegToRad;
+                var rotation = player.BikeRotation * Constants.DegToRad;
                 var rotationCos = Math.Cos(rotation);
                 var rotationSin = Math.Sin(rotation);
 
-                if (opts.useTransparency)
+                if (opts.UseTransparency)
                 {
                     GL.Enable(EnableCap.Blend);
                     GL.BlendFunc(BlendingFactor.One, BlendingFactor.OneMinusDstColor);
                 }
 
                 //Wheels
-                DrawWheel(player.leftWheelx, player.leftWheely, player.leftWheelRotation, distance);
-                DrawWheel(player.rightWheelx, player.rightWheely, player.rightWheelRotation, distance);
+                DrawWheel(player.LeftWheelX, player.LeftWheelY, player.LeftWheelRotation, distance);
+                DrawWheel(player.RightWheelX, player.RightWheelY, player.RightWheelRotation, distance);
 
                 //Suspensions
                 var x = Utils.BooleanToInteger(isright);
@@ -1132,8 +1132,8 @@ namespace Elmanager
                     GL.PushMatrix();
                     if (x == 0)
                         x = -1;
-                    var yPos = player.globalBodyY + _suspensions[i].Y * rotationCos - _suspensions[i].X * x * rotationSin;
-                    var xPos = player.globalBodyX - _suspensions[i].X * x * rotationCos - _suspensions[i].Y * rotationSin;
+                    var yPos = player.GlobalBodyY + _suspensions[i].Y * rotationCos - _suspensions[i].X * x * rotationSin;
+                    var xPos = player.GlobalBodyX - _suspensions[i].X * x * rotationCos - _suspensions[i].Y * rotationSin;
                     if (x == -1)
                         x = _suspensions[i].WheelNumber;
                     else
@@ -1142,13 +1142,13 @@ namespace Elmanager
                     double wheelYpos;
                     if (x == 0)
                     {
-                        wheelXpos = player.leftWheelx;
-                        wheelYpos = player.leftWheely;
+                        wheelXpos = player.LeftWheelX;
+                        wheelYpos = player.LeftWheelY;
                     }
                     else
                     {
-                        wheelXpos = player.rightWheelx;
-                        wheelYpos = player.rightWheely;
+                        wheelXpos = player.RightWheelX;
+                        wheelYpos = player.RightWheelY;
                     }
 
                     var xDiff = xPos - wheelXpos;
@@ -1173,12 +1173,12 @@ namespace Elmanager
 
                 //Head
                 GL.PushMatrix();
-                GL.Translate(player.headX, player.headY, 0);
-                GL.Rotate(player.bikeRotation + 180, 0, 0, 1);
+                GL.Translate(player.HeadX, player.HeadY, 0);
+                GL.Rotate(player.BikeRotation + 180, 0, 0, 1);
                 if (!isright)
                     GL.Scale(-1.0, 1.0, 1.0);
-                GL.Translate(-player.headX, -player.headY, 0);
-                DrawPicture(_headPic, player.headX - Constants.HeadDiameter / 2.0, player.headY - Constants.HeadDiameter / 2.0,
+                GL.Translate(-player.HeadX, -player.HeadY, 0);
+                DrawPicture(_headPic, player.HeadX - Constants.HeadDiameter / 2.0, player.HeadY - Constants.HeadDiameter / 2.0,
                     Constants.HeadDiameter, Constants.HeadDiameter, distance);
                 GL.PopMatrix();
 
@@ -1186,17 +1186,17 @@ namespace Elmanager
                 GL.PushMatrix();
                 double bikePicTranslateX;
                 double bikePicTranslateY;
-                GL.Translate(player.globalBodyX, player.globalBodyY, 0);
+                GL.Translate(player.GlobalBodyX, player.GlobalBodyY, 0);
                 if (!isright)
                 {
                     bikePicTranslateX = _bikePicTranslateXFacingLeft;
                     bikePicTranslateY = _bikePicTranslateYFacingLeft;
-                    GL.Rotate(player.bikeRotation + BikePicRotationConst + 180, 0, 0, 1);
+                    GL.Rotate(player.BikeRotation + BikePicRotationConst + 180, 0, 0, 1);
                     GL.Scale(-1.0, 1.0, 1.0);
                 }
                 else
                 {
-                    GL.Rotate(player.bikeRotation + 180 - BikePicRotationConst, 0, 0, 1);
+                    GL.Rotate(player.BikeRotation + 180 - BikePicRotationConst, 0, 0, 1);
                     bikePicTranslateX = _bikePicTranslateXFacingRight;
                     bikePicTranslateY = _bikePicTranslateYFacingRight;
                 }
@@ -1218,10 +1218,10 @@ namespace Elmanager
                 }
 
                 const double thighsy = -0.55;
-                var footx = player.globalBodyX + footsx * rotationCos - footsy * rotationSin;
-                var footy = player.globalBodyY + footsx * rotationSin + footsy * rotationCos;
-                var thighstartx = player.headX + thighsx * rotationCos - thighsy * rotationSin;
-                var thighstarty = player.headY + thighsx * rotationSin + thighsy * rotationCos;
+                var footx = player.GlobalBodyX + footsx * rotationCos - footsy * rotationSin;
+                var footy = player.GlobalBodyY + footsx * rotationSin + footsy * rotationCos;
+                var thighstartx = player.HeadX + thighsx * rotationCos - thighsy * rotationSin;
+                var thighstarty = player.HeadY + thighsx * rotationSin + thighsy * rotationCos;
                 CalculateMiddle(thighstartx, thighstarty, footx, footy, legMinimumWidth, isright, out var thighendx,
                     out var thighendy);
                 DrawPicture(_thighPic, thighstartx, thighstarty, thighendx, thighendy, thighHeight, distance, isright,
@@ -1235,15 +1235,15 @@ namespace Elmanager
                 const double offsetx = 0.15;
                 const double offsety = -0.35;
                 GL.PushMatrix();
-                GL.Translate(player.headX, player.headY, 0);
+                GL.Translate(player.HeadX, player.HeadY, 0);
                 if (isright)
                 {
                     GL.Scale(-1.0, 1.0, 1.0);
-                    GL.Rotate(-player.bikeRotation - BodyRotation, 0, 0, 1);
+                    GL.Rotate(-player.BikeRotation - BodyRotation, 0, 0, 1);
                 }
                 else
                 {
-                    GL.Rotate(player.bikeRotation - BodyRotation, 0, 0, 1);
+                    GL.Rotate(player.BikeRotation - BodyRotation, 0, 0, 1);
                 }
 
                 DrawPicture(_bodyPic, offsetx, offsety, BodyWidth, BodyHeight, distance);
@@ -1267,19 +1267,19 @@ namespace Elmanager
                 }
 
                 var armsy = -0.2;
-                var armx = player.headX + armsx * rotationCos - armsy * rotationSin;
-                var army = player.headY + armsx * rotationSin + armsy * rotationCos;
-                var initialx = player.globalBodyX + handsx * rotationCos - handsy * rotationSin;
-                var initialy = player.globalBodyY + handsx * rotationSin + handsy * rotationCos;
+                var armx = player.HeadX + armsx * rotationCos - armsy * rotationSin;
+                var army = player.HeadY + armsx * rotationSin + armsy * rotationCos;
+                var initialx = player.GlobalBodyX + handsx * rotationCos - handsy * rotationSin;
+                var initialy = player.GlobalBodyY + handsx * rotationSin + handsy * rotationCos;
                 var dist = Math.Sqrt((initialx - armx) * (initialx - armx) + (initialy - army) * (initialy - army));
                 double armAngle;
                 if (isright)
                 {
-                    armAngle = Math.Atan2(initialy - army, initialx - armx) + player.armRotation * Constants.DegToRad;
+                    armAngle = Math.Atan2(initialy - army, initialx - armx) + player.ArmRotation * Constants.DegToRad;
                 }
                 else
                 {
-                    armAngle = Math.Atan2(initialy - army, initialx - armx) + player.armRotation * Constants.DegToRad;
+                    armAngle = Math.Atan2(initialy - army, initialx - armx) + player.ArmRotation * Constants.DegToRad;
                 }
 
                 var angleCos = Math.Cos(armAngle);
@@ -1293,21 +1293,21 @@ namespace Elmanager
                 const double lowArmHeight = 0.15;
                 DrawPicture(_handPic, armendx, armendy, handx, handy, lowArmHeight, distance, isright, 0.05);
 
-                if (!opts.isActive)
+                if (!opts.IsActive)
                     GL.Disable(EnableCap.Blend);
             }
             else
             {
                 GL.Disable(EnableCap.Texture2D);
                 GL.Disable(EnableCap.DepthTest);
-                if (!opts.isActive)
+                if (!opts.IsActive)
                 {
                     GL.Enable(EnableCap.LineStipple);
                     GL.LineStipple((int) _settings.LineWidth, LinePattern);
                 }
 
-                DrawPlayerFrames(player, opts.color);
-                if (!opts.isActive)
+                DrawPlayerFrames(player, opts.Color);
+                if (!opts.IsActive)
                 {
                     GL.Disable(EnableCap.LineStipple);
                 }
@@ -1316,13 +1316,13 @@ namespace Elmanager
 
         private void DrawPlayerFrames(PlayerState player, Color playerColor)
         {
-            var headCos = Math.Cos(player.bikeRotation * Constants.DegToRad);
-            var headSin = Math.Sin(player.bikeRotation * Constants.DegToRad);
-            var f = player.isright ? 1 : -1;
-            var headLineEndPointX = player.headX + f * headCos * Constants.HeadDiameter / 2;
-            var headLineEndPointY = player.headY + f * headSin * Constants.HeadDiameter / 2;
-            DrawCircle(player.leftWheelx, player.leftWheely, ObjectRadius, playerColor);
-            DrawCircle(player.rightWheelx, player.rightWheely, ObjectRadius, playerColor);
+            var headCos = Math.Cos(player.BikeRotation * Constants.DegToRad);
+            var headSin = Math.Sin(player.BikeRotation * Constants.DegToRad);
+            var f = player.IsRight ? 1 : -1;
+            var headLineEndPointX = player.HeadX + f * headCos * Constants.HeadDiameter / 2;
+            var headLineEndPointY = player.HeadY + f * headSin * Constants.HeadDiameter / 2;
+            DrawCircle(player.LeftWheelX, player.LeftWheelY, ObjectRadius, playerColor);
+            DrawCircle(player.RightWheelX, player.RightWheelY, ObjectRadius, playerColor);
             GL.Begin(PrimitiveType.Lines);
             for (var k = 0; k < 2; k++)
             {
@@ -1333,15 +1333,15 @@ namespace Elmanager
                     double wheelrot;
                     if (k == 0)
                     {
-                        wheelx = player.leftWheelx;
-                        wheely = player.leftWheely;
-                        wheelrot = player.leftWheelRotation;
+                        wheelx = player.LeftWheelX;
+                        wheely = player.LeftWheelY;
+                        wheelrot = player.LeftWheelRotation;
                     }
                     else
                     {
-                        wheelx = player.rightWheelx;
-                        wheely = player.rightWheely;
-                        wheelrot = player.rightWheelRotation;
+                        wheelx = player.RightWheelX;
+                        wheely = player.RightWheelY;
+                        wheelrot = player.RightWheelRotation;
                     }
 
                     GL.Vertex2(wheelx, wheely);
@@ -1351,9 +1351,9 @@ namespace Elmanager
             }
 
             GL.End();
-            DrawCircle(player.headX, player.headY, Constants.HeadDiameter / 2, playerColor);
+            DrawCircle(player.HeadX, player.HeadY, Constants.HeadDiameter / 2, playerColor);
             GL.Begin(PrimitiveType.Lines);
-            GL.Vertex2(player.headX, player.headY);
+            GL.Vertex2(player.HeadX, player.HeadY);
             GL.Vertex2(headLineEndPointX, headLineEndPointY);
             GL.End();
         }

@@ -80,10 +80,10 @@ namespace Elmanager
             {
                 var isSelected = _activePlayerIndices.Contains(x);
                 var opts = new PlayerRenderOpts {
-                    color = isSelected ? _activePlayerColor : _inActivePlayerColor,
-                    isActive = isSelected,
-                    useGraphics = !_drawOnlyPlayerFrames,
-                    useTransparency = !isSelected && _drawInActiveAsTransparent
+                    Color = isSelected ? _activePlayerColor : _inActivePlayerColor,
+                    IsActive = isSelected,
+                    UseGraphics = !_drawOnlyPlayerFrames,
+                    UseTransparency = !isSelected && _drawInActiveAsTransparent
                 };
                 Renderer.DrawPlayer(PlayListReplays[x].Player.GetInterpolatedState(CurrentTime),
                     opts,
@@ -246,7 +246,7 @@ namespace Elmanager
             }
 
             var r = f.GetInterpolatedState(CurrentTime);
-            return new Vector(r.globalBodyX, r.globalBodyY);
+            return new Vector(r.GlobalBodyX, r.GlobalBodyY);
         }
 
         private Player FirstActivePlayer => GetActivePlayers().Select(p => p.Player).FirstOrDefault();
@@ -261,8 +261,8 @@ namespace Elmanager
 
             var i1 = first.GetInterpolatedState(CurrentTime);
             var i2 = first.GetInterpolatedState(Math.Max(CurrentTime - 1 / 30.0, 0));
-            var xdiff = i1.globalBodyX - i2.globalBodyX;
-            var ydiff = i1.globalBodyY - i2.globalBodyY;
+            var xdiff = i1.GlobalBodyX - i2.GlobalBodyX;
+            var ydiff = i1.GlobalBodyY - i2.GlobalBodyY;
             return Math.Sqrt(xdiff * xdiff + ydiff * ydiff) * Constants.SpeedConst;
         }
 
@@ -289,8 +289,8 @@ namespace Elmanager
             if (firstActive != null && zoomToDriver)
             {
                 var r = firstActive.GetInterpolatedState(CurrentTime);
-                ZoomCtrl.CenterX = r.globalBodyX;
-                ZoomCtrl.CenterY = r.globalBodyY;
+                ZoomCtrl.CenterX = r.GlobalBodyX;
+                ZoomCtrl.CenterY = r.GlobalBodyY;
                 var cam = ZoomCtrl.Cam;
                 _fixx = ZoomCtrl.CenterX % (2 * ZoomCtrl.ZoomLevel * cam.AspectRatio / cam.ViewPortWidth);
                 _fixy = ZoomCtrl.CenterY % (2 * ZoomCtrl.ZoomLevel / cam.ViewPortHeight);
@@ -301,17 +301,17 @@ namespace Elmanager
             {
                 var player = firstVisible.Player;
                 var fr = player.GetInterpolatedState(CurrentTime);
-                var xmin = fr.globalBodyX;
+                var xmin = fr.GlobalBodyX;
                 var xmax = xmin;
-                var ymin = fr.globalBodyY;
+                var ymin = fr.GlobalBodyY;
                 var ymax = ymin;
                 foreach (var p in GetVisiblePlayers())
                 {
                     var r = p.Player.GetInterpolatedState(CurrentTime);
-                    var gx = r.globalBodyX;
+                    var gx = r.GlobalBodyX;
                     xmin = Math.Min(gx, xmin);
                     xmax = Math.Max(gx, xmax);
-                    var gy = r.globalBodyY;
+                    var gy = r.GlobalBodyY;
                     ymin = Math.Min(gy, ymin);
                     ymax = Math.Max(gy, ymax);
                 }
