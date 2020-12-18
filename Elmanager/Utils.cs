@@ -20,7 +20,7 @@ namespace Elmanager
     {
         private static bool _scrollInProgress;
 
-        internal static void BeginArrowScroll(ElmaRenderer renderer)
+        internal static void BeginArrowScroll(ElmaRenderer renderer, ZoomController zoomCtrl, SceneSettings sceneSettings)
         {
             if (_scrollInProgress)
                 return;
@@ -34,26 +34,27 @@ namespace Elmanager
                 long timeDelta = timer.ElapsedMilliseconds - lastTime;
                 if (Keyboard.IsKeyDown(Key.Up))
                 {
-                    renderer.CenterY += timeDelta / 200.0 * renderer.ZoomLevel;
+                    zoomCtrl.CenterY += timeDelta / 200.0 * zoomCtrl.ZoomLevel;
                 }
 
                 if (Keyboard.IsKeyDown(Key.Down))
                 {
-                    renderer.CenterY -= timeDelta / 200.0 * renderer.ZoomLevel;
+                    zoomCtrl.CenterY -= timeDelta / 200.0 * zoomCtrl.ZoomLevel;
                 }
 
                 if (Keyboard.IsKeyDown(Key.Right))
                 {
-                    renderer.CenterX += timeDelta / 200.0 * renderer.ZoomLevel;
+                    zoomCtrl.CenterX += timeDelta / 200.0 * zoomCtrl.ZoomLevel;
                 }
 
                 if (Keyboard.IsKeyDown(Key.Left))
                 {
-                    renderer.CenterX -= timeDelta / 200.0 * renderer.ZoomLevel;
+                    zoomCtrl.CenterX -= timeDelta / 200.0 * zoomCtrl.ZoomLevel;
                 }
 
                 lastTime = timer.ElapsedMilliseconds;
-                renderer.RedrawScene();
+                renderer.DrawScene(zoomCtrl.Cam, sceneSettings);
+                renderer.Swap();
                 Thread.Sleep(1);
                 Application.DoEvents();
             }
@@ -131,7 +132,7 @@ namespace Elmanager
         }
 
         internal static void PutEventsToList(Player player, ListBox listBox, bool finished,
-            PlayerEvent<LogicalEventType>[] selectedEvents)
+            List<PlayerEvent<LogicalEventType>> selectedEvents)
         {
             int turnCounter = 0;
             int leftVoltCounter = 0;
@@ -429,6 +430,13 @@ namespace Elmanager
             Process.Start(
                 new ProcessStartInfo(url)
                     {UseShellExecute = true});
+        }
+
+        internal static double GetFirstGridLine(double size, double offset, double min)
+        {
+            var tmp = (Math.Floor(min / size) + 1) * size;
+            var left = (tmp - (size + offset));
+            return left;
         }
     }
 }

@@ -27,6 +27,11 @@ namespace Elmanager.EditorTools
                 Renderer.DrawLine(_start, CurrentPos, Color.Blue);
         }
 
+        public List<Polygon> GetExtraPolygons()
+        {
+            return new List<Polygon>();
+        }
+
         public void InActivate()
         {
             StartSelected = false;
@@ -90,7 +95,7 @@ namespace Elmanager.EditorTools
             for (int i = Lev.Polygons.Count - 1; i >= 0; i--)
             {
                 Polygon x = Lev.Polygons[i];
-                List<Polygon> cutPolygons = x.Cut(v1, v2, 0.01 * Renderer.ZoomLevel);
+                List<Polygon> cutPolygons = x.Cut(v1, v2, 0.01 * ZoomCtrl.ZoomLevel);
                 if (cutPolygons == null) continue;
                 anythingCut = true;
                 Lev.Polygons.Remove(x);
@@ -113,7 +118,7 @@ namespace Elmanager.EditorTools
             if (intersectingPolygons.Count == 2)
             {
                 Polygon connected = GeometryUtils.Connect(intersectingPolygons[0], intersectingPolygons[1], _start,
-                    CurrentPos, Renderer.ZoomLevel * 0.01);
+                    CurrentPos, ZoomCtrl.ZoomLevel * 0.01);
                 if (connected != null)
                 {
                     Lev.Polygons.Remove(intersectingPolygons[0]);

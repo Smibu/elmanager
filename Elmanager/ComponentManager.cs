@@ -26,7 +26,8 @@ namespace Elmanager
 
         internal static void LaunchReplayViewer(Replay replay)
         {
-            var rv = new ReplayViewer(replay);
+            var rv = new ReplayViewer();
+            rv.SetReplays(replay);
             AppCtx.AddAndShow(rv);
         }
 

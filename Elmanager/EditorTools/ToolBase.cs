@@ -22,6 +22,9 @@ namespace Elmanager.EditorTools
 
         protected Level Lev => LevEditor.Lev;
 
+        protected ZoomController ZoomCtrl => LevEditor.ZoomCtrl;
+        private SceneSettings SceneSettings => LevEditor.SceneSettings;
+
         public abstract bool Busy { get; }
 
         internal int GetNearestObjectIndex(Vector p)
@@ -61,7 +64,7 @@ namespace Elmanager.EditorTools
             }
 
             if (Math.Sqrt(smallest) <
-                Math.Max(Renderer.ZoomLevel * Global.AppSettings.LevelEditor.CaptureRadius, ElmaRenderer.ObjectRadius))
+                Math.Max(ZoomCtrl.ZoomLevel * Global.AppSettings.LevelEditor.CaptureRadius, ElmaRenderer.ObjectRadius))
                 return index;
             return -1;
         }
@@ -73,7 +76,7 @@ namespace Elmanager.EditorTools
             int found = -1;
             if (Global.AppSettings.LevelEditor.CapturePicturesAndTexturesFromBordersOnly)
             {
-                var limit = Renderer.ZoomLevel * Global.AppSettings.LevelEditor.CaptureRadius;
+                var limit = ZoomCtrl.ZoomLevel * Global.AppSettings.LevelEditor.CaptureRadius;
                 for (int j = 0; j < Lev.Pictures.Count; j++)
                 {
                     Picture z = Lev.Pictures[j];
@@ -82,11 +85,11 @@ namespace Elmanager.EditorTools
                         if (GeometryUtils.DistanceFromSegment(z.Position.X, z.Position.Y, z.Position.X + z.Width,
                                 z.Position.Y, p.X, p.Y) < limit
                             || GeometryUtils.DistanceFromSegment(z.Position.X, z.Position.Y, z.Position.X,
-                                z.Position.Y + z.Height, p.X, p.Y) < limit
+                                z.Position.Y - z.Height, p.X, p.Y) < limit
                             || GeometryUtils.DistanceFromSegment(z.Position.X + z.Width, z.Position.Y,
-                                z.Position.X + z.Width, z.Position.Y + z.Height, p.X, p.Y) < limit
-                            || GeometryUtils.DistanceFromSegment(z.Position.X, z.Position.Y + z.Height,
-                                z.Position.X + z.Width, z.Position.Y + z.Height, p.X, p.Y) < limit)
+                                z.Position.X + z.Width, z.Position.Y - z.Height, p.X, p.Y) < limit
+                            || GeometryUtils.DistanceFromSegment(z.Position.X, z.Position.Y - z.Height,
+                                z.Position.X + z.Width, z.Position.Y - z.Height, p.X, p.Y) < limit)
                         {
                             found = j;
                             if (z.Position.Mark == VectorMark.Selected)
@@ -104,8 +107,8 @@ namespace Elmanager.EditorTools
                     Picture z = Lev.Pictures[j];
                     if ((z.IsPicture && pictureFilter) || (!z.IsPicture && textureFilter))
                     {
-                        if (p.X > z.Position.X && p.X < z.Position.X + z.Width && p.Y > z.Position.Y &&
-                            p.Y < z.Position.Y + z.Height)
+                        if (p.X > z.Position.X && p.X < z.Position.X + z.Width && p.Y < z.Position.Y &&
+                            p.Y > z.Position.Y - z.Height)
                         {
                             found = j;
                             if (z.Position.Mark == VectorMark.Selected)
@@ -136,7 +139,7 @@ namespace Elmanager.EditorTools
                 double currentDistance;
                 if (((poly.IsGrass && grassFilter) || (!poly.IsGrass && groundFilter)) &&
                     (currentDistance = poly.GetNearestVertexDistance(p)) <
-                    Renderer.ZoomLevel * Global.AppSettings.LevelEditor.CaptureRadius)
+                    ZoomCtrl.ZoomLevel * Global.AppSettings.LevelEditor.CaptureRadius)
                 {
                     int currentIndex = poly.GetNearestVertexIndex(p);
                     if (currentDistance < smallestDistance)
@@ -177,7 +180,7 @@ namespace Elmanager.EditorTools
                 double currentDistance;
                 if (((x.IsGrass && grassFilter) || (!x.IsGrass && groundFilter)) &&
                     (currentDistance = x.DistanceFromPoint(p)) <
-                    Renderer.ZoomLevel * Global.AppSettings.LevelEditor.CaptureRadius)
+                    ZoomCtrl.ZoomLevel * Global.AppSettings.LevelEditor.CaptureRadius)
                 {
                     if (currentDistance < smallestDistance)
                     {
@@ -229,14 +232,14 @@ namespace Elmanager.EditorTools
                 !Global.AppSettings.LevelEditor.SnapToGrid)
                 return;
             var gridSize = Global.AppSettings.LevelEditor.RenderingSettings.GridSize;
-            double x = (p.X + Renderer.GridOffset.X) % gridSize;
+            double x = (p.X + SceneSettings.GridOffset.X) % gridSize;
             if (Math.Abs(x) > gridSize / 2)
             {
                 x -= gridSize * Math.Sign(x);
             }
 
             p.X -= x;
-            double y = (p.Y - Renderer.GridOffset.Y) % gridSize;
+            double y = (p.Y - SceneSettings.GridOffset.Y) % gridSize;
             if (Math.Abs(y) > gridSize / 2)
             {
                 y -= gridSize * Math.Sign(y);

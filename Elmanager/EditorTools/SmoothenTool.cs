@@ -43,6 +43,11 @@ namespace Elmanager.EditorTools
                     Renderer.DrawPolygon(x, Color.Red);
         }
 
+        public List<Polygon> GetExtraPolygons()
+        {
+            return new List<Polygon>();
+        }
+
         public void InActivate()
         {
             Global.AppSettings.LevelEditor.SmoothSteps = _smoothSteps;

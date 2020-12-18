@@ -1,3 +1,4 @@
+using System.Collections.Generic;
 using System.Windows.Forms;
 
 namespace Elmanager.EditorTools
@@ -10,6 +11,7 @@ namespace Elmanager.EditorTools
         void MouseMove(Vector p);
         void MouseOutOfEditor();
         void ExtraRendering();
+        List<Polygon> GetExtraPolygons();
         void InActivate();
         void Activate();
         void UpdateHelp();

@@ -14,13 +14,13 @@ namespace Elmanager
         internal double TextureWidth;
         internal double Width;
 
-        internal Picture(ClippingType clipping, int distance, Vector position, ElmaRenderer.DrawableImage texture,
-            ElmaRenderer.DrawableImage mask)
+        internal Picture(ClippingType clipping, int distance, Vector position, DrawableImage texture,
+            DrawableImage mask)
         {
             SetTexture(clipping, distance, position, texture, mask);
         }
 
-        internal Picture(ElmaRenderer.DrawableImage pictureImage, Vector position, int distance,
+        internal Picture(DrawableImage pictureImage, Vector position, int distance,
             ClippingType clipping)
         {
             SetPicture(pictureImage, position, distance, clipping);
@@ -50,7 +50,7 @@ namespace Elmanager
             return new Picture(this);
         }
 
-        internal void SetPicture(ElmaRenderer.DrawableImage pictureImage, Vector position, int distance,
+        internal void SetPicture(DrawableImage pictureImage, Vector position, int distance,
             ClippingType clipping)
         {
             Position = position;
@@ -67,7 +67,7 @@ namespace Elmanager
         }
 
         internal void SetTexture(ClippingType clipping, int distance, Vector position,
-            ElmaRenderer.DrawableImage texture, ElmaRenderer.DrawableImage mask)
+            DrawableImage texture, DrawableImage mask)
         {
             Clipping = clipping;
             Distance = distance;

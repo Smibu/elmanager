@@ -1,3 +1,4 @@
+using System.Collections.Generic;
 using System.Windows.Forms;
 using Elmanager.Forms;
 
@@ -57,6 +58,11 @@ namespace Elmanager.EditorTools
                     Renderer.DrawFlower(CurrentPos);
                     break;
             }
+        }
+
+        public List<Polygon> GetExtraPolygons()
+        {
+            return new List<Polygon>();
         }
 
         public void InActivate()

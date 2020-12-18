@@ -1,3 +1,4 @@
+using System.Collections.Generic;
 using System.Windows.Forms;
 using Elmanager.Forms;
 
@@ -21,6 +22,11 @@ namespace Elmanager.EditorTools
 
         public void ExtraRendering()
         {
+        }
+
+        public List<Polygon> GetExtraPolygons()
+        {
+            return new List<Polygon>();
         }
 
         public void InActivate()
@@ -70,7 +76,7 @@ namespace Elmanager.EditorTools
             {
                 _currentPicture.Position = CurrentPos;
                 _currentPicture.Position.X -= _currentPicture.Width / 2;
-                _currentPicture.Position.Y -= _currentPicture.Height / 2;
+                _currentPicture.Position.Y += _currentPicture.Height / 2;
             }
         }
 

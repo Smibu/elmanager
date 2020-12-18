@@ -164,6 +164,11 @@
     <Compile Include="CustomControls\FormMod.cs">
       <SubType>Form</SubType>
     </Compile>
+    <Compile Include="CustomControls\NoPaintBgControl.cs">
+      <SubType>Component</SubType>
+    </Compile>
+    <Compile Include="DrawableImage.cs" />
+    <Compile Include="ElmaCamera.cs" />
     <Compile Include="ElmaObject.cs" />
     <Compile Include="ElmaTime.cs" />
     <Compile Include="Forms\IManagerGui.cs" />
@@ -175,12 +180,15 @@
     </Compile>
     <Compile Include="Forms\Manager.cs" />
     <Compile Include="Forms\MaybeOpened.cs" />
+    <Compile Include="Forms\PlayListObject.cs" />
     <Compile Include="LevelFileTexture.cs" />
     <Compile Include="LevelTop10.cs" />
     <Compile Include="LevObject.cs" />
     <Compile Include="MirrorOption.cs" />
     <Compile Include="ObjectType.cs" />
     <Compile Include="Picture.cs" />
+    <Compile Include="PlayerRenderOpts.cs" />
+    <Compile Include="PlayerState.cs" />
     <Compile Include="PolygonOperationType.cs" />
     <Compile Include="Range.cs" />
     <Compile Include="CustomControls\FontDialogMod.cs">
@@ -367,9 +375,12 @@
     <Compile Include="EditorTools\VertexTool.cs" />
     <Compile Include="EditorTools\ZoomTool.cs" />
     <Compile Include="EditorTools\SmoothenTool.cs" />
+    <Compile Include="ReplayController.cs" />
     <Compile Include="ReplaySearchParameters.cs" />
+    <Compile Include="SceneSettings.cs" />
     <Compile Include="SearchParameters.cs" />
     <Compile Include="SettingsException.cs" />
+    <Compile Include="Suspension.cs" />
     <Compile Include="Top10Entry.cs" />
     <Compile Include="Top10EntryMulti.cs" />
     <Compile Include="Top10EntrySingle.cs" />
@@ -383,7 +394,7 @@
     <Compile Include="VectrastWrapper.cs" />
     <Compile Include="Vectrast\Primitives.cs" />
     <Compile Include="Vectrast\Vectrast.cs" />
-    <Compile Include="ViewSettings.cs" />
+    <Compile Include="ZoomController.cs" />
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="CustomControls\TriSelect.resx">

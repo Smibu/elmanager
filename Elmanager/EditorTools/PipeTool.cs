@@ -39,7 +39,6 @@ namespace Elmanager.EditorTools
         {
             _pipeRadius = Global.AppSettings.LevelEditor.PipeRadius;
             UpdateHelp();
-            Renderer.AdditionalPolys = ExtraPolys;
         }
 
         public void ExtraRendering()
@@ -60,10 +59,19 @@ namespace Elmanager.EditorTools
             }
         }
 
+        public List<Polygon> GetExtraPolygons()
+        {
+            var polys = new List<Polygon>();
+            if (CreatingPipe)
+            {
+                polys.Add(_pipe);
+            }
+            return polys;
+        }
+
         public void InActivate()
         {
             _pipeline = null;
-            Renderer.AdditionalPolys = null;
             Global.AppSettings.LevelEditor.PipeRadius = _pipeRadius;
         }
 
@@ -255,12 +263,6 @@ namespace Elmanager.EditorTools
             }
 
             return apples;
-        }
-
-        private void ExtraPolys()
-        {
-            if (CreatingPipe)
-                Renderer.DrawFilledTriangles(_pipe.Decomposition);
         }
 
         private void UpdatePipe(Polygon pipeLine)

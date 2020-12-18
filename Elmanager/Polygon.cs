@@ -23,10 +23,11 @@ namespace Elmanager
 
         internal const double BufferDistance = -1e-10;
 
-        internal Polygon(IEnumerable<Vector> vertices)
+        internal Polygon(IEnumerable<Vector> vertices, bool isGrass = false)
         {
             Vertices = new List<Vector>();
             Vertices.AddRange(vertices);
+            IsGrass = isGrass;
         }
 
         internal Polygon()
@@ -57,6 +58,11 @@ namespace Elmanager
             {
                 Vertices.Add(new Vector(v.X, v.Y));
             }
+        }
+
+        public Polygon WithYNegated()
+        {
+            return new Polygon(Vertices.Select(v => new Vector(v.X, -v.Y)), IsGrass);
         }
 
         internal int Count => Vertices.Count;

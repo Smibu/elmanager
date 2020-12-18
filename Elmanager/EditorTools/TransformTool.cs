@@ -142,6 +142,11 @@ namespace Elmanager.EditorTools
                 (_transformRectangle.Vertices[3] + _transformRectangle.Vertices[0]) / 2, Color.Blue);
         }
 
+        public List<Polygon> GetExtraPolygons()
+        {
+            return new List<Polygon>();
+        }
+
         public void InActivate()
         {
             EndTransforming();
@@ -170,7 +175,7 @@ namespace Elmanager.EditorTools
             for (int i = 0; i < 4; i++)
             {
                 if ((_transformRectangle[i] - CurrentPos).Length <
-                    Global.AppSettings.LevelEditor.CaptureRadius * Renderer.ZoomLevel)
+                    Global.AppSettings.LevelEditor.CaptureRadius * ZoomCtrl.ZoomLevel)
                 {
                     _transformPolygonIndex = i;
                     Transforming = true;
@@ -178,7 +183,7 @@ namespace Elmanager.EditorTools
                 }
 
                 if (((_transformRectangle[i] + _transformRectangle[i + 1]) / 2 - CurrentPos).Length <
-                    Global.AppSettings.LevelEditor.CaptureRadius * Renderer.ZoomLevel)
+                    Global.AppSettings.LevelEditor.CaptureRadius * ZoomCtrl.ZoomLevel)
                 {
                     _transformPolygonIndex = i + 4;
                     Transforming = true;
@@ -187,7 +192,7 @@ namespace Elmanager.EditorTools
             }
 
             if (((_transformRectangle[0] + _transformRectangle[2]) / 2 - CurrentPos).Length <
-                Global.AppSettings.LevelEditor.CaptureRadius * Renderer.ZoomLevel)
+                Global.AppSettings.LevelEditor.CaptureRadius * ZoomCtrl.ZoomLevel)
             {
                 _transformPolygonIndex = 8;
                 Transforming = true;

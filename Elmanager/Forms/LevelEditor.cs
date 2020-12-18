@@ -12,6 +12,7 @@ using System.Windows.Input;
 using Elmanager.CustomControls;
 using Elmanager.EditorTools;
 using NetTopologySuite.Geometries;
+using OpenTK.Graphics.OpenGL;
 using SharpVectors.Converters;
 using SharpVectors.Renderers.Wpf;
 using SvgNet.SvgGdi;
@@ -74,6 +75,9 @@ namespace Elmanager.Forms
         private Vector _contextMenuClickPosition;
         private SvgImportOptions _svgImportOptions = SvgImportOptions.Default;
         private bool _maybeOpenOnDrop;
+        private ElmaCamera _camera;
+        private ZoomController _zoomCtrl;
+        private readonly SceneSettings _sceneSettings = new SceneSettings();
 
         internal LevelEditor(string levPath)
         {
@@ -174,6 +178,10 @@ namespace Elmanager.Forms
             }
         }
 
+        internal ZoomController ZoomCtrl => _zoomCtrl;
+
+        internal SceneSettings SceneSettings => _sceneSettings;
+
         internal void TransformMenuItemClick(object sender = null, EventArgs e = null)
         {
             if (!CurrentTool.Busy)
@@ -192,16 +200,24 @@ namespace Elmanager.Forms
             }
         }
 
+        internal void RedrawScene(object sender = null, EventArgs e = null)
+        {
+            _sceneSettings.AdditionalPolys = CurrentTool.GetExtraPolygons();
+            Renderer.DrawScene(_zoomCtrl.Cam, _sceneSettings);
+            CustomRendering();
+            Renderer.Swap();
+        }
+
         internal void ActivateCurrentAndRedraw()
         {
             CurrentTool.Activate();
-            Renderer.RedrawScene();
+            RedrawScene();
         }
 
         internal void InactivateCurrentAndRedraw()
         {
             CurrentTool.InActivate();
-            Renderer.RedrawScene();
+            RedrawScene();
         }
 
         internal void SetModified(bool value, bool updateHistory = true)
@@ -215,7 +231,6 @@ namespace Elmanager.Forms
                     AddToHistory();
                 if (Global.AppSettings.LevelEditor.CheckTopologyDynamically)
                     CheckTopology();
-                Renderer.UpdateZoomFillBounds();
             }
         }
 
@@ -286,7 +301,7 @@ namespace Elmanager.Forms
             Renderer.UpdateSettings(Global.AppSettings.LevelEditor.RenderingSettings);
             UpdateLgrTools();
             UpdateButtons();
-            Renderer.RedrawScene();
+            RedrawScene();
         }
 
         private void AutoGrassButtonChanged(object sender, EventArgs e)
@@ -438,7 +453,7 @@ namespace Elmanager.Forms
         private void CheckTopologyAndUpdate(object sender = null, EventArgs e = null)
         {
             CheckTopology();
-            Renderer.RedrawScene();
+            RedrawScene();
         }
 
         private void ClearHistory()
@@ -476,7 +491,7 @@ namespace Elmanager.Forms
             Vector.MarkDefault = VectorMark.Selected;
             var delta = Keyboard.IsKeyDown(Key.LeftShift)
                 ? Global.AppSettings.LevelEditor.RenderingSettings.GridSize
-                : Renderer.ZoomLevel * 0.1;
+                : _zoomCtrl.Cam.ZoomLevel * 0.1;
             foreach (Polygon x in Lev.Polygons)
             {
                 var copy = new Polygon();
@@ -530,7 +545,7 @@ namespace Elmanager.Forms
             Lev.Pictures.AddRange(copiedTextures);
             if (copiedObjects.Count + copiedPolygons.Count + copiedTextures.Count > 0)
                 Modified = true;
-            Renderer.RedrawScene();
+            RedrawScene();
         }
 
         private bool CurrLevDirExists()
@@ -543,17 +558,17 @@ namespace Elmanager.Forms
             CurrentTool.ExtraRendering();
             if (Global.AppSettings.LevelEditor.ShowCrossHair)
             {
-                var mouse = GetMouseCoordinatesFixed();
-                Renderer.DrawDashLine(Renderer.XMin, mouse.Y, Renderer.XMax,
+                var mouse = GetMouseCoordinates();
+                Renderer.DrawDashLine(_zoomCtrl.Cam.XMin, mouse.Y, _zoomCtrl.Cam.XMax,
                     mouse.Y, Global.AppSettings.LevelEditor.CrosshairColor);
-                Renderer.DrawDashLine(mouse.X, -Renderer.YMax, mouse.X,
-                    -Renderer.YMin, Global.AppSettings.LevelEditor.CrosshairColor);
+                Renderer.DrawDashLine(mouse.X, _zoomCtrl.Cam.YMin, mouse.X,
+                    _zoomCtrl.Cam.YMax, Global.AppSettings.LevelEditor.CrosshairColor);
             }
 
-            Action<Vector, Color> drawAction = Global.AppSettings.LevelEditor.RenderingSettings.UseCirclesForVertices
+            var drawAction = Global.AppSettings.LevelEditor.RenderingSettings.UseCirclesForVertices
                 ? (Action<Vector, Color>) ((pt, color) => Renderer.DrawPoint(pt, color))
                 : ((pt, color) => Renderer.DrawEquilateralTriangle(pt,
-                    Renderer.ZoomLevel * Global.AppSettings.LevelEditor.RenderingSettings.VertexSize, color));
+                    _zoomCtrl.Cam.ZoomLevel * Global.AppSettings.LevelEditor.RenderingSettings.VertexSize, color));
 
             foreach (Polygon x in Lev.Polygons)
             {
@@ -618,28 +633,28 @@ namespace Elmanager.Forms
                 switch (z.Mark)
                 {
                     case VectorMark.Selected:
-                        Renderer.DrawRectangle(z.X, z.Y, z.X + t.Width, z.Y + t.Height,
+                        Renderer.DrawRectangle(z.X, z.Y, z.X + t.Width, z.Y - t.Height,
                             Global.AppSettings.LevelEditor.SelectionColor);
                         break;
                     case VectorMark.Highlight:
-                        Renderer.DrawRectangle(z.X, z.Y, z.X + t.Width, z.Y + t.Height,
+                        Renderer.DrawRectangle(z.X, z.Y, z.X + t.Width, z.Y - t.Height,
                             Global.AppSettings.LevelEditor.HighlightColor);
                         break;
                 }
             }
 
             foreach (Vector x in _errorPoints)
-                Renderer.DrawSquare(x, Renderer.ZoomLevel / 25, Color.Red);
+                Renderer.DrawSquare(x, _zoomCtrl.Cam.ZoomLevel / 25, Color.Red);
             if ((object) _savedStartPosition != null)
             {
                 if (Global.AppSettings.LevelEditor.RenderingSettings.ShowObjects)
                 {
-                    Renderer.DrawDummyPlayer(_savedStartPosition.X, -_savedStartPosition.Y, false, true);
+                    Renderer.DrawDummyPlayer(_savedStartPosition.X, _savedStartPosition.Y, _sceneSettings, new PlayerRenderOpts(Color.Green, false, true));
                 }
 
                 if (Global.AppSettings.LevelEditor.RenderingSettings.ShowObjectFrames)
                 {
-                    Renderer.DrawDummyPlayer(_savedStartPosition.X, -_savedStartPosition.Y, false, false);
+                    Renderer.DrawDummyPlayer(_savedStartPosition.X, _savedStartPosition.Y, _sceneSettings, new PlayerRenderOpts(Color.Green, false, false));
                 }
             }
         }
@@ -660,7 +675,7 @@ namespace Elmanager.Forms
             }
 
             Modified = true;
-            Renderer.RedrawScene();
+            RedrawScene();
         }
 
         private void DeleteSelected(object sender, EventArgs e)
@@ -801,7 +816,7 @@ namespace Elmanager.Forms
                 }
             }
 
-            Renderer.RedrawScene();
+            RedrawScene();
             SelectionFilterToolStripMenuItem.ShowDropDown();
         }
 
@@ -817,26 +832,11 @@ namespace Elmanager.Forms
             var mousePos = new Vector
             {
                 X =
-                    Renderer.XMin +
-                    mousePosNoTr.X * (Renderer.XMax - Renderer.XMin) / EditorControl.Width,
+                    _zoomCtrl.Cam.XMin +
+                    mousePosNoTr.X * (_zoomCtrl.Cam.XMax - _zoomCtrl.Cam.XMin) / EditorControl.Width,
                 Y =
-                    Renderer.YMax -
-                    mousePosNoTr.Y * (Renderer.YMax - Renderer.YMin) / EditorControl.Height
-            };
-            return mousePos;
-        }
-
-        private Vector GetMouseCoordinatesFixed()
-        {
-            Point mousePosNoTr = EditorControl.PointToClient(MousePosition);
-            var mousePos = new Vector
-            {
-                X =
-                    Renderer.XMin +
-                    mousePosNoTr.X * (Renderer.XMax - Renderer.XMin) / EditorControl.Width,
-                Y =
-                    -Renderer.YMax +
-                    mousePosNoTr.Y * (Renderer.YMax - Renderer.YMin) / EditorControl.Height
+                    _zoomCtrl.Cam.YMax -
+                    mousePosNoTr.Y * (_zoomCtrl.Cam.YMax - _zoomCtrl.Cam.YMin) / EditorControl.Height
             };
             return mousePos;
         }
@@ -855,7 +855,7 @@ namespace Elmanager.Forms
                 p.UpdateDecomposition();
             });
             Modified = true;
-            Renderer.RedrawScene();
+            RedrawScene();
         }
 
         private void HandleGravityMenu(object sender, EventArgs e)
@@ -924,10 +924,7 @@ namespace Elmanager.Forms
             SelectButton.Select();
             UpdateButtons();
             Size = Global.AppSettings.LevelEditor.Size;
-            Renderer = new ElmaRenderer(EditorControl, Global.AppSettings.LevelEditor.RenderingSettings)
-            {
-                CustomRendering = CustomRendering
-            };
+            Renderer = new ElmaRenderer(EditorControl, Global.AppSettings.LevelEditor.RenderingSettings);
             
             Tools = new IEditorTool[]
             {
@@ -954,10 +951,12 @@ namespace Elmanager.Forms
 
         private void InitializeLevel()
         {
+            _camera = new ElmaCamera();
+            _zoomCtrl = new ZoomController(_camera, Lev, Global.AppSettings.LevelEditor.RenderingSettings, () => RedrawScene());
             Modified = false;
             UpdateLabels();
             Renderer.InitializeLevel(Lev);
-            Renderer.ZoomFill();
+            _zoomCtrl.ZoomFill();
             UpdateLgrFromLev();
             Renderer.UpdateSettings(Global.AppSettings.LevelEditor.RenderingSettings);
             topologyList.Text = string.Empty;
@@ -994,7 +993,7 @@ namespace Elmanager.Forms
                 case Keys.Down:
                 case Keys.Left:
                 case Keys.Right:
-                    Utils.BeginArrowScroll(Renderer);
+                    Utils.BeginArrowScroll(Renderer, _zoomCtrl, _sceneSettings);
                     break;
                 case Keys.C:
                     if (!_lockMouseX)
@@ -1034,7 +1033,7 @@ namespace Elmanager.Forms
                 Modified = true;
             }
 
-            Renderer.RedrawScene();
+            RedrawScene();
         }
 
         private async void TexturizeSelection()
@@ -1098,7 +1097,7 @@ namespace Elmanager.Forms
             var pics = selmasks.Zip(covering,
                 (m, c) =>
                     new Picture(PicForm.Clipping, PicForm.Distance,
-                        new Vector(c.MinX - m.EmptyPixelXMargin, c.MinY - m.EmptyPixelYMargin), texture, m));
+                        new Vector(c.MinX - m.EmptyPixelXMargin, c.MaxY + m.EmptyPixelYMargin), texture, m));
             Lev.Pictures.AddRange(pics);
             Modified = true;
         }
@@ -1106,7 +1105,7 @@ namespace Elmanager.Forms
         private void SetModifiedAndRender()
         {
             Modified = true;
-            Renderer.RedrawScene();
+            RedrawScene();
         }
 
         private void KeyHandlerUp(object sender, KeyEventArgs e)
@@ -1164,7 +1163,7 @@ namespace Elmanager.Forms
                         Utils.ShowError("Default ground and sky is enabled, so you won\'t see this change in editor.",
                             "Warning", MessageBoxIcon.Exclamation);
                     Renderer.UpdateGroundAndSky(Global.AppSettings.LevelEditor.RenderingSettings.DefaultGroundAndSky);
-                    Renderer.RedrawScene();
+                    RedrawScene();
                 }
 
                 Modified = true;
@@ -1177,8 +1176,8 @@ namespace Elmanager.Forms
             Lev = _history[_historyIndex].Clone();
             Lev.Path = oldPath;
             Renderer.Lev = Lev;
+            _zoomCtrl.Lev = Lev;
             Lev.DecomposeGroundPolygons();
-            Renderer.UpdateZoomFillBounds();
             UpdateUndoRedo();
             topologyList.DropDownItems.Clear();
             topologyList.Text = "";
@@ -1194,12 +1193,12 @@ namespace Elmanager.Forms
         {
             Lev.MirrorSelected(MirrorOption.Horizontal);
             Modified = true;
-            Renderer.RedrawScene();
+            RedrawScene();
         }
 
         private void MouseDownEvent(object sender, MouseEventArgs e)
         {
-            Vector p = GetMouseCoordinatesFixed();
+            Vector p = GetMouseCoordinates();
             CurrentTool.MouseMove(p);
             int nearestVertexIndex = ToolBase.GetNearestVertexIndex(p);
             int nearestObjectIndex = ToolBase.GetNearestObjectIndex(p);
@@ -1305,7 +1304,7 @@ namespace Elmanager.Forms
                     if (Keyboard.IsKeyDown(Key.LeftCtrl))
                     {
                         _draggingGrid = true;
-                        _gridStartOffset = Renderer.GridOffset;
+                        _gridStartOffset = _sceneSettings.GridOffset;
                     }
                     else
                     {
@@ -1317,13 +1316,13 @@ namespace Elmanager.Forms
             }
 
             CurrentTool.MouseDown(e);
-            Renderer.RedrawScene();
+            RedrawScene();
         }
 
         private void MouseLeaveEvent(object sender, EventArgs e)
         {
             CurrentTool.MouseOutOfEditor();
-            Renderer.RedrawScene();
+            RedrawScene();
         }
 
         private void MouseMoveEvent(object sender, MouseEventArgs e)
@@ -1338,17 +1337,17 @@ namespace Elmanager.Forms
                 Vector z = GetMouseCoordinates();
                 if (_draggingGrid)
                 {
-                    Renderer.GridOffset = _gridStartOffset + _moveStartPosition - z;
+                    _sceneSettings.GridOffset = _gridStartOffset + _moveStartPosition - z;
                 }
                 else
                 {
-                    Renderer.CenterX = (Renderer.XMax + Renderer.XMin) / 2 - (z.X - _moveStartPosition.X);
-                    Renderer.CenterY = (Renderer.YMax + Renderer.YMin) / 2 - (z.Y - _moveStartPosition.Y);
+                    _zoomCtrl.CenterX = (_zoomCtrl.Cam.XMax + _zoomCtrl.Cam.XMin) / 2 - (z.X - _moveStartPosition.X);
+                    _zoomCtrl.CenterY = (_zoomCtrl.Cam.YMax + _zoomCtrl.Cam.YMin) / 2 - (z.Y - _moveStartPosition.Y);
                 }
             }
 
-            CurrentTool.MouseMove(GetMouseCoordinatesFixed());
-            Renderer.RedrawScene();
+            CurrentTool.MouseMove(GetMouseCoordinates());
+            RedrawScene();
             StatusStrip1.Refresh();
         }
 
@@ -1357,7 +1356,7 @@ namespace Elmanager.Forms
             CurrentTool.MouseUp();
             _draggingScreen = false;
             _draggingGrid = false;
-            Renderer.RedrawScene();
+            RedrawScene();
         }
 
         private void MouseWheelZoom(long delta)
@@ -1365,17 +1364,38 @@ namespace Elmanager.Forms
             if (Keyboard.IsKeyDown(Key.LeftCtrl))
             {
                 double currSize = Global.AppSettings.LevelEditor.RenderingSettings.GridSize;
-                double newSize = currSize + Math.Sign(delta) * Renderer.ZoomLevel / 50.0;
+                double newSize = currSize + Math.Sign(delta) * _zoomCtrl.Cam.ZoomLevel / 50.0;
                 if (newSize > 0)
                 {
                     Global.AppSettings.LevelEditor.RenderingSettings.GridSize = newSize;
-                    Renderer.SetGridSizeWithMouse(newSize, GetMouseCoordinates());
+                    SetGridSizeWithMouse(newSize, GetMouseCoordinates());
                 }
             }
             else
             {
-                Renderer.Zoom(GetMouseCoordinates(), delta > 0, 1 - MouseWheelStep / 100.0);
+                _zoomCtrl.Zoom(GetMouseCoordinates(), delta > 0, 1 - MouseWheelStep / 100.0);
             }
+        }
+
+        private static double GetGridMouseRatio(double size, double offset, double min, double mouse)
+        {
+            var dist = mouse - Utils.GetFirstGridLine(size, offset, min);
+            return (dist % size) / size;
+        }
+
+        private void SetGridSizeWithMouse(double newSize, Vector mouseCoords)
+        {
+            var settings = Global.AppSettings.LevelEditor.RenderingSettings;
+            var gx = _sceneSettings.GridOffset.X;
+            _sceneSettings.GridOffset.X = (gx + Utils.GetFirstGridLine(newSize, gx, _zoomCtrl.Cam.XMin)
+                                           - mouseCoords.X + GetGridMouseRatio(settings.GridSize, gx, _zoomCtrl.Cam.XMin, mouseCoords.X) *
+                                           newSize) % newSize;
+            var gy = _sceneSettings.GridOffset.Y;
+            _sceneSettings.GridOffset.Y = (gy + Utils.GetFirstGridLine(newSize, gy, _zoomCtrl.Cam.YMin)
+                                           - mouseCoords.Y + GetGridMouseRatio(settings.GridSize, gy, _zoomCtrl.Cam.YMin, mouseCoords.Y) *
+                                           newSize) % newSize;
+            settings.GridSize = newSize;
+            RedrawScene();
         }
 
         private void MoveFocus(object sender, EventArgs e)
@@ -1419,7 +1439,7 @@ namespace Elmanager.Forms
             rSettings.Changed += x =>
             {
                 Renderer.UpdateSettings(x);
-                Renderer.RedrawScene();
+                RedrawScene();
             };
             rSettings.ShowDialog();
             AfterSettingsClosed(oldLgr);
@@ -1490,8 +1510,7 @@ namespace Elmanager.Forms
                         if (selected.IsPicture)
                         {
                             // need to set proper mask; otherwise the mask name will be picture name
-                            mask = Renderer.DrawableImageFromName(_editorLgr.ListedImages
-                                .Where(i => i.Type == Lgr.ImageType.Mask).First().Name);
+                            mask = Renderer.DrawableImageFromName(_editorLgr.ListedImages.First(i => i.Type == Lgr.ImageType.Mask).Name);
                         }
 
                         selected.SetTexture(clipping, distance, position, texture,
@@ -1520,7 +1539,7 @@ namespace Elmanager.Forms
                 }
 
                 Modified = true;
-                Renderer.RedrawScene();
+                RedrawScene();
             }
         }
 
@@ -1597,7 +1616,7 @@ namespace Elmanager.Forms
             }
 
             Modified = true;
-            Renderer.RedrawScene();
+            RedrawScene();
         }
 
         private void Redo(object sender, EventArgs e)
@@ -1612,7 +1631,7 @@ namespace Elmanager.Forms
         private void RefreshOnOpen(object sender, EventArgs e)
         {
             ViewerResized();
-            Renderer.ZoomFill();
+            _zoomCtrl.ZoomFill();
         }
 
         private void SaveAs(object sender = null, EventArgs e = null)
@@ -1763,7 +1782,7 @@ namespace Elmanager.Forms
                     texture.Position.Select();
             }
 
-            Renderer.RedrawScene();
+            RedrawScene();
             UpdateSelectionInfo();
         }
 
@@ -1833,14 +1852,14 @@ namespace Elmanager.Forms
             Global.AppSettings.LevelEditor.SnapToGrid = snapToGridButton.Checked;
             Global.AppSettings.LevelEditor.ShowCrossHair = showCrossHairButton.Checked;
             Renderer.UpdateSettings(settings);
-            Renderer.RedrawScene();
+            RedrawScene();
         }
 
         private void SetupEventHandlers()
         {
             Resize += ViewerResized;
-            EditorControl.Paint += Renderer.RedrawScene;
-            ZoomFillButton.Click += Renderer.ZoomFill;
+            EditorControl.Paint += RedrawScene;
+            ZoomFillButton.Click += (s, e) => _zoomCtrl.ZoomFill();
             ObjectButton.CheckedChanged += ObjectButtonChanged;
             VertexButton.CheckedChanged += VertexButtonChanged;
             PipeButton.CheckedChanged += PipeButtonChanged;
@@ -2052,7 +2071,7 @@ namespace Elmanager.Forms
             if (EditorControl.Width > 0 && EditorControl.Height > 0)
             {
                 Renderer.ResetViewport(EditorControl.Width, EditorControl.Height);
-                Renderer.RedrawScene();
+                RedrawScene();
             }
         }
 
@@ -2064,7 +2083,7 @@ namespace Elmanager.Forms
 
         private void ZoomFillToolStripMenuItemClick(object sender, EventArgs e)
         {
-            Renderer.ZoomFill();
+            _zoomCtrl.ZoomFill();
         }
 
         private void TitleBoxTextChanged(object sender, EventArgs e)
@@ -2179,8 +2198,7 @@ namespace Elmanager.Forms
             if (imported > 0)
             {
                 Modified = true;
-                Renderer.UpdateZoomFillBounds();
-                Renderer.ZoomFill();
+                _zoomCtrl.ZoomFill();
             }
         }
 
@@ -2191,7 +2209,7 @@ namespace Elmanager.Forms
             {
                 if (saveAsPictureDialog.FileName.EndsWith(".png"))
                 {
-                    Renderer.SaveSnapShot(saveAsPictureDialog.FileName);
+                    Renderer.SaveSnapShot(saveAsPictureDialog.FileName, _zoomCtrl, _sceneSettings);
                 }
                 else if (saveAsPictureDialog.FileName.EndsWith(".svg"))
                 {
@@ -2523,7 +2541,7 @@ namespace Elmanager.Forms
         {
             Lev.MirrorSelected(MirrorOption.Vertical);
             Modified = true;
-            Renderer.RedrawScene();
+            RedrawScene();
         }
 
         private void MoveStartHereToolStripMenuItem_Click(object sender, EventArgs e)
@@ -2538,7 +2556,7 @@ namespace Elmanager.Forms
 
         private void EditorMenuStrip_Opening(object sender, CancelEventArgs e)
         {
-            _contextMenuClickPosition = GetMouseCoordinatesFixed();
+            _contextMenuClickPosition = GetMouseCoordinates();
         }
 
         private void EditorControl_DragLeave(object sender, EventArgs e)

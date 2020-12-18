@@ -12,7 +12,7 @@ namespace Elmanager
         internal const double GlobalBodyDifferenceFromLeftWheelX = 0.85;
         internal const double GlobalBodyDifferenceFromLeftWheelY = 0.6;
         internal const double HeadDifferenceFromLeftWheelX = 0.7595;
-        internal const double HeadDifferenceFromLeftWheelY = -1.67;
+        internal const double HeadDifferenceFromLeftWheelY = 1.67;
         internal const int MaximumObjectCount = 252;
         internal const int MaximumPolygonCount = 1200;
         internal const int MaximumPolygonVertexCount = 1000;
@@ -161,7 +161,7 @@ namespace Elmanager
                 for (var j = 0; j < numVertice; j++)
                 {
                     var x = lev.ReadDouble();
-                    var y = lev.ReadDouble();
+                    var y = -lev.ReadDouble();
                     poly.Add(new Vector(x, y));
                 }
 
@@ -178,7 +178,7 @@ namespace Elmanager
             for (var i = 0; i < objectCount; i++)
             {
                 var x = lev.ReadDouble();
-                var y = lev.ReadDouble();
+                var y = -lev.ReadDouble();
                 var objectType = (ObjectType) lev.ReadInt32();
                 if (objectType == ObjectType.Start)
                 {
@@ -211,7 +211,7 @@ namespace Elmanager
                     var textureName = lev.ReadNullTerminatedString(10);
                     var maskName = lev.ReadNullTerminatedString(10);
                     var x = lev.ReadDouble();
-                    var y = lev.ReadDouble();
+                    var y = -lev.ReadDouble();
                     var distance = lev.ReadInt32();
                     var clipping = (ClippingType) lev.ReadInt32();
                     if (pictureName == "")
@@ -299,36 +299,27 @@ namespace Elmanager
         [Description("Times (m)")]
         public int MultiTimesCount => Top10.MultiPlayer.Count;
 
-        private int? _appleObjectCount;
-        [Description("Apples")] public int AppleObjectCount => (_appleObjectCount ?? (_appleObjectCount = Objects.Count(x => x.Type == ObjectType.Apple))).Value;
+        [Description("Apples")] public int AppleObjectCount => Objects.Count(x => x.Type == ObjectType.Apple);
 
         [Description("Grav.")]
         public int GravApples => Objects.Count(x => x.Type == ObjectType.Apple && x.AppleType != AppleType.Normal);
 
-        private int? _exitObjectCount;
-        [Description("Flowers")] public int ExitObjectCount => _exitObjectCount ??(_exitObjectCount = Objects.Count(x => x.Type == ObjectType.Flower)).Value;
+        [Description("Flowers")] public int ExitObjectCount => Objects.Count(x => x.Type == ObjectType.Flower);
 
-        private int? _killerObjectCount;
         [Description("Killers")]
-        public int KillerObjectCount => (_killerObjectCount ?? (_killerObjectCount = Objects.Count(x => x.Type == ObjectType.Killer))).Value;
+        public int KillerObjectCount => Objects.Count(x => x.Type == ObjectType.Killer);
 
         [Description("Polys")] public int PolygonCount => Polygons.Count;
 
-        private int? _grassPolygonCount;
-        [Description("Grass ps")] public int GrassPolygonCount => (_grassPolygonCount ??
-                                                                        (_grassPolygonCount = Polygons.Count(x => x.IsGrass))).Value;
+        [Description("Grass ps")] public int GrassPolygonCount => Polygons.Count(x => x.IsGrass);
 
-        private int? _grassVertexCount;
         [Description("Grass vs")] public int GrassVertexCount =>
-            (_grassVertexCount ?? (_grassVertexCount = Polygons.Where(x => x.IsGrass).Sum(x => x.Count))).Value;
+            Polygons.Where(x => x.IsGrass).Sum(x => x.Count);
 
-        private int? _groundPolygonCount;
-        [Description("Ground ps")] public int GroundPolygonCount => (_groundPolygonCount ??
-                                                                           (_groundPolygonCount = Polygons.Count(x => !x.IsGrass))).Value;
+        [Description("Ground ps")] public int GroundPolygonCount => Polygons.Count(x => !x.IsGrass);
 
-        private int? _groundVertexCount;
         [Description("Ground vs")]
-        public int GroundVertexCount => (_groundVertexCount ?? (_groundVertexCount = Polygons.Where(x => !x.IsGrass).Sum(x => x.Count))).Value;
+        public int GroundVertexCount => Polygons.Where(x => !x.IsGrass).Sum(x => x.Count);
 
         internal bool HasTooLargePolygons
         {
@@ -463,24 +454,11 @@ namespace Elmanager
 
         internal double YMin { get; private set; }
 
-        private double ObjectSum => Objects.Sum(x => x.Position.X + x.Position.Y + (int) x.Type);
+        private double ObjectSum => Objects.Sum(x => x.Position.X - x.Position.Y + (int) x.Type);
 
-        private double PictureSum => _textureData.Sum(x => x.Position.X + x.Position.Y);
+        private double PictureSum => _textureData.Sum(x => x.Position.X - x.Position.Y);
 
-        private double PolygonSum
-        {
-            get
-            {
-                double sum = 0;
-                foreach (var x in Polygons)
-                {
-                    for (var i = 0; i < x.Count; i++)
-                        sum += x.Vertices[i].X + x.Vertices[i].Y;
-                }
-
-                return sum;
-            }
-        }
+        private double PolygonSum => Polygons.Sum(x => x.Vertices.Sum(v => v.X - v.Y));
 
         internal bool IsElmaLevel => LevStartMagic == "POT14";
 
@@ -650,7 +628,7 @@ namespace Elmanager
 
             foreach (var z in Pictures.Where(p => selector(p.Position)))
             {
-                var fix = new Vector(z.Width / 2, z.Height / 2);
+                var fix = new Vector(z.Width / 2, -z.Height / 2);
                 z.Position.SetPosition((z.Position + fix) * matrix - fix);
             }
         }
@@ -691,7 +669,7 @@ namespace Elmanager
             levelFile.AddRange(BitConverter.GetBytes(Polygons.Count + MagicDouble));
             foreach (var x in Polygons)
             {
-                if (x.IsCounterClockwise ^ IsSky(x))
+                if (!(x.IsCounterClockwise ^ IsSky(x)))
                     x.ChangeOrientation();
                 levelFile.AddRange(BitConverter.GetBytes(x.IsGrass));
                 for (var i = 1; i <= 3; i++)
@@ -700,7 +678,7 @@ namespace Elmanager
                 foreach (var z in x.Vertices)
                 {
                     levelFile.AddRange(BitConverter.GetBytes(z.X));
-                    levelFile.AddRange(BitConverter.GetBytes(z.Y));
+                    levelFile.AddRange(BitConverter.GetBytes(-z.Y));
                 }
             }
 
@@ -708,7 +686,7 @@ namespace Elmanager
             foreach (var x in Objects)
             {
                 levelFile.AddRange(BitConverter.GetBytes(x.Position.X));
-                levelFile.AddRange(BitConverter.GetBytes(x.Position.Y));
+                levelFile.AddRange(BitConverter.GetBytes(-x.Position.Y));
                 levelFile.AddRange(BitConverter.GetBytes((int) x.Type));
                 levelFile.AddRange(BitConverter.GetBytes((int) x.AppleType));
                 levelFile.AddRange(BitConverter.GetBytes(x.AnimationNumber - 1));
@@ -732,7 +710,7 @@ namespace Elmanager
                 }
 
                 levelFile.AddRange(BitConverter.GetBytes(x.Position.X));
-                levelFile.AddRange(BitConverter.GetBytes(x.Position.Y));
+                levelFile.AddRange(BitConverter.GetBytes(-x.Position.Y));
                 levelFile.AddRange(BitConverter.GetBytes(x.Distance));
                 levelFile.AddRange(BitConverter.GetBytes((int) x.Clipping));
             }
@@ -790,7 +768,7 @@ namespace Elmanager
         ///     This method should only be called once (when loading level).
         /// </summary>
         /// <param name="lgrImages"></param>
-        internal void UpdateImages(List<ElmaRenderer.DrawableImage> lgrImages)
+        internal void UpdateImages(List<DrawableImage> lgrImages)
         {
             Pictures = new List<Picture>();
             AllPicturesFound = true;

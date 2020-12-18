@@ -1,12 +1,12 @@
 ﻿using System;
-using System.Collections;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Drawing;
-using System.IO;
-using System.Reflection;
+using System.Drawing.Imaging;
+using System.Linq;
 using System.Windows.Forms;
 using System.Windows.Input;
+using BrightIdeasSoftware;
 using Elmanager.CustomControls;
 using OpenTK;
 using KeyEventArgs = System.Windows.Forms.KeyEventArgs;
@@ -16,55 +16,21 @@ namespace Elmanager.Forms
 {
     partial class ReplayViewer : FormMod
     {
-        private readonly uint[] _colourValues = new[]
-        {
-            0xFFFF0000, 0xFF00FF00, 0xFF0000FF, 0xFFFFFF00, 0xFFFF00FF,
-            0xFF00FFFF, 0xFF000000, 0xFF800000, 0xFF008000, 0xFF000080,
-            0xFF808000, 0xFF800080, 0xFF008080, 0xFF808080, 0xFFC00000,
-            0xFF00C000, 0xFF0000C0, 0xFFC0C000, 0xFFC000C0, 0xFF00C0C0,
-            0xFFC0C0C0, 0xFF400000, 0xFF004000, 0xFF000040, 0xFF404000,
-            0xFF400040, 0xFF004040, 0xFF404040, 0xFF200000, 0xFF002000,
-            0xFF000020, 0xFF202000, 0xFF200020, 0xFF002020, 0xFF202020,
-            0xFF600000, 0xFF006000, 0xFF000060, 0xFF606000, 0xFF600060,
-            0xFF006060, 0xFF606060, 0xFFA00000, 0xFF00A000, 0xFF0000A0,
-            0xFFA0A000, 0xFFA000A0, 0xFF00A0A0, 0xFFA0A0A0, 0xFFE00000,
-            0xFF00E000, 0xFF0000E0, 0xFFE0E000, 0xFFE000E0, 0xFF00E0E0,
-            0xFFE0E0E0
-        };
-
-        private PlayerEvent<LogicalEventType>[] _currentEvents;
         private bool _draggingScreen;
         private bool _fullScreen;
         private Point _lastLocation;
         private int _lastMouseX;
         private Vector _moveStartPosition;
-        private List<PlayListObject> _playListReplays;
-        private ElmaRenderer _renderer;
         private FormWindowState _windowState;
-        private Vector _zoomRectStartPoint;
-        private bool _zoomRecting;
         private bool _zooming;
+        private ReplayController _replayController;
+        private readonly TypedObjectListView<PlayListObject> _typedPlayList;
 
         public ReplayViewer()
         {
             InitializeComponent();
+            _typedPlayList = new TypedObjectListView<PlayListObject>(PlayList);
             Initialize();
-            ViewerResized();
-        }
-
-        internal ReplayViewer(Replay rp)
-        {
-            InitializeComponent();
-            Initialize();
-            SetReplays(rp);
-            ViewerResized();
-        }
-
-        internal ReplayViewer(List<Replay> replaysToPlay)
-        {
-            InitializeComponent();
-            Initialize();
-            SetReplays(replaysToPlay);
             ViewerResized();
         }
 
@@ -74,45 +40,20 @@ namespace Elmanager.Forms
             SetReplays(oneReplay);
         }
 
-        internal void SetLevel(Level lev)
-        {
-            Text = Utils.GetPossiblyInternal(lev.FileName) + " - Replay viewer";
-            _playListReplays = new List<PlayListObject>();
-            PlayList.SetObjects(_playListReplays);
-            _renderer.InitializeLevel(lev);
-            _renderer.ZoomFill();
-            UpdateEventsLists();
-        }
-
         internal void SetReplays(List<Replay> replays)
         {
-            _playListReplays = new List<PlayListObject>();
-            foreach (Replay replay in replays)
-            {
-                _playListReplays.Add(new PlayListObject(Path.GetFileNameWithoutExtension(replay.FileName), 1,
-                    replay.Player1));
-                if (replay.IsMulti)
-                    _playListReplays.Add(new PlayListObject(Path.GetFileNameWithoutExtension(replay.FileName), 2,
-                        replay.Player2));
-            }
-
+            _replayController.SetReplays(replays);
             timeBar.Value = 0;
-            _renderer.InitializeReplays(replays);
-            _renderer.DrivingLineColors = new Color[_playListReplays.Count];
-            for (int i = 0; i < _renderer.DrivingLineColors.Length; i++)
-                _renderer.DrivingLineColors[i] = Color.FromArgb((int) _colourValues[i % _colourValues.Length]);
-            UpdateControlColor(DrivingLinePanel, _renderer.DrivingLineColors[0]);
-            PlayList.SetObjects(_playListReplays);
+            UpdateControlColor(DrivingLinePanel, _replayController.PlayListReplays[0].DrivingLineColor);
+            PlayList.SetObjects(_replayController.PlayListReplays);
             Text = Utils.GetPossiblyInternal(replays[0].LevelFilename) + " - Replay viewer";
             if (replays[0].WrongLevelVersion)
                 Text += " (wrong version)";
-            if (Global.AppSettings.ReplayViewer.DontSelectPlayersByDefault)
-                _renderer.ZoomFill();
-            else
-                _renderer.ZoomLevel = Global.AppSettings.ReplayViewer.ZoomLevel;
             if (!Global.AppSettings.ReplayViewer.DontSelectPlayersByDefault)
                 PlayList.Items[0].Selected = true;
-            PlayList.CheckedObjects = (IList) PlayList.Objects;
+            _typedPlayList.CheckedObjects = _typedPlayList.Objects;
+            _replayController.SetInitialView();
+            PlayList.AutoResizeColumns();
             UpdateEventsLists();
         }
 
@@ -121,17 +62,23 @@ namespace Elmanager.Forms
             control.BackColor = newColor;
         }
 
-        private void AfterRendering()
+        private void UpdateLabels(bool refresh = false)
         {
-            if (_playListReplays.Count == 0)
+            if (_replayController.PlayListReplays.Count == 0)
             {
                 return;
             }
-            TimeBox.Text = _renderer.CurrentTime.ToTimeString();
+            TimeBox.Text = _replayController.CurrentTime.ToTimeString();
             timeBar.Value =
-                (int) (Math.Min(_renderer.CurrentTime, _renderer.MaxTime) / _renderer.MaxTime * timeBar.Maximum);
+                (int) (Math.Min(_replayController.CurrentTime, _replayController.MaxTime) / _replayController.MaxTime * timeBar.Maximum);
             ShowCoordinates();
-            SpeedLabel.Text = "Speed: " + _renderer.GetSpeed().ToString("F2");
+            SpeedLabel.Text = "Speed: " + _replayController.GetSpeed().ToString("F2");
+            if (refresh)
+            {
+                TimeBox.Refresh();
+                SpeedLabel.Refresh();
+                CoordinateLabel.Refresh();
+            }
         }
 
         private void ChangeRectColor(object sender, EventArgs e)
@@ -140,13 +87,13 @@ namespace Elmanager.Forms
             ColorDialog1.Color = clickedRect.BackColor;
             if (ColorDialog1.ShowDialog() == DialogResult.OK)
             {
-                Color i = ColorDialog1.Color;
-                int j = GetSelectedIndex();
-                clickedRect.BackColor = i;
+                var color = ColorDialog1.Color;
+                var j = GetSelectedIndex();
+                clickedRect.BackColor = color;
                 if (sender.Equals(DrivingLinePanel))
                 {
                     if (j >= 0)
-                        _renderer.DrivingLineColors[j] = i;
+                        _replayController.PlayListReplays[j].DrivingLineColor = color;
                     else
                         return;
                 }
@@ -161,29 +108,11 @@ namespace Elmanager.Forms
             ShowCoordinates();
         }
 
-        private void CoordinateLabelClick(object sender, MouseEventArgs e)
+        private async void EventListBoxSelectedIndexChanged(object sender, EventArgs e)
         {
-        }
-
-        private void CustomRendering()
-        {
-            if (_zoomRecting)
-            {
-                Vector z = GetMouseCoordinates();
-                _renderer.DrawRectangle(_zoomRectStartPoint.X, -_zoomRectStartPoint.Y, z.X, -z.Y, Color.Blue);
-            }
-        }
-
-        private void EventListBoxSelectedIndexChanged(object sender, EventArgs e)
-        {
-            int i = EventListBox.SelectedIndex;
-            if (!_renderer.Playing)
-            {
-                if (i == _currentEvents.Length)
-                    UpdateCurrFrameFromTime(_playListReplays[GetSelectedIndex()].Player.Time);
-                else if (i >= 0)
-                    UpdateCurrFrameFromTime(_currentEvents[i].Time);
-            }
+            await _replayController.PausePlaying();
+            _replayController.SelectedEventChanged(EventListBox.SelectedIndex);
+            UpdateLabels();
         }
 
         private void FullScreen(object sender, EventArgs e)
@@ -195,7 +124,7 @@ namespace Elmanager.Forms
             FormBorderStyle = FormBorderStyle.None;
             ViewerBox.Location = new Point(0, 0);
             TopMost = true;
-            _renderer.SetFullScreenMode(DisplayDevice.Default.AvailableResolutions[ResolutionBox.SelectedIndex]);
+            _replayController.Renderer.SetFullScreenMode(DisplayDevice.Default.AvailableResolutions[ResolutionBox.SelectedIndex]);
             WindowState = FormWindowState.Maximized;
             _fullScreen = true;
             ViewerBox.Size = Size;
@@ -205,15 +134,16 @@ namespace Elmanager.Forms
 
         private Vector GetMouseCoordinates()
         {
-            Point mousePosNoTr = ViewerBox.PointToClient(MousePosition);
+            var mousePosNoTr = ViewerBox.PointToClient(MousePosition);
+            var z = _replayController.ZoomCtrl;
             var mousePos = new Vector
             {
                 X =
-                    _renderer.XMin +
-                    mousePosNoTr.X * (_renderer.XMax - _renderer.XMin) / ViewerBox.Width,
+                    z.Cam.XMin +
+                    mousePosNoTr.X * (z.Cam.XMax - z.Cam.XMin) / ViewerBox.Width,
                 Y =
-                    _renderer.YMax -
-                    mousePosNoTr.Y * (_renderer.YMax - _renderer.YMin) / ViewerBox.Height
+                    z.Cam.YMax -
+                    mousePosNoTr.Y * (z.Cam.YMax - z.Cam.YMin) / ViewerBox.Height
             };
             return mousePos;
         }
@@ -227,27 +157,22 @@ namespace Elmanager.Forms
 
         private void Goto(object sender, MouseEventArgs e)
         {
-            double selectedTime = _renderer.MaxTime * ((e.Location.X - 13) / (double) (timeBar.Width - 27));
-            selectedTime = Math.Min(selectedTime, _renderer.MaxTime);
+            var selectedTime = _replayController.MaxTime * ((e.Location.X - 13) / (double) (timeBar.Width - 27));
+            selectedTime = Math.Min(selectedTime, _replayController.MaxTime);
             selectedTime = Math.Max(selectedTime, 0);
-            timeBar.Value = (int) (selectedTime * 1000 / _renderer.MaxTime);
-            UpdateCurrFrameFromTime(selectedTime);
+            timeBar.Value = (int) (selectedTime * 1000 / _replayController.MaxTime);
+            _replayController.UpdateCurrFrameFromTime(selectedTime);
         }
 
         private void Initialize()
         {
-            MemberInfo[] playListObjectMembers =
-                typeof(PlayListObject).GetMembers(BindingFlags.Public | BindingFlags.Instance);
-            for (int i = 0; i <= 1; i++)
-                PlayList.GetColumn(i).AspectName = playListObjectMembers[i + 4].Name;
-            _renderer = new ElmaRenderer(ViewerBox, Global.AppSettings.ReplayViewer.RenderingSettings);
-            _renderer.UpdateReplaySettings();
-            _renderer.AfterDrawing = AfterRendering;
-            _renderer.CustomRendering = CustomRendering;
-            foreach (DisplayResolution resolution in DisplayDevice.Default.AvailableResolutions)
+            Utils.ConfigureColumns<PlayListObject>(PlayList, hiddenColumns: new []{"Player"});
+            _replayController = new ReplayController(ViewerBox, Global.AppSettings.ReplayViewer.RenderingSettings);
+            _replayController.UpdateReplaySettings();
+            foreach (var resolution in DisplayDevice.Default.AvailableResolutions)
             {
-                ResolutionBox.Items.Add(resolution.Width + "x" + resolution.Height + "x" + resolution.BitsPerPixel +
-                                        ", " + resolution.RefreshRate + " Hz");
+                ResolutionBox.Items.Add(
+                    $"{resolution.Width}x{resolution.Height}x{resolution.BitsPerPixel}, {resolution.RefreshRate} Hz");
                 if (resolution.Equals(DisplayDevice.Default.SelectResolution(1, 1, 1, 1)))
                     ResolutionBox.SelectedIndex = ResolutionBox.Items.Count - 1;
             }
@@ -284,7 +209,7 @@ namespace Elmanager.Forms
                     case Keys.Down:
                     case Keys.Left:
                     case Keys.Right:
-                        Utils.BeginArrowScroll(_renderer);
+                        Utils.BeginArrowScroll(_replayController.Renderer, _replayController.ZoomCtrl, _replayController.SceneSettings);
                         break;
                 }
             }
@@ -317,15 +242,15 @@ namespace Elmanager.Forms
 
                     break;
                 case Keys.Space:
-                    _renderer.TogglePlay();
+                    _replayController.TogglePlay();
                     break;
                 case Constants.Decrease:
                     if (!(Keyboard.IsKeyDown(Key.LeftCtrl) || Keyboard.IsKeyDown(Key.RightCtrl)))
-                        _renderer.PreviousFrame();
+                        _replayController.PreviousFrame();
                     break;
                 case Constants.Increase:
                     if (!(Keyboard.IsKeyDown(Key.LeftCtrl) || Keyboard.IsKeyDown(Key.RightCtrl)))
-                        _renderer.NextFrame();
+                        _replayController.NextFrame();
                     break;
                 case Keys.Oemcomma:
                     if (PlayList.SelectedIndex == -1)
@@ -343,7 +268,7 @@ namespace Elmanager.Forms
                     FullScreen(null, null);
                     break;
                 case Keys.F5:
-                    _renderer.ZoomFill();
+                    _replayController.ZoomCtrl.ZoomFill();
                     break;
                 case Keys.Enter:
                     TextBoxKeyPress(e);
@@ -366,8 +291,8 @@ namespace Elmanager.Forms
 
         private void Zoom(bool zoomIn, double zoomFactor)
         {
-            _renderer.Zoom(GetMouseCoordinates(), zoomIn, zoomFactor);
-            Global.AppSettings.ReplayViewer.ZoomLevel = _renderer.ZoomLevel;
+            _replayController.ZoomCtrl.Zoom(GetMouseCoordinates(), zoomIn, zoomFactor);
+            Global.AppSettings.ReplayViewer.ZoomLevel = _replayController.ZoomCtrl.ZoomLevel;
         }
 
         private void MouseWheelZoomBoxTextChanged(object sender, EventArgs e)
@@ -375,46 +300,44 @@ namespace Elmanager.Forms
             Global.AppSettings.ReplayViewer.MouseWheelStep = MouseWheelZoomBox.ValueAsInt;
         }
 
-        private void PlayBarScroll(object sender, EventArgs e)
+        private async void PlayBarScroll(object sender, EventArgs e)
         {
-            _renderer.Playing = false;
-            _renderer.CurrentTime = timeBar.Value / (double) timeBar.Maximum * _renderer.MaxTime;
-            _renderer.DrawSceneDefault();
+            await _replayController.PausePlaying();
+            _replayController.UpdateCurrFrameFromTime(timeBar.Value / (double)timeBar.Maximum * _replayController.MaxTime);
+            UpdateLabels(true);
         }
 
         private void PlayListSelectionChanged(object sender, EventArgs e)
         {
-            int i = GetSelectedIndex();
-            _renderer.ActivePlayerIndices.Clear();
-            foreach (int x in PlayList.SelectedIndices)
-                _renderer.ActivePlayerIndices.Add(x);
-            _renderer.VisiblePlayerIndices.Clear();
-            foreach (int x in PlayList.CheckedIndices)
-                _renderer.VisiblePlayerIndices.Add(x);
-            _renderer.FocusIndicesChanged();
+            var i = GetSelectedIndex();
+            _replayController.SelectedReplayChanged(
+                i,
+                PlayList.SelectedIndices.Cast<int>(),
+                PlayList.CheckedIndices.Cast<int>()
+                );
             if (i < 0)
             {
-                _renderer.DrawSceneDefault();
+                RedrawSceneIfNotPlaying();
                 DrivingLinePanel.Enabled = false;
             }
             else
             {
                 DrivingLinePanel.Enabled = true;
-                UpdateControlColor(DrivingLinePanel, _renderer.DrivingLineColors[i]);
+                UpdateControlColor(DrivingLinePanel, _replayController.PlayListReplays[i].DrivingLineColor);
             }
 
             UpdateEventsLists();
-            _renderer.DrawSceneDefault();
+            _replayController.UpdateCameraAndDrawSceneIfNotPlaying();
         }
 
         private void RenderingOptionsChanged(object sender = null, EventArgs e = null)
         {
             SaveViewerSettings();
-            double speed = Math.Pow(2, playbackSpeedBar.Value);
-            _renderer.SetPlayBackSpeed(speed);
+            var speed = Math.Pow(2, playbackSpeedBar.Value);
+            _replayController.SetPlayBackSpeed(speed);
             toolTip1.SetToolTip(playbackSpeedBar, "Playback speed: " + speed + "x");
-            _renderer.UpdateReplaySettings();
-            _renderer.RedrawScene();
+            _replayController.UpdateReplaySettings();
+            RedrawSceneIfNotPlaying();
         }
 
         private void RenderingSettingsButtonClick(object sender, EventArgs e)
@@ -422,8 +345,8 @@ namespace Elmanager.Forms
             var settingsForm = new RenderingSettingsForm(Global.AppSettings.ReplayViewer.RenderingSettings);
             settingsForm.Changed += x =>
             {
-                _renderer.UpdateSettings(x);
-                _renderer.RedrawScene();
+                _replayController.Renderer.UpdateSettings(x);
+                RedrawSceneIfNotPlaying();
             };
             settingsForm.ShowDialog();
         }
@@ -451,12 +374,29 @@ namespace Elmanager.Forms
         private void SetupEventHandlers()
         {
             Resize += ViewerResized;
-            ViewerBox.Paint += _renderer.RedrawScene;
-            ZoomFillButton.MouseDown += _renderer.ZoomFill;
-            PlayButton.MouseDown += _renderer.TogglePlay;
-            StopButton.MouseDown += _renderer.StopPlaying;
-            PrevFrameButton.MouseDown += _renderer.PreviousFrame;
-            NextFrameButton.MouseDown += _renderer.NextFrame;
+            var ope = new Action(() => UpdateLabels());
+            _replayController.PlayingElapsed += (s, e) =>
+            {
+                Invoke(ope);
+            };
+            
+            ZoomFillButton.MouseDown += (s, e) => _replayController.ZoomCtrl.ZoomFill();
+            PlayButton.MouseDown += (s, e) => _replayController.TogglePlay();
+            StopButton.MouseDown += async (s, e) =>
+            {
+                await _replayController.StopPlaying();
+                UpdateLabels();
+            };
+            PrevFrameButton.MouseDown += (s, e) =>
+            {
+                _replayController.PreviousFrame();
+                UpdateLabels();
+            };
+            NextFrameButton.MouseDown += (s, e) =>
+            {
+                _replayController.NextFrame();
+                UpdateLabels();
+            };
             ShowDriverPathBox.CheckedChanged += RenderingOptionsChanged;
             LockedCamBox.CheckedChanged += RenderingOptionsChanged;
             LoopPlayingBox.CheckedChanged += RenderingOptionsChanged;
@@ -480,15 +420,14 @@ namespace Elmanager.Forms
 
         private void ShowCoordinates()
         {
-            Vector x;
             if (Global.AppSettings.ReplayViewer.ShowBikeCoords)
             {
-                x = _renderer.GetBikeCoordinates();
+                var x = _replayController.GetBikeCoordinates();
                 CoordinateLabel.Text = "Bike X: " + x.X.ToString("F3") + " Y: " + x.Y.ToString("F3");
             }
             else
             {
-                x = GetMouseCoordinates();
+                var x = GetMouseCoordinates();
                 CoordinateLabel.Text = "Mouse X: " + x.X.ToString("F3") + " Y: " + x.Y.ToString("F3");
             }
         }
@@ -498,38 +437,41 @@ namespace Elmanager.Forms
             if (e.Location == _lastLocation)
                 return;
             toolTip1.SetToolTip(timeBar,
-                (_renderer.MaxTime * ((e.Location.X - 13) / (double) (timeBar.Width - 27))).ToTimeString
+                (_replayController.MaxTime * ((e.Location.X - 13) / (double) (timeBar.Width - 27))).ToTimeString
                     ());
             _lastLocation = e.Location;
         }
 
         private void SnapShotButtonClick(object sender, EventArgs e)
         {
+            if (_replayController.Playing)
+            {
+                return;
+            }
             if (SaveFileDialog1.ShowDialog() == DialogResult.OK)
-                _renderer.SaveSnapShot(SaveFileDialog1.FileName);
+            {
+                using (var bmp = ElmaRenderer.GetSnapShotOfCurrent(_replayController.ZoomCtrl))
+                {
+                    bmp.Save(SaveFileDialog1.FileName, ImageFormat.Png);
+                }
+            }
         }
 
         private void TextBoxKeyPress(KeyEventArgs e)
         {
             if (e.KeyCode == Keys.Enter && TimeBox.Text.Length == 9)
-                UpdateCurrFrameFromTime(Utils.StringToTime(TimeBox.Text));
+                _replayController.UpdateCurrFrameFromTime(Utils.StringToTime(TimeBox.Text));
         }
 
         private void TrackBarScrolled(int delta)
         {
-            Zoom(delta > 0, 1 - Global.AppSettings.ReplayViewer.MouseWheelStep / 100.0);
-        }
-
-        private void UpdateCurrFrameFromTime(double newTime)
-        {
-            newTime = Math.Max(newTime, 0);
-            _renderer.CurrentTime = newTime;
-            _renderer.DrawSceneDefault();
+            // TODO: Was this ever needed?
+            // Zoom(delta > 0, 1 - Global.AppSettings.ReplayViewer.MouseWheelStep / 100.0);
         }
 
         private void UpdateEventsLists(object sender = null, EventArgs e = null)
         {
-            int i = GetSelectedIndex();
+            var i = GetSelectedIndex();
             if (i >= 0)
             {
                 var typesToShow = new List<LogicalEventType>();
@@ -545,10 +487,9 @@ namespace Elmanager.Forms
                     typesToShow.Add(LogicalEventType.Turn);
                 if (groundtouchesToolStripMenuItem.Checked)
                     typesToShow.Add(LogicalEventType.GroundTouch);
-                _currentEvents = _playListReplays[i].Player.GetEvents(typesToShow.ToArray());
-                Utils.PutEventsToList(_playListReplays[i].Player, EventListBox,
-                    _playListReplays[0].Player.Finished || _playListReplays[i].Player.FakeFinish,
-                    _currentEvents);
+                var evs = _replayController.UpdateEvents(typesToShow);
+                var p = _replayController.GetSelectedPlayer();
+                Utils.PutEventsToList(p, EventListBox, p.Finished || p.FakeFinish, evs);
             }
             else
                 EventListBox.Items.Clear();
@@ -559,30 +500,26 @@ namespace Elmanager.Forms
             }
         }
 
-        private void ViewerClosing(object sender, CancelEventArgs e)
+        private async void ViewerClosing(object sender, CancelEventArgs e)
         {
-            _renderer.Playing = false;
             DisplayDevice.Default.RestoreResolution();
-            _renderer.Dispose();
-            _renderer = null;
             SaveViewerSettings();
+            if (_replayController.Playing)
+            {
+                e.Cancel = true; // must make sure playing thread has stopped before closing
+                await _replayController.PausePlaying();
+                Close();
+            }
         }
 
         private void ViewerMouseDown(object sender, MouseEventArgs e)
         {
-            Vector z = GetMouseCoordinates();
+            var z = GetMouseCoordinates();
             switch (e.Button)
             {
                 case MouseButtons.Left:
-                    if (Keyboard.IsKeyDown(Key.LeftCtrl))
-                    {
-                        _zoomRecting = true;
-                        _zoomRectStartPoint = z;
-                    }
-                    else
-                        Zoom(e.Button == MouseButtons.Left,
-                            1 - Global.AppSettings.ReplayViewer.MouseClickStep / 100.0);
-
+                    Zoom(e.Button == MouseButtons.Left,
+                        1 - Global.AppSettings.ReplayViewer.MouseClickStep / 100.0);
                     break;
                 case MouseButtons.Right:
                     Zoom(e.Button == MouseButtons.Left,
@@ -598,29 +535,22 @@ namespace Elmanager.Forms
         private void ViewerMouseMoving(object sender, MouseEventArgs e)
         {
             ShowCoordinates();
-            Vector z = GetMouseCoordinates();
+            var z = GetMouseCoordinates();
+            var zoomCtrl = _replayController.ZoomCtrl;
             if (_draggingScreen)
             {
-                _renderer.CenterX = _moveStartPosition.X + (_renderer.XMax + _renderer.XMin) / 2 - z.X;
-                _renderer.CenterY = _moveStartPosition.Y + (_renderer.YMax + _renderer.YMin) / 2 - z.Y;
-                _renderer.RedrawScene();
+                zoomCtrl.CenterX = _moveStartPosition.X + (zoomCtrl.Cam.XMax + zoomCtrl.Cam.XMin) / 2 - z.X;
+                zoomCtrl.CenterY = _moveStartPosition.Y + (zoomCtrl.Cam.YMax + zoomCtrl.Cam.YMin) / 2 - z.Y;
+                RedrawSceneIfNotPlaying();
             }
-            else if (_zoomRecting)
-                _renderer.RedrawScene();
         }
 
         private void ViewerMouseUp(object sender, MouseEventArgs e)
         {
-            if (_zoomRecting)
-            {
-                _zoomRecting = false;
-                _renderer.ZoomRect(_zoomRectStartPoint, GetMouseCoordinates());
-            }
-
             _draggingScreen = false;
         }
 
-        private void ViewerResized(object sender = null, EventArgs e = null)
+        private async void ViewerResized(object sender = null, EventArgs e = null)
         {
             if (sender != null)
             {
@@ -628,12 +558,12 @@ namespace Elmanager.Forms
                 viewerSizeYBox.Text = ViewerBox.Height.ToString();
             }
 
-            if (_renderer != null)
+            if (_replayController != null)
             {
-                _renderer.ResetViewport(ViewerBox.Width, ViewerBox.Height);
-                if (_renderer.Lev != null)
+                await _replayController.ResetViewport(ViewerBox.Width, ViewerBox.Height);
+                if (_replayController.Lev != null)
                 {
-                    _renderer.RedrawScene();
+                    RedrawSceneIfNotPlaying();
                 }
             }
         }
@@ -660,39 +590,27 @@ namespace Elmanager.Forms
                     return;
                 if (MousePosition.X - _lastMouseX < 0)
                 {
-                    _renderer.ZoomLevel *= 1.05;
+                    _replayController.ZoomCtrl.ZoomLevel *= 1.05;
                 }
                 else
                 {
-                    _renderer.ZoomLevel /= 1.05;
+                    _replayController.ZoomCtrl.ZoomLevel /= 1.05;
                 }
 
-                _renderer.RedrawScene();
+                RedrawSceneIfNotPlaying();
                 _lastMouseX = MousePosition.X;
-                Global.AppSettings.ReplayViewer.ZoomLevel = _renderer.ZoomLevel;
+                Global.AppSettings.ReplayViewer.ZoomLevel = _replayController.ZoomCtrl.ZoomLevel;
             }
+        }
+
+        private void RedrawSceneIfNotPlaying()
+        {
+            _replayController.RedrawSceneIfNotPlaying();
         }
 
         private void ZoomButtonMouseUp(object sender, MouseEventArgs e)
         {
             _zooming = false;
-        }
-
-        private struct PlayListObject
-        {
-// ReSharper disable UnaccessedField.Local
-            public string FileName;
-            public int PlayerNum;
-
-            internal Player Player;
-// ReSharper restore UnaccessedField.Local
-
-            internal PlayListObject(string fileName, int num, Player player)
-            {
-                FileName = fileName;
-                PlayerNum = num;
-                Player = player;
-            }
         }
     }
 }

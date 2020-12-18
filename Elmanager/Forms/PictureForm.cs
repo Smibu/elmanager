@@ -74,7 +74,7 @@ namespace Elmanager.Forms
 
         internal bool MultipleTexturesSelected => TextureComboBox.SelectedItem.ToString() == MultipleValues;
 
-        internal bool MultipleMaskSelected => MaskComboBox.SelectedItem.ToString() == MultipleValues;
+        internal bool MultipleMaskSelected => MaskComboBox.SelectedItem?.ToString() == MultipleValues;
 
         internal bool MultipleDistanceSelected => DistanceBox.Text == MultipleValues;
 
@@ -360,7 +360,7 @@ namespace Elmanager.Forms
                             Clipping = (ClippingType) ClippingComboBox.SelectedIndex;
                             Picture = _currentLgr.ImageFromName(PictureComboBox.SelectedItem.ToString());
                             Texture = _currentLgr.ImageFromName(TextureComboBox.SelectedItem.ToString());
-                            Mask = _currentLgr.ImageFromName(MaskComboBox.SelectedItem.ToString());
+                            Mask = MaskComboBox.SelectedItem != null ? _currentLgr.ImageFromName(MaskComboBox.SelectedItem.ToString()) : null;
                             CloseAndAccept(true);
                         }
                         else

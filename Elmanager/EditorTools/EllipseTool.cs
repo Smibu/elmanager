@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using System.Windows.Forms;
 using System.Windows.Input;
 using Elmanager.Forms;
@@ -26,14 +27,28 @@ namespace Elmanager.EditorTools
         {
             _ellipseSteps = Math.Max(Global.AppSettings.LevelEditor.EllipseSteps, 3);
             UpdateHelp();
-            Renderer.AdditionalPolys = ExtraPolys;
         }
 
         public void ExtraRendering()
         {
             if (CreatingEllipse)
+            {
                 if (Global.AppSettings.LevelEditor.RenderingSettings.ShowGroundEdges)
+                {
                     Renderer.DrawPolygon(_ellipse, Global.AppSettings.LevelEditor.RenderingSettings.GroundEdgeColor);
+                }
+            }
+        }
+
+        public List<Polygon> GetExtraPolygons()
+        {
+            var polys = new List<Polygon>();
+            if (CreatingEllipse)
+            {
+                polys.Add(_ellipse);
+            }
+
+            return polys;
         }
 
         public void InActivate()
@@ -116,12 +131,6 @@ namespace Elmanager.EditorTools
                 LevEditor.InfoLabel.Text = "+/-: adjust number of sides. Edges in ellipse: " + _ellipseSteps;
             else
                 LevEditor.InfoLabel.Text = "Left mouse button: select center point of the ellipse.";
-        }
-
-        private void ExtraPolys()
-        {
-            if (CreatingEllipse)
-                Renderer.DrawFilledTriangles(_ellipse.Decomposition);
         }
 
         private void UpdateEllipse()

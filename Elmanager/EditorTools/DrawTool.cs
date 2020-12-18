@@ -1,3 +1,4 @@
+using System.Collections.Generic;
 using System.Drawing;
 using System.Windows.Forms;
 using Elmanager.Forms;
@@ -33,6 +34,11 @@ namespace Elmanager.EditorTools
         {
             if (Drawing)
                 Renderer.DrawLine(_currentPolygon.GetLastVertex(), _currentPolygon.Vertices[0], Color.Red);
+        }
+
+        public List<Polygon> GetExtraPolygons()
+        {
+            return new List<Polygon>();
         }
 
         public void InActivate()
@@ -81,7 +87,7 @@ namespace Elmanager.EditorTools
             if (!Drawing) return;
             _mouseTrip += (p - _lastMousePosition).Length;
             _lastMousePosition = p;
-            var scaledStep = Global.AppSettings.LevelEditor.DrawStep * Renderer.ZoomLevel * 0.1;
+            var scaledStep = Global.AppSettings.LevelEditor.DrawStep * ZoomCtrl.ZoomLevel * 0.1;
             if (_mouseTrip > scaledStep)
             {
                 while (!(_mouseTrip < scaledStep))

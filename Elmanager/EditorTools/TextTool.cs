@@ -44,7 +44,7 @@ namespace Elmanager.EditorTools
                 case MouseButtons.Left:
                     _writing = true;
                     _currentTextPolygons = new List<Polygon>();
-                    Renderer.RedrawScene();
+                    LevEditor.RedrawScene();
                     var result = TextToolForm.ShowDefault(_currentOptions, HandleChange);
                     _writing = false;
                     if (result.HasValue)
@@ -61,7 +61,7 @@ namespace Elmanager.EditorTools
                         LevEditor.UpdateSelectionInfo();
                     }
 
-                    Renderer.RedrawScene();
+                    LevEditor.RedrawScene();
                     break;
                 case MouseButtons.None:
                     break;
@@ -81,7 +81,7 @@ namespace Elmanager.EditorTools
         private void HandleChange(TextToolOptions obj)
         {
             _currentTextPolygons = RenderString(obj, CurrentPos);
-            Renderer.RedrawScene();
+            LevEditor.RedrawScene();
         }
 
         public void MouseUp()
@@ -107,6 +107,11 @@ namespace Elmanager.EditorTools
             {
                 _currentTextPolygons.ForEach(p => Renderer.DrawPolygon(p, Color.Blue));
             }
+        }
+
+        public List<Polygon> GetExtraPolygons()
+        {
+            return new List<Polygon>();
         }
 
         public void InActivate()
@@ -241,7 +246,7 @@ namespace Elmanager.EditorTools
                                         }
                                     })
                                     .Select(p =>
-                                        new Vector(p.X + offset.X, p.Y + offset.Y, VectorMark.Selected))
+                                        new Vector(p.X + offset.X, -p.Y + offset.Y, VectorMark.Selected))
                             )
                         )
                 );

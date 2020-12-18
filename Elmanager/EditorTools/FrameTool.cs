@@ -31,7 +31,6 @@ namespace Elmanager.EditorTools
         {
             _frameRadius = Global.AppSettings.LevelEditor.FrameRadius;
             UpdateHelp();
-            Renderer.AdditionalPolys = ExtraPolygons;
         }
 
         public void UpdateHelp()
@@ -48,10 +47,20 @@ namespace Elmanager.EditorTools
             Renderer.DrawPolygon(_frames[1], Color.Blue);
         }
 
+        public List<Polygon> GetExtraPolygons()
+        {
+            var polys = new List<Polygon>();
+            if (Framing)
+            {
+                polys = _frames;
+            }
+
+            return polys;
+        }
+
         public void InActivate()
         {
             Global.AppSettings.LevelEditor.FrameRadius = _frameRadius;
-            Renderer.AdditionalPolys = null;
             if (!Framing) return;
             CancelFraming();
             ResetHighlight();
@@ -163,13 +172,6 @@ namespace Elmanager.EditorTools
 
         public void MouseUp()
         {
-        }
-
-        private void ExtraPolygons()
-        {
-            if (!Framing) return;
-            Renderer.DrawFilledTriangles(_frames[0].Decomposition);
-            Renderer.DrawFilledTriangles(_frames[1].Decomposition);
         }
 
         private void CancelFraming()

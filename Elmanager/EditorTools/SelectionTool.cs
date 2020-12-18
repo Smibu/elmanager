@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using System.Drawing;
 using System.Linq;
 using System.Windows.Forms;
@@ -45,6 +46,11 @@ namespace Elmanager.EditorTools
                 Renderer.DrawRectangle(_selectionStartPoint, CurrentPos, Color.Blue);
             else if (FreeSelecting)
                 Renderer.DrawPolygon(_selectionPoly, Color.Blue);
+        }
+
+        public List<Polygon> GetExtraPolygons()
+        {
+            return new List<Polygon>();
         }
 
         public void InActivate()
@@ -280,7 +286,7 @@ namespace Elmanager.EditorTools
             {
                 _mouseTrip += (p - _lastMousePosition).Length;
                 _lastMousePosition = p;
-                double step = 0.02 * Renderer.ZoomLevel;
+                double step = 0.02 * ZoomCtrl.ZoomLevel;
                 if (_mouseTrip > step)
                 {
                     while (!(_mouseTrip < step))

@@ -53,6 +53,11 @@ namespace Elmanager.EditorTools
         {
         }
 
+        public List<Polygon> GetExtraPolygons()
+        {
+            return new List<Polygon>();
+        }
+
         public void InActivate()
         {
             if (!FirstSelected) return;

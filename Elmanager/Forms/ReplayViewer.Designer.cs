@@ -15,7 +15,7 @@ namespace Elmanager.Forms
 				{
 					components.Dispose();
 				}
-                _renderer?.Dispose();
+                _replayController.Dispose();
 			}
 			finally
 			{
@@ -33,7 +33,7 @@ namespace Elmanager.Forms
             this.components = new System.ComponentModel.Container();
             this.SaveFileDialog1 = new System.Windows.Forms.SaveFileDialog();
             this.ColorDialog1 = new System.Windows.Forms.ColorDialog();
-            this.ViewerBox = new System.Windows.Forms.Panel();
+            this.ViewerBox = new NoPaintBgControl();
             this.contextMenuStrip1 = new System.Windows.Forms.ContextMenuStrip(this.components);
             this.applesToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.leftVoltsToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
@@ -838,7 +838,7 @@ namespace Elmanager.Forms
 		internal System.Windows.Forms.CheckBox LockedCamBox;
 		internal System.Windows.Forms.CheckBox TransparentInactiveBox;
 		internal System.Windows.Forms.CheckBox PictBackGroundBox;
-		internal System.Windows.Forms.Panel ViewerBox;
+		internal Control ViewerBox;
 		internal ComboBoxMod ResolutionBox;
 		internal System.Windows.Forms.Label Label7;
         internal TrackBarMod playbackSpeedBar;

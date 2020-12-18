@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using System.ComponentModel;
 using System.IO;
 
@@ -55,8 +56,9 @@ namespace Elmanager
         internal readonly bool IsInternal; //Is it internal or external replay
 
         internal readonly string LevelPath; //Path of the level file if it is found
-        internal readonly Player Player1;
-        internal readonly Player Player2;
+        internal Player Player1 => Players[0];
+        internal Player Player2 => Players[1];
+        internal readonly List<Player> Players = new List<Player>(2);
 
         internal Replay(string replayPath)
         {
@@ -78,12 +80,12 @@ namespace Elmanager
                     LevelFilename = rec.ReadNullTerminatedString(12);
                     rec.ReadInt32();
                     IsInternal = Level.IsInternalLevel(LevelFilename);
-                    Player1 = new Player(rec, frames);
+                    Players.Add(new Player(rec, frames));
                     if (IsMulti)
                     {
                         frames = rec.ReadInt32();
                         rec.BaseStream.Seek(32, SeekOrigin.Current);
-                        Player2 = new Player(rec, frames);
+                        Players.Add(new Player(rec, frames));
                     }
                 }
                 catch (EndOfStreamException)

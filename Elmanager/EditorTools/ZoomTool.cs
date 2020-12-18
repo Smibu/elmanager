@@ -1,3 +1,4 @@
+using System.Collections.Generic;
 using System.Windows.Forms;
 using Elmanager.Forms;
 
@@ -18,6 +19,11 @@ namespace Elmanager.EditorTools
         {
         }
 
+        public List<Polygon> GetExtraPolygons()
+        {
+            return new List<Polygon>();
+        }
+
         public void InActivate()
         {
         }
@@ -33,7 +39,7 @@ namespace Elmanager.EditorTools
             {
                 case MouseButtons.Left:
                 case MouseButtons.Right:
-                    Renderer.Zoom(CurrentPos, mouseData.Button == MouseButtons.Left,
+                    ZoomCtrl.Zoom(CurrentPos, mouseData.Button == MouseButtons.Left,
                         1 - Global.AppSettings.LevelEditor.MouseClickStep / 100.0);
                     break;
             }

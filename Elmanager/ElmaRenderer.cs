@@ -3,9 +3,7 @@ using OpenTK.Graphics;
 using OpenTK.Graphics.OpenGL;
 using OpenTK.Platform;
 using System;
-using System.Collections;
 using System.Collections.Generic;
-using System.Diagnostics;
 using System.Drawing;
 using System.Drawing.Imaging;
 using System.IO;
@@ -17,18 +15,8 @@ namespace Elmanager
 {
     internal class ElmaRenderer : IDisposable
     {
-        //Constants
-        internal const double ObjectDiameter = ObjectRadius * 2;
+        private const double ObjectDiameter = ObjectRadius * 2;
         internal const double ObjectRadius = 0.4;
-        internal List<int> ActivePlayerIndices = new List<int>();
-        internal Action AdditionalPolys;
-        internal Action AfterDrawing;
-        internal Lgr CurrentLgr;
-        internal Action CustomRendering;
-        internal Color[] DrivingLineColors = new Color[] { };
-        internal Level Lev;
-        internal bool Playing;
-        internal List<int> VisiblePlayerIndices = new List<int>();
         private const int BikeDistance = 500;
         private const double BikePicAspectRatio = 380.0 / 301.0;
         private const double BikePicRotationConst = 35.0;
@@ -42,28 +30,24 @@ namespace Elmanager
         private const double BodyWidth = 0.7;
         private const double GroundDepth = 0;
         private const int GroundStencil = 2;
-        private const double MinimumZoom = 0.000001;
         private const double PictureFactor = 1 / 48.0;
         private const double SkyDepth = 0;
         private const int SkyStencil = 1;
         private const int StencilMask = 255;
-
         private const double Suspension1Factor = 1 / 170.0;
         private const double Suspension2Factor = 1 / 220.0;
         private const double TextureCoordConst = TextureVertexConst * 7.0 / 3.0;
         private const double TextureVertexConst = 1000;
         private const double TextureZoomConst = 10000.0;
-
-        private const double ZoomFillMargin = 0.05;
         private const double ZFar = 1;
         private const double ZNear = -1;
         private const int LinePattern = 0b0101010101010101;
-        private readonly int[] _viewPort = new int[4];
-        private static bool _smoothZoomInProgress;
-        private Color _activePlayerColor;
-        private Dictionary<int, int> _applePics = new Dictionary<int, int>();
+
+        internal Lgr CurrentLgr;
+        internal Level Lev;
+
+        private readonly Dictionary<int, int> _applePics = new Dictionary<int, int>();
         private int _armPic;
-        private double _aspectRatio;
         private int _bikePic;
         private double _bikePicTranslateXFacingLeft;
         private double _bikePicTranslateXFacingRight;
@@ -71,127 +55,33 @@ namespace Elmanager
         private double _bikePicTranslateYFacingRight;
         private int _bodyPic;
         private IWindowInfo _ctrlWindowInfo;
-        private PlayerEvent<LogicalEventType>[] _currentPlayerAppleEvents;
         private bool _disposed;
-        private bool _drawInActiveAsTransparent;
-        private bool _drawOnlyPlayerFrames;
 
         public List<DrawableImage> DrawableImages { get; set; } = new List<DrawableImage>();
 
         private int _flowerPic;
-        private bool _followDriver;
-        private double _frameStep = 0.02;
         private GraphicsContext _gfxContext;
         private DrawableImage _groundTexture;
+        private DrawableImage _skyTexture;
         private int _handPic;
         private int _headPic;
-        private bool _hideStartObject;
-        private Color _inActivePlayerColor;
-        private double _initialTime;
         private int _killerPic;
         private bool _lgrGraphicsLoaded;
         private int _legPic;
-        private bool _lockedCamera;
-        private bool _loopPlaying;
-        private double _midX;
-        private double _midY;
-        private bool _multiSpy;
-        private List<LevObject> _notTakenApples;
         private bool _openGlInitialized;
-        private bool _picturesInBackground;
-        private double _playBackSpeed = 1.0;
-        private Stopwatch _playTimer = new Stopwatch();
-        private List<Player> _players = new List<Player>();
         private RenderingSettings _settings = new RenderingSettings();
-        private bool _showDriverPath;
-        private DrawableImage _skyTexture;
-        private Suspension[] _suspensions = new Suspension[2];
+        private readonly Suspension[] _suspensions = new Suspension[2];
         private int _thighPic;
         private int _wheelPic;
-        private bool _wrongLevVersion;
-        private double _zoomFillxMax;
-        private double _zoomFillxMin;
-        private double _zoomFillyMax;
-        private double _zoomFillyMin;
-        private ViewSettings _viewSettings;
-        private double _currentTime;
-        private Vector _gridOffset = new Vector(0, 0);
         private int _frameBuffer;
         private int _colorRenderBuffer;
         private int _depthStencilRenderBuffer;
         private int _maxRenderbufferSize;
-        private Control _renderTarget;
-        private bool _followAlsoWhenZooming;
 
         internal ElmaRenderer(Control renderingTarget, RenderingSettings settings)
         {
             BaseInit(renderingTarget, settings);
         }
-
-        internal double CenterX
-        {
-            get => _viewSettings.CenterX;
-            set
-            {
-                if (value < _zoomFillxMin - XSize)
-                    value = _zoomFillxMin - XSize;
-                if (value > _zoomFillxMax + XSize)
-                    value = _zoomFillxMax + XSize;
-                _viewSettings.CenterX = value;
-            }
-        }
-
-        internal double CenterY
-        {
-            get => _viewSettings.CenterY;
-            set
-            {
-                if (value < _zoomFillyMin - YSize)
-                    value = _zoomFillyMin - YSize;
-                if (value > _zoomFillyMax + YSize)
-                    value = _zoomFillyMax + YSize;
-                _viewSettings.CenterY = value;
-            }
-        }
-
-        internal double CurrentTime
-        {
-            get => _currentTime;
-            set
-            {
-                _currentTime = value;
-                _players.ForEach(x => { x.CurrentTime = _currentTime; });
-            }
-        }
-
-        internal double MaxTime { get; private set; }
-
-        internal double XMax => CenterX + ZoomLevel * _aspectRatio;
-
-        internal double XMin => CenterX - ZoomLevel * _aspectRatio;
-
-        internal double XSize => XMax - XMin;
-
-        internal double YMax => CenterY + ZoomLevel;
-
-        internal double YMin => CenterY - ZoomLevel;
-
-        internal double YSize => YMax - YMin;
-
-        internal double ZoomLevel
-        {
-            get => _viewSettings.ZoomLevel;
-            set
-            {
-                if (value > MaxDimension * 2)
-                    value = MaxDimension * 2;
-                if (value < MinimumZoom)
-                    value = MinimumZoom;
-                _viewSettings.ZoomLevel = value;
-            }
-        }
-
-        private double MaxDimension => Math.Max(_zoomFillxMax - _zoomFillxMin, _zoomFillyMax - _zoomFillyMin);
 
         internal bool LgrGraphicsLoaded => _lgrGraphicsLoaded;
 
@@ -200,7 +90,7 @@ namespace Elmanager
             Dispose(true);
         }
 
-        internal Bitmap GetSnapShot()
+        internal Bitmap GetSnapShot(ZoomController zoomCtrl, SceneSettings sceneSettings)
         {
             Bitmap snapShotBmp;
             if (_maxRenderbufferSize > 0)
@@ -209,10 +99,10 @@ namespace Elmanager
                 var height = _maxRenderbufferSize;
                 GL.BindFramebuffer(FramebufferTarget.ReadFramebuffer, _frameBuffer);
                 GL.BindFramebuffer(FramebufferTarget.DrawFramebuffer, _frameBuffer);
-                var oldViewPort = (int[]) _viewPort.Clone();
-                var oldViewSettings = _viewSettings;
+                var oldViewPort = (int[]) zoomCtrl.Cam.Viewport.Clone();
                 ResetViewport(width, height);
-                ZoomFill();
+                zoomCtrl.ZoomFill();
+                DrawScene(zoomCtrl.Cam, sceneSettings);
                 snapShotBmp = new Bitmap(width, height);
                 var bmpData = snapShotBmp.LockBits(new Rectangle(0, 0, width, height), ImageLockMode.WriteOnly,
                     PixelFormat.Format24bppRgb);
@@ -224,22 +114,27 @@ namespace Elmanager
                 GL.BindFramebuffer(FramebufferTarget.ReadFramebuffer, 0);
                 GL.BindFramebuffer(FramebufferTarget.DrawFramebuffer, 0);
                 ResetViewport(oldViewPort[2], oldViewPort[3]);
-                _viewSettings = oldViewSettings;
-                RedrawScene();
             }
             else
             {
-                var width = _viewPort[2];
-                var height = _viewPort[3];
-                snapShotBmp = new Bitmap(width, height);
-                var bmpData = snapShotBmp.LockBits(new Rectangle(0, 0, width, height), ImageLockMode.WriteOnly,
-                    PixelFormat.Format24bppRgb);
-                GL.ReadPixels(0, 0, width, height, OpenTK.Graphics.OpenGL.PixelFormat.Bgr, PixelType.UnsignedByte,
-                    bmpData.Scan0);
-                snapShotBmp.UnlockBits(bmpData);
-                snapShotBmp.RotateFlip(RotateFlipType.RotateNoneFlipY);
+                snapShotBmp = GetSnapShotOfCurrent(zoomCtrl);
             }
 
+            return snapShotBmp;
+        }
+
+        internal static Bitmap GetSnapShotOfCurrent(ZoomController zoomCtrl)
+        {
+            var width = zoomCtrl.Cam.ViewPortWidth;
+            var height = zoomCtrl.Cam.ViewPortHeight;
+            var snapShotBmp = new Bitmap(width, height);
+            var bmpData = snapShotBmp.LockBits(new Rectangle(0, 0, width, height), ImageLockMode.WriteOnly,
+                PixelFormat.Format24bppRgb);
+            GL.ReadBuffer(ReadBufferMode.Front);
+            GL.ReadPixels(0, 0, width, height, OpenTK.Graphics.OpenGL.PixelFormat.Bgr, PixelType.UnsignedByte,
+                bmpData.Scan0);
+            snapShotBmp.UnlockBits(bmpData);
+            snapShotBmp.RotateFlip(RotateFlipType.RotateNoneFlipY);
             return snapShotBmp;
         }
 
@@ -273,18 +168,13 @@ namespace Elmanager
             DrawCircle(v.X, v.Y, radius, circleColor);
         }
 
-        internal void DrawDummyPlayer(double leftWheelx, double leftWheely, bool active = true, bool useGraphics = true)
+        internal void DrawDummyPlayer(double leftWheelx, double leftWheely, SceneSettings sceneSettings, PlayerRenderOpts opts)
         {
-            GL.Scale(1, -1, 1);
-            GL.Enable(EnableCap.Texture2D);
-            GL.Enable(EnableCap.AlphaTest);
-            GL.Enable(EnableCap.DepthTest);
-            DrawPlayer(leftWheelx + Level.GlobalBodyDifferenceFromLeftWheelX,
+            DrawPlayer(new PlayerState(leftWheelx + Level.GlobalBodyDifferenceFromLeftWheelX,
                 leftWheely + Level.GlobalBodyDifferenceFromLeftWheelY, leftWheelx, leftWheely,
                 leftWheelx + Level.RightWheelDifferenceFromLeftWheelX, leftWheely, 0, 0,
-                leftWheelx + Level.HeadDifferenceFromLeftWheelX, leftWheely - Level.HeadDifferenceFromLeftWheelY,
-                0, Direction.Left, 0, active, useGraphics);
-            GL.Scale(1, -1, 1);
+                leftWheelx + Level.HeadDifferenceFromLeftWheelX, leftWheely + Level.HeadDifferenceFromLeftWheelY,
+                0, Direction.Left, 0), opts, sceneSettings);
         }
 
         internal void DrawFilledTriangles(IEnumerable<Vector[]> triangles)
@@ -444,53 +334,44 @@ namespace Elmanager
             GL.End();
         }
 
-        internal void DrawScene(bool zoomToDriver, bool showDriverPath)
+        internal void MakeCurrent()
         {
             _gfxContext.MakeCurrent(_ctrlWindowInfo);
+        }
+
+        internal void MakeNoneCurrent()
+        {
+            _gfxContext.MakeCurrent(null);
+        }
+
+        internal void DrawScene(ElmaCamera cam, SceneSettings sceneSettings)
+        {
+            MakeCurrent();
+            var aspectRatio = cam.AspectRatio;
+            var centerX = cam.CenterX;
+            var centerY = cam.CenterY;
             GL.LoadIdentity();
-            double fixx = 0;
-            double fixy = 0;
-            if (ActivePlayerIndices.Count > 0 && zoomToDriver)
-            {
-                CenterX = _players[ActivePlayerIndices[0]].GlobalBodyX;
-                CenterY = _players[ActivePlayerIndices[0]].GlobalBodyY;
-                fixx = CenterX % (2 * ZoomLevel * _aspectRatio / _renderTarget.Width);
-                fixy = CenterY % (2 * ZoomLevel / _renderTarget.Height);
-                CenterX -= fixx;
-                CenterY -= fixy;
-                GL.Ortho(XMin, XMax, YMin, YMax, ZNear, ZFar);
-                if (_lockedCamera)
-                {
-                    GL.Translate(CenterX, CenterY, 0);
-                    GL.Rotate(-_players[ActivePlayerIndices[0]].BikeRotationDegrees, 0, 0, 1);
-                    GL.Translate(-CenterX, -CenterY, 0);
-                }
-            }
-            else
-            {
-                GL.Ortho(XMin, XMax, YMin, YMax, ZNear, ZFar);
-            }
+            GL.Ortho(cam.XMin, cam.XMax, cam.YMin, cam.YMax, ZNear, ZFar);
 
             GL.Clear(ClearBufferMask.DepthBufferBit | ClearBufferMask.StencilBufferBit |
                      ClearBufferMask.ColorBufferBit);
-            GL.Scale(1.0, -1.0, 1.0);
             GL.Enable(EnableCap.StencilTest);
             GL.Disable(EnableCap.Texture2D);
             GL.StencilOp(StencilOp.Incr, StencilOp.Keep, StencilOp.Decr);
             GL.StencilFunc(StencilFunction.Equal, GroundStencil, StencilMask);
             GL.ColorMask(false, false, false, false);
             GL.Begin(PrimitiveType.Triangles);
-            foreach (var k in Lev.Polygons)
+            foreach (var k in Lev.Polygons.Concat(sceneSettings.AdditionalPolys))
                 if (!k.IsGrass)
                     DrawFilledTrianglesFast(k.Decomposition, ZFar - (ZFar - ZNear) * SkyDepth);
             GL.End();
-            AdditionalPolys?.Invoke();
             GL.ColorMask(true, true, true, true);
             GL.Enable(EnableCap.Texture2D);
             GL.Enable(EnableCap.DepthTest);
             GL.StencilFunc(StencilFunction.Equal, GroundStencil, StencilMask);
             GL.StencilOp(StencilOp.Keep, StencilOp.Keep, StencilOp.Replace);
-            GL.Scale(1.0, -1.0, 1.0);
+            var midX = (Lev.XMin + Lev.XMax) / 2;
+            var midY = (Lev.YMin + Lev.YMax) / 2;
             if (_settings.ShowGround)
             {
                 const double depth = ZFar - (ZFar - ZNear) * GroundDepth;
@@ -499,7 +380,7 @@ namespace Elmanager
                     GL.BindTexture(TextureTarget.Texture2D, _groundTexture.TextureIdentifier);
                     var gtW = _groundTexture.Width;
                     var gtH = _groundTexture.Height;
-                    var zl = ZoomLevel;
+                    var zl = cam.ZoomLevel;
                     var c = TextureZoomConst;
                     if (_settings.ZoomTextures)
                     {
@@ -508,13 +389,13 @@ namespace Elmanager
                     }
                     GL.Begin(PrimitiveType.Quads);
                     GL.TexCoord2(0, c / gtW * gtW / gtH / zl);
-                    GL.Vertex3(_midX - TextureVertexConst, _midY - TextureVertexConst, depth);
+                    GL.Vertex3(midX - TextureVertexConst, midY - TextureVertexConst, depth);
                     GL.TexCoord2(c / gtW / zl, c / gtW * gtW / gtH / zl);
-                    GL.Vertex3(_midX + TextureVertexConst, _midY - TextureVertexConst, depth);
+                    GL.Vertex3(midX + TextureVertexConst, midY - TextureVertexConst, depth);
                     GL.TexCoord2(c / gtW / zl, 0);
-                    GL.Vertex3(_midX + TextureVertexConst, _midY + TextureVertexConst, depth);
+                    GL.Vertex3(midX + TextureVertexConst, midY + TextureVertexConst, depth);
                     GL.TexCoord2(0, 0);
-                    GL.Vertex3(_midX - TextureVertexConst, _midY + TextureVertexConst, depth);
+                    GL.Vertex3(midX - TextureVertexConst, midY + TextureVertexConst, depth);
                     GL.End();
                 }
                 else
@@ -522,10 +403,10 @@ namespace Elmanager
                     GL.Disable(EnableCap.Texture2D);
                     GL.Color4(_settings.GroundFillColor);
                     GL.Begin(PrimitiveType.Quads);
-                    GL.Vertex3(_midX - TextureVertexConst, _midY - TextureVertexConst, depth);
-                    GL.Vertex3(_midX + TextureVertexConst, _midY - TextureVertexConst, depth);
-                    GL.Vertex3(_midX + TextureVertexConst, _midY + TextureVertexConst, depth);
-                    GL.Vertex3(_midX - TextureVertexConst, _midY + TextureVertexConst, depth);
+                    GL.Vertex3(midX - TextureVertexConst, midY - TextureVertexConst, depth);
+                    GL.Vertex3(midX + TextureVertexConst, midY - TextureVertexConst, depth);
+                    GL.Vertex3(midX + TextureVertexConst, midY + TextureVertexConst, depth);
+                    GL.Vertex3(midX - TextureVertexConst, midY + TextureVertexConst, depth);
                     GL.End();
                     GL.Enable(EnableCap.Texture2D);
                 }
@@ -540,19 +421,19 @@ namespace Elmanager
                 {
                     GL.Begin(PrimitiveType.Quads);
                     GL.TexCoord2(0, TextureCoordConst / _skyTexture.Width * _skyTexture.Width / _skyTexture.Height);
-                    GL.Vertex3(CenterX / 2 - TextureVertexConst, CenterY - TextureVertexConst, depth);
+                    GL.Vertex3(centerX / 2 - TextureVertexConst, centerY - TextureVertexConst, depth);
                     GL.TexCoord2(TextureCoordConst / _skyTexture.Width,
                         TextureCoordConst / _skyTexture.Width * _skyTexture.Width / _skyTexture.Height);
-                    GL.Vertex3(CenterX / 2 + TextureVertexConst, CenterY - TextureVertexConst, depth);
+                    GL.Vertex3(centerX / 2 + TextureVertexConst, centerY - TextureVertexConst, depth);
                     GL.TexCoord2(TextureCoordConst / _skyTexture.Width, 0);
-                    GL.Vertex3(CenterX / 2 + TextureVertexConst, CenterY + TextureVertexConst, depth);
+                    GL.Vertex3(centerX / 2 + TextureVertexConst, centerY + TextureVertexConst, depth);
                     GL.TexCoord2(0, 0);
-                    GL.Vertex3(CenterX / 2 - TextureVertexConst, CenterY + TextureVertexConst, depth);
+                    GL.Vertex3(centerX / 2 - TextureVertexConst, centerY + TextureVertexConst, depth);
                     GL.End();
                 }
                 else
                 {
-                    var xdelta = CenterX / _skyTexture.Width;
+                    var xdelta = centerX / _skyTexture.Width;
                     GL.PushMatrix();
                     GL.LoadIdentity();
                     GL.Ortho(0, 1, 0, 1, ZNear, ZFar);
@@ -562,17 +443,16 @@ namespace Elmanager
                     GL.TexCoord2(2 + xdelta, 0);
                     GL.Vertex3(1, 1, depth);
                     GL.TexCoord2(2 + xdelta,
-                        2 / _aspectRatio);
+                        2 / aspectRatio);
                     GL.Vertex3(1, 0, depth);
                     GL.TexCoord2(xdelta,
-                        2 / _aspectRatio);
+                        2 / aspectRatio);
                     GL.Vertex3(0, 0, depth);
                     GL.End();
                     GL.PopMatrix();
                 }
             }
 
-            GL.Scale(1.0, -1.0, 1.0);
             GL.Enable(EnableCap.AlphaTest);
             if (LgrGraphicsLoaded)
             {
@@ -581,7 +461,7 @@ namespace Elmanager
                 for (var i = Lev.Pictures.Count - 1; i >= 0; --i)
                 {
                     var picture = Lev.Pictures[i];
-                    DoPictureScissor(picture);
+                    DoPictureScissor(picture, cam);
                     if (picture.IsPicture && _settings.ShowPictures)
                     {
                         GL.StencilOp(StencilOp.Keep, StencilOp.Keep, StencilOp.Keep);
@@ -598,14 +478,14 @@ namespace Elmanager
                                 break;
                         }
 
-                        DrawPicture(picture.Id, picture.Position.X, picture.Position.Y, picture.Width, picture.Height,
+                        DrawPicture(picture.Id, picture.Position.X, picture.Position.Y, picture.Width, -picture.Height,
                             (picture.Distance / 1000.0 * (ZFar - ZNear)) + ZNear);
                     }
                 }
 
                 foreach (var picture in Lev.Pictures)
                 {
-                    DoPictureScissor(picture);
+                    DoPictureScissor(picture, cam);
                     if (!picture.IsPicture && _settings.ShowTextures)
                     {
                         GL.StencilOp(StencilOp.Keep, StencilOp.Keep, StencilOp.Invert);
@@ -623,12 +503,12 @@ namespace Elmanager
                         }
 
                         var depth = (picture.Distance / 1000.0 * (ZFar - ZNear)) + ZNear;
-                        DrawPicture(picture.Id, picture.Position.X, picture.Position.Y, picture.Width, picture.Height,
+                        DrawPicture(picture.Id, picture.Position.X, picture.Position.Y, picture.Width, -picture.Height,
                             depth + 0.001);
 
                         GL.BindTexture(TextureTarget.Texture2D, picture.TextureId);
                         GL.StencilFunc(StencilFunction.Lequal, 5, StencilMask);
-                        var zl = ZoomLevel;
+                        var zl = cam.ZoomLevel;
                         var c = TextureZoomConst;
                         if (_settings.ZoomTextures)
                         {
@@ -636,16 +516,16 @@ namespace Elmanager
                             c = TextureCoordConst;
                         }
                         GL.Begin(PrimitiveType.Quads);
-                        var ymin = -(_midY - TextureVertexConst);
-                        var ymax = -(_midY + TextureVertexConst);
-                        GL.TexCoord2(0, c / picture.TextureWidth * picture.AspectRatio / zl);
-                        GL.Vertex3(_midX - TextureVertexConst, ymin, depth);
-                        GL.TexCoord2(c / picture.TextureWidth / zl, c / picture.TextureWidth * picture.AspectRatio / zl);
-                        GL.Vertex3(_midX + TextureVertexConst, ymin, depth);
-                        GL.TexCoord2(c / picture.TextureWidth / zl, 0);
-                        GL.Vertex3(_midX + TextureVertexConst, ymax, depth);
+                        var ymin = -(midY - TextureVertexConst);
+                        var ymax = -(midY + TextureVertexConst);
                         GL.TexCoord2(0, 0);
-                        GL.Vertex3(_midX - TextureVertexConst, ymax, depth);
+                        GL.Vertex3(midX - TextureVertexConst, ymin, depth);
+                        GL.TexCoord2(c / picture.TextureWidth / zl, 0);
+                        GL.Vertex3(midX + TextureVertexConst, ymin, depth);
+                        GL.TexCoord2(c / picture.TextureWidth / zl, c / picture.TextureWidth * picture.AspectRatio / zl);
+                        GL.Vertex3(midX + TextureVertexConst, ymax, depth);
+                        GL.TexCoord2(0, c / picture.TextureWidth * picture.AspectRatio / zl);
+                        GL.Vertex3(midX - TextureVertexConst, ymax, depth);
                         GL.End();
                     }
                 }
@@ -655,15 +535,10 @@ namespace Elmanager
             }
 
             GL.Disable(EnableCap.StencilTest);
-            GL.Scale(1.0, -1.0, 1.0);
-            GL.Translate(-fixx, -fixy, 0);
-            DrawPlayers(ActivePlayerIndices, VisiblePlayerIndices);
-            GL.Translate(fixx, fixy, 0);
-            GL.Scale(1.0, -1.0, 1.0);
             if (_settings.ShowObjects && LgrGraphicsLoaded)
             {
-                var depth = _picturesInBackground ? 0 : 0.5 * (ZFar - ZNear) + ZNear;
-                foreach (var x in Lev.Objects)
+                var depth = sceneSettings.PicturesInBackground ? 0 : 0.5 * (ZFar - ZNear) + ZNear;
+                foreach (var x in GetVisibleObjects(sceneSettings))
                 {
                     switch (x.Type)
                     {
@@ -674,78 +549,46 @@ namespace Elmanager
                             DrawObject(_killerPic, x.Position, depth);
                             break;
                         case ObjectType.Apple:
-                            if (_wrongLevVersion || ActivePlayerIndices.Count == 0)
-                                DrawObject(GetApple(x.AnimationNumber), x.Position, depth);
+                            DrawObject(GetApple(x.AnimationNumber), x.Position, depth);
                             break;
                         case ObjectType.Start:
-                            if (!_hideStartObject)
-                            {
-                                DrawDummyPlayer(x.Position.X, -x.Position.Y, true, !_drawOnlyPlayerFrames);
-                            }
-
+                            DrawDummyPlayer(x.Position.X, x.Position.Y, sceneSettings, new PlayerRenderOpts {isActive = true, useTransparency = false, useGraphics = true});
                             break;
                     }
-                }
-
-                if (!_wrongLevVersion && ActivePlayerIndices.Count > 0)
-                {
-                    var i = 0;
-                    while (!(i >= _currentPlayerAppleEvents.Length || _currentPlayerAppleEvents[i].Time >= CurrentTime))
-                        i++;
-                    for (var j = i; j < _currentPlayerAppleEvents.Length; j++)
-                    {
-                        var z = Lev.Objects[_currentPlayerAppleEvents[j].Info];
-                        DrawObject(GetApple(z.AnimationNumber), z.Position);
-                    }
-
-                    foreach (var x in _notTakenApples)
-                        DrawObject(GetApple(x.AnimationNumber), x.Position);
                 }
             }
 
-            DisableCaps();
+            GL.Disable(EnableCap.Texture2D);
+            GL.Disable(EnableCap.StencilTest);
+            GL.Disable(EnableCap.DepthTest);
+            GL.Disable(EnableCap.AlphaTest);
             if (_settings.ShowGrid)
-                DrawGrid();
+                DrawGrid(cam, sceneSettings.GridOffset, _settings.GridSize);
             if (_settings.ShowMaxDimensions)
             {
                 GL.Enable(EnableCap.LineStipple);
                 GL.LineStipple((int) _settings.LineWidth * 2, LinePattern);
-                var centerX = (Lev.XMin + Lev.XMax) / 2;
-                var centerY = (Lev.YMin + Lev.YMax) / 2;
-                DrawRectangle(centerX - Level.MaximumSize / 2,
-                    centerY - Level.MaximumSize / 2,
-                    centerX + Level.MaximumSize / 2,
-                    centerY + Level.MaximumSize / 2,
+                var levCenterX = (Lev.XMin + Lev.XMax) / 2;
+                var levCenterY = (Lev.YMin + Lev.YMax) / 2;
+                DrawRectangle(levCenterX - Level.MaximumSize / 2,
+                    levCenterY - Level.MaximumSize / 2,
+                    levCenterX + Level.MaximumSize / 2,
+                    levCenterY + Level.MaximumSize / 2,
                     _settings.MaxDimensionColor);
                 GL.Disable(EnableCap.LineStipple);
                 GL.LineWidth(_settings.LineWidth);
             }
 
             if (_settings.ShowObjectFrames)
-                DrawObjectFrames();
+                DrawObjectFrames(sceneSettings);
             if (_settings.ShowObjectCenters)
-                DrawObjectCenters();
+                DrawObjectCenters(sceneSettings);
             if (_settings.ShowGravityAppleArrows &&
                 (_settings.ShowObjectFrames || (_lgrGraphicsLoaded && _settings.ShowObjects)))
             {
-                if (_wrongLevVersion || ActivePlayerIndices.Count == 0)
-                    foreach (var o in Lev.Objects)
-                    {
-                        DrawGravityArrowMaybe(o);
-                    }
-                else if (!_wrongLevVersion && ActivePlayerIndices.Count > 0)
+                foreach (var o in GetVisibleObjects(sceneSettings))
                 {
-                    var i = 0;
-                    while (!(i >= _currentPlayerAppleEvents.Length || _currentPlayerAppleEvents[i].Time >= CurrentTime))
-                        i++;
-                    for (var j = i; j < _currentPlayerAppleEvents.Length; j++)
-                    {
-                        var z = Lev.Objects[_currentPlayerAppleEvents[j].Info];
-                        DrawGravityArrowMaybe(z);
-                    }
-
-                    foreach (var x in _notTakenApples)
-                        DrawGravityArrowMaybe(x);
+                    DrawGravityArrowMaybe(o);
                 }
             }
 
@@ -781,7 +624,7 @@ namespace Elmanager
                     GL.Color4(_settings.TextureFrameColor);
                 }
 
-                DrawRectangle(z.Position.X, z.Position.Y, z.Position.X + z.Width, z.Position.Y + z.Height);
+                DrawRectangle(z.Position.X, z.Position.Y, z.Position.X + z.Width, z.Position.Y - z.Height);
             }
 
             if (_settings.ShowVertices)
@@ -803,39 +646,29 @@ namespace Elmanager
                     foreach (var x in Lev.Polygons)
                         if ((showGrassVertices && x.IsGrass) || (showGroundVertices && !x.IsGrass))
                             foreach (var z in x.Vertices)
-                                DrawEquilateralTriangleFast(z, _viewSettings.ZoomLevel * _settings.VertexSize);
+                                DrawEquilateralTriangleFast(z, cam.ZoomLevel * _settings.VertexSize);
                 }
 
                 GL.End();
             }
-
-            CustomRendering?.Invoke();
-            GL.Scale(1.0, -1.0, 1.0);
-            if (ActivePlayerIndices.Count > 0 && showDriverPath)
-            {
-                foreach (var x in ActivePlayerIndices)
-                {
-                    if (_players[x].FrameCount > 1)
-                    {
-                        GL.Color4(DrivingLineColors[x]);
-                        GL.Begin(PrimitiveType.LineStrip);
-                        for (var k = 0; k < _players[x].FrameCount; k++)
-                            GL.Vertex2(_players[x].GlobalBodyFromIndex(k).X, _players[x].GlobalBodyFromIndex(k).Y);
-                        GL.End();
-                    }
-                }
-            }
-
-            _gfxContext.SwapBuffers();
-            AfterDrawing?.Invoke();
         }
 
-        private void DoPictureScissor(Picture picture)
+        internal void Swap()
         {
-            var x = (int) ((picture.Position.X - XMin) / (XMax - XMin) * _viewPort[2]);
-            var y = (int) (((-picture.Position.Y - picture.Height) - YMin) / (YMax - YMin) * _viewPort[3]);
-            var w = (int) ((picture.Position.X + picture.Width - XMin) / (XMax - XMin) * _viewPort[2]) - x;
-            var h = (int) ((-picture.Position.Y - YMin) / (YMax - YMin) * _viewPort[3]) - y;
+            _gfxContext.SwapBuffers();
+        }
+
+        private IEnumerable<LevObject> GetVisibleObjects(SceneSettings sceneSettings)
+        {
+            return Lev.Objects.Where((t, i) => !sceneSettings.HiddenObjectIndices.Contains(i));
+        }
+
+        private void DoPictureScissor(Picture picture, ElmaCamera cam)
+        {
+            var x = (int) ((picture.Position.X - cam.XMin) / (cam.XMax - cam.XMin) * cam.ViewPortWidth);
+            var y = (int) (((picture.Position.Y - picture.Height) - cam.YMin) / (cam.YMax - cam.YMin) * cam.ViewPortHeight);
+            var w = (int) ((picture.Position.X + picture.Width - cam.XMin) / (cam.XMax - cam.XMin) * cam.ViewPortWidth) - x;
+            var h = (int) ((picture.Position.Y - cam.YMin) / (cam.YMax - cam.YMin) * cam.ViewPortHeight) - y;
             GL.Scissor(x, y, w, h);
         }
 
@@ -882,11 +715,6 @@ namespace Elmanager
             }
         }
 
-        internal void DrawSceneDefault()
-        {
-            DrawScene(_followDriver, _showDriverPath);
-        }
-
         internal void DrawSquare(Vector v, double side, Color color)
         {
             DrawRectangle(v.X - side, v.Y - side, v.X + side, v.Y + side, color);
@@ -913,37 +741,6 @@ namespace Elmanager
             return DrawableImages.FirstOrDefault(x => x.Name == name);
         }
 
-        internal void FocusIndicesChanged()
-        {
-            if (!_wrongLevVersion && ActivePlayerIndices.Count > 0)
-            {
-                _currentPlayerAppleEvents = _players[ActivePlayerIndices[0]].GetEvents(LogicalEventType.AppleTake);
-                _notTakenApples = new List<LevObject>();
-                for (var i = 0; i < Lev.Objects.Count; i++)
-                {
-                    if (Lev.Objects[i].Type != ObjectType.Apple)
-                        continue;
-                    var i1 = i;
-                    var isTaken = _currentPlayerAppleEvents.Any(x => x.Info == i1);
-                    if (!isTaken)
-                        _notTakenApples.Add(Lev.Objects[i]);
-                }
-            }
-        }
-
-        internal Vector GetBikeCoordinates()
-        {
-            return ActivePlayerIndices.Count > 0
-                ? new Vector(_players[ActivePlayerIndices[0]].GlobalBodyX,
-                    _players[ActivePlayerIndices[0]].GlobalBodyY)
-                : new Vector();
-        }
-
-        internal double GetSpeed()
-        {
-            return ActivePlayerIndices.Count > 0 ? _players[ActivePlayerIndices[0]].Speed : 0.0;
-        }
-
         internal void InitializeLevel(Level level)
         {
             Lev = level;
@@ -965,158 +762,18 @@ namespace Elmanager
             Lev.DecomposeGroundPolygons();
             Lev.UpdateImages(DrawableImages);
             Lev.UpdateBounds();
-            UpdateZoomFillBounds();
             UpdateGroundAndSky(_settings.DefaultGroundAndSky);
-        }
-
-        internal void InitializeReplays(List<Replay> replays)
-        {
-            ZoomLevel = 5.0;
-            MaxTime = 0.0;
-            _players = new List<Player>();
-            foreach (var t in replays)
-            {
-                _players.Add(t.Player1);
-                if (t.Player1.FrameCount > MaxTime)
-                    MaxTime = t.Player1.FrameCount;
-                if (t.IsMulti)
-                {
-                    _players.Add(t.Player2);
-                    if (t.Player2.FrameCount > MaxTime)
-                        MaxTime = t.Player2.FrameCount;
-                }
-            }
-
-            MaxTime /= 30.0;
-            CurrentTime = 0.0;
-            InitializeLevel(replays[0].GetLevel());
-            ActivePlayerIndices = new List<int>();
-            VisiblePlayerIndices = new List<int>();
-
-            _wrongLevVersion = replays[0].WrongLevelVersion;
-        }
-
-        internal void NextFrame(object sender = null, EventArgs e = null)
-        {
-            if (!Playing)
-            {
-                CurrentTime += _frameStep;
-                if (CurrentTime > MaxTime)
-                    CurrentTime = 0;
-                DrawSceneDefault();
-            }
-        }
-
-        internal void PreviousFrame(object sender = null, EventArgs e = null)
-        {
-            if (!Playing)
-            {
-                CurrentTime -= _frameStep;
-                if (CurrentTime < 0)
-                    CurrentTime = MaxTime;
-                DrawSceneDefault();
-            }
-        }
-
-        internal void RedrawScene(object sender = null, EventArgs e = null)
-        {
-            DrawSceneNoDriverFocus();
         }
 
         internal void ResetViewport(int width, int height)
         {
             GL.Viewport(0, 0, width, height);
-            _aspectRatio = width / (double) height;
-            GL.GetInteger(GetPName.Viewport, _viewPort);
         }
 
         internal void SetFullScreenMode(DisplayResolution newResolution)
         {
             DisplayDevice.Default.ChangeResolution(newResolution);
             GL.Viewport(0, 0, newResolution.Width, newResolution.Height);
-            _aspectRatio = newResolution.Width / (double) newResolution.Height;
-        }
-
-        internal void SetPlayBackSpeed(double newSpeed)
-        {
-            _playBackSpeed = newSpeed;
-            if (Playing)
-            {
-                _initialTime = CurrentTime;
-                _playTimer.Restart();
-            }
-        }
-
-        internal void StopPlaying(object sender = null, EventArgs e = null)
-        {
-            Playing = false;
-            CurrentTime = 0;
-            DrawSceneDefault();
-        }
-
-        internal void TogglePlay(object sender = null, EventArgs e = null)
-        {
-            if (Playing)
-            {
-                Playing = false;
-                return;
-            }
-
-            if (CurrentTime > MaxTime)
-            {
-                CurrentTime = 0;
-                DrawSceneDefault();
-            }
-
-            Playing = true;
-            double elapsedTime = 0;
-            _initialTime = CurrentTime;
-            _playTimer.Restart();
-            while (Playing)
-            {
-                CurrentTime = _initialTime + elapsedTime;
-                if (_multiSpy && VisiblePlayerIndices.Count > 0 && (!_followDriver || ActivePlayerIndices.Count == 0))
-                {
-                    var xmin = _players[VisiblePlayerIndices[0]].GlobalBodyX;
-                    var xmax = _players[VisiblePlayerIndices[0]].GlobalBodyX;
-                    var ymin = _players[VisiblePlayerIndices[0]].GlobalBodyY;
-                    var ymax = _players[VisiblePlayerIndices[0]].GlobalBodyY;
-                    foreach (var i in VisiblePlayerIndices)
-                    {
-                        xmin = Math.Min(_players[i].GlobalBodyX, xmin);
-                        xmax = Math.Max(_players[i].GlobalBodyX, xmax);
-                        ymin = Math.Min(_players[i].GlobalBodyY, ymin);
-                        ymax = Math.Max(_players[i].GlobalBodyY, ymax);
-                    }
-
-                    CenterX = (xmin + xmax) / 2;
-                    CenterY = (ymin + ymax) / 2;
-                    ZoomLevel = Math.Max((xmax + 5 - CenterX) / _aspectRatio, ymax + 5 - CenterY);
-                    ZoomLevel = Math.Max(ZoomLevel, 5);
-                }
-
-                if (CurrentTime > MaxTime)
-                {
-                    if (_loopPlaying)
-                    {
-                        CurrentTime = 0;
-                        _initialTime = 0;
-                        _playTimer.Restart();
-                    }
-                    else
-                    {
-                        DrawSceneDefault();
-                        break;
-                    }
-                }
-
-                DrawSceneDefault();
-                Application.DoEvents();
-                elapsedTime = _playTimer.ElapsedMilliseconds / 1000.0 * _playBackSpeed;
-            }
-
-            Playing = false;
-            _playTimer.Stop();
         }
 
         internal void UpdateGroundAndSky(bool useDefault)
@@ -1166,23 +823,6 @@ namespace Elmanager
             }
         }
 
-        internal void UpdateReplaySettings()
-        {
-            _showDriverPath = Global.AppSettings.ReplayViewer.ShowDriverPath;
-            _followDriver = Global.AppSettings.ReplayViewer.FollowDriver;
-            _followAlsoWhenZooming = Global.AppSettings.ReplayViewer.FollowAlsoWhenZooming;
-            _lockedCamera = Global.AppSettings.ReplayViewer.LockedCamera;
-            _picturesInBackground = Global.AppSettings.ReplayViewer.PicturesInBackGround;
-            _drawInActiveAsTransparent = Global.AppSettings.ReplayViewer.DrawTransparentInactive;
-            _frameStep = Global.AppSettings.ReplayViewer.FrameStep;
-            _loopPlaying = Global.AppSettings.ReplayViewer.LoopPlaying;
-            _activePlayerColor = Global.AppSettings.ReplayViewer.ActivePlayerColor;
-            _inActivePlayerColor = Global.AppSettings.ReplayViewer.InactivePlayerColor;
-            _drawOnlyPlayerFrames = Global.AppSettings.ReplayViewer.DrawOnlyPlayerFrames;
-            _hideStartObject = Global.AppSettings.ReplayViewer.HideStartObject;
-            _multiSpy = Global.AppSettings.ReplayViewer.MultiSpy;
-        }
-
         internal void UpdateSettings(RenderingSettings newSettings)
         {
             if (_settings.LgrFile != newSettings.LgrFile)
@@ -1207,84 +847,6 @@ namespace Elmanager
             GL.LineWidth(newSettings.LineWidth);
             GL.PointSize((float) (newSettings.VertexSize * 300));
             _settings = newSettings.Clone();
-        }
-
-        internal void UpdateZoomFillBounds()
-        {
-            _zoomFillxMin = (1 + ZoomFillMargin) * Lev.XMin - ZoomFillMargin * Lev.XMax;
-            _zoomFillxMax = (1 + ZoomFillMargin) * Lev.XMax - ZoomFillMargin * Lev.XMin;
-            _zoomFillyMin = (1 + ZoomFillMargin) * Lev.YMin - ZoomFillMargin * Lev.YMax;
-            _zoomFillyMax = (1 + ZoomFillMargin) * Lev.YMax - ZoomFillMargin * Lev.YMin;
-            var tempVar = _zoomFillyMin;
-            _zoomFillyMin = -_zoomFillyMax;
-            _zoomFillyMax = -tempVar;
-            _midX = (_zoomFillxMax + _zoomFillxMin) / 2;
-            _midY = (_zoomFillyMax + _zoomFillyMin) / 2;
-        }
-
-        internal void Zoom(Vector p, bool zoomIn, double zoomFactor)
-        {
-            var i = zoomIn ? zoomFactor : 1 / zoomFactor;
-            var x = p.X;
-            var y = p.Y;
-            if (ActivePlayerIndices.Count > 0 && _followDriver && _followAlsoWhenZooming)
-            {
-                x = _players[ActivePlayerIndices[0]].GlobalBodyX;
-                y = _players[ActivePlayerIndices[0]].GlobalBodyY;
-                CenterX = x;
-                CenterY = y;
-            }
-
-            x -= (x - (XMax + XMin) / 2) * i;
-            y -= (y - (YMax + YMin) / 2) * i;
-            PerformZoom(ZoomLevel * i, x, y);
-        }
-
-        internal void ZoomFill(object sender = null, EventArgs e = null)
-        {
-            var levelAspectRatio = (_zoomFillxMax - _zoomFillxMin) / (_zoomFillyMax - _zoomFillyMin);
-            var newZoomLevel = (_zoomFillyMax - _zoomFillyMin) / 2;
-            if (levelAspectRatio > _aspectRatio)
-                newZoomLevel = (_zoomFillxMax - _zoomFillxMin) / 2 / _aspectRatio;
-            PerformZoom(newZoomLevel, (_zoomFillxMax + _zoomFillxMin) / 2, (_zoomFillyMax + _zoomFillyMin) / 2);
-        }
-
-        internal void ZoomRect(Vector startPoint, Vector endPoint)
-        {
-            if (startPoint != endPoint)
-            {
-                double x1;
-                double x2;
-                if (startPoint.X < endPoint.X)
-                {
-                    x1 = startPoint.X;
-                    x2 = endPoint.X;
-                }
-                else
-                {
-                    x2 = startPoint.X;
-                    x1 = endPoint.X;
-                }
-
-                double y1;
-                double y2;
-                if (startPoint.Y < endPoint.Y)
-                {
-                    y1 = startPoint.Y;
-                    y2 = endPoint.Y;
-                }
-                else
-                {
-                    y2 = startPoint.Y;
-                    y1 = endPoint.Y;
-                }
-
-                var i = (y2 - y1) / 2;
-                var rectAspectRatio = (x2 - x1) / (y2 - y1);
-                if (rectAspectRatio > _aspectRatio)
-                    i = (x2 - x1) / 2 / _aspectRatio;
-                PerformZoom(i, (x2 + x1) / 2, (y2 + y1) / 2);
-            }
         }
 
         protected virtual void Dispose(bool disposing)
@@ -1344,14 +906,6 @@ namespace Elmanager
             }
         }
 
-        private static void DisableCaps()
-        {
-            GL.Disable(EnableCap.Texture2D);
-            GL.Disable(EnableCap.StencilTest);
-            GL.Disable(EnableCap.DepthTest);
-            GL.Disable(EnableCap.AlphaTest);
-        }
-
         private static void DrawFilledTrianglesFast(IEnumerable<Vector[]> triangles, double depth = 0.0)
         {
             foreach (var triangle in triangles)
@@ -1363,17 +917,7 @@ namespace Elmanager
         {
             x -= ObjectRadius;
             y -= ObjectRadius;
-            GL.BindTexture(TextureTarget.Texture2D, picture);
-            GL.Begin(PrimitiveType.Quads);
-            GL.TexCoord2(0, 0);
-            GL.Vertex3(x, y, depth);
-            GL.TexCoord2(1, 0);
-            GL.Vertex3(x + ObjectDiameter, y, depth);
-            GL.TexCoord2(1, 1);
-            GL.Vertex3(x + ObjectDiameter, y + ObjectDiameter, depth);
-            GL.TexCoord2(0, 1);
-            GL.Vertex3(x, y + ObjectDiameter, depth);
-            GL.End();
+            DrawPicture(picture, x, y, ObjectDiameter, ObjectDiameter, depth, -1);
         }
 
         private static void DrawObject(int picture, Vector v, double depth = 0.5 * (ZFar - ZNear) + ZNear)
@@ -1381,7 +925,7 @@ namespace Elmanager
             DrawObject(picture, v.X, v.Y, depth);
         }
 
-        private static void DrawPicture(int picture, double x, double y, double width, double height, double depth)
+        private static void DrawPicture(int picture, double x, double y, double width, double height, double depth, double texcoordy = 1)
         {
             GL.BindTexture(TextureTarget.Texture2D, picture);
             GL.Begin(PrimitiveType.Quads);
@@ -1389,9 +933,9 @@ namespace Elmanager
             GL.Vertex3(x, y, depth);
             GL.TexCoord2(1, 0);
             GL.Vertex3(x + width, y, depth);
-            GL.TexCoord2(1, 1);
+            GL.TexCoord2(1, texcoordy);
             GL.Vertex3(x + width, y + height, depth);
-            GL.TexCoord2(0, 1);
+            GL.TexCoord2(0, texcoordy);
             GL.Vertex3(x, y + height, depth);
             GL.End();
         }
@@ -1432,8 +976,6 @@ namespace Elmanager
 
         private void BaseInit(Control renderingTarget, RenderingSettings settings)
         {
-            _activePlayerColor = Color.Black;
-            _inActivePlayerColor = Color.Green;
             _bikePicTranslateXFacingLeft = BikePicXFacingLeft * Math.Cos(BikePicRotationConst * Constants.DegToRad) +
                                            BikePicYFacingLeft * Math.Sin(BikePicRotationConst * Constants.DegToRad);
             _bikePicTranslateYFacingLeft = BikePicXFacingLeft * Math.Sin(BikePicRotationConst * Constants.DegToRad) +
@@ -1442,11 +984,9 @@ namespace Elmanager
                                             BikePicYFacingRight * Math.Sin(-BikePicRotationConst * Constants.DegToRad);
             _bikePicTranslateYFacingRight = BikePicXFacingRight * Math.Sin(-BikePicRotationConst * Constants.DegToRad) +
                                             BikePicYFacingRight * Math.Cos(-BikePicRotationConst * Constants.DegToRad);
-            _aspectRatio = renderingTarget.Width / (double) renderingTarget.Height;
             _ctrlWindowInfo = Utilities.CreateWindowsWindowInfo(renderingTarget.Handle);
             InitializeOpengl(disableFrameBuffer: settings.DisableFrameBuffer);
             UpdateSettings(settings);
-            _renderTarget = renderingTarget;
         }
 
         private void DeleteTextures()
@@ -1480,72 +1020,34 @@ namespace Elmanager
             _skyTexture = null;
         }
 
-        public Vector GridOffset
+        private void DrawGrid(ElmaCamera cam, Vector gridOffset, double gridSize)
         {
-            get => _gridOffset;
-            set
-            {
-                _gridOffset = value;
-                _gridOffset.X %= _settings.GridSize;
-                _gridOffset.Y %= _settings.GridSize;
-            }
-        }
-
-        internal void SetGridSizeWithMouse(double newSize, Vector mouseCoords)
-        {
-            GridOffset.X = (GridOffset.X + GetFirstGridLine(newSize, GridOffset.X, XMin)
-                            - mouseCoords.X + GetGridMouseRatio(_settings.GridSize, GridOffset.X, XMin, mouseCoords.X) *
-                            newSize) % newSize;
-            GridOffset.Y = (GridOffset.Y + GetFirstGridLine(newSize, GridOffset.Y, YMin)
-                            - mouseCoords.Y + GetGridMouseRatio(_settings.GridSize, GridOffset.Y, YMin, mouseCoords.Y) *
-                            newSize) % newSize;
-            _settings.GridSize = newSize;
-            RedrawScene();
-        }
-
-        private static double GetGridMouseRatio(double size, double offset, double min, double mouse)
-        {
-            var dist = mouse - GetFirstGridLine(size, offset, min);
-            return (dist % size) / size;
-        }
-
-        private static double GetFirstGridLine(double size, double offset, double min)
-        {
-            var tmp = (Math.Floor(min / size) + 1) * size;
-            var left = (tmp - (size + offset));
-            return left;
-        }
-
-        private void DrawGrid()
-        {
-            var current = GetFirstGridLine(_settings.GridSize, GridOffset.X, XMin);
+            var current = Utils.GetFirstGridLine(gridSize, gridOffset.X, cam.XMin);
             GL.Enable(EnableCap.LineStipple);
             GL.LineStipple((int) _settings.LineWidth, LinePattern);
-            GL.Scale(1.0, -1.0, 1.0);
             GL.Color3(_settings.GridColor);
             GL.Begin(PrimitiveType.Lines);
-            while (!(current > XMax))
+            while (!(current > cam.XMax))
             {
-                DrawLineFast(current, YMin, current, YMax);
-                current += _settings.GridSize;
+                DrawLineFast(current, cam.YMin, current, cam.YMax);
+                current += gridSize;
             }
 
-            current = GetFirstGridLine(_settings.GridSize, GridOffset.Y, YMin);
-            while (!(current > YMax))
+            current = Utils.GetFirstGridLine(gridSize, gridOffset.Y, cam.YMin);
+            while (!(current > cam.YMax))
             {
-                DrawLineFast(XMin, current, XMax, current);
-                current += _settings.GridSize;
+                DrawLineFast(cam.XMin, current, cam.XMax, current);
+                current += gridSize;
             }
 
             GL.End();
-            GL.Scale(1.0, -1.0, 1.0);
             GL.Disable(EnableCap.LineStipple);
             GL.LineWidth(_settings.LineWidth);
         }
 
-        private void DrawObjectCenters()
+        private void DrawObjectCenters(SceneSettings sceneSettings)
         {
-            foreach (var x in Lev.Objects)
+            foreach (var x in GetVisibleObjects(sceneSettings))
             {
                 switch (x.Type)
                 {
@@ -1556,40 +1058,23 @@ namespace Elmanager
                         DrawPoint(x.Position, _settings.KillerColor);
                         break;
                     case ObjectType.Apple:
-                        if (_wrongLevVersion || ActivePlayerIndices.Count == 0)
-                            DrawPoint(x.Position, _settings.AppleColor);
+                        DrawPoint(x.Position, _settings.AppleColor);
                         break;
                     case ObjectType.Start:
-                        if (!_hideStartObject)
-                        {
-                            DrawPoint(x.Position, _settings.StartColor);
-                            DrawPoint(x.Position.X + Level.RightWheelDifferenceFromLeftWheelX, x.Position.Y,
-                                Global.AppSettings.LevelEditor.RenderingSettings.StartColor);
-                            DrawPoint(x.Position.X + Level.HeadDifferenceFromLeftWheelX,
-                                x.Position.Y + Level.HeadDifferenceFromLeftWheelY,
-                                Global.AppSettings.LevelEditor.RenderingSettings.StartColor);
-                        }
-
+                        DrawPoint(x.Position, _settings.StartColor);
+                        DrawPoint(x.Position.X + Level.RightWheelDifferenceFromLeftWheelX, x.Position.Y,
+                            Global.AppSettings.LevelEditor.RenderingSettings.StartColor);
+                        DrawPoint(x.Position.X + Level.HeadDifferenceFromLeftWheelX,
+                            x.Position.Y + Level.HeadDifferenceFromLeftWheelY,
+                            Global.AppSettings.LevelEditor.RenderingSettings.StartColor);
                         break;
                 }
             }
-
-            if (!_wrongLevVersion && ActivePlayerIndices.Count > 0)
-            {
-                var i = 0;
-                while (!(i >= _currentPlayerAppleEvents.Length || _currentPlayerAppleEvents[i].Time >= CurrentTime))
-                    i++;
-                for (var j = i; j < _currentPlayerAppleEvents.Length; j++)
-                    DrawPoint(Lev.Objects[_currentPlayerAppleEvents[j].Info].Position,
-                        _settings.AppleColor);
-                foreach (var x in _notTakenApples)
-                    DrawPoint(x.Position, _settings.AppleColor);
-            }
         }
 
-        private void DrawObjectFrames()
+        private void DrawObjectFrames(SceneSettings sceneSettings)
         {
-            foreach (var x in Lev.Objects)
+            foreach (var x in GetVisibleObjects(sceneSettings))
             {
                 switch (x.Type)
                 {
@@ -1600,66 +1085,45 @@ namespace Elmanager
                         DrawCircle(x.Position, ObjectRadius, _settings.KillerColor);
                         break;
                     case ObjectType.Apple:
-                        if (_wrongLevVersion || ActivePlayerIndices.Count == 0)
-                            DrawCircle(x.Position, ObjectRadius, _settings.AppleColor);
+                        DrawCircle(x.Position, ObjectRadius, _settings.AppleColor);
                         break;
                     case ObjectType.Start:
-                        if (!_hideStartObject)
-                        {
-                            DrawPlayerFrames(x.Position.X + Level.HeadDifferenceFromLeftWheelX,
-                                x.Position.Y + Level.HeadDifferenceFromLeftWheelY, 0, false, x.Position.X,
-                                x.Position.Y, x.Position.X + Level.RightWheelDifferenceFromLeftWheelX,
-                                x.Position.Y, 0, 0, _settings.StartColor);
-                        }
-
+                        DrawPlayerFrames(new PlayerState(0, 0,
+                            x.Position.X + Level.HeadDifferenceFromLeftWheelX,
+                            x.Position.Y + Level.HeadDifferenceFromLeftWheelY,
+                            x.Position.X, x.Position.Y,
+                            0, 0,
+                            x.Position.X + Level.RightWheelDifferenceFromLeftWheelX, x.Position.Y,
+                            0.0, Direction.Left, 0.0), _settings.StartColor);
                         break;
                 }
             }
-
-            if (!_wrongLevVersion && ActivePlayerIndices.Count > 0)
-            {
-                var i = 0;
-                while (!(i >= _currentPlayerAppleEvents.Length || _currentPlayerAppleEvents[i].Time >= CurrentTime))
-                    i++;
-                for (var j = i; j < _currentPlayerAppleEvents.Length; j++)
-                    DrawCircle(Lev.Objects[_currentPlayerAppleEvents[j].Info].Position, ObjectRadius,
-                        _settings.AppleColor);
-                foreach (var x in _notTakenApples)
-                    DrawCircle(x.Position, ObjectRadius, _settings.AppleColor);
-            }
         }
 
-        private void DrawPlayer(Player player, bool isActive = true)
+        internal void DrawPlayer(PlayerState player, PlayerRenderOpts opts, SceneSettings sceneSettings)
         {
-            DrawPlayer(player.GlobalBodyX, player.GlobalBodyY, player.LeftWheelX, player.LeftWheelY, player.RightWheelX,
-                player.RightWheelY, player.LeftWheelRotation, player.RightWheelRotation, player.HeadX,
-                player.HeadY, player.BikeRotationDegrees, player.Dir, player.ArmRotation,
-                isActive || !_drawInActiveAsTransparent, !_drawOnlyPlayerFrames);
-        }
-
-        private void DrawPlayer(double globalBodyX, double globalBodyY, double leftWheelx, double leftWheely,
-            double rightWheelx, double rightWheely, double leftWheelRotation,
-            double rightWheelRotation, double headX, double headY, double bikeRotation,
-            Direction direction, double armRotation, bool isActive, bool useGraphics)
-        {
-            var distance = ((_picturesInBackground ? 1 : BikeDistance) - Utils.BooleanToInteger(isActive)) /
+            var distance = ((sceneSettings.PicturesInBackground ? 1 : BikeDistance) - Utils.BooleanToInteger(opts.isActive)) /
                            1000.0 * (ZFar - ZNear) + ZNear;
-            var isright = direction == Direction.Right;
-            if (useGraphics && LgrGraphicsLoaded)
+            var isright = player.direction == Direction.Right;
+            if (opts.useGraphics && LgrGraphicsLoaded)
             {
-                var rotation = bikeRotation * Constants.DegToRad;
+                GL.Enable(EnableCap.Texture2D);
+                GL.Enable(EnableCap.AlphaTest);
+                GL.Enable(EnableCap.DepthTest);
+
+                var rotation = player.bikeRotation * Constants.DegToRad;
                 var rotationCos = Math.Cos(rotation);
                 var rotationSin = Math.Sin(rotation);
 
-                if (!isActive)
+                if (opts.useTransparency)
                 {
                     GL.Enable(EnableCap.Blend);
                     GL.BlendFunc(BlendingFactor.One, BlendingFactor.OneMinusDstColor);
                 }
 
                 //Wheels
-                DrawWheel(leftWheelx, leftWheely, leftWheelRotation, distance);
-                DrawWheel(rightWheelx, rightWheely, rightWheelRotation, distance);
+                DrawWheel(player.leftWheelx, player.leftWheely, player.leftWheelRotation, distance);
+                DrawWheel(player.rightWheelx, player.rightWheely, player.rightWheelRotation, distance);
 
                 //Suspensions
                 var x = Utils.BooleanToInteger(isright);
@@ -1668,8 +1132,8 @@ namespace Elmanager
                     GL.PushMatrix();
                     if (x == 0)
                         x = -1;
-                    var yPos = globalBodyY + _suspensions[i].Y * rotationCos - _suspensions[i].X * x * rotationSin;
-                    var xPos = globalBodyX - _suspensions[i].X * x * rotationCos - _suspensions[i].Y * rotationSin;
+                    var yPos = player.globalBodyY + _suspensions[i].Y * rotationCos - _suspensions[i].X * x * rotationSin;
+                    var xPos = player.globalBodyX - _suspensions[i].X * x * rotationCos - _suspensions[i].Y * rotationSin;
                     if (x == -1)
                         x = _suspensions[i].WheelNumber;
                     else
@@ -1678,13 +1142,13 @@ namespace Elmanager
                     double wheelYpos;
                     if (x == 0)
                     {
-                        wheelXpos = leftWheelx;
-                        wheelYpos = leftWheely;
+                        wheelXpos = player.leftWheelx;
+                        wheelYpos = player.leftWheely;
                     }
                     else
                     {
-                        wheelXpos = rightWheelx;
-                        wheelYpos = rightWheely;
+                        wheelXpos = player.rightWheelx;
+                        wheelYpos = player.rightWheely;
                     }
 
                     var xDiff = xPos - wheelXpos;
@@ -1709,12 +1173,12 @@ namespace Elmanager
 
                 //Head
                 GL.PushMatrix();
-                GL.Translate(headX, headY, 0);
-                GL.Rotate(bikeRotation + 180, 0, 0, 1);
+                GL.Translate(player.headX, player.headY, 0);
+                GL.Rotate(player.bikeRotation + 180, 0, 0, 1);
                 if (!isright)
                     GL.Scale(-1.0, 1.0, 1.0);
-                GL.Translate(-headX, -headY, 0);
-                DrawPicture(_headPic, headX - Constants.HeadDiameter / 2.0, headY - Constants.HeadDiameter / 2.0,
+                GL.Translate(-player.headX, -player.headY, 0);
+                DrawPicture(_headPic, player.headX - Constants.HeadDiameter / 2.0, player.headY - Constants.HeadDiameter / 2.0,
                     Constants.HeadDiameter, Constants.HeadDiameter, distance);
                 GL.PopMatrix();
 
@@ -1722,17 +1186,17 @@ namespace Elmanager
                 GL.PushMatrix();
                 double bikePicTranslateX;
                 double bikePicTranslateY;
-                GL.Translate(globalBodyX, globalBodyY, 0);
+                GL.Translate(player.globalBodyX, player.globalBodyY, 0);
                 if (!isright)
                 {
                     bikePicTranslateX = _bikePicTranslateXFacingLeft;
                     bikePicTranslateY = _bikePicTranslateYFacingLeft;
-                    GL.Rotate(bikeRotation + BikePicRotationConst + 180, 0, 0, 1);
+                    GL.Rotate(player.bikeRotation + BikePicRotationConst + 180, 0, 0, 1);
                     GL.Scale(-1.0, 1.0, 1.0);
                 }
                 else
                 {
-                    GL.Rotate(bikeRotation + 180 - BikePicRotationConst, 0, 0, 1);
+                    GL.Rotate(player.bikeRotation + 180 - BikePicRotationConst, 0, 0, 1);
                     bikePicTranslateX = _bikePicTranslateXFacingRight;
                     bikePicTranslateY = _bikePicTranslateYFacingRight;
                 }
@@ -1754,10 +1218,10 @@ namespace Elmanager
                 }
 
                 const double thighsy = -0.55;
-                var footx = globalBodyX + footsx * rotationCos - footsy * rotationSin;
-                var footy = globalBodyY + footsx * rotationSin + footsy * rotationCos;
-                var thighstartx = headX + thighsx * rotationCos - thighsy * rotationSin;
-                var thighstarty = headY + thighsx * rotationSin + thighsy * rotationCos;
+                var footx = player.globalBodyX + footsx * rotationCos - footsy * rotationSin;
+                var footy = player.globalBodyY + footsx * rotationSin + footsy * rotationCos;
+                var thighstartx = player.headX + thighsx * rotationCos - thighsy * rotationSin;
+                var thighstarty = player.headY + thighsx * rotationSin + thighsy * rotationCos;
                 CalculateMiddle(thighstartx, thighstarty, footx, footy, legMinimumWidth, isright, out var thighendx,
                     out var thighendy);
                 DrawPicture(_thighPic, thighstartx, thighstarty, thighendx, thighendy, thighHeight, distance, isright,
@@ -1771,15 +1235,15 @@ namespace Elmanager
                 const double offsetx = 0.15;
                 const double offsety = -0.35;
                 GL.PushMatrix();
-                GL.Translate(headX, headY, 0);
+                GL.Translate(player.headX, player.headY, 0);
                 if (isright)
                 {
                     GL.Scale(-1.0, 1.0, 1.0);
-                    GL.Rotate(-bikeRotation - BodyRotation, 0, 0, 1);
+                    GL.Rotate(-player.bikeRotation - BodyRotation, 0, 0, 1);
                 }
                 else
                 {
-                    GL.Rotate(bikeRotation - BodyRotation, 0, 0, 1);
+                    GL.Rotate(player.bikeRotation - BodyRotation, 0, 0, 1);
                 }
 
                 DrawPicture(_bodyPic, offsetx, offsety, BodyWidth, BodyHeight, distance);
@@ -1803,19 +1267,19 @@ namespace Elmanager
                 }
 
                 var armsy = -0.2;
-                var armx = headX + armsx * rotationCos - armsy * rotationSin;
-                var army = headY + armsx * rotationSin + armsy * rotationCos;
-                var initialx = globalBodyX + handsx * rotationCos - handsy * rotationSin;
-                var initialy = globalBodyY + handsx * rotationSin + handsy * rotationCos;
+                var armx = player.headX + armsx * rotationCos - armsy * rotationSin;
+                var army = player.headY + armsx * rotationSin + armsy * rotationCos;
+                var initialx = player.globalBodyX + handsx * rotationCos - handsy * rotationSin;
+                var initialy = player.globalBodyY + handsx * rotationSin + handsy * rotationCos;
                 var dist = Math.Sqrt((initialx - armx) * (initialx - armx) + (initialy - army) * (initialy - army));
                 double armAngle;
                 if (isright)
                 {
-                    armAngle = Math.Atan2(initialy - army, initialx - armx) + armRotation * Constants.DegToRad;
+                    armAngle = Math.Atan2(initialy - army, initialx - armx) + player.armRotation * Constants.DegToRad;
                 }
                 else
                 {
-                    armAngle = Math.Atan2(initialy - army, initialx - armx) + armRotation * Constants.DegToRad;
+                    armAngle = Math.Atan2(initialy - army, initialx - armx) + player.armRotation * Constants.DegToRad;
                 }
 
                 var angleCos = Math.Cos(armAngle);
@@ -1829,43 +1293,36 @@ namespace Elmanager
                 const double lowArmHeight = 0.15;
                 DrawPicture(_handPic, armendx, armendy, handx, handy, lowArmHeight, distance, isright, 0.05);
 
-                if (!isActive)
+                if (!opts.isActive)
                     GL.Disable(EnableCap.Blend);
             }
             else
             {
                 GL.Disable(EnableCap.Texture2D);
                 GL.Disable(EnableCap.DepthTest);
-                if (!isActive)
+                if (!opts.isActive)
                 {
                     GL.Enable(EnableCap.LineStipple);
                     GL.LineStipple((int) _settings.LineWidth, LinePattern);
                 }
 
-                DrawPlayerFrames(headX, headY, bikeRotation, isright, leftWheelx, leftWheely, rightWheelx, rightWheely,
-                    leftWheelRotation, rightWheelRotation,
-                    isActive ? _activePlayerColor : _inActivePlayerColor);
-                if (!isActive)
+                DrawPlayerFrames(player, opts.color);
+                if (!opts.isActive)
                 {
                     GL.Disable(EnableCap.LineStipple);
                 }
-
-                GL.Enable(EnableCap.Texture2D);
-                GL.Enable(EnableCap.DepthTest);
             }
         }
 
-        private void DrawPlayerFrames(double headX, double headY, double bikeRotation, bool isright, double leftWheelx,
-            double leftWheely, double rightWheelx, double rightWheely,
-            double leftWheelRotation, double rightWheelRotation, Color playerColor)
+        private void DrawPlayerFrames(PlayerState player, Color playerColor)
         {
-            var headCos = Math.Cos(bikeRotation * Constants.DegToRad);
-            var headSin = Math.Sin(bikeRotation * Constants.DegToRad);
-            var f = isright ? 1 : -1;
-            var headLineEndPointX = headX + f * headCos * Constants.HeadDiameter / 2;
-            var headLineEndPointY = headY + f * headSin * Constants.HeadDiameter / 2;
-            DrawCircle(leftWheelx, leftWheely, ObjectRadius, playerColor);
-            DrawCircle(rightWheelx, rightWheely, ObjectRadius, playerColor);
+            var headCos = Math.Cos(player.bikeRotation * Constants.DegToRad);
+            var headSin = Math.Sin(player.bikeRotation * Constants.DegToRad);
+            var f = player.isright ? 1 : -1;
+            var headLineEndPointX = player.headX + f * headCos * Constants.HeadDiameter / 2;
+            var headLineEndPointY = player.headY + f * headSin * Constants.HeadDiameter / 2;
+            DrawCircle(player.leftWheelx, player.leftWheely, ObjectRadius, playerColor);
+            DrawCircle(player.rightWheelx, player.rightWheely, ObjectRadius, playerColor);
             GL.Begin(PrimitiveType.Lines);
             for (var k = 0; k < 2; k++)
             {
@@ -1876,15 +1333,15 @@ namespace Elmanager
                     double wheelrot;
                     if (k == 0)
                     {
-                        wheelx = leftWheelx;
-                        wheely = leftWheely;
-                        wheelrot = leftWheelRotation;
+                        wheelx = player.leftWheelx;
+                        wheely = player.leftWheely;
+                        wheelrot = player.leftWheelRotation;
                     }
                     else
                     {
-                        wheelx = rightWheelx;
-                        wheely = rightWheely;
-                        wheelrot = rightWheelRotation;
+                        wheelx = player.rightWheelx;
+                        wheely = player.rightWheely;
+                        wheelrot = player.rightWheelRotation;
                     }
 
                     GL.Vertex2(wheelx, wheely);
@@ -1894,25 +1351,11 @@ namespace Elmanager
             }
 
             GL.End();
-            DrawCircle(headX, headY, Constants.HeadDiameter / 2, playerColor);
+            DrawCircle(player.headX, player.headY, Constants.HeadDiameter / 2, playerColor);
             GL.Begin(PrimitiveType.Lines);
-            GL.Vertex2(headX, headY);
+            GL.Vertex2(player.headX, player.headY);
             GL.Vertex2(headLineEndPointX, headLineEndPointY);
             GL.End();
-        }
-
-        private void DrawPlayers(IList focusIndices, IList visibleIndices)
-        {
-            foreach (int x in visibleIndices)
-            {
-                var isSelected = focusIndices.Contains(x);
-                DrawPlayer(_players[x], isSelected);
-            }
-        }
-
-        private void DrawSceneNoDriverFocus()
-        {
-            DrawScene(false, _showDriverPath);
         }
 
         private void DrawWheel(double x, double y, double rot, double distance)
@@ -2068,145 +1511,6 @@ namespace Elmanager
             _lgrGraphicsLoaded = true;
         }
 
-        private void PerformZoom(double newZoomLevel, double newCenterX, double newCenterY)
-        {
-            if (_settings.SmoothZoomEnabled)
-                SmoothZoom(newZoomLevel, newCenterX, newCenterY);
-            else
-            {
-                ZoomLevel = newZoomLevel;
-                CenterX = newCenterX;
-                CenterY = newCenterY;
-                if (!Playing)
-                    DrawSceneNoDriverFocus();
-            }
-        }
-
-        private void SmoothZoom(double newZoomLevel, double newCenterX, double newCenterY)
-        {
-            if (_smoothZoomInProgress)
-                return;
-            _smoothZoomInProgress = true;
-            var oldZoomLevel = ZoomLevel;
-            var oldCenterX = (XMax + XMin) / 2;
-            var oldCenterY = (YMax + YMin) / 2;
-            var zoomTimer = new Stopwatch();
-            long elapsedTime = 0;
-            var initialTime = CurrentTime;
-            zoomTimer.Start();
-            while (elapsedTime <= _settings.SmoothZoomDuration)
-            {
-                ZoomLevel = oldZoomLevel + (newZoomLevel - oldZoomLevel) * elapsedTime / _settings.SmoothZoomDuration;
-                CenterX = oldCenterX + (newCenterX - oldCenterX) * elapsedTime / _settings.SmoothZoomDuration;
-                CenterY = oldCenterY + (newCenterY - oldCenterY) * elapsedTime / _settings.SmoothZoomDuration;
-                if (Playing)
-                {
-                    CurrentTime = initialTime + elapsedTime / 1000.0 * _playBackSpeed;
-                    DrawSceneDefault();
-                }
-                else
-                    DrawSceneNoDriverFocus();
-
-                elapsedTime = zoomTimer.ElapsedMilliseconds;
-            }
-
-            zoomTimer.Stop();
-            //Draw the last frame separately to make sure the zoom was made correctly
-            ZoomLevel = newZoomLevel;
-            if (!Playing)
-            {
-                CenterX = newCenterX;
-                CenterY = newCenterY;
-                DrawSceneNoDriverFocus();
-            }
-
-            _smoothZoomInProgress = false;
-        }
-
-        internal class DrawableImage
-        {
-            internal readonly ClippingType DefaultClipping;
-            internal readonly int DefaultDistance;
-            internal readonly double Height;
-            internal readonly string Name;
-            internal readonly int TextureIdentifier;
-            internal readonly Lgr.ImageType Type;
-            internal readonly double Width;
-
-            internal DrawableImage(int textureId, double width, double height, ClippingType clipping,
-                int distance,
-                string name, Lgr.ImageType type)
-            {
-                TextureIdentifier = textureId;
-                Width = width;
-                Height = height;
-                DefaultClipping = clipping;
-                DefaultDistance = distance;
-                Name = name;
-                Type = type;
-            }
-
-            internal double WidthMinusMargin => Width - 2 * EmptyPixelXMargin;
-
-            internal double HeightMinusMargin => Height - 2 * EmptyPixelYMargin;
-
-            internal double EmptyPixelXMargin
-            {
-                get
-                {
-                    switch (Name)
-                    {
-                        case "maskhor":
-                            return 0.029;
-                        case "masklitt":
-                            return 0.015;
-                        case "maskbig":
-                            return 0.092;
-                        default:
-                            return 0.092;
-                    }
-                }
-            }
-
-            internal double EmptyPixelYMargin
-            {
-                get
-                {
-                    switch (Name)
-                    {
-                        case "maskhor":
-                            return 0.029;
-                        case "masklitt":
-                            return 0.015;
-                        case "maskbig":
-                            return 0.112;
-                        default:
-                            return 0.112;
-                    }
-                }
-            }
-        }
-
-        internal class Suspension
-        {
-            internal double Height;
-            internal double OffsetX;
-            internal int TextureIdentifier;
-            internal int WheelNumber;
-            internal double X;
-            internal double Y;
-
-            internal Suspension(int textureId, double x, double y, double height, double offsetX, int wheelNumber)
-            {
-                TextureIdentifier = textureId;
-                X = x;
-                Y = y;
-                Height = height;
-                OffsetX = offsetX;
-                WheelNumber = wheelNumber;
-            }
-        }
-
         public void DrawDashLine(Vector v1, Vector v2, Color color)
         {
             DrawDashLine(v1.X, v1.Y, v2.X, v2.Y, color);
@@ -2221,9 +1525,9 @@ namespace Elmanager
             GL.LineWidth(_settings.LineWidth);
         }
 
-        public void SaveSnapShot(string fileName)
+        public void SaveSnapShot(string fileName, ZoomController zoomCtrl, SceneSettings sceneSettings)
         {
-            using (var bmp = GetSnapShot())
+            using (var bmp = GetSnapShot(zoomCtrl, sceneSettings))
             {
                 bmp.Save(fileName, ImageFormat.Png);
             }

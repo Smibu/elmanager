@@ -9,18 +9,18 @@ namespace Elmanager
     internal class Player
     {
         internal const double TimeConst = 625.0 / 273.0;
-        internal int Apples; // Number of appletakes and bugapples
-        internal List<PlayerEvent<ReplayEventType>> RawEvents = new List<PlayerEvent<ReplayEventType>>();
-        internal List<PlayerEvent<LogicalEventType>> Events = new List<PlayerEvent<LogicalEventType>>();
-        internal int GroundTouches;
-        internal int LeftVolts;
-        internal int RightVolts;
-        internal int SuperVolts;
-        internal double Time;
+        internal readonly int Apples; // Number of appletakes and bugapples
+        internal readonly List<PlayerEvent<ReplayEventType>> RawEvents = new List<PlayerEvent<ReplayEventType>>();
+        internal readonly List<PlayerEvent<LogicalEventType>> Events = new List<PlayerEvent<LogicalEventType>>();
+        internal readonly int GroundTouches;
+        internal readonly int LeftVolts;
+        internal readonly int RightVolts;
+        internal readonly int SuperVolts;
+        internal readonly double Time;
         private double? _topSpeed;
         private double? _trip;
-        internal int Turns;
-        private PlayerEvent<LogicalEventType>[] _voltEvents;
+        internal readonly int Turns;
+        private List<PlayerEvent<LogicalEventType>> _voltEvents;
         private const double ArmForwardTime = 0.2;
         private const double ArmRotationDelay = 0.916;
         private const double HeadDiff = 0.0915;
@@ -28,26 +28,22 @@ namespace Elmanager
         private const double MaxArmRotation = 95;
         private const double WheelRotationFactor = 1 / 250.0;
 
-        private List<Vector> _globalBody = new List<Vector>();
-        private List<double> _bikeRotation = new List<double>();
-        private List<Direction> _direction = new List<Direction>();
-        private List<Vector> _head = new List<Vector>();
-        private List<Vector> _leftWheel = new List<Vector>();
-        private List<double> _leftWheelRotation = new List<double>();
-        private List<Vector> _rightWheel = new List<Vector>();
-        private List<double> _rightWheelRotation = new List<double>();
-        private int _currentFrameIndex;
-        private double _currentTime;
-        private double _interpolationStep;
+        private readonly List<Vector> _globalBody = new List<Vector>();
+        private readonly List<double> _bikeRotation = new List<double>();
+        private readonly List<Direction> _direction = new List<Direction>();
+        private readonly List<Vector> _head = new List<Vector>();
+        private readonly List<Vector> _leftWheel = new List<Vector>();
+        private readonly List<double> _leftWheelRotation = new List<double>();
+        private readonly List<Vector> _rightWheel = new List<Vector>();
+        private readonly List<double> _rightWheelRotation = new List<double>();
 
         internal int FrameCount => _globalBody.Count;
-        private int MaxFrameIndex => FrameCount - 1;
 
         internal Player(BinaryReader rec, int frames)
         {
             var frameCount = frames;
 
-            for (int i = 0; i < frameCount; i++)
+            for (var i = 0; i < frameCount; i++)
             {
                 _globalBody.Add(new Vector(rec.ReadSingle(), 0));
             }
@@ -70,27 +66,27 @@ namespace Elmanager
                 }
             }
 
-            for (int i = 0; i < frameCount; i++)
+            for (var i = 0; i < frameCount; i++)
             {
                 _bikeRotation.Add(rec.ReadInt16() / 10000.0 * 2 * Math.PI);
             }
 
             foreach (var part in new[] {_leftWheelRotation, _rightWheelRotation})
             {
-                for (int i = 0; i < frameCount; i++)
+                for (var i = 0; i < frameCount; i++)
                 {
                     part.Add(rec.ReadByte() * 2 * Math.PI * WheelRotationFactor);
                 }
             }
 
-            for (int i = 0; i < frameCount; i++)
+            for (var i = 0; i < frameCount; i++)
             {
                 var dirData = rec.ReadByte();
                 _direction.Add(dirData % 4 < 2 ? Direction.Left : Direction.Right);
             }
 
             // Compute final head position
-            for (int i = 0; i < frameCount; i++)
+            for (var i = 0; i < frameCount; i++)
             {
                 var dirf = 2 * (int) _direction[i] - 1; // 0 -> -1, 1 -> 1
                 _head[i].X += Math.Cos(_bikeRotation[i] + Math.PI / 2) * HeightConst +
@@ -103,9 +99,9 @@ namespace Elmanager
             rec.BaseStream.Seek(frameCount * 2, SeekOrigin.Current);
 
             var eventCount = rec.ReadInt32();
-            for (int j = 0; j < eventCount; j++)
+            for (var j = 0; j < eventCount; j++)
             {
-                double eventTime = rec.ReadDouble() * TimeConst;
+                var eventTime = rec.ReadDouble() * TimeConst;
                 var info1 = rec.ReadByte();
                 var info2 = rec.ReadByte();
                 var eventType = (ReplayEventType) rec.ReadByte();
@@ -161,7 +157,7 @@ namespace Elmanager
                         // (e.g. when the player finishes by taking the last apple while touching a flower).
                         // We use the objectIndexFreqs dictionary to determine which ObjectTouch events likely correspond to the flower touch,
                         // and skip those.
-                        int skips = 0;
+                        var skips = 0;
                         for (var i = 0; i < consecutiveSimultaneousAppletakes; i++)
                         {
                             var rawEvent = RawEvents[index - 1 - i - skips];
@@ -226,7 +222,7 @@ namespace Elmanager
                 var lastSameTimeFlowerEvents = 0;
                 var lastSameTimeAppleEvents = 0;
                 var flowerWaitAtEnd = false;
-                for (int i = Events.Count - 1; i >= 0; i--)
+                for (var i = Events.Count - 1; i >= 0; i--)
                 {
                     var curr = Events[i];
                     if (curr.Time == last.Time)
@@ -264,7 +260,7 @@ namespace Elmanager
         {
             var trip = 0.0;
             var top = 0.0;
-            for (int i = 0; i < _globalBody.Count - 2; i++)
+            for (var i = 0; i < _globalBody.Count - 2; i++)
             {
                 var curr = _globalBody[i].Dist(_globalBody[i + 1]);
                 trip += curr;
@@ -279,165 +275,99 @@ namespace Elmanager
         internal bool FakeFinish => Events.Count > 0 && Events.Last().Type == LogicalEventType.FlowerTouch;
         internal bool IsLastEventApple => Events.Count > 0 && Events.Last().Type == LogicalEventType.AppleTake;
 
-        internal double ArmRotation
+        private double GetArmRotation(double currentTime)
         {
-            get
+            if (_voltEvents == null)
             {
-                if (_voltEvents == null)
-                {
-                    _voltEvents = GetEvents(LogicalEventType.LeftVolt, LogicalEventType.RightVolt,
-                        LogicalEventType.SuperVolt);
-                }
+                _voltEvents = GetEvents(LogicalEventType.LeftVolt, LogicalEventType.RightVolt,
+                    LogicalEventType.SuperVolt);
+            }
 
-                int upperIndex = _voltEvents.Length;
-                int lowerIndex = 0;
-                int lastIndex = -1;
-                while (lowerIndex != upperIndex)
+            var upperIndex = _voltEvents.Count;
+            var lowerIndex = 0;
+            var lastIndex = -1;
+            while (lowerIndex != upperIndex)
+            {
+                var currIndex = (lowerIndex + upperIndex) / 2;
+                var currTime = _voltEvents[currIndex].Time;
+                var difference = currentTime - currTime;
+                if (difference > 0 && difference < ArmRotationDelay)
                 {
-                    int currIndex = (lowerIndex + upperIndex) / 2;
-                    double currTime = _voltEvents[currIndex].Time;
-                    double difference = CurrentTime - currTime;
-                    if (difference > 0 && difference < ArmRotationDelay)
+                    if (difference < ArmForwardTime)
                     {
-                        if (difference < ArmForwardTime)
-                        {
-                            if (_voltEvents[currIndex].Type == LogicalEventType.RightVolt)
-                                return MaxArmRotation * difference / ArmForwardTime;
-                            return -MaxArmRotation * difference / ArmForwardTime;
-                        }
-
                         if (_voltEvents[currIndex].Type == LogicalEventType.RightVolt)
-                            return (MaxArmRotation -
-                                    MaxArmRotation * (difference - ArmForwardTime) /
-                                    (ArmRotationDelay - ArmForwardTime));
-                        return
-                            -(MaxArmRotation -
-                              MaxArmRotation * (difference - ArmForwardTime) /
-                              (ArmRotationDelay - ArmForwardTime));
+                            return MaxArmRotation * difference / ArmForwardTime;
+                        return -MaxArmRotation * difference / ArmForwardTime;
                     }
 
-                    if (currTime < CurrentTime)
-                    {
-                        lowerIndex = currIndex;
-                    }
-                    else
-                    {
-                        upperIndex = currIndex;
-                    }
-
-                    if (lastIndex == currIndex)
-                        lowerIndex++;
-                    lastIndex = currIndex;
+                    if (_voltEvents[currIndex].Type == LogicalEventType.RightVolt)
+                        return (MaxArmRotation -
+                                MaxArmRotation * (difference - ArmForwardTime) /
+                                (ArmRotationDelay - ArmForwardTime));
+                    return
+                        -(MaxArmRotation -
+                          MaxArmRotation * (difference - ArmForwardTime) /
+                          (ArmRotationDelay - ArmForwardTime));
                 }
 
-                return 0.0;
+                if (currTime < currentTime)
+                {
+                    lowerIndex = currIndex;
+                }
+                else
+                {
+                    upperIndex = currIndex;
+                }
+
+                if (lastIndex == currIndex)
+                    lowerIndex++;
+                lastIndex = currIndex;
             }
+
+            return 0.0;
         }
 
-        internal double BikeRotation
+        internal PlayerState GetInterpolatedState(double time)
         {
-            get
-            {
-                double bikeRotationBegin = _bikeRotation[FirstInterpolationIndex];
-                double bikeRotationEnd = _bikeRotation[SecondInterpolationIndex];
-                if (bikeRotationEnd - bikeRotationBegin > 5 * Math.PI / 3)
-                    bikeRotationEnd -= 2 * Math.PI + bikeRotationBegin;
-                if (bikeRotationBegin - bikeRotationEnd > 5 * Math.PI / 3)
-                    bikeRotationBegin -= 2 * Math.PI + bikeRotationEnd;
-                return Interpolate(bikeRotationBegin, bikeRotationEnd);
-            }
-        }
-
-        internal double BikeRotationDegrees => BikeRotation / (2 * Math.PI) * 360;
-
-        internal double CurrentTime
-        {
-            set
-            {
-                _currentFrameIndex = (int) Math.Floor(value * 30);
-                _interpolationStep = value * 30 - _currentFrameIndex;
-                _currentTime = value;
-            }
-            get => _currentTime;
-        }
-
-        internal Direction Dir => _direction[FirstInterpolationIndex];
-
-        internal double GlobalBodyX =>
-            Interpolate(_globalBody[FirstInterpolationIndex].X, _globalBody[SecondInterpolationIndex].X);
-
-        internal double GlobalBodyY =>
-            Interpolate(_globalBody[FirstInterpolationIndex].Y, _globalBody[SecondInterpolationIndex].Y);
-
-        internal double HeadX => Interpolate(_head[FirstInterpolationIndex].X, _head[SecondInterpolationIndex].X);
-
-        internal double HeadY => Interpolate(_head[FirstInterpolationIndex].Y, _head[SecondInterpolationIndex].Y);
-
-        internal double LeftWheelRotation
-        {
-            get
-            {
-                double lWheelRotateBegin = _leftWheelRotation[FirstInterpolationIndex];
-                double lWheelRotateEnd = _leftWheelRotation[SecondInterpolationIndex];
-                if (lWheelRotateEnd - lWheelRotateBegin > 4 / 3.0 * Math.PI)
-                    lWheelRotateEnd -= 2 * Math.PI;
-                if (lWheelRotateBegin - lWheelRotateEnd > 4 / 3.0 * Math.PI)
-                    lWheelRotateBegin -= 2 * Math.PI;
-                return Interpolate(lWheelRotateBegin, lWheelRotateEnd);
-            }
-        }
-
-        internal double LeftWheelX =>
-            Interpolate(_leftWheel[FirstInterpolationIndex].X, _leftWheel[SecondInterpolationIndex].X);
-
-        internal double LeftWheelY =>
-            Interpolate(_leftWheel[FirstInterpolationIndex].Y, _leftWheel[SecondInterpolationIndex].Y);
-
-        internal double RightWheelRotation
-        {
-            get
-            {
-                double rWheelRotateBegin = _rightWheelRotation[FirstInterpolationIndex];
-                double rWheelRotateEnd = _rightWheelRotation[SecondInterpolationIndex];
-                if (rWheelRotateEnd - rWheelRotateBegin > 4 / 3.0 * Math.PI)
-                    rWheelRotateEnd -= 2 * Math.PI;
-                if (rWheelRotateBegin - rWheelRotateEnd > 4 / 3.0 * Math.PI)
-                    rWheelRotateBegin -= 2 * Math.PI;
-                return Interpolate(rWheelRotateBegin, rWheelRotateEnd);
-            }
-        }
-
-        internal double RightWheelX =>
-            Interpolate(_rightWheel[FirstInterpolationIndex].X, _rightWheel[SecondInterpolationIndex].X);
-
-        internal double RightWheelY =>
-            Interpolate(_rightWheel[FirstInterpolationIndex].Y, _rightWheel[SecondInterpolationIndex].Y);
-
-        internal double Speed
-        {
-            get
-            {
-                if (_currentFrameIndex == 0 || _currentFrameIndex > MaxFrameIndex)
-                    return 0.0;
-                return
-                    Math.Sqrt(Math.Pow((_globalBody[_currentFrameIndex].X - _globalBody[_currentFrameIndex - 1].X), 2) +
-                              Math.Pow((_globalBody[_currentFrameIndex].Y - _globalBody[_currentFrameIndex - 1].Y),
-                                  2)) *
-                    Constants.SpeedConst;
-            }
-        }
-
-        private int FirstInterpolationIndex =>
-            _currentFrameIndex > MaxFrameIndex ? MaxFrameIndex : _currentFrameIndex;
-
-        private int SecondInterpolationIndex
-        {
-            get
-            {
-                if (_currentFrameIndex < MaxFrameIndex)
-                    return _currentFrameIndex + 1;
-                return FirstInterpolationIndex;
-            }
+            var currIndex = (int)Math.Floor(time * 30);
+            var step = time * 30 - currIndex;
+            var maxFrameIndex = FrameCount - 1;
+            var i1 = Math.Min(currIndex, maxFrameIndex);
+            var i2 = Math.Min(currIndex + 1, maxFrameIndex);
+            var head1 = _head[i1];
+            var head2 = _head[i2];
+            var lWheelRotate1 = _leftWheelRotation[i1];
+            var lWheelRotate2 = _leftWheelRotation[i2];
+            if (lWheelRotate2 - lWheelRotate1 > 4 / 3.0 * Math.PI)
+                lWheelRotate2 -= 2 * Math.PI;
+            if (lWheelRotate1 - lWheelRotate2 > 4 / 3.0 * Math.PI)
+                lWheelRotate1 -= 2 * Math.PI;
+            var rWheelRotate1 = _rightWheelRotation[i1];
+            var rWheelRotate2 = _rightWheelRotation[i2];
+            if (rWheelRotate2 - rWheelRotate1 > 4 / 3.0 * Math.PI)
+                rWheelRotate2 -= 2 * Math.PI;
+            if (rWheelRotate1 - rWheelRotate2 > 4 / 3.0 * Math.PI)
+                rWheelRotate1 -= 2 * Math.PI;
+            var bikeRotation1 = _bikeRotation[i1];
+            var bikeRotation2 = _bikeRotation[i2];
+            if (bikeRotation2 - bikeRotation1 > 5 * Math.PI / 3)
+                bikeRotation2 -= 2 * Math.PI + bikeRotation1;
+            if (bikeRotation1 - bikeRotation2 > 5 * Math.PI / 3)
+                bikeRotation1 -= 2 * Math.PI + bikeRotation2;
+            var leftwheel1 = _leftWheel[i1];
+            var leftwheel2 = _leftWheel[i2];
+            var rightwheel1 = _rightWheel[i1];
+            var rightwheel2 = _rightWheel[i2];
+            var global1 = _globalBody[i1];
+            var global2 = _globalBody[i2];
+            return new PlayerState(
+                Interpolate(global1.X, global2.X, step), Interpolate(global1.Y, global2.Y, step),
+                Interpolate(leftwheel1.X, leftwheel2.X, step), Interpolate(leftwheel1.Y, leftwheel2.Y, step),
+                Interpolate(rightwheel1.X, rightwheel2.X, step), Interpolate(rightwheel1.Y, rightwheel2.Y, step),
+                Interpolate(lWheelRotate1, lWheelRotate2, step), Interpolate(rWheelRotate1, rWheelRotate2, step),
+                Interpolate(head1.X, head2.X, step), Interpolate(head1.Y, head2.Y, step),
+                Interpolate(bikeRotation1, bikeRotation2, step) / (2 * Math.PI) * 360, _direction[i1],
+                GetArmRotation(time));
         }
 
         internal double TopSpeed
@@ -475,19 +405,16 @@ namespace Elmanager
                 select x.Time).ToArray();
         }
 
-        internal PlayerEvent<LogicalEventType>[] GetEvents(params LogicalEventType[] eventTypes)
+        internal List<PlayerEvent<LogicalEventType>> GetEvents(params LogicalEventType[] eventTypes)
         {
-            return Events.Where(x => eventTypes.Contains(x.Type)).ToArray();
+            return Events.Where(x => eventTypes.Contains(x.Type)).ToList();
         }
 
-        internal Vector GlobalBodyFromIndex(int index)
-        {
-            return _globalBody[index];
-        }
+        internal List<Vector> GlobalBody => _globalBody;
 
-        private double Interpolate(double firstValue, double secondValue)
+        private static double Interpolate(double firstValue, double secondValue, double step)
         {
-            return firstValue + (secondValue - firstValue) * _interpolationStep;
+            return firstValue + (secondValue - firstValue) * step;
         }
     }
 }

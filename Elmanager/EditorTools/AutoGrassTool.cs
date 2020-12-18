@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Drawing;
+using System.Linq;
 using System.Windows.Forms;
 using Elmanager.Forms;
 
@@ -38,6 +39,11 @@ namespace Elmanager.EditorTools
             {
                 _currentAutograssPolys.ForEach(poly => Renderer.DrawLineStrip(poly, Color.Red));
             }
+        }
+
+        public List<Polygon> GetExtraPolygons()
+        {
+            return new List<Polygon>();
         }
 
         public void InActivate()
@@ -145,6 +151,8 @@ namespace Elmanager.EditorTools
             double autoGrassThickness = Global.AppSettings.LevelEditor.AutoGrassThickness;
             List<Polygon> grassPolys = new List<Polygon>();
             bool isSky = Lev.IsSky(p);
+            // TODO: Make autograss work without the WithYNegated hack.
+            p = p.WithYNegated();
             if (!(isSky ^ p.IsCounterClockwise))
                 p.ChangeOrientation();
             int i;
@@ -169,7 +177,7 @@ namespace Elmanager.EditorTools
                     j++;
                     j = j % p.Vertices.Count;
                     if (exploredVerts.Contains(j))
-                        return grassPolys;
+                        return grassPolys.Select(x => x.WithYNegated()).ToList();
                 }
 
                 exploredVerts.Add(j);
@@ -317,7 +325,7 @@ namespace Elmanager.EditorTools
                 grassPolys[grassPolys.Count - 1].Add(lastGrassVertex);
             }
 
-            return grassPolys;
+            return grassPolys.Select(x => x.WithYNegated()).ToList();
         }
 
         public override bool Busy => AutoGrassPolygonSelected;
