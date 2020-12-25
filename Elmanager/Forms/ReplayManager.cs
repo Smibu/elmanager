@@ -38,6 +38,13 @@ namespace Elmanager.Forms
             }
 
             Global.AppSettings.ReplayManager.RestoreGui(this);
+            LevPatternBox.Text = Global.AppSettings.ReplayManager.LevPattern;
+            intExtSelect.SelectedOption = Global.AppSettings.ReplayManager.IntExtSelect;
+            singleMultiSelect.SelectedOption = Global.AppSettings.ReplayManager.SingleMultiSelect;
+            finishedSelect.SelectedOption = Global.AppSettings.ReplayManager.FinishedSelect;
+            fastestSlowestSelect.SelectedOption = Global.AppSettings.ReplayManager.FastestSlowestSelect;
+            elmaAcrossSelect.SelectedOption = Global.AppSettings.ReplayManager.ElmaAcrossSelect;
+
             DisplaySelectionInfo();
         }
 
@@ -515,6 +522,12 @@ namespace Elmanager.Forms
         private void SaveSettings(object sender, FormClosingEventArgs e)
         {
             Global.AppSettings.ReplayManager.SaveGui(this);
+            Global.AppSettings.ReplayManager.LevPattern = LevPatternBox.Text;
+            Global.AppSettings.ReplayManager.IntExtSelect = intExtSelect.SelectedOption;
+            Global.AppSettings.ReplayManager.SingleMultiSelect = singleMultiSelect.SelectedOption;
+            Global.AppSettings.ReplayManager.FinishedSelect = finishedSelect.SelectedOption;
+            Global.AppSettings.ReplayManager.FastestSlowestSelect = fastestSlowestSelect.SelectedOption;
+            Global.AppSettings.ReplayManager.ElmaAcrossSelect = elmaAcrossSelect.SelectedOption;
         }
 
         private void SelectAll(object sender, EventArgs e)
