@@ -487,6 +487,10 @@ namespace Elmanager.Forms
                     typesToShow.Add(LogicalEventType.Turn);
                 if (groundtouchesToolStripMenuItem.Checked)
                     typesToShow.Add(LogicalEventType.GroundTouch);
+                if (gasOnToolStripMenuItem.Checked)
+                    typesToShow.Add(LogicalEventType.GasOn);
+                if (gasOffToolStripMenuItem.Checked)
+                    typesToShow.Add(LogicalEventType.GasOff);
                 var evs = _replayController.UpdateEvents(typesToShow);
                 var p = _replayController.GetSelectedPlayer();
                 Utils.PutEventsToList(p, EventListBox, p.Finished || p.FakeFinish, evs);

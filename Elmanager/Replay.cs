@@ -25,7 +25,9 @@ namespace Elmanager
         Turn,
         RightVolt,
         LeftVolt,
-        SuperVolt
+        SuperVolt,
+        GasOn,
+        GasOff
     }
 
     internal enum Direction

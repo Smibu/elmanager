@@ -79,9 +79,11 @@ namespace Elmanager
                 }
             }
 
+            var gas = new List<bool>();
             for (var i = 0; i < frameCount; i++)
             {
                 var dirData = rec.ReadByte();
+                gas.Add(dirData % 2 == 1);
                 _direction.Add(dirData % 4 < 2 ? Direction.Left : Direction.Right);
             }
 
@@ -254,6 +256,23 @@ namespace Elmanager
 
             if ((!Finished && !FakeFinish) || Time == 0)
                 Time = Math.Round(frameCount / 30.0, 3);
+            
+            // calculating gas events
+            bool gasOn = false;
+            for (int i = 0; i < frameCount; i++)
+            {
+                if (gas[i] == gasOn)
+                    continue;
+                
+                gasOn = gas[i];
+                var eventTime = Math.Round(i / 30.0, 3);
+                if (eventTime >= Time)
+                    break;
+                
+                Events.Add(new PlayerEvent<LogicalEventType>(gasOn ? LogicalEventType.GasOn : LogicalEventType.GasOff, eventTime));
+            }
+            
+            Events.Sort((a, b) => a.Time.CompareTo(b.Time));
         }
 
         private void ComputeTripAndTopSpeed()
