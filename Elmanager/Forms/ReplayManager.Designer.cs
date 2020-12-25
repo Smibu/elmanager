@@ -320,7 +320,7 @@ namespace Elmanager.Forms
             this.LevPatternBox.Location = new System.Drawing.Point(103, 90);
             this.LevPatternBox.Name = "LevPatternBox";
             this.LevPatternBox.Size = new System.Drawing.Size(100, 23);
-            this.LevPatternBox.TabIndex = 42;
+            this.LevPatternBox.TabIndex = 70;
             this.toolTip1.SetToolTip(this.LevPatternBox, "Enter regular expression");
             // 
             // PatternBox
@@ -328,7 +328,7 @@ namespace Elmanager.Forms
             this.PatternBox.Location = new System.Drawing.Point(103, 61);
             this.PatternBox.Name = "PatternBox";
             this.PatternBox.Size = new System.Drawing.Size(100, 23);
-            this.PatternBox.TabIndex = 15;
+            this.PatternBox.TabIndex = 69;
             this.toolTip1.SetToolTip(this.PatternBox, "Enter regular expression");
             // 
             // SelectedReplaysLabel
@@ -349,7 +349,7 @@ namespace Elmanager.Forms
             this.SearchButton.Location = new System.Drawing.Point(237, 219);
             this.SearchButton.Name = "SearchButton";
             this.SearchButton.Size = new System.Drawing.Size(97, 25);
-            this.SearchButton.TabIndex = 13;
+            this.SearchButton.TabIndex = 73;
             this.SearchButton.Text = "Search";
             this.SearchButton.UseVisualStyleBackColor = true;
             this.SearchButton.Click += new System.EventHandler(this.ToggleSearch);
@@ -445,7 +445,7 @@ namespace Elmanager.Forms
             this.tableLayoutPanel2.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 20F));
             this.tableLayoutPanel2.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 20F));
             this.tableLayoutPanel2.Size = new System.Drawing.Size(266, 176);
-            this.tableLayoutPanel2.TabIndex = 65;
+            this.tableLayoutPanel2.TabIndex = 55;
             // 
             // singleMultiSelect
             // 
@@ -459,7 +459,7 @@ namespace Elmanager.Forms
             this.singleMultiSelect.Option3Text = "Both";
             this.singleMultiSelect.SelectedOption = 2;
             this.singleMultiSelect.Size = new System.Drawing.Size(266, 36);
-            this.singleMultiSelect.TabIndex = 62;
+            this.singleMultiSelect.TabIndex = 64;
             // 
             // finishedSelect
             // 
@@ -473,7 +473,7 @@ namespace Elmanager.Forms
             this.finishedSelect.Option3Text = "Both";
             this.finishedSelect.SelectedOption = 2;
             this.finishedSelect.Size = new System.Drawing.Size(266, 35);
-            this.finishedSelect.TabIndex = 61;
+            this.finishedSelect.TabIndex = 62;
             // 
             // elmaAcrossSelect
             // 
@@ -487,7 +487,7 @@ namespace Elmanager.Forms
             this.elmaAcrossSelect.Option3Text = "Both";
             this.elmaAcrossSelect.SelectedOption = 2;
             this.elmaAcrossSelect.Size = new System.Drawing.Size(266, 35);
-            this.elmaAcrossSelect.TabIndex = 63;
+            this.elmaAcrossSelect.TabIndex = 61;
             // 
             // intExtSelect
             // 
@@ -515,7 +515,7 @@ namespace Elmanager.Forms
             this.fastestSlowestSelect.Option3Text = "All";
             this.fastestSlowestSelect.SelectedOption = 2;
             this.fastestSlowestSelect.Size = new System.Drawing.Size(266, 35);
-            this.fastestSlowestSelect.TabIndex = 64;
+            this.fastestSlowestSelect.TabIndex = 63;
             // 
             // panel1
             // 
@@ -526,7 +526,7 @@ namespace Elmanager.Forms
             this.panel1.Margin = new System.Windows.Forms.Padding(2);
             this.panel1.Name = "panel1";
             this.panel1.Size = new System.Drawing.Size(338, 247);
-            this.panel1.TabIndex = 1;
+            this.panel1.TabIndex = 56;
             // 
             // minFileSizeBox
             // 
@@ -535,7 +535,7 @@ namespace Elmanager.Forms
             this.minFileSizeBox.Location = new System.Drawing.Point(103, 3);
             this.minFileSizeBox.Name = "minFileSizeBox";
             this.minFileSizeBox.Size = new System.Drawing.Size(100, 23);
-            this.minFileSizeBox.TabIndex = 53;
+            this.minFileSizeBox.TabIndex = 65;
             this.minFileSizeBox.Text = "0";
             // 
             // Label1
@@ -556,7 +556,7 @@ namespace Elmanager.Forms
             this.TimeMaxBox.MaxLength = 9;
             this.TimeMaxBox.Name = "TimeMaxBox";
             this.TimeMaxBox.Size = new System.Drawing.Size(100, 23);
-            this.TimeMaxBox.TabIndex = 23;
+            this.TimeMaxBox.TabIndex = 72;
             this.TimeMaxBox.Text = "99:00,000";
             // 
             // TimeMinBox
@@ -567,7 +567,7 @@ namespace Elmanager.Forms
             this.TimeMinBox.MaxLength = 9;
             this.TimeMinBox.Name = "TimeMinBox";
             this.TimeMinBox.Size = new System.Drawing.Size(100, 23);
-            this.TimeMinBox.TabIndex = 21;
+            this.TimeMinBox.TabIndex = 71;
             this.TimeMinBox.Text = "00:00,000";
             // 
             // Label7
@@ -607,7 +607,7 @@ namespace Elmanager.Forms
             this.maxDateTime.Location = new System.Drawing.Point(233, 32);
             this.maxDateTime.Name = "maxDateTime";
             this.maxDateTime.Size = new System.Drawing.Size(100, 23);
-            this.maxDateTime.TabIndex = 59;
+            this.maxDateTime.TabIndex = 68;
             this.maxDateTime.Value = new System.DateTime(9000, 1, 1, 0, 0, 0, 0);
             // 
             // maxFileSizeBox
@@ -617,7 +617,7 @@ namespace Elmanager.Forms
             this.maxFileSizeBox.Location = new System.Drawing.Point(233, 3);
             this.maxFileSizeBox.Name = "maxFileSizeBox";
             this.maxFileSizeBox.Size = new System.Drawing.Size(100, 23);
-            this.maxFileSizeBox.TabIndex = 55;
+            this.maxFileSizeBox.TabIndex = 66;
             this.maxFileSizeBox.Text = "10000";
             // 
             // label26
@@ -647,7 +647,7 @@ namespace Elmanager.Forms
             this.minDateTime.Location = new System.Drawing.Point(103, 32);
             this.minDateTime.Name = "minDateTime";
             this.minDateTime.Size = new System.Drawing.Size(100, 23);
-            this.minDateTime.TabIndex = 57;
+            this.minDateTime.TabIndex = 67;
             this.minDateTime.Value = new System.DateTime(1800, 1, 1, 0, 0, 0, 0);
             // 
             // label25
@@ -1111,7 +1111,7 @@ namespace Elmanager.Forms
             this.TextBox21.Location = new System.Drawing.Point(178, 105);
             this.TextBox21.Name = "TextBox21";
             this.TextBox21.Size = new System.Drawing.Size(47, 23);
-            this.TextBox21.TabIndex = 59;
+            this.TextBox21.TabIndex = 68;
             this.TextBox21.Text = "10000";
             // 
             // TextBox2
