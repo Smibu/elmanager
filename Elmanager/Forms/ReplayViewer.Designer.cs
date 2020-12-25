@@ -41,6 +41,8 @@ namespace Elmanager.Forms
             this.supervoltsToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.turnsToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.groundtouchesToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.gasOnToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.gasOffToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.toolTip1 = new System.Windows.Forms.ToolTip(this.components);
             this.playbackSpeedBar = new Elmanager.CustomControls.TrackBarMod();
             this.TabControl1 = new Elmanager.CustomControls.TabControlMod();
@@ -135,7 +137,9 @@ namespace Elmanager.Forms
             this.rightVoltsToolStripMenuItem,
             this.supervoltsToolStripMenuItem,
             this.turnsToolStripMenuItem,
-            this.groundtouchesToolStripMenuItem});
+            this.groundtouchesToolStripMenuItem,
+            this.gasOnToolStripMenuItem,
+            this.gasOffToolStripMenuItem});
             this.contextMenuStrip1.Name = "contextMenuStrip1";
             this.contextMenuStrip1.Size = new System.Drawing.Size(157, 136);
             // 
@@ -182,6 +186,20 @@ namespace Elmanager.Forms
             this.groundtouchesToolStripMenuItem.Name = "groundtouchesToolStripMenuItem";
             this.groundtouchesToolStripMenuItem.Size = new System.Drawing.Size(156, 22);
             this.groundtouchesToolStripMenuItem.Text = "Groundtouches";
+            // 
+            // gasOnToolStripMenuItem
+            // 
+            this.gasOnToolStripMenuItem.CheckOnClick = true;
+            this.gasOnToolStripMenuItem.Name = "gasOnToolStripMenuItem";
+            this.gasOnToolStripMenuItem.Size = new System.Drawing.Size(156, 22);
+            this.gasOnToolStripMenuItem.Text = "Gas on (approx)";
+            // 
+            // gasOffToolStripMenuItem
+            // 
+            this.gasOffToolStripMenuItem.CheckOnClick = true;
+            this.gasOffToolStripMenuItem.Name = "gasOffToolStripMenuItem";
+            this.gasOffToolStripMenuItem.Size = new System.Drawing.Size(156, 22);
+            this.gasOffToolStripMenuItem.Text = "Gas off (approx)";
             // 
             // toolTip1
             // 
@@ -895,6 +913,8 @@ namespace Elmanager.Forms
         private ToolStripMenuItem supervoltsToolStripMenuItem;
         private ToolStripMenuItem turnsToolStripMenuItem;
         private ToolStripMenuItem groundtouchesToolStripMenuItem;
+        private ToolStripMenuItem gasOnToolStripMenuItem;
+        private ToolStripMenuItem gasOffToolStripMenuItem;
         private System.ComponentModel.IContainer components;
         private ToolTip toolTip1;
         private Button button1;

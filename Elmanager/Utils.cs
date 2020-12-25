@@ -140,6 +140,7 @@ namespace Elmanager
             int superVoltCounter = 0;
             int gtCounter = 0;
             int appleCounter = 0;
+            int gasCounter = 0;
             double lastEventTime = 0;
             listBox.Items.Clear();
             foreach (var e in selectedEvents)
@@ -171,6 +172,13 @@ namespace Elmanager
                     case LogicalEventType.GroundTouch:
                         gtCounter++;
                         strToAdd = "Touch " + gtCounter;
+                        break;
+                    case LogicalEventType.GasOn:
+                        gasCounter++;
+                        strToAdd = "Gas on " + gasCounter;
+                        break;
+                    case LogicalEventType.GasOff:
+                        strToAdd = "Gas off " + gasCounter;
                         break;
                     default:
                         throw new Exception("Unknown ReplayEventType.");
