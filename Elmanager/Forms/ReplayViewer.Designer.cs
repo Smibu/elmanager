@@ -3,33 +3,33 @@ using Elmanager.CustomControls;
 
 namespace Elmanager.Forms
 {
-	public partial class ReplayViewer
-		{
-		
-		//Form overrides dispose to clean up the component list.
-		protected override void Dispose(bool disposing)
-			{
-			try
-			{
-				if (disposing && components != null)
-				{
-					components.Dispose();
-				}
+    public partial class ReplayViewer
+    {
+
+        //Form overrides dispose to clean up the component list.
+        protected override void Dispose(bool disposing)
+        {
+            try
+            {
+                if (disposing && components != null)
+                {
+                    components.Dispose();
+                }
                 _replayController.Dispose();
-			}
-			finally
-			{
-				base.Dispose(disposing);
-			}
-		}
+            }
+            finally
+            {
+                base.Dispose(disposing);
+            }
+        }
 
         //Required by the Windows Form Designer
-		
-		//The following procedure is required by the Windows Form Designer
-		//It can be modified using the Windows Form Designer.
-		//Do not modify it using the code editor.
-		private void InitializeComponent()
-			{
+
+        //The following procedure is required by the Windows Form Designer
+        //It can be modified using the Windows Form Designer.
+        //Do not modify it using the code editor.
+        private void InitializeComponent()
+        {
             this.components = new System.ComponentModel.Container();
             this.SaveFileDialog1 = new System.Windows.Forms.SaveFileDialog();
             this.ColorDialog1 = new System.Windows.Forms.ColorDialog();
@@ -90,8 +90,10 @@ namespace Elmanager.Forms
             this.FollowDriverBox = new System.Windows.Forms.CheckBox();
             this.ShowDriverPathBox = new System.Windows.Forms.CheckBox();
             this.LoopPlayingBox = new System.Windows.Forms.CheckBox();
+            this.flowLayoutPanel = new System.Windows.Forms.FlowLayoutPanel();
             this.tableLayoutPanel1 = new System.Windows.Forms.TableLayoutPanel();
             this.tableLayoutPanel2 = new System.Windows.Forms.TableLayoutPanel();
+            this.optionsPanel3 = new System.Windows.Forms.Panel();
             this.contextMenuStrip1.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.playbackSpeedBar)).BeginInit();
             this.TabControl1.SuspendLayout();
@@ -99,8 +101,10 @@ namespace Elmanager.Forms
             ((System.ComponentModel.ISupportInitialize)(this.PlayList)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.timeBar)).BeginInit();
             this.TabPage2.SuspendLayout();
+            this.flowLayoutPanel.SuspendLayout();
             this.tableLayoutPanel1.SuspendLayout();
             this.tableLayoutPanel2.SuspendLayout();
+            this.optionsPanel3.SuspendLayout();
             this.SuspendLayout();
             // 
             // SaveFileDialog1
@@ -249,7 +253,7 @@ namespace Elmanager.Forms
             // 
             this.PlayList.AllColumns.Add(this.OlvColumn1);
             this.PlayList.AllColumns.Add(this.OlvColumn2);
-            this.PlayList.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+            this.PlayList.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom)
             | System.Windows.Forms.AnchorStyles.Left)));
             this.PlayList.CellEditUseWholeCell = false;
             this.PlayList.CheckBoxes = true;
@@ -307,7 +311,7 @@ namespace Elmanager.Forms
             // 
             // EventListBox
             // 
-            this.EventListBox.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+            this.EventListBox.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom)
             | System.Windows.Forms.AnchorStyles.Left)));
             this.EventListBox.ContextMenuStrip = this.contextMenuStrip1;
             this.EventListBox.FormattingEnabled = true;
@@ -411,15 +415,7 @@ namespace Elmanager.Forms
             // 
             // TabPage2
             // 
-            this.TabPage2.Controls.Add(this.tableLayoutPanel2);
-            this.TabPage2.Controls.Add(this.tableLayoutPanel1);
-            this.TabPage2.Controls.Add(this.RenderingSettingsButton);
-            this.TabPage2.Controls.Add(this.ActivePlayerPanel);
-            this.TabPage2.Controls.Add(this.InActivePlayerPanel);
-            this.TabPage2.Controls.Add(this.DrivingLinePanel);
-            this.TabPage2.Controls.Add(this.DrivingLineLabel);
-            this.TabPage2.Controls.Add(this.ActivePLabel);
-            this.TabPage2.Controls.Add(this.InactivePLabel);
+            this.TabPage2.Controls.Add(this.flowLayoutPanel);
             this.TabPage2.Location = new System.Drawing.Point(4, 24);
             this.TabPage2.Name = "TabPage2";
             this.TabPage2.Padding = new System.Windows.Forms.Padding(3);
@@ -435,7 +431,7 @@ namespace Elmanager.Forms
             this.followAlsoWhenZooming.Margin = new System.Windows.Forms.Padding(0);
             this.followAlsoWhenZooming.Name = "followAlsoWhenZooming";
             this.followAlsoWhenZooming.Size = new System.Drawing.Size(138, 19);
-            this.followAlsoWhenZooming.TabIndex = 146;
+            this.followAlsoWhenZooming.TabIndex = 56;
             this.followAlsoWhenZooming.Text = "...also when zooming";
             this.followAlsoWhenZooming.UseVisualStyleBackColor = true;
             // 
@@ -456,7 +452,7 @@ namespace Elmanager.Forms
             this.viewerSizeYBox.Location = new System.Drawing.Point(221, 61);
             this.viewerSizeYBox.Name = "viewerSizeYBox";
             this.viewerSizeYBox.Size = new System.Drawing.Size(49, 23);
-            this.viewerSizeYBox.TabIndex = 144;
+            this.viewerSizeYBox.TabIndex = 66;
             this.viewerSizeYBox.Text = "1";
             this.viewerSizeYBox.KeyUp += new System.Windows.Forms.KeyEventHandler(this.ViewerSizeBoxKeyUp);
             // 
@@ -467,7 +463,7 @@ namespace Elmanager.Forms
             this.viewerSizeXBox.Location = new System.Drawing.Point(147, 61);
             this.viewerSizeXBox.Name = "viewerSizeXBox";
             this.viewerSizeXBox.Size = new System.Drawing.Size(49, 23);
-            this.viewerSizeXBox.TabIndex = 143;
+            this.viewerSizeXBox.TabIndex = 65;
             this.viewerSizeXBox.Text = "1";
             this.viewerSizeXBox.KeyUp += new System.Windows.Forms.KeyEventHandler(this.ViewerSizeBoxKeyUp);
             // 
@@ -488,7 +484,7 @@ namespace Elmanager.Forms
             this.multiSpyBox.Margin = new System.Windows.Forms.Padding(0);
             this.multiSpyBox.Name = "multiSpyBox";
             this.multiSpyBox.Size = new System.Drawing.Size(75, 19);
-            this.multiSpyBox.TabIndex = 141;
+            this.multiSpyBox.TabIndex = 61;
             this.multiSpyBox.Text = "Multi spy";
             this.multiSpyBox.UseVisualStyleBackColor = true;
             // 
@@ -499,7 +495,7 @@ namespace Elmanager.Forms
             this.HideStartObjectBox.Margin = new System.Windows.Forms.Padding(0);
             this.HideStartObjectBox.Name = "HideStartObjectBox";
             this.HideStartObjectBox.Size = new System.Drawing.Size(113, 19);
-            this.HideStartObjectBox.TabIndex = 140;
+            this.HideStartObjectBox.TabIndex = 62;
             this.HideStartObjectBox.Text = "Hide start object";
             this.HideStartObjectBox.UseVisualStyleBackColor = true;
             // 
@@ -510,7 +506,7 @@ namespace Elmanager.Forms
             this.SelectNoPlayersBox.Margin = new System.Windows.Forms.Padding(0);
             this.SelectNoPlayersBox.Name = "SelectNoPlayersBox";
             this.SelectNoPlayersBox.Size = new System.Drawing.Size(170, 19);
-            this.SelectNoPlayersBox.TabIndex = 139;
+            this.SelectNoPlayersBox.TabIndex = 59;
             this.SelectNoPlayersBox.Text = "Select no players by default";
             this.SelectNoPlayersBox.UseVisualStyleBackColor = true;
             // 
@@ -521,7 +517,7 @@ namespace Elmanager.Forms
             this.MouseClickZoomBox.Location = new System.Drawing.Point(147, 32);
             this.MouseClickZoomBox.Name = "MouseClickZoomBox";
             this.MouseClickZoomBox.Size = new System.Drawing.Size(49, 23);
-            this.MouseClickZoomBox.TabIndex = 138;
+            this.MouseClickZoomBox.TabIndex = 64;
             this.MouseClickZoomBox.Text = "1";
             this.MouseClickZoomBox.TextChanged += new System.EventHandler(this.MouseClickZoomBoxTextChanged);
             // 
@@ -532,7 +528,7 @@ namespace Elmanager.Forms
             this.MouseWheelZoomBox.Location = new System.Drawing.Point(147, 3);
             this.MouseWheelZoomBox.Name = "MouseWheelZoomBox";
             this.MouseWheelZoomBox.Size = new System.Drawing.Size(49, 23);
-            this.MouseWheelZoomBox.TabIndex = 137;
+            this.MouseWheelZoomBox.TabIndex = 63;
             this.MouseWheelZoomBox.Text = "1";
             this.MouseWheelZoomBox.TextChanged += new System.EventHandler(this.MouseWheelZoomBoxTextChanged);
             // 
@@ -543,16 +539,16 @@ namespace Elmanager.Forms
             this.PlayerFramesBox.Margin = new System.Windows.Forms.Padding(0);
             this.PlayerFramesBox.Name = "PlayerFramesBox";
             this.PlayerFramesBox.Size = new System.Drawing.Size(123, 19);
-            this.PlayerFramesBox.TabIndex = 136;
+            this.PlayerFramesBox.TabIndex = 60;
             this.PlayerFramesBox.Text = "Player frames only";
             this.PlayerFramesBox.UseVisualStyleBackColor = true;
             // 
             // RenderingSettingsButton
             // 
-            this.RenderingSettingsButton.Location = new System.Drawing.Point(126, 274);
+            this.RenderingSettingsButton.Location = new System.Drawing.Point(120, 30);
             this.RenderingSettingsButton.Name = "RenderingSettingsButton";
             this.RenderingSettingsButton.Size = new System.Drawing.Size(115, 25);
-            this.RenderingSettingsButton.TabIndex = 135;
+            this.RenderingSettingsButton.TabIndex = 71;
             this.RenderingSettingsButton.Text = "Rendering settings";
             this.RenderingSettingsButton.UseVisualStyleBackColor = true;
             this.RenderingSettingsButton.Click += new System.EventHandler(this.RenderingSettingsButtonClick);
@@ -561,7 +557,7 @@ namespace Elmanager.Forms
             // 
             this.ActivePlayerPanel.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
             this.ActivePlayerPanel.Cursor = System.Windows.Forms.Cursors.Hand;
-            this.ActivePlayerPanel.Location = new System.Drawing.Point(6, 244);
+            this.ActivePlayerPanel.Location = new System.Drawing.Point(0, 0);
             this.ActivePlayerPanel.Name = "ActivePlayerPanel";
             this.ActivePlayerPanel.Size = new System.Drawing.Size(20, 20);
             this.ActivePlayerPanel.TabIndex = 132;
@@ -571,7 +567,7 @@ namespace Elmanager.Forms
             // 
             this.InActivePlayerPanel.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
             this.InActivePlayerPanel.Cursor = System.Windows.Forms.Cursors.Hand;
-            this.InActivePlayerPanel.Location = new System.Drawing.Point(6, 277);
+            this.InActivePlayerPanel.Location = new System.Drawing.Point(0, 33);
             this.InActivePlayerPanel.Name = "InActivePlayerPanel";
             this.InActivePlayerPanel.Size = new System.Drawing.Size(20, 20);
             this.InActivePlayerPanel.TabIndex = 133;
@@ -581,7 +577,7 @@ namespace Elmanager.Forms
             // 
             this.DrivingLinePanel.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
             this.DrivingLinePanel.Cursor = System.Windows.Forms.Cursors.Hand;
-            this.DrivingLinePanel.Location = new System.Drawing.Point(126, 244);
+            this.DrivingLinePanel.Location = new System.Drawing.Point(120, 0);
             this.DrivingLinePanel.Name = "DrivingLinePanel";
             this.DrivingLinePanel.Size = new System.Drawing.Size(20, 20);
             this.DrivingLinePanel.TabIndex = 134;
@@ -591,7 +587,7 @@ namespace Elmanager.Forms
             // 
             this.DrivingLineLabel.AutoSize = true;
             this.DrivingLineLabel.Cursor = System.Windows.Forms.Cursors.Default;
-            this.DrivingLineLabel.Location = new System.Drawing.Point(152, 247);
+            this.DrivingLineLabel.Location = new System.Drawing.Point(146, 3);
             this.DrivingLineLabel.Name = "DrivingLineLabel";
             this.DrivingLineLabel.Size = new System.Drawing.Size(152, 15);
             this.DrivingLineLabel.TabIndex = 131;
@@ -601,7 +597,7 @@ namespace Elmanager.Forms
             // 
             this.ActivePLabel.AutoSize = true;
             this.ActivePLabel.Cursor = System.Windows.Forms.Cursors.Default;
-            this.ActivePLabel.Location = new System.Drawing.Point(32, 247);
+            this.ActivePLabel.Location = new System.Drawing.Point(26, 3);
             this.ActivePLabel.Name = "ActivePLabel";
             this.ActivePLabel.Size = new System.Drawing.Size(75, 15);
             this.ActivePLabel.TabIndex = 129;
@@ -611,7 +607,7 @@ namespace Elmanager.Forms
             // 
             this.InactivePLabel.AutoSize = true;
             this.InactivePLabel.Cursor = System.Windows.Forms.Cursors.Default;
-            this.InactivePLabel.Location = new System.Drawing.Point(32, 280);
+            this.InactivePLabel.Location = new System.Drawing.Point(26, 36);
             this.InactivePLabel.Name = "InactivePLabel";
             this.InactivePLabel.Size = new System.Drawing.Size(83, 15);
             this.InactivePLabel.TabIndex = 130;
@@ -626,7 +622,7 @@ namespace Elmanager.Forms
             this.ResolutionBox.Location = new System.Drawing.Point(147, 90);
             this.ResolutionBox.Name = "ResolutionBox";
             this.ResolutionBox.Size = new System.Drawing.Size(137, 23);
-            this.ResolutionBox.TabIndex = 128;
+            this.ResolutionBox.TabIndex = 67;
             // 
             // Label7
             // 
@@ -665,7 +661,7 @@ namespace Elmanager.Forms
             this.TransparentInactiveBox.Margin = new System.Windows.Forms.Padding(0);
             this.TransparentInactiveBox.Name = "TransparentInactiveBox";
             this.TransparentInactiveBox.Size = new System.Drawing.Size(171, 19);
-            this.TransparentInactiveBox.TabIndex = 113;
+            this.TransparentInactiveBox.TabIndex = 57;
             this.TransparentInactiveBox.Text = "Transparent inactive players";
             this.TransparentInactiveBox.UseVisualStyleBackColor = true;
             // 
@@ -676,7 +672,7 @@ namespace Elmanager.Forms
             this.PictBackGroundBox.Margin = new System.Windows.Forms.Padding(0);
             this.PictBackGroundBox.Name = "PictBackGroundBox";
             this.PictBackGroundBox.Size = new System.Drawing.Size(148, 19);
-            this.PictBackGroundBox.TabIndex = 112;
+            this.PictBackGroundBox.TabIndex = 58;
             this.PictBackGroundBox.Text = "Pictures in background";
             this.PictBackGroundBox.UseVisualStyleBackColor = true;
             // 
@@ -687,7 +683,7 @@ namespace Elmanager.Forms
             this.LockedCamBox.Margin = new System.Windows.Forms.Padding(0);
             this.LockedCamBox.Name = "LockedCamBox";
             this.LockedCamBox.Size = new System.Drawing.Size(106, 19);
-            this.LockedCamBox.TabIndex = 108;
+            this.LockedCamBox.TabIndex = 53;
             this.LockedCamBox.Text = "Locked camera";
             this.LockedCamBox.UseVisualStyleBackColor = true;
             // 
@@ -720,7 +716,7 @@ namespace Elmanager.Forms
             this.LoopPlayingBox.Margin = new System.Windows.Forms.Padding(0);
             this.LoopPlayingBox.Name = "LoopPlayingBox";
             this.LoopPlayingBox.Size = new System.Drawing.Size(95, 19);
-            this.LoopPlayingBox.TabIndex = 72;
+            this.LoopPlayingBox.TabIndex = 55;
             this.LoopPlayingBox.Text = "Loop playing";
             this.LoopPlayingBox.UseVisualStyleBackColor = true;
             // 
@@ -783,6 +779,35 @@ namespace Elmanager.Forms
             this.tableLayoutPanel2.RowStyles.Add(new System.Windows.Forms.RowStyle());
             this.tableLayoutPanel2.Size = new System.Drawing.Size(287, 116);
             this.tableLayoutPanel2.TabIndex = 148;
+            //
+            // optionsPanel3
+            //
+            this.optionsPanel3.AutoSize = true;
+            this.optionsPanel3.AutoSizeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink;
+            this.optionsPanel3.Controls.Add(this.RenderingSettingsButton);
+            this.optionsPanel3.Controls.Add(this.ActivePlayerPanel);
+            this.optionsPanel3.Controls.Add(this.InActivePlayerPanel);
+            this.optionsPanel3.Controls.Add(this.DrivingLinePanel);
+            this.optionsPanel3.Controls.Add(this.DrivingLineLabel);
+            this.optionsPanel3.Controls.Add(this.ActivePLabel);
+            this.optionsPanel3.Controls.Add(this.InactivePLabel);
+            this.optionsPanel3.Location = new System.Drawing.Point(6, 244);
+            this.optionsPanel3.Name = "optionsPanel3";
+            this.optionsPanel3.Size = new System.Drawing.Size(320, 60);
+            this.optionsPanel3.TabIndex = 149;
+            // 
+            // flowLayoutPanel
+            // 
+            this.flowLayoutPanel.AutoSize = true;
+            this.flowLayoutPanel.AutoSizeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink;
+            this.flowLayoutPanel.Controls.Add(this.tableLayoutPanel1);
+            this.flowLayoutPanel.Controls.Add(this.tableLayoutPanel2);
+            this.flowLayoutPanel.Controls.Add(this.optionsPanel3);
+            this.flowLayoutPanel.FlowDirection = System.Windows.Forms.FlowDirection.TopDown;
+            this.flowLayoutPanel.Location = new System.Drawing.Point(0, 0);
+            this.flowLayoutPanel.Name = "flowLayoutPanel";
+            this.flowLayoutPanel.Size = new System.Drawing.Size(386, 307);
+            this.flowLayoutPanel.WrapContents = false;
             // 
             // ReplayViewer
             // 
@@ -812,53 +837,57 @@ namespace Elmanager.Forms
             this.tableLayoutPanel1.PerformLayout();
             this.tableLayoutPanel2.ResumeLayout(false);
             this.tableLayoutPanel2.PerformLayout();
+            this.optionsPanel3.ResumeLayout(false);
+            this.optionsPanel3.PerformLayout();
+            this.flowLayoutPanel.ResumeLayout(false);
+            this.flowLayoutPanel.PerformLayout();
             this.ResumeLayout(false);
 
         }
-		internal System.Windows.Forms.Label CoordinateLabel;
-		internal TrackBarMod timeBar;
-		internal System.Windows.Forms.CheckBox LoopPlayingBox;
-		internal System.Windows.Forms.Button NextFrameButton;
-		internal System.Windows.Forms.Button PrevFrameButton;
-		internal System.Windows.Forms.TextBox TimeBox;
-		internal System.Windows.Forms.Button ZoomFillButton;
-		internal System.Windows.Forms.Button StopButton;
-		internal System.Windows.Forms.CheckBox ShowDriverPathBox;
-		internal System.Windows.Forms.CheckBox FollowDriverBox;
-		internal System.Windows.Forms.Button PlayButton;
-		internal System.Windows.Forms.SaveFileDialog SaveFileDialog1;
-		internal System.Windows.Forms.ColorDialog ColorDialog1;
+        internal System.Windows.Forms.Label CoordinateLabel;
+        internal TrackBarMod timeBar;
+        internal System.Windows.Forms.CheckBox LoopPlayingBox;
+        internal System.Windows.Forms.Button NextFrameButton;
+        internal System.Windows.Forms.Button PrevFrameButton;
+        internal System.Windows.Forms.TextBox TimeBox;
+        internal System.Windows.Forms.Button ZoomFillButton;
+        internal System.Windows.Forms.Button StopButton;
+        internal System.Windows.Forms.CheckBox ShowDriverPathBox;
+        internal System.Windows.Forms.CheckBox FollowDriverBox;
+        internal System.Windows.Forms.Button PlayButton;
+        internal System.Windows.Forms.SaveFileDialog SaveFileDialog1;
+        internal System.Windows.Forms.ColorDialog ColorDialog1;
         internal System.Windows.Forms.ListBox EventListBox;
-		internal System.Windows.Forms.Label SpeedLabel;
-		internal TabControlMod TabControl1;
-		internal System.Windows.Forms.TabPage TabPage1;
-		internal System.Windows.Forms.TabPage TabPage2;
-		internal System.Windows.Forms.Button SnapShotButton;
-		internal System.Windows.Forms.Button FullScreenButton;
-		internal System.Windows.Forms.CheckBox LockedCamBox;
-		internal System.Windows.Forms.CheckBox TransparentInactiveBox;
-		internal System.Windows.Forms.CheckBox PictBackGroundBox;
-		internal Control ViewerBox;
-		internal ComboBoxMod ResolutionBox;
-		internal System.Windows.Forms.Label Label7;
+        internal System.Windows.Forms.Label SpeedLabel;
+        internal TabControlMod TabControl1;
+        internal System.Windows.Forms.TabPage TabPage1;
+        internal System.Windows.Forms.TabPage TabPage2;
+        internal System.Windows.Forms.Button SnapShotButton;
+        internal System.Windows.Forms.Button FullScreenButton;
+        internal System.Windows.Forms.CheckBox LockedCamBox;
+        internal System.Windows.Forms.CheckBox TransparentInactiveBox;
+        internal System.Windows.Forms.CheckBox PictBackGroundBox;
+        internal Control ViewerBox;
+        internal ComboBoxMod ResolutionBox;
+        internal System.Windows.Forms.Label Label7;
         internal TrackBarMod playbackSpeedBar;
-		internal System.Windows.Forms.Label Label5;
-		internal System.Windows.Forms.Label Label4;
-		internal System.Windows.Forms.Panel ActivePlayerPanel;
-		internal System.Windows.Forms.Panel InActivePlayerPanel;
-		internal System.Windows.Forms.Panel DrivingLinePanel;
-		internal System.Windows.Forms.Label DrivingLineLabel;
-		internal System.Windows.Forms.Label ActivePLabel;
-		internal System.Windows.Forms.Label InactivePLabel;
-		internal System.Windows.Forms.Button RenderingSettingsButton;
-		internal System.Windows.Forms.CheckBox PlayerFramesBox;
-		internal Elmanager.CustomControls.NumericTextBox MouseClickZoomBox;
+        internal System.Windows.Forms.Label Label5;
+        internal System.Windows.Forms.Label Label4;
+        internal System.Windows.Forms.Panel ActivePlayerPanel;
+        internal System.Windows.Forms.Panel InActivePlayerPanel;
+        internal System.Windows.Forms.Panel DrivingLinePanel;
+        internal System.Windows.Forms.Label DrivingLineLabel;
+        internal System.Windows.Forms.Label ActivePLabel;
+        internal System.Windows.Forms.Label InactivePLabel;
+        internal System.Windows.Forms.Button RenderingSettingsButton;
+        internal System.Windows.Forms.CheckBox PlayerFramesBox;
+        internal Elmanager.CustomControls.NumericTextBox MouseClickZoomBox;
         internal Elmanager.CustomControls.NumericTextBox MouseWheelZoomBox;
-		internal System.Windows.Forms.CheckBox SelectNoPlayersBox;
-		internal BrightIdeasSoftware.ObjectListView PlayList;
-		internal BrightIdeasSoftware.OLVColumn OlvColumn1;
-		internal BrightIdeasSoftware.OLVColumn OlvColumn2;
-		internal System.Windows.Forms.CheckBox HideStartObjectBox;
+        internal System.Windows.Forms.CheckBox SelectNoPlayersBox;
+        internal BrightIdeasSoftware.ObjectListView PlayList;
+        internal BrightIdeasSoftware.OLVColumn OlvColumn1;
+        internal BrightIdeasSoftware.OLVColumn OlvColumn2;
+        internal System.Windows.Forms.CheckBox HideStartObjectBox;
         private ContextMenuStrip contextMenuStrip1;
         private ToolStripMenuItem applesToolStripMenuItem;
         private ToolStripMenuItem leftVoltsToolStripMenuItem;
@@ -877,6 +906,8 @@ namespace Elmanager.Forms
         internal CheckBox followAlsoWhenZooming;
         private TableLayoutPanel tableLayoutPanel1;
         private TableLayoutPanel tableLayoutPanel2;
+        private Panel optionsPanel3;
+        private FlowLayoutPanel flowLayoutPanel;
     }
-	
+
 }
