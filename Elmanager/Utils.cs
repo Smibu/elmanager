@@ -20,7 +20,7 @@ namespace Elmanager
     {
         private static bool _scrollInProgress;
 
-        internal static void BeginArrowScroll(ElmaRenderer renderer, ZoomController zoomCtrl, SceneSettings sceneSettings)
+        internal static void BeginArrowScroll(Action render, ZoomController zoomCtrl)
         {
             if (_scrollInProgress)
                 return;
@@ -53,8 +53,7 @@ namespace Elmanager
                 }
 
                 lastTime = timer.ElapsedMilliseconds;
-                renderer.DrawScene(zoomCtrl.Cam, sceneSettings);
-                renderer.Swap();
+                render();
                 Thread.Sleep(1);
                 Application.DoEvents();
             }

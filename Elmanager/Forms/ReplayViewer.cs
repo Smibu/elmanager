@@ -209,7 +209,7 @@ namespace Elmanager.Forms
                     case Keys.Down:
                     case Keys.Left:
                     case Keys.Right:
-                        Utils.BeginArrowScroll(_replayController.Renderer, _replayController.ZoomCtrl, _replayController.SceneSettings);
+                        Utils.BeginArrowScroll(RedrawSceneIfNotPlaying, _replayController.ZoomCtrl);
                         break;
                 }
             }

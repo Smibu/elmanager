@@ -993,7 +993,7 @@ namespace Elmanager.Forms
                 case Keys.Down:
                 case Keys.Left:
                 case Keys.Right:
-                    Utils.BeginArrowScroll(Renderer, _zoomCtrl, _sceneSettings);
+                    Utils.BeginArrowScroll(() => RedrawScene(), _zoomCtrl);
                     break;
                 case Keys.C:
                     if (!_lockMouseX)
