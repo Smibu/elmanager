@@ -312,21 +312,7 @@ namespace Elmanager
                 var difference = currentTime - currTime;
                 if (difference > 0 && difference < ArmRotationDelay)
                 {
-                    if (difference < ArmForwardTime)
-                    {
-                        if (_voltEvents[currIndex].Type == LogicalEventType.RightVolt)
-                            return MaxArmRotation * difference / ArmForwardTime;
-                        return -MaxArmRotation * difference / ArmForwardTime;
-                    }
-
-                    if (_voltEvents[currIndex].Type == LogicalEventType.RightVolt)
-                        return (MaxArmRotation -
-                                MaxArmRotation * (difference - ArmForwardTime) /
-                                (ArmRotationDelay - ArmForwardTime));
-                    return
-                        -(MaxArmRotation -
-                          MaxArmRotation * (difference - ArmForwardTime) /
-                          (ArmRotationDelay - ArmForwardTime));
+                    return GetArmRotationFromLastVolt(difference, _voltEvents[currIndex].Type == LogicalEventType.RightVolt);
                 }
 
                 if (currTime < currentTime)
@@ -344,6 +330,25 @@ namespace Elmanager
             }
 
             return 0.0;
+        }
+
+        public static double GetArmRotationFromLastVolt(double difference, bool isRightVolt)
+        {
+            if (difference < ArmForwardTime)
+            {
+                if (isRightVolt)
+                    return MaxArmRotation * difference / ArmForwardTime;
+                return -MaxArmRotation * difference / ArmForwardTime;
+            }
+
+            if (isRightVolt)
+                return (MaxArmRotation -
+                        MaxArmRotation * (difference - ArmForwardTime) /
+                        (ArmRotationDelay - ArmForwardTime));
+            return
+                -(MaxArmRotation -
+                  MaxArmRotation * (difference - ArmForwardTime) /
+                  (ArmRotationDelay - ArmForwardTime));
         }
 
         internal PlayerState GetInterpolatedState(double time)
