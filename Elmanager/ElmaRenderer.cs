@@ -681,10 +681,10 @@ namespace Elmanager
                 switch (o.AppleType)
                 {
                     case AppleType.GravityUp:
-                        arrowRotation = 180.0;
+                        arrowRotation = 0.0;
                         break;
                     case AppleType.GravityDown:
-                        arrowRotation = 0.0;
+                        arrowRotation = 180.0;
                         break;
                     case AppleType.GravityLeft:
                         arrowRotation = 90.0;
