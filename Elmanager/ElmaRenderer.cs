@@ -1088,13 +1088,7 @@ namespace Elmanager
                         DrawCircle(x.Position, ObjectRadius, _settings.AppleColor);
                         break;
                     case ObjectType.Start:
-                        DrawPlayerFrames(new PlayerState(0, 0,
-                            x.Position.X + Level.HeadDifferenceFromLeftWheelX,
-                            x.Position.Y + Level.HeadDifferenceFromLeftWheelY,
-                            x.Position.X, x.Position.Y,
-                            0, 0,
-                            x.Position.X + Level.RightWheelDifferenceFromLeftWheelX, x.Position.Y,
-                            0.0, Direction.Left, 0.0), _settings.StartColor);
+                        DrawDummyPlayer(x.Position.X, x.Position.Y, sceneSettings, new PlayerRenderOpts(_settings.StartColor, true, false));
                         break;
                 }
             }
