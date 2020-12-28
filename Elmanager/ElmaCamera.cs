@@ -34,5 +34,14 @@ namespace Elmanager
         internal int ViewPortHeight => _viewport[3];
 
         internal int[] Viewport => _viewport;
+
+        internal Vector FixJitter()
+        {
+            var fixx = CenterX % (2 * ZoomLevel * AspectRatio / ViewPortWidth);
+            var fixy = CenterY % (2 * ZoomLevel / ViewPortHeight);
+            CenterX -= fixx;
+            CenterY -= fixy;
+            return new Vector(fixx, fixy);
+        }
     }
 }

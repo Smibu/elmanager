@@ -291,11 +291,9 @@ namespace Elmanager
                 var r = firstActive.GetInterpolatedState(CurrentTime);
                 ZoomCtrl.CenterX = r.GlobalBodyX;
                 ZoomCtrl.CenterY = r.GlobalBodyY;
-                var cam = ZoomCtrl.Cam;
-                _fixx = ZoomCtrl.CenterX % (2 * ZoomCtrl.ZoomLevel * cam.AspectRatio / cam.ViewPortWidth);
-                _fixy = ZoomCtrl.CenterY % (2 * ZoomCtrl.ZoomLevel / cam.ViewPortHeight);
-                ZoomCtrl.CenterX -= _fixx;
-                ZoomCtrl.CenterY -= _fixy;
+                var jf = ZoomCtrl.Cam.FixJitter();
+                _fixx = jf.X;
+                _fixy = jf.Y;
             }
             else if (_multiSpy && firstVisible != null)
             {
