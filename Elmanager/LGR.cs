@@ -74,111 +74,109 @@ namespace Elmanager
 
         internal Lgr(string lgrFile)
         {
-            using (var stream = File.OpenRead(lgrFile))
+            using var stream = File.OpenRead(lgrFile);
+            Path = lgrFile;
+            var lgr = new BinaryReader(stream, Encoding.ASCII);
+            if (lgr.ReadString(5) != "LGR12")
+                throw new Exception($"The LGR file {lgrFile} is not valid (magic start string not found)");
+            int numberOfPcXs = lgr.ReadInt32();
+            int picturesLstVersion = lgr.ReadInt32(); // unused
+            int numberOfOptPcXs = lgr.ReadInt32();
+            var pcxNames = new List<string>();
+            var pcxTypes = new List<ImageType>();
+            var distances = new List<int>();
+            var clippingTypes = new List<ClippingType>();
+            var transparencies = new List<Transparency>();
+            for (int i = 0; i < numberOfOptPcXs; i++)
             {
-                Path = lgrFile;
-                var lgr = new BinaryReader(stream, Encoding.ASCII);
-                if (lgr.ReadString(5) != "LGR12")
-                    throw new Exception($"The LGR file {lgrFile} is not valid (magic start string not found)");
-                int numberOfPcXs = lgr.ReadInt32();
-                int picturesLstVersion = lgr.ReadInt32(); // unused
-                int numberOfOptPcXs = lgr.ReadInt32();
-                var pcxNames = new List<string>();
-                var pcxTypes = new List<ImageType>();
-                var distances = new List<int>();
-                var clippingTypes = new List<ClippingType>();
-                var transparencies = new List<Transparency>();
-                for (int i = 0; i < numberOfOptPcXs; i++)
-                {
-                    pcxNames.Add(lgr.ReadNullTerminatedString(10));
-                }
+                pcxNames.Add(lgr.ReadNullTerminatedString(10));
+            }
 
-                for (int i = 0; i < numberOfOptPcXs; i++)
-                {
-                    pcxTypes.Add((ImageType) lgr.ReadInt32());
-                }
+            for (int i = 0; i < numberOfOptPcXs; i++)
+            {
+                pcxTypes.Add((ImageType) lgr.ReadInt32());
+            }
 
-                for (int i = 0; i < numberOfOptPcXs; i++)
-                {
-                    distances.Add(lgr.ReadInt32());
-                }
+            for (int i = 0; i < numberOfOptPcXs; i++)
+            {
+                distances.Add(lgr.ReadInt32());
+            }
 
-                for (int i = 0; i < numberOfOptPcXs; i++)
-                {
-                    clippingTypes.Add((ClippingType) lgr.ReadInt32());
-                }
+            for (int i = 0; i < numberOfOptPcXs; i++)
+            {
+                clippingTypes.Add((ClippingType) lgr.ReadInt32());
+            }
 
-                for (int i = 0; i < numberOfOptPcXs; i++)
-                {
-                    transparencies.Add((Transparency) lgr.ReadInt32());
-                }
+            for (int i = 0; i < numberOfOptPcXs; i++)
+            {
+                transparencies.Add((Transparency) lgr.ReadInt32());
+            }
 
-                for (int i = 0; i < numberOfOptPcXs; i++)
+            for (int i = 0; i < numberOfOptPcXs; i++)
+            {
+                ListedImages.Add(new ListedImage
                 {
-                    ListedImages.Add(new ListedImage
+                    Name = pcxNames[i].ToLower(),
+                    Type = pcxTypes[i],
+                    Distance = distances[i],
+                    ClippingType = clippingTypes[i],
+                    Transparency = transparencies[i]
+                });
+            }
+
+            for (int i = 0; i < numberOfPcXs; i++)
+            {
+                string lgrImageName = System.IO.Path.GetFileNameWithoutExtension(lgr.ReadNullTerminatedString(12)).ToLower();
+                var isGrass = lgrImageName == "qgrass";
+                ImageType imgType = isGrass ? ImageType.Texture : ImageType.Picture;
+                int imgDistance = 500;
+                ClippingType imgClippingType = isGrass ? ClippingType.Ground : ClippingType.Unclipped;
+                var transparency = Transparency.TopLeft;
+                foreach (ListedImage x in ListedImages)
+                {
+                    if (x.Name == lgrImageName)
                     {
-                        Name = pcxNames[i].ToLower(),
-                        Type = pcxTypes[i],
-                        Distance = distances[i],
-                        ClippingType = clippingTypes[i],
-                        Transparency = transparencies[i]
-                    });
-                }
-
-                for (int i = 0; i < numberOfPcXs; i++)
-                {
-                    string lgrImageName = System.IO.Path.GetFileNameWithoutExtension(lgr.ReadNullTerminatedString(12)).ToLower();
-                    var isGrass = lgrImageName == "qgrass";
-                    ImageType imgType = isGrass ? ImageType.Texture : ImageType.Picture;
-                    int imgDistance = 500;
-                    ClippingType imgClippingType = isGrass ? ClippingType.Ground : ClippingType.Unclipped;
-                    var transparency = Transparency.TopLeft;
-                    foreach (ListedImage x in ListedImages)
-                    {
-                        if (x.Name == lgrImageName)
+                        imgType = x.Type;
+                        imgClippingType = x.ClippingType;
+                        imgDistance = x.Distance;
+                        if (!TransparencyIgnoreSet.Contains(x.Name))
                         {
-                            imgType = x.Type;
-                            imgClippingType = x.ClippingType;
-                            imgDistance = x.Distance;
-                            if (!TransparencyIgnoreSet.Contains(x.Name))
-                            {
-                                transparency = x.Transparency;
-                            }
+                            transparency = x.Transparency;
                         }
                     }
-
-                    lgr.ReadInt32(); // unknown, not used
-                    lgr.ReadInt32(); // unknown, not used
-                    int sizeOfPcx = lgr.ReadInt32();
-                    Bitmap bmp = new Pcx(stream).ToBitmap();
-                    if (imgType != ImageType.Texture)
-                    {
-                        switch (transparency)
-                        {
-                            case Transparency.NotTransparent:
-                                break;
-                            case Transparency.Palette0:
-                                bmp.MakeTransparent(Color.Black); // TODO get from palette index 0
-                                break;
-                            // If the transparency field value is invalid, we'll assume Transparency.TopLeft as it is the most common case.
-                            default:
-                                // case Transparency.TopLeft:
-                                bmp.MakeTransparent(bmp.GetPixel(0, 0));
-                                break;
-                            case Transparency.TopRight:
-                                bmp.MakeTransparent(bmp.GetPixel(bmp.Width - 1, 0));
-                                break;
-                            case Transparency.BottomLeft:
-                                bmp.MakeTransparent(bmp.GetPixel(0, bmp.Height - 1));
-                                break;
-                            case Transparency.BottomRight:
-                                bmp.MakeTransparent(bmp.GetPixel(bmp.Width - 1, bmp.Height - 1));
-                                break;
-                        }
-                    }
-
-                    LgrImages.Add(new LgrImage(lgrImageName, bmp, imgType, imgDistance, imgClippingType));
                 }
+
+                lgr.ReadInt32(); // unknown, not used
+                lgr.ReadInt32(); // unknown, not used
+                int sizeOfPcx = lgr.ReadInt32();
+                Bitmap bmp = new Pcx(stream).ToBitmap();
+                if (imgType != ImageType.Texture)
+                {
+                    switch (transparency)
+                    {
+                        case Transparency.NotTransparent:
+                            break;
+                        case Transparency.Palette0:
+                            bmp.MakeTransparent(Color.Black); // TODO get from palette index 0
+                            break;
+                        // If the transparency field value is invalid, we'll assume Transparency.TopLeft as it is the most common case.
+                        default:
+                            // case Transparency.TopLeft:
+                            bmp.MakeTransparent(bmp.GetPixel(0, 0));
+                            break;
+                        case Transparency.TopRight:
+                            bmp.MakeTransparent(bmp.GetPixel(bmp.Width - 1, 0));
+                            break;
+                        case Transparency.BottomLeft:
+                            bmp.MakeTransparent(bmp.GetPixel(0, bmp.Height - 1));
+                            break;
+                        case Transparency.BottomRight:
+                            bmp.MakeTransparent(bmp.GetPixel(bmp.Width - 1, bmp.Height - 1));
+                            break;
+                    }
+                }
+
+                LgrImages.Add(new LgrImage(lgrImageName, bmp, imgType, imgDistance, imgClippingType));
             }
         }
 

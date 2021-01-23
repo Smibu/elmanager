@@ -59,10 +59,8 @@ namespace Elmanager.Forms
         {
             var txt = e.Link.Name == "License" ? Resources.LICENSE : Resources.LICENSE_3RD_PARTY;
 
-            using (var f = new LicenseForm(e.Link.Name, txt))
-            {
-                f.ShowDialog();
-            }
+            using var f = new LicenseForm(e.Link.Name, txt);
+            f.ShowDialog();
         }
 
         private void levelManagerButton_Click(object sender, EventArgs e)

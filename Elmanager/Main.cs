@@ -51,9 +51,9 @@ namespace Elmanager
         private static void LoadInternals()
         {
             Internals.Clear();
-            using (var zip = new ZipArchive(new MemoryStream(Resources.Internals)))
-                foreach (var entry in zip.Entries)
-                    Internals.Add(Level.FromStream(entry.Open()));
+            using var zip = new ZipArchive(new MemoryStream(Resources.Internals));
+            foreach (var entry in zip.Entries)
+                Internals.Add(Level.FromStream(entry.Open()));
         }
 
         private static void ParseCommandLine(IList<string> args)

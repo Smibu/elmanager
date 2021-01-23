@@ -86,15 +86,13 @@ namespace Elmanager
 
         internal static Level FromPath(string levelPath)
         {
-            using (var stream = File.OpenRead(levelPath))
-            {
-                var lev = FromStream(stream);
-                lev.Size = (int)new FileInfo(levelPath).Length;
-                lev.Path = levelPath;
-                lev.IsInternal = IsInternalLevel(lev.FileName);
-                lev.DateModified = File.GetLastWriteTime(levelPath);
-                return lev;
-            }
+            using var stream = File.OpenRead(levelPath);
+            var lev = FromStream(stream);
+            lev.Size = (int)new FileInfo(levelPath).Length;
+            lev.Path = levelPath;
+            lev.IsInternal = IsInternalLevel(lev.FileName);
+            lev.DateModified = File.GetLastWriteTime(levelPath);
+            return lev;
         }
 
         internal static Level FromStream(Stream data)

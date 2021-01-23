@@ -2144,40 +2144,38 @@ namespace Elmanager.Forms
                     _svgImportOptions = newOpts;
                     var settings = new WpfDrawingSettings
                         {IncludeRuntime = false, TextAsGeometry = true, IgnoreRootViewbox = true};
-                    using (var converter = new FileSvgReader(settings))
+                    using var converter = new FileSvgReader(settings);
+                    var drawingGroup = converter.Read(new Uri(file));
+                    List<Polygon> polys;
+                    try
                     {
-                        var drawingGroup = converter.Read(new Uri(file));
-                        List<Polygon> polys;
-                        try
-                        {
-                            (polys, _) = TextTool.BuildPolygons(
-                                TextTool.CreateGeometry(drawingGroup, newOpts),
-                                new Vector(),
-                                newOpts.Smoothness,
-                                newOpts.UseOutlinedGeometry);
-                        }
-                        catch (PolygonException)
-                        {
-                            Utils.ShowError($"Failed to import SVG {file}. Invalid or animated SVGs are not supported.");
-                            return;
-                        }
-
-                        try
-                        {
-                            TextTool.FinalizePolygons(polys);
-                        }
-                        catch (TopologyException)
-                        {
-                        }
-                        catch (ArgumentException)
-                        {
-                        }
-
-                        var m = Matrix.CreateScaling(1 / 10.0, 1 / 10.0);
-                        polys = polys.Select(p => p.ApplyTransformation(m)).ToList();
-                        lev = new Level();
-                        lev.Polygons.AddRange(polys);
+                        (polys, _) = TextTool.BuildPolygons(
+                            TextTool.CreateGeometry(drawingGroup, newOpts),
+                            new Vector(),
+                            newOpts.Smoothness,
+                            newOpts.UseOutlinedGeometry);
                     }
+                    catch (PolygonException)
+                    {
+                        Utils.ShowError($"Failed to import SVG {file}. Invalid or animated SVGs are not supported.");
+                        return;
+                    }
+
+                    try
+                    {
+                        TextTool.FinalizePolygons(polys);
+                    }
+                    catch (TopologyException)
+                    {
+                    }
+                    catch (ArgumentException)
+                    {
+                    }
+
+                    var m = Matrix.CreateScaling(1 / 10.0, 1 / 10.0);
+                    polys = polys.Select(p => p.ApplyTransformation(m)).ToList();
+                    lev = new Level();
+                    lev.Polygons.AddRange(polys);
                 }
                 else
                 {

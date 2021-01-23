@@ -1521,10 +1521,8 @@ namespace Elmanager
 
         public void SaveSnapShot(string fileName, ZoomController zoomCtrl, SceneSettings sceneSettings)
         {
-            using (var bmp = GetSnapShot(zoomCtrl, sceneSettings))
-            {
-                bmp.Save(fileName, ImageFormat.Png);
-            }
+            using var bmp = GetSnapShot(zoomCtrl, sceneSettings);
+            bmp.Save(fileName, ImageFormat.Png);
         }
     }
 }

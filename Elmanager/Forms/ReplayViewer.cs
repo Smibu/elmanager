@@ -450,10 +450,8 @@ namespace Elmanager.Forms
             }
             if (SaveFileDialog1.ShowDialog() == DialogResult.OK)
             {
-                using (var bmp = ElmaRenderer.GetSnapShotOfCurrent(_replayController.ZoomCtrl))
-                {
-                    bmp.Save(SaveFileDialog1.FileName, ImageFormat.Png);
-                }
+                using var bmp = ElmaRenderer.GetSnapShotOfCurrent(_replayController.ZoomCtrl);
+                bmp.Save(SaveFileDialog1.FileName, ImageFormat.Png);
             }
         }
 
