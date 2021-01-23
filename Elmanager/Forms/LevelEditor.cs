@@ -2146,7 +2146,7 @@ namespace Elmanager.Forms
                         {IncludeRuntime = false, TextAsGeometry = true, IgnoreRootViewbox = true};
                     using (var converter = new FileSvgReader(settings))
                     {
-                        var drawingGroup = converter.Read(file);
+                        var drawingGroup = converter.Read(new Uri(file));
                         List<Polygon> polys;
                         try
                         {
