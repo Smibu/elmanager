@@ -6,8 +6,8 @@ namespace Elmanager
 {
     internal class LevelTop10
     {
-        internal List<Top10EntryMulti> MultiPlayer = new List<Top10EntryMulti>();
-        internal List<Top10EntrySingle> SinglePlayer = new List<Top10EntrySingle>();
+        internal List<Top10EntryMulti> MultiPlayer = new();
+        internal List<Top10EntrySingle> SinglePlayer = new();
 
         internal bool IsEmpty => SinglePlayer.Count == 0 && MultiPlayer.Count == 0;
 

@@ -9,12 +9,12 @@ namespace Elmanager
 {
     internal class Lgr : IDisposable
     {
-        internal readonly List<LgrImage> LgrImages = new List<LgrImage>();
-        internal readonly List<ListedImage> ListedImages = new List<ListedImage>();
+        internal readonly List<LgrImage> LgrImages = new();
+        internal readonly List<ListedImage> ListedImages = new();
         internal readonly string Path;
 
         private static readonly HashSet<string> TransparencyIgnoreSet =
-            new HashSet<string>(Enumerable.Range(0, 18).SelectMany(TransparencyIgnoreHelper));
+            new(Enumerable.Range(0, 18).SelectMany(TransparencyIgnoreHelper));
 
         internal enum ImageType
         {
@@ -218,7 +218,7 @@ namespace Elmanager
             }
 
             private static readonly HashSet<string> SpecialNames =
-                new HashSet<string>(EnumSpecialNames().Union(TransparencyIgnoreSet));
+                new(EnumSpecialNames().Union(TransparencyIgnoreSet));
 
             internal ClippingType ClippingType;
             internal int Distance;

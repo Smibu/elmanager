@@ -14,7 +14,7 @@ namespace Elmanager
     {
         internal static ElmanagerSettings AppSettings; //TODO Settings should not be global
         internal static DateTime BuildDate = ThisAssembly.GitCommitDate;
-        internal static readonly List<Level> Internals = new List<Level>();
+        internal static readonly List<Level> Internals = new();
         private static List<string> _levelFiles;
         internal static DateTime Version;
 

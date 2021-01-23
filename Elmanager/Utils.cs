@@ -218,7 +218,7 @@ namespace Elmanager
 
         internal static string ReadString(this BinaryReader reader, int count)
         {
-            return new string(reader.ReadChars(count));
+            return new(reader.ReadChars(count));
         }
 
         internal static bool RecDirectoryExists()
@@ -422,7 +422,7 @@ namespace Elmanager
 
         public static Range<double> GetTimeRange(string timeMin, string timeMax)
         {
-            return new Range<double>(StringToTime(timeMin),
+            return new(StringToTime(timeMin),
                 StringToTime(timeMax));
         }
 

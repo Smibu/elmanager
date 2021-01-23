@@ -188,7 +188,7 @@ namespace Elmanager.EditorTools
 
         private List<Polygon> MakeClosedPipe(Polygon pipeLine, double radius)
         {
-            List<Polygon> p = new List<Polygon> {new Polygon(), new Polygon()};
+            List<Polygon> p = new List<Polygon> {new(), new()};
             if (pipeLine.Vertices.Count < 2)
                 return p;
             for (int i = 0; i < pipeLine.Vertices.Count; i++)

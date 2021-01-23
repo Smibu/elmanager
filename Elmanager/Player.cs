@@ -10,8 +10,8 @@ namespace Elmanager
     {
         internal const double TimeConst = 625.0 / 273.0;
         internal readonly int Apples; // Number of appletakes and bugapples
-        internal readonly List<PlayerEvent<ReplayEventType>> RawEvents = new List<PlayerEvent<ReplayEventType>>();
-        internal readonly List<PlayerEvent<LogicalEventType>> Events = new List<PlayerEvent<LogicalEventType>>();
+        internal readonly List<PlayerEvent<ReplayEventType>> RawEvents = new();
+        internal readonly List<PlayerEvent<LogicalEventType>> Events = new();
         internal readonly int GroundTouches;
         internal readonly int LeftVolts;
         internal readonly int RightVolts;
@@ -28,14 +28,14 @@ namespace Elmanager
         private const double MaxArmRotation = 95;
         private const double WheelRotationFactor = 1 / 250.0;
 
-        private readonly List<Vector> _globalBody = new List<Vector>();
-        private readonly List<double> _bikeRotation = new List<double>();
-        private readonly List<Direction> _direction = new List<Direction>();
-        private readonly List<Vector> _head = new List<Vector>();
-        private readonly List<Vector> _leftWheel = new List<Vector>();
-        private readonly List<double> _leftWheelRotation = new List<double>();
-        private readonly List<Vector> _rightWheel = new List<Vector>();
-        private readonly List<double> _rightWheelRotation = new List<double>();
+        private readonly List<Vector> _globalBody = new();
+        private readonly List<double> _bikeRotation = new();
+        private readonly List<Direction> _direction = new();
+        private readonly List<Vector> _head = new();
+        private readonly List<Vector> _leftWheel = new();
+        private readonly List<double> _leftWheelRotation = new();
+        private readonly List<Vector> _rightWheel = new();
+        private readonly List<double> _rightWheelRotation = new();
 
         internal int FrameCount => _globalBody.Count;
 

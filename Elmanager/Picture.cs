@@ -47,7 +47,7 @@ namespace Elmanager
 
         internal Picture Clone()
         {
-            return new Picture(this);
+            return new(this);
         }
 
         internal void SetPicture(DrawableImage pictureImage, Vector position, int distance,

@@ -68,17 +68,17 @@ namespace Elmanager
 
         internal static Matrix CreateScaling(double scaleX, double scaleY)
         {
-            return new Matrix(scaleX, 0, 0, scaleY, 0, 0);
+            return new(scaleX, 0, 0, scaleY, 0, 0);
         }
 
         internal static Matrix CreateTranslation(double offsetX, double offsetY)
         {
-            return new Matrix(1, 0, 0, 1, offsetX, offsetY);
+            return new(1, 0, 0, 1, offsetX, offsetY);
         }
 
         internal static Matrix MultiplyMatrix(Matrix matrix1, Matrix matrix2)
         {
-            return new Matrix(
+            return new(
                 matrix1._m11 * matrix2._m11 + matrix1._m12 * matrix2._m21,
                 matrix1._m11 * matrix2._m12 + matrix1._m12 * matrix2._m22,
                 matrix1._m21 * matrix2._m11 + matrix1._m22 * matrix2._m21,
@@ -91,7 +91,7 @@ namespace Elmanager
 
         internal Vector MultiplyVector(Vector v)
         {
-            return new Vector {X = v.X * _m11 + v.Y * _m21 + _offsetX, Y = v.Y * _m22 + v.X * _m12 + _offsetY, Mark = v.Mark};
+            return new() {X = v.X * _m11 + v.Y * _m21 + _offsetX, Y = v.Y * _m22 + v.X * _m12 + _offsetY, Mark = v.Mark};
         }
 
         internal void Rotate(double angle)
@@ -117,7 +117,7 @@ namespace Elmanager
 
         private static Matrix CreateIdentity()
         {
-            return new Matrix(1, 0, 0, 1, 0, 0);
+            return new(1, 0, 0, 1, 0, 0);
         }
 
         private void SetMatrix(Matrix m)

@@ -38,7 +38,7 @@ namespace Elmanager.EditorTools
 
         public List<Polygon> GetExtraPolygons()
         {
-            return new List<Polygon>();
+            return new();
         }
 
         public void InActivate()

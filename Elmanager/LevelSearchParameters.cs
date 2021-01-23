@@ -7,19 +7,19 @@ namespace Elmanager
     internal class LevelSearchParameters : SearchParameters
     {
         private const int MaxCount = 10000;
-        internal Range<int> GroundPolygons = new Range<int>(0, MaxCount);
-        internal Range<int> GrassPolygons = new Range<int>(0, MaxCount);
-        internal Range<int> GroundVertices = new Range<int>(0, MaxCount);
-        internal Range<int> GrassVertices = new Range<int>(0, MaxCount);
-        internal Range<int> SingleTop10Times = new Range<int>(0, MaxCount);
-        internal Range<int> MultiTop10Times = new Range<int>(0, MaxCount);
-        internal Range<int> Killers = new Range<int>(0, MaxCount);
-        internal Range<int> Flowers = new Range<int>(0, MaxCount);
-        internal Range<int> Pictures = new Range<int>(0, MaxCount);
-        internal Range<int> Textures = new Range<int>(0, MaxCount);
-        internal Range<int> Apples = new Range<int>(0, MaxCount);
+        internal Range<int> GroundPolygons = new(0, MaxCount);
+        internal Range<int> GrassPolygons = new(0, MaxCount);
+        internal Range<int> GroundVertices = new(0, MaxCount);
+        internal Range<int> GrassVertices = new(0, MaxCount);
+        internal Range<int> SingleTop10Times = new(0, MaxCount);
+        internal Range<int> MultiTop10Times = new(0, MaxCount);
+        internal Range<int> Killers = new(0, MaxCount);
+        internal Range<int> Flowers = new(0, MaxCount);
+        internal Range<int> Pictures = new(0, MaxCount);
+        internal Range<int> Textures = new(0, MaxCount);
+        internal Range<int> Apples = new(0, MaxCount);
 
-        internal Dictionary<AppleType, Range<int>> GravApples = new Dictionary<AppleType, Range<int>>
+        internal Dictionary<AppleType, Range<int>> GravApples = new()
         {
             {AppleType.Normal, new Range<int>(0, MaxCount)},
             {AppleType.GravityUp, new Range<int>(0, MaxCount)},
@@ -28,17 +28,17 @@ namespace Elmanager
             {AppleType.GravityRight, new Range<int>(0, MaxCount)},
         };
 
-        internal Regex Title = new Regex("");
-        internal Regex Lgr = new Regex("");
-        internal Regex GroundTexture = new Regex("");
-        internal Regex SkyTexture = new Regex("");
-        internal Regex SinglePlayerNick = new Regex("");
-        internal Regex MultiPlayerNick = new Regex("");
+        internal Regex Title = new("");
+        internal Regex Lgr = new("");
+        internal Regex GroundTexture = new("");
+        internal Regex SkyTexture = new("");
+        internal Regex SinglePlayerNick = new("");
+        internal Regex MultiPlayerNick = new("");
 
-        internal Range<double> SinglePlayerBestTime = new Range<double>(0, double.MaxValue);
-        internal Range<double> MultiPlayerBestTime = new Range<double>(0, double.MaxValue);
+        internal Range<double> SinglePlayerBestTime = new(0, double.MaxValue);
+        internal Range<double> MultiPlayerBestTime = new(0, double.MaxValue);
 
-        internal Range<int> Replays = new Range<int>(0, MaxCount);
+        internal Range<int> Replays = new(0, MaxCount);
 
         public bool Matches(Level lev)
         {

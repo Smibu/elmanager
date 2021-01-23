@@ -6,7 +6,7 @@ namespace Elmanager
     {
         private static bool _config;
 
-        public static AppContext AppCtx { get; } = new AppContext();
+        public static AppContext AppCtx { get; } = new();
 
         internal static void LaunchLevelEditor(string levPath = null)
         {

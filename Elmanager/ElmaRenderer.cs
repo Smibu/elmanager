@@ -46,7 +46,7 @@ namespace Elmanager
         internal Lgr CurrentLgr;
         internal Level Lev;
 
-        private readonly Dictionary<int, int> _applePics = new Dictionary<int, int>();
+        private readonly Dictionary<int, int> _applePics = new();
         private int _armPic;
         private int _bikePic;
         private double _bikePicTranslateXFacingLeft;
@@ -57,7 +57,7 @@ namespace Elmanager
         private IWindowInfo _ctrlWindowInfo;
         private bool _disposed;
 
-        public List<DrawableImage> DrawableImages { get; set; } = new List<DrawableImage>();
+        public List<DrawableImage> DrawableImages { get; set; } = new();
 
         private int _flowerPic;
         private GraphicsContext _gfxContext;
@@ -69,7 +69,7 @@ namespace Elmanager
         private bool _lgrGraphicsLoaded;
         private int _legPic;
         private bool _openGlInitialized;
-        private RenderingSettings _settings = new RenderingSettings();
+        private RenderingSettings _settings = new();
         private readonly Suspension[] _suspensions = new Suspension[2];
         private int _thighPic;
         private int _wheelPic;

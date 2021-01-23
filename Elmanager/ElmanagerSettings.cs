@@ -20,11 +20,11 @@ namespace Elmanager
         private static string _settingsFile =
             SettingsFileBaseName + Global.Version.ToString(SettingsFileDateFormat) + ".dat";
 
-        public GeneralSettings General = new GeneralSettings();
-        public LevelEditorSettings LevelEditor = new LevelEditorSettings();
-        public ReplayManagerSettings ReplayManager = new ReplayManagerSettings();
-        public LevelManagerSettings LevelManager = new LevelManagerSettings();
-        public ReplayViewerSettings ReplayViewer = new ReplayViewerSettings();
+        public GeneralSettings General = new();
+        public LevelEditorSettings LevelEditor = new();
+        public ReplayManagerSettings ReplayManager = new();
+        public LevelManagerSettings LevelManager = new();
+        public ReplayViewerSettings ReplayViewer = new();
 
         public static string ElmanagerFolder => Path.GetDirectoryName(Process.GetCurrentProcess().MainModule.FileName);
 
@@ -115,9 +115,9 @@ namespace Elmanager
             public int MouseClickStep = 50;
             public string NumberFormat = "0";
             public double PipeRadius = 1.0;
-            public RenderingSettings RenderingSettings = new RenderingSettings();
+            public RenderingSettings RenderingSettings = new();
             public Color SelectionColor = Color.Blue;
-            public Size Size = new Size(800, 600);
+            public Size Size = new(800, 600);
             public bool SnapToGrid;
             public bool ShowCrossHair;
             public int SmoothSteps = 3;
@@ -187,7 +187,7 @@ namespace Elmanager
             public string SearchPattern = string.Empty;
             public SearchOption RecDirSearchOption = SearchOption.AllDirectories;
             public bool ShowGridInList = true;
-            public Size Size = new Size(800, 600);
+            public Size Size = new(800, 600);
             public FormWindowState WindowState = FormWindowState.Normal;
             public bool ShowTooltipInList = true;
             public SearchOption LevDirSearchOption = SearchOption.AllDirectories;
@@ -254,10 +254,10 @@ namespace Elmanager
             public int MouseWheelStep = 50;
             public bool MultiSpy;
             public bool PicturesInBackGround;
-            public RenderingSettings RenderingSettings = new RenderingSettings();
+            public RenderingSettings RenderingSettings = new();
             public bool ShowBikeCoords = true;
             public bool ShowDriverPath;
-            public Size Size = new Size(800, 600);
+            public Size Size = new(800, 600);
             public FormWindowState WindowState = FormWindowState.Normal;
             public double ZoomLevel = 5.0;
             public bool FollowAlsoWhenZooming = false;

@@ -52,13 +52,13 @@ namespace Elmanager
         private double[] Integrity = new double[4];
         private bool IsInternal;
 
-        internal List<LevObject> Objects = new List<LevObject>();
-        internal List<Picture> Pictures = new List<Picture>();
-        internal List<Polygon> Polygons = new List<Polygon>();
+        internal List<LevObject> Objects = new();
+        internal List<Picture> Pictures = new();
+        internal List<Polygon> Polygons = new();
         internal string SkyTextureName = "sky";
-        internal readonly LevelTop10 Top10 = new LevelTop10();
+        internal readonly LevelTop10 Top10 = new();
         public int Identifier { get; private set; }
-        private List<LevelFileTexture> _textureData = new List<LevelFileTexture>();
+        private List<LevelFileTexture> _textureData = new();
 
         [Description("LGR")]
         public string LgrFile = "default";
@@ -480,7 +480,7 @@ namespace Elmanager
         internal static bool IsInternalLevel(string levStr) =>
             levStr.Length == 12 && levStr.Substring(0, 6).CompareWith("QWQUU0");
 
-        internal Level Clone() => new Level(this);
+        internal Level Clone() => new(this);
 
         internal void DecomposeGroundPolygons()
         {
@@ -883,7 +883,7 @@ namespace Elmanager
 
         internal static Level FromDimensions(double width, double height)
         {
-            return new Level(
+            return new(
                 Polygon.Rectangle(new Vector(), width,
                     height),
                 new Vector(width / 2,

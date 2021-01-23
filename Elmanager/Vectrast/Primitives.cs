@@ -28,7 +28,7 @@ namespace vectrast
 
         public static IntVector2 operator -(IntVector2 v1, IntVector2 v2)
         {
-            return new IntVector2(v1.x - v2.x, v1.y - v2.y);
+            return new(v1.x - v2.x, v1.y - v2.y);
         }
 
         public bool extension(IntVector2 otherVector)
@@ -77,7 +77,7 @@ namespace vectrast
 
         public DoubleVector2 perpendicular
         {
-            get { return new DoubleVector2(y, -x); }
+            get { return new(y, -x); }
         }
 
         public void normalize()
@@ -95,7 +95,7 @@ namespace vectrast
 
         public static DoubleVector2 operator -(DoubleVector2 v1, DoubleVector2 v2)
         {
-            return new DoubleVector2(v1.x - v2.x, v1.y - v2.y);
+            return new(v1.x - v2.x, v1.y - v2.y);
         }
     }
 

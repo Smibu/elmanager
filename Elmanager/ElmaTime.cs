@@ -11,7 +11,7 @@ namespace Elmanager
             _val = value;
         }
 
-        public static implicit operator ElmaTime(double value) => new ElmaTime(value);
+        public static implicit operator ElmaTime(double value) => new(value);
 
         public override string ToString() => _val.ToTimeString(2);
 

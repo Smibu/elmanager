@@ -21,7 +21,7 @@ namespace Elmanager
 
         internal static Range<int> FromNumericBoxes(NumericTextBox min, NumericTextBox max)
         {
-            return new Range<int>(min.ValueAsInt, max.ValueAsInt);
+            return new(min.ValueAsInt, max.ValueAsInt);
         }
     }
 }

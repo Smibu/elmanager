@@ -9,7 +9,7 @@ namespace Elmanager.EditorTools
         public bool NeverWidenClosedPaths;
         public FillRule FillRule;
 
-        public static SvgImportOptions Default => new SvgImportOptions
+        public static SvgImportOptions Default => new()
         {
             FillRule = FillRule.EvenOdd,
             UseOutlinedGeometry = false,

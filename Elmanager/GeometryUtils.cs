@@ -314,7 +314,7 @@ namespace Elmanager
 
         internal static Vector[][] Decompose(Polygon polygon)
         {
-            var triangulatedPoly = new List<Polygon> {new Polygon(polygon)};
+            var triangulatedPoly = new List<Polygon> {new(polygon)};
             Decompose(triangulatedPoly);
             var triangulatedPolyArray = new Vector[triangulatedPoly.Count][];
             for (int i = 0; i < triangulatedPoly.Count; i++)

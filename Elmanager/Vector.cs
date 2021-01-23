@@ -102,17 +102,17 @@ namespace Elmanager
 
         public static implicit operator Vector(Coordinate v)
         {
-            return new Vector(v.X, v.Y);
+            return new(v.X, v.Y);
         }
 
         public static implicit operator Coordinate(Vector v)
         {
-            return new Coordinate(v.X, v.Y);
+            return new(v.X, v.Y);
         }
 
         public static Vector operator +(Vector vector1, Vector vector2)
         {
-            return new Vector(vector1.X + vector2.X, vector1.Y + vector2.Y);
+            return new(vector1.X + vector2.X, vector1.Y + vector2.Y);
         }
 
         public static Vector operator /(Vector vector, double scalar)
@@ -132,12 +132,12 @@ namespace Elmanager
 
         public static Vector operator *(Vector vector, double scalar)
         {
-            return new Vector((vector.X * scalar), (vector.Y * scalar));
+            return new((vector.X * scalar), (vector.Y * scalar));
         }
 
         public static Vector operator *(double scalar, Vector vector)
         {
-            return new Vector((vector.X * scalar), (vector.Y * scalar));
+            return new((vector.X * scalar), (vector.Y * scalar));
         }
 
         public static Vector operator *(Vector vector, Matrix matrix)
@@ -152,12 +152,12 @@ namespace Elmanager
 
         public static Vector operator -(Vector vector1, Vector vector2)
         {
-            return new Vector(vector1.X - vector2.X, vector1.Y - vector2.Y);
+            return new(vector1.X - vector2.X, vector1.Y - vector2.Y);
         }
 
         public static Vector operator -(Vector vector)
         {
-            return new Vector(-vector.X, -vector.Y);
+            return new(-vector.X, -vector.Y);
         }
 
         internal static double CrossProduct(Vector vector1, Vector vector2)
@@ -174,7 +174,7 @@ namespace Elmanager
 
         internal Vector Clone()
         {
-            return new Vector(X, Y, Mark);
+            return new(X, Y, Mark);
         }
 
         internal void Select()

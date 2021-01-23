@@ -27,17 +27,17 @@ namespace Elmanager
 
         internal static LevObject ExitObject(Vector exitPosition)
         {
-            return new LevObject(exitPosition, ObjectType.Flower, AppleType.Normal);
+            return new(exitPosition, ObjectType.Flower, AppleType.Normal);
         }
 
         internal static LevObject StartObject(Vector startPosition)
         {
-            return new LevObject(startPosition, ObjectType.Start, AppleType.Normal);
+            return new(startPosition, ObjectType.Start, AppleType.Normal);
         }
 
         internal LevObject Clone()
         {
-            return new LevObject(this);
+            return new(this);
         }
     }
 }

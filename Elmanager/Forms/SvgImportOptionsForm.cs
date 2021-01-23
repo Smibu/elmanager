@@ -25,7 +25,7 @@ namespace Elmanager.Forms
 
         public SvgImportOptions Result
         {
-            get => new SvgImportOptions
+            get => new()
             {
                 Smoothness = 10 * Math.Pow(Pow, -smoothnessBar.Value),
                 FillRule = evenOddRadioButton.Checked ? FillRule.EvenOdd : FillRule.Nonzero,

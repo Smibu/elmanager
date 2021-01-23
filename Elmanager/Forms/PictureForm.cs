@@ -19,7 +19,7 @@ namespace Elmanager.Forms
         internal bool TextureSelected;
         private Lgr _currentLgr;
         private bool _autoTextureMode;
-        private static HashSet<string> _knownMaskNames = new HashSet<string> {"maskbig", "maskhor", "masklitt"};
+        private static HashSet<string> _knownMaskNames = new() {"maskbig", "maskhor", "masklitt"};
 
         internal PictureForm(Lgr currentLgr)
         {

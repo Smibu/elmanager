@@ -62,7 +62,7 @@ namespace Elmanager
 
         public Polygon WithYNegated()
         {
-            return new Polygon(Vertices.Select(v => new Vector(v.X, -v.Y)), IsGrass);
+            return new(Vertices.Select(v => new Vector(v.X, -v.Y)), IsGrass);
         }
 
         internal int Count => Vertices.Count;
@@ -180,7 +180,7 @@ namespace Elmanager
 
         internal static Polygon Rectangle(Vector lowerLeftCorner, double width, double height)
         {
-            return new Polygon(new Vector(lowerLeftCorner.X, lowerLeftCorner.Y),
+            return new(new Vector(lowerLeftCorner.X, lowerLeftCorner.Y),
                 new Vector(lowerLeftCorner.X + width, lowerLeftCorner.Y),
                 new Vector(lowerLeftCorner.X + width, lowerLeftCorner.Y + height),
                 new Vector(lowerLeftCorner.X, lowerLeftCorner.Y + height));
@@ -611,7 +611,7 @@ namespace Elmanager
             Vector.MarkDefault = VectorMark.None;
             if (numberOfIntersections % 2 == 0 && numberOfIntersections > 0)
             {
-                var result = new List<Polygon> {new Polygon()};
+                var result = new List<Polygon> {new()};
                 int k = 0;
                 bool isBeginning = true;
                 while (k != clone.Count)
@@ -674,12 +674,12 @@ namespace Elmanager
 
         public Polygon Clone()
         {
-            return new Polygon(this);
+            return new(this);
         }
 
         public static Polygon Rectangle(Vector corner1, Vector corner2)
         {
-            return new Polygon(corner1, new Vector(corner2.X, corner1.Y), corner2, new Vector(corner1.X, corner2.Y));
+            return new(corner1, new Vector(corner2.X, corner1.Y), corner2, new Vector(corner1.X, corner2.Y));
         }
 
         internal NetTopologySuite.Geometries.Polygon ToIPolygon()

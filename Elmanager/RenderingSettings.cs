@@ -93,7 +93,7 @@ namespace Elmanager
 
         internal RenderingSettings Clone()
         {
-            return new RenderingSettings(this);
+            return new(this);
         }
 
         [Category("Colors"), DisplayName("Ground fill")]

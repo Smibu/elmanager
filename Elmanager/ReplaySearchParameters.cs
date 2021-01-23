@@ -8,12 +8,12 @@ namespace Elmanager
         internal BoolOption Finished = BoolOption.Dontcare;
         internal BoolOption InternalRec = BoolOption.Dontcare;
         internal BoolOption LevExists = BoolOption.Dontcare;
-        internal Regex LevFilenameMatcher = new Regex("");
+        internal Regex LevFilenameMatcher = new("");
         internal BoolOption MultiPlayer = BoolOption.Dontcare;
-        internal PlayerBounds P1Bounds = new PlayerBounds();
-        internal PlayerBounds P2Bounds = new PlayerBounds();
+        internal PlayerBounds P1Bounds = new();
+        internal PlayerBounds P2Bounds = new();
 
-        internal Range<double> Time = new Range<double>(0, 7200);
+        internal Range<double> Time = new(0, 7200);
         internal BoolOption WrongLev = BoolOption.Dontcare;
 
         /// <summary>
@@ -60,12 +60,12 @@ namespace Elmanager
 
         internal class PlayerBounds
         {
-            internal Range<int> Apples = new Range<int>(0, 10000);
-            internal Range<int> GroundTouches = new Range<int>(0, 10000);
-            internal Range<int> LeftVolts = new Range<int>(0, 10000);
-            internal Range<int> RightVolts = new Range<int>(0, 10000);
-            internal Range<int> SuperVolts = new Range<int>(0, 10000);
-            internal Range<int> Turns = new Range<int>(0, 10000);
+            internal Range<int> Apples = new(0, 10000);
+            internal Range<int> GroundTouches = new(0, 10000);
+            internal Range<int> LeftVolts = new(0, 10000);
+            internal Range<int> RightVolts = new(0, 10000);
+            internal Range<int> SuperVolts = new(0, 10000);
+            internal Range<int> Turns = new(0, 10000);
 
             internal bool Matches(Player p)
             {

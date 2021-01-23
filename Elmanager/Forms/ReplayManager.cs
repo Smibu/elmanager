@@ -21,10 +21,10 @@ namespace Elmanager.Forms
         private const string NoReplaysSelected = "No replays are selected!";
         private ObjectListView list;
         private bool _cellEditing;
-        private readonly MaybeOpened<ReplayViewer> _currentViewer = new MaybeOpened<ReplayViewer>();
+        private readonly MaybeOpened<ReplayViewer> _currentViewer = new();
         private readonly Manager<Replay> _manager;
         private CancellationTokenSource _searchCancelToken;
-        protected override Size DefaultSize => new Size(600, 400);
+        protected override Size DefaultSize => new(600, 400);
 
         internal ReplayManager()
         {

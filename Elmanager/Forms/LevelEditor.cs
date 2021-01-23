@@ -32,7 +32,7 @@ namespace Elmanager.Forms
         private const string CoordinateFormat = "F3";
         private const string LevEditorName = "SLE";
         private const int MouseWheelStep = 20;
-        private readonly List<Level> _history = new List<Level>();
+        private readonly List<Level> _history = new();
         private bool _appleFilter = true;
         private bool _flowerFilter = true;
         private bool _grassFilter = true;
@@ -48,7 +48,7 @@ namespace Elmanager.Forms
         private List<string> _currLevDirFiles;
         private bool _draggingScreen;
         private Lgr _editorLgr;
-        private List<Vector> _errorPoints = new List<Vector>();
+        private List<Vector> _errorPoints = new();
         private int _historyIndex;
         private int _savedIndex;
         private string _loadedLevFilesDir;
@@ -77,7 +77,7 @@ namespace Elmanager.Forms
         private bool _maybeOpenOnDrop;
         private ElmaCamera _camera;
         private ZoomController _zoomCtrl;
-        private readonly SceneSettings _sceneSettings = new SceneSettings();
+        private readonly SceneSettings _sceneSettings = new();
 
         internal LevelEditor(string levPath)
         {

@@ -60,7 +60,7 @@ namespace Elmanager
         internal readonly string LevelPath; //Path of the level file if it is found
         internal Player Player1 => Players[0];
         internal Player Player2 => Players[1];
-        internal readonly List<Player> Players = new List<Player>(2);
+        internal readonly List<Player> Players = new(2);
 
         internal Replay(string replayPath)
         {

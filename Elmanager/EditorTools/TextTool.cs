@@ -25,9 +25,9 @@ namespace Elmanager.EditorTools
 
         private List<Polygon> _currentTextPolygons;
         private bool _writing;
-        private static readonly Dictionary<string, string> EmptySynonymMap = new Dictionary<string, string>();
+        private static readonly Dictionary<string, string> EmptySynonymMap = new();
 
-        private static readonly Dictionary<string, string> SynonymMap = new Dictionary<string, string>
+        private static readonly Dictionary<string, string> SynonymMap = new()
         {
             {"Italic", "Oblique"},
             {"Demibold", "Bold"}
@@ -111,7 +111,7 @@ namespace Elmanager.EditorTools
 
         public List<Polygon> GetExtraPolygons()
         {
-            return new List<Polygon>();
+            return new();
         }
 
         public void InActivate()

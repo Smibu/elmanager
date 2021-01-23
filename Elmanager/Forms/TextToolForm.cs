@@ -34,7 +34,7 @@ namespace Elmanager.Forms
 
         public TextToolOptions Result
         {
-            get => new TextToolOptions
+            get => new()
             {
                 Font = _font,
                 Text = textBox.Text,

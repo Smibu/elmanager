@@ -8,7 +8,7 @@ namespace Elmanager.CustomControls
     internal class FontDialogMod : FontDialog
     {
         private const int ApplyClick = 0x402;
-        private readonly IntPtr _applyCommand = new IntPtr(ApplyClick);
+        private readonly IntPtr _applyCommand = new(ApplyClick);
         public string FontStyleName { get; private set; }
         private const int WmCommand = 0x0111;
 

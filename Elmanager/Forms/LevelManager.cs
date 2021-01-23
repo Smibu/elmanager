@@ -17,10 +17,10 @@ namespace Elmanager.Forms
         private CancellationTokenSource _searchCancelToken;
         private readonly TypedObjectListView<Top10EntrySingle> _singleList;
         private readonly TypedObjectListView<Top10EntryMulti> _multiList;
-        private readonly MaybeOpened<ReplayViewer> _viewer = new MaybeOpened<ReplayViewer>();
-        private readonly MaybeOpened<LevelEditor> _editor = new MaybeOpened<LevelEditor>();
-        private Dictionary<string, List<Replay>> _recsByLevel = new Dictionary<string, List<Replay>>();
-        protected override Size DefaultSize => new Size(600, 400);
+        private readonly MaybeOpened<ReplayViewer> _viewer = new();
+        private readonly MaybeOpened<LevelEditor> _editor = new();
+        private Dictionary<string, List<Replay>> _recsByLevel = new();
+        protected override Size DefaultSize => new(600, 400);
         private readonly Manager<Level> _manager;
         private TypedObjectListView<Level> TypedList => _manager.TypedList;
 

@@ -37,13 +37,13 @@ namespace Elmanager
         };
 
         private List<PlayerEvent<LogicalEventType>> _currentEvents;
-        private List<int> _activePlayerIndices = new List<int>();
+        private List<int> _activePlayerIndices = new();
         private bool _playing;
         private bool _requestPlayCancel;
-        private List<int> _visiblePlayerIndices = new List<int>();
+        private List<int> _visiblePlayerIndices = new();
         internal Level Lev;
         private double _playBackSpeed = 1.0;
-        private readonly Stopwatch _playTimer = new Stopwatch();
+        private readonly Stopwatch _playTimer = new();
         private bool _loopPlaying;
         private bool _wrongLevVersion;
         private double _frameStep = 0.02;
@@ -60,7 +60,7 @@ namespace Elmanager
         private int _selectedReplayIndex;
         private double _fixx;
         private double _fixy;
-        private readonly Timer _timer = new Timer(25); // Don't update unnecessarily often to avoid overhead
+        private readonly Timer _timer = new(25); // Don't update unnecessarily often to avoid overhead
         private Task _playTask;
 
         public event ElapsedEventHandler PlayingElapsed
@@ -235,7 +235,7 @@ namespace Elmanager
 
         internal ElmaRenderer Renderer { get; }
 
-        public SceneSettings SceneSettings { get; } = new SceneSettings();
+        public SceneSettings SceneSettings { get; } = new();
 
         internal Vector GetBikeCoordinates()
         {

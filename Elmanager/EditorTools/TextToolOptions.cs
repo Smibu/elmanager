@@ -10,7 +10,7 @@ namespace Elmanager.EditorTools
         public double Smoothness;
         public string Text;
 
-        public static TextToolOptions Default => new TextToolOptions
+        public static TextToolOptions Default => new()
         {
             Font = new Font(new FontFamily("Arial"), 9.0f),
             FontStyleName = "",

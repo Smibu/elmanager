@@ -5,7 +5,7 @@ namespace Elmanager
 {
     internal class AppContext : ApplicationContext
     {
-        private readonly List<Form> _forms = new List<Form>();
+        private readonly List<Form> _forms = new();
 
         public void AddAndShow(Form form)
         {
