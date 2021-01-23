@@ -21,11 +21,11 @@ jobs:
     - name: Setup .NET Core
       uses: actions/setup-dotnet@v1
       with:
-        dotnet-version: 3.1.x
+        dotnet-version: 5.0.x
     - name: Build with dotnet
-      working-directory: ElmanagerCore
+      working-directory: Elmanager
       run: dotnet publish --configuration Release
     - uses: actions/upload-artifact@v1
       with:
         name: Elmanager
-        path: ElmanagerCore/bin/Release/netcoreapp3.1/win7-x86/publish/Elmanager.exe
+        path: Elmanager/bin/Release/net5.0-windows/win7-x86/publish/Elmanager.exe

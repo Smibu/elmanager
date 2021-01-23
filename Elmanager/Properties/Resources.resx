@@ -254,7 +254,7 @@
     <value>..\Resources\internals.zip;System.Byte[], mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </data>
   <data name="LICENSE" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\Resources\LICENSE.txt;System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089;Windows-1252</value>
+    <value>..\Resources\LICENSE.txt;System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089;utf-8</value>
   </data>
   <data name="LICENSE_3RD_PARTY" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\Resources\LICENSE-3RD-PARTY.txt;System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089;utf-8</value>
