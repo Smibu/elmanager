@@ -129,18 +129,13 @@ namespace Elmanager.EditorTools
 
                     break;
                 case Keys.Space:
-                    switch (_pipeMode)
+                    _pipeMode = _pipeMode switch
                     {
-                        case PipeMode.NoApples:
-                            _pipeMode = PipeMode.ApplesDistance;
-                            break;
-                        case PipeMode.ApplesDistance:
-                            _pipeMode = PipeMode.ApplesAmount;
-                            break;
-                        case PipeMode.ApplesAmount:
-                            _pipeMode = PipeMode.NoApples;
-                            break;
-                    }
+                        PipeMode.NoApples => PipeMode.ApplesDistance,
+                        PipeMode.ApplesDistance => PipeMode.ApplesAmount,
+                        PipeMode.ApplesAmount => PipeMode.NoApples,
+                        _ => _pipeMode
+                    };
 
                     break;
             }

@@ -30,18 +30,13 @@ namespace Elmanager.EditorTools
         public void UpdateHelp()
         {
             char polyChar = FirstSelected ? 'B' : 'A';
-            switch (_currentOpType)
+            LevEditor.InfoLabel.Text = _currentOpType switch
             {
-                case PolygonOperationType.Union:
-                    LevEditor.InfoLabel.Text = "Click the polygon " + polyChar + " (operation = A+B).";
-                    break;
-                case PolygonOperationType.Difference:
-                    LevEditor.InfoLabel.Text = "Click the polygon " + polyChar + " (operation = A-B).";
-                    break;
-                case PolygonOperationType.Intersection:
-                    LevEditor.InfoLabel.Text = "(This mode is not yet implemented.)";
-                    break;
-            }
+                PolygonOperationType.Union => "Click the polygon " + polyChar + " (operation = A+B).",
+                PolygonOperationType.Difference => "Click the polygon " + polyChar + " (operation = A-B).",
+                PolygonOperationType.Intersection => "(This mode is not yet implemented.)",
+                _ => LevEditor.InfoLabel.Text
+            };
 
             if (!FirstSelected)
             {
@@ -197,24 +192,15 @@ namespace Elmanager.EditorTools
             Geometry result;
             try
             {
-                switch (opType)
+                result = opType switch
                 {
-                    case PolygonOperationType.Union:
-                        result = others.Union(selection);
-                        break;
-                    case PolygonOperationType.Difference:
-                        result = others.Difference(selection);
-                        break;
-                    case PolygonOperationType.Intersection:
-                        result = others.Intersection(selection);
-                        break;
-                    case PolygonOperationType.SymmetricDifference:
-                        result = others.SymmetricDifference(selection)
-                            .Buffer(Polygon.BufferDistance, new BufferParameters(0, EndCapStyle.Flat, JoinStyle.Bevel, 1));
-                        break;
-                    default:
-                        throw new Exception("Unknown operation type.");
-                }
+                    PolygonOperationType.Union => others.Union(selection),
+                    PolygonOperationType.Difference => others.Difference(selection),
+                    PolygonOperationType.Intersection => others.Intersection(selection),
+                    PolygonOperationType.SymmetricDifference => others.SymmetricDifference(selection)
+                        .Buffer(Polygon.BufferDistance, new BufferParameters(0, EndCapStyle.Flat, JoinStyle.Bevel, 1)),
+                    _ => throw new Exception("Unknown operation type.")
+                };
             }
             catch (TopologyException)
             {

@@ -82,20 +82,13 @@ namespace Elmanager.EditorTools
 
                     break;
                 case Keys.Space:
-                    switch (_frameType)
+                    _frameType = _frameType switch
                     {
-                        case FrameType.Normal:
-                            _frameType = FrameType.Inward;
-                            break;
-                        case FrameType.Inward:
-                            _frameType = FrameType.Outward;
-                            break;
-                        case FrameType.Outward:
-                            _frameType = FrameType.Normal;
-                            break;
-                        default:
-                            throw new ArgumentOutOfRangeException();
-                    }
+                        FrameType.Normal => FrameType.Inward,
+                        FrameType.Inward => FrameType.Outward,
+                        FrameType.Outward => FrameType.Normal,
+                        _ => throw new ArgumentOutOfRangeException()
+                    };
 
                     UpdateHelp();
                     break;

@@ -425,15 +425,12 @@ namespace Elmanager.EditorTools
         {
             if (selectionPoly.AreaHasPoint(z))
             {
-                switch (z.Mark)
+                z.Mark = z.Mark switch
                 {
-                    case VectorMark.None:
-                        z.Mark = VectorMark.Selected;
-                        break;
-                    case VectorMark.Selected:
-                        z.Mark = VectorMark.None;
-                        break;
-                }
+                    VectorMark.None => VectorMark.Selected,
+                    VectorMark.Selected => VectorMark.None,
+                    _ => z.Mark
+                };
             }
             else if (!Keyboard.IsKeyDown(Key.LeftCtrl))
                 z.Mark = VectorMark.None;
@@ -449,15 +446,12 @@ namespace Elmanager.EditorTools
         {
             if (z.X < selectionxMax && z.X > selectionxMin && z.Y < selectionyMax && z.Y > selectionyMin)
             {
-                switch (z.Mark)
+                z.Mark = z.Mark switch
                 {
-                    case VectorMark.None:
-                        z.Mark = VectorMark.Selected;
-                        break;
-                    case VectorMark.Selected:
-                        z.Mark = VectorMark.None;
-                        break;
-                }
+                    VectorMark.None => VectorMark.Selected,
+                    VectorMark.Selected => VectorMark.None,
+                    _ => z.Mark
+                };
             }
             else if (!Keyboard.IsKeyDown(Key.LeftCtrl))
                 z.Mark = VectorMark.None;

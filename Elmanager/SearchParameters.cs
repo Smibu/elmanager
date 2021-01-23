@@ -12,17 +12,12 @@ namespace Elmanager
 
         internal Range<int> Size = new(0, 10000000);
 
-        public static BoolOption GetBoolOptionFromTriSelect(TriSelect select)
-        {
-            switch (select.SelectedOption)
+        public static BoolOption GetBoolOptionFromTriSelect(TriSelect select) =>
+            select.SelectedOption switch
             {
-                case 0:
-                    return BoolOption.True;
-                case 1:
-                    return BoolOption.False;
-                default:
-                    return BoolOption.Dontcare;
-            }
-        }
+                0 => BoolOption.True,
+                1 => BoolOption.False,
+                _ => BoolOption.Dontcare
+            };
     }
 }

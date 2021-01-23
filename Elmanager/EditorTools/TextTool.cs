@@ -233,17 +233,11 @@ namespace Elmanager.EditorTools
                         .Select(
                             figure => new Polygon(
                                 figure.Segments
-                                    .SelectMany(segment =>
+                                    .SelectMany(segment => segment switch
                                     {
-                                        switch (segment)
-                                        {
-                                            case PolyLineSegment s:
-                                                return s.Points.ToArray();
-                                            case LineSegment l:
-                                                return new[] {l.Point};
-                                            default:
-                                                throw new TopologyException("Segment wasn't flattened?");
-                                        }
+                                        PolyLineSegment s => s.Points.ToArray(),
+                                        LineSegment l => new[] {l.Point},
+                                        _ => throw new TopologyException("Segment wasn't flattened?")
                                     })
                                     .Select(p =>
                                         new Vector(p.X + offset.X, -p.Y + offset.Y, VectorMark.Selected))

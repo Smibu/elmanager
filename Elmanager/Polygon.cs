@@ -469,24 +469,16 @@ namespace Elmanager
                 throw new PolygonException("Both polygons must be non-self-intersecting.");
             }
 
-            Geometry resultPolys;
-            switch (type)
+            var resultPolys = type switch
             {
-                case PolygonOperationType.Intersection:
-                    resultPolys = p.ToIPolygon().Intersection(ToIPolygon());
-                    break;
-                case PolygonOperationType.Union:
-                    resultPolys = p.ToIPolygon().Union(ToIPolygon());
-                    break;
-                case PolygonOperationType.Difference:
-                    resultPolys = p.ToIPolygon().Difference(ToIPolygon());
-                    break;
-                case PolygonOperationType.SymmetricDifference:
-                    resultPolys = p.ToIPolygon().SymmetricDifference(ToIPolygon()).Buffer(BufferDistance);
-                    break;
-                default:
-                    throw new PolygonException("Unsupported operation type.");
-            }
+                PolygonOperationType.Intersection => p.ToIPolygon().Intersection(ToIPolygon()),
+                PolygonOperationType.Union => p.ToIPolygon().Union(ToIPolygon()),
+                PolygonOperationType.Difference => p.ToIPolygon().Difference(ToIPolygon()),
+                PolygonOperationType.SymmetricDifference => p.ToIPolygon()
+                    .SymmetricDifference(ToIPolygon())
+                    .Buffer(BufferDistance),
+                _ => throw new PolygonException("Unsupported operation type.")
+            };
 
             var multiPolygon = resultPolys as MultiPolygon;
             var results = new List<Polygon>();

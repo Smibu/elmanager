@@ -27,40 +27,22 @@ namespace Elmanager
 
         internal double HeightMinusMargin => Height - 2 * EmptyPixelYMargin;
 
-        internal double EmptyPixelXMargin
-        {
-            get
+        internal double EmptyPixelXMargin =>
+            Name switch
             {
-                switch (Name)
-                {
-                    case "maskhor":
-                        return 0.029;
-                    case "masklitt":
-                        return 0.015;
-                    case "maskbig":
-                        return 0.092;
-                    default:
-                        return 0.092;
-                }
-            }
-        }
+                "maskhor" => 0.029,
+                "masklitt" => 0.015,
+                "maskbig" => 0.092,
+                _ => 0.092
+            };
 
-        internal double EmptyPixelYMargin
-        {
-            get
+        internal double EmptyPixelYMargin =>
+            Name switch
             {
-                switch (Name)
-                {
-                    case "maskhor":
-                        return 0.029;
-                    case "masklitt":
-                        return 0.015;
-                    case "maskbig":
-                        return 0.112;
-                    default:
-                        return 0.112;
-                }
-            }
-        }
+                "maskhor" => 0.029,
+                "masklitt" => 0.015,
+                "maskbig" => 0.112,
+                _ => 0.112
+            };
     }
 }

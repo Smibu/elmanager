@@ -347,21 +347,13 @@ namespace Elmanager
 
                 var desc = descs[0];
                 var col = new OLVColumn(desc.Description, m.Name);
-                Type t;
-                switch (m)
+                var t = m switch
                 {
-                    case FieldInfo fieldInfo:
-                        t = fieldInfo.FieldType;
-                        break;
-                    case MethodInfo methodInfo:
-                        t = methodInfo.ReturnType;
-                        break;
-                    case PropertyInfo propertyInfo:
-                        t = propertyInfo.PropertyType;
-                        break;
-                    default:
-                        throw new ArgumentOutOfRangeException(nameof(m));
-                }
+                    FieldInfo fieldInfo => fieldInfo.FieldType,
+                    MethodInfo methodInfo => methodInfo.ReturnType,
+                    PropertyInfo propertyInfo => propertyInfo.PropertyType,
+                    _ => throw new ArgumentOutOfRangeException(nameof(m))
+                };
 
                 if (t == typeof(bool))
                 {

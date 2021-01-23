@@ -74,18 +74,13 @@ namespace Elmanager.EditorTools
             switch (key.KeyCode)
             {
                 case Keys.Space:
-                    switch (_currentObjectType)
+                    _currentObjectType = _currentObjectType switch
                     {
-                        case ObjectType.Apple:
-                            _currentObjectType = ObjectType.Killer;
-                            break;
-                        case ObjectType.Killer:
-                            _currentObjectType = ObjectType.Flower;
-                            break;
-                        case ObjectType.Flower:
-                            _currentObjectType = ObjectType.Apple;
-                            break;
-                    }
+                        ObjectType.Apple => ObjectType.Killer,
+                        ObjectType.Killer => ObjectType.Flower,
+                        ObjectType.Flower => ObjectType.Apple,
+                        _ => _currentObjectType
+                    };
 
                     UpdateHelp();
                     break;

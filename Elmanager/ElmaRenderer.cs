@@ -677,24 +677,14 @@ namespace Elmanager
             if (o.Type == ObjectType.Apple && o.AppleType != AppleType.Normal)
             {
                 GL.Color3(_settings.AppleGravityArrowColor);
-                double arrowRotation;
-                switch (o.AppleType)
+                double arrowRotation = o.AppleType switch
                 {
-                    case AppleType.GravityUp:
-                        arrowRotation = 0.0;
-                        break;
-                    case AppleType.GravityDown:
-                        arrowRotation = 180.0;
-                        break;
-                    case AppleType.GravityLeft:
-                        arrowRotation = 90.0;
-                        break;
-                    case AppleType.GravityRight:
-                        arrowRotation = 270.0;
-                        break;
-                    default:
-                        throw new ArgumentOutOfRangeException();
-                }
+                    AppleType.GravityUp => 0.0,
+                    AppleType.GravityDown => 180.0,
+                    AppleType.GravityLeft => 90.0,
+                    AppleType.GravityRight => 270.0,
+                    _ => throw new ArgumentOutOfRangeException()
+                };
 
                 const double arrowThickness = 0.4;
                 GL.PushMatrix();
@@ -744,20 +734,13 @@ namespace Elmanager
         internal void InitializeLevel(Level level)
         {
             Lev = level;
-            Lev.Objects = Lev.Objects.OrderBy(o => {
-                switch (o.Type)
-                {
-                    case ObjectType.Flower:
-                        return 3;
-                    case ObjectType.Apple:
-                        return 2;
-                    case ObjectType.Killer:
-                        return 1;
-                    case ObjectType.Start:
-                        return 4;
-                    default:
-                        throw new ArgumentOutOfRangeException();
-                }
+            Lev.Objects = Lev.Objects.OrderBy(o => o.Type switch
+            {
+                ObjectType.Flower => 3,
+                ObjectType.Apple => 2,
+                ObjectType.Killer => 1,
+                ObjectType.Start => 4,
+                _ => throw new ArgumentOutOfRangeException()
             }).ToList();
             Lev.DecomposeGroundPolygons();
             Lev.UpdateImages(DrawableImages);

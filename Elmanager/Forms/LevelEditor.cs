@@ -972,15 +972,12 @@ namespace Elmanager.Forms
 
         private void KeyHandlerDown(object sender, KeyEventArgs e)
         {
-            switch (e.KeyCode)
+            e = e.KeyCode switch
             {
-                case Keys.Add:
-                    e = new KeyEventArgs(Constants.Increase);
-                    break;
-                case Keys.Subtract:
-                    e = new KeyEventArgs(Constants.Decrease);
-                    break;
-            }
+                Keys.Add => new KeyEventArgs(Constants.Increase),
+                Keys.Subtract => new KeyEventArgs(Constants.Decrease),
+                _ => e
+            };
 
             CurrentTool.KeyDown(e);
             var wasModified = false;
