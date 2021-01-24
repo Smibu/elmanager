@@ -28,41 +28,44 @@ namespace Elmanager
         private const double MaxArmRotation = 95;
         private const double WheelRotationFactor = 1 / 250.0;
 
-        private readonly List<Vector> _globalBody = new();
+        private readonly Vector[] _globalBody;
         private readonly List<double> _bikeRotation = new();
         private readonly List<Direction> _direction = new();
-        private readonly List<Vector> _head = new();
-        private readonly List<Vector> _leftWheel = new();
+        private readonly Vector[] _head;
+        private readonly Vector[] _leftWheel;
         private readonly List<double> _leftWheelRotation = new();
-        private readonly List<Vector> _rightWheel = new();
+        private readonly Vector[] _rightWheel;
         private readonly List<double> _rightWheelRotation = new();
 
-        internal int FrameCount => _globalBody.Count;
+        internal int FrameCount => _globalBody.Length;
 
         internal Player(BinaryReader rec, int frames)
         {
             var frameCount = frames;
+            _globalBody = new Vector[frameCount];
+            _leftWheel = new Vector[frameCount];
+            _rightWheel = new Vector[frameCount];
+            _head = new Vector[frameCount];
+            for (var i = 0; i < frameCount; i++)
+            {
+                _globalBody[i] = new Vector(rec.ReadSingle(), 0);
+            }
 
             for (var i = 0; i < frameCount; i++)
             {
-                _globalBody.Add(new Vector(rec.ReadSingle(), 0));
-            }
-
-            foreach (var b in _globalBody)
-            {
-                b.Y = rec.ReadSingle();
+                _globalBody[i].Y = rec.ReadSingle();
             }
 
             foreach (var part in new[] {_leftWheel, _rightWheel, _head})
             {
-                foreach (var b in _globalBody)
+                for (var i = 0; i < frameCount; i++)
                 {
-                    part.Add(new Vector(b.X + rec.ReadInt16() / 1000.0, 0));
+                    part[i] = new Vector(_globalBody[i].X + rec.ReadInt16() / 1000.0, 0);
                 }
 
-                foreach (var (b, w) in _globalBody.Zip(part, (x, y) => (x, y)))
+                for (var i = 0; i < frameCount; i++)
                 {
-                    w.Y = b.Y + rec.ReadInt16() / 1000.0;
+                    part[i].Y = _globalBody[i].Y + rec.ReadInt16() / 1000.0;
                 }
             }
 
@@ -279,7 +282,7 @@ namespace Elmanager
         {
             var trip = 0.0;
             var top = 0.0;
-            for (var i = 0; i < _globalBody.Count - 2; i++)
+            for (var i = 0; i < _globalBody.Length - 2; i++)
             {
                 var curr = _globalBody[i].Dist(_globalBody[i + 1]);
                 trip += curr;
@@ -434,7 +437,7 @@ namespace Elmanager
             return Events.Where(x => eventTypes.Contains(x.Type)).ToList();
         }
 
-        internal List<Vector> GlobalBody => _globalBody;
+        internal Vector[] GlobalBody => _globalBody;
 
         private static double Interpolate(double firstValue, double secondValue, double step)
         {

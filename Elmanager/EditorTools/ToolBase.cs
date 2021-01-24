@@ -207,9 +207,12 @@ namespace Elmanager.EditorTools
             {
                 if (x.Mark == PolygonMark.Highlight)
                     x.Mark = PolygonMark.None;
-                foreach (Vector z in x.Vertices)
+                for (var index = 0; index < x.Vertices.Count; index++)
+                {
+                    Vector z = x.Vertices[index];
                     if (z.Mark != VectorMark.Selected)
-                        z.Mark = VectorMark.None;
+                        x.Vertices[index] = new Vector(z.X, z.Y, VectorMark.None);
+                }
             }
 
             foreach (LevObject x in Lev.Objects)
@@ -262,9 +265,14 @@ namespace Elmanager.EditorTools
 
         protected void MarkAllAs(VectorMark mark)
         {
-            foreach (Vector t in Lev.Polygons.SelectMany(x => x.Vertices))
+            foreach (var p in Lev.Polygons)
             {
-                t.Mark = mark;
+                for (int j = 0; j < p.Vertices.Count; j++)
+                {
+                    Vector v = p.Vertices[j];
+                    v.Mark = mark;
+                    p.Vertices[j] = v;
+                }
             }
 
             foreach (LevObject x in Lev.Objects)

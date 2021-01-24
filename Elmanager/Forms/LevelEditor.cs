@@ -69,10 +69,10 @@ namespace Elmanager.Forms
         private bool _draggingGrid;
         private Vector _gridStartOffset;
         private bool _programmaticPropertyChange;
-        private Vector _savedStartPosition;
+        private Vector? _savedStartPosition;
         private float _dpiX;
         private float _dpiY;
-        private Vector _contextMenuClickPosition;
+        private Vector? _contextMenuClickPosition;
         private SvgImportOptions _svgImportOptions = SvgImportOptions.Default;
         private bool _maybeOpenOnDrop;
         private ElmaCamera _camera;
@@ -495,11 +495,12 @@ namespace Elmanager.Forms
             foreach (Polygon x in Lev.Polygons)
             {
                 var copy = new Polygon();
-                foreach (Vector z in x.Vertices)
+                for (var index = 0; index < x.Vertices.Count; index++)
                 {
+                    Vector z = x.Vertices[index];
                     if (z.Mark == VectorMark.Selected)
                     {
-                        z.Mark = VectorMark.None;
+                        x.Vertices[index] = new Vector(z.X, z.Y, VectorMark.None);
                         copy.Add(new Vector(z.X + delta,
                             z.Y + delta));
                     }
@@ -645,16 +646,16 @@ namespace Elmanager.Forms
 
             foreach (Vector x in _errorPoints)
                 Renderer.DrawSquare(x, _zoomCtrl.Cam.ZoomLevel / 25, Color.Red);
-            if ((object) _savedStartPosition != null)
+            if (_savedStartPosition is { } p)
             {
                 if (Global.AppSettings.LevelEditor.RenderingSettings.ShowObjects)
                 {
-                    Renderer.DrawDummyPlayer(_savedStartPosition.X, _savedStartPosition.Y, _sceneSettings, new PlayerRenderOpts(Color.Green, false, true));
+                    Renderer.DrawDummyPlayer(p.X, p.Y, _sceneSettings, new PlayerRenderOpts(Color.Green, false, true));
                 }
 
                 if (Global.AppSettings.LevelEditor.RenderingSettings.ShowObjectFrames)
                 {
-                    Renderer.DrawDummyPlayer(_savedStartPosition.X, _savedStartPosition.Y, _sceneSettings, new PlayerRenderOpts(Color.Green, false, false));
+                    Renderer.DrawDummyPlayer(p.X, p.Y, _sceneSettings, new PlayerRenderOpts(Color.Green, false, false));
                 }
             }
         }
@@ -2518,13 +2519,17 @@ namespace Elmanager.Forms
 
         private void restoreStartPositionToolStripMenuItem_Click(object sender, EventArgs e)
         {
+            if (_savedStartPosition is not { } p)
+            {
+                return;
+            }
             foreach (var o in Lev.Objects)
             {
                 if (o.Type == ObjectType.Start)
                 {
                     var oldPos = o.Position;
-                    o.Position = _savedStartPosition.Clone();
-                    if (oldPos != _savedStartPosition)
+                    o.Position = p.Clone();
+                    if (!Equals(oldPos, _savedStartPosition))
                     {
                         Modified = true;
                     }
@@ -2542,9 +2547,9 @@ namespace Elmanager.Forms
         private void MoveStartHereToolStripMenuItem_Click(object sender, EventArgs e)
         {
             var s = Lev.Objects.Find(o => o.Type == ObjectType.Start);
-            if (s != null && _contextMenuClickPosition != null)
+            if (s != null && _contextMenuClickPosition is { } p)
             {
-                s.Position = _contextMenuClickPosition;
+                s.Position = p;
                 Modified = true;
             }
         }

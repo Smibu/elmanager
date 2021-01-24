@@ -54,16 +54,16 @@ namespace Elmanager
                 p2C.ChangeOrientation();
             int numberOfIntersectionsP1C = 0;
             int numberOfIntersectionsP2C = 0;
-            Vector p1IsectPoint = null;
-            Vector p2IsectPoint = null;
+            var p1IsectPoint = new Vector();
+            var p2IsectPoint = new Vector();
             Vector.MarkDefault = VectorMark.Selected;
             for (int i = 0; i < p1.Vertices.Count; i++)
             {
-                Vector isectPoint = GetIntersectionPoint(p1[i], p1[i + 1], v1, v2);
-                if ((object) isectPoint != null)
+                var isectPoint = GetIntersectionPoint(p1[i], p1[i + 1], v1, v2);
+                if (isectPoint is {} p)
                 {
-                    p1IsectPoint = isectPoint;
-                    p1C.InsertIntersection(p1IsectPoint, Constants.Tolerance);
+                    p1IsectPoint = p;
+                    p1C.InsertIntersection(p, Constants.Tolerance);
                     numberOfIntersectionsP1C++;
                 }
             }
@@ -72,11 +72,11 @@ namespace Elmanager
                 return null;
             for (int i = 0; i < p2.Vertices.Count; i++)
             {
-                Vector isectPoint = GetIntersectionPoint(p2[i], p2[i + 1], v1, v2);
-                if ((object) isectPoint != null)
+                var isectPoint = GetIntersectionPoint(p2[i], p2[i + 1], v1, v2);
+                if (isectPoint is { } p)
                 {
-                    p2IsectPoint = isectPoint;
-                    p2C.InsertIntersection(p2IsectPoint, Constants.Tolerance);
+                    p2IsectPoint = p;
+                    p2C.InsertIntersection(p, Constants.Tolerance);
                     numberOfIntersectionsP2C++;
                 }
             }
@@ -88,8 +88,8 @@ namespace Elmanager
             int p1Index = 0;
             int p2Index = p2C.IndexOf(p2IsectPoint);
             bool p1CCurrent = true;
-            Vector p1ConnectVector = null;
-            Vector p2ConnectVector = null;
+            var p1ConnectVector = new Vector();
+            var p2ConnectVector = new Vector();
             while (!(p1Index == 0 && p1CCurrent && result.Count > 0))
             {
                 if (p1CCurrent)
@@ -197,7 +197,7 @@ namespace Elmanager
             return Math.Round(uaT, RoundingPrecision) != 0;
         }
 
-        internal static Vector GetIntersectionPoint(Vector a1, Vector a2, Vector b1, Vector b2)
+        internal static Vector? GetIntersectionPoint(Vector a1, Vector a2, Vector b1, Vector b2)
         {
             double b2Minusb1X = b2.X - b1.X;
             double b2Minusb1Y = b2.Y - b1.Y;

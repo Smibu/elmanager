@@ -11,7 +11,7 @@ namespace Elmanager.EditorTools
     internal class EllipseTool : ToolBase, IEditorTool
     {
         private Polygon _ellipse;
-        private Vector _ellipseCenter;
+        private Vector? _ellipseCenter;
         private int _ellipseSteps = 10;
 
         internal EllipseTool(LevelEditor editor)
@@ -21,7 +21,7 @@ namespace Elmanager.EditorTools
 
         public override bool Busy => CreatingEllipse;
 
-        private bool CreatingEllipse => (object) _ellipseCenter != null;
+        private bool CreatingEllipse => _ellipseCenter != null;
 
         public void Activate()
         {
@@ -135,17 +135,17 @@ namespace Elmanager.EditorTools
 
         private void UpdateEllipse()
         {
-            if (!CreatingEllipse) return;
+            if (_ellipseCenter is not { } c) return;
             if (Keyboard.IsKeyDown(Key.LeftCtrl))
             {
                 double dist =
-                    Math.Sqrt((CurrentPos.X - _ellipseCenter.X) * (CurrentPos.X - _ellipseCenter.X) +
-                              (CurrentPos.Y - _ellipseCenter.Y) * (CurrentPos.Y - _ellipseCenter.Y));
-                _ellipse = Polygon.Ellipse(_ellipseCenter, dist, dist, 0, _ellipseSteps);
+                    Math.Sqrt((CurrentPos.X - c.X) * (CurrentPos.X - c.X) +
+                              (CurrentPos.Y - c.Y) * (CurrentPos.Y - c.Y));
+                _ellipse = Polygon.Ellipse(c, dist, dist, 0, _ellipseSteps);
             }
             else
-                _ellipse = Polygon.Ellipse(_ellipseCenter, CurrentPos.X - _ellipseCenter.X,
-                    CurrentPos.Y - _ellipseCenter.Y, 0, _ellipseSteps);
+                _ellipse = Polygon.Ellipse(c, CurrentPos.X - c.X,
+                    CurrentPos.Y - c.Y, 0, _ellipseSteps);
         }
     }
 }

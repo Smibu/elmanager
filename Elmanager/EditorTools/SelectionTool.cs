@@ -154,7 +154,9 @@ namespace Elmanager.EditorTools
                     }
                     else if (nearestVertexIndex >= 0)
                     {
-                        HandleMark(NearestPolygon[nearestVertexIndex]);
+                        var v = NearestPolygon[nearestVertexIndex];
+                        HandleMark(ref v);
+                        NearestPolygon.Vertices[nearestVertexIndex] = v;
                         if (Keyboard.IsKeyDown(Key.LeftShift))
                         {
                             _lockCenter = NearestPolygon[nearestVertexIndex];
@@ -200,9 +202,9 @@ namespace Elmanager.EditorTools
                         EndSelectionHandling();
                     }
                     else if (nearestObjectIndex >= 0)
-                        HandleMark(Lev.Objects[nearestObjectIndex].Position);
+                        HandleMark(ref Lev.Objects[nearestObjectIndex].Position);
                     else if (nearestPictureIndex >= 0)
-                        HandleMark(Lev.Pictures[nearestPictureIndex].Position);
+                        HandleMark(ref Lev.Pictures[nearestPictureIndex].Position);
                     else
                     {
                         if (!Keyboard.IsKeyDown(Key.LeftCtrl))
@@ -312,7 +314,10 @@ namespace Elmanager.EditorTools
                     ChangeCursorToHand();
                     Vector b = NearestPolygon.Vertices[nearestVertex];
                     if (b.Mark == VectorMark.None)
+                    {
                         b.Mark = VectorMark.Highlight;
+                        NearestPolygon.Vertices[nearestVertex] = b;
+                    }
                     LevEditor.HighlightLabel.Text = NearestPolygon.IsGrass ? "Grass" : "Ground";
                     LevEditor.HighlightLabel.Text += " polygon, vertex " + (nearestVertex + 1) + " of " +
                                                      NearestPolygon.Count + " vertices";
@@ -371,13 +376,18 @@ namespace Elmanager.EditorTools
                 {
                     if ((x.IsGrass && grassFilter) || (!x.IsGrass && groundFilter))
                     {
-                        foreach (Vector t in x.Vertices)
+                        for (var index = 0; index < x.Vertices.Count; index++)
+                        {
+                            Vector t = x.Vertices[index];
                             if (RectSelecting)
-                                MarkSelectedInArea(t, selectionxMin, selectionxMax, selectionyMin, selectionyMax);
+                                MarkSelectedInArea(ref t, selectionxMin, selectionxMax, selectionyMin, selectionyMax);
                             else
                             {
-                                MarkSelectedInArea(t, _selectionPoly);
+                                MarkSelectedInArea(ref t, _selectionPoly);
                             }
+
+                            x.Vertices[index] = t;
+                        }
                     }
                 }
 
@@ -388,11 +398,11 @@ namespace Elmanager.EditorTools
                         (type == ObjectType.Killer && killerFilter) ||
                         (type == ObjectType.Flower && flowerFilter))
                         if (RectSelecting)
-                            MarkSelectedInArea(t.Position, selectionxMin, selectionxMax, selectionyMin,
+                            MarkSelectedInArea(ref t.Position, selectionxMin, selectionxMax, selectionyMin,
                                 selectionyMax);
                         else
                         {
-                            MarkSelectedInArea(t.Position, _selectionPoly);
+                            MarkSelectedInArea(ref t.Position, _selectionPoly);
                         }
                 }
 
@@ -400,10 +410,10 @@ namespace Elmanager.EditorTools
                 {
                     if ((z.IsPicture && pictureFilter) || (!z.IsPicture && textureFilter))
                         if (RectSelecting)
-                            MarkSelectedInArea(z.Position, selectionxMin, selectionxMax, selectionyMin, selectionyMax);
+                            MarkSelectedInArea(ref z.Position, selectionxMin, selectionxMax, selectionyMin, selectionyMax);
                         else
                         {
-                            MarkSelectedInArea(z.Position, _selectionPoly);
+                            MarkSelectedInArea(ref z.Position, _selectionPoly);
                         }
                 }
 
@@ -421,7 +431,7 @@ namespace Elmanager.EditorTools
             }
         }
 
-        private static void MarkSelectedInArea(Vector z, Polygon selectionPoly)
+        private static void MarkSelectedInArea(ref Vector z, Polygon selectionPoly)
         {
             if (selectionPoly.AreaHasPoint(z))
             {
@@ -441,7 +451,7 @@ namespace Elmanager.EditorTools
             LevEditor.InfoLabel.Text = "Left mouse button: select level elements; Left Shift: Bend edge";
         }
 
-        private static void MarkSelectedInArea(Vector z, double selectionxMin, double selectionxMax,
+        private static void MarkSelectedInArea(ref Vector z, double selectionxMin, double selectionxMax,
             double selectionyMin, double selectionyMax)
         {
             if (z.X < selectionxMax && z.X > selectionxMin && z.Y < selectionyMax && z.Y > selectionyMin)
@@ -457,7 +467,7 @@ namespace Elmanager.EditorTools
                 z.Mark = VectorMark.None;
         }
 
-        private void HandleMark(Vector v)
+        private void HandleMark(ref Vector v)
         {
             if (!Keyboard.IsKeyDown(Key.LeftCtrl))
             {

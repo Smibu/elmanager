@@ -4,19 +4,8 @@ using NetTopologySuite.Geometries;
 namespace Elmanager
 {
     [Serializable]
-    internal class Vector
+    internal struct Vector
     {
-        public override int GetHashCode()
-        {
-            unchecked
-            {
-                int hashCode = 1;
-                hashCode = (hashCode * 397) ^ X.GetHashCode();
-                hashCode = (hashCode * 397) ^ Y.GetHashCode();
-                return hashCode;
-            }
-        }
-
         internal static VectorMark MarkDefault = VectorMark.None;
         internal VectorMark Mark;
         internal double X;
@@ -26,13 +15,6 @@ namespace Elmanager
         {
             X = x;
             Y = y;
-            Mark = MarkDefault;
-        }
-
-        internal Vector()
-        {
-            X = 0;
-            Y = 0;
             Mark = MarkDefault;
         }
 
@@ -47,6 +29,7 @@ namespace Elmanager
         {
             X = Math.Cos(angle * Constants.DegToRad);
             Y = Math.Sin(angle * Constants.DegToRad);
+            Mark = MarkDefault;
         }
 
         internal double Angle
@@ -73,20 +56,6 @@ namespace Elmanager
 
         internal double LengthSquared => X * X + Y * Y;
 
-        public override bool Equals(object obj)
-        {
-            if (obj is null) return false;
-            if (ReferenceEquals(this, obj)) return true;
-            if (obj.GetType() != GetType()) return false;
-            return Equals((Vector) obj);
-        }
-
-        protected bool Equals(Vector p)
-        {
-            if (p is null) return false;
-            return X.Equals(p.X) && Y.Equals(p.Y);
-        }
-
         public void Transform(Matrix m)
         {
             var transformed = this * m;
@@ -98,11 +67,6 @@ namespace Elmanager
         {
             X = v.X;
             Y = v.Y;
-        }
-
-        public static implicit operator Vector(Coordinate v)
-        {
-            return new(v.X, v.Y);
         }
 
         public static implicit operator Coordinate(Vector v)
@@ -118,16 +82,6 @@ namespace Elmanager
         public static Vector operator /(Vector vector, double scalar)
         {
             return (vector * (1 / scalar));
-        }
-
-        public static bool operator ==(Vector vector1, Vector vector2)
-        {
-            return vector1.Equals(vector2);
-        }
-
-        public static bool operator !=(Vector vector1, Vector vector2)
-        {
-            return !(vector1 == vector2);
         }
 
         public static Vector operator *(Vector vector, double scalar)

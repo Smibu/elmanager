@@ -135,7 +135,7 @@ namespace Elmanager
             {
                 for (int i = 0; i < Vertices.Count; i++)
                 {
-                    if (Vertices[i] == Vertices[(i + 1) % Vertices.Count])
+                    if (Vertices[i].Equals(Vertices[(i + 1) % Vertices.Count]))
                     {
                         return false;
                     }
@@ -297,8 +297,11 @@ namespace Elmanager
 
         internal void MarkVectorsAs(VectorMark mark)
         {
-            foreach (Vector t in Vertices)
-                t.Mark = mark;
+            for (var index = 0; index < Vertices.Count; index++)
+            {
+                Vector t = Vertices[index];
+                Vertices[index] = new Vector(t.X, t.Y, mark);
+            }
         }
 
         internal int GetNearestVertexIndex(Vector p)
@@ -592,10 +595,10 @@ namespace Elmanager
             int numberOfIntersections = 0;
             for (int i = 0; i < Vertices.Count; i++)
             {
-                Vector isectPoint = GeometryUtils.GetIntersectionPoint(this[i], this[i + 1], v1, v2);
-                if ((object) isectPoint != null)
+                var isectPoint = GeometryUtils.GetIntersectionPoint(this[i], this[i + 1], v1, v2);
+                if (isectPoint is { } p)
                 {
-                    clone.InsertIntersection(isectPoint, Constants.Tolerance);
+                    clone.InsertIntersection(p, Constants.Tolerance);
                     numberOfIntersections++;
                 }
             }

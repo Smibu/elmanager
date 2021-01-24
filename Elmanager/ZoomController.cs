@@ -91,7 +91,7 @@ namespace Elmanager
 
         internal void ZoomRect(Vector startPoint, Vector endPoint)
         {
-            if (startPoint != endPoint)
+            if (!Equals(startPoint, endPoint))
             {
                 double x1;
                 double x2;
