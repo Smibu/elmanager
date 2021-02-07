@@ -4,6 +4,7 @@ using System.Drawing;
 using System.Globalization;
 using System.IO;
 using System.Linq;
+using System.Runtime.Serialization;
 using System.Runtime.Serialization.Formatters.Binary;
 using System.Text.RegularExpressions;
 using System.Windows.Forms;
@@ -227,9 +228,51 @@ namespace Elmanager
             public string Nickname = "Nick";
             public bool NitroReplays;
             public string Pattern = "LNT";
+            public string LevPattern = "";
+            
+            private int? _intExtSelect = 2;
+            private int? _singleMultiSelect = 2;
+            private int? _finishedSelect = 2;
+            private int? _fastestSlowestSelect = 2;
+            private int? _elmaAcrossSelect = 2;
+            public int IntExtSelect
+            {
+                get => _intExtSelect.Value;
+                set => _intExtSelect = value;
+            }
+            public int SingleMultiSelect
+            {
+                get => _singleMultiSelect.Value;
+                set => _singleMultiSelect = value;
+            }
+            public int FinishedSelect
+            {
+                get => _finishedSelect.Value;
+                set => _finishedSelect = value;
+            }
+            public int FastestSlowestSelect
+            {
+                get => _fastestSlowestSelect.Value;
+                set => _fastestSlowestSelect = value;
+            }
+            public int ElmaAcrossSelect
+            {
+                get => _elmaAcrossSelect.Value;
+                set => _elmaAcrossSelect = value;
+            }
 
             public int NumDecimals => Decimal3Shown ? 3 : 2;
 
+            [OnDeserialized]
+            internal void OnDeserialized(StreamingContext context)
+            {
+                LevPattern = LevPattern ?? "";
+                _intExtSelect = _intExtSelect ?? 2;
+                _singleMultiSelect = _singleMultiSelect ?? 2;
+                _finishedSelect = _finishedSelect ?? 2;
+                _fastestSlowestSelect = _fastestSlowestSelect ?? 2;
+                _elmaAcrossSelect = _elmaAcrossSelect ?? 2;
+            }
         }
 
         [Serializable]
