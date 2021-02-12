@@ -2,7 +2,7 @@
 
 namespace Elmanager.Forms
 {
-    public sealed partial class LevelPropertiesForm
+    internal sealed partial class LevelPropertiesForm
     {
         private readonly Level _level;
 

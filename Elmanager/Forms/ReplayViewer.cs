@@ -14,7 +14,7 @@ using MouseEventArgs = System.Windows.Forms.MouseEventArgs;
 
 namespace Elmanager.Forms
 {
-    partial class ReplayViewer : FormMod
+    internal partial class ReplayViewer : FormMod
     {
         private bool _draggingScreen;
         private bool _fullScreen;

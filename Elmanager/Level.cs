@@ -607,8 +607,16 @@ namespace Elmanager
         {
             foreach (var x in Polygons)
             {
-                foreach (var t in x.Vertices.Where(selector))
-                    t.Transform(matrix);
+                for (var i = 0; i < x.Vertices.Count; i++)
+                {
+                    var v = x.Vertices[i];
+                    if (!selector(v))
+                    {
+                        continue;
+                    }
+                    x.Vertices[i] = v.Transform(matrix);
+                }
+
                 x.UpdateDecomposition();
             }
 
@@ -621,7 +629,7 @@ namespace Elmanager
                     t.Position.SetPosition((z + fix) * matrix - fix);
                 }
                 else
-                    t.Position.Transform(matrix);
+                    t.Position = t.Position.Transform(matrix);
             }
 
             foreach (var z in Pictures.Where(p => selector(p.Position)))

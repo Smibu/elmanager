@@ -2,7 +2,7 @@
 
 namespace Elmanager.Forms
 {
-	public partial class RenameForm
+    internal partial class RenameForm
 		{
 		
 		//Form overrides dispose to clean up the component list.

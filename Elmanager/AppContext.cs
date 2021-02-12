@@ -14,12 +14,12 @@ namespace Elmanager
             form.Show();
         }
 
-        private void FormClosed(object sender, FormClosedEventArgs formClosedEventArgs)
+        private async void FormClosed(object sender, FormClosedEventArgs formClosedEventArgs)
         {
             _forms.Remove((Form)sender);
             if (_forms.Count == 0)
             {
-                Global.AppSettings.Save();
+                await Global.AppSettings.Save();
                 ExitThread();
             }
         }

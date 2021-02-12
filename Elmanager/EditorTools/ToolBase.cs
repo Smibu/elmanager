@@ -1,5 +1,4 @@
 using System;
-using System.Linq;
 using System.Windows.Forms;
 using Elmanager.Forms;
 
@@ -199,10 +198,16 @@ namespace Elmanager.EditorTools
             return -2; //Indicates that mouse wasn't near any edge nor vertex
         }
 
+        public double CaptureRadiusScaled => ZoomCtrl.ZoomLevel * Global.AppSettings.LevelEditor.CaptureRadius;
+
         protected void ResetHighlight()
         {
             if (!Global.AppSettings.LevelEditor.UseHighlight)
                 return;
+            if (LevEditor.PlayController.PlayerSelection == VectorMark.Highlight)
+            {
+                LevEditor.PlayController.PlayerSelection = VectorMark.None;
+            }
             foreach (Polygon x in Lev.Polygons)
             {
                 if (x.Mark == PolygonMark.Highlight)
@@ -265,6 +270,7 @@ namespace Elmanager.EditorTools
 
         protected void MarkAllAs(VectorMark mark)
         {
+            LevEditor.PlayController.PlayerSelection = mark;
             foreach (var p in Lev.Polygons)
             {
                 for (int j = 0; j < p.Vertices.Count; j++)

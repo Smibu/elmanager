@@ -1,6 +1,7 @@
 using System.Collections.Generic;
 using System.Windows.Forms;
 using Elmanager.Forms;
+using Elmanager.LevEditor;
 
 namespace Elmanager.EditorTools
 {
@@ -117,7 +118,7 @@ namespace Elmanager.EditorTools
         {
             if (mouseData.Button != MouseButtons.Left) return;
             Lev.Objects.Add(new LevObject(CurrentPos, _currentObjectType, AppleType.Normal, _animNum));
-            LevEditor.Modified = true;
+            LevEditor.SetModified(LevModification.Objects);
         }
 
         public void MouseMove(Vector p)

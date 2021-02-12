@@ -3,6 +3,7 @@ using System.Drawing;
 using System.Linq;
 using System.Windows.Forms;
 using Elmanager.Forms;
+using Elmanager.LevEditor;
 
 namespace Elmanager.EditorTools
 {
@@ -106,7 +107,7 @@ namespace Elmanager.EditorTools
 
             StartSelected = false;
             if (anythingCut)
-                LevEditor.Modified = true;
+                LevEditor.SetModified(LevModification.Ground);
         }
 
         private bool TryConnect(Vector v1, Vector v2)
@@ -131,7 +132,7 @@ namespace Elmanager.EditorTools
             StartSelected = false;
             if (anythingConnected)
             {
-                LevEditor.Modified = true;
+                LevEditor.SetModified(LevModification.Ground);
             }
 
             return anythingConnected;

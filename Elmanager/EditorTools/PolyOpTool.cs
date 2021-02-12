@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Windows.Forms;
 using Elmanager.Forms;
+using Elmanager.LevEditor;
 using NetTopologySuite.Geometries;
 using NetTopologySuite.Operation.Buffer;
 using EndCapStyle = NetTopologySuite.Operation.Buffer.EndCapStyle;
@@ -100,7 +101,7 @@ namespace Elmanager.EditorTools
                                     Lev.Polygons.RemoveAll(p => p.Vertices.Count < 3);
                                     Lev.Polygons.Remove(_firstPolygon);
                                     Lev.Polygons.Remove(NearestPolygon);
-                                    LevEditor.Modified = true;
+                                    LevEditor.SetModified(LevModification.Ground);
                                 }
                                 catch (PolygonException e)
                                 {

@@ -538,8 +538,16 @@ namespace Elmanager
             if (_settings.ShowObjects && LgrGraphicsLoaded)
             {
                 var depth = sceneSettings.PicturesInBackground ? 0 : 0.5 * (ZFar - ZNear) + ZNear;
-                foreach (var x in GetVisibleObjects(sceneSettings))
+                foreach (var (x, i) in GetVisibleObjects(sceneSettings))
                 {
+                    if (sceneSettings.FadedObjectIndices.Contains(i))
+                    {
+                        GL.Enable(EnableCap.Blend);
+                    }
+                    else
+                    {
+                        GL.Disable(EnableCap.Blend);
+                    }
                     switch (x.Type)
                     {
                         case ObjectType.Flower:
@@ -586,7 +594,7 @@ namespace Elmanager
             if (_settings.ShowGravityAppleArrows &&
                 (_settings.ShowObjectFrames || (_lgrGraphicsLoaded && _settings.ShowObjects)))
             {
-                foreach (var o in GetVisibleObjects(sceneSettings))
+                foreach (var (o, i) in GetVisibleObjects(sceneSettings))
                 {
                     DrawGravityArrowMaybe(o);
                 }
@@ -658,9 +666,9 @@ namespace Elmanager
             _gfxContext.SwapBuffers();
         }
 
-        private IEnumerable<LevObject> GetVisibleObjects(SceneSettings sceneSettings)
+        private IEnumerable<(LevObject, int)> GetVisibleObjects(SceneSettings sceneSettings)
         {
-            return Lev.Objects.Where((t, i) => !sceneSettings.HiddenObjectIndices.Contains(i));
+            return Lev.Objects.Select((t, i) => (t, i)).Where(t => !sceneSettings.HiddenObjectIndices.Contains(t.i));
         }
 
         private void DoPictureScissor(Picture picture, ElmaCamera cam)
@@ -967,7 +975,7 @@ namespace Elmanager
                                             BikePicYFacingRight * Math.Sin(-BikePicRotationConst * Constants.DegToRad);
             _bikePicTranslateYFacingRight = BikePicXFacingRight * Math.Sin(-BikePicRotationConst * Constants.DegToRad) +
                                             BikePicYFacingRight * Math.Cos(-BikePicRotationConst * Constants.DegToRad);
-            _ctrlWindowInfo = Utilities.CreateWindowsWindowInfo(renderingTarget.Handle);
+            _ctrlWindowInfo = OpenTK.Platform.Utilities.CreateWindowsWindowInfo(renderingTarget.Handle);
             InitializeOpengl(disableFrameBuffer: settings.DisableFrameBuffer);
             UpdateSettings(settings);
         }
@@ -1006,8 +1014,7 @@ namespace Elmanager
         private void DrawGrid(ElmaCamera cam, Vector gridOffset, double gridSize)
         {
             var current = Utils.GetFirstGridLine(gridSize, gridOffset.X, cam.XMin);
-            GL.Enable(EnableCap.LineStipple);
-            GL.LineStipple((int) _settings.LineWidth, LinePattern);
+            EnableDashLines(LinePattern);
             GL.Color3(_settings.GridColor);
             GL.Begin(PrimitiveType.Lines);
             while (!(current > cam.XMax))
@@ -1028,9 +1035,15 @@ namespace Elmanager
             GL.LineWidth(_settings.LineWidth);
         }
 
+        private void EnableDashLines(short pattern)
+        {
+            GL.Enable(EnableCap.LineStipple);
+            GL.LineStipple((int) _settings.LineWidth, pattern);
+        }
+
         private void DrawObjectCenters(SceneSettings sceneSettings)
         {
-            foreach (var x in GetVisibleObjects(sceneSettings))
+            foreach (var (x, i) in GetVisibleObjects(sceneSettings))
             {
                 switch (x.Type)
                 {
@@ -1057,8 +1070,16 @@ namespace Elmanager
 
         private void DrawObjectFrames(SceneSettings sceneSettings)
         {
-            foreach (var x in GetVisibleObjects(sceneSettings))
+            foreach (var (x, i) in GetVisibleObjects(sceneSettings))
             {
+                if (sceneSettings.FadedObjectIndices.Contains(i))
+                {
+                    EnableDashLines(0b0110011001100110);
+                }
+                else
+                {
+                    GL.Disable(EnableCap.LineStipple);
+                }
                 switch (x.Type)
                 {
                     case ObjectType.Flower:
@@ -1071,10 +1092,11 @@ namespace Elmanager
                         DrawCircle(x.Position, ObjectRadius, _settings.AppleColor);
                         break;
                     case ObjectType.Start:
-                        DrawDummyPlayer(x.Position.X, x.Position.Y, sceneSettings, new PlayerRenderOpts(_settings.StartColor, true, false));
+                        DrawDummyPlayer(x.Position.X, x.Position.Y, sceneSettings, new PlayerRenderOpts(_settings.StartColor, true, false, false));
                         break;
                 }
             }
+            GL.Disable(EnableCap.LineStipple);
         }
 
         internal void DrawPlayer(PlayerState player, PlayerRenderOpts opts, SceneSettings sceneSettings)

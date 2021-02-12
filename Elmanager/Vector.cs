@@ -3,7 +3,6 @@ using NetTopologySuite.Geometries;
 
 namespace Elmanager
 {
-    [Serializable]
     internal struct Vector
     {
         internal static VectorMark MarkDefault = VectorMark.None;
@@ -56,11 +55,9 @@ namespace Elmanager
 
         internal double LengthSquared => X * X + Y * Y;
 
-        public void Transform(Matrix m)
+        public Vector Transform(Matrix m)
         {
-            var transformed = this * m;
-            X = transformed.X;
-            Y = transformed.Y;
+            return this * m;
         }
 
         public void SetPosition(Vector v)
@@ -146,6 +143,11 @@ namespace Elmanager
             var xd = X - other.X;
             var yd = Y - other.Y;
             return Math.Sqrt(xd * xd + yd * yd);
+        }
+
+        public override string ToString()
+        {
+            return $"({X:F3}, {Y:F3})";
         }
     }
 }

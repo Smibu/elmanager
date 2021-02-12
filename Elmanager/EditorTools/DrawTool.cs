@@ -2,6 +2,7 @@ using System.Collections.Generic;
 using System.Drawing;
 using System.Windows.Forms;
 using Elmanager.Forms;
+using Elmanager.LevEditor;
 
 namespace Elmanager.EditorTools
 {
@@ -111,7 +112,7 @@ namespace Elmanager.EditorTools
             if (_currentPolygon.Count > 2)
             {
                 _currentPolygon.UpdateDecomposition();
-                LevEditor.Modified = true;
+                LevEditor.SetModified(LevModification.Ground);
             }
         }
 

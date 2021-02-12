@@ -5,6 +5,7 @@ using System.Linq;
 using System.Windows.Forms;
 using System.Windows.Input;
 using Elmanager.Forms;
+using Elmanager.LevEditor;
 using KeyEventArgs = System.Windows.Forms.KeyEventArgs;
 using MouseEventArgs = System.Windows.Forms.MouseEventArgs;
 
@@ -166,7 +167,7 @@ namespace Elmanager.EditorTools
 
                         Lev.Polygons.AddRange(_smoothPolys);
                         Smoothing = false;
-                        LevEditor.Modified = true;
+                        LevEditor.SetModified(LevModification.Ground);
                         LevEditor.UpdateSelectionInfo();
                         foreach (Polygon x in _smoothPolys)
                             x.UpdateDecomposition();

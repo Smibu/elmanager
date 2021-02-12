@@ -1,12 +1,11 @@
 ﻿using System;
-using System.Diagnostics;
 using System.Windows.Forms;
 using Elmanager.CustomControls;
 using Elmanager.Updating;
 
 namespace Elmanager.Forms
 {
-    public partial class NewVersionForm : FormMod
+    internal partial class NewVersionForm : FormMod
     {
         private readonly UpdateInfo _updateInfo;
 

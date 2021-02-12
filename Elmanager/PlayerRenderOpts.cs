@@ -9,12 +9,12 @@ namespace Elmanager
         public bool UseGraphics;
         public bool UseTransparency;
 
-        public PlayerRenderOpts(Color color, bool isActive, bool useGraphics)
+        public PlayerRenderOpts(Color color, bool isActive, bool useGraphics, bool useTransparency)
         {
             IsActive = isActive;
             Color = color;
             UseGraphics = useGraphics;
-            UseTransparency = true;
+            UseTransparency = useTransparency;
         }
     }
 }

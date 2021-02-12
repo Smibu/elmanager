@@ -13,7 +13,7 @@ using Timer = System.Timers.Timer;
 
 namespace Elmanager
 {
-    class ReplayController : IDisposable
+    internal class ReplayController : IDisposable
     {
         public void Dispose()
         {

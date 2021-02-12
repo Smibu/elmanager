@@ -4,27 +4,44 @@ using System.Drawing;
 using System.Globalization;
 using System.IO;
 using System.Linq;
-using System.Runtime.Serialization.Formatters.Binary;
+using System.Text.Json;
+using System.Text.Json.Serialization;
 using System.Text.RegularExpressions;
+using System.Threading.Tasks;
 using System.Windows.Forms;
 using Elmanager.Forms;
+using Elmanager.LevEditor.Playing;
+using ColorConverter = Elmanager.Utilities.Json.ColorConverter;
+using PointConverter = Elmanager.Utilities.Json.PointConverter;
+using SizeConverter = Elmanager.Utilities.Json.SizeConverter;
 
 namespace Elmanager
 {
-    [Serializable]
-    public class ElmanagerSettings
+    internal class ElmanagerSettings
     {
         private const string SettingsFileDateFormat = "ddMMyyyy";
-        private const string SettingsFileBaseName = "Elmanager";
+        private const string SettingsFileBaseName = "ElmanagerSettings";
 
-        private static string _settingsFile =
-            SettingsFileBaseName + Global.Version.ToString(SettingsFileDateFormat) + ".dat";
+        private static readonly string _settingsFile =
+            SettingsFileBaseName + Global.Version.ToString(SettingsFileDateFormat) + ".json";
 
+        [JsonInclude]
         public GeneralSettings General = new();
+        [JsonInclude]
         public LevelEditorSettings LevelEditor = new();
+        [JsonInclude]
         public ReplayManagerSettings ReplayManager = new();
+        [JsonInclude]
         public LevelManagerSettings LevelManager = new();
+        [JsonInclude]
         public ReplayViewerSettings ReplayViewer = new();
+
+        private static readonly JsonSerializerOptions JsonSerializerOptions = new()
+        {
+            WriteIndented = true,
+            IgnoreReadOnlyProperties = true,
+            Converters = { new ColorConverter(), new SizeConverter(), new PointConverter() }
+        };
 
         public static string ElmanagerFolder => Path.GetDirectoryName(Process.GetCurrentProcess().MainModule.FileName);
 
@@ -35,7 +52,7 @@ namespace Elmanager
                 return GetSettings(_settingsFile);
             }
 
-            var oldSettingFiles = Directory.GetFiles(ElmanagerFolder, "Elmanager*.dat");
+            var oldSettingFiles = Directory.GetFiles(ElmanagerFolder, "ElmanagerSettings*.json");
             try
             {
                 if (oldSettingFiles.Length > 0)
@@ -48,7 +65,7 @@ namespace Elmanager
                         .Max()
                         .ToString(SettingsFileDateFormat);
                     return GetSettings(Path.Combine(ElmanagerFolder,
-                        SettingsFileBaseName + oldFileDate + ".dat"));
+                        SettingsFileBaseName + oldFileDate + ".json"));
                 }
             }
             catch (Exception)
@@ -59,78 +76,71 @@ namespace Elmanager
             return new ElmanagerSettings();
         }
 
-        public void Save()
+        public async Task Save()
         {
-            var appSettingsFile = new FileStream(Path.Combine(ElmanagerFolder, _settingsFile), FileMode.Create);
-            var binFormatter = new BinaryFormatter();
-            binFormatter.Serialize(appSettingsFile, this);
-            appSettingsFile.Close();
+            await using var appSettingsFile = new FileStream(Path.Combine(ElmanagerFolder, _settingsFile), FileMode.Create);
+            await JsonSerializer.SerializeAsync(appSettingsFile, this, JsonSerializerOptions);
         }
 
         private static ElmanagerSettings GetSettings(string settingsFile)
         {
-            var appSettingsFile = new FileStream(Path.Combine(ElmanagerFolder, settingsFile), FileMode.Open);
-            var binFormatter = new BinaryFormatter();
-            var loadedSettings = (ElmanagerSettings) (binFormatter.Deserialize(appSettingsFile));
-            appSettingsFile.Close();
-            if (loadedSettings.ReplayViewer.ZoomLevel <= 0)
+            var path = Path.Combine(ElmanagerFolder, settingsFile);
+            try
             {
-                loadedSettings.ReplayViewer.ZoomLevel = 5.0;
+                var loadedSettings = JsonSerializer.Deserialize<ElmanagerSettings>(File.ReadAllText(path), JsonSerializerOptions);
+                return loadedSettings;
             }
-
-            if (loadedSettings.LevelManager == null)
+            catch (JsonException e)
             {
-                loadedSettings.LevelManager = new LevelManagerSettings();
+                Utils.ShowError(e.Message);
+                return new ElmanagerSettings();
             }
-
-            return loadedSettings;
         }
 
-        [Serializable]
         public class GeneralSettings
         {
-            public bool CheckForUpdatesOnStartup = true;
-            public string LevelDirectory = string.Empty;
-            public string LgrDirectory = string.Empty;
-            public string ReplayDirectory = string.Empty;
+            public bool CheckForUpdatesOnStartup { get; set; } = true;
+            public string LevelDirectory { get; set; } = string.Empty;
+            public string LgrDirectory { get; set; } = string.Empty;
+            public string ReplayDirectory { get; set; } = string.Empty;
         }
 
-        [Serializable]
         public class LevelEditorSettings
         {
-            public double AutoGrassThickness = 0.2;
-            public string BaseFilename = "MyLev";
-            public double CaptureRadius = 0.015;
-            public bool CheckTopologyDynamically;
-            public bool CheckTopologyWhenSaving;
-            public string DefaultTitle = "New level";
-            public double DrawStep = 1.0;
-            public int EllipseSteps = 10;
-            public double FrameRadius = 0.2;
-            public Color CrosshairColor = Color.Blue;
-            public Color HighlightColor = Color.Yellow;
-            public double InitialHeight = 50.0;
-            public double InitialWidth = 50.0;
-            public string LastLevel;
-            public int MouseClickStep = 50;
-            public string NumberFormat = "0";
-            public double PipeRadius = 1.0;
-            public RenderingSettings RenderingSettings = new();
-            public Color SelectionColor = Color.Blue;
-            public Size Size = new(800, 600);
-            public bool SnapToGrid;
-            public bool ShowCrossHair;
-            public int SmoothSteps = 3;
-            public int SmoothVertexOffset = 50;
-            public double UnsmoothAngle = 10;
-            public double UnsmoothLength = 1.0;
-            public bool UseFilenameForTitle;
-            public bool UseFilenameSuggestion;
-            public bool UseHighlight = true;
-            public FormWindowState WindowState = FormWindowState.Normal;
-            public string LevelTemplate = "50,50";
-            public bool CapturePicturesAndTexturesFromBordersOnly = false;
-            public bool AlwaysSetDefaultsInPictureTool = false;
+            public double AutoGrassThickness { get; set; } = 0.2;
+            public string BaseFilename { get; set; } = "MyLev";
+            public double CaptureRadius { get; set; } = 0.015;
+            public bool CheckTopologyDynamically { get; set; }
+            public bool CheckTopologyWhenSaving { get; set; }
+            public string DefaultTitle { get; set; } = "New level";
+            public double DrawStep { get; set; } = 1.0;
+            public int EllipseSteps { get; set; } = 10;
+            public double FrameRadius { get; set; } = 0.2;
+            public Color CrosshairColor { get; set; } = Color.Blue;
+            public Color HighlightColor { get; set; } = Color.Yellow;
+            public double InitialHeight { get; set; } = 50.0;
+            public double InitialWidth { get; set; } = 50.0;
+            public string LastLevel { get; set; }
+            public int MouseClickStep { get; set; } = 50;
+            public string NumberFormat { get; set; } = "0";
+            public double PipeRadius { get; set; } = 1.0;
+            public RenderingSettings RenderingSettings { get; set; } = new();
+            public Color SelectionColor { get; set; } = Color.Blue;
+            public Size Size { get; set; } = new(800, 600);
+            public bool SnapToGrid { get; set; }
+            public bool ShowCrossHair { get; set; }
+            public int SmoothSteps { get; set; } = 3;
+            public int SmoothVertexOffset { get; set; } = 50;
+            public double UnsmoothAngle { get; set; } = 10;
+            public double UnsmoothLength { get; set; } = 1.0;
+            public bool UseFilenameForTitle { get; set; }
+            public bool UseFilenameSuggestion { get; set; }
+            public bool UseHighlight { get; set; } = true;
+            public FormWindowState WindowState { get; set; } = FormWindowState.Normal;
+            public string LevelTemplate { get; set; } = "50,50";
+            public bool CapturePicturesAndTexturesFromBordersOnly { get; set; } = false;
+            public bool AlwaysSetDefaultsInPictureTool { get; set; } = false;
+            public PlaySettings PlayingSettings { get; set; } = new();
 
             internal static Level TryGetTemplateLevel(string text)
             {
@@ -178,19 +188,18 @@ namespace Elmanager
             }
         }
 
-        [Serializable]
         public class ManagerSettings
         {
-            public bool ConfirmDelete = true;
-            public Point Location;
-            public byte[] ListState;
-            public string SearchPattern = string.Empty;
-            public SearchOption RecDirSearchOption = SearchOption.AllDirectories;
-            public bool ShowGridInList = true;
-            public Size Size = new(800, 600);
-            public FormWindowState WindowState = FormWindowState.Normal;
-            public bool ShowTooltipInList = true;
-            public SearchOption LevDirSearchOption = SearchOption.AllDirectories;
+            public bool ConfirmDelete { get; set; } = true;
+            public Point Location { get; set; }
+            public byte[] ListState { get; set; }
+            public string SearchPattern { get; set; } = string.Empty;
+            public SearchOption RecDirSearchOption { get; set; } = SearchOption.AllDirectories;
+            public bool ShowGridInList { get; set; } = true;
+            public Size Size { get; set; } = new(800, 600);
+            public FormWindowState WindowState { get; set; } = FormWindowState.Normal;
+            public bool ShowTooltipInList { get; set; } = true;
+            public SearchOption LevDirSearchOption { get; set; } = SearchOption.AllDirectories;
 
             public void SaveGui(IManagerGui m)
             {
@@ -220,47 +229,44 @@ namespace Elmanager
             }
         }
 
-        [Serializable]
         public class ReplayManagerSettings : ManagerSettings
         {
-            public bool Decimal3Shown;
-            public string Nickname = "Nick";
-            public bool NitroReplays;
-            public string Pattern = "LNT";
+            public bool Decimal3Shown { get; set; }
+            public string Nickname { get; set; } = "Nick";
+            public bool NitroReplays { get; set; }
+            public string Pattern { get; set; } = "LNT";
 
             public int NumDecimals => Decimal3Shown ? 3 : 2;
 
         }
 
-        [Serializable]
         public class LevelManagerSettings : ManagerSettings
         {
         }
 
-        [Serializable]
         public class ReplayViewerSettings
         {
-            public Color ActivePlayerColor = Color.Black;
-            public bool DontSelectPlayersByDefault;
-            public bool DrawOnlyPlayerFrames = true;
-            public bool DrawTransparentInactive = true;
-            public bool FollowDriver = true;
-            public double FrameStep = 0.02;
-            public bool HideStartObject = true;
-            public Color InactivePlayerColor = Color.Green;
-            public bool LockedCamera;
-            public bool LoopPlaying;
-            public int MouseClickStep = 50;
-            public int MouseWheelStep = 50;
-            public bool MultiSpy;
-            public bool PicturesInBackGround;
-            public RenderingSettings RenderingSettings = new();
-            public bool ShowBikeCoords = true;
-            public bool ShowDriverPath;
-            public Size Size = new(800, 600);
-            public FormWindowState WindowState = FormWindowState.Normal;
-            public double ZoomLevel = 5.0;
-            public bool FollowAlsoWhenZooming = false;
+            public Color ActivePlayerColor { get; set; } = Color.Black;
+            public bool DontSelectPlayersByDefault { get; set; }
+            public bool DrawOnlyPlayerFrames { get; set; } = true;
+            public bool DrawTransparentInactive { get; set; } = true;
+            public bool FollowDriver { get; set; } = true;
+            public double FrameStep { get; set; } = 0.02;
+            public bool HideStartObject { get; set; } = true;
+            public Color InactivePlayerColor { get; set; } = Color.Green;
+            public bool LockedCamera { get; set; }
+            public bool LoopPlaying { get; set; }
+            public int MouseClickStep { get; set; } = 50;
+            public int MouseWheelStep { get; set; } = 50;
+            public bool MultiSpy { get; set; }
+            public bool PicturesInBackGround { get; set; }
+            public RenderingSettings RenderingSettings { get; set; } = new();
+            public bool ShowBikeCoords { get; set; } = true;
+            public bool ShowDriverPath { get; set; }
+            public Size Size { get; set; } = new(800, 600);
+            public FormWindowState WindowState { get; set; } = FormWindowState.Normal;
+            public double ZoomLevel { get; set; } = 5.0;
+            public bool FollowAlsoWhenZooming { get; set; } = false;
         }
     }
 }

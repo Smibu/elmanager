@@ -2,7 +2,7 @@
 
 namespace Elmanager.Forms
 {
-	public partial class MainForm
+    internal partial class MainForm
 		{
 		
 		//Form overrides dispose to clean up the component list.

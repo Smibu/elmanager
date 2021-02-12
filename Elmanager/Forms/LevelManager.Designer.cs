@@ -1,4 +1,6 @@
-﻿namespace Elmanager.Forms
+﻿using Elmanager.CustomControls;
+
+namespace Elmanager.Forms
 {
     partial class LevelManager
     {
@@ -29,7 +31,7 @@
         private void InitializeComponent()
         {
             this.components = new System.ComponentModel.Container();
-            this.levelList = new BrightIdeasSoftware.ObjectListView();
+            this.levelList = new CustomObjectListView();
             this.OlvColumn1 = ((BrightIdeasSoftware.OLVColumn)(new BrightIdeasSoftware.OLVColumn()));
             this.OlvColumn2 = ((BrightIdeasSoftware.OLVColumn)(new BrightIdeasSoftware.OLVColumn()));
             this.OlvColumn3 = ((BrightIdeasSoftware.OLVColumn)(new BrightIdeasSoftware.OLVColumn()));
@@ -159,11 +161,11 @@
             this.statusLabel = new System.Windows.Forms.ToolStripStatusLabel();
             this.searchProgressBar = new System.Windows.Forms.ToolStripProgressBar();
             this.tableLayoutPanel3 = new System.Windows.Forms.TableLayoutPanel();
-            this.singleTop10List = new BrightIdeasSoftware.ObjectListView();
+            this.singleTop10List = new CustomObjectListView();
             this.top10ListMenuStrip = new System.Windows.Forms.ContextMenuStrip(this.components);
             this.removeSelectedTimesToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.copyToClipboardToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.multiTop10List = new BrightIdeasSoftware.ObjectListView();
+            this.multiTop10List = new CustomObjectListView();
             this.label12 = new System.Windows.Forms.Label();
             this.label13 = new System.Windows.Forms.Label();
             this.searchButton = new System.Windows.Forms.Button();

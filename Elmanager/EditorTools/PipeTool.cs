@@ -3,6 +3,7 @@ using System.Drawing;
 using System.Windows.Forms;
 using System.Windows.Input;
 using Elmanager.Forms;
+using Elmanager.LevEditor;
 using KeyEventArgs = System.Windows.Forms.KeyEventArgs;
 using MouseEventArgs = System.Windows.Forms.MouseEventArgs;
 
@@ -173,7 +174,7 @@ namespace Elmanager.EditorTools
                         {
                             Lev.Polygons.Add(_pipe);
                             Lev.Objects.AddRange(_apples);
-                            LevEditor.Modified = true;
+                            LevEditor.SetModified(LevModification.Ground);
                         }
 
                         _pipeline = null;

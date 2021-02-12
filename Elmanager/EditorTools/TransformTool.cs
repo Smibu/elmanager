@@ -4,6 +4,7 @@ using System.Drawing;
 using System.Windows.Forms;
 using System.Windows.Input;
 using Elmanager.Forms;
+using Elmanager.LevEditor;
 using KeyEventArgs = System.Windows.Forms.KeyEventArgs;
 using MouseEventArgs = System.Windows.Forms.MouseEventArgs;
 
@@ -296,7 +297,7 @@ namespace Elmanager.EditorTools
             for (int i = 0; i < _originalTransformTextures.Count; i++)
                 _originalTransformTextures[i] = Lev.Pictures[Lev.Pictures.Count - 1 - i].Clone();
             _originalRectangle = new Polygon(_transformRectangle);
-            LevEditor.Modified = true;
+            LevEditor.SetModified(LevModification.Ground);
         }
 
         public override bool Busy => true;

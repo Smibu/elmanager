@@ -4,7 +4,7 @@ using Elmanager.CustomControls;
 
 namespace Elmanager.Forms
 {
-	public partial class LevelEditor
+    internal partial class LevelEditor
 		{
 		
 		//Form overrides dispose to clean up the component list.
@@ -32,6 +32,7 @@ namespace Elmanager.Forms
 		private void InitializeComponent()
 			{
             this.components = new System.ComponentModel.Container();
+            System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(LevelEditor));
             this.MenuStrip1 = new System.Windows.Forms.MenuStrip();
             this.FileToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.NewToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
@@ -143,6 +144,7 @@ namespace Elmanager.Forms
             this.ZoomTexturesButton = new System.Windows.Forms.ToolStripButton();
             this.toolStripSeparator12 = new System.Windows.Forms.ToolStripSeparator();
             this.BestTimeLabel = new System.Windows.Forms.ToolStripLabel();
+            this.PlayTimeLabel = new System.Windows.Forms.ToolStripLabel();
             this.topologyList = new System.Windows.Forms.ToolStripDropDownButton();
             this.toolStrip3 = new System.Windows.Forms.ToolStrip();
             this.InfoLabel = new System.Windows.Forms.ToolStripLabel();
@@ -184,6 +186,10 @@ namespace Elmanager.Forms
             this.DrawButton = new Elmanager.CustomControls.RadioButtonMod();
             this.VertexButton = new Elmanager.CustomControls.RadioButtonMod();
             this.SelectButton = new Elmanager.CustomControls.RadioButtonMod();
+            this.toolStripSeparator16 = new System.Windows.Forms.ToolStripSeparator();
+            this.playButton = new SvgImageToolStripButton();
+            this.stopButton = new SvgImageToolStripButton();
+            this.settingsButton = new SvgImageToolStripButton();
             this.MenuStrip1.SuspendLayout();
             this.StatusStrip1.SuspendLayout();
             this.ToolStripPanel1.SuspendLayout();
@@ -226,7 +232,7 @@ namespace Elmanager.Forms
             // 
             // NewToolStripMenuItem
             // 
-            this.NewToolStripMenuItem.Image = global::My.Resources.Resources.New16;
+            this.NewToolStripMenuItem.Image = Elmanager.Properties.Resources.New16;
             this.NewToolStripMenuItem.Name = "NewToolStripMenuItem";
             this.NewToolStripMenuItem.ShortcutKeys = ((System.Windows.Forms.Keys)((System.Windows.Forms.Keys.Control | System.Windows.Forms.Keys.N)));
             this.NewToolStripMenuItem.Size = new System.Drawing.Size(202, 22);
@@ -235,7 +241,7 @@ namespace Elmanager.Forms
             // 
             // OpenToolStripMenuItem
             // 
-            this.OpenToolStripMenuItem.Image = global::My.Resources.Resources.Open;
+            this.OpenToolStripMenuItem.Image = Elmanager.Properties.Resources.Open;
             this.OpenToolStripMenuItem.Name = "OpenToolStripMenuItem";
             this.OpenToolStripMenuItem.ShortcutKeys = ((System.Windows.Forms.Keys)((System.Windows.Forms.Keys.Control | System.Windows.Forms.Keys.O)));
             this.OpenToolStripMenuItem.Size = new System.Drawing.Size(202, 22);
@@ -245,7 +251,7 @@ namespace Elmanager.Forms
             // SaveToolStripMenuItem
             // 
             this.SaveToolStripMenuItem.Enabled = false;
-            this.SaveToolStripMenuItem.Image = global::My.Resources.Resources.Save;
+            this.SaveToolStripMenuItem.Image = Elmanager.Properties.Resources.Save;
             this.SaveToolStripMenuItem.Name = "SaveToolStripMenuItem";
             this.SaveToolStripMenuItem.ShortcutKeys = ((System.Windows.Forms.Keys)((System.Windows.Forms.Keys.Control | System.Windows.Forms.Keys.S)));
             this.SaveToolStripMenuItem.Size = new System.Drawing.Size(202, 22);
@@ -254,7 +260,7 @@ namespace Elmanager.Forms
             // 
             // SaveAsToolStripMenuItem
             // 
-            this.SaveAsToolStripMenuItem.Image = global::My.Resources.Resources.SaveAs16;
+            this.SaveAsToolStripMenuItem.Image = Elmanager.Properties.Resources.SaveAs16;
             this.SaveAsToolStripMenuItem.Name = "SaveAsToolStripMenuItem";
             this.SaveAsToolStripMenuItem.Size = new System.Drawing.Size(202, 22);
             this.SaveAsToolStripMenuItem.Text = "Save as...";
@@ -270,7 +276,7 @@ namespace Elmanager.Forms
             // 
             // deleteLevMenuItem
             // 
-            this.deleteLevMenuItem.Image = global::My.Resources.Resources.Delete;
+            this.deleteLevMenuItem.Image = Elmanager.Properties.Resources.Delete;
             this.deleteLevMenuItem.Name = "deleteLevMenuItem";
             this.deleteLevMenuItem.Size = new System.Drawing.Size(202, 22);
             this.deleteLevMenuItem.Text = "Delete";
@@ -278,7 +284,7 @@ namespace Elmanager.Forms
             // 
             // ExitToolStripMenuItem
             // 
-            this.ExitToolStripMenuItem.Image = global::My.Resources.Resources.Exit16;
+            this.ExitToolStripMenuItem.Image = Elmanager.Properties.Resources.Exit16;
             this.ExitToolStripMenuItem.Name = "ExitToolStripMenuItem";
             this.ExitToolStripMenuItem.Size = new System.Drawing.Size(202, 22);
             this.ExitToolStripMenuItem.Text = "Exit";
@@ -307,7 +313,7 @@ namespace Elmanager.Forms
             // 
             // QuickGrassToolStripMenuItem
             // 
-            this.QuickGrassToolStripMenuItem.Image = global::My.Resources.Resources.GrassAll;
+            this.QuickGrassToolStripMenuItem.Image = Elmanager.Properties.Resources.GrassAll;
             this.QuickGrassToolStripMenuItem.Name = "QuickGrassToolStripMenuItem";
             this.QuickGrassToolStripMenuItem.ShortcutKeys = ((System.Windows.Forms.Keys)((System.Windows.Forms.Keys.Control | System.Windows.Forms.Keys.G)));
             this.QuickGrassToolStripMenuItem.Size = new System.Drawing.Size(251, 22);
@@ -316,7 +322,7 @@ namespace Elmanager.Forms
             // 
             // DeleteAllGrassToolStripMenuItem
             // 
-            this.DeleteAllGrassToolStripMenuItem.Image = global::My.Resources.Resources.GrassDelete;
+            this.DeleteAllGrassToolStripMenuItem.Image = Elmanager.Properties.Resources.GrassDelete;
             this.DeleteAllGrassToolStripMenuItem.Name = "DeleteAllGrassToolStripMenuItem";
             this.DeleteAllGrassToolStripMenuItem.ShortcutKeys = ((System.Windows.Forms.Keys)((System.Windows.Forms.Keys.Control | System.Windows.Forms.Keys.D)));
             this.DeleteAllGrassToolStripMenuItem.Size = new System.Drawing.Size(251, 22);
@@ -325,7 +331,7 @@ namespace Elmanager.Forms
             // 
             // UndoToolStripMenuItem
             // 
-            this.UndoToolStripMenuItem.Image = global::My.Resources.Resources.Undo;
+            this.UndoToolStripMenuItem.Image = Elmanager.Properties.Resources.Undo;
             this.UndoToolStripMenuItem.Name = "UndoToolStripMenuItem";
             this.UndoToolStripMenuItem.ShortcutKeys = ((System.Windows.Forms.Keys)((System.Windows.Forms.Keys.Control | System.Windows.Forms.Keys.Z)));
             this.UndoToolStripMenuItem.Size = new System.Drawing.Size(251, 22);
@@ -334,7 +340,7 @@ namespace Elmanager.Forms
             // 
             // RedoToolStripMenuItem
             // 
-            this.RedoToolStripMenuItem.Image = global::My.Resources.Resources.Redo;
+            this.RedoToolStripMenuItem.Image = Elmanager.Properties.Resources.Redo;
             this.RedoToolStripMenuItem.Name = "RedoToolStripMenuItem";
             this.RedoToolStripMenuItem.ShortcutKeyDisplayString = "";
             this.RedoToolStripMenuItem.ShortcutKeys = ((System.Windows.Forms.Keys)((System.Windows.Forms.Keys.Control | System.Windows.Forms.Keys.Y)));
@@ -349,7 +355,7 @@ namespace Elmanager.Forms
             // 
             // ZoomFillToolStripMenuItem
             // 
-            this.ZoomFillToolStripMenuItem.Image = global::My.Resources.Resources.ZoomFill16;
+            this.ZoomFillToolStripMenuItem.Image = Elmanager.Properties.Resources.ZoomFill16;
             this.ZoomFillToolStripMenuItem.Name = "ZoomFillToolStripMenuItem";
             this.ZoomFillToolStripMenuItem.ShortcutKeys = System.Windows.Forms.Keys.F5;
             this.ZoomFillToolStripMenuItem.Size = new System.Drawing.Size(251, 22);
@@ -358,7 +364,7 @@ namespace Elmanager.Forms
             // 
             // CheckTopologyMenuItem
             // 
-            this.CheckTopologyMenuItem.Image = global::My.Resources.Resources.Topology;
+            this.CheckTopologyMenuItem.Image = Elmanager.Properties.Resources.Topology;
             this.CheckTopologyMenuItem.Name = "CheckTopologyMenuItem";
             this.CheckTopologyMenuItem.ShortcutKeys = System.Windows.Forms.Keys.F6;
             this.CheckTopologyMenuItem.Size = new System.Drawing.Size(251, 22);
@@ -380,7 +386,7 @@ namespace Elmanager.Forms
             // 
             // previousLevelToolStripMenuItem
             // 
-            this.previousLevelToolStripMenuItem.Image = global::My.Resources.Resources.Previous;
+            this.previousLevelToolStripMenuItem.Image = Elmanager.Properties.Resources.Previous;
             this.previousLevelToolStripMenuItem.Name = "previousLevelToolStripMenuItem";
             this.previousLevelToolStripMenuItem.ShortcutKeys = System.Windows.Forms.Keys.F2;
             this.previousLevelToolStripMenuItem.Size = new System.Drawing.Size(251, 22);
@@ -388,7 +394,7 @@ namespace Elmanager.Forms
             // 
             // nextLevelToolStripMenuItem
             // 
-            this.nextLevelToolStripMenuItem.Image = global::My.Resources.Resources.Next;
+            this.nextLevelToolStripMenuItem.Image = Elmanager.Properties.Resources.Next;
             this.nextLevelToolStripMenuItem.Name = "nextLevelToolStripMenuItem";
             this.nextLevelToolStripMenuItem.ShortcutKeys = System.Windows.Forms.Keys.F3;
             this.nextLevelToolStripMenuItem.Size = new System.Drawing.Size(251, 22);
@@ -453,7 +459,7 @@ namespace Elmanager.Forms
             // 
             // MirrorHorizontallyToolStripMenuItem
             // 
-            this.MirrorHorizontallyToolStripMenuItem.Image = global::My.Resources.Resources.Mirror16;
+            this.MirrorHorizontallyToolStripMenuItem.Image = Elmanager.Properties.Resources.Mirror16;
             this.MirrorHorizontallyToolStripMenuItem.Name = "MirrorHorizontallyToolStripMenuItem";
             this.MirrorHorizontallyToolStripMenuItem.ShortcutKeys = ((System.Windows.Forms.Keys)((System.Windows.Forms.Keys.Control | System.Windows.Forms.Keys.M)));
             this.MirrorHorizontallyToolStripMenuItem.Size = new System.Drawing.Size(265, 22);
@@ -462,7 +468,7 @@ namespace Elmanager.Forms
             // 
             // MirrorVerticallyToolStripMenuItem
             // 
-            this.MirrorVerticallyToolStripMenuItem.Image = global::My.Resources.Resources.Mirror16;
+            this.MirrorVerticallyToolStripMenuItem.Image = Elmanager.Properties.Resources.Mirror16;
             this.MirrorVerticallyToolStripMenuItem.Name = "MirrorVerticallyToolStripMenuItem";
             this.MirrorVerticallyToolStripMenuItem.ShortcutKeys = ((System.Windows.Forms.Keys)(((System.Windows.Forms.Keys.Control | System.Windows.Forms.Keys.Shift) 
             | System.Windows.Forms.Keys.M)));
@@ -472,7 +478,7 @@ namespace Elmanager.Forms
             // 
             // DeleteSelectedMenuItem
             // 
-            this.DeleteSelectedMenuItem.Image = global::My.Resources.Resources.Delete;
+            this.DeleteSelectedMenuItem.Image = Elmanager.Properties.Resources.Delete;
             this.DeleteSelectedMenuItem.Name = "DeleteSelectedMenuItem";
             this.DeleteSelectedMenuItem.ShortcutText = "Del";
             this.DeleteSelectedMenuItem.Size = new System.Drawing.Size(265, 22);
@@ -796,7 +802,7 @@ namespace Elmanager.Forms
             // NewButton
             // 
             this.NewButton.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
-            this.NewButton.Image = global::My.Resources.Resources._New;
+            this.NewButton.Image = Elmanager.Properties.Resources._New;
             this.NewButton.ImageTransparentColor = System.Drawing.Color.Magenta;
             this.NewButton.Name = "NewButton";
             this.NewButton.Size = new System.Drawing.Size(36, 36);
@@ -806,7 +812,7 @@ namespace Elmanager.Forms
             // OpenButton
             // 
             this.OpenButton.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
-            this.OpenButton.Image = global::My.Resources.Resources.Open;
+            this.OpenButton.Image = Elmanager.Properties.Resources.Open;
             this.OpenButton.ImageTransparentColor = System.Drawing.Color.Magenta;
             this.OpenButton.Name = "OpenButton";
             this.OpenButton.Size = new System.Drawing.Size(36, 36);
@@ -817,7 +823,7 @@ namespace Elmanager.Forms
             // 
             this.SaveButton.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
             this.SaveButton.Enabled = false;
-            this.SaveButton.Image = global::My.Resources.Resources.Save;
+            this.SaveButton.Image = Elmanager.Properties.Resources.Save;
             this.SaveButton.ImageTransparentColor = System.Drawing.Color.Magenta;
             this.SaveButton.Name = "SaveButton";
             this.SaveButton.Size = new System.Drawing.Size(36, 36);
@@ -827,7 +833,7 @@ namespace Elmanager.Forms
             // SaveAsButton
             // 
             this.SaveAsButton.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
-            this.SaveAsButton.Image = global::My.Resources.Resources.SaveAs;
+            this.SaveAsButton.Image = Elmanager.Properties.Resources.SaveAs;
             this.SaveAsButton.ImageTransparentColor = System.Drawing.Color.Magenta;
             this.SaveAsButton.Name = "SaveAsButton";
             this.SaveAsButton.Size = new System.Drawing.Size(36, 36);
@@ -837,7 +843,7 @@ namespace Elmanager.Forms
             // deleteButton
             // 
             this.deleteButton.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
-            this.deleteButton.Image = global::My.Resources.Resources.Delete;
+            this.deleteButton.Image = Elmanager.Properties.Resources.Delete;
             this.deleteButton.ImageTransparentColor = System.Drawing.Color.Magenta;
             this.deleteButton.Name = "deleteButton";
             this.deleteButton.Size = new System.Drawing.Size(36, 36);
@@ -853,7 +859,7 @@ namespace Elmanager.Forms
             // CheckTopologyButton
             // 
             this.CheckTopologyButton.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
-            this.CheckTopologyButton.Image = global::My.Resources.Resources.Topology;
+            this.CheckTopologyButton.Image = Elmanager.Properties.Resources.Topology;
             this.CheckTopologyButton.ImageTransparentColor = System.Drawing.Color.Magenta;
             this.CheckTopologyButton.Name = "CheckTopologyButton";
             this.CheckTopologyButton.Size = new System.Drawing.Size(36, 36);
@@ -863,7 +869,7 @@ namespace Elmanager.Forms
             // ZoomFillButton
             // 
             this.ZoomFillButton.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
-            this.ZoomFillButton.Image = global::My.Resources.Resources.ZoomFill;
+            this.ZoomFillButton.Image = Elmanager.Properties.Resources.ZoomFill;
             this.ZoomFillButton.ImageTransparentColor = System.Drawing.Color.Magenta;
             this.ZoomFillButton.Name = "ZoomFillButton";
             this.ZoomFillButton.Size = new System.Drawing.Size(36, 36);
@@ -877,7 +883,7 @@ namespace Elmanager.Forms
             // UndoButton
             // 
             this.UndoButton.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
-            this.UndoButton.Image = global::My.Resources.Resources.Undo;
+            this.UndoButton.Image = Elmanager.Properties.Resources.Undo;
             this.UndoButton.ImageTransparentColor = System.Drawing.Color.Magenta;
             this.UndoButton.Name = "UndoButton";
             this.UndoButton.Size = new System.Drawing.Size(36, 36);
@@ -887,7 +893,7 @@ namespace Elmanager.Forms
             // RedoButton
             // 
             this.RedoButton.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
-            this.RedoButton.Image = global::My.Resources.Resources.Redo;
+            this.RedoButton.Image = Elmanager.Properties.Resources.Redo;
             this.RedoButton.ImageTransparentColor = System.Drawing.Color.Magenta;
             this.RedoButton.Name = "RedoButton";
             this.RedoButton.Size = new System.Drawing.Size(36, 36);
@@ -902,7 +908,7 @@ namespace Elmanager.Forms
             // PreviousButton
             // 
             this.PreviousButton.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
-            this.PreviousButton.Image = global::My.Resources.Resources.Previous;
+            this.PreviousButton.Image = Elmanager.Properties.Resources.Previous;
             this.PreviousButton.ImageTransparentColor = System.Drawing.Color.Magenta;
             this.PreviousButton.Name = "PreviousButton";
             this.PreviousButton.Size = new System.Drawing.Size(36, 36);
@@ -912,7 +918,7 @@ namespace Elmanager.Forms
             // NextButton
             // 
             this.NextButton.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
-            this.NextButton.Image = global::My.Resources.Resources.Next;
+            this.NextButton.Image = Elmanager.Properties.Resources.Next;
             this.NextButton.ImageTransparentColor = System.Drawing.Color.Magenta;
             this.NextButton.Name = "NextButton";
             this.NextButton.Size = new System.Drawing.Size(36, 36);
@@ -1069,11 +1075,17 @@ namespace Elmanager.Forms
             this.ZoomTexturesButton,
             this.toolStripSeparator12,
             this.BestTimeLabel,
-            this.topologyList});
+            this.topologyList,
+            this.toolStripSeparator16,
+            this.playButton,
+            this.stopButton,
+            this.settingsButton,
+            this.PlayTimeLabel,
+            });
             this.ToolStrip2.LayoutStyle = System.Windows.Forms.ToolStripLayoutStyle.HorizontalStackWithOverflow;
             this.ToolStrip2.Location = new System.Drawing.Point(0, 45);
             this.ToolStrip2.Name = "ToolStrip2";
-            this.ToolStrip2.Size = new System.Drawing.Size(795, 39);
+            this.ToolStrip2.Size = new System.Drawing.Size(865, 39);
             this.ToolStrip2.TabIndex = 15;
             this.ToolStrip2.Text = "ToolStrip2";
             // 
@@ -1081,7 +1093,7 @@ namespace Elmanager.Forms
             // 
             this.ShowGridButton.CheckOnClick = true;
             this.ShowGridButton.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
-            this.ShowGridButton.Image = global::My.Resources.Resources.Grid;
+            this.ShowGridButton.Image = Elmanager.Properties.Resources.Grid;
             this.ShowGridButton.ImageTransparentColor = System.Drawing.Color.Magenta;
             this.ShowGridButton.Name = "ShowGridButton";
             this.ShowGridButton.Size = new System.Drawing.Size(36, 36);
@@ -1091,7 +1103,7 @@ namespace Elmanager.Forms
             // 
             this.snapToGridButton.CheckOnClick = true;
             this.snapToGridButton.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
-            this.snapToGridButton.Image = global::My.Resources.Resources.Snap;
+            this.snapToGridButton.Image = Elmanager.Properties.Resources.Snap;
             this.snapToGridButton.ImageTransparentColor = System.Drawing.Color.Magenta;
             this.snapToGridButton.Name = "snapToGridButton";
             this.snapToGridButton.Size = new System.Drawing.Size(36, 36);
@@ -1101,7 +1113,7 @@ namespace Elmanager.Forms
             // 
             this.showCrossHairButton.CheckOnClick = true;
             this.showCrossHairButton.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
-            this.showCrossHairButton.Image = global::My.Resources.Resources.Crosshair2;
+            this.showCrossHairButton.Image = Elmanager.Properties.Resources.Crosshair2;
             this.showCrossHairButton.ImageTransparentColor = System.Drawing.Color.Magenta;
             this.showCrossHairButton.Name = "showCrossHairButton";
             this.showCrossHairButton.Size = new System.Drawing.Size(36, 36);
@@ -1111,7 +1123,7 @@ namespace Elmanager.Forms
             // 
             this.ShowGrassEdgesButton.CheckOnClick = true;
             this.ShowGrassEdgesButton.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
-            this.ShowGrassEdgesButton.Image = global::My.Resources.Resources.GrassEdges;
+            this.ShowGrassEdgesButton.Image = Elmanager.Properties.Resources.GrassEdges;
             this.ShowGrassEdgesButton.ImageTransparentColor = System.Drawing.Color.Magenta;
             this.ShowGrassEdgesButton.Name = "ShowGrassEdgesButton";
             this.ShowGrassEdgesButton.Size = new System.Drawing.Size(36, 36);
@@ -1121,7 +1133,7 @@ namespace Elmanager.Forms
             // 
             this.ShowGroundEdgesButton.CheckOnClick = true;
             this.ShowGroundEdgesButton.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
-            this.ShowGroundEdgesButton.Image = global::My.Resources.Resources.Edges;
+            this.ShowGroundEdgesButton.Image = Elmanager.Properties.Resources.Edges;
             this.ShowGroundEdgesButton.ImageTransparentColor = System.Drawing.Color.Magenta;
             this.ShowGroundEdgesButton.Name = "ShowGroundEdgesButton";
             this.ShowGroundEdgesButton.Size = new System.Drawing.Size(36, 36);
@@ -1131,7 +1143,7 @@ namespace Elmanager.Forms
             // 
             this.ShowVerticesButton.CheckOnClick = true;
             this.ShowVerticesButton.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
-            this.ShowVerticesButton.Image = global::My.Resources.Resources.Vertices;
+            this.ShowVerticesButton.Image = Elmanager.Properties.Resources.Vertices;
             this.ShowVerticesButton.ImageTransparentColor = System.Drawing.Color.Magenta;
             this.ShowVerticesButton.Name = "ShowVerticesButton";
             this.ShowVerticesButton.Size = new System.Drawing.Size(36, 36);
@@ -1141,7 +1153,7 @@ namespace Elmanager.Forms
             // 
             this.ShowTextureFramesButton.CheckOnClick = true;
             this.ShowTextureFramesButton.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
-            this.ShowTextureFramesButton.Image = global::My.Resources.Resources.TextureFrame;
+            this.ShowTextureFramesButton.Image = Elmanager.Properties.Resources.TextureFrame;
             this.ShowTextureFramesButton.ImageTransparentColor = System.Drawing.Color.Magenta;
             this.ShowTextureFramesButton.Name = "ShowTextureFramesButton";
             this.ShowTextureFramesButton.Size = new System.Drawing.Size(36, 36);
@@ -1151,7 +1163,7 @@ namespace Elmanager.Forms
             // 
             this.ShowPictureFramesButton.CheckOnClick = true;
             this.ShowPictureFramesButton.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
-            this.ShowPictureFramesButton.Image = global::My.Resources.Resources.PictureFrame;
+            this.ShowPictureFramesButton.Image = Elmanager.Properties.Resources.PictureFrame;
             this.ShowPictureFramesButton.ImageTransparentColor = System.Drawing.Color.Magenta;
             this.ShowPictureFramesButton.Name = "ShowPictureFramesButton";
             this.ShowPictureFramesButton.Size = new System.Drawing.Size(36, 36);
@@ -1161,7 +1173,7 @@ namespace Elmanager.Forms
             // 
             this.ShowTexturesButton.CheckOnClick = true;
             this.ShowTexturesButton.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
-            this.ShowTexturesButton.Image = global::My.Resources.Resources.Texture;
+            this.ShowTexturesButton.Image = Elmanager.Properties.Resources.Texture;
             this.ShowTexturesButton.ImageTransparentColor = System.Drawing.Color.Magenta;
             this.ShowTexturesButton.Name = "ShowTexturesButton";
             this.ShowTexturesButton.Size = new System.Drawing.Size(36, 36);
@@ -1171,7 +1183,7 @@ namespace Elmanager.Forms
             // 
             this.ShowPicturesButton.CheckOnClick = true;
             this.ShowPicturesButton.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
-            this.ShowPicturesButton.Image = global::My.Resources.Resources.Picture;
+            this.ShowPicturesButton.Image = Elmanager.Properties.Resources.Picture;
             this.ShowPicturesButton.ImageTransparentColor = System.Drawing.Color.Magenta;
             this.ShowPicturesButton.Name = "ShowPicturesButton";
             this.ShowPicturesButton.Size = new System.Drawing.Size(36, 36);
@@ -1181,7 +1193,7 @@ namespace Elmanager.Forms
             // 
             this.ShowObjectFramesButton.CheckOnClick = true;
             this.ShowObjectFramesButton.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
-            this.ShowObjectFramesButton.Image = global::My.Resources.Resources.ObjectFrame;
+            this.ShowObjectFramesButton.Image = Elmanager.Properties.Resources.ObjectFrame;
             this.ShowObjectFramesButton.ImageTransparentColor = System.Drawing.Color.Magenta;
             this.ShowObjectFramesButton.Name = "ShowObjectFramesButton";
             this.ShowObjectFramesButton.Size = new System.Drawing.Size(36, 36);
@@ -1191,7 +1203,7 @@ namespace Elmanager.Forms
             // 
             this.ShowObjectsButton.CheckOnClick = true;
             this.ShowObjectsButton.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
-            this.ShowObjectsButton.Image = global::My.Resources.Resources._Object;
+            this.ShowObjectsButton.Image = Elmanager.Properties.Resources._Object;
             this.ShowObjectsButton.ImageTransparentColor = System.Drawing.Color.Magenta;
             this.ShowObjectsButton.Name = "ShowObjectsButton";
             this.ShowObjectsButton.Size = new System.Drawing.Size(36, 36);
@@ -1201,7 +1213,7 @@ namespace Elmanager.Forms
             // 
             this.ShowGravityAppleArrowsButton.CheckOnClick = true;
             this.ShowGravityAppleArrowsButton.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
-            this.ShowGravityAppleArrowsButton.Image = global::My.Resources.Resources.AppleArrow;
+            this.ShowGravityAppleArrowsButton.Image = Elmanager.Properties.Resources.AppleArrow;
             this.ShowGravityAppleArrowsButton.ImageTransparentColor = System.Drawing.Color.Magenta;
             this.ShowGravityAppleArrowsButton.Name = "ShowGravityAppleArrowsButton";
             this.ShowGravityAppleArrowsButton.Size = new System.Drawing.Size(36, 36);
@@ -1211,7 +1223,7 @@ namespace Elmanager.Forms
             // 
             this.ShowGroundButton.CheckOnClick = true;
             this.ShowGroundButton.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
-            this.ShowGroundButton.Image = global::My.Resources.Resources.GroundFill;
+            this.ShowGroundButton.Image = Elmanager.Properties.Resources.GroundFill;
             this.ShowGroundButton.ImageTransparentColor = System.Drawing.Color.Magenta;
             this.ShowGroundButton.Name = "ShowGroundButton";
             this.ShowGroundButton.Size = new System.Drawing.Size(36, 36);
@@ -1221,7 +1233,7 @@ namespace Elmanager.Forms
             // 
             this.ShowGroundTextureButton.CheckOnClick = true;
             this.ShowGroundTextureButton.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
-            this.ShowGroundTextureButton.Image = global::My.Resources.Resources.Ground;
+            this.ShowGroundTextureButton.Image = Elmanager.Properties.Resources.Ground;
             this.ShowGroundTextureButton.ImageTransparentColor = System.Drawing.Color.Magenta;
             this.ShowGroundTextureButton.Name = "ShowGroundTextureButton";
             this.ShowGroundTextureButton.Size = new System.Drawing.Size(36, 36);
@@ -1231,7 +1243,7 @@ namespace Elmanager.Forms
             // 
             this.ShowSkyTextureButton.CheckOnClick = true;
             this.ShowSkyTextureButton.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
-            this.ShowSkyTextureButton.Image = global::My.Resources.Resources.Sky;
+            this.ShowSkyTextureButton.Image = Elmanager.Properties.Resources.Sky;
             this.ShowSkyTextureButton.ImageTransparentColor = System.Drawing.Color.Magenta;
             this.ShowSkyTextureButton.Name = "ShowSkyTextureButton";
             this.ShowSkyTextureButton.Size = new System.Drawing.Size(36, 36);
@@ -1241,7 +1253,7 @@ namespace Elmanager.Forms
             // 
             this.ZoomTexturesButton.CheckOnClick = true;
             this.ZoomTexturesButton.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
-            this.ZoomTexturesButton.Image = global::My.Resources.Resources.ZoomTexture;
+            this.ZoomTexturesButton.Image = Elmanager.Properties.Resources.ZoomTexture;
             this.ZoomTexturesButton.ImageTransparentColor = System.Drawing.Color.Magenta;
             this.ZoomTexturesButton.Name = "ZoomTexturesButton";
             this.ZoomTexturesButton.Size = new System.Drawing.Size(36, 36);
@@ -1259,6 +1271,14 @@ namespace Elmanager.Forms
             this.BestTimeLabel.Size = new System.Drawing.Size(170, 36);
             this.BestTimeLabel.Text = "Best time: None";
             this.BestTimeLabel.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
+            // 
+            // PlayTimeLabel
+            // 
+            this.PlayTimeLabel.AutoSize = false;
+            this.PlayTimeLabel.Name = "PlayTimeLabel";
+            this.PlayTimeLabel.Size = new System.Drawing.Size(170, 36);
+            this.PlayTimeLabel.Text = "";
+            this.PlayTimeLabel.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
             // 
             // topologyList
             // 
@@ -1685,6 +1705,39 @@ namespace Elmanager.Forms
             this.SelectButton.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
             this.SelectButton.UseVisualStyleBackColor = true;
             // 
+            // toolStripSeparator16
+            // 
+            this.toolStripSeparator16.Name = "toolStripSeparator16";
+            this.toolStripSeparator16.Size = new System.Drawing.Size(6, 39);
+            // 
+            // playButton
+            // 
+            this.playButton.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
+            this.playButton.SvgData = Elmanager.Properties.Resources.Play;
+            this.playButton.Name = "playButton";
+            this.playButton.Size = new System.Drawing.Size(33, 36);
+            this.playButton.Click += new System.EventHandler(this.playButton_Click);
+            this.playButton.ToolTipText = "Play";
+            // 
+            // stopButton
+            // 
+            this.stopButton.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
+            this.stopButton.SvgData = Elmanager.Properties.Resources.Stop;
+            this.stopButton.Name = "stopButton";
+            this.stopButton.Size = new System.Drawing.Size(33, 36);
+            this.stopButton.Click += new System.EventHandler(this.stopButton_Click);
+            this.stopButton.Enabled = false;
+            this.stopButton.ToolTipText = "Stop";
+            // 
+            // settingsButton
+            // 
+            this.settingsButton.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
+            this.settingsButton.SvgData = Elmanager.Properties.Resources.Settings;
+            this.settingsButton.Name = "settingsButton";
+            this.settingsButton.Size = new System.Drawing.Size(33, 36);
+            this.settingsButton.Click += new System.EventHandler(this.settingsButton_Click);
+            this.settingsButton.ToolTipText = "Settings";
+            // 
             // LevelEditor
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(96F, 96F);
@@ -1847,6 +1900,7 @@ namespace Elmanager.Forms
         internal RadioButtonMod TextButton;
         internal ToolStripButton ShowGravityAppleArrowsButton;
         private ToolStripLabel BestTimeLabel;
+        private ToolStripLabel PlayTimeLabel;
         private ToolStripDropDownButton topologyList;
         private ToolStripSeparator toolStripSeparator12;
         private ToolStripMenuItem deleteLevMenuItem;
@@ -1875,6 +1929,10 @@ namespace Elmanager.Forms
         private ToolStripMenuItem moveStartHereToolStripMenuItem;
         private ToolStrip toolStrip3;
         internal ToolStripLabel InfoLabel;
+        private ToolStripSeparator toolStripSeparator16;
+        private SvgImageToolStripButton playButton;
+        private SvgImageToolStripButton stopButton;
+        private SvgImageToolStripButton settingsButton;
     }
 	
 }

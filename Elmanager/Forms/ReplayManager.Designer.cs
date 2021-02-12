@@ -1,5 +1,4 @@
 ﻿using System.Windows.Forms;
-using BrightIdeasSoftware;
 using Elmanager.CustomControls;
 
 namespace Elmanager.Forms
@@ -31,7 +30,7 @@ namespace Elmanager.Forms
 		private void InitializeComponent()
 			{
             this.components = new System.ComponentModel.Container();
-            this.list = new BrightIdeasSoftware.ObjectListView();
+            this.list = new CustomObjectListView();
             this.ContextMenuStrip1 = new System.Windows.Forms.ContextMenuStrip(this.components);
             this.SelectAllToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.InvertToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();

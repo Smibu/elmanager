@@ -7,7 +7,7 @@ using Elmanager.EditorTools;
 
 namespace Elmanager.Forms
 {
-    public partial class SvgImportOptionsForm : FormMod
+    internal partial class SvgImportOptionsForm : FormMod
     {
         private const double Pow = 1.09648;
         public SvgImportOptionsForm()

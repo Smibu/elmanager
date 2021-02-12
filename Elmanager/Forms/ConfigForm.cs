@@ -7,7 +7,7 @@ using SearchOption = System.IO.SearchOption;
 
 namespace Elmanager.Forms
 {
-    partial class ConfigForm : FormMod
+    internal partial class ConfigForm : FormMod
     {
         private bool _levelDirectoryChanged;
 

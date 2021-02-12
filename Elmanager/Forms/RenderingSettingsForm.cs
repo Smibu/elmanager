@@ -7,7 +7,7 @@ namespace Elmanager.Forms
 {
     internal delegate void SettingChangedEventHandler(RenderingSettings settings);
 
-    partial class RenderingSettingsForm : FormMod
+    internal partial class RenderingSettingsForm : FormMod
     {
         private readonly RenderingSettings _settings;
 

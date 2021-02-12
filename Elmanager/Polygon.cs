@@ -67,6 +67,19 @@ namespace Elmanager
 
         internal int Count => Vertices.Count;
 
+        internal IEnumerable<Vector> VerticesRing
+        {
+            get
+            {
+                foreach (var vertex in Vertices)
+                {
+                    yield return vertex;
+                }
+
+                yield return Vertices[0];
+            }
+        }
+        
         internal Vector this[int index] =>
             index < 0 ? Vertices[Vertices.Count + index] : Vertices[index % Vertices.Count];
 
@@ -242,11 +255,10 @@ namespace Elmanager
 
         internal void Move(Vector delta)
         {
-            Vertices.ForEach(vertex =>
+            for (int i = 0; i < Vertices.Count; i++)
             {
-                vertex.X += delta.X;
-                vertex.Y += delta.Y;
-            });
+                Vertices[i] += delta;
+            }
         }
 
         internal double DistanceFromPoint(Vector p)

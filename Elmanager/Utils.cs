@@ -19,17 +19,19 @@ namespace Elmanager
     internal static class Utils
     {
         private static bool _scrollInProgress;
+        public static bool AllowScroll;
 
         internal static void BeginArrowScroll(Action render, ZoomController zoomCtrl)
         {
             if (_scrollInProgress)
                 return;
             _scrollInProgress = true;
+            AllowScroll = true;
             var timer = new Stopwatch();
             timer.Start();
             long lastTime = timer.ElapsedMilliseconds;
-            while (Keyboard.IsKeyDown(Key.Up) || Keyboard.IsKeyDown(Key.Down) || Keyboard.IsKeyDown(Key.Left) ||
-                   Keyboard.IsKeyDown(Key.Right))
+            while ((Keyboard.IsKeyDown(Key.Up) || Keyboard.IsKeyDown(Key.Down) || Keyboard.IsKeyDown(Key.Left) ||
+                    Keyboard.IsKeyDown(Key.Right)) && AllowScroll)
             {
                 long timeDelta = timer.ElapsedMilliseconds - lastTime;
                 if (Keyboard.IsKeyDown(Key.Up))
@@ -278,10 +280,10 @@ namespace Elmanager
             switch (digits)
             {
                 case 3:
-                    timeStr.Append(String.Format("{0:00.000}", timeVar));
+                    timeStr.Append($"{timeVar:00.000}");
                     break;
                 case 2:
-                    timeStr.Append(String.Format("{0:00.00}", timeVar));
+                    timeStr.Append($"{timeVar:00.00}");
                     break;
                 default:
                     throw new Exception("Invalid number of digits!");
@@ -436,6 +438,14 @@ namespace Elmanager
             var tmp = (Math.Floor(min / size) + 1) * size;
             var left = (tmp - (size + offset));
             return left;
+        }
+
+        [DllImport("user32.dll")]
+        private static extern short GetAsyncKeyState(Keys key);
+
+        public static bool IsKeyDown(Keys key)
+        {
+            return GetAsyncKeyState(key) < 0;
         }
     }
 }

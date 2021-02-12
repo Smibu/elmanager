@@ -3,7 +3,7 @@ using System.Windows.Forms;
 
 namespace Elmanager.CustomControls
 {
-    public partial class TriSelect : UserControl
+    internal partial class TriSelect : UserControl
     {
         public TriSelect()
         {

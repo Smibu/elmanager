@@ -2,7 +2,7 @@
 
 namespace Elmanager.EditorTools
 {
-    public struct SvgImportOptions
+    internal struct SvgImportOptions
     {
         public double Smoothness;
         public bool UseOutlinedGeometry;

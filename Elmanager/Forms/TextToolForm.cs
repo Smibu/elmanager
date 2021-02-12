@@ -6,7 +6,7 @@ using Elmanager.EditorTools;
 
 namespace Elmanager.Forms
 {
-    public partial class TextToolForm : Form
+    internal partial class TextToolForm : FormMod
     {
         public event Action<TextToolOptions> EnteredTextChanged = delegate { };
         private Font _font;

@@ -5,7 +5,7 @@ using Elmanager.CustomControls;
 
 namespace Elmanager.Forms
 {
-    partial class ErrorForm : FormMod
+    internal partial class ErrorForm : FormMod
     {
         internal ErrorForm(IEnumerable<string> files)
         {

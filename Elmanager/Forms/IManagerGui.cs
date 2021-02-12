@@ -3,7 +3,7 @@ using System.Windows.Forms;
 
 namespace Elmanager.Forms
 {
-    public interface IManagerGui
+    internal interface IManagerGui
     {
         Form Form { get; }
         ObjectListView ObjectList { get; }

@@ -1,5 +1,4 @@
 using Elmanager.Updating;
-using My.Resources;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -7,10 +6,11 @@ using System.IO.Compression;
 using System.Net;
 using System.Threading.Tasks;
 using System.Windows.Forms;
+using Elmanager.Properties;
 
 namespace Elmanager
 {
-    public static class Global
+    internal static class Global
     {
         internal static ElmanagerSettings AppSettings; //TODO Settings should not be global
         internal static DateTime BuildDate = ThisAssembly.GitCommitDate;

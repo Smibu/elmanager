@@ -3,6 +3,7 @@ using System.Drawing;
 using System.Windows.Forms;
 using System.Windows.Input;
 using Elmanager.Forms;
+using Elmanager.LevEditor;
 using KeyEventArgs = System.Windows.Forms.KeyEventArgs;
 using MouseEventArgs = System.Windows.Forms.MouseEventArgs;
 
@@ -91,7 +92,7 @@ namespace Elmanager.EditorTools
                         var rect = Polygon.Rectangle(_rectangleStart, CurrentPos);
                         Lev.Polygons.Add(rect);
                         rect.UpdateDecomposition();
-                        LevEditor.Modified = true;
+                        LevEditor.SetModified(LevModification.Ground);
                         return;
                     }
 
@@ -181,7 +182,7 @@ namespace Elmanager.EditorTools
                 if (_currentPolygon.Count > 2)
                 {
                     _currentPolygon.UpdateDecomposition();
-                    LevEditor.Modified = true;
+                    LevEditor.SetModified(_currentPolygon.IsGrass ? LevModification.Decorations : LevModification.Ground);
                 }
                 else
                     Lev.Polygons.Remove(_currentPolygon);

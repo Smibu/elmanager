@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Net;
+using System.Text.Json;
 using Elmanager.Forms;
-using Newtonsoft.Json;
 
 namespace Elmanager.Updating
 {
@@ -16,8 +16,8 @@ namespace Elmanager.Updating
             wc.Headers.Add("User-Agent", "Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:78.0) Gecko/20100101 Firefox/78.0");
             try
             {
-                var info = JsonConvert.DeserializeObject<UpdateInfo>(wc.DownloadString(Constants.VersionUri));
-                if (info.Date > Global.Version)
+                var info = JsonSerializer.Deserialize<UpdateInfo>(wc.DownloadString(Constants.VersionUri));
+                if (info is not null && info.Date > Global.Version)
                 {
                     var newDlg = new NewVersionForm(info);
                     newDlg.ShowDialog();

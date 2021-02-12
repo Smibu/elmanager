@@ -6,7 +6,7 @@ using Elmanager.CustomControls;
 
 namespace Elmanager.Forms
 {
-    partial class CompareForm : FormMod
+    internal partial class CompareForm : FormMod
     {
         private readonly List<Replay> _comparingRps;
         private readonly int[][] _touchCheckPoints;

@@ -7,6 +7,7 @@ using System.Windows.Forms;
 using System.Windows.Markup;
 using System.Windows.Media;
 using Elmanager.Forms;
+using Elmanager.LevEditor;
 using NetTopologySuite.Geometries;
 using Brushes = System.Windows.Media.Brushes;
 using Color = System.Drawing.Color;
@@ -55,7 +56,7 @@ namespace Elmanager.EditorTools
                         Lev.Polygons.AddRange(rendered);
                         if (rendered.Count > 0)
                         {
-                            LevEditor.Modified = true;
+                            LevEditor.SetModified(LevModification.Ground);
                         }
 
                         LevEditor.UpdateSelectionInfo();

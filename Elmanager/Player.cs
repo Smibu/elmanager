@@ -22,7 +22,7 @@ namespace Elmanager
         internal readonly int Turns;
         private List<PlayerEvent<LogicalEventType>> _voltEvents;
         private const double ArmForwardTime = 0.2;
-        private const double ArmRotationDelay = 0.916;
+        public const double ArmRotationDelay = 0.916;
         private const double HeadDiff = 0.0915;
         private const double HeightConst = 0.632;
         private const double MaxArmRotation = 95;

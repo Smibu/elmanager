@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Drawing;
 using System.Windows.Forms;
 using Elmanager.Forms;
+using Elmanager.LevEditor;
 
 namespace Elmanager.EditorTools
 {
@@ -122,7 +123,7 @@ namespace Elmanager.EditorTools
                         Lev.Polygons.AddRange(_frames);
                         _frames = null;
                         Framing = false;
-                        LevEditor.Modified = true;
+                        LevEditor.SetModified(LevModification.Ground);
                     }
 
                     break;

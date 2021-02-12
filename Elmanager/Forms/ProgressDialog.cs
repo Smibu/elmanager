@@ -5,7 +5,7 @@ using Elmanager.CustomControls;
 
 namespace Elmanager.Forms
 {
-    public partial class ProgressDialog : FormMod
+    internal partial class ProgressDialog : FormMod
     {
         private readonly CancellationTokenSource _cancelSrc;
         private readonly Task _task;

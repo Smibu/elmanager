@@ -11,6 +11,10 @@ using System.Windows.Forms;
 using System.Windows.Input;
 using Elmanager.CustomControls;
 using Elmanager.EditorTools;
+using Elmanager.LevEditor;
+using Elmanager.LevEditor.Playing;
+using Elmanager.Physics;
+using Elmanager.Properties;
 using NetTopologySuite.Geometries;
 using OpenTK.Graphics.OpenGL;
 using SharpVectors.Converters;
@@ -23,15 +27,17 @@ using Envelope = NetTopologySuite.Geometries.Envelope;
 using KeyEventArgs = System.Windows.Forms.KeyEventArgs;
 using MouseEventArgs = System.Windows.Forms.MouseEventArgs;
 using Point = System.Drawing.Point;
+using Timer = System.Timers.Timer;
 
 namespace Elmanager.Forms
 {
-    partial class LevelEditor : FormMod
+    internal partial class LevelEditor : FormMod
     {
         //TODO Tool interface should be improved
         private const string CoordinateFormat = "F3";
         private const string LevEditorName = "SLE";
         private const int MouseWheelStep = 20;
+        private const bool Physics = false;
         private readonly List<Level> _history = new();
         private bool _appleFilter = true;
         private bool _flowerFilter = true;
@@ -132,11 +138,7 @@ namespace Elmanager.Forms
             Initialize();
         }
 
-        internal bool Modified
-        {
-            get => _modified;
-            set => SetModified(value);
-        }
+        internal bool Modified => _modified;
 
         internal bool EffectiveAppleFilter => _appleFilter &&
                                               (ShowObjectFramesButton.Checked ||
@@ -182,6 +184,8 @@ namespace Elmanager.Forms
 
         internal SceneSettings SceneSettings => _sceneSettings;
 
+        internal PlayController PlayController { get; } = new() { Settings = Global.AppSettings.LevelEditor.PlayingSettings };
+
         internal void TransformMenuItemClick(object sender = null, EventArgs e = null)
         {
             if (!CurrentTool.Busy)
@@ -202,10 +206,12 @@ namespace Elmanager.Forms
 
         internal void RedrawScene(object sender = null, EventArgs e = null)
         {
-            _sceneSettings.AdditionalPolys = CurrentTool.GetExtraPolygons();
-            Renderer.DrawScene(_zoomCtrl.Cam, _sceneSettings);
-            CustomRendering();
-            Renderer.Swap();
+            if (PlayController.PlayingOrPaused)
+            {
+                return;
+            }
+
+            DoRedrawScene();
         }
 
         internal void ActivateCurrentAndRedraw()
@@ -220,17 +226,26 @@ namespace Elmanager.Forms
             RedrawScene();
         }
 
-        internal void SetModified(bool value, bool updateHistory = true)
+        internal void SetModified(LevModification value, bool updateHistory = true)
         {
-            _modified = value;
-            EnableSaveButtons(value);
-            if (value)
+            var wasModified = value != LevModification.Nothing;
+            _modified = wasModified || _modified;
+            if (wasModified)
+            {
+                EnableSaveButtons(true);
+            }
+            if (wasModified)
             {
                 Lev.UpdateBounds();
                 if (updateHistory)
                     AddToHistory();
                 if (Global.AppSettings.LevelEditor.CheckTopologyDynamically)
                     CheckTopology();
+            }
+
+            if (value.HasFlag(LevModification.Ground) || value.HasFlag(LevModification.Objects))
+            {
+                PlayController.UpdateEngine(Lev);
             }
         }
 
@@ -312,20 +327,23 @@ namespace Elmanager.Forms
 
         private void BringToFrontToolStripMenuItemClick(object sender, EventArgs e)
         {
+            var mod = LevModification.Nothing;
             if (_selectedObjectIndex >= 0)
             {
                 var obj = Lev.Objects[_selectedObjectIndex];
                 Lev.Objects.RemoveAt(_selectedObjectIndex);
                 Lev.Objects.Add(obj);
+                mod = LevModification.Objects;
             }
             else if (_selectedPictureIndex >= 0)
             {
                 var obj = Lev.Pictures[_selectedPictureIndex];
                 Lev.Pictures.RemoveAt(_selectedPictureIndex);
                 Lev.Pictures.Insert(0, obj);
+                mod = LevModification.Decorations;
             }
 
-            Modified = true;
+            SetModified(mod);
         }
 
         public void ChangeToDefaultCursor()
@@ -465,7 +483,7 @@ namespace Elmanager.Forms
             UpdateUndoRedo();
         }
 
-        private void ConfirmClose(object sender, CancelEventArgs e)
+        private async void ConfirmClose(object sender, CancelEventArgs e)
         {
             if (!PromptToSaveIfModified())
                 e.Cancel = true;
@@ -481,6 +499,12 @@ namespace Elmanager.Forms
 
             Global.AppSettings.LevelEditor.WindowState = WindowState;
             Global.AppSettings.LevelEditor.LastLevel = Lev.Path;
+            if (PlayController.PlayingOrPaused)
+            {
+                e.Cancel = true;
+                await PlayController.StopPlaying();
+                Close();
+            }
         }
 
         private void CopyMenuItemClick(object sender, EventArgs e)
@@ -502,7 +526,7 @@ namespace Elmanager.Forms
                     {
                         x.Vertices[index] = new Vector(z.X, z.Y, VectorMark.None);
                         copy.Add(new Vector(z.X + delta,
-                            z.Y + delta));
+                            z.Y - delta));
                     }
                 }
 
@@ -523,7 +547,7 @@ namespace Elmanager.Forms
                         new LevObject(
                             x.Position +
                             new Vector(delta,
-                                delta), x.Type, x.AppleType,
+                                -delta), x.Type, x.AppleType,
                             x.AnimationNumber));
                 }
             }
@@ -534,7 +558,7 @@ namespace Elmanager.Forms
                 {
                     Picture copiedPicture = x.Clone();
                     copiedPicture.Position.X += delta;
-                    copiedPicture.Position.Y += delta;
+                    copiedPicture.Position.Y -= delta;
                     copiedTextures.Add(copiedPicture);
                     x.Position.Mark = VectorMark.None;
                 }
@@ -544,8 +568,20 @@ namespace Elmanager.Forms
             Lev.Polygons.AddRange(copiedPolygons);
             Lev.Objects.AddRange(copiedObjects);
             Lev.Pictures.AddRange(copiedTextures);
-            if (copiedObjects.Count + copiedPolygons.Count + copiedTextures.Count > 0)
-                Modified = true;
+            var mod = LevModification.Nothing;
+            if (copiedObjects.Count > 0)
+            {
+                mod |= LevModification.Objects;
+            }
+            if (copiedPolygons.Count > 0)
+            {
+                mod |= LevModification.Ground;
+            }
+            if (copiedTextures.Count > 0)
+            {
+                mod |= LevModification.Decorations;
+            }
+            SetModified(mod);
             RedrawScene();
         }
 
@@ -554,9 +590,14 @@ namespace Elmanager.Forms
             return Directory.Exists(Path.GetDirectoryName(Lev.Path));
         }
 
-        private void CustomRendering()
+        private void DoRedrawScene()
         {
-            CurrentTool.ExtraRendering();
+            _sceneSettings.AdditionalPolys = CurrentTool.GetExtraPolygons();
+            var jf = PlayController.Playing && PlayController.FollowDriver ? _zoomCtrl.Cam.FixJitter() : new Vector();
+            Renderer.DrawScene(_zoomCtrl.Cam, _sceneSettings);
+
+            var drawAction = GetVertexDrawAction();
+
             if (Global.AppSettings.LevelEditor.ShowCrossHair)
             {
                 var mouse = GetMouseCoordinates();
@@ -565,11 +606,6 @@ namespace Elmanager.Forms
                 Renderer.DrawDashLine(mouse.X, _zoomCtrl.Cam.YMin, mouse.X,
                     _zoomCtrl.Cam.YMax, Global.AppSettings.LevelEditor.CrosshairColor);
             }
-
-            var drawAction = Global.AppSettings.LevelEditor.RenderingSettings.UseCirclesForVertices
-                ? (Action<Vector, Color>) ((pt, color) => Renderer.DrawPoint(pt, color))
-                : ((pt, color) => Renderer.DrawEquilateralTriangle(pt,
-                    _zoomCtrl.Cam.ZoomLevel * Global.AppSettings.LevelEditor.RenderingSettings.VertexSize, color));
 
             foreach (Polygon x in Lev.Polygons)
             {
@@ -650,14 +686,55 @@ namespace Elmanager.Forms
             {
                 if (Global.AppSettings.LevelEditor.RenderingSettings.ShowObjects)
                 {
-                    Renderer.DrawDummyPlayer(p.X, p.Y, _sceneSettings, new PlayerRenderOpts(Color.Green, false, true));
+                    Renderer.DrawDummyPlayer(p.X, p.Y, _sceneSettings, new PlayerRenderOpts(Color.Green, false, true, true));
                 }
 
                 if (Global.AppSettings.LevelEditor.RenderingSettings.ShowObjectFrames)
                 {
-                    Renderer.DrawDummyPlayer(p.X, p.Y, _sceneSettings, new PlayerRenderOpts(Color.Green, false, false));
+                    Renderer.DrawDummyPlayer(p.X, p.Y, _sceneSettings, new PlayerRenderOpts(Color.Green, false, false, true));
                 }
             }
+
+            if (PlayController.PlayingOrPaused)
+            {
+                GL.Translate(-jf.X, -jf.Y, 0);
+                var driver = PlayController.Driver;
+                if (Global.AppSettings.LevelEditor.RenderingSettings.ShowObjects && Renderer.LgrGraphicsLoaded)
+                {
+                    Renderer.DrawPlayer(driver.GetState(), PlayController.RenderOptsLgr, _sceneSettings);
+                }
+                else if (Global.AppSettings.LevelEditor.RenderingSettings.ShowObjectFrames)
+                {
+                    Renderer.DrawPlayer(driver.GetState(), PlayController.RenderOptsFrame, _sceneSettings);
+                }
+
+                GL.Disable(EnableCap.Blend);
+                GL.Disable(EnableCap.Texture2D);
+                GL.Disable(EnableCap.DepthTest);
+                switch (PlayController.PlayerSelection)
+                {
+                    case VectorMark.Selected:
+                        drawAction(driver.Body.Location, Global.AppSettings.LevelEditor.SelectionColor);
+                        break;
+                    case VectorMark.Highlight:
+                        drawAction(driver.Body.Location, Global.AppSettings.LevelEditor.HighlightColor);
+                        break;
+                }
+                GL.Translate(jf.X, jf.Y, 0);
+            }
+
+            CurrentTool.ExtraRendering();
+
+            Renderer.Swap();
+        }
+
+        private Action<Vector, Color> GetVertexDrawAction()
+        {
+            var drawAction = Global.AppSettings.LevelEditor.RenderingSettings.UseCirclesForVertices
+                ? (Action<Vector, Color>) ((pt, color) => Renderer.DrawPoint(pt, color))
+                : ((pt, color) => Renderer.DrawEquilateralTriangle(pt,
+                    _zoomCtrl.Cam.ZoomLevel * Global.AppSettings.LevelEditor.RenderingSettings.VertexSize, color));
+            return drawAction;
         }
 
         private void CutButtonChanged(object sender, EventArgs e)
@@ -668,14 +745,18 @@ namespace Elmanager.Forms
 
         private void DeleteAllGrassToolStripMenuItemClick(object sender, EventArgs e)
         {
+            var mod = LevModification.Nothing;
             for (int i = Lev.Polygons.Count - 1; i >= 0; i--)
             {
                 Polygon x = Lev.Polygons[i];
                 if (x.IsGrass)
+                {
+                    mod = LevModification.Decorations;
                     Lev.Polygons.Remove(x);
+                }
             }
 
-            Modified = true;
+            SetModified(mod);
             RedrawScene();
         }
 
@@ -683,7 +764,7 @@ namespace Elmanager.Forms
         {
             if (!CurrentTool.Busy)
             {
-                bool anythingDeleted = false;
+                var mod = LevModification.Nothing;
                 for (int j = Lev.Polygons.Count - 1; j >= 0; j--)
                 {
                     bool polyModified = false;
@@ -694,7 +775,14 @@ namespace Elmanager.Forms
                             (Lev.Polygons.Count > 1 || x.Vertices.Count > 3))
                         {
                             x.Vertices.RemoveAt(i);
-                            anythingDeleted = true;
+                            if (x.IsGrass)
+                            {
+                                mod |= LevModification.Decorations;
+                            }
+                            else
+                            {
+                                mod |= LevModification.Ground;
+                            }
                             polyModified = true;
                         }
                     }
@@ -705,15 +793,19 @@ namespace Elmanager.Forms
                         x.UpdateDecomposition();
                 }
 
+                var deletedApples = new HashSet<int>();
                 for (int i = Lev.Objects.Count - 1; i >= 0; i--)
                 {
                     if (Lev.Objects[i].Position.Mark == VectorMark.Selected)
                     {
-                        if (Lev.Objects[i].Type != ObjectType.Start)
+                        if (Lev.Objects[i].Type == ObjectType.Start)
+                            continue;
+                        mod |= LevModification.Objects;
+                        if (Lev.Objects[i].Type == ObjectType.Apple)
                         {
-                            Lev.Objects.RemoveAt(i);
-                            anythingDeleted = true;
+                            deletedApples.Add(i);
                         }
+                        Lev.Objects.RemoveAt(i);
                     }
                 }
 
@@ -723,15 +815,13 @@ namespace Elmanager.Forms
                     if (x.Position.Mark == VectorMark.Selected)
                     {
                         Lev.Pictures.Remove(x);
-                        anythingDeleted = true;
+                        mod |= LevModification.Decorations;
                     }
                 }
 
-                if (anythingDeleted)
-                {
-                    Modified = true;
-                    UpdateSelectionInfo();
-                }
+                PlayController.NotifyDeletedApples(deletedApples);
+                SetModified(mod);
+                UpdateSelectionInfo();
             }
         }
 
@@ -829,7 +919,7 @@ namespace Elmanager.Forms
 
         private Vector GetMouseCoordinates()
         {
-            Point mousePosNoTr = EditorControl.PointToClient(MousePosition);
+            var mousePosNoTr = (Point) Invoke(new Func<Point>(() => EditorControl.PointToClient(MousePosition)));
             var mousePos = new Vector
             {
                 X =
@@ -850,18 +940,26 @@ namespace Elmanager.Forms
                 polys.Add(ToolBase.NearestPolygon);
             }
 
+            var mod = LevModification.Nothing;
             polys.ForEach(p =>
             {
                 p.IsGrass = !p.IsGrass;
+                if (!p.IsGrass)
+                {
+                    mod |= LevModification.Ground;
+                }
+                else
+                {
+                    mod |= LevModification.Decorations;
+                }
                 p.UpdateDecomposition();
             });
-            Modified = true;
+            SetModified(mod);
             RedrawScene();
         }
 
         private void HandleGravityMenu(object sender, EventArgs e)
         {
-            LevObject currApple = Lev.Objects[_selectedObjectIndex];
             AppleType chosenAppleType;
             if (sender.Equals(GravityNoneMenuItem))
                 chosenAppleType = AppleType.Normal;
@@ -874,19 +972,26 @@ namespace Elmanager.Forms
             else
                 chosenAppleType = AppleType.GravityRight;
 
-            if (currApple.Position.Mark == VectorMark.Selected)
+            if (_selectedObjectIndex >= 0)
             {
-                Lev.Objects.Where(
-                        obj => obj.Position.Mark == VectorMark.Selected && obj.Type == ObjectType.Apple)
-                    .ToList()
-                    .ForEach(apple => apple.AppleType = chosenAppleType);
+                var currApple = Lev.Objects[_selectedObjectIndex];
+                if (currApple.Position.Mark == VectorMark.Selected)
+                {
+                    Lev.Objects.Where(
+                            obj => obj.Position.Mark == VectorMark.Selected && obj.Type == ObjectType.Apple)
+                        .ToList()
+                        .ForEach(apple => apple.AppleType = chosenAppleType);
+                }
+                else
+                {
+                    currApple.AppleType = chosenAppleType;
+                }
+                SetModified(LevModification.Objects);
             }
             else
             {
-                currApple.AppleType = chosenAppleType;
+                PlayController.UpdateGravity(chosenAppleType);
             }
-
-            Modified = true;
         }
 
         private void UpdateLgrFromLev()
@@ -903,6 +1008,13 @@ namespace Elmanager.Forms
 
         private void Initialize()
         {
+            if (!Physics)
+            {
+                playButton.Visible = false;
+                stopButton.Visible = false;
+                settingsButton.Visible = false;
+            }
+            PlayController.PlayingPaused += () => Invoke(new Action(SetNotPlaying));
             var graphics = CreateGraphics();
             _dpiX = graphics.DpiX / 96;
             _dpiY = graphics.DpiY / 96;
@@ -950,12 +1062,13 @@ namespace Elmanager.Forms
             InitializeLevel();
         }
 
-        private void InitializeLevel()
+        private async void InitializeLevel()
         {
+            await PlayController.StopPlaying();
+            PlayTimeLabel.Text = "";
             _camera = new ElmaCamera();
             _zoomCtrl = new ZoomController(_camera, Lev, Global.AppSettings.LevelEditor.RenderingSettings, () => RedrawScene());
-            Modified = false;
-            UpdateLabels();
+            SetNotModified();
             Renderer.InitializeLevel(Lev);
             _zoomCtrl.ZoomFill();
             UpdateLgrFromLev();
@@ -964,6 +1077,7 @@ namespace Elmanager.Forms
             topologyList.DropDownItems.Clear();
             ResetTopologyListStyle();
             UpdateLgrTools();
+            UpdateLabels();
             ClearHistory();
             UpdatePrevNextButtons();
             CurrentTool.InActivate();
@@ -973,6 +1087,7 @@ namespace Elmanager.Forms
 
         private void KeyHandlerDown(object sender, KeyEventArgs e)
         {
+            PlayController.UpdateInputKeys();
             e = e.KeyCode switch
             {
                 Keys.Add => new KeyEventArgs(Constants.Increase),
@@ -991,7 +1106,10 @@ namespace Elmanager.Forms
                 case Keys.Down:
                 case Keys.Left:
                 case Keys.Right:
-                    Utils.BeginArrowScroll(() => RedrawScene(), _zoomCtrl);
+                    if (!PlayController.PlayingOrPaused)
+                    {
+                        Utils.BeginArrowScroll(() => RedrawScene(), _zoomCtrl);
+                    }
                     break;
                 case Keys.C:
                     if (!_lockMouseX)
@@ -1018,17 +1136,20 @@ namespace Elmanager.Forms
                 case Keys.OemPeriod:
                     wasModified = PolyOpTool.PolyOpSelected(PolygonOperationType.Difference, Lev.Polygons);
                     break;
-                case Keys.Enter:
-                    wasModified = PolyOpTool.PolyOpSelected(PolygonOperationType.Intersection, Lev.Polygons);
+                case Keys.Enter when Physics:
+                    playButton_Click(null, null);
                     break;
                 case Keys.Oem2:
                     wasModified = PolyOpTool.PolyOpSelected(PolygonOperationType.SymmetricDifference, Lev.Polygons);
+                    break;
+                case Keys.Escape:
+                    stopButton_Click(null, null);
                     break;
             }
 
             if (wasModified)
             {
-                Modified = true;
+                SetModified(LevModification.Ground);
             }
 
             RedrawScene();
@@ -1097,17 +1218,18 @@ namespace Elmanager.Forms
                     new Picture(PicForm.Clipping, PicForm.Distance,
                         new Vector(c.MinX - m.EmptyPixelXMargin, c.MaxY + m.EmptyPixelYMargin), texture, m));
             Lev.Pictures.AddRange(pics);
-            Modified = true;
+            SetModified(LevModification.Decorations);
         }
 
-        private void SetModifiedAndRender()
+        private void SetModifiedAndRender(LevModification value)
         {
-            Modified = true;
+            SetModified(value);
             RedrawScene();
         }
 
         private void KeyHandlerUp(object sender, KeyEventArgs e)
         {
+            PlayController.UpdateInputKeys();
             switch (e.KeyCode)
             {
                 case Keys.C:
@@ -1164,7 +1286,7 @@ namespace Elmanager.Forms
                     RedrawScene();
                 }
 
-                Modified = true;
+                SetModified(LevModification.Decorations);
             }
         }
 
@@ -1184,13 +1306,26 @@ namespace Elmanager.Forms
             CurrentTool.InActivate();
             ActivateCurrentAndRedraw();
             UpdateLabels();
-            SetModified(_savedIndex != _historyIndex, false);
+            if (_savedIndex != _historyIndex)
+            {
+                SetModified(LevModification.Ground | LevModification.Objects | LevModification.Decorations, false);
+            }
+            else
+            {
+                SetNotModified();
+            }
+        }
+
+        private void SetNotModified()
+        {
+            EnableSaveButtons(false);
+            _modified = false;
         }
 
         private void MirrorHorizontallyToolStripMenuItem_Click(object sender, EventArgs e)
         {
             Lev.MirrorSelected(MirrorOption.Horizontal);
-            Modified = true;
+            SetModified(LevModification.Objects | LevModification.Ground | LevModification.Decorations);
             RedrawScene();
         }
 
@@ -1201,6 +1336,8 @@ namespace Elmanager.Forms
             int nearestVertexIndex = ToolBase.GetNearestVertexIndex(p);
             int nearestObjectIndex = ToolBase.GetNearestObjectIndex(p);
             int nearestPictureIndex = ToolBase.GetNearestPictureIndex(p);
+            var player = PlayController.GetNearestDriverBodyPart(p, ToolBase.CaptureRadiusScaled);
+            PlayController.FollowDriver = false;
             switch (e.Button)
             {
                 case MouseButtons.Right:
@@ -1270,7 +1407,7 @@ namespace Elmanager.Forms
                                     break;
                                 case ObjectType.Start:
                                     saveStartPositionToolStripMenuItem.Visible = true;
-                                    if ((object) _savedStartPosition != null)
+                                    if (_savedStartPosition != null)
                                     {
                                         restoreStartPositionToolStripMenuItem.Visible = true;
                                     }
@@ -1292,6 +1429,32 @@ namespace Elmanager.Forms
                             PicturePropertiesMenuItem.Visible = true;
                             bringToFrontToolStripMenuItem.Visible = true;
                             sendToBackToolStripMenuItem.Visible = true;
+                        }
+
+                        if (player != null)
+                        {
+                            if (nearestObjectIndex < 0)
+                            {
+                                GravityUpMenuItem.Visible = true;
+                                GravityDownMenuItem.Visible = true;
+                                GravityLeftMenuItem.Visible = true;
+                                GravityRightMenuItem.Visible = true;
+                                switch (PlayController.Driver.GravityDirection)
+                                {
+                                    case GravityDirection.Up:
+                                        UpdateGravityMenu(GravityUpMenuItem);
+                                        break;
+                                    case GravityDirection.Down:
+                                        UpdateGravityMenu(GravityDownMenuItem);
+                                        break;
+                                    case GravityDirection.Left:
+                                        UpdateGravityMenu(GravityLeftMenuItem);
+                                        break;
+                                    case GravityDirection.Right:
+                                        UpdateGravityMenu(GravityRightMenuItem);
+                                        break;
+                                }
+                            }
                         }
 
                         EditorMenuStrip.Show(MousePosition);
@@ -1536,7 +1699,7 @@ namespace Elmanager.Forms
                     }
                 }
 
-                Modified = true;
+                SetModified(LevModification.Decorations);
                 RedrawScene();
             }
         }
@@ -1606,14 +1769,22 @@ namespace Elmanager.Forms
 
         private void QuickGrassToolStripMenuItemClick(object sender, EventArgs e)
         {
+            var mod = LevModification.Nothing;
             for (int i = Lev.Polygons.Count - 1; i >= 0; i--)
             {
                 Polygon x = Lev.Polygons[i];
                 if (!x.IsGrass)
-                    Lev.Polygons.AddRange(((AutoGrassTool) (Tools[11])).AutoGrass(x));
+                {
+                    var autoGrass = ((AutoGrassTool) (Tools[11])).AutoGrass(x);
+                    Lev.Polygons.AddRange(autoGrass);
+                    if (autoGrass.Count > 0)
+                    {
+                        mod = LevModification.Decorations;
+                    }
+                }
             }
 
-            Modified = true;
+            SetModified(mod);
             RedrawScene();
         }
 
@@ -1736,7 +1907,7 @@ namespace Elmanager.Forms
 
                     UpdateLabels();
                     UpdatePrevNextButtons();
-                    Modified = false;
+                    SetNotModified();
                 }
                 catch (UnauthorizedAccessException ex)
                 {
@@ -1792,20 +1963,23 @@ namespace Elmanager.Forms
 
         private void SendToBackToolStripMenuItemClick(object sender, EventArgs e)
         {
+            var mod = LevModification.Nothing;
             if (_selectedObjectIndex >= 0)
             {
                 var obj = Lev.Objects[_selectedObjectIndex];
                 Lev.Objects.RemoveAt(_selectedObjectIndex);
                 Lev.Objects.Insert(0, obj);
+                mod |= LevModification.Objects;
             }
             else if (_selectedPictureIndex >= 0)
             {
                 var obj = Lev.Pictures[_selectedPictureIndex];
                 Lev.Pictures.RemoveAt(_selectedPictureIndex);
                 Lev.Pictures.Add(obj);
+                mod |= LevModification.Decorations;
             }
 
-            Modified = true;
+            SetModified(mod);
         }
 
         private void SetAllFilters(object sender, EventArgs e)
@@ -2068,9 +2242,21 @@ namespace Elmanager.Forms
         {
             if (EditorControl.Width > 0 && EditorControl.Height > 0)
             {
-                Renderer.ResetViewport(EditorControl.Width, EditorControl.Height);
-                RedrawScene();
+                if (PlayController.PlayingOrPaused)
+                {
+                    PlayController.ResetViewPortRequested = (EditorControl.Width, EditorControl.Height);
+                } 
+                else
+                {
+                    ResetViewPort();
+                    RedrawScene();
+                }
             }
+        }
+
+        private void ResetViewPort()
+        {
+            Renderer.ResetViewport(EditorControl.Width, EditorControl.Height);
         }
 
         private void ZoomButtonChanged(object sender, EventArgs e)
@@ -2193,7 +2379,7 @@ namespace Elmanager.Forms
             });
             if (imported > 0)
             {
-                Modified = true;
+                SetModified(LevModification.Objects | LevModification.Ground | LevModification.Decorations);
                 _zoomCtrl.ZoomFill();
             }
         }
@@ -2337,7 +2523,7 @@ namespace Elmanager.Forms
                     }
                 }
 
-                Modified = true;
+                SetModified(LevModification.Decorations);
                 return;
             }
 
@@ -2349,7 +2535,7 @@ namespace Elmanager.Forms
                 Lev.Objects.Add(obj);
             }
 
-            Modified = true;
+            SetModified(LevModification.Decorations | LevModification.Ground | LevModification.Objects);
         }
 
         private void TextButton_CheckedChanged(object sender, EventArgs e)
@@ -2473,7 +2659,7 @@ namespace Elmanager.Forms
         {
             if (PolyOpTool.PolyOpSelected(PolygonOperationType.Union, Lev.Polygons))
             {
-                SetModifiedAndRender();
+                SetModifiedAndRender(LevModification.Ground);
             }
         }
 
@@ -2481,7 +2667,7 @@ namespace Elmanager.Forms
         {
             if (PolyOpTool.PolyOpSelected(PolygonOperationType.Difference, Lev.Polygons))
             {
-                SetModifiedAndRender();
+                SetModifiedAndRender(LevModification.Ground);
             }
         }
 
@@ -2489,7 +2675,7 @@ namespace Elmanager.Forms
         {
             if (PolyOpTool.PolyOpSelected(PolygonOperationType.Intersection, Lev.Polygons))
             {
-                SetModifiedAndRender();
+                SetModifiedAndRender(LevModification.Ground);
             }
         }
 
@@ -2497,7 +2683,7 @@ namespace Elmanager.Forms
         {
             if (PolyOpTool.PolyOpSelected(PolygonOperationType.SymmetricDifference, Lev.Polygons))
             {
-                SetModifiedAndRender();
+                SetModifiedAndRender(LevModification.Ground);
             }
         }
 
@@ -2531,7 +2717,7 @@ namespace Elmanager.Forms
                     o.Position = p.Clone();
                     if (!Equals(oldPos, _savedStartPosition))
                     {
-                        Modified = true;
+                        SetModified(LevModification.Objects);
                     }
                 }
             }
@@ -2540,7 +2726,7 @@ namespace Elmanager.Forms
         private void MirrorVerticallyToolStripMenuItem_Click(object sender, EventArgs e)
         {
             Lev.MirrorSelected(MirrorOption.Vertical);
-            Modified = true;
+            SetModified(LevModification.Decorations | LevModification.Ground | LevModification.Objects);
             RedrawScene();
         }
 
@@ -2550,7 +2736,7 @@ namespace Elmanager.Forms
             if (s != null && _contextMenuClickPosition is { } p)
             {
                 s.Position = p;
-                Modified = true;
+                SetModified(LevModification.Objects);
             }
         }
 
@@ -2575,6 +2761,77 @@ namespace Elmanager.Forms
             {
                 InfoLabel.Text = "Left side: open, right side: import. Current: ";
                 InfoLabel.Text += ShouldOpenOnDrop() ? "open" : "import";
+            }
+        }
+
+        private async void playButton_Click(object sender, EventArgs e)
+        {
+            if (PlayController.Paused)
+            {
+                PlayController.PlayState = PlayState.Playing;
+                SetToPlaying();
+                return;
+            }
+            if (PlayController.Playing)
+            {
+                PlayController.PlayState = PlayState.Paused;
+                SetNotPlaying();
+                return;
+            }
+
+            SetToPlaying();
+            var t = new Timer(25);
+            var updateTime = new Action(() =>
+            {
+                PlayTimeLabel.Text = PlayController.Driver.CurrentTime.ToSeconds().ToTimeString(3);
+            });
+            t.Elapsed += (_, _) =>
+            {
+                Invoke(updateTime);
+            };
+            t.Start();
+            Utils.AllowScroll = false;
+            await PlayController.BeginLoop(Lev, _sceneSettings, Renderer, _zoomCtrl, DoRedrawScene);
+            t.Stop();
+            PlayTimeLabel.Text = PlayController.Driver.CurrentTime.ToSeconds().ToTimeString(3);
+            if (PlayController.Driver.Condition == DriverCondition.Finished)
+            {
+                PlayTimeLabel.Text += " F";
+            }
+            RedrawScene();
+            SetNotPlaying();
+            stopButton.Enabled = false;
+        }
+
+        private void SetNotPlaying()
+        {
+            playButton.SvgData = Resources.Play;
+            playButton.ToolTipText = "Play";
+        }
+
+        private void SetToPlaying()
+        {
+            playButton.SvgData = Resources.Pause;
+            playButton.ToolTipText = "Pause";
+            stopButton.Enabled = true;
+        }
+
+        private void stopButton_Click(object sender, EventArgs e)
+        {
+            if (PlayController.PlayingOrPaused)
+            {
+                PlayController.PlayingStopRequested = true;
+            }
+        }
+
+        private void settingsButton_Click(object sender, EventArgs e)
+        {
+            var f = new PlaySettingsForm(PlayController.Settings);
+            var result = f.ShowDialog();
+            if (result == DialogResult.OK)
+            {
+                PlayController.Settings = f.Settings;
+                Global.AppSettings.LevelEditor.PlayingSettings = f.Settings;
             }
         }
     }

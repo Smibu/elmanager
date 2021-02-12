@@ -3,7 +3,7 @@ using Elmanager.CustomControls;
 
 namespace Elmanager.Forms
 {
-	public partial class PictureForm : FormMod
+    internal partial class PictureForm : FormMod
 		{
 		
 		//Form overrides dispose to clean up the component list.

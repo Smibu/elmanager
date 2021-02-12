@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Windows.Forms;
 using System.Windows.Input;
 using Elmanager.Forms;
+using Elmanager.LevEditor;
 using KeyEventArgs = System.Windows.Forms.KeyEventArgs;
 using MouseEventArgs = System.Windows.Forms.MouseEventArgs;
 
@@ -89,7 +90,7 @@ namespace Elmanager.EditorTools
                     {
                         _ellipseCenter = null;
                         Lev.Polygons.Add(_ellipse);
-                        LevEditor.Modified = true;
+                        LevEditor.SetModified(LevModification.Ground);
                     }
                     else
                     {

@@ -1,12 +1,11 @@
 ﻿using System;
-using System.Diagnostics;
 using System.Windows.Forms;
 using Elmanager.CustomControls;
-using My.Resources;
+using Elmanager.Properties;
 
 namespace Elmanager.Forms
 {
-    partial class MainForm : FormMod
+    internal partial class MainForm : FormMod
     {
         public MainForm()
         {

@@ -2,7 +2,7 @@
 
 namespace Elmanager.Forms
 {
-	public partial class RenderingSettingsForm
+    internal partial class RenderingSettingsForm
 		{
 		
 		//Form overrides dispose to clean up the component list.

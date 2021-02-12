@@ -4,6 +4,7 @@ using System.Drawing;
 using System.Linq;
 using System.Windows.Forms;
 using Elmanager.Forms;
+using Elmanager.LevEditor;
 
 namespace Elmanager.EditorTools
 {
@@ -97,7 +98,7 @@ namespace Elmanager.EditorTools
                     {
                         Lev.Polygons.AddRange(AutoGrass(_currentPolygon));
                         AutoGrassPolygonSelected = false;
-                        LevEditor.Modified = true;
+                        LevEditor.SetModified(LevModification.Decorations);
                     }
 
                     break;

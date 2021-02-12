@@ -2,7 +2,7 @@
 
 namespace Elmanager.Forms
 {
-    public sealed partial class LicenseForm : FormMod
+    internal sealed partial class LicenseForm : FormMod
     {
         public LicenseForm()
         {

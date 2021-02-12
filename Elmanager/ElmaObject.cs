@@ -3,7 +3,7 @@ using System.ComponentModel;
 
 namespace Elmanager
 {
-    public class ElmaObject
+    internal class ElmaObject
     {
         [Description("Date modified")] public DateTime DateModified;
         public int Size;

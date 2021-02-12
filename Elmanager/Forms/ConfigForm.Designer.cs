@@ -3,7 +3,7 @@ using Elmanager.CustomControls;
 
 namespace Elmanager.Forms
 {
-	public partial class ConfigForm
+    internal partial class ConfigForm
 		{
 		
 		//Form overrides dispose to clean up the component list.

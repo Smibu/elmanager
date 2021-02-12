@@ -7,7 +7,7 @@ using System.Windows.Forms;
 
 namespace Elmanager.Forms
 {
-    partial class RenameForm : FormMod
+    internal partial class RenameForm : FormMod
     {
         private readonly IList<Replay> _replaysToRename;
         private readonly ReplayManager _rm;

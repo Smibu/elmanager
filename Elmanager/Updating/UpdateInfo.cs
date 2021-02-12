@@ -1,22 +1,24 @@
 using System;
 using System.Collections.Generic;
-using Newtonsoft.Json;
+using System.Text.Json.Serialization;
 
 namespace Elmanager.Updating
 {
-    public class Asset
+    internal class Asset
     {
-        public string browser_download_url;
+        [JsonPropertyName("browser_download_url")]
+        public string BrowserDownloadUrl { get; set; }
     }
 
-    public class UpdateInfo
+    internal class UpdateInfo
     {
-        [JsonConverter(typeof(UpdateInfoDateTimeConverter))]
-        public DateTime tag_name { get; set; }
+        [JsonPropertyName("tag_name")]
+        public string TagName { get; set; }
 
-        public List<Asset> assets;
+        [JsonPropertyName("assets")]
+        public List<Asset> Assets { get; set; }
 
-        public string Link => assets[0].browser_download_url;
-        public DateTime Date => tag_name;
+        public string Link => Assets[0].BrowserDownloadUrl;
+        public DateTime Date => DateTime.ParseExact(TagName, "d.M.yyyy", null);
     }
 }

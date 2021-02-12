@@ -5,6 +5,7 @@ using System.Linq;
 using System.Windows.Forms;
 using System.Windows.Input;
 using Elmanager.Forms;
+using Elmanager.LevEditor;
 using KeyEventArgs = System.Windows.Forms.KeyEventArgs;
 using MouseEventArgs = System.Windows.Forms.MouseEventArgs;
 
@@ -12,7 +13,7 @@ namespace Elmanager.EditorTools
 {
     internal class SelectionTool : ToolBase, IEditorTool
     {
-        private bool _anythingMoved;
+        private LevModification _currLevModification;
         private Vector _lockCenter; //for lock lines -mode
         private Vector _lockNext; //for lock lines -mode
         private Vector _lockPrev; //for lock lines -mode
@@ -104,7 +105,7 @@ namespace Elmanager.EditorTools
             selected.ForEach(obj => obj.AnimationNumber = animNum);
             if (updated)
             {
-                LevEditor.Modified = true;
+                LevEditor.SetModified(LevModification.Objects);
             }
 
             ShowObjectInfo(GetNearestObjectIndex(CurrentPos));
@@ -113,13 +114,15 @@ namespace Elmanager.EditorTools
         public void MouseDown(MouseEventArgs mouseData)
         {
             Vector p = CurrentPos;
-            _anythingMoved = false;
+            _currLevModification = LevModification.Nothing;
             int nearestVertexIndex = GetNearestVertexIndex(p);
             int nearestObjectIndex = GetNearestObjectIndex(p);
             int nearestPictureIndex = GetNearestPictureIndex(p);
+            var nearestBodyPart = LevEditor.PlayController.GetNearestDriverBodyPart(p, CaptureRadiusScaled);
             switch (mouseData.Button)
             {
                 case MouseButtons.Left:
+                    var somethingGrabbed = true;
                     if (nearestVertexIndex >= -1 && Keyboard.IsKeyDown(Key.LeftAlt))
                     {
                         if (!Keyboard.IsKeyDown(Key.LeftCtrl))
@@ -175,7 +178,7 @@ namespace Elmanager.EditorTools
                             MarkAllAs(VectorMark.None);
                             p.Mark = VectorMark.Selected;
                             NearestPolygon.Insert(nearestSegmentIndex + 1, p);
-                            LevEditor.Modified = true;
+                            LevEditor.SetModified(NearestPolygon.IsGrass ? LevModification.Decorations : LevModification.Ground);
                         }
                         else
                         {
@@ -205,8 +208,15 @@ namespace Elmanager.EditorTools
                         HandleMark(ref Lev.Objects[nearestObjectIndex].Position);
                     else if (nearestPictureIndex >= 0)
                         HandleMark(ref Lev.Pictures[nearestPictureIndex].Position);
+                    else if (nearestBodyPart != null)
+                    {
+                        LevEditor.PlayController.CurrentBodyPart = nearestBodyPart;
+                        LevEditor.PlayController.PlayerSelection = VectorMark.Selected;
+                        EndSelectionHandling();
+                    }
                     else
                     {
+                        somethingGrabbed = false;
                         if (!Keyboard.IsKeyDown(Key.LeftCtrl))
                         {
                             MarkAllAs(VectorMark.None);
@@ -226,6 +236,11 @@ namespace Elmanager.EditorTools
                             _selectionStartPoint = p;
                             RectSelecting = true;
                         }
+                    }
+
+                    if (somethingGrabbed && LevEditor.PlayController.PlayerSelection == VectorMark.Selected)
+                    {
+                        LevEditor.PlayController.CurrentBodyPart = LevEditor.PlayController.Driver.GetBody();
                     }
 
                     LevEditor.UpdateSelectionInfo();
@@ -252,33 +267,51 @@ namespace Elmanager.EditorTools
                             ? _lockNext
                             : _lockPrev, p);
                 }
-
+                if (Equals(p, _moveStartPosition))
+                {
+                    return;
+                }
                 Vector delta = p - _moveStartPosition;
-                if (delta.Length > 0)
-                    _anythingMoved = true;
                 Vector.MarkDefault = VectorMark.Selected;
+                var anythingMoved = LevModification.Nothing;
                 foreach (Polygon x in Lev.Polygons)
                 {
-                    bool anythingMoved = false;
+                    bool polygonMoved = false;
                     for (int i = 0; i < x.Vertices.Count; i++)
                     {
                         if (x.Vertices[i].Mark != VectorMark.Selected) continue;
                         x.Vertices[i] += delta;
-                        anythingMoved = true;
+                        polygonMoved = true;
                     }
 
-                    if (anythingMoved)
+                    if (polygonMoved)
+                    {
                         x.UpdateDecomposition();
+                        anythingMoved |= x.IsGrass ? LevModification.Decorations : LevModification.Ground;
+                    }
                 }
 
                 foreach (LevObject x in Lev.Objects.Where(x => x.Position.Mark == VectorMark.Selected))
                 {
                     x.Position += delta;
+                    anythingMoved |= LevModification.Objects;
                 }
 
                 foreach (Picture z in Lev.Pictures.Where(z => z.Position.Mark == VectorMark.Selected))
                 {
                     z.Position += delta;
+                    anythingMoved |= LevModification.Decorations;
+                }
+
+                _currLevModification = anythingMoved;
+                if (anythingMoved.HasFlag(LevModification.Ground) || anythingMoved.HasFlag(LevModification.Objects))
+                {
+                    LevEditor.PlayController.UpdateEngine(Lev);
+                }
+
+                if (LevEditor.PlayController.CurrentBodyPart != null)
+                {
+                    LevEditor.PlayController.CurrentBodyPart.Position += delta;
                 }
 
                 Vector.MarkDefault = VectorMark.None;
@@ -302,6 +335,7 @@ namespace Elmanager.EditorTools
                 int nearestVertex = GetNearestVertexIndex(p);
                 int nearestObject = GetNearestObjectIndex(p);
                 int nearestTextureIndex = GetNearestPictureIndex(p);
+                var nearestBodyPart = LevEditor.PlayController.GetNearestDriverBodyPart(p, CaptureRadiusScaled);
                 if (nearestVertex == -1)
                 {
                     ChangeCursorToHand();
@@ -335,6 +369,15 @@ namespace Elmanager.EditorTools
                     if (Lev.Pictures[nearestTextureIndex].Position.Mark == VectorMark.None)
                         Lev.Pictures[nearestTextureIndex].Position.Mark = VectorMark.Highlight;
                     ShowTextureInfo(nearestTextureIndex);
+                }
+                else if (nearestBodyPart != null)
+                {
+                    ChangeCursorToHand();
+                    LevEditor.HighlightLabel.Text = "Player";
+                    if (LevEditor.PlayController.PlayerSelection == VectorMark.None)
+                    {
+                        LevEditor.PlayController.PlayerSelection = VectorMark.Highlight;
+                    }
                 }
                 else
                 {
@@ -417,6 +460,22 @@ namespace Elmanager.EditorTools
                         }
                 }
 
+                if (LevEditor.PlayController.PlayingOrPaused)
+                {
+                    var x = LevEditor.PlayController.Driver.Body.Location;
+                    x.Mark = LevEditor.PlayController.PlayerSelection;
+                    if (RectSelecting)
+                    {
+                        MarkSelectedInArea(ref x, selectionxMin, selectionxMax, selectionyMin, selectionyMax);
+                    }
+                    else
+                    {
+                        MarkSelectedInArea(ref x, _selectionPoly);
+                    }
+
+                    LevEditor.PlayController.PlayerSelection = x.Mark;
+                }
+
                 LevEditor.UpdateSelectionInfo();
                 LevEditor.PreserveSelection();
                 RectSelecting = false;
@@ -426,8 +485,8 @@ namespace Elmanager.EditorTools
             {
                 Moving = false;
                 _lockingLines = false;
-                if (_anythingMoved)
-                    LevEditor.Modified = true;
+                LevEditor.PlayController.CurrentBodyPart = null;
+                LevEditor.SetModified(_currLevModification);
             }
         }
 

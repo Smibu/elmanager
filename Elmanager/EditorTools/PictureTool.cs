@@ -1,6 +1,7 @@
 using System.Collections.Generic;
 using System.Windows.Forms;
 using Elmanager.Forms;
+using Elmanager.LevEditor;
 
 namespace Elmanager.EditorTools
 {
@@ -55,7 +56,7 @@ namespace Elmanager.EditorTools
                     {
                         _currentPicture = _currentPicture.Clone();
                         Lev.Pictures.Add(_currentPicture);
-                        LevEditor.Modified = true;
+                        LevEditor.SetModified(LevModification.Decorations);
                     }
                     else
                         OpenDialog();

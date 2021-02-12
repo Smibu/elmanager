@@ -2,7 +2,7 @@
 
 namespace Elmanager.CustomControls
 {
-    class NoPaintBgControl : Control
+    internal class NoPaintBgControl : Control
     {
         protected override void OnPaintBackground(PaintEventArgs pevent)
         {

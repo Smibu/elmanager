@@ -3,7 +3,7 @@ using Elmanager.CustomControls;
 
 namespace Elmanager.Forms
 {
-    public partial class ReplayViewer
+    internal partial class ReplayViewer
     {
 
         //Form overrides dispose to clean up the component list.
@@ -48,7 +48,7 @@ namespace Elmanager.Forms
             this.TabControl1 = new Elmanager.CustomControls.TabControlMod();
             this.TabPage1 = new System.Windows.Forms.TabPage();
             this.button1 = new System.Windows.Forms.Button();
-            this.PlayList = new BrightIdeasSoftware.ObjectListView();
+            this.PlayList = new CustomObjectListView();
             this.OlvColumn1 = ((BrightIdeasSoftware.OLVColumn)(new BrightIdeasSoftware.OLVColumn()));
             this.OlvColumn2 = ((BrightIdeasSoftware.OLVColumn)(new BrightIdeasSoftware.OLVColumn()));
             this.FullScreenButton = new System.Windows.Forms.Button();

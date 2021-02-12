@@ -1,9 +1,9 @@
 ﻿using System.Windows.Forms;
-using My.Resources;
+using Elmanager.Properties;
 
 namespace Elmanager.CustomControls
 {
-    public class FormMod : Form
+    internal class FormMod : Form
     {
         protected FormMod()
         {

@@ -17,6 +17,7 @@ namespace Elmanager.Forms
             _managerGui = m;
             TypedList = new TypedObjectListView<T>(ObjectList);
             Utils.ConfigureColumns<T>(ObjectList);
+            return;
             _levWatcher = new FileSystemWatcher(Global.AppSettings.General.LevelDirectory, "*.lev");
             _recWatcher = new FileSystemWatcher(Global.AppSettings.General.ReplayDirectory, "*.rec");
             _levWatcher.IncludeSubdirectories = true;

@@ -4,7 +4,7 @@ using System.Threading.Tasks;
 
 namespace Elmanager
 {
-    class ZoomController
+    internal class ZoomController
     {
         private readonly RenderingSettings _settings;
         private double MaxDimension => Math.Max(ZoomFillxMax - ZoomFillxMin, ZoomFillyMax - ZoomFillyMin);

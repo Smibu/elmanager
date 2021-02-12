@@ -12,7 +12,7 @@ using Elmanager.CustomControls;
 
 namespace Elmanager.Forms
 {
-    public partial class LevelManager : FormMod, IManagerGui
+    internal partial class LevelManager : FormMod, IManagerGui
     {
         private CancellationTokenSource _searchCancelToken;
         private readonly TypedObjectListView<Top10EntrySingle> _singleList;

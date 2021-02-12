@@ -2,7 +2,7 @@
 
 namespace Elmanager.Forms
 {
-    public partial class UploadForm : FormMod
+    internal partial class UploadForm : FormMod
     {
         public UploadForm()
         {

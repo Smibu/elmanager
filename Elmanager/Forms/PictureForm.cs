@@ -7,7 +7,7 @@ using System.Windows.Forms;
 
 namespace Elmanager.Forms
 {
-    partial class PictureForm
+    internal partial class PictureForm
     {
         private const string MultipleValues = "<multiple>";
         internal ClippingType Clipping;
