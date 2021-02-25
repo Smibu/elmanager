@@ -1,3 +1,5 @@
+using Elmanager.Geometry;
+
 namespace Elmanager.Physics
 {
     internal class TaggedBodyPart

@@ -1,4 +1,6 @@
-﻿namespace Elmanager.Physics
+﻿using Elmanager.ElmaPrimitives;
+
+namespace Elmanager.Physics
 {
     internal struct Rotation
     {

@@ -1,4 +1,6 @@
-﻿namespace Elmanager.Physics
+﻿using Elmanager.Geometry;
+
+namespace Elmanager.Physics
 {
     internal class BodyPart
     {

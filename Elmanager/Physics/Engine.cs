@@ -1,4 +1,7 @@
 using System.Collections.Generic;
+using Elmanager.ElmaPrimitives;
+using Elmanager.Geometry;
+using Elmanager.Lev;
 
 namespace Elmanager.Physics
 {

@@ -1,5 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
+using Elmanager.ElmaPrimitives;
+using Elmanager.Geometry;
+using Elmanager.Rec;
 
 namespace Elmanager.Physics
 {
