@@ -313,6 +313,7 @@ namespace Elmanager.LevelEditor.Tools
                 if (LevEditor.PlayController.CurrentBodyPart != null)
                 {
                     LevEditor.PlayController.CurrentBodyPart.Position += delta;
+                    LevEditor.PlayController.ShouldRestartAfterResuming = false;
                 }
 
                 Vector.MarkDefault = VectorMark.None;

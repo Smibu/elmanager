@@ -19,6 +19,7 @@ namespace Elmanager.LevelEditor.Playing
     {
         private Engine _engine;
         public bool PlayingStopRequested { get; set; }
+        private bool PlayingRestartRequested { get; set; }
 
         public PlaySettings Settings
         {
@@ -55,14 +56,22 @@ namespace Elmanager.LevelEditor.Playing
                 }
                 else
                 {
-                    Driver.Condition = DriverCondition.Alive;
-                    _timer.Start();
+                    if (Driver.Condition == DriverCondition.Dead && ShouldRestartAfterResuming)
+                    {
+                        PlayingRestartRequested = true;
+                    }
+                    else
+                    {
+                        Driver.Condition = DriverCondition.Alive;
+                        _timer.Start();
+                    }
                 }
             }
         }
 
         private readonly InputKeys _keys = new();
         public bool FollowDriver { get; set; }
+        public bool ShouldRestartAfterResuming { get; set; }
         public (int, int)? ResetViewPortRequested { get; set; }
         private TaggedBodyPart _currentBodyPart;
         private PlaySettings _settings = new();
@@ -143,6 +152,10 @@ namespace Elmanager.LevelEditor.Playing
         public void UpdateEngine(Level lev)
         {
             _engine?.InitPolysAndObjects(lev.Polygons, lev.Objects);
+            if (Paused)
+            {
+                ShouldRestartAfterResuming = false;
+            }
         }
 
         public void NotifyDeletedApples(HashSet<int> deletedApples)
@@ -184,6 +197,7 @@ namespace Elmanager.LevelEditor.Playing
             _timer.Reset();
             PlayState = PlayState.Playing;
             PlayingStopRequested = false;
+            ShouldRestartAfterResuming = false;
             renderer.MakeNoneCurrent();
             FollowDriver = Settings.FollowDriverOption == FollowDriverOption.WhenPressingKey;
             sceneSettings.FadedObjectIndices = _engine.TakenApples;
@@ -240,6 +254,20 @@ namespace Elmanager.LevelEditor.Playing
                         PlayingStopRequested = true;
                     }
 
+                    void RestartPlaying()
+                    {
+                        Driver = _engine.init_driver();
+                        sceneSettings.FadedObjectIndices = _engine.TakenApples;
+                        physElapsed = 0.0;
+                        _timer.Restart();
+                    }
+
+                    if (PlayingRestartRequested)
+                    {
+                        PlayingRestartRequested = false;
+                        RestartPlaying();
+                    }
+
                     if (Driver.Bugged || Driver.Condition == DriverCondition.Dead)
                     {
                         switch (Settings.DyingBehavior)
@@ -247,16 +275,14 @@ namespace Elmanager.LevelEditor.Playing
                             case DyingBehavior.PausePlaying when !Driver.Bugged:
                                 if (!Paused)
                                 {
+                                    ShouldRestartAfterResuming = true;
                                     PlayState = PlayState.Paused;
                                     PlayingPaused();
                                 }
 
                                 break;
                             case DyingBehavior.RestartPlaying:
-                                Driver = _engine.init_driver();
-                                sceneSettings.FadedObjectIndices = _engine.TakenApples;
-                                physElapsed = 0.0;
-                                _timer.Restart();
+                                RestartPlaying();
                                 break;
                             case DyingBehavior.BeInvulnerable when !Driver.Bugged:
                                 // Should be unreachable.
