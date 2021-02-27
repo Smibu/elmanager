@@ -238,7 +238,7 @@ namespace Elmanager.LevelEditor.Tools
                 x.Mark = PolygonMark.None;
         }
 
-        protected void AdjustForGrid(Vector p)
+        protected void AdjustForGrid(ref Vector p)
         {
             if (!Global.AppSettings.LevelEditor.RenderingSettings.ShowGrid ||
                 !Global.AppSettings.LevelEditor.SnapToGrid)
@@ -251,7 +251,7 @@ namespace Elmanager.LevelEditor.Tools
             }
 
             p.X -= x;
-            double y = (p.Y - SceneSettings.GridOffset.Y) % gridSize;
+            double y = (p.Y + SceneSettings.GridOffset.Y) % gridSize;
             if (Math.Abs(y) > gridSize / 2)
             {
                 y -= gridSize * Math.Sign(y);

@@ -173,7 +173,7 @@ namespace Elmanager.LevelEditor.Tools
                     else if (nearestVertexIndex == -1)
                     {
                         int nearestSegmentIndex = NearestPolygon.GetNearestSegmentIndex(p);
-                        AdjustForGrid(p);
+                        AdjustForGrid(ref p);
                         if (Keyboard.IsKeyDown(Key.LeftShift))
                         {
                             MarkAllAs(VectorMark.None);
@@ -259,7 +259,7 @@ namespace Elmanager.LevelEditor.Tools
             CurrentPos = p;
             if (Moving)
             {
-                AdjustForGrid(p);
+                AdjustForGrid(ref p);
                 if (_lockingLines)
                 {
                     p = GeometryUtils.OrthogonalProjection(_lockCenter,
@@ -549,7 +549,7 @@ namespace Elmanager.LevelEditor.Tools
         {
             Moving = true;
             LevEditor.PreserveSelection();
-            AdjustForGrid(CurrentPos);
+            AdjustForGrid(ref CurrentPos);
             _moveStartPosition = CurrentPos;
         }
 

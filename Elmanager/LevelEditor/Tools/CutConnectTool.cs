@@ -47,7 +47,7 @@ namespace Elmanager.LevelEditor.Tools
             switch (mouseData.Button)
             {
                 case MouseButtons.Left:
-                    AdjustForGrid(CurrentPos);
+                    AdjustForGrid(ref CurrentPos);
                     if (!StartSelected)
                     {
                         StartSelected = true;
@@ -71,7 +71,7 @@ namespace Elmanager.LevelEditor.Tools
         public void MouseMove(Vector p)
         {
             CurrentPos = p;
-            AdjustForGrid(CurrentPos);
+            AdjustForGrid(ref CurrentPos);
         }
 
         public void MouseOutOfEditor()

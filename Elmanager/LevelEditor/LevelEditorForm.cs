@@ -1537,7 +1537,6 @@ namespace Elmanager.LevelEditor
                 double newSize = currSize + Math.Sign(delta) * _zoomCtrl.Cam.ZoomLevel / 50.0;
                 if (newSize > 0)
                 {
-                    Global.AppSettings.LevelEditor.RenderingSettings.GridSize = newSize;
                     SetGridSizeWithMouse(newSize, GetMouseCoordinates());
                 }
             }
@@ -1565,6 +1564,7 @@ namespace Elmanager.LevelEditor
                                            - mouseCoords.Y + GetGridMouseRatio(settings.GridSize, gy, _zoomCtrl.Cam.YMin, mouseCoords.Y) *
                                            newSize) % newSize;
             settings.GridSize = newSize;
+            Renderer.UpdateSettings(settings);
             RedrawScene();
         }
 

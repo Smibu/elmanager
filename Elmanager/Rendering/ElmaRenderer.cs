@@ -1541,6 +1541,10 @@ namespace Elmanager.Rendering
 
         internal static double GetFirstGridLine(double size, double offset, double min)
         {
+            if (offset < 0)
+            {
+                offset = size + (offset % size);
+            }
             var tmp = (Math.Floor(min / size) + 1) * size;
             var left = (tmp - (size + offset));
             return left;

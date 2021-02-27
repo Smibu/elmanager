@@ -73,7 +73,7 @@ namespace Elmanager.LevelEditor.Tools
         public void MouseMove(Vector p)
         {
             CurrentPos = p;
-            AdjustForGrid(CurrentPos);
+            AdjustForGrid(ref CurrentPos);
 
             if (_currentPicture != null)
             {

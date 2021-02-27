@@ -127,7 +127,7 @@ namespace Elmanager.LevelEditor.Tools
         {
             CurrentPos = p;
             _hasFocus = true;
-            AdjustForGrid(CurrentPos);
+            AdjustForGrid(ref CurrentPos);
         }
 
         public void MouseOutOfEditor()

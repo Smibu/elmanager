@@ -48,7 +48,7 @@ namespace Elmanager.LevelEditor.Tools
                 Renderer.DrawLine(_currentPolygon.GetLastVertex(), _currentPolygon.Vertices[0], Color.Red);
             else if (CreatingRectangle)
             {
-                AdjustForGrid(CurrentPos);
+                AdjustForGrid(ref CurrentPos);
                 Renderer.DrawRectangle(_rectangleStart, CurrentPos, Color.Blue);
             }
             else
@@ -86,7 +86,7 @@ namespace Elmanager.LevelEditor.Tools
             {
                 case MouseButtons.Left:
                     int nearestIndex = GetNearestVertexIndex(CurrentPos);
-                    AdjustForGrid(CurrentPos);
+                    AdjustForGrid(ref CurrentPos);
                     if (CreatingRectangle)
                     {
                         CreatingRectangle = false;
@@ -141,8 +141,8 @@ namespace Elmanager.LevelEditor.Tools
             CurrentPos = p;
             if (CreatingVertex)
             {
-                AdjustForGrid(CurrentPos);
-                _currentPolygon.Vertices[_currentPolygon.Count - 1] = p;
+                AdjustForGrid(ref CurrentPos);
+                _currentPolygon.Vertices[_currentPolygon.Count - 1] = CurrentPos;
                 if (_currentPolygon.Count > 2)
                     _currentPolygon.UpdateDecomposition(false);
                 UpdateHelp();
@@ -150,10 +150,10 @@ namespace Elmanager.LevelEditor.Tools
             else if (!CreatingRectangle)
             {
                 ResetHighlight();
-                int nearestVertex = GetNearestVertexIndex(p);
+                int nearestVertex = GetNearestVertexIndex(CurrentPos);
                 if (nearestVertex >= -1)
                 {
-                    _nearestSegmentIndex = NearestPolygon.GetNearestSegmentIndex(p);
+                    _nearestSegmentIndex = NearestPolygon.GetNearestSegmentIndex(CurrentPos);
                     ChangeCursorToHand();
                 }
                 else
