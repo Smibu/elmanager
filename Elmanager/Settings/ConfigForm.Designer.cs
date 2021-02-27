@@ -724,8 +724,8 @@ namespace Elmanager.Settings
             this.tableLayoutPanel1.Controls.Add(this.Label5, 0, 2);
             this.tableLayoutPanel1.Controls.Add(this.ElmaDirButton, 3, 1);
             this.tableLayoutPanel1.Controls.Add(this.RecTextBox, 1, 0);
-            this.tableLayoutPanel1.Controls.Add(this.LGRDirButton, 2, 1);
-            this.tableLayoutPanel1.Controls.Add(this.LevDirButton, 2, 2);
+            this.tableLayoutPanel1.Controls.Add(this.LGRDirButton, 2, 2);
+            this.tableLayoutPanel1.Controls.Add(this.LevDirButton, 2, 1);
             this.tableLayoutPanel1.Controls.Add(this.LevTextBox, 1, 1);
             this.tableLayoutPanel1.Controls.Add(this.LGRTextBox, 1, 2);
             this.tableLayoutPanel1.Controls.Add(this.RecDirButton, 2, 0);
