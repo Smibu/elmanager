@@ -702,6 +702,9 @@ namespace Elmanager.LevelEditor
                 {
                     Renderer.DrawDummyPlayer(p.X, p.Y, _sceneSettings, new PlayerRenderOpts(Color.Green, false, false, true));
                 }
+                GL.Disable(EnableCap.Texture2D);
+                GL.Disable(EnableCap.AlphaTest);
+                GL.Disable(EnableCap.DepthTest);
             }
 
             if (PlayController.PlayingOrPaused)
