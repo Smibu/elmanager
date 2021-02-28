@@ -113,7 +113,7 @@ namespace Elmanager.Application
             this.homePageLabel.Size = new System.Drawing.Size(288, 13);
             this.homePageLabel.TabIndex = 7;
             this.homePageLabel.TabStop = true;
-            this.homePageLabel.Text = "https://mkl.io/Elma/";
+            this.homePageLabel.Text = "https://m-l.fi/Elma/";
             this.homePageLabel.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
             this.homePageLabel.LinkClicked += new System.Windows.Forms.LinkLabelLinkClickedEventHandler(this.HomePageClicked);
             // 
