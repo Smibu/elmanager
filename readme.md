@@ -14,8 +14,6 @@ Elmanager has basically three components: replay manager, level manager and a le
 
 ### Replay manager
 
-Features:
-
   -   Replay searching with many parameters
       -   Internal/external replays
       -   Finished/unfinished replays
@@ -29,8 +27,9 @@ Features:
       -   Replays whose appletakes/left volts/right volts/supervolts/turns/groundtouches match the specified ranges
   -   Duplicate replay search
   -   Duplicate filename search
-  -   Best replay search
+  -   Fastest/slowest replay search (return only one replay per level)
   -   Replay renaming
+  -   Replay mass renaming using pattern
   -   Replay list that displays properties of replays
       -   Filename
       -   Filename of level
@@ -38,21 +37,17 @@ Features:
       -   Whether the replay is finished/unfinished
       -   Multiplayer/singleplayer
       -   Whether the level exists for the replay
-      -   Wrong version of level
-      -   Hover mouse cursor above a replay to show more information (appletakes, left volts, ...)
+      -   Whether the level version is wrong
+      -   Hover mouse cursor above a replay to show more information (appletakes, left volts, etc.)
   -   Replay viewer
       -   Watch as many players in the same level as you want simultaneously
       -   Choose LGR file in configuration window to play the replay with same graphics as in game
       -   Customizable colors for apples, killers, active/inactive player, flower, start object, driving lines, ground and sky
-      -   Smooth zooming
       -   Event list displaying the selected events for selected player
       -   Fullscreen mode
-      -   Locked camera -mode (for fun)
   -   Replay comparison
       -   Compare replays by apples or groundtouches
-  -   Move or copy selected replays to anywhere
   -   Open level file of a replay with the default program
-  -   Replay renaming with pattern
   -   Save properties of selected replays to a text file
   -   Merge two singleplayer replays to a multiplayer replay
 
@@ -62,8 +57,6 @@ Features:
 ![Replay viewer](pictures/RMviewer.png)
 
 ### Level manager
-
-Features:
 
 - Search levels
   - File name
@@ -80,25 +73,22 @@ Features:
 
 ### Level editor (SLE)
 
-Features:
-
-  -   Create pipe
-  -   Draw ground with pencil
-  -   Dynamic topology checking
+  -   Create pipes
+  -   Create ellipses
+  -   Continuous topology checking
   -   Frame polygons
   -   Cut/connect polygons
   -   Smoothen/unsmoothen polygons
   -   Lock mouse horizontally or vertically
-  -   Transform selected objects
-  -   AutoGrass
-  -   QuickGrass
+  -   Transform selection
+  -   Autograss
+  -   Quickgrass (apply autograss to all polygons)
   -   Undo/redo
-  -   Grid
+  -   Grid, snap to grid
   -   Mirror level
-  -   Edge bending
-  -   Polygon operations (merge, difference)
-  -   Type text
-  -   Customize various colors
+  -   Polygon boolean operations (union, difference, intersection, symmetric difference)
+  -   Create text with almost any system font
+  -   Many customizable options (e.g. colors)
 
 #### Screenshots
 ![Main window](pictures/leveleditor.png)
