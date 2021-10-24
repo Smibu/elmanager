@@ -1,5 +1,13 @@
 # Elmanager changelog
 
+## 12.2.2021
+* SLE: Added support for in-editor testing.
+* Replay viewer: Added support for showing approximate gas on/off times. (@pskrip)
+* Replay manager: Fixed wrong tabulation order. (@pskrip)
+* Replay viewer: Fixed an UI layout problem. (@pskrip)
+* Fixed a crash when trying to open replay/level manager without configuring lev/rec paths.
+* Changed settings file format to JSON. The reason was that the old format (binary) is considered insecure (according to official .NET docs), and as a bonus, you can now edit the settings with a text editor.
+
 ## 18.7.2020
 * Level manager has been rewritten from scratch in C#, so it is now similar to replay manager.
 * Elmanager is now a single-file program and no longer requires .NET Framework.
