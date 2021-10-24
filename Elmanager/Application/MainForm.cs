@@ -12,7 +12,7 @@ namespace Elmanager.Application
         {
             InitializeComponent();
             versionLabel.Text =
-                $"Version: {Global.BuildDate.ToShortDateString()} ({ThisAssembly.GitCommitId.Substring(0, 8)})";
+                $"Version: {Global.Version.ToShortDateString()}";
             var conf = "Debug";
             if (ThisAssembly.AssemblyConfiguration == conf)
             {

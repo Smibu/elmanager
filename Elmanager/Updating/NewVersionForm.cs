@@ -14,7 +14,7 @@ namespace Elmanager.Updating
         {
             _updateInfo = info;
             InitializeComponent();
-            versionInfoLabel.Text = $"Latest version: {info.Date.ToShortDateString()}. Your version: {Global.BuildDate.ToShortDateString()}";
+            versionInfoLabel.Text = $"Latest version: {info.Date.ToShortDateString()}. Your version: {Global.Version.ToShortDateString()}";
         }
 
         private void NewVersionForm_Load(object sender, EventArgs e)

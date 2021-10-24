@@ -17,10 +17,9 @@ namespace Elmanager.Application
     internal static class Global
     {
         internal static ElmanagerSettings AppSettings; //TODO Settings should not be global
-        internal static DateTime BuildDate = ThisAssembly.GitCommitDate;
         internal static readonly List<Level> Internals = new();
         private static List<string> _levelFiles;
-        internal static DateTime Version;
+        internal static DateTime Version = new(2021, 2, 12);
 
         internal static List<string> GetLevelFiles()
         {
@@ -45,7 +44,6 @@ namespace Elmanager.Application
             catch (NotSupportedException)
             {
             }
-            Version = BuildDate;
             Startup(args);
         }
 
