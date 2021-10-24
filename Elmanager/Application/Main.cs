@@ -19,7 +19,7 @@ namespace Elmanager.Application
         internal static ElmanagerSettings AppSettings; //TODO Settings should not be global
         internal static readonly List<Level> Internals = new();
         private static List<string> _levelFiles;
-        internal static DateTime Version = new(2021, 2, 12);
+        internal static DateTime Version = new(2021, 10, 24);
 
         internal static List<string> GetLevelFiles()
         {

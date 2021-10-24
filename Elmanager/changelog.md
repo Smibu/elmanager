@@ -1,5 +1,9 @@
 # Elmanager changelog
 
+## 24.10.2021
+* SLE: Updated ground vertex limit to match newest EOL version (5130 -> 20000).
+* SLE: Bugfix: Topology check was very slow if the level had thousands of vertices.
+
 ## 12.2.2021
 * SLE: Added support for in-editor testing.
 * Replay viewer: Added support for showing approximate gas on/off times. (@pskrip)
