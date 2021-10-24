@@ -23,7 +23,7 @@ namespace Elmanager.Lev
         internal const int MaximumPolygonCount = 1200;
         internal const int MaximumPolygonVertexCount = 1000;
         internal const double MaximumSize = 188.0;
-        internal const int MaximumGroundVertexCount = 5130;
+        internal const int MaximumGroundVertexCount = 20000;
         internal const int MaximumPictureTextureCount = 5000;
         internal const double RightWheelDifferenceFromLeftWheelX = 1.698;
         private const int EndOfDataMagicNumber = 0x67103A;
