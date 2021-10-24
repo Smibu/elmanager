@@ -344,11 +344,6 @@ namespace Elmanager.Geometry
                 }
             }
 
-            var vectors = polygons.SelectMany(p => p.Vertices);
-            var query = vectors.GroupBy(x => x)
-                .Where(g => g.Count() > 1)
-                .Select(y => y.Key);
-            isects.AddRange(query);
             return isects;
         }
 
