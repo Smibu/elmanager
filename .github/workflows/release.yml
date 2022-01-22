@@ -17,12 +17,12 @@ jobs:
     - name: Setup .NET Core
       uses: actions/setup-dotnet@v1
       with:
-        dotnet-version: 5.0.x
+        dotnet-version: 6.0.x
     - name: Build with dotnet
       working-directory: Elmanager
       run: dotnet publish --configuration Release
     - name: Create ZIP archive
-      run: Compress-Archive -LiteralPath Elmanager/bin/Release/net5.0-windows/win7-x86/publish/Elmanager.exe -DestinationPath Elmanager.zip
+      run: Compress-Archive -LiteralPath Elmanager/bin/Release/net6.0-windows/win-x64/publish/Elmanager.exe -DestinationPath Elmanager.zip
     - name: Create release
       id: create_release
       uses: actions/create-release@v1

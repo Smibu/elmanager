@@ -1,18 +1,17 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
     <PropertyGroup>
         <OutputType>WinExe</OutputType>
-        <TargetFramework>net5.0-windows</TargetFramework>
+        <TargetFramework>net6.0-windows</TargetFramework>
         <UseWindowsForms>true</UseWindowsForms>
         <UseWpf>true</UseWpf>
         <GenerateAssemblyInfo>false</GenerateAssemblyInfo>
         <AssemblyName>Elmanager</AssemblyName>
         <RootNamespace>Elmanager</RootNamespace>
-        <PublishSingleFile>true</PublishSingleFile>
+        <PublishSingleFile Condition="'$(Configuration)' == 'Release'">true</PublishSingleFile>
         <SelfContained>true</SelfContained>
         <PublishReadyToRun>false</PublishReadyToRun>
-        <RuntimeIdentifier>win7-x86</RuntimeIdentifier>
+        <RuntimeIdentifier>win-x64</RuntimeIdentifier>
         <IncludeNativeLibrariesForSelfExtract>true</IncludeNativeLibrariesForSelfExtract>
-        <IncludeAllContentForSelfExtract>true</IncludeAllContentForSelfExtract>
         <ApplicationManifest>app.manifest</ApplicationManifest>
         <ApplicationIcon>Icons/Elma.ico</ApplicationIcon>
         <SatelliteResourceLanguages>en</SatelliteResourceLanguages>
