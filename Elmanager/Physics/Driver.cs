@@ -17,6 +17,7 @@ namespace Elmanager.Physics
         public Vector HeadLocation;
         public Rotation? LastRotation;
         public ElmaTime CurrentTime;
+        public readonly HashSet<int> TakenApples;
 
         public Driver(Vector leftWheelLocation)
         {
@@ -68,6 +69,11 @@ namespace Elmanager.Physics
         public void SetPosition(TaggedBodyPart part, bool paused)
         {
 
+        }
+
+        public Driver Clone()
+        {
+            throw new NotImplementedException();
         }
     }
 }

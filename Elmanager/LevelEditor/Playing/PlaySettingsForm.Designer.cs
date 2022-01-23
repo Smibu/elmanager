@@ -33,6 +33,9 @@ namespace Elmanager.LevelEditor.Playing
             this.cancelButton = new System.Windows.Forms.Button();
             this.okButton = new System.Windows.Forms.Button();
             this.tableLayoutPanel1 = new System.Windows.Forms.TableLayoutPanel();
+            this.loadButton = new System.Windows.Forms.Button();
+            this.label13 = new System.Windows.Forms.Label();
+            this.label12 = new System.Windows.Forms.Label();
             this.followDriverComboBox = new System.Windows.Forms.ComboBox();
             this.label1 = new System.Windows.Forms.Label();
             this.label2 = new System.Windows.Forms.Label();
@@ -49,6 +52,7 @@ namespace Elmanager.LevelEditor.Playing
             this.aloVoltButton = new System.Windows.Forms.Button();
             this.turnButton = new System.Windows.Forms.Button();
             this.dyingComboBox = new System.Windows.Forms.ComboBox();
+            this.saveButton = new System.Windows.Forms.Button();
             this.label3 = new System.Windows.Forms.Label();
             this.label9 = new System.Windows.Forms.Label();
             this.label10 = new System.Windows.Forms.Label();
@@ -62,7 +66,7 @@ namespace Elmanager.LevelEditor.Playing
             this.flowLayoutPanel1.Controls.Add(this.okButton);
             this.flowLayoutPanel1.Dock = System.Windows.Forms.DockStyle.Bottom;
             this.flowLayoutPanel1.FlowDirection = System.Windows.Forms.FlowDirection.RightToLeft;
-            this.flowLayoutPanel1.Location = new System.Drawing.Point(0, 562);
+            this.flowLayoutPanel1.Location = new System.Drawing.Point(0, 609);
             this.flowLayoutPanel1.Name = "flowLayoutPanel1";
             this.flowLayoutPanel1.Size = new System.Drawing.Size(742, 53);
             this.flowLayoutPanel1.TabIndex = 0;
@@ -93,6 +97,9 @@ namespace Elmanager.LevelEditor.Playing
             this.tableLayoutPanel1.ColumnCount = 2;
             this.tableLayoutPanel1.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 50F));
             this.tableLayoutPanel1.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 50F));
+            this.tableLayoutPanel1.Controls.Add(this.loadButton, 1, 9);
+            this.tableLayoutPanel1.Controls.Add(this.label13, 0, 9);
+            this.tableLayoutPanel1.Controls.Add(this.label12, 0, 8);
             this.tableLayoutPanel1.Controls.Add(this.followDriverComboBox, 1, 7);
             this.tableLayoutPanel1.Controls.Add(this.label1, 0, 0);
             this.tableLayoutPanel1.Controls.Add(this.label2, 0, 1);
@@ -109,10 +116,11 @@ namespace Elmanager.LevelEditor.Playing
             this.tableLayoutPanel1.Controls.Add(this.aloVoltButton, 1, 4);
             this.tableLayoutPanel1.Controls.Add(this.turnButton, 1, 5);
             this.tableLayoutPanel1.Controls.Add(this.dyingComboBox, 1, 6);
+            this.tableLayoutPanel1.Controls.Add(this.saveButton, 1, 8);
             this.tableLayoutPanel1.Dock = System.Windows.Forms.DockStyle.Top;
             this.tableLayoutPanel1.Location = new System.Drawing.Point(0, 0);
             this.tableLayoutPanel1.Name = "tableLayoutPanel1";
-            this.tableLayoutPanel1.RowCount = 8;
+            this.tableLayoutPanel1.RowCount = 10;
             this.tableLayoutPanel1.RowStyles.Add(new System.Windows.Forms.RowStyle());
             this.tableLayoutPanel1.RowStyles.Add(new System.Windows.Forms.RowStyle());
             this.tableLayoutPanel1.RowStyles.Add(new System.Windows.Forms.RowStyle());
@@ -121,8 +129,44 @@ namespace Elmanager.LevelEditor.Playing
             this.tableLayoutPanel1.RowStyles.Add(new System.Windows.Forms.RowStyle());
             this.tableLayoutPanel1.RowStyles.Add(new System.Windows.Forms.RowStyle());
             this.tableLayoutPanel1.RowStyles.Add(new System.Windows.Forms.RowStyle());
-            this.tableLayoutPanel1.Size = new System.Drawing.Size(742, 380);
+            this.tableLayoutPanel1.RowStyles.Add(new System.Windows.Forms.RowStyle());
+            this.tableLayoutPanel1.RowStyles.Add(new System.Windows.Forms.RowStyle());
+            this.tableLayoutPanel1.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 20F));
+            this.tableLayoutPanel1.Size = new System.Drawing.Size(742, 476);
             this.tableLayoutPanel1.TabIndex = 1;
+            // 
+            // loadButton
+            // 
+            this.loadButton.AutoSize = true;
+            this.loadButton.AutoSizeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink;
+            this.loadButton.Location = new System.Drawing.Point(374, 431);
+            this.loadButton.MinimumSize = new System.Drawing.Size(150, 0);
+            this.loadButton.Name = "loadButton";
+            this.loadButton.Size = new System.Drawing.Size(150, 42);
+            this.loadButton.TabIndex = 20;
+            this.loadButton.Text = "RShiftKey";
+            this.loadButton.UseVisualStyleBackColor = true;
+            this.loadButton.Click += new System.EventHandler(this.KeyButtonClick);
+            // 
+            // label13
+            // 
+            this.label13.Anchor = System.Windows.Forms.AnchorStyles.Right;
+            this.label13.AutoSize = true;
+            this.label13.Location = new System.Drawing.Point(303, 436);
+            this.label13.Name = "label13";
+            this.label13.Size = new System.Drawing.Size(65, 32);
+            this.label13.TabIndex = 18;
+            this.label13.Text = "Load";
+            // 
+            // label12
+            // 
+            this.label12.Anchor = System.Windows.Forms.AnchorStyles.Right;
+            this.label12.AutoSize = true;
+            this.label12.Location = new System.Drawing.Point(304, 388);
+            this.label12.Name = "label12";
+            this.label12.Size = new System.Drawing.Size(64, 32);
+            this.label12.TabIndex = 17;
+            this.label12.Text = "Save";
             // 
             // followDriverComboBox
             // 
@@ -310,6 +354,19 @@ namespace Elmanager.LevelEditor.Playing
             this.dyingComboBox.Size = new System.Drawing.Size(365, 40);
             this.dyingComboBox.TabIndex = 15;
             // 
+            // saveButton
+            // 
+            this.saveButton.AutoSize = true;
+            this.saveButton.AutoSizeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink;
+            this.saveButton.Location = new System.Drawing.Point(374, 383);
+            this.saveButton.MinimumSize = new System.Drawing.Size(150, 0);
+            this.saveButton.Name = "saveButton";
+            this.saveButton.Size = new System.Drawing.Size(150, 42);
+            this.saveButton.TabIndex = 19;
+            this.saveButton.Text = "LShiftKey";
+            this.saveButton.UseVisualStyleBackColor = true;
+            this.saveButton.Click += new System.EventHandler(this.KeyButtonClick);
+            // 
             // label3
             // 
             this.label3.Location = new System.Drawing.Point(0, 0);
@@ -340,7 +397,7 @@ namespace Elmanager.LevelEditor.Playing
             this.AutoScaleDimensions = new System.Drawing.SizeF(13F, 32F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.CancelButton = this.cancelButton;
-            this.ClientSize = new System.Drawing.Size(742, 615);
+            this.ClientSize = new System.Drawing.Size(742, 662);
             this.Controls.Add(this.tableLayoutPanel1);
             this.Controls.Add(this.flowLayoutPanel1);
             this.KeyPreview = true;
@@ -379,5 +436,9 @@ namespace Elmanager.LevelEditor.Playing
         private System.Windows.Forms.Button cancelButton;
         private System.Windows.Forms.Button okButton;
         private System.Windows.Forms.ComboBox followDriverComboBox;
+        private System.Windows.Forms.Button loadButton;
+        private System.Windows.Forms.Label label13;
+        private System.Windows.Forms.Label label12;
+        private System.Windows.Forms.Button saveButton;
     }
 }

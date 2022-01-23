@@ -81,6 +81,15 @@ namespace Elmanager.LevelEditor.Playing
         public readonly PlayerRenderOpts RenderOptsLgr = new(Color.Black, true, true, false);
         public readonly PlayerRenderOpts RenderOptsFrame = new(Color.Black, true, false, false);
         private PlayState _playState;
+        private Driver _savedDriverState;
+        private SaveLoadRequest _saveLoadRequest = SaveLoadRequest.None;
+
+        private enum SaveLoadRequest
+        {
+            None,
+            Save,
+            Load,
+        }
 
         public Driver Driver { get; private set; }
 
@@ -147,6 +156,14 @@ namespace Elmanager.LevelEditor.Playing
             {
                 FollowDriver = true;
             }
+            if (KeyboardUtils.IsKeyDown(Settings.Save))
+            {
+                _saveLoadRequest = SaveLoadRequest.Save;
+            }
+            else if (KeyboardUtils.IsKeyDown(Settings.Load) && _savedDriverState != null)
+            {
+                _saveLoadRequest = SaveLoadRequest.Load;
+            }
         }
 
         public void UpdateEngine(Level lev)
@@ -160,7 +177,7 @@ namespace Elmanager.LevelEditor.Playing
 
         public void NotifyDeletedApples(HashSet<int> deletedApples)
         {
-            _engine?.TakenApples.RemoveWhere(deletedApples.Contains);
+            Driver.TakenApples.RemoveWhere(deletedApples.Contains);
         }
 
         public event Action PlayingPaused;
@@ -186,6 +203,12 @@ namespace Elmanager.LevelEditor.Playing
             await WaitUntilStop();
         }
 
+        public async Task NotifyLevelChanged()
+        {
+            await StopPlaying();
+            _savedDriverState = null;
+        }
+
         private async Task BeginLoopImpl(Level lev, SceneSettings sceneSettings, ElmaRenderer renderer,
             ZoomController zoomCtrl, Action render)
         {
@@ -200,7 +223,7 @@ namespace Elmanager.LevelEditor.Playing
             ShouldRestartAfterResuming = false;
             renderer.MakeNoneCurrent();
             FollowDriver = Settings.FollowDriverOption == FollowDriverOption.WhenPressingKey;
-            sceneSettings.FadedObjectIndices = _engine.TakenApples;
+            sceneSettings.FadedObjectIndices = Driver.TakenApples;
             PlayerSelection = VectorMark.None;
             await Task.Run(() =>
             {
@@ -257,7 +280,7 @@ namespace Elmanager.LevelEditor.Playing
                     void RestartPlaying()
                     {
                         Driver = _engine.init_driver();
-                        sceneSettings.FadedObjectIndices = _engine.TakenApples;
+                        sceneSettings.FadedObjectIndices = Driver.TakenApples;
                         physElapsed = 0.0;
                         _timer.Restart();
                     }
@@ -270,26 +293,33 @@ namespace Elmanager.LevelEditor.Playing
 
                     if (Driver.Bugged || Driver.Condition == DriverCondition.Dead)
                     {
-                        switch (Settings.DyingBehavior)
+                        if (_savedDriverState is null)
                         {
-                            case DyingBehavior.PausePlaying when !Driver.Bugged:
-                                if (!Paused)
-                                {
-                                    ShouldRestartAfterResuming = true;
-                                    PlayState = PlayState.Paused;
-                                    PlayingPaused();
-                                }
+                            switch (Settings.DyingBehavior)
+                            {
+                                case DyingBehavior.PausePlaying when !Driver.Bugged:
+                                    if (!Paused)
+                                    {
+                                        ShouldRestartAfterResuming = true;
+                                        PlayState = PlayState.Paused;
+                                        PlayingPaused();
+                                    }
 
-                                break;
-                            case DyingBehavior.RestartPlaying:
-                                RestartPlaying();
-                                break;
-                            case DyingBehavior.BeInvulnerable when !Driver.Bugged:
-                                // Should be unreachable.
-                                break;
-                            default:
-                                PlayingStopRequested = true;
-                                break;
+                                    break;
+                                case DyingBehavior.RestartPlaying:
+                                    RestartPlaying();
+                                    break;
+                                case DyingBehavior.BeInvulnerable when !Driver.Bugged:
+                                    // Should be unreachable.
+                                    break;
+                                default:
+                                    PlayingStopRequested = true;
+                                    break;
+                            }
+                        }
+                        else
+                        {
+                            _saveLoadRequest = SaveLoadRequest.Load;
                         }
                     }
 
@@ -300,6 +330,19 @@ namespace Elmanager.LevelEditor.Playing
                     catch (InvalidOperationException)
                     {
                         GL.End();
+                    }
+
+                    switch (_saveLoadRequest)
+                    {
+                        case SaveLoadRequest.Save:
+                            _savedDriverState = Driver.Clone();
+                            _saveLoadRequest = SaveLoadRequest.None;
+                            break;
+                        case SaveLoadRequest.Load:
+                            Driver = _savedDriverState.Clone();
+                            sceneSettings.FadedObjectIndices = Driver.TakenApples;
+                            _saveLoadRequest = SaveLoadRequest.None;
+                            break;
                     }
                 }
 

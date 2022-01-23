@@ -28,6 +28,8 @@ namespace Elmanager.LevelEditor.Playing
             rightVoltButton.Text = Settings.RightVolt.ToString();
             aloVoltButton.Text = Settings.AloVolt.ToString();
             turnButton.Text = Settings.Turn.ToString();
+            saveButton.Text = Settings.Save.ToString();
+            loadButton.Text = Settings.Load.ToString();
         }
 
         private void OkButtonClick(object sender, EventArgs e)
@@ -124,6 +126,14 @@ namespace Elmanager.LevelEditor.Playing
             else if (_currButton == turnButton)
             {
                 Settings.Turn = key;
+            }
+            else if (_currButton == saveButton)
+            {
+                Settings.Save = key;
+            }
+            else if (_currButton == loadButton)
+            {
+                Settings.Load = key;
             }
 
             UpdateGui();

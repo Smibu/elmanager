@@ -1076,7 +1076,7 @@ namespace Elmanager.LevelEditor
 
         private async void InitializeLevel()
         {
-            await PlayController.StopPlaying();
+            await PlayController.NotifyLevelChanged();
             PlayTimeLabel.Text = "";
             _camera = new ElmaCamera();
             _zoomCtrl = new ZoomController(_camera, Lev, Global.AppSettings.LevelEditor.RenderingSettings, () => RedrawScene());
