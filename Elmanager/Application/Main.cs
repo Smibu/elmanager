@@ -97,7 +97,7 @@ namespace Elmanager.Application
             Task.Run(LoadInternals);
             System.Windows.Forms.Application.EnableVisualStyles();
             System.Windows.Forms.Application.SetCompatibleTextRenderingDefault(false);
-            System.Windows.Forms.Application.SetHighDpiMode(System.Windows.Forms.HighDpiMode.DpiUnawareGdiScaled);
+            System.Windows.Forms.Application.SetHighDpiMode(System.Windows.Forms.HighDpiMode.DpiUnaware);
             AppSettings = ElmanagerSettings.Load();
             if (AppSettings.General.CheckForUpdatesOnStartup)
             {
