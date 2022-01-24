@@ -1,13 +1,12 @@
 ﻿using Elmanager.Utilities;
 
-namespace Elmanager.UI
+namespace Elmanager.UI;
+
+internal class TimeTextBox : GenericTextBox<double>
 {
-    internal class TimeTextBox : GenericTextBox<double>
+    public TimeTextBox()
+        : base(StringUtils.StringToTime)
     {
-        public TimeTextBox()
-            : base(StringUtils.StringToTime)
-        {
-            DefaultValue = 0;
-        }
+        DefaultValue = 0;
     }
 }

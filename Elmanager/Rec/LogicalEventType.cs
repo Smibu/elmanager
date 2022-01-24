@@ -1,17 +1,16 @@
-namespace Elmanager.Rec
+namespace Elmanager.Rec;
+
+internal enum LogicalEventType
 {
-    internal enum LogicalEventType
-    {
-        Finish,
-        FlowerTouch,
-        KillerTouch,
-        GroundTouch,
-        AppleTake,
-        Turn,
-        RightVolt,
-        LeftVolt,
-        SuperVolt,
-        GasOn,
-        GasOff
-    }
+    Finish,
+    FlowerTouch,
+    KillerTouch,
+    GroundTouch,
+    AppleTake,
+    Turn,
+    RightVolt,
+    LeftVolt,
+    SuperVolt,
+    GasOn,
+    GasOff
 }

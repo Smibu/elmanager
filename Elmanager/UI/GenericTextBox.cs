@@ -3,59 +3,58 @@ using System.ComponentModel;
 using System.Drawing;
 using System.Windows.Forms;
 
-namespace Elmanager.UI
+namespace Elmanager.UI;
+
+internal class GenericTextBox<T> : TextBox
 {
-    internal class GenericTextBox<T> : TextBox
+    private T _defaultValue;
+    private Func<string, T> _parseInput;
+
+    public GenericTextBox(Func<string, T> parser)
     {
-        private T _defaultValue;
-        private Func<string, T> _parseInput;
+        TextChanged += ValidateInput;
+        SetParser(parser);
+    }
 
-        public GenericTextBox(Func<string, T> parser)
-        {
-            TextChanged += ValidateInput;
-            SetParser(parser);
-        }
+    [Description("Gets or sets the default value.")]
+    public T DefaultValue
+    {
+        get => _defaultValue;
+        set => _defaultValue = value;
+    }
 
-        [Description("Gets or sets the default value.")]
-        public T DefaultValue
+    public T Value
+    {
+        get
         {
-            get => _defaultValue;
-            set => _defaultValue = value;
+            if (IsInputValid() && _parseInput != null)
+                return _parseInput(Text);
+            return _defaultValue;
         }
+    }
 
-        public T Value
+    public bool IsInputValid()
+    {
+        try
         {
-            get
-            {
-                if (IsInputValid() && _parseInput != null)
-                    return _parseInput(Text);
-                return _defaultValue;
-            }
+            _parseInput(Text);
+            return true;
         }
+        catch (Exception)
+        {
+            return false;
+        }
+    }
 
-        public bool IsInputValid()
-        {
-            try
-            {
-                _parseInput(Text);
-                return true;
-            }
-            catch (Exception)
-            {
-                return false;
-            }
-        }
+    public void SetParser(Func<string, T> val)
+    {
+        if (val == null)
+            return;
+        _parseInput = val;
+    }
 
-        public void SetParser(Func<string, T> val)
-        {
-            if (val == null)
-                return;
-            _parseInput = val;
-        }
-
-        private void ValidateInput(object sender, EventArgs eventArgs)
-        {
-            BackColor = IsInputValid() ? SystemColors.Window : Color.Red;
-        }
+    private void ValidateInput(object sender, EventArgs eventArgs)
+    {
+        BackColor = IsInputValid() ? SystemColors.Window : Color.Red;
     }
 }

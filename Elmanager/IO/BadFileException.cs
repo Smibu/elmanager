@@ -1,12 +1,11 @@
 using System;
 
-namespace Elmanager.IO
+namespace Elmanager.IO;
+
+internal class BadFileException : Exception
 {
-    internal class BadFileException : Exception
+    public BadFileException(string message)
+        : base(message)
     {
-        public BadFileException(string message)
-            : base(message)
-        {
-        }
     }
 }

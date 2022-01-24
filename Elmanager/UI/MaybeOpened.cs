@@ -1,24 +1,23 @@
 ﻿using System.Windows.Forms;
 
-namespace Elmanager.UI
+namespace Elmanager.UI;
+
+internal class MaybeOpened<T> where T : Form, new()
 {
-    internal class MaybeOpened<T> where T : Form, new()
+    private T _instance;
+
+    public T ExistingInstance
     {
-        private T _instance;
-
-        public T ExistingInstance
+        get
         {
-            get
+            if (_instance != null && !_instance.IsDisposed)
             {
-                if (_instance != null && !_instance.IsDisposed)
-                {
-                    return _instance;
-                }
-
-                return null;
+                return _instance;
             }
-        }
 
-        public T Instance => ExistingInstance ?? (_instance = new T());
+            return null;
+        }
     }
+
+    public T Instance => ExistingInstance ?? (_instance = new T());
 }

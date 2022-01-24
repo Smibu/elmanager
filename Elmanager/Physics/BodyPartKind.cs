@@ -1,10 +1,9 @@
-﻿namespace Elmanager.Physics
+﻿namespace Elmanager.Physics;
+
+internal enum BodyPartKind
 {
-    internal enum BodyPartKind
-    {
-        Head,
-        LeftWheel,
-        RightWheel,
-        Body,
-    }
+    Head,
+    LeftWheel,
+    RightWheel,
+    Body,
 }

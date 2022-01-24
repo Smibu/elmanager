@@ -1,9 +1,8 @@
-﻿namespace Elmanager.Searching
+﻿namespace Elmanager.Searching;
+
+internal enum BoolOption
 {
-    internal enum BoolOption
-    {
-        True,
-        False,
-        Dontcare
-    }
+    True,
+    False,
+    Dontcare
 }

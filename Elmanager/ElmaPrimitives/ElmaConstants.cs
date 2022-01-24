@@ -1,8 +1,7 @@
-namespace Elmanager.ElmaPrimitives
+namespace Elmanager.ElmaPrimitives;
+
+internal static class ElmaConstants
 {
-    internal static class ElmaConstants
-    {
-        internal const double HeadDiameter = 0.476;
-        internal const double HeadRadius = HeadDiameter / 2;
-    }
+    internal const double HeadDiameter = 0.476;
+    internal const double HeadRadius = HeadDiameter / 2;
 }

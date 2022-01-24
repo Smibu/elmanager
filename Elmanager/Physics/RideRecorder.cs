@@ -1,6 +1,5 @@
-namespace Elmanager.Physics
+namespace Elmanager.Physics;
+
+internal class RideRecorder
 {
-    internal class RideRecorder
-    {
-    }
 }

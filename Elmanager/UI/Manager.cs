@@ -4,91 +4,90 @@ using Elmanager.Application;
 using Elmanager.IO;
 using Microsoft.VisualBasic.FileIO;
 
-namespace Elmanager.UI
+namespace Elmanager.UI;
+
+internal class Manager<T> where T : ElmaFile
 {
-    internal class Manager<T> where T : ElmaFile
+    private ObjectListView ObjectList => _managerGui.ObjectList;
+    public readonly TypedObjectListView<T> TypedList;
+    private readonly IManagerGui _managerGui;
+    private FileSystemWatcher _levWatcher;
+    private FileSystemWatcher _recWatcher;
+
+    public Manager(IManagerGui m)
     {
-        private ObjectListView ObjectList => _managerGui.ObjectList;
-        public readonly TypedObjectListView<T> TypedList;
-        private readonly IManagerGui _managerGui;
-        private FileSystemWatcher _levWatcher;
-        private FileSystemWatcher _recWatcher;
+        _managerGui = m;
+        TypedList = new TypedObjectListView<T>(ObjectList);
+        UiUtils.ConfigureColumns<T>(ObjectList);
+        return;
+        _levWatcher = new FileSystemWatcher(Global.AppSettings.General.LevelDirectory, "*.lev");
+        _recWatcher = new FileSystemWatcher(Global.AppSettings.General.ReplayDirectory, "*.rec");
+        _levWatcher.IncludeSubdirectories = true;
+        _recWatcher.IncludeSubdirectories = true;
+        _levWatcher.EnableRaisingEvents = false;
+        _recWatcher.EnableRaisingEvents = false;
+        _levWatcher.NotifyFilter = NotifyFilters.LastWrite | NotifyFilters.FileName;
+        _recWatcher.NotifyFilter = NotifyFilters.LastWrite | NotifyFilters.FileName;
+        _levWatcher.Changed += WatcherOnChanged;
+        _levWatcher.Created += WatcherOnChanged;
+        _levWatcher.Deleted += WatcherOnChanged;
+        _levWatcher.Renamed += WatcherOnChanged;
+        _recWatcher.Changed += WatcherOnChanged;
+        _recWatcher.Created += WatcherOnChanged;
+        _recWatcher.Deleted += WatcherOnChanged;
+        _recWatcher.Renamed += WatcherOnChanged;
+    }
 
-        public Manager(IManagerGui m)
+    private void WatcherOnChanged(object sender, FileSystemEventArgs e)
+    {
+        _managerGui.NotifyAboutModification();
+    }
+
+    public void DeleteItems()
+    {
+        if (TypedList.SelectedObjects.Count == 0)
         {
-            _managerGui = m;
-            TypedList = new TypedObjectListView<T>(ObjectList);
-            UiUtils.ConfigureColumns<T>(ObjectList);
+            UiUtils.ShowError(_managerGui.EmptySelectionError);
             return;
-            _levWatcher = new FileSystemWatcher(Global.AppSettings.General.LevelDirectory, "*.lev");
-            _recWatcher = new FileSystemWatcher(Global.AppSettings.General.ReplayDirectory, "*.rec");
-            _levWatcher.IncludeSubdirectories = true;
-            _recWatcher.IncludeSubdirectories = true;
-            _levWatcher.EnableRaisingEvents = false;
-            _recWatcher.EnableRaisingEvents = false;
-            _levWatcher.NotifyFilter = NotifyFilters.LastWrite | NotifyFilters.FileName;
-            _recWatcher.NotifyFilter = NotifyFilters.LastWrite | NotifyFilters.FileName;
-            _levWatcher.Changed += WatcherOnChanged;
-            _levWatcher.Created += WatcherOnChanged;
-            _levWatcher.Deleted += WatcherOnChanged;
-            _levWatcher.Renamed += WatcherOnChanged;
-            _recWatcher.Changed += WatcherOnChanged;
-            _recWatcher.Created += WatcherOnChanged;
-            _recWatcher.Deleted += WatcherOnChanged;
-            _recWatcher.Renamed += WatcherOnChanged;
         }
 
-        private void WatcherOnChanged(object sender, FileSystemEventArgs e)
+        if (_managerGui.Busy || !_managerGui.ConfirmDeletion())
+            return;
+        foreach (var x in TypedList.SelectedObjects)
         {
-            _managerGui.NotifyAboutModification();
+            try
+            {
+                FileSystem.DeleteFile(x.Path, UIOption.OnlyErrorDialogs, RecycleOption.SendToRecycleBin);
+            }
+            catch (FileNotFoundException)
+            {
+            }
         }
+        RemoveReplays();
+    }
 
-        public void DeleteItems()
+    public void RemoveReplays()
+    {
+        if (ObjectList.SelectedObjects.Count <= 0)
         {
-            if (TypedList.SelectedObjects.Count == 0)
-            {
-                UiUtils.ShowError(_managerGui.EmptySelectionError);
-                return;
-            }
-
-            if (_managerGui.Busy || !_managerGui.ConfirmDeletion())
-                return;
-            foreach (var x in TypedList.SelectedObjects)
-            {
-                try
-                {
-                    FileSystem.DeleteFile(x.Path, UIOption.OnlyErrorDialogs, RecycleOption.SendToRecycleBin);
-                }
-                catch (FileNotFoundException)
-                {
-                }
-            }
-            RemoveReplays();
+            UiUtils.ShowError(_managerGui.EmptySelectionError);
+            return;
         }
 
-        public void RemoveReplays()
+        if (_managerGui.Busy)
+            return;
+        var index = ObjectList.SelectedIndices[0];
+        ObjectList.RemoveObjects(ObjectList.SelectedObjects);
+        if (ObjectList.Items.Count > 0)
         {
-            if (ObjectList.SelectedObjects.Count <= 0)
+            if (index >= ObjectList.Items.Count)
             {
-                UiUtils.ShowError(_managerGui.EmptySelectionError);
-                return;
+                index--;
             }
 
-            if (_managerGui.Busy)
-                return;
-            var index = ObjectList.SelectedIndices[0];
-            ObjectList.RemoveObjects(ObjectList.SelectedObjects);
-            if (ObjectList.Items.Count > 0)
-            {
-                if (index >= ObjectList.Items.Count)
-                {
-                    index--;
-                }
-
-                ObjectList.Items[index].Selected = true;
-            }
-
-            _managerGui.DisplaySelectionInfo();
+            ObjectList.Items[index].Selected = true;
         }
+
+        _managerGui.DisplaySelectionInfo();
     }
 }

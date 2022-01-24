@@ -1,8 +1,7 @@
-namespace Elmanager.Rec
+namespace Elmanager.Rec;
+
+internal enum Direction
 {
-    internal enum Direction
-    {
-        Left = 0,
-        Right = 1
-    }
+    Left = 0,
+    Right = 1
 }

@@ -1,13 +1,12 @@
 ﻿using System;
 
-namespace Elmanager.LevelEditor
+namespace Elmanager.LevelEditor;
+
+[Flags]
+internal enum LevModification
 {
-    [Flags]
-    internal enum LevModification
-    {
-        Nothing = 0,
-        Ground = 1,
-        Objects = 2,
-        Decorations = 4,
-    }
+    Nothing = 0,
+    Ground = 1,
+    Objects = 2,
+    Decorations = 4,
 }

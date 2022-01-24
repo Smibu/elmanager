@@ -1,10 +1,9 @@
-﻿namespace Elmanager.Physics
+﻿namespace Elmanager.Physics;
+
+internal enum GravityDirection
 {
-    internal enum GravityDirection
-    {
-        Up,
-        Down,
-        Left,
-        Right,
-    }
+    Up,
+    Down,
+    Left,
+    Right,
 }

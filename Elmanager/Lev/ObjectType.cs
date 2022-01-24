@@ -1,10 +1,9 @@
-namespace Elmanager.Lev
+namespace Elmanager.Lev;
+
+internal enum ObjectType
 {
-    internal enum ObjectType
-    {
-        Flower = 1,
-        Apple = 2,
-        Killer = 3,
-        Start = 4
-    }
+    Flower = 1,
+    Apple = 2,
+    Killer = 3,
+    Start = 4
 }

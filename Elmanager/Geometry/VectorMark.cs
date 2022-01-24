@@ -1,9 +1,8 @@
-namespace Elmanager.Geometry
+namespace Elmanager.Geometry;
+
+internal enum VectorMark
 {
-    internal enum VectorMark
-    {
-        None = 0,
-        Selected = 1,
-        Highlight = 2
-    }
+    None = 0,
+    Selected = 1,
+    Highlight = 2
 }

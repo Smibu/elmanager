@@ -1,8 +1,7 @@
 using Elmanager.Settings;
 
-namespace Elmanager.LevelManager
+namespace Elmanager.LevelManager;
+
+internal class LevelManagerSettings : ManagerSettings
 {
-    internal class LevelManagerSettings : ManagerSettings
-    {
-    }
 }

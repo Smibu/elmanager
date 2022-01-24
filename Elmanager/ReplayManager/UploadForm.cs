@@ -1,12 +1,11 @@
 ﻿using Elmanager.UI;
 
-namespace Elmanager.ReplayManager
+namespace Elmanager.ReplayManager;
+
+internal partial class UploadForm : FormMod
 {
-    internal partial class UploadForm : FormMod
+    public UploadForm()
     {
-        public UploadForm()
-        {
-            InitializeComponent();
-        }
+        InitializeComponent();
     }
 }

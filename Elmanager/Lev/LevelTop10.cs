@@ -2,57 +2,56 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 
-namespace Elmanager.Lev
+namespace Elmanager.Lev;
+
+internal class LevelTop10
 {
-    internal class LevelTop10
+    internal List<Top10EntryMulti> MultiPlayer = new();
+    internal List<Top10EntrySingle> SinglePlayer = new();
+
+    internal bool IsEmpty => SinglePlayer.Count == 0 && MultiPlayer.Count == 0;
+
+    internal void Clear()
     {
-        internal List<Top10EntryMulti> MultiPlayer = new();
-        internal List<Top10EntrySingle> SinglePlayer = new();
+        SinglePlayer.Clear();
+        MultiPlayer.Clear();
+    }
 
-        internal bool IsEmpty => SinglePlayer.Count == 0 && MultiPlayer.Count == 0;
+    internal double GetMultiPlayerAverage()
+    {
+        var avg = MultiPlayer.Sum(x => x.TimeInSecs);
+        return MultiPlayer.Count > 0 ? avg / MultiPlayer.Count : 0.0;
+    }
 
-        internal void Clear()
-        {
-            SinglePlayer.Clear();
-            MultiPlayer.Clear();
-        }
+    internal string GetMultiPlayerString(int index)
+    {
+        return MultiPlayer.Count <= index ? "None" : MultiPlayer[index].FormatEntry(21);
+    }
 
-        internal double GetMultiPlayerAverage()
-        {
-            var avg = MultiPlayer.Sum(x => x.TimeInSecs);
-            return MultiPlayer.Count > 0 ? avg / MultiPlayer.Count : 0.0;
-        }
+    internal string GetMultiPlayerString()
+    {
+        return GetTop10String(GetMultiPlayerString);
+    }
 
-        internal string GetMultiPlayerString(int index)
-        {
-            return MultiPlayer.Count <= index ? "None" : MultiPlayer[index].FormatEntry(21);
-        }
+    internal string GetSinglePlayerString()
+    {
+        return GetTop10String(GetSinglePlayerString);
+    }
 
-        internal string GetMultiPlayerString()
-        {
-            return GetTop10String(GetMultiPlayerString);
-        }
+    private static string GetTop10String(Func<int, string> act)
+    {
+        return Enumerable.Range(0, 10).Select(i => (index: i, s: act(i))).Aggregate("", (s, s1) =>
+            $"{s}{s1.index + 1,2}. {s1.s}{Environment.NewLine}").TrimEnd();
+    }
 
-        internal string GetSinglePlayerString()
-        {
-            return GetTop10String(GetSinglePlayerString);
-        }
+    internal double GetSinglePlayerAverage()
+    {
+        var avg = SinglePlayer.Sum(x => x.TimeInSecs);
+        return SinglePlayer.Count > 0 ? avg / SinglePlayer.Count : 0.0;
+    }
 
-        private static string GetTop10String(Func<int, string> act)
-        {
-            return Enumerable.Range(0, 10).Select(i => (index: i, s: act(i))).Aggregate("", (s, s1) =>
-                $"{s}{s1.index + 1,2}. {s1.s}{Environment.NewLine}").TrimEnd();
-        }
-
-        internal double GetSinglePlayerAverage()
-        {
-            var avg = SinglePlayer.Sum(x => x.TimeInSecs);
-            return SinglePlayer.Count > 0 ? avg / SinglePlayer.Count : 0.0;
-        }
-
-        internal string GetSinglePlayerString(int index)
-        {
-            return SinglePlayer.Count <= index ? "None" : SinglePlayer[index].FormatEntry(12);
-        }
+    internal string GetSinglePlayerString(int index)
+    {
+        return SinglePlayer.Count <= index ? "None" : SinglePlayer[index].FormatEntry(12);
     }
 }

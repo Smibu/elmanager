@@ -1,7 +1,6 @@
-namespace Elmanager.LevelEditor.Tools
+namespace Elmanager.LevelEditor.Tools;
+
+internal interface IEditorToolBase
 {
-    internal interface IEditorToolBase
-    {
-        bool Busy { get; }
-    }
+    bool Busy { get; }
 }

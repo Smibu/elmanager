@@ -1,27 +1,26 @@
 ﻿using System;
 using Elmanager.UI;
 
-namespace Elmanager.Searching
+namespace Elmanager.Searching;
+
+internal class Range<T> where T : IComparable
 {
-    internal class Range<T> where T : IComparable
+    private T _max;
+    private T _min;
+
+    internal Range(T min, T max)
     {
-        private T _max;
-        private T _min;
+        _min = min;
+        _max = max;
+    }
 
-        internal Range(T min, T max)
-        {
-            _min = min;
-            _max = max;
-        }
+    internal bool Accepts(T x)
+    {
+        return _min.CompareTo(x) <= 0 && _max.CompareTo(x) >= 0;
+    }
 
-        internal bool Accepts(T x)
-        {
-            return _min.CompareTo(x) <= 0 && _max.CompareTo(x) >= 0;
-        }
-
-        internal static Range<int> FromNumericBoxes(NumericTextBox min, NumericTextBox max)
-        {
-            return new(min.ValueAsInt, max.ValueAsInt);
-        }
+    internal static Range<int> FromNumericBoxes(NumericTextBox min, NumericTextBox max)
+    {
+        return new(min.ValueAsInt, max.ValueAsInt);
     }
 }

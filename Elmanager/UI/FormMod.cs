@@ -1,13 +1,12 @@
 ﻿using System.Windows.Forms;
 using Elmanager.Properties;
 
-namespace Elmanager.UI
+namespace Elmanager.UI;
+
+internal class FormMod : Form
 {
-    internal class FormMod : Form
+    protected FormMod()
     {
-        protected FormMod()
-        {
-            Icon = Resources.Elma;
-        }
+        Icon = Resources.Elma;
     }
 }

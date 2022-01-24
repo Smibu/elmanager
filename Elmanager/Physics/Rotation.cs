@@ -1,10 +1,9 @@
 ﻿using Elmanager.ElmaPrimitives;
 
-namespace Elmanager.Physics
+namespace Elmanager.Physics;
+
+internal struct Rotation
 {
-    internal struct Rotation
-    {
-        public RotationKind Kind;
-        public ElmaTime Time;
-    }
+    public RotationKind Kind;
+    public ElmaTime Time;
 }

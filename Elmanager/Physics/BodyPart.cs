@@ -1,11 +1,10 @@
 ﻿using Elmanager.Geometry;
 
-namespace Elmanager.Physics
+namespace Elmanager.Physics;
+
+internal class BodyPart
 {
-    internal class BodyPart
-    {
-        public double Rotation;
-        public Vector Location;
-        public Vector Velocity;
-    }
+    public double Rotation;
+    public Vector Location;
+    public Vector Velocity;
 }

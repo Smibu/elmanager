@@ -1,11 +1,10 @@
 ﻿using System;
 
-namespace Elmanager.LevelEditor
+namespace Elmanager.LevelEditor;
+
+internal class VectrastException : Exception
 {
-    internal class VectrastException : Exception
+    public VectrastException(string message) : base(message)
     {
-        public VectrastException(string message) : base(message)
-        {
-        }
     }
 }

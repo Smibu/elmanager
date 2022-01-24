@@ -1,10 +1,9 @@
-﻿namespace Elmanager.UI
+﻿namespace Elmanager.UI;
+
+internal class IntTextBox : GenericTextBox<int>
 {
-    internal class IntTextBox : GenericTextBox<int>
+    public IntTextBox() : base(int.Parse)
     {
-        public IntTextBox() : base(int.Parse)
-        {
-            DefaultValue = 0;
-        }
+        DefaultValue = 0;
     }
 }

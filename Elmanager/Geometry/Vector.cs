@@ -2,153 +2,152 @@
 using Elmanager.Utilities;
 using NetTopologySuite.Geometries;
 
-namespace Elmanager.Geometry
+namespace Elmanager.Geometry;
+
+internal struct Vector
 {
-    internal struct Vector
+    internal static VectorMark MarkDefault = VectorMark.None;
+    internal VectorMark Mark;
+    internal double X;
+    internal double Y;
+
+    internal Vector(double x, double y)
     {
-        internal static VectorMark MarkDefault = VectorMark.None;
-        internal VectorMark Mark;
-        internal double X;
-        internal double Y;
+        X = x;
+        Y = y;
+        Mark = MarkDefault;
+    }
 
-        internal Vector(double x, double y)
+    internal Vector(double x, double y, VectorMark mark)
+    {
+        X = x;
+        Y = y;
+        Mark = mark;
+    }
+
+    internal Vector(double angle)
+    {
+        X = Math.Cos(angle * MathUtils.DegToRad);
+        Y = Math.Sin(angle * MathUtils.DegToRad);
+        Mark = MarkDefault;
+    }
+
+    internal double Angle
+    {
+        get
         {
-            X = x;
-            Y = y;
-            Mark = MarkDefault;
+            double ang = Math.Atan2(Y, X) * MathUtils.RadToDeg;
+            return ang;
         }
+    }
 
-        internal Vector(double x, double y, VectorMark mark)
+    internal double AnglePositive
+    {
+        get
         {
-            X = x;
-            Y = y;
-            Mark = mark;
+            double ang = Math.Atan2(Y, X) * MathUtils.RadToDeg;
+            if (ang < 0)
+                ang += 360;
+            return ang;
         }
+    }
 
-        internal Vector(double angle)
-        {
-            X = Math.Cos(angle * MathUtils.DegToRad);
-            Y = Math.Sin(angle * MathUtils.DegToRad);
-            Mark = MarkDefault;
-        }
+    internal double Length => Math.Sqrt(X * X + Y * Y);
 
-        internal double Angle
-        {
-            get
-            {
-                double ang = Math.Atan2(Y, X) * MathUtils.RadToDeg;
-                return ang;
-            }
-        }
+    internal double LengthSquared => X * X + Y * Y;
 
-        internal double AnglePositive
-        {
-            get
-            {
-                double ang = Math.Atan2(Y, X) * MathUtils.RadToDeg;
-                if (ang < 0)
-                    ang += 360;
-                return ang;
-            }
-        }
+    public Vector Transform(Matrix m)
+    {
+        return this * m;
+    }
 
-        internal double Length => Math.Sqrt(X * X + Y * Y);
+    public void SetPosition(Vector v)
+    {
+        X = v.X;
+        Y = v.Y;
+    }
 
-        internal double LengthSquared => X * X + Y * Y;
+    public static implicit operator Coordinate(Vector v)
+    {
+        return new(v.X, v.Y);
+    }
 
-        public Vector Transform(Matrix m)
-        {
-            return this * m;
-        }
+    public static Vector operator +(Vector vector1, Vector vector2)
+    {
+        return new(vector1.X + vector2.X, vector1.Y + vector2.Y);
+    }
 
-        public void SetPosition(Vector v)
-        {
-            X = v.X;
-            Y = v.Y;
-        }
+    public static Vector operator /(Vector vector, double scalar)
+    {
+        return (vector * (1 / scalar));
+    }
 
-        public static implicit operator Coordinate(Vector v)
-        {
-            return new(v.X, v.Y);
-        }
+    public static Vector operator *(Vector vector, double scalar)
+    {
+        return new((vector.X * scalar), (vector.Y * scalar));
+    }
 
-        public static Vector operator +(Vector vector1, Vector vector2)
-        {
-            return new(vector1.X + vector2.X, vector1.Y + vector2.Y);
-        }
+    public static Vector operator *(double scalar, Vector vector)
+    {
+        return new((vector.X * scalar), (vector.Y * scalar));
+    }
 
-        public static Vector operator /(Vector vector, double scalar)
-        {
-            return (vector * (1 / scalar));
-        }
+    public static Vector operator *(Vector vector, Matrix matrix)
+    {
+        return matrix.Transform(vector);
+    }
 
-        public static Vector operator *(Vector vector, double scalar)
-        {
-            return new((vector.X * scalar), (vector.Y * scalar));
-        }
+    public static double operator *(Vector vector1, Vector vector2)
+    {
+        return vector1.X * vector2.X + vector1.Y * vector2.Y;
+    }
 
-        public static Vector operator *(double scalar, Vector vector)
-        {
-            return new((vector.X * scalar), (vector.Y * scalar));
-        }
+    public static Vector operator -(Vector vector1, Vector vector2)
+    {
+        return new(vector1.X - vector2.X, vector1.Y - vector2.Y);
+    }
 
-        public static Vector operator *(Vector vector, Matrix matrix)
-        {
-            return matrix.Transform(vector);
-        }
+    public static Vector operator -(Vector vector)
+    {
+        return new(-vector.X, -vector.Y);
+    }
 
-        public static double operator *(Vector vector1, Vector vector2)
-        {
-            return vector1.X * vector2.X + vector1.Y * vector2.Y;
-        }
+    internal static double CrossProduct(Vector vector1, Vector vector2)
+    {
+        return vector1.X * vector2.Y - vector1.Y * vector2.X;
+    }
 
-        public static Vector operator -(Vector vector1, Vector vector2)
-        {
-            return new(vector1.X - vector2.X, vector1.Y - vector2.Y);
-        }
+    internal double AngleBetween(Vector vector1)
+    {
+        double y = (vector1.X * Y) - (X * vector1.Y);
+        double x = (vector1.X * X) + (vector1.Y * Y);
+        return (Math.Atan2(y, x) * MathUtils.RadToDeg);
+    }
 
-        public static Vector operator -(Vector vector)
-        {
-            return new(-vector.X, -vector.Y);
-        }
+    internal Vector Clone()
+    {
+        return new(X, Y, Mark);
+    }
 
-        internal static double CrossProduct(Vector vector1, Vector vector2)
-        {
-            return vector1.X * vector2.Y - vector1.Y * vector2.X;
-        }
+    internal void Select()
+    {
+        Mark = VectorMark.Selected;
+    }
 
-        internal double AngleBetween(Vector vector1)
-        {
-            double y = (vector1.X * Y) - (X * vector1.Y);
-            double x = (vector1.X * X) + (vector1.Y * Y);
-            return (Math.Atan2(y, x) * MathUtils.RadToDeg);
-        }
+    internal Vector Unit()
+    {
+        return this / Length;
+    }
 
-        internal Vector Clone()
-        {
-            return new(X, Y, Mark);
-        }
+    internal double Dist(Vector other)
+    {
+        var xd = X - other.X;
+        var yd = Y - other.Y;
+        return Math.Sqrt(xd * xd + yd * yd);
+    }
 
-        internal void Select()
-        {
-            Mark = VectorMark.Selected;
-        }
-
-        internal Vector Unit()
-        {
-            return this / Length;
-        }
-
-        internal double Dist(Vector other)
-        {
-            var xd = X - other.X;
-            var yd = Y - other.Y;
-            return Math.Sqrt(xd * xd + yd * yd);
-        }
-
-        public override string ToString()
-        {
-            return $"({X:F3}, {Y:F3})";
-        }
+    public override string ToString()
+    {
+        return $"({X:F3}, {Y:F3})";
     }
 }

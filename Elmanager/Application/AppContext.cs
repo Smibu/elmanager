@@ -1,27 +1,26 @@
 ﻿using System.Collections.Generic;
 using System.Windows.Forms;
 
-namespace Elmanager.Application
+namespace Elmanager.Application;
+
+internal class AppContext : ApplicationContext
 {
-    internal class AppContext : ApplicationContext
+    private readonly List<Form> _forms = new();
+
+    public void AddAndShow(Form form)
     {
-        private readonly List<Form> _forms = new();
+        _forms.Add(form);
+        form.FormClosed += FormClosed;
+        form.Show();
+    }
 
-        public void AddAndShow(Form form)
+    private async void FormClosed(object sender, FormClosedEventArgs formClosedEventArgs)
+    {
+        _forms.Remove((Form)sender);
+        if (_forms.Count == 0)
         {
-            _forms.Add(form);
-            form.FormClosed += FormClosed;
-            form.Show();
-        }
-
-        private async void FormClosed(object sender, FormClosedEventArgs formClosedEventArgs)
-        {
-            _forms.Remove((Form)sender);
-            if (_forms.Count == 0)
-            {
-                await Global.AppSettings.Save();
-                ExitThread();
-            }
+            await Global.AppSettings.Save();
+            ExitThread();
         }
     }
 }

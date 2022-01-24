@@ -1,14 +1,13 @@
 using System.Diagnostics;
 
-namespace Elmanager.IO
+namespace Elmanager.IO;
+
+internal static class OsUtils
 {
-    internal static class OsUtils
+    internal static void ShellExecute(string url)
     {
-        internal static void ShellExecute(string url)
-        {
-            Process.Start(
-                new ProcessStartInfo(url)
-                    {UseShellExecute = true});
-        }
+        Process.Start(
+            new ProcessStartInfo(url)
+                {UseShellExecute = true});
     }
 }
