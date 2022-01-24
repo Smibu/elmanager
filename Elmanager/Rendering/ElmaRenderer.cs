@@ -4,7 +4,6 @@ using System.Drawing;
 using System.Drawing.Imaging;
 using System.IO;
 using System.Linq;
-using System.Windows.Forms;
 using Elmanager.Application;
 using Elmanager.ElmaPrimitives;
 using Elmanager.Geometry;
@@ -14,10 +13,9 @@ using Elmanager.Rec;
 using Elmanager.Rendering.Camera;
 using Elmanager.UI;
 using Elmanager.Utilities;
-using OpenTK;
-using OpenTK.Graphics;
 using OpenTK.Graphics.OpenGL;
-using OpenTK.Platform;
+using OpenTK.Windowing.Common;
+using OpenTK.WinForms;
 using PixelFormat = System.Drawing.Imaging.PixelFormat;
 
 namespace Elmanager.Rendering
@@ -63,13 +61,12 @@ namespace Elmanager.Rendering
         private double _bikePicTranslateYFacingLeft;
         private double _bikePicTranslateYFacingRight;
         private int _bodyPic;
-        private IWindowInfo _ctrlWindowInfo;
         private bool _disposed;
 
         public List<DrawableImage> DrawableImages { get; set; } = new();
 
         private int _flowerPic;
-        private GraphicsContext _gfxContext;
+        private IGraphicsContext _gfxContext;
         private DrawableImage _groundTexture;
         private DrawableImage _skyTexture;
         private int _handPic;
@@ -87,7 +84,7 @@ namespace Elmanager.Rendering
         private int _depthStencilRenderBuffer;
         private int _maxRenderbufferSize;
 
-        internal ElmaRenderer(Control renderingTarget, RenderingSettings settings)
+        internal ElmaRenderer(GLControl renderingTarget, RenderingSettings settings)
         {
             BaseInit(renderingTarget, settings);
         }
@@ -345,12 +342,12 @@ namespace Elmanager.Rendering
 
         internal void MakeCurrent()
         {
-            _gfxContext.MakeCurrent(_ctrlWindowInfo);
+            _gfxContext.MakeCurrent();
         }
 
         internal void MakeNoneCurrent()
         {
-            _gfxContext.MakeCurrent(null);
+            _gfxContext.MakeNoneCurrent();
         }
 
         internal void DrawScene(ElmaCamera cam, SceneSettings sceneSettings)
@@ -770,12 +767,6 @@ namespace Elmanager.Rendering
             GL.Viewport(0, 0, width, height);
         }
 
-        internal void SetFullScreenMode(DisplayResolution newResolution)
-        {
-            DisplayDevice.Default.ChangeResolution(newResolution);
-            GL.Viewport(0, 0, newResolution.Width, newResolution.Height);
-        }
-
         internal void UpdateGroundAndSky(bool useDefault)
         {
             _settings.DefaultGroundAndSky = useDefault;
@@ -875,8 +866,6 @@ namespace Elmanager.Rendering
                 {
                     GL.DeleteRenderbuffer(_depthStencilRenderBuffer);
                 }
-                _gfxContext.Dispose();
-                _ctrlWindowInfo.Dispose();
             }
 
             _disposed = true;
@@ -974,7 +963,7 @@ namespace Elmanager.Rendering
             return textureIdentifier;
         }
 
-        private void BaseInit(Control renderingTarget, RenderingSettings settings)
+        private void BaseInit(GLControl renderingTarget, RenderingSettings settings)
         {
             _bikePicTranslateXFacingLeft = BikePicXFacingLeft * Math.Cos(BikePicRotationConst * MathUtils.DegToRad) +
                                            BikePicYFacingLeft * Math.Sin(BikePicRotationConst * MathUtils.DegToRad);
@@ -984,8 +973,7 @@ namespace Elmanager.Rendering
                                             BikePicYFacingRight * Math.Sin(-BikePicRotationConst * MathUtils.DegToRad);
             _bikePicTranslateYFacingRight = BikePicXFacingRight * Math.Sin(-BikePicRotationConst * MathUtils.DegToRad) +
                                             BikePicYFacingRight * Math.Cos(-BikePicRotationConst * MathUtils.DegToRad);
-            _ctrlWindowInfo = OpenTK.Platform.Utilities.CreateWindowsWindowInfo(renderingTarget.Handle);
-            InitializeOpengl(disableFrameBuffer: settings.DisableFrameBuffer);
+            InitializeOpengl(disableFrameBuffer: settings.DisableFrameBuffer, renderingTarget.Context);
             UpdateSettings(settings);
         }
 
@@ -1375,14 +1363,10 @@ namespace Elmanager.Rendering
             GL.PopMatrix();
         }
 
-        private void InitializeOpengl(bool disableFrameBuffer)
+        private void InitializeOpengl(bool disableFrameBuffer, IGraphicsContext ctx)
         {
-            var opts = ToolkitOptions.Default;
-            opts.Backend = PlatformBackend.PreferNative;
-            Toolkit.Init(opts);
-            _gfxContext = new GraphicsContext(new GraphicsMode(new ColorFormat(8, 8, 8, 8), 8, 8), _ctrlWindowInfo);
-            _gfxContext.MakeCurrent(_ctrlWindowInfo);
-            _gfxContext.LoadAll();
+            _gfxContext = ctx;
+            _gfxContext.MakeCurrent();
             GL.MatrixMode(MatrixMode.Projection);
             GL.ClearDepth(GroundDepth);
             GL.StencilMask(255);

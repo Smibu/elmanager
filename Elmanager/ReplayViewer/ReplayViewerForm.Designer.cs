@@ -6,6 +6,7 @@ using System.Windows.Forms;
 using BrightIdeasSoftware;
 using Elmanager.Rec;
 using Elmanager.UI;
+using OpenTK.WinForms;
 
 namespace Elmanager.ReplayViewer
 {
@@ -39,7 +40,7 @@ namespace Elmanager.ReplayViewer
             this.components = new Container();
             this.SaveFileDialog1 = new SaveFileDialog();
             this.ColorDialog1 = new ColorDialog();
-            this.ViewerBox = new NoPaintBgControl();
+            this.ViewerBox = new GLControl();
             this.contextMenuStrip1 = new ContextMenuStrip(this.components);
             this.applesToolStripMenuItem = new ToolStripMenuItem();
             this.leftVoltsToolStripMenuItem = new ToolStripMenuItem();
@@ -88,8 +89,6 @@ namespace Elmanager.ReplayViewer
             this.DrivingLineLabel = new Label();
             this.ActivePLabel = new Label();
             this.InactivePLabel = new Label();
-            this.ResolutionBox = new ComboBoxMod();
-            this.Label7 = new Label();
             this.Label5 = new Label();
             this.Label4 = new Label();
             this.TransparentInactiveBox = new CheckBox();
@@ -134,6 +133,12 @@ namespace Elmanager.ReplayViewer
             this.ViewerBox.MouseDown += new MouseEventHandler(this.ViewerMouseDown);
             this.ViewerBox.MouseMove += new MouseEventHandler(this.ViewerMouseMoving);
             this.ViewerBox.MouseUp += new MouseEventHandler(this.ViewerMouseUp);
+            this.ViewerBox.API = OpenTK.Windowing.Common.ContextAPI.OpenGL;
+            this.ViewerBox.APIVersion = new System.Version(3, 3, 0, 0);
+            this.ViewerBox.Flags = OpenTK.Windowing.Common.ContextFlags.Default;
+            this.ViewerBox.IsEventDriven = true;
+            this.ViewerBox.Profile = OpenTK.Windowing.Common.ContextProfile.Compatability;
+
             // 
             // contextMenuStrip1
             // 
@@ -637,27 +642,6 @@ namespace Elmanager.ReplayViewer
             this.InactivePLabel.TabIndex = 130;
             this.InactivePLabel.Text = "Inactive player";
             // 
-            // ResolutionBox
-            // 
-            this.tableLayoutPanel2.SetColumnSpan(this.ResolutionBox, 4);
-            this.ResolutionBox.Dock = DockStyle.Fill;
-            this.ResolutionBox.DropDownStyle = ComboBoxStyle.DropDownList;
-            this.ResolutionBox.FormattingEnabled = true;
-            this.ResolutionBox.Location = new Point(147, 90);
-            this.ResolutionBox.Name = "ResolutionBox";
-            this.ResolutionBox.Size = new Size(137, 23);
-            this.ResolutionBox.TabIndex = 67;
-            // 
-            // Label7
-            // 
-            this.Label7.Anchor = AnchorStyles.Right;
-            this.Label7.AutoSize = true;
-            this.Label7.Location = new Point(19, 94);
-            this.Label7.Name = "Label7";
-            this.Label7.Size = new Size(122, 15);
-            this.Label7.TabIndex = 127;
-            this.Label7.Text = "Full screen resolution:";
-            // 
             // Label5
             // 
             this.Label5.Anchor = AnchorStyles.Right;
@@ -792,8 +776,6 @@ namespace Elmanager.ReplayViewer
             this.tableLayoutPanel2.Controls.Add(this.MouseClickZoomBox, 1, 1);
             this.tableLayoutPanel2.Controls.Add(this.viewerSizeXBox, 1, 2);
             this.tableLayoutPanel2.Controls.Add(this.label1, 0, 2);
-            this.tableLayoutPanel2.Controls.Add(this.Label7, 0, 3);
-            this.tableLayoutPanel2.Controls.Add(this.ResolutionBox, 1, 3);
             this.tableLayoutPanel2.Location = new Point(6, 123);
             this.tableLayoutPanel2.Name = "tableLayoutPanel2";
             this.tableLayoutPanel2.RowCount = 4;
@@ -891,9 +873,7 @@ namespace Elmanager.ReplayViewer
         internal CheckBox LockedCamBox;
         internal CheckBox TransparentInactiveBox;
         internal CheckBox PictBackGroundBox;
-        internal Control ViewerBox;
-        internal ComboBoxMod ResolutionBox;
-        internal Label Label7;
+        internal GLControl ViewerBox;
         internal TrackBarMod playbackSpeedBar;
         internal Label Label5;
         internal Label Label4;

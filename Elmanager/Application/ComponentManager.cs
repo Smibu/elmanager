@@ -30,9 +30,11 @@ namespace Elmanager.Application
             AppCtx.AddAndShow(new ReplayManagerForm());
         }
 
-        internal static void LaunchReplayViewer(Replay replay)
+        internal static async void LaunchReplayViewer(Replay replay)
         {
             var rv = new ReplayViewerForm();
+            rv.Show();
+            await rv.WaitInit();
             rv.SetReplays(replay);
             AppCtx.AddAndShow(rv);
         }

@@ -6,7 +6,6 @@ using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
 using System.Timers;
-using System.Windows.Forms;
 using Elmanager.Application;
 using Elmanager.Geometry;
 using Elmanager.Lev;
@@ -14,6 +13,7 @@ using Elmanager.Rec;
 using Elmanager.Rendering;
 using Elmanager.Rendering.Camera;
 using OpenTK.Graphics.OpenGL;
+using OpenTK.WinForms;
 using Timer = System.Timers.Timer;
 
 namespace Elmanager.ReplayViewer
@@ -74,7 +74,7 @@ namespace Elmanager.ReplayViewer
             remove => _timer.Elapsed -= value;
         }
 
-        public ReplayController(Control viewerBox, RenderingSettings replayViewerRenderingSettings)
+        public ReplayController(GLControl viewerBox, RenderingSettings replayViewerRenderingSettings)
         {
             Renderer = new ElmaRenderer(viewerBox, replayViewerRenderingSettings);
         }

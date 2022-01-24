@@ -386,12 +386,13 @@ namespace Elmanager.LevelManager
             Cursor = Cursors.Default;
         }
 
-        private void UpdateViewer(ReplayViewerForm v)
+        private async void UpdateViewer(ReplayViewerForm v)
         {
             if (CurrentLevelHasReplays)
             {
-                v.SetReplays(GetReplays(TypedList.SelectedObject));
                 v.Show();
+                await v.WaitInit();
+                v.SetReplays(GetReplays(TypedList.SelectedObject));
             }
         }
 
@@ -409,13 +410,14 @@ namespace Elmanager.LevelManager
             OpenViewer();
         }
 
-        private void OpenInLevelEditor(object sender, EventArgs e)
+        private async void OpenInLevelEditor(object sender, EventArgs e)
         {
             if (TypedList.SelectedObject != null)
             {
                 Cursor = Cursors.WaitCursor;
-                _editor.Instance.SetLevel(TypedList.SelectedObject);
                 _editor.Instance.Show();
+                await _editor.Instance.WaitInit();
+                _editor.Instance.SetLevel(TypedList.SelectedObject);
                 Cursor = Cursors.Default;
             }
         }

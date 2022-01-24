@@ -93,12 +93,13 @@ namespace Elmanager.LevelEditor
         private ElmaCamera _camera;
         private ZoomController _zoomCtrl;
         private readonly SceneSettings _sceneSettings = new();
+        private TaskCompletionSource _tcs = new();
 
         internal LevelEditorForm(string levPath)
         {
             InitializeComponent();
             TryLoadLevel(levPath);
-            Initialize();
+            PostInit();
         }
 
         internal void SetLevel(Level lev)
@@ -143,8 +144,21 @@ namespace Elmanager.LevelEditor
             }
             else
                 SetBlankLevel();
+            PostInit();
+        }
 
-            Initialize();
+        private void PostInit()
+        {
+            EditorControl.HandleCreated += (_, _) =>
+            {
+                Initialize();
+                _tcs.SetResult();
+            };
+        }
+
+        internal async Task WaitInit()
+        {
+            await _tcs.Task;
         }
 
         internal bool Modified => _modified;

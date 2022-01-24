@@ -360,7 +360,7 @@ namespace Elmanager.ReplayManager
             }
         }
 
-        private void OpenViewer(object sender, EventArgs e)
+        private async void OpenViewer(object sender, EventArgs e)
         {
             if (ObjectList.SelectedObjects.Count <= 0)
             {
@@ -383,8 +383,9 @@ namespace Elmanager.ReplayManager
             }
 
             Cursor = Cursors.WaitCursor;
-            _currentViewer.Instance.SetReplays(rps);
             _currentViewer.Instance.Show();
+            await _currentViewer.Instance.WaitInit();
+            _currentViewer.Instance.SetReplays(rps);
 
             Cursor = Cursors.Default;
         }

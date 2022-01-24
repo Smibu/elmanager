@@ -24,8 +24,9 @@
             <Version>2.9.2</Version>
         </PackageReference>
         <PackageReference Include="OpenTK">
-            <Version>3.3.1</Version>
+            <Version>4.6.7</Version>
         </PackageReference>
+        <PackageReference Include="OpenTK.WinForms" Version="4.0.0-pre.6" />
         <PackageReference Include="SharpVectors">
             <Version>1.7.1</Version>
         </PackageReference>

@@ -5,6 +5,7 @@ using System.Windows.Forms;
 using Elmanager.IO;
 using Elmanager.Properties;
 using Elmanager.UI;
+using OpenTK.WinForms;
 
 namespace Elmanager.LevelEditor
 {
@@ -87,7 +88,7 @@ namespace Elmanager.LevelEditor
             this.ConfigurationToolStripMenuItem = new ToolStripMenuItem();
             this.MainConfigMenuItem = new ToolStripMenuItem();
             this.RenderingSettingsToolStripMenuItem = new ToolStripMenuItem();
-            this.EditorControl = new Panel();
+            this.EditorControl = new GLControl();
             this.OpenFileDialog1 = new OpenFileDialog();
             this.StatusStrip1 = new StatusStrip();
             this.CoordinateLabel = new ToolStripStatusLabel();
@@ -667,9 +668,14 @@ namespace Elmanager.LevelEditor
             // EditorControl
             // 
             this.EditorControl.AllowDrop = true;
+            this.EditorControl.API = OpenTK.Windowing.Common.ContextAPI.OpenGL;
+            this.EditorControl.APIVersion = new System.Version(3, 3, 0, 0);
             this.EditorControl.Dock = DockStyle.Fill;
+            this.EditorControl.Flags = OpenTK.Windowing.Common.ContextFlags.Default;
+            this.EditorControl.IsEventDriven = true;
             this.EditorControl.Location = new Point(84, 136);
             this.EditorControl.Name = "EditorControl";
+            this.EditorControl.Profile = OpenTK.Windowing.Common.ContextProfile.Compatability;
             this.EditorControl.Size = new Size(845, 350);
             this.EditorControl.TabIndex = 2;
             this.EditorControl.DragDrop += new DragEventHandler(this.ItemsDropped);
@@ -1786,7 +1792,7 @@ namespace Elmanager.LevelEditor
 		internal ToolStripMenuItem SaveToolStripMenuItem;
 		internal ToolStripMenuItem SaveAsToolStripMenuItem;
 		internal ToolStripMenuItem ExitToolStripMenuItem;
-		internal Panel EditorControl;
+		internal GLControl EditorControl;
 		internal OpenFileDialog OpenFileDialog1;
 		internal PanelMod ToolPanel;
 		internal RadioButtonMod EllipseButton;

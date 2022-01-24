@@ -4,6 +4,7 @@ using System.ComponentModel;
 using System.Drawing;
 using System.Drawing.Imaging;
 using System.Linq;
+using System.Threading.Tasks;
 using System.Windows.Forms;
 using System.Windows.Input;
 using BrightIdeasSoftware;
@@ -16,7 +17,6 @@ using Elmanager.Rendering.Camera;
 using Elmanager.Settings;
 using Elmanager.UI;
 using Elmanager.Utilities;
-using OpenTK;
 using KeyEventArgs = System.Windows.Forms.KeyEventArgs;
 using MouseEventArgs = System.Windows.Forms.MouseEventArgs;
 using StringUtils = Elmanager.Utilities.StringUtils;
@@ -34,13 +34,23 @@ namespace Elmanager.ReplayViewer
         private bool _zooming;
         private ReplayController _replayController;
         private readonly TypedObjectListView<PlayListObject> _typedPlayList;
+        private TaskCompletionSource _tcs = new();
 
         public ReplayViewerForm()
         {
             InitializeComponent();
             _typedPlayList = new TypedObjectListView<PlayListObject>(PlayList);
-            Initialize();
-            ViewerResized();
+            ViewerBox.HandleCreated += (s, e) =>
+            {
+                Initialize();
+                ViewerResized();
+                _tcs.SetResult();
+            };
+        }
+
+        internal async Task WaitInit()
+        {
+            await _tcs.Task;
         }
 
         internal void SetReplays(Replay replay)
@@ -133,7 +143,6 @@ namespace Elmanager.ReplayViewer
             FormBorderStyle = FormBorderStyle.None;
             ViewerBox.Location = new Point(0, 0);
             TopMost = true;
-            _replayController.Renderer.SetFullScreenMode(DisplayDevice.Default.AvailableResolutions[ResolutionBox.SelectedIndex]);
             WindowState = FormWindowState.Maximized;
             _fullScreen = true;
             ViewerBox.Size = Size;
@@ -178,13 +187,6 @@ namespace Elmanager.ReplayViewer
             UiUtils.ConfigureColumns<PlayListObject>(PlayList, hiddenColumns: new []{"Player"});
             _replayController = new ReplayController(ViewerBox, Global.AppSettings.ReplayViewer.RenderingSettings);
             _replayController.UpdateReplaySettings();
-            foreach (var resolution in DisplayDevice.Default.AvailableResolutions)
-            {
-                ResolutionBox.Items.Add(
-                    $"{resolution.Width}x{resolution.Height}x{resolution.BitsPerPixel}, {resolution.RefreshRate} Hz");
-                if (resolution.Equals(DisplayDevice.Default.SelectResolution(1, 1, 1, 1)))
-                    ResolutionBox.SelectedIndex = ResolutionBox.Items.Count - 1;
-            }
 
             Size = Global.AppSettings.ReplayViewer.Size;
             playbackSpeedBar.Value = 0;
@@ -238,7 +240,6 @@ namespace Elmanager.ReplayViewer
                     {
                         _fullScreen = false;
                         Resize -= ViewerResized;
-                        DisplayDevice.Default.RestoreResolution();
                         FormBorderStyle = FormBorderStyle.Sizable;
                         TopMost = false;
                         WindowState = _windowState;
@@ -419,7 +420,6 @@ namespace Elmanager.ReplayViewer
             multiSpyBox.CheckedChanged += RenderingOptionsChanged;
             playbackSpeedBar.MouseWheel += TrackBarScrolled;
             timeBar.MouseWheel += TrackBarScrolled;
-            ResolutionBox.MouseWheel += TrackBarScrolled;
             TabControl1.KeyDown += KeyHandler;
             foreach (ToolStripMenuItem toolStripMenuItem in contextMenuStrip1.Items)
             {
@@ -513,7 +513,6 @@ namespace Elmanager.ReplayViewer
 
         private async void ViewerClosing(object sender, CancelEventArgs e)
         {
-            DisplayDevice.Default.RestoreResolution();
             SaveViewerSettings();
             if (_replayController.Playing)
             {
