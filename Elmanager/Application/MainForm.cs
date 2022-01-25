@@ -13,11 +13,6 @@ internal partial class MainForm : FormMod
         InitializeComponent();
         versionLabel.Text =
             $"Version: {Global.Version.ToShortDateString()}";
-        var conf = "Debug";
-        if (ThisAssembly.AssemblyConfiguration == conf)
-        {
-            versionLabel.Text += " [DEBUG BUILD]";
-        }
         linkLabel2.Links.Add(new LinkLabel.Link(0, 7) {Name = "License"});
         linkLabel2.Links.Add(new LinkLabel.Link(9, 9) {Name = "Libraries"});
     }
