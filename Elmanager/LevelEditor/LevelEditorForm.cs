@@ -1111,6 +1111,17 @@ internal partial class LevelEditorForm : FormMod
         _errorPoints.Clear();
     }
 
+    protected override bool ProcessCmdKey(ref Message msg, Keys keyData)
+    {
+        // Hack to allow tab to be used for turn key.
+        if (PlayController.Playing && keyData == Keys.Tab && PlayController.Settings.Turn == Keys.Tab)
+        {
+            OnKeyDown(new KeyEventArgs(keyData));
+            return true;
+        }
+        return base.ProcessCmdKey(ref msg, keyData);
+    }
+
     private void KeyHandlerDown(object sender, KeyEventArgs e)
     {
         PlayController.UpdateInputKeys();
