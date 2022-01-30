@@ -15,6 +15,7 @@ internal class PlaySettings
     public DyingBehavior DyingBehavior { get; set; } = DyingBehavior.StopPlaying;
     public FollowDriverOption FollowDriverOption { get; set; } = FollowDriverOption.WhenPressingKey;
     public bool DisableShortcuts { get; set; }
+    public int PhysicsFps { get; set; } = 1000;
 
     public PlaySettings() { }
 
@@ -31,5 +32,6 @@ internal class PlaySettings
         DyingBehavior = other.DyingBehavior;
         FollowDriverOption = other.FollowDriverOption;
         DisableShortcuts = other.DisableShortcuts;
+        PhysicsFps = other.PhysicsFps;
     }
 }

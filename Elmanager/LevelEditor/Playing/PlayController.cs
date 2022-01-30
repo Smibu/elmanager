@@ -235,8 +235,7 @@ internal class PlayController
                 var elapsed = _timer.ElapsedMilliseconds;
                 while (physElapsed < elapsed)
                 {
-                    //var step = ElmaTime.FromMilliSeconds(elapsed - physElapsed);
-                    var step = ElmaTime.FromMilliSeconds(1);
+                    var step = ElmaTime.FromMilliSeconds(1000.0 / Settings.PhysicsFps);
                     if (step > maxPhysStep)
                     {
                         step = maxPhysStep;

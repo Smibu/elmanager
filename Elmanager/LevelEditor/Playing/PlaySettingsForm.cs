@@ -31,6 +31,7 @@ internal partial class PlaySettingsForm : FormMod
         saveButton.Text = Settings.Save.ToString();
         loadButton.Text = Settings.Load.ToString();
         disableShortcutsCheckBox.Checked = Settings.DisableShortcuts;
+        fpsTextBox.Text = Settings.PhysicsFps.ToString();
     }
 
     private void OkButtonClick(object sender, EventArgs e)
@@ -38,6 +39,15 @@ internal partial class PlaySettingsForm : FormMod
         Settings.DyingBehavior = (DyingBehavior) dyingComboBox.SelectedIndex;
         Settings.FollowDriverOption = (FollowDriverOption) followDriverComboBox.SelectedIndex;
         Settings.DisableShortcuts = disableShortcutsCheckBox.Checked;
+        var newFps = fpsTextBox.Value;
+        const int minFps = 79;
+        const int maxFps = 1000;
+        if (newFps is < minFps or > maxFps)
+        {
+            UiUtils.ShowError($"Physics FPS must be between {minFps} and {maxFps}.");
+            return;
+        }
+        Settings.PhysicsFps = newFps;
         DialogResult = DialogResult.OK;
     }
 
