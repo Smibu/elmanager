@@ -1,22 +1,25 @@
-using System.Net;
+using System.IO;
+using System.Net.Http;
+using System.Threading.Tasks;
 using Elmanager.UI;
 
 namespace Elmanager.IO;
 
 internal static class NetUtils
 {
-    internal static void DownloadAndOpenFile(string uri, string destFile, string username = null,
-        string password = null)
+    internal static async Task DownloadAndOpenFile(string uri, string destFile)
     {
-        var wc = new WebClient();
-        if (username != null && password != null)
-            wc.Credentials = new NetworkCredential(username, password);
+        var client = new HttpClient();
         try
         {
-            wc.DownloadFile(uri, destFile);
+            {
+                var result = await client.GetStreamAsync(uri);
+                await using var fs = File.Create(destFile);
+                await result.CopyToAsync(fs);
+            }
             OsUtils.ShellExecute(destFile);
         }
-        catch (WebException)
+        catch (HttpRequestException)
         {
             UiUtils.ShowError("Failed to download file " + uri);
         }

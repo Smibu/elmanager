@@ -22,12 +22,12 @@ internal partial class NewVersionForm : FormMod
         downloadButton.Select();
     }
 
-    private void DownloadButtonClick(object sender, EventArgs e)
+    private async void DownloadButtonClick(object sender, EventArgs e)
     {
         downloadButton.Text = "Downloading...";
         downloadButton.Enabled = false;
         downloadButton.Refresh();
-        NetUtils.DownloadAndOpenFile(_updateInfo.Link, System.Windows.Forms.Application.StartupPath + "\\Elmanager.zip");
+        await NetUtils.DownloadAndOpenFile(_updateInfo.Link, System.Windows.Forms.Application.StartupPath + "\\Elmanager.zip");
         Environment.Exit(0);
     }
 

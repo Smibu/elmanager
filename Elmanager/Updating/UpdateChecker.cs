@@ -1,5 +1,5 @@
 ﻿using System;
-using System.Net;
+using System.Net.Http;
 using System.Text.Json;
 using Elmanager.Application;
 
@@ -10,20 +10,21 @@ internal static class UpdateChecker
     /// <summary>
     ///   Checks if there are new updates for the program.
     /// </summary>
-    internal static void CheckForUpdates()
+    internal static async void CheckForUpdates()
     {
-        using var wc = new WebClient();
-        wc.Headers.Add("User-Agent", "Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:78.0) Gecko/20100101 Firefox/78.0");
+        using var client = new HttpClient();
+        client.DefaultRequestHeaders.Add("User-Agent", "Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:78.0) Gecko/20100101 Firefox/78.0");
         try
         {
-            var info = JsonSerializer.Deserialize<UpdateInfo>(wc.DownloadString(VersionUri));
+            var result = await client.GetStreamAsync(VersionUri);
+            var info = JsonSerializer.Deserialize<UpdateInfo>(result);
             if (info is not null && info.Date > Global.Version)
             {
                 var newDlg = new NewVersionForm(info);
                 newDlg.ShowDialog();
             }
         }
-        catch (WebException)
+        catch (HttpRequestException)
         {
         }
         catch (FormatException)
