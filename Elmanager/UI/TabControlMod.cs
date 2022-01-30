@@ -15,7 +15,7 @@ internal class TabControlMod : TabControl
 
     protected override void WndProc(ref Message m)
     {
-        if (m.Msg == 0x100) //WM_KEYDOWN
+        if (m.Msg == NativeUtils.WmKeydown)
         {
             var key = (Keys) m.WParam;
             KeyDownEvent?.Invoke(null, new KeyEventArgs(key));

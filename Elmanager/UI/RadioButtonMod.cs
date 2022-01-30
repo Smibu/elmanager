@@ -23,6 +23,8 @@ internal class RadioButtonMod : RadioButton
             case Keys.Right:
                 KeyDownEvent?.Invoke(null, new KeyEventArgs(keyData));
                 return true;
+            case Keys.Tab:
+                return true;
         }
 
         return base.IsInputKey(keyData);
@@ -30,7 +32,7 @@ internal class RadioButtonMod : RadioButton
 
     protected override void WndProc(ref Message m)
     {
-        if (m.Msg == 0x100) //WM_KEYDOWN
+        if (m.Msg == NativeUtils.WmKeydown)
         {
             var pressedKey = (Keys) m.WParam;
             if (pressedKey != Keys.Up && pressedKey != Keys.Down && pressedKey != Keys.Left &&

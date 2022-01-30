@@ -40,7 +40,7 @@ using Timer = System.Timers.Timer;
 
 namespace Elmanager.LevelEditor;
 
-internal partial class LevelEditorForm : FormMod
+internal partial class LevelEditorForm : FormMod, IMessageFilter
 {
     //TODO Tool interface should be improved
     private const string CoordinateFormat = "F3";
@@ -149,11 +149,13 @@ internal partial class LevelEditorForm : FormMod
 
     private void PostInit()
     {
+        System.Windows.Forms.Application.AddMessageFilter(this);
         EditorControl.HandleCreated += (_, _) =>
         {
             Initialize();
             _tcs.SetResult();
         };
+        Closed += (_, _) => System.Windows.Forms.Application.RemoveMessageFilter(this);
     }
 
     internal async Task WaitInit()
@@ -1111,20 +1113,8 @@ internal partial class LevelEditorForm : FormMod
         _errorPoints.Clear();
     }
 
-    protected override bool ProcessCmdKey(ref Message msg, Keys keyData)
-    {
-        // Hack to allow tab to be used for turn key.
-        if (PlayController.Playing && keyData == Keys.Tab && PlayController.Settings.Turn == Keys.Tab)
-        {
-            OnKeyDown(new KeyEventArgs(keyData));
-            return true;
-        }
-        return base.ProcessCmdKey(ref msg, keyData);
-    }
-
     private void KeyHandlerDown(object sender, KeyEventArgs e)
     {
-        PlayController.UpdateInputKeys();
         e = e.KeyCode switch
         {
             Keys.Add => new KeyEventArgs(KeyUtils.Increase),
@@ -1174,6 +1164,7 @@ internal partial class LevelEditorForm : FormMod
                 wasModified = PolyOpTool.PolyOpSelected(PolygonOperationType.Difference, Lev.Polygons);
                 break;
             case Keys.Enter when Physics:
+                PlayController.UpdateInputKeys();
                 playButton_Click(null, null);
                 break;
             case Keys.Oem2:
@@ -1266,7 +1257,6 @@ internal partial class LevelEditorForm : FormMod
 
     private void KeyHandlerUp(object sender, KeyEventArgs e)
     {
-        PlayController.UpdateInputKeys();
         switch (e.KeyCode)
         {
             case Keys.C:
@@ -2873,4 +2863,36 @@ internal partial class LevelEditorForm : FormMod
     }
 
     private static readonly string[] ImportableExtensions = {DirUtils.LevExtension, DirUtils.LebExtension, ".bmp", ".png", ".gif", ".tiff", ".exif", ".svg", ".svgz" };
+
+    public bool PreFilterMessage(ref Message m)
+    {
+        if (PlayController.Playing)
+        {
+            // The message filter is global, so the control that is receiving the message
+            // might be in a different form (e.g. level manager). Hence the need for IsChild check.
+            if (m.Msg is NativeUtils.WmKeydown or NativeUtils.WmKeyup && NativeUtils.IsChild(Handle, m.HWnd))
+            {
+                PlayController.UpdateInputKeys();
+                var key = (Keys)m.WParam;
+                if (m.Msg == NativeUtils.WmKeydown)
+                {
+                    switch (key)
+                    {
+                        case Keys.Enter:
+                            playButton_Click(null, null);
+                            break;
+                        case Keys.Escape:
+                            stopButton_Click(null, null);
+                            break;
+                    }
+                }
+                if (PlayController.Settings.DisableShortcuts)
+                {
+                    return true;
+                }
+            }
+        }
+
+        return false;
+    }
 }

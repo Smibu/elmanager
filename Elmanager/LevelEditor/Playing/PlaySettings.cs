@@ -14,6 +14,7 @@ internal class PlaySettings
     public Keys Load { get; set; } = Keys.RShiftKey;
     public DyingBehavior DyingBehavior { get; set; } = DyingBehavior.StopPlaying;
     public FollowDriverOption FollowDriverOption { get; set; } = FollowDriverOption.WhenPressingKey;
+    public bool DisableShortcuts { get; set; }
 
     public PlaySettings() { }
 
@@ -29,5 +30,6 @@ internal class PlaySettings
         Load = other.Load;
         DyingBehavior = other.DyingBehavior;
         FollowDriverOption = other.FollowDriverOption;
+        DisableShortcuts = other.DisableShortcuts;
     }
 }

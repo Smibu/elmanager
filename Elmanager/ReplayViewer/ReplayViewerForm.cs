@@ -211,8 +211,7 @@ internal partial class ReplayViewerForm : FormMod
 
     protected override bool ProcessCmdKey(ref Message m, Keys keyData)
     {
-        const int wmKeydown = 0x100;
-        if (m.Msg == wmKeydown)
+        if (m.Msg == NativeUtils.WmKeydown)
         {
             switch (keyData)
             {

@@ -30,12 +30,14 @@ internal partial class PlaySettingsForm : FormMod
         turnButton.Text = Settings.Turn.ToString();
         saveButton.Text = Settings.Save.ToString();
         loadButton.Text = Settings.Load.ToString();
+        disableShortcutsCheckBox.Checked = Settings.DisableShortcuts;
     }
 
     private void OkButtonClick(object sender, EventArgs e)
     {
         Settings.DyingBehavior = (DyingBehavior) dyingComboBox.SelectedIndex;
         Settings.FollowDriverOption = (FollowDriverOption) followDriverComboBox.SelectedIndex;
+        Settings.DisableShortcuts = disableShortcutsCheckBox.Checked;
         DialogResult = DialogResult.OK;
     }
 

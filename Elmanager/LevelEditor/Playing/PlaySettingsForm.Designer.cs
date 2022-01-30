@@ -53,6 +53,7 @@ namespace Elmanager.LevelEditor.Playing
             this.turnButton = new System.Windows.Forms.Button();
             this.dyingComboBox = new System.Windows.Forms.ComboBox();
             this.saveButton = new System.Windows.Forms.Button();
+            this.disableShortcutsCheckBox = new System.Windows.Forms.CheckBox();
             this.label3 = new System.Windows.Forms.Label();
             this.label9 = new System.Windows.Forms.Label();
             this.label10 = new System.Windows.Forms.Label();
@@ -66,7 +67,7 @@ namespace Elmanager.LevelEditor.Playing
             this.flowLayoutPanel1.Controls.Add(this.okButton);
             this.flowLayoutPanel1.Dock = System.Windows.Forms.DockStyle.Bottom;
             this.flowLayoutPanel1.FlowDirection = System.Windows.Forms.FlowDirection.RightToLeft;
-            this.flowLayoutPanel1.Location = new System.Drawing.Point(0, 609);
+            this.flowLayoutPanel1.Location = new System.Drawing.Point(0, 659);
             this.flowLayoutPanel1.Name = "flowLayoutPanel1";
             this.flowLayoutPanel1.Size = new System.Drawing.Size(742, 53);
             this.flowLayoutPanel1.TabIndex = 0;
@@ -117,10 +118,11 @@ namespace Elmanager.LevelEditor.Playing
             this.tableLayoutPanel1.Controls.Add(this.turnButton, 1, 5);
             this.tableLayoutPanel1.Controls.Add(this.dyingComboBox, 1, 6);
             this.tableLayoutPanel1.Controls.Add(this.saveButton, 1, 8);
+            this.tableLayoutPanel1.Controls.Add(this.disableShortcutsCheckBox, 1, 10);
             this.tableLayoutPanel1.Dock = System.Windows.Forms.DockStyle.Top;
             this.tableLayoutPanel1.Location = new System.Drawing.Point(0, 0);
             this.tableLayoutPanel1.Name = "tableLayoutPanel1";
-            this.tableLayoutPanel1.RowCount = 10;
+            this.tableLayoutPanel1.RowCount = 11;
             this.tableLayoutPanel1.RowStyles.Add(new System.Windows.Forms.RowStyle());
             this.tableLayoutPanel1.RowStyles.Add(new System.Windows.Forms.RowStyle());
             this.tableLayoutPanel1.RowStyles.Add(new System.Windows.Forms.RowStyle());
@@ -131,8 +133,8 @@ namespace Elmanager.LevelEditor.Playing
             this.tableLayoutPanel1.RowStyles.Add(new System.Windows.Forms.RowStyle());
             this.tableLayoutPanel1.RowStyles.Add(new System.Windows.Forms.RowStyle());
             this.tableLayoutPanel1.RowStyles.Add(new System.Windows.Forms.RowStyle());
-            this.tableLayoutPanel1.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 20F));
-            this.tableLayoutPanel1.Size = new System.Drawing.Size(742, 476);
+            this.tableLayoutPanel1.RowStyles.Add(new System.Windows.Forms.RowStyle());
+            this.tableLayoutPanel1.Size = new System.Drawing.Size(742, 518);
             this.tableLayoutPanel1.TabIndex = 1;
             // 
             // loadButton
@@ -367,6 +369,16 @@ namespace Elmanager.LevelEditor.Playing
             this.saveButton.UseVisualStyleBackColor = true;
             this.saveButton.Click += new System.EventHandler(this.KeyButtonClick);
             // 
+            // disableShortcutsCheckBox
+            // 
+            this.disableShortcutsCheckBox.AutoSize = true;
+            this.disableShortcutsCheckBox.Location = new System.Drawing.Point(374, 479);
+            this.disableShortcutsCheckBox.Name = "disableShortcutsCheckBox";
+            this.disableShortcutsCheckBox.Size = new System.Drawing.Size(272, 36);
+            this.disableShortcutsCheckBox.TabIndex = 21;
+            this.disableShortcutsCheckBox.Text = "Disable shortcut keys";
+            this.disableShortcutsCheckBox.UseVisualStyleBackColor = true;
+            // 
             // label3
             // 
             this.label3.Location = new System.Drawing.Point(0, 0);
@@ -397,7 +409,7 @@ namespace Elmanager.LevelEditor.Playing
             this.AutoScaleDimensions = new System.Drawing.SizeF(13F, 32F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.CancelButton = this.cancelButton;
-            this.ClientSize = new System.Drawing.Size(742, 662);
+            this.ClientSize = new System.Drawing.Size(742, 712);
             this.Controls.Add(this.tableLayoutPanel1);
             this.Controls.Add(this.flowLayoutPanel1);
             this.KeyPreview = true;
@@ -440,5 +452,6 @@ namespace Elmanager.LevelEditor.Playing
         private System.Windows.Forms.Label label13;
         private System.Windows.Forms.Label label12;
         private System.Windows.Forms.Button saveButton;
+        private System.Windows.Forms.CheckBox disableShortcutsCheckBox;
     }
 }
