@@ -1,5 +1,11 @@
 # Elmanager changelog
 
+## Upcoming
+* SLE: Added basic saveload support when playing.
+* SLE: Physics FPS can be changed.
+* SLE: Shortcuts can be disabled when playing.
+* SLE: Bugfix: Tab key was not working well if used as turn key.
+
 ## 24.10.2021
 * SLE: Updated ground vertex limit to match newest EOL version (5130 -> 20000).
 * SLE: Bugfix: Topology check was very slow if the level had thousands of vertices.
