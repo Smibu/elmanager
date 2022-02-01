@@ -177,7 +177,7 @@ internal class PlayController
 
     public void NotifyDeletedApples(HashSet<int> deletedApples)
     {
-        Driver.TakenApples.RemoveWhere(deletedApples.Contains);
+        Driver?.TakenApples.RemoveWhere(deletedApples.Contains);
     }
 
     public event Action PlayingPaused;
