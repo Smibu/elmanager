@@ -15,7 +15,7 @@ internal static class VectrastWrapper
         var vr = new VectRast(false, false);
         byte[,] pixelOn;
         Bitmap bmp;
-        var transformMatrix = Matrix2D.identityM();
+        var transformMatrix = Matrix2D.scaleM(1, -1);
         const int numFlowers = 0;
         try
         {
