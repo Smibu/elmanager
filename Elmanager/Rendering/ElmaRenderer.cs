@@ -1114,7 +1114,10 @@ internal class ElmaRenderer : IDisposable
             if (opts.UseTransparency)
             {
                 GL.Enable(EnableCap.Blend);
-                GL.BlendFunc(BlendingFactor.One, BlendingFactor.OneMinusDstColor);
+            }
+            else
+            {
+                GL.Disable(EnableCap.Blend);
             }
 
             //Wheels
@@ -1289,8 +1292,7 @@ internal class ElmaRenderer : IDisposable
             const double lowArmHeight = 0.15;
             DrawPicture(_handPic, armendx, armendy, handx, handy, lowArmHeight, distance, isright, 0.05);
 
-            if (!opts.IsActive)
-                GL.Disable(EnableCap.Blend);
+            GL.Disable(EnableCap.Blend);
         }
         else
         {
@@ -1373,6 +1375,7 @@ internal class ElmaRenderer : IDisposable
         GL.ClearStencil(GroundStencil);
         GL.DepthFunc(DepthFunction.Gequal);
         GL.AlphaFunc(AlphaFunction.Gequal, 0.9f);
+        GL.BlendFunc(BlendingFactor.One, BlendingFactor.OneMinusDstColor);
         GL.Hint(HintTarget.PerspectiveCorrectionHint, HintMode.Fastest);
         GL.Hint(HintTarget.TextureCompressionHint, HintMode.Fastest);
         GL.Hint(HintTarget.PolygonSmoothHint, HintMode.Fastest);
