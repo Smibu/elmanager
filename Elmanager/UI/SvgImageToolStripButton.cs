@@ -11,6 +11,15 @@ namespace Elmanager.UI;
 internal class SvgImageToolStripButton : ToolStripButton
 {
     private byte[] _svgData;
+    private static readonly StreamSvgConverter SvgConverter = new(new WpfDrawingSettings
+    {
+        EnsureViewboxSize = true,
+        PixelWidth = 64,
+        PixelHeight = 64,
+        DpiScale = new DpiScale(100),
+        InteractiveMode = SvgInteractiveModes.None,
+        OptimizePath = false
+    });
 
     public byte[] SvgData
     {
@@ -18,19 +27,9 @@ internal class SvgImageToolStripButton : ToolStripButton
         set
         {
             _svgData = value;
-            var s = new WpfDrawingSettings
-            {
-                EnsureViewboxSize = true,
-                PixelWidth = 64,
-                PixelHeight = 64,
-                DpiScale = new DpiScale(100),
-                InteractiveMode = SvgInteractiveModes.None,
-                OptimizePath = false
-            };
-            var c = new StreamSvgConverter(s);
             using var dest = new MemoryStream();
             using var src = new MemoryStream(_svgData);
-            if (!c.Convert(src, dest))
+            if (!SvgConverter.Convert(src, dest))
             {
                 throw new ArgumentException("Invalid SVG data.");
             }
