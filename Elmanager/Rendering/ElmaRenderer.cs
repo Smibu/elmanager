@@ -576,6 +576,7 @@ internal class ElmaRenderer : IDisposable
         GL.Disable(EnableCap.StencilTest);
         GL.Disable(EnableCap.DepthTest);
         GL.Disable(EnableCap.AlphaTest);
+        GL.Disable(EnableCap.Blend);
         if (_settings.ShowGrid)
             DrawGrid(cam, sceneSettings.GridOffset, _settings.GridSize);
         if (_settings.ShowMaxDimensions)
