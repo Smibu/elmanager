@@ -103,15 +103,15 @@ internal partial class PlaySettingsForm : FormMod
             key = KeyboardUtils.IsKeyDown(Keys.RControlKey) ? Keys.RControlKey : Keys.LControlKey;
         }
 
+        if (_currButton is null)
+        {
+            return false;
+        }
+
         if (key == Keys.Escape)
         {
             UpdateGui();
             return true;
-        }
-
-        if (_currButton is null)
-        {
-            return false;
         }
 
         _currButton.Text = key.ToString();
