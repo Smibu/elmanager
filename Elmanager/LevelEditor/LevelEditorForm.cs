@@ -2874,20 +2874,20 @@ internal partial class LevelEditorForm : FormMod, IMessageFilter
             {
                 PlayController.UpdateInputKeys();
                 var key = (Keys)m.WParam;
-                if (m.Msg == NativeUtils.WmKeydown)
-                {
-                    switch (key)
-                    {
-                        case Keys.Enter:
-                            playButton_Click(null, null);
-                            break;
-                        case Keys.Escape:
-                            stopButton_Click(null, null);
-                            break;
-                    }
-                }
                 if (PlayController.Settings.DisableShortcuts)
                 {
+                    if (m.Msg == NativeUtils.WmKeydown)
+                    {
+                        switch (key)
+                        {
+                            case Keys.Enter:
+                                playButton_Click(null, null);
+                                break;
+                            case Keys.Escape:
+                                stopButton_Click(null, null);
+                                break;
+                        }
+                    }
                     return true;
                 }
             }
