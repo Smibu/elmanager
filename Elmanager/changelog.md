@@ -5,6 +5,9 @@
 * SLE: Physics FPS can be changed.
 * SLE: Shortcuts can be disabled when playing.
 * SLE: Bugfix: Tab key was not working well if used as turn key.
+* SLE: Bugfix: Raster image import result was being vertically mirrored.
+* SLE: Bugfix: Apples were not always faded when grabbed.
+* SLE: Bugfix: Grid color sometimes changed after grabbing the first apple.
 
 ## 24.10.2021
 * SLE: Updated ground vertex limit to match newest EOL version (5130 -> 20000).
