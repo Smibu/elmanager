@@ -1,6 +1,6 @@
 # Elmanager changelog
 
-## Upcoming
+## 11.2.2022
 * SLE: Added basic saveload support when playing.
 * SLE: Physics FPS can be changed.
 * SLE: Shortcuts can be disabled when playing.
