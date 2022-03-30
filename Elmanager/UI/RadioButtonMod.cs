@@ -5,12 +5,12 @@ namespace Elmanager.UI;
 
 internal class RadioButtonMod : RadioButton
 {
-    public KeyDownEventHandler KeyDownEvent;
+    public KeyDownEventHandler? KeyDownEvent;
 
     internal new event KeyDownEventHandler KeyDown
     {
         add => KeyDownEvent = (KeyDownEventHandler) Delegate.Combine(KeyDownEvent, value);
-        remove => KeyDownEvent = (KeyDownEventHandler) Delegate.Remove(KeyDownEvent, value);
+        remove => KeyDownEvent = (KeyDownEventHandler?) Delegate.Remove(KeyDownEvent, value);
     }
 
     protected override bool IsInputKey(Keys keyData)
@@ -47,5 +47,5 @@ internal class RadioButtonMod : RadioButton
         base.WndProc(ref m);
     }
 
-    internal delegate void KeyDownEventHandler(object sender, KeyEventArgs e);
+    internal delegate void KeyDownEventHandler(object? sender, KeyEventArgs e);
 }

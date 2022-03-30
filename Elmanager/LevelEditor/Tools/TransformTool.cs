@@ -14,12 +14,7 @@ namespace Elmanager.LevelEditor.Tools;
 
 internal class TransformTool : ToolBase, IEditorTool
 {
-    private Polygon _originalRectangle;
-    private List<LevObject> _originalTransformObjects;
-    private List<Polygon> _originalTransformPolygons;
-    private List<Picture> _originalTransformTextures;
-    private int _transformPolygonIndex;
-    private Polygon _transformRectangle;
+    private TransformState? _transformState;
 
     internal TransformTool(LevelEditorForm editor)
         : base(editor)
@@ -30,17 +25,17 @@ internal class TransformTool : ToolBase, IEditorTool
 
     private bool DisableScaling => Keyboard.IsKeyDown(Key.LeftCtrl);
 
-    private bool Transforming { get; set; }
+    private bool Transforming => _transformState?.TransformPolygonIndex is { };
 
     public void Activate()
     {
         List<LevObject> transformObjectReferences = new List<LevObject>();
         List<Polygon> transformPolygonReferences = new List<Polygon>();
-        List<Picture> transformTextureReferences = new List<Picture>();
+        List<GraphicElement> transformTextureReferences = new List<GraphicElement>();
         int numberOfMarked = 0;
-        _originalTransformPolygons = new List<Polygon>();
-        _originalTransformObjects = new List<LevObject>();
-        _originalTransformTextures = new List<Picture>();
+        var originalTransformPolygons = new List<Polygon>();
+        var originalTransformObjects = new List<LevObject>();
+        var originalTransformTextures = new List<GraphicElement>();
         double xMin = 0;
         double xMax = 0;
         double yMin = 0;
@@ -74,7 +69,7 @@ internal class TransformTool : ToolBase, IEditorTool
                 if (!foundMarked)
                 {
                     transformPolygonReferences.Add(x);
-                    _originalTransformPolygons.Add(new Polygon(x));
+                    originalTransformPolygons.Add(new Polygon(x));
                     foundMarked = true;
                 }
 
@@ -85,29 +80,30 @@ internal class TransformTool : ToolBase, IEditorTool
         foreach (LevObject x in Lev.Objects)
         {
             if (x.Position.Mark != VectorMark.Selected) continue;
-            _originalTransformObjects.Add(new LevObject(x.Position, x.Type, x.AppleType,
+            originalTransformObjects.Add(new LevObject(x.Position, x.Type, x.AppleType,
                 x.AnimationNumber));
             transformObjectReferences.Add(x);
             IncrementMarked(x.Position);
         }
 
-        foreach (Picture x in Lev.Pictures)
+        foreach (GraphicElement x in Lev.GraphicElements)
         {
             if (x.Position.Mark != VectorMark.Selected)
                 continue;
-            _originalTransformTextures.Add(x.Clone());
+            originalTransformTextures.Add(x with { });
             transformTextureReferences.Add(x);
             IncrementMarked(x.Position);
         }
 
         if (numberOfMarked > 1)
         {
-            _transformRectangle = new Polygon();
-            _transformRectangle.Add(new Vector(xMin, yMin));
-            _transformRectangle.Add(new Vector(xMax, yMin));
-            _transformRectangle.Add(new Vector(xMax, yMax));
-            _transformRectangle.Add(new Vector(xMin, yMax));
-            _originalRectangle = new Polygon(_transformRectangle);
+            var transformRectangle = new Polygon();
+            transformRectangle.Add(new Vector(xMin, yMin));
+            transformRectangle.Add(new Vector(xMax, yMin));
+            transformRectangle.Add(new Vector(xMax, yMax));
+            transformRectangle.Add(new Vector(xMin, yMax));
+            _transformState = new TransformState(originalTransformObjects, originalTransformPolygons,
+                originalTransformTextures, transformRectangle);
             foreach (Polygon x in transformPolygonReferences)
             {
                 Lev.Polygons.Remove(x);
@@ -120,10 +116,10 @@ internal class TransformTool : ToolBase, IEditorTool
                 Lev.Objects.Add(x);
             }
 
-            foreach (Picture x in transformTextureReferences)
+            foreach (GraphicElement x in transformTextureReferences)
             {
-                Lev.Pictures.Remove(x);
-                Lev.Pictures.Add(x);
+                Lev.GraphicElements.Remove(x);
+                Lev.GraphicElements.Add(x);
             }
 
             UpdateHelp();
@@ -134,15 +130,17 @@ internal class TransformTool : ToolBase, IEditorTool
 
     public void ExtraRendering()
     {
-        if (_transformRectangle == null)
+        if (_transformState is null)
         {
             return;
         }
-        Renderer.DrawPolygon(_transformRectangle, Color.Blue);
-        Renderer.DrawLine((_transformRectangle.Vertices[0] + _transformRectangle.Vertices[1]) / 2,
-            (_transformRectangle.Vertices[2] + _transformRectangle.Vertices[3]) / 2, Color.Blue);
-        Renderer.DrawLine((_transformRectangle.Vertices[1] + _transformRectangle.Vertices[2]) / 2,
-            (_transformRectangle.Vertices[3] + _transformRectangle.Vertices[0]) / 2, Color.Blue);
+
+        var transformRectangle = _transformState.TransformRectangle;
+        Renderer.DrawPolygon(transformRectangle, Color.Blue);
+        Renderer.DrawLine((transformRectangle.Vertices[0] + transformRectangle.Vertices[1]) / 2,
+            (transformRectangle.Vertices[2] + transformRectangle.Vertices[3]) / 2, Color.Blue);
+        Renderer.DrawLine((transformRectangle.Vertices[1] + transformRectangle.Vertices[2]) / 2,
+            (transformRectangle.Vertices[3] + transformRectangle.Vertices[0]) / 2, Color.Blue);
     }
 
     public List<Polygon> GetExtraPolygons()
@@ -170,50 +168,49 @@ internal class TransformTool : ToolBase, IEditorTool
     {
         if (mouseData.Button != MouseButtons.Left
             || Transforming
-            || _transformRectangle == null)
+            || _transformState is null)
         {
             return;
         }
 
+        var transformRectangle = _transformState.TransformRectangle;
         for (int i = 0; i < 4; i++)
         {
-            if ((_transformRectangle[i] - CurrentPos).Length <
+            if ((transformRectangle[i] - CurrentPos).Length <
                 Global.AppSettings.LevelEditor.CaptureRadius * ZoomCtrl.ZoomLevel)
             {
-                _transformPolygonIndex = i;
-                Transforming = true;
+                _transformState.TransformPolygonIndex = i;
                 break;
             }
 
-            if (((_transformRectangle[i] + _transformRectangle[i + 1]) / 2 - CurrentPos).Length <
+            if (((transformRectangle[i] + transformRectangle[i + 1]) / 2 - CurrentPos).Length <
                 Global.AppSettings.LevelEditor.CaptureRadius * ZoomCtrl.ZoomLevel)
             {
-                _transformPolygonIndex = i + 4;
-                Transforming = true;
+                _transformState.TransformPolygonIndex = i + 4;
                 break;
             }
         }
 
-        if (((_transformRectangle[0] + _transformRectangle[2]) / 2 - CurrentPos).Length <
+        if (((transformRectangle[0] + transformRectangle[2]) / 2 - CurrentPos).Length <
             Global.AppSettings.LevelEditor.CaptureRadius * ZoomCtrl.ZoomLevel)
         {
-            _transformPolygonIndex = 8;
-            Transforming = true;
+            _transformState.TransformPolygonIndex = 8;
         }
     }
 
     public void MouseMove(Vector p)
     {
         CurrentPos = p;
-        if (!Transforming) return;
-        Vector center = (_originalRectangle.Vertices[0] + _originalRectangle.Vertices[2]) / 2;
+        if (_transformState?.TransformPolygonIndex is not { } pi) return;
+        var originalRectangle = _transformState.OriginalRectangle;
+        Vector center = (originalRectangle.Vertices[0] + originalRectangle.Vertices[2]) / 2;
         Matrix transformMatrix = Matrix.Identity;
         transformMatrix.Translate(-center.X, -center.Y);
         Vector z;
         double scaleFactor;
-        if (_transformPolygonIndex < 4)
+        if (pi < 4)
         {
-            z = _originalRectangle.Vertices[_transformPolygonIndex];
+            z = originalRectangle.Vertices[pi];
             if (!DisableScaling)
             {
                 scaleFactor = (p - center).Length / (z - center).Length;
@@ -223,17 +220,17 @@ internal class TransformTool : ToolBase, IEditorTool
             if (!DisableRotation)
                 transformMatrix.Rotate(-(p - center).AngleBetween(z - center));
         }
-        else if (_transformPolygonIndex != 8)
+        else if (_transformState.TransformPolygonIndex != 8)
         {
-            z = (_originalRectangle[_transformPolygonIndex - 4] +
-                 _originalRectangle[_transformPolygonIndex - 3]) / 2;
+            z = (originalRectangle[pi - 4] +
+                 originalRectangle[pi - 3]) / 2;
             double rotated =
-                (_originalRectangle.Vertices[1] - _originalRectangle.Vertices[0]).Angle;
+                (originalRectangle.Vertices[1] - originalRectangle.Vertices[0]).Angle;
             if (!DisableScaling)
             {
                 scaleFactor = (p - center).Length / (z - center).Length;
                 transformMatrix.Rotate(rotated);
-                if (_transformPolygonIndex % 2 == 0)
+                if (pi % 2 == 0)
                     transformMatrix.Scale(1, scaleFactor);
                 else
                     transformMatrix.Scale(scaleFactor, 1);
@@ -250,21 +247,21 @@ internal class TransformTool : ToolBase, IEditorTool
         }
 
         transformMatrix.Translate(center.X, center.Y);
-        _transformRectangle = _originalRectangle.ApplyTransformation(transformMatrix);
-        for (int i = 0; i < _originalTransformPolygons.Count; i++)
+        _transformState.TransformRectangle = originalRectangle.ApplyTransformation(transformMatrix);
+        for (int i = 0; i < _transformState.OriginalTransformPolygons.Count; i++)
         {
             Lev.Polygons[Lev.Polygons.Count - 1 - i] =
-                _originalTransformPolygons[i].ApplyTransformation(transformMatrix, true);
+                _transformState.OriginalTransformPolygons[i].ApplyTransformation(transformMatrix, true);
             Lev.Polygons[Lev.Polygons.Count - 1 - i].UpdateDecomposition();
         }
 
-        for (int i = 0; i < _originalTransformObjects.Count; i++)
+        for (int i = 0; i < _transformState.OriginalTransformObjects.Count; i++)
             Lev.Objects[Lev.Objects.Count - 1 - i].Position =
-                _originalTransformObjects[_originalTransformObjects.Count - 1 - i].Position * transformMatrix;
-        for (int i = 0; i < _originalTransformTextures.Count; i++)
+                _transformState.OriginalTransformObjects[_transformState.OriginalTransformObjects.Count - 1 - i].Position * transformMatrix;
+        for (int i = 0; i < _transformState.OriginalTransformTextures.Count; i++)
         {
-            Picture x = _originalTransformTextures[_originalTransformTextures.Count - 1 - i];
-            Lev.Pictures[Lev.Pictures.Count - 1 - i].Position =
+            GraphicElement x = _transformState.OriginalTransformTextures[_transformState.OriginalTransformTextures.Count - 1 - i];
+            Lev.GraphicElements[Lev.GraphicElements.Count - 1 - i].Position =
                 x.Position * transformMatrix;
         }
     }
@@ -285,20 +282,20 @@ internal class TransformTool : ToolBase, IEditorTool
 
     private void EndTransforming()
     {
-        if (!Transforming) return;
-        Transforming = false;
-        for (int i = 0; i < _originalTransformPolygons.Count; i++)
-            _originalTransformPolygons[i] = new Polygon(Lev.Polygons[Lev.Polygons.Count - 1 - i]);
-        for (int i = 0; i < _originalTransformObjects.Count; i++)
+        if (_transformState?.TransformPolygonIndex is null) return;
+        _transformState.TransformPolygonIndex = null;
+        for (int i = 0; i < _transformState.OriginalTransformPolygons.Count; i++)
+            _transformState.OriginalTransformPolygons[i] = new Polygon(Lev.Polygons[Lev.Polygons.Count - 1 - i]);
+        for (int i = 0; i < _transformState.OriginalTransformObjects.Count; i++)
         {
             LevObject x = Lev.Objects[Lev.Objects.Count - 1 - i];
-            _originalTransformObjects[_originalTransformObjects.Count - 1 - i] = new LevObject(
+            _transformState.OriginalTransformObjects[_transformState.OriginalTransformObjects.Count - 1 - i] = new LevObject(
                 x.Position, x.Type, x.AppleType, x.AnimationNumber);
         }
 
-        for (int i = 0; i < _originalTransformTextures.Count; i++)
-            _originalTransformTextures[i] = Lev.Pictures[Lev.Pictures.Count - 1 - i].Clone();
-        _originalRectangle = new Polygon(_transformRectangle);
+        for (int i = 0; i < _transformState.OriginalTransformTextures.Count; i++)
+            _transformState.OriginalTransformTextures[i] = Lev.GraphicElements[Lev.GraphicElements.Count - 1 - i] with { };
+        _transformState.OriginalRectangle = new Polygon(_transformState.TransformRectangle);
         LevEditor.SetModified(LevModification.Ground);
     }
 

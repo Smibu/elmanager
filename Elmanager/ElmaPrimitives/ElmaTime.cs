@@ -43,7 +43,7 @@ internal struct ElmaTime : IComparable
 
     public override string ToString() => _val.ToTimeString(2);
 
-    public int CompareTo(object obj) => _val.CompareTo(((ElmaTime)obj)._val);
+    public int CompareTo(object? obj) => obj is null ? 1 : _val.CompareTo(((ElmaTime)obj)._val);
 
     public static ElmaTime FromMilliSeconds(double stepM)
     {

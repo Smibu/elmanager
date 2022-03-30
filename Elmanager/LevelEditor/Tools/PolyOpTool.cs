@@ -17,14 +17,14 @@ namespace Elmanager.LevelEditor.Tools;
 internal class PolyOpTool : ToolBase, IEditorTool
 {
     private PolygonOperationType _currentOpType = PolygonOperationType.Union;
-    private Polygon _firstPolygon;
+    private Polygon? _firstPolygon;
 
     internal PolyOpTool(LevelEditorForm editor)
         : base(editor)
     {
     }
 
-    private bool FirstSelected { get; set; }
+    private bool FirstSelected => _firstPolygon is { };
 
     public void Activate()
     {
@@ -59,9 +59,9 @@ internal class PolyOpTool : ToolBase, IEditorTool
 
     public void InActivate()
     {
-        if (!FirstSelected) return;
-        FirstSelected = false;
+        if (_firstPolygon is null) return;
         _firstPolygon.Mark = PolygonMark.None;
+        _firstPolygon = null;
     }
 
     public void KeyDown(KeyEventArgs key)
@@ -88,22 +88,21 @@ internal class PolyOpTool : ToolBase, IEditorTool
         switch (mouseData.Button)
         {
             case MouseButtons.Left:
-                int nearestVertexIndex = GetNearestVertexIndex(CurrentPos);
-                if (FirstSelected)
+                var info = GetNearestVertexInfo(CurrentPos);
+                if (_firstPolygon is { })
                 {
-                    if (nearestVertexIndex >= -1)
+                    if (info is { } v)
                     {
-                        if (!NearestPolygon.Equals(_firstPolygon))
+                        if (!v.Polygon.Equals(_firstPolygon))
                         {
                             MarkAllAs(VectorMark.None);
-                            FirstSelected = false;
                             try
                             {
                                 Lev.Polygons.AddRange(
-                                    NearestPolygon.PolygonOperationWith(_firstPolygon, _currentOpType));
+                                    v.Polygon.PolygonOperationWith(_firstPolygon, _currentOpType));
                                 Lev.Polygons.RemoveAll(p => p.Vertices.Count < 3);
                                 Lev.Polygons.Remove(_firstPolygon);
-                                Lev.Polygons.Remove(NearestPolygon);
+                                Lev.Polygons.Remove(v.Polygon);
                                 LevEditor.SetModified(LevModification.Ground);
                             }
                             catch (PolygonException e)
@@ -111,6 +110,7 @@ internal class PolyOpTool : ToolBase, IEditorTool
                                 UiUtils.ShowError(e.Message);
                             }
 
+                            _firstPolygon = null;
                             ResetPolygonMarks();
                             UpdateHelp();
                         }
@@ -118,10 +118,9 @@ internal class PolyOpTool : ToolBase, IEditorTool
                 }
                 else
                 {
-                    if (nearestVertexIndex >= -1)
+                    if (info is { } v)
                     {
-                        FirstSelected = true;
-                        _firstPolygon = NearestPolygon;
+                        _firstPolygon = v.Polygon;
                         _firstPolygon.Mark = PolygonMark.Selected;
                         UpdateHelp();
                     }
@@ -129,9 +128,9 @@ internal class PolyOpTool : ToolBase, IEditorTool
 
                 break;
             case MouseButtons.Right:
-                if (FirstSelected)
+                if (_firstPolygon is { })
                 {
-                    FirstSelected = false;
+                    _firstPolygon = null;
                     ResetPolygonMarks();
                     UpdateHelp();
                 }
@@ -144,12 +143,11 @@ internal class PolyOpTool : ToolBase, IEditorTool
     {
         CurrentPos = p;
         ResetHighlight();
-        int nearestVertex = GetNearestVertexIndex(p);
-        if (nearestVertex >= -1)
+        if (GetNearestVertexInfo(p) is { } v)
         {
             ChangeCursorToHand();
-            if (NearestPolygon.Mark != PolygonMark.Selected)
-                NearestPolygon.Mark = PolygonMark.Highlight;
+            if (v.Polygon.Mark != PolygonMark.Selected)
+                v.Polygon.Mark = PolygonMark.Highlight;
         }
         else
             ChangeToDefaultCursorIfHand();

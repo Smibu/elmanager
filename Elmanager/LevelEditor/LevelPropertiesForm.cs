@@ -1,4 +1,5 @@
 ﻿using System;
+using Elmanager.IO;
 using Elmanager.Lev;
 using Elmanager.Utilities;
 
@@ -8,12 +9,12 @@ internal sealed partial class LevelPropertiesForm
 {
     private readonly Level _level;
 
-    internal LevelPropertiesForm(Level lev)
+    internal LevelPropertiesForm(Level lev, ElmaFile? file)
     {
         InitializeComponent();
         _level = lev;
-        if (_level.Path != null)
-            Text = "Level properties - " + _level.Path;
+        if (file is not null)
+            Text = "Level properties - " + file.Path;
         else
             Text = "Level properties - New";
         PropertiesLabel.Text = "Polygons: " + _level.PolygonCount + "\r\n" +

@@ -10,6 +10,7 @@ using System.Windows.Input;
 using BrightIdeasSoftware;
 using Elmanager.Application;
 using Elmanager.Geometry;
+using Elmanager.IO;
 using Elmanager.Lev;
 using Elmanager.Rec;
 using Elmanager.Rendering;
@@ -32,7 +33,7 @@ internal partial class ReplayViewerForm : FormMod
     private Vector _moveStartPosition;
     private FormWindowState _windowState;
     private bool _zooming;
-    private ReplayController _replayController;
+    private ReplayController _replayController = null!;
     private readonly TypedObjectListView<PlayListObject> _typedPlayList;
     private TaskCompletionSource _tcs = new();
 
@@ -53,20 +54,20 @@ internal partial class ReplayViewerForm : FormMod
         await _tcs.Task;
     }
 
-    internal void SetReplays(Replay replay)
+    internal void SetReplays(ElmaFileObject<Replay> replay)
     {
-        var oneReplay = new List<Replay> {replay};
+        var oneReplay = new List<ElmaFileObject<Replay>> {replay};
         SetReplays(oneReplay);
     }
 
-    internal void SetReplays(List<Replay> replays)
+    internal void SetReplays(List<ElmaFileObject<Replay>> replays)
     {
         _replayController.SetReplays(replays);
         timeBar.Value = 0;
         UpdateControlColor(DrivingLinePanel, _replayController.PlayListReplays[0].DrivingLineColor);
         PlayList.SetObjects(_replayController.PlayListReplays);
-        Text = Level.GetPossiblyInternal(replays[0].LevelFilename) + " - Replay viewer";
-        if (replays[0].WrongLevelVersion)
+        Text = Level.GetPossiblyInternal(replays[0].Obj.LevelFilename) + " - Replay viewer";
+        if (replays[0].Obj.WrongLevelVersion)
             Text += " (wrong version)";
         if (!Global.AppSettings.ReplayViewer.DontSelectPlayersByDefault)
             PlayList.Items[0].Selected = true;
@@ -134,7 +135,7 @@ internal partial class ReplayViewerForm : FormMod
         UpdateLabels();
     }
 
-    private void FullScreen(object sender, EventArgs e)
+    private void FullScreen(object? sender, EventArgs? e)
     {
         Resize -= ViewerResized;
         _windowState = WindowState;
@@ -227,7 +228,7 @@ internal partial class ReplayViewerForm : FormMod
         return base.ProcessCmdKey(ref m, keyData);
     }
 
-    private void KeyHandler(object sender, KeyEventArgs e)
+    private void KeyHandler(object? sender, KeyEventArgs e)
     {
         e.SuppressKeyPress = true;
         switch (e.KeyCode)
@@ -339,7 +340,7 @@ internal partial class ReplayViewerForm : FormMod
         _replayController.UpdateCameraAndDrawSceneIfNotPlaying();
     }
 
-    private void RenderingOptionsChanged(object sender = null, EventArgs e = null)
+    private void RenderingOptionsChanged(object? sender = null, EventArgs? e = null)
     {
         SaveViewerSettings();
         var speed = Math.Pow(2, playbackSpeedBar.Value);
@@ -475,7 +476,7 @@ internal partial class ReplayViewerForm : FormMod
         // Zoom(delta > 0, 1 - Global.AppSettings.ReplayViewer.MouseWheelStep / 100.0);
     }
 
-    private void UpdateEventsLists(object sender = null, EventArgs e = null)
+    private void UpdateEventsLists(object? sender = null, EventArgs? e = null)
     {
         var i = GetSelectedIndex();
         if (i >= 0)
@@ -559,7 +560,7 @@ internal partial class ReplayViewerForm : FormMod
         _draggingScreen = false;
     }
 
-    private async void ViewerResized(object sender = null, EventArgs e = null)
+    private async void ViewerResized(object? sender = null, EventArgs? e = null)
     {
         if (sender != null)
         {

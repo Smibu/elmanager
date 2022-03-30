@@ -61,7 +61,7 @@ internal partial class SvgImportOptionsForm : FormMod
         Close();
     }
 
-    private void UseOutlinedGeometryBox_CheckedChanged(object sender = null, EventArgs e = null)
+    private void UseOutlinedGeometryBox_CheckedChanged(object? sender = null, EventArgs? e = null)
     {
         fillRuleGroupBox.Visible = useOutlinedGeometryBox.Checked;
     }

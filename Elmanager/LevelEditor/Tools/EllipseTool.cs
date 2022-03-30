@@ -13,7 +13,7 @@ namespace Elmanager.LevelEditor.Tools;
 
 internal class EllipseTool : ToolBase, IEditorTool
 {
-    private Polygon _ellipse;
+    private Polygon? _ellipse;
     private Vector? _ellipseCenter;
     private int _ellipseSteps = 10;
 
@@ -24,7 +24,7 @@ internal class EllipseTool : ToolBase, IEditorTool
 
     public override bool Busy => CreatingEllipse;
 
-    private bool CreatingEllipse => _ellipseCenter != null;
+    private bool CreatingEllipse => _ellipseCenter is { };
 
     public void Activate()
     {
@@ -34,7 +34,7 @@ internal class EllipseTool : ToolBase, IEditorTool
 
     public void ExtraRendering()
     {
-        if (CreatingEllipse)
+        if (_ellipse is { })
         {
             if (Global.AppSettings.LevelEditor.RenderingSettings.ShowGroundEdges)
             {
@@ -46,7 +46,7 @@ internal class EllipseTool : ToolBase, IEditorTool
     public List<Polygon> GetExtraPolygons()
     {
         var polys = new List<Polygon>();
-        if (CreatingEllipse)
+        if (_ellipse is { })
         {
             polys.Add(_ellipse);
         }
@@ -59,6 +59,7 @@ internal class EllipseTool : ToolBase, IEditorTool
         Global.AppSettings.LevelEditor.EllipseSteps = _ellipseSteps;
         if (!CreatingEllipse) return;
         _ellipseCenter = null;
+        _ellipse = null;
     }
 
     public void KeyDown(KeyEventArgs key)
@@ -88,10 +89,10 @@ internal class EllipseTool : ToolBase, IEditorTool
         switch (mouseData.Button)
         {
             case MouseButtons.Left:
-                if (CreatingEllipse)
+                if (_ellipse is { })
                 {
-                    _ellipseCenter = null;
                     Lev.Polygons.Add(_ellipse);
+                    InActivate();
                     LevEditor.SetModified(LevModification.Ground);
                 }
                 else
@@ -104,7 +105,7 @@ internal class EllipseTool : ToolBase, IEditorTool
             case MouseButtons.Right:
                 if (CreatingEllipse)
                 {
-                    _ellipseCenter = null;
+                    InActivate();
                 }
 
                 break;

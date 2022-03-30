@@ -50,8 +50,8 @@ internal class ElmaRenderer : IDisposable
     private const double ZNear = -1;
     private const int LinePattern = 0b0101010101010101;
 
-    internal Lgr.Lgr CurrentLgr;
-    internal Level Lev;
+    internal Lgr.Lgr? CurrentLgr;
+    internal Level Lev = new();
 
     private readonly Dictionary<int, int> _applePics = new();
     private int _armPic;
@@ -63,12 +63,12 @@ internal class ElmaRenderer : IDisposable
     private int _bodyPic;
     private bool _disposed;
 
-    public List<DrawableImage> DrawableImages { get; set; } = new();
+    public Dictionary<string, DrawableImage> DrawableImages { get; set; } = new();
 
     private int _flowerPic;
     private IGraphicsContext _gfxContext;
-    private DrawableImage _groundTexture;
-    private DrawableImage _skyTexture;
+    private DrawableImage? _groundTexture;
+    private DrawableImage? _skyTexture;
     private int _handPic;
     private int _headPic;
     private int _killerPic;
@@ -76,7 +76,7 @@ internal class ElmaRenderer : IDisposable
     private int _legPic;
     private bool _openGlInitialized;
     private RenderingSettings _settings = new();
-    private readonly Suspension[] _suspensions = new Suspension[2];
+    private readonly Suspension?[] _suspensions = new Suspension[2];
     private int _thighPic;
     private int _wheelPic;
     private int _frameBuffer;
@@ -86,7 +86,17 @@ internal class ElmaRenderer : IDisposable
 
     internal ElmaRenderer(GLControl renderingTarget, RenderingSettings settings)
     {
-        BaseInit(renderingTarget, settings);
+        _bikePicTranslateXFacingLeft = BikePicXFacingLeft * Math.Cos(BikePicRotationConst * MathUtils.DegToRad) +
+                                       BikePicYFacingLeft * Math.Sin(BikePicRotationConst * MathUtils.DegToRad);
+        _bikePicTranslateYFacingLeft = BikePicXFacingLeft * Math.Sin(BikePicRotationConst * MathUtils.DegToRad) +
+                                       BikePicYFacingLeft * Math.Cos(BikePicRotationConst * MathUtils.DegToRad);
+        _bikePicTranslateXFacingRight = BikePicXFacingRight * Math.Cos(-BikePicRotationConst * MathUtils.DegToRad) +
+                                        BikePicYFacingRight * Math.Sin(-BikePicRotationConst * MathUtils.DegToRad);
+        _bikePicTranslateYFacingRight = BikePicXFacingRight * Math.Sin(-BikePicRotationConst * MathUtils.DegToRad) +
+                                        BikePicYFacingRight * Math.Cos(-BikePicRotationConst * MathUtils.DegToRad);
+        _gfxContext = renderingTarget.Context;
+        InitializeOpengl(disableFrameBuffer: settings.DisableFrameBuffer);
+        UpdateSettings(settings);
     }
 
     internal bool LgrGraphicsLoaded => _lgrGraphicsLoaded;
@@ -383,7 +393,7 @@ internal class ElmaRenderer : IDisposable
             const double depth = ZFar - (ZFar - ZNear) * GroundDepth;
             if (_settings.GroundTextureEnabled && LgrGraphicsLoaded)
             {
-                GL.BindTexture(TextureTarget.Texture2D, _groundTexture.TextureIdentifier);
+                GL.BindTexture(TextureTarget.Texture2D, _groundTexture!.TextureId);
                 var gtW = _groundTexture.Width;
                 var gtH = _groundTexture.Height;
                 var zl = cam.ZoomLevel;
@@ -422,7 +432,7 @@ internal class ElmaRenderer : IDisposable
         if (_settings.SkyTextureEnabled && LgrGraphicsLoaded)
         {
             const double depth = ZFar - (ZFar - ZNear) * SkyDepth;
-            GL.BindTexture(TextureTarget.Texture2D, _skyTexture.TextureIdentifier);
+            GL.BindTexture(TextureTarget.Texture2D, _skyTexture!.TextureId);
             if (_settings.ZoomTextures)
             {
                 GL.Begin(PrimitiveType.Quads);
@@ -464,11 +474,11 @@ internal class ElmaRenderer : IDisposable
         {
             GL.DepthFunc(DepthFunction.Gequal);
             GL.Enable(EnableCap.ScissorTest);
-            for (var i = Lev.Pictures.Count - 1; i >= 0; --i)
+            for (var i = Lev.GraphicElements.Count - 1; i >= 0; --i)
             {
-                var picture = Lev.Pictures[i];
+                var picture = Lev.GraphicElements[i];
                 DoPictureScissor(picture, cam);
-                if (picture.IsPicture && _settings.ShowPictures)
+                if (picture is GraphicElement.Picture p && _settings.ShowPictures)
                 {
                     GL.StencilOp(StencilOp.Keep, StencilOp.Keep, StencilOp.Keep);
                     switch (picture.Clipping)
@@ -484,15 +494,15 @@ internal class ElmaRenderer : IDisposable
                             break;
                     }
 
-                    DrawPicture(picture.Id, picture.Position.X, picture.Position.Y, picture.Width, -picture.Height,
+                    DrawPicture(p.PictureInfo.TextureId, picture.Position.X, picture.Position.Y, picture.Width, -picture.Height,
                         (picture.Distance / 1000.0 * (ZFar - ZNear)) + ZNear);
                 }
             }
 
-            foreach (var picture in Lev.Pictures)
+            foreach (var picture in Lev.GraphicElements)
             {
                 DoPictureScissor(picture, cam);
-                if (!picture.IsPicture && _settings.ShowTextures)
+                if (picture is GraphicElement.Texture t && _settings.ShowTextures)
                 {
                     GL.StencilOp(StencilOp.Keep, StencilOp.Keep, StencilOp.Invert);
                     switch (picture.Clipping)
@@ -509,10 +519,10 @@ internal class ElmaRenderer : IDisposable
                     }
 
                     var depth = (picture.Distance / 1000.0 * (ZFar - ZNear)) + ZNear;
-                    DrawPicture(picture.Id, picture.Position.X, picture.Position.Y, picture.Width, -picture.Height,
+                    DrawPicture(t.MaskInfo.TextureId, picture.Position.X, picture.Position.Y, picture.Width, -picture.Height,
                         depth + 0.001);
 
-                    GL.BindTexture(TextureTarget.Texture2D, picture.TextureId);
+                    GL.BindTexture(TextureTarget.Texture2D, t.TextureInfo.TextureId);
                     GL.StencilFunc(StencilFunction.Lequal, 5, StencilMask);
                     var zl = cam.ZoomLevel;
                     var c = TextureZoomConst;
@@ -526,11 +536,11 @@ internal class ElmaRenderer : IDisposable
                     var ymax = -(midY + TextureVertexConst);
                     GL.TexCoord2(0, 0);
                     GL.Vertex3(midX - TextureVertexConst, ymin, depth);
-                    GL.TexCoord2(c / picture.TextureWidth / zl, 0);
+                    GL.TexCoord2(c / t.TextureInfo.Width / zl, 0);
                     GL.Vertex3(midX + TextureVertexConst, ymin, depth);
-                    GL.TexCoord2(c / picture.TextureWidth / zl, c / picture.TextureWidth * picture.AspectRatio / zl);
+                    GL.TexCoord2(c / t.TextureInfo.Width / zl, c / t.TextureInfo.Width * t.AspectRatio / zl);
                     GL.Vertex3(midX + TextureVertexConst, ymax, depth);
-                    GL.TexCoord2(0, c / picture.TextureWidth * picture.AspectRatio / zl);
+                    GL.TexCoord2(0, c / t.TextureInfo.Width * t.AspectRatio / zl);
                     GL.Vertex3(midX - TextureVertexConst, ymax, depth);
                     GL.End();
                 }
@@ -625,9 +635,9 @@ internal class ElmaRenderer : IDisposable
         }
 
         GL.Color4(_settings.TextureFrameColor);
-        foreach (var z in Lev.Pictures)
+        foreach (var z in Lev.GraphicElements)
         {
-            if (z.IsPicture)
+            if (z is GraphicElement.Picture)
             {
                 if (!_settings.ShowPictureFrames) continue;
                 GL.Color4(_settings.PictureFrameColor);
@@ -678,12 +688,12 @@ internal class ElmaRenderer : IDisposable
         return Lev.Objects.Select((t, i) => (t, i)).Where(t => !sceneSettings.HiddenObjectIndices.Contains(t.i));
     }
 
-    private void DoPictureScissor(Picture picture, ElmaCamera cam)
+    private void DoPictureScissor(GraphicElement graphicElement, ElmaCamera cam)
     {
-        var x = (int) ((picture.Position.X - cam.XMin) / (cam.XMax - cam.XMin) * cam.ViewPortWidth);
-        var y = (int) (((picture.Position.Y - picture.Height) - cam.YMin) / (cam.YMax - cam.YMin) * cam.ViewPortHeight);
-        var w = (int) ((picture.Position.X + picture.Width - cam.XMin) / (cam.XMax - cam.XMin) * cam.ViewPortWidth) - x;
-        var h = (int) ((picture.Position.Y - cam.YMin) / (cam.YMax - cam.YMin) * cam.ViewPortHeight) - y;
+        var x = (int) ((graphicElement.Position.X - cam.XMin) / (cam.XMax - cam.XMin) * cam.ViewPortWidth);
+        var y = (int) (((graphicElement.Position.Y - graphicElement.Height) - cam.YMin) / (cam.YMax - cam.YMin) * cam.ViewPortHeight);
+        var w = (int) ((graphicElement.Position.X + graphicElement.Width - cam.XMin) / (cam.XMax - cam.XMin) * cam.ViewPortWidth) - x;
+        var h = (int) ((graphicElement.Position.Y - cam.YMin) / (cam.YMax - cam.YMin) * cam.ViewPortHeight) - y;
         GL.Scissor(x, y, w, h);
     }
 
@@ -741,10 +751,7 @@ internal class ElmaRenderer : IDisposable
         GL.Vertex3(center.X - side / 2, center.Y - side * factor, 0);
     }
 
-    internal DrawableImage DrawableImageFromName(string name)
-    {
-        return DrawableImages.FirstOrDefault(x => x.Name == name);
-    }
+    internal DrawableImage DrawableImageFromName(LgrImage img) => DrawableImages[img.Name];
 
     internal void InitializeLevel(Level level)
     {
@@ -772,7 +779,7 @@ internal class ElmaRenderer : IDisposable
     {
         _settings.DefaultGroundAndSky = useDefault;
         if (!LgrGraphicsLoaded) return;
-        foreach (var x in DrawableImages)
+        foreach (var x in DrawableImages.Values)
         {
             if (useDefault)
             {
@@ -792,7 +799,7 @@ internal class ElmaRenderer : IDisposable
 
         if (_groundTexture == null)
         {
-            foreach (var x in DrawableImages)
+            foreach (var x in DrawableImages.Values)
             {
                 if (x.Type == ImageType.Texture && !x.Equals(_skyTexture))
                 {
@@ -804,7 +811,7 @@ internal class ElmaRenderer : IDisposable
 
         if (_skyTexture == null)
         {
-            foreach (var x in DrawableImages)
+            foreach (var x in DrawableImages.Values)
             {
                 if (x.Type == ImageType.Texture && !x.Equals(_groundTexture))
                 {
@@ -823,11 +830,8 @@ internal class ElmaRenderer : IDisposable
             if (File.Exists(newSettings.LgrFile))
             {
                 LoadLgrGraphics(newSettings.LgrFile);
-                if (Lev != null)
-                {
-                    Lev.UpdateImages(DrawableImages);
-                    UpdateGroundAndSky(newSettings.DefaultGroundAndSky);
-                }
+                Lev.UpdateImages(DrawableImages);
+                UpdateGroundAndSky(newSettings.DefaultGroundAndSky);
             }
         }
         else if (_settings.DefaultGroundAndSky != newSettings.DefaultGroundAndSky)
@@ -964,20 +968,6 @@ internal class ElmaRenderer : IDisposable
         return textureIdentifier;
     }
 
-    private void BaseInit(GLControl renderingTarget, RenderingSettings settings)
-    {
-        _bikePicTranslateXFacingLeft = BikePicXFacingLeft * Math.Cos(BikePicRotationConst * MathUtils.DegToRad) +
-                                       BikePicYFacingLeft * Math.Sin(BikePicRotationConst * MathUtils.DegToRad);
-        _bikePicTranslateYFacingLeft = BikePicXFacingLeft * Math.Sin(BikePicRotationConst * MathUtils.DegToRad) +
-                                       BikePicYFacingLeft * Math.Cos(BikePicRotationConst * MathUtils.DegToRad);
-        _bikePicTranslateXFacingRight = BikePicXFacingRight * Math.Cos(-BikePicRotationConst * MathUtils.DegToRad) +
-                                        BikePicYFacingRight * Math.Sin(-BikePicRotationConst * MathUtils.DegToRad);
-        _bikePicTranslateYFacingRight = BikePicXFacingRight * Math.Sin(-BikePicRotationConst * MathUtils.DegToRad) +
-                                        BikePicYFacingRight * Math.Cos(-BikePicRotationConst * MathUtils.DegToRad);
-        InitializeOpengl(disableFrameBuffer: settings.DisableFrameBuffer, renderingTarget.Context);
-        UpdateSettings(settings);
-    }
-
     private void DeleteTextures()
     {
         if (_openGlInitialized)
@@ -998,8 +988,8 @@ internal class ElmaRenderer : IDisposable
             GL.DeleteTexture(_handPic);
             GL.DeleteTexture(_legPic);
             GL.DeleteTexture(_thighPic);
-            foreach (var x in DrawableImages)
-                GL.DeleteTexture(x.TextureIdentifier);
+            foreach (var x in DrawableImages.Values)
+                GL.DeleteTexture(x.TextureId);
             foreach (var x in _suspensions)
                 if (x != null)
                     GL.DeleteTexture(x.TextureIdentifier);
@@ -1132,10 +1122,11 @@ internal class ElmaRenderer : IDisposable
                 GL.PushMatrix();
                 if (x == 0)
                     x = -1;
-                var yPos = player.GlobalBodyY + _suspensions[i].Y * rotationCos - _suspensions[i].X * x * rotationSin;
-                var xPos = player.GlobalBodyX - _suspensions[i].X * x * rotationCos - _suspensions[i].Y * rotationSin;
+                var suspension = _suspensions[i]!;
+                var yPos = player.GlobalBodyY + suspension.Y * rotationCos - suspension.X * x * rotationSin;
+                var xPos = player.GlobalBodyX - suspension.X * x * rotationCos - suspension.Y * rotationSin;
                 if (x == -1)
-                    x = _suspensions[i].WheelNumber;
+                    x = suspension.WheelNumber;
                 else
                     x -= i;
                 double wheelXpos;
@@ -1157,16 +1148,16 @@ internal class ElmaRenderer : IDisposable
                 var length = Math.Sqrt(xDiff * xDiff + yDiff * yDiff);
                 GL.Translate(wheelXpos, wheelYpos, 0);
                 GL.Rotate(angle, 0, 0, 1);
-                GL.BindTexture(TextureTarget.Texture2D, _suspensions[i].TextureIdentifier);
+                GL.BindTexture(TextureTarget.Texture2D, suspension.TextureIdentifier);
                 GL.Begin(PrimitiveType.Quads);
                 GL.TexCoord2(0, 0);
-                GL.Vertex3(-_suspensions[i].OffsetX, -_suspensions[i].Height / 2, distance);
+                GL.Vertex3(-suspension.OffsetX, -suspension.Height / 2, distance);
                 GL.TexCoord2(1, 0);
-                GL.Vertex3(length + _suspensions[i].Height / 2, -_suspensions[i].Height / 2, distance);
+                GL.Vertex3(length + suspension.Height / 2, -suspension.Height / 2, distance);
                 GL.TexCoord2(1, 1);
-                GL.Vertex3(length + _suspensions[i].Height / 2, _suspensions[i].Height / 2, distance);
+                GL.Vertex3(length + suspension.Height / 2, suspension.Height / 2, distance);
                 GL.TexCoord2(0, 1);
-                GL.Vertex3(-_suspensions[i].OffsetX, _suspensions[i].Height / 2, distance);
+                GL.Vertex3(-suspension.OffsetX, suspension.Height / 2, distance);
                 GL.End();
                 GL.PopMatrix();
             }
@@ -1366,9 +1357,8 @@ internal class ElmaRenderer : IDisposable
         GL.PopMatrix();
     }
 
-    private void InitializeOpengl(bool disableFrameBuffer, IGraphicsContext ctx)
+    private void InitializeOpengl(bool disableFrameBuffer)
     {
-        _gfxContext = ctx;
         _gfxContext.MakeCurrent();
         GL.MatrixMode(MatrixMode.Projection);
         GL.ClearDepth(GroundDepth);
@@ -1422,7 +1412,7 @@ internal class ElmaRenderer : IDisposable
     private void LoadLgrGraphics(string lgr)
     {
         DeleteTextures();
-        DrawableImages = new List<DrawableImage>();
+        DrawableImages = new Dictionary<string, DrawableImage>();
         try
         {
             CurrentLgr = new Lgr.Lgr(lgr);
@@ -1434,7 +1424,7 @@ internal class ElmaRenderer : IDisposable
         }
 
         var firstFrameRect = new Rectangle(0, 0, 40, 40);
-        foreach (var x in CurrentLgr.LgrImages)
+        foreach (var x in CurrentLgr.LgrImages.Values)
         {
             var isSpecial = true;
             switch (x.Name)
@@ -1498,9 +1488,8 @@ internal class ElmaRenderer : IDisposable
 
             if (!isSpecial)
             {
-                DrawableImages.Add(new DrawableImage(LoadTexture(x), x.Bmp.Width * PictureFactor,
-                    x.Bmp.Height * PictureFactor, x.ClippingType, x.Distance,
-                    x.Name, x.Type));
+                DrawableImages[x.Name] = new DrawableImage(LoadTexture(x), x.Bmp.Width * PictureFactor,
+                    x.Bmp.Height * PictureFactor, x.Meta);
             }
         }
 

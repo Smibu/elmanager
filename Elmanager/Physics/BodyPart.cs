@@ -2,6 +2,8 @@
 
 namespace Elmanager.Physics;
 
+#pragma warning disable
+
 internal class BodyPart
 {
     public double Rotation;

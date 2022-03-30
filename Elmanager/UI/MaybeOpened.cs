@@ -4,9 +4,9 @@ namespace Elmanager.UI;
 
 internal class MaybeOpened<T> where T : Form, new()
 {
-    private T _instance;
+    private T? _instance;
 
-    public T ExistingInstance
+    public T? ExistingInstance
     {
         get
         {

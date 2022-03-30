@@ -12,18 +12,14 @@ namespace Elmanager.LevelEditor.Tools;
 
 internal class VertexTool : ToolBase, IEditorTool
 {
-    private Polygon _currentPolygon;
-    private int _nearestSegmentIndex = -1;
-    private Vector _rectangleStart;
+    private Polygon? _currentPolygon;
+    private NearestVertexInfo.EdgeInfo? _nearestVertexInfo;
+    private Vector? _rectangleStart;
 
     internal VertexTool(LevelEditorForm editor)
         : base(editor)
     {
     }
-
-    private bool CreatingVertex { get; set; }
-
-    private bool CreatingRectangle { get; set; }
 
     public void Activate()
     {
@@ -34,7 +30,7 @@ internal class VertexTool : ToolBase, IEditorTool
     {
         LevEditor.InfoLabel.Text =
             "Left mouse button: create vertex. Click near an edge of a polygon to add vertices to it.";
-        if (CreatingVertex)
+        if (_currentPolygon is { })
         {
             var lngth = (_currentPolygon.Vertices[_currentPolygon.Count - 1] -
                          _currentPolygon.Vertices[_currentPolygon.Count - 2]).Length;
@@ -44,18 +40,18 @@ internal class VertexTool : ToolBase, IEditorTool
 
     public void ExtraRendering()
     {
-        if (CreatingVertex)
+        if (_currentPolygon is { })
             Renderer.DrawLine(_currentPolygon.GetLastVertex(), _currentPolygon.Vertices[0], Color.Red);
-        else if (CreatingRectangle)
+        else if (_rectangleStart is {} r)
         {
             AdjustForGrid(ref CurrentPos);
-            Renderer.DrawRectangle(_rectangleStart, CurrentPos, Color.Blue);
+            Renderer.DrawRectangle(r, CurrentPos, Color.Blue);
         }
         else
         {
-            if (Global.AppSettings.LevelEditor.UseHighlight && _nearestSegmentIndex >= 0)
+            if (Global.AppSettings.LevelEditor.UseHighlight && _nearestVertexInfo is { } v)
             {
-                Renderer.DrawLine(NearestPolygon[_nearestSegmentIndex], NearestPolygon[_nearestSegmentIndex + 1],
+                Renderer.DrawLine(v.Polygon[v.StartIndex], v.Polygon[v.EndIndex],
                     Color.Yellow);
             }
         }
@@ -73,7 +69,7 @@ internal class VertexTool : ToolBase, IEditorTool
 
     public void KeyDown(KeyEventArgs key)
     {
-        if (key.KeyCode != Keys.Space || !CreatingVertex) return;
+        if (key.KeyCode != Keys.Space || _currentPolygon is null) return;
         _currentPolygon.RemoveLastVertex();
         _currentPolygon.ChangeOrientation();
         _currentPolygon.Add(CurrentPos);
@@ -85,33 +81,31 @@ internal class VertexTool : ToolBase, IEditorTool
         switch (mouseData.Button)
         {
             case MouseButtons.Left:
-                int nearestIndex = GetNearestVertexIndex(CurrentPos);
+                var nearestIndex = GetNearestSegmentInfo(CurrentPos);
                 AdjustForGrid(ref CurrentPos);
-                if (CreatingRectangle)
+                if (_rectangleStart is {} r)
                 {
-                    CreatingRectangle = false;
-                    var rect = Polygon.Rectangle(_rectangleStart, CurrentPos);
+                    var rect = Polygon.Rectangle(r, CurrentPos);
                     Lev.Polygons.Add(rect);
                     rect.UpdateDecomposition();
                     LevEditor.SetModified(LevModification.Ground);
+                    _rectangleStart = null;
                     return;
                 }
 
-                if (!CreatingVertex)
+                if (_currentPolygon is null)
                 {
                     if (Keyboard.IsKeyDown(Key.LeftShift))
                     {
-                        CreatingRectangle = true;
                         _rectangleStart = CurrentPos;
                     }
                     else
                     {
-                        CreatingVertex = true;
-                        if (nearestIndex >= -1)
+                        if (nearestIndex is { } v)
                         {
-                            _nearestSegmentIndex = NearestPolygon.GetNearestSegmentIndex(CurrentPos);
-                            _currentPolygon = NearestPolygon;
-                            _currentPolygon.SetBeginPoint(_nearestSegmentIndex + 1);
+                            _nearestVertexInfo = nearestIndex;
+                            _currentPolygon = v.Polygon;
+                            _currentPolygon.SetBeginPoint(nearestIndex.EndIndex);
                             _currentPolygon.Add(CurrentPos);
                             ChangeToDefaultCursorIfHand();
                         }
@@ -139,7 +133,7 @@ internal class VertexTool : ToolBase, IEditorTool
     public void MouseMove(Vector p)
     {
         CurrentPos = p;
-        if (CreatingVertex)
+        if (_currentPolygon is { })
         {
             AdjustForGrid(ref CurrentPos);
             _currentPolygon.Vertices[_currentPolygon.Count - 1] = CurrentPos;
@@ -147,19 +141,18 @@ internal class VertexTool : ToolBase, IEditorTool
                 _currentPolygon.UpdateDecomposition(false);
             UpdateHelp();
         }
-        else if (!CreatingRectangle)
+        else if (_rectangleStart is null)
         {
             ResetHighlight();
-            int nearestVertex = GetNearestVertexIndex(CurrentPos);
-            if (nearestVertex >= -1)
+            var nearestVertex = GetNearestSegmentInfo(CurrentPos);
+            _nearestVertexInfo = nearestVertex;
+            if (nearestVertex is { })
             {
-                _nearestSegmentIndex = NearestPolygon.GetNearestSegmentIndex(CurrentPos);
                 ChangeCursorToHand();
             }
             else
             {
                 ChangeToDefaultCursorIfHand();
-                _nearestSegmentIndex = -1;
             }
         }
     }
@@ -175,9 +168,8 @@ internal class VertexTool : ToolBase, IEditorTool
 
     private void FinishVertexCreation()
     {
-        if (CreatingVertex)
+        if (_currentPolygon is { })
         {
-            CreatingVertex = false;
             UpdateHelp();
             _currentPolygon.RemoveLastVertex();
             if (_currentPolygon.Count > 2)
@@ -187,12 +179,14 @@ internal class VertexTool : ToolBase, IEditorTool
             }
             else
                 Lev.Polygons.Remove(_currentPolygon);
+
+            _currentPolygon = null;
         }
-        else if (CreatingRectangle)
+        else if (_rectangleStart is {})
         {
-            CreatingRectangle = false;
+            _rectangleStart = null;
         }
     }
 
-    public override bool Busy => CreatingVertex || CreatingRectangle;
+    public override bool Busy => _currentPolygon is {} || _rectangleStart is {};
 }

@@ -1,46 +1,21 @@
 ﻿using System.IO;
 using BrightIdeasSoftware;
-using Elmanager.Application;
 using Elmanager.IO;
 using Microsoft.VisualBasic.FileIO;
 
 namespace Elmanager.UI;
 
-internal class Manager<T> where T : ElmaFile
+internal class Manager<T> where T: class, IElmaFileObject
 {
     private ObjectListView ObjectList => _managerGui.ObjectList;
     public readonly TypedObjectListView<T> TypedList;
     private readonly IManagerGui _managerGui;
-    private FileSystemWatcher _levWatcher;
-    private FileSystemWatcher _recWatcher;
 
     public Manager(IManagerGui m)
     {
         _managerGui = m;
         TypedList = new TypedObjectListView<T>(ObjectList);
         UiUtils.ConfigureColumns<T>(ObjectList);
-        return;
-        _levWatcher = new FileSystemWatcher(Global.AppSettings.General.LevelDirectory, "*.lev");
-        _recWatcher = new FileSystemWatcher(Global.AppSettings.General.ReplayDirectory, "*.rec");
-        _levWatcher.IncludeSubdirectories = true;
-        _recWatcher.IncludeSubdirectories = true;
-        _levWatcher.EnableRaisingEvents = false;
-        _recWatcher.EnableRaisingEvents = false;
-        _levWatcher.NotifyFilter = NotifyFilters.LastWrite | NotifyFilters.FileName;
-        _recWatcher.NotifyFilter = NotifyFilters.LastWrite | NotifyFilters.FileName;
-        _levWatcher.Changed += WatcherOnChanged;
-        _levWatcher.Created += WatcherOnChanged;
-        _levWatcher.Deleted += WatcherOnChanged;
-        _levWatcher.Renamed += WatcherOnChanged;
-        _recWatcher.Changed += WatcherOnChanged;
-        _recWatcher.Created += WatcherOnChanged;
-        _recWatcher.Deleted += WatcherOnChanged;
-        _recWatcher.Renamed += WatcherOnChanged;
-    }
-
-    private void WatcherOnChanged(object sender, FileSystemEventArgs e)
-    {
-        _managerGui.NotifyAboutModification();
     }
 
     public void DeleteItems()

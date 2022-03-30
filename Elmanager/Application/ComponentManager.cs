@@ -1,4 +1,5 @@
-﻿using Elmanager.LevelEditor;
+﻿using Elmanager.IO;
+using Elmanager.LevelEditor;
 using Elmanager.LevelManager;
 using Elmanager.Rec;
 using Elmanager.ReplayManager;
@@ -14,7 +15,7 @@ internal static class ComponentManager
 
     public static AppContext AppCtx { get; } = new();
 
-    internal static void LaunchLevelEditor(string levPath = null)
+    internal static void LaunchLevelEditor(string? levPath = null)
     {
         var le = levPath != null ? new LevelEditorForm(levPath) : new LevelEditorForm();
         AppCtx.AddAndShow(le);
@@ -30,7 +31,7 @@ internal static class ComponentManager
         AppCtx.AddAndShow(new ReplayManagerForm());
     }
 
-    internal static async void LaunchReplayViewer(Replay replay)
+    internal static async void LaunchReplayViewer(ElmaFileObject<Replay> replay)
     {
         var rv = new ReplayViewerForm();
         rv.Show();

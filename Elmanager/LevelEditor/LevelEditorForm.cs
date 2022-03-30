@@ -55,23 +55,22 @@ internal partial class LevelEditorForm : FormMod, IMessageFilter
     private bool _killerFilter = true;
     private bool _pictureFilter = true;
     private bool _textureFilter = true;
-    internal IEditorTool CurrentTool;
-    internal Level Lev;
-    internal PictureForm PicForm;
-    internal ElmaRenderer Renderer;
-    internal IEditorTool[] Tools;
-    private List<string> _currLevDirFiles;
+    internal IEditorTool CurrentTool = null!;
+    internal Level Lev = null!;
+    private ElmaFile? _file;
+    internal ElmaRenderer Renderer = null!;
+    internal IEditorTool[] Tools = null!;
+    private List<string>? _currLevDirFiles;
     private bool _draggingScreen;
-    private Lgr.Lgr _editorLgr;
+    private Lgr.Lgr? _editorLgr;
     private List<Vector> _errorPoints = new();
     private int _historyIndex;
     private int _savedIndex;
-    private string _loadedLevFilesDir;
+    private string? _loadedLevFilesDir;
     private int _lockCoord;
     private bool _lockMouseX;
     private bool _lockMouseY;
     private bool _modified;
-    private bool _fromScratch;
     private Vector _moveStartPosition;
     private int _selectedObjectCount;
     private int _selectedObjectIndex;
@@ -90,10 +89,9 @@ internal partial class LevelEditorForm : FormMod, IMessageFilter
     private Vector? _contextMenuClickPosition;
     private SvgImportOptions _svgImportOptions = SvgImportOptions.Default;
     private bool _maybeOpenOnDrop;
-    private ElmaCamera _camera;
-    private ZoomController _zoomCtrl;
+    private ZoomController _zoomCtrl = null!;
     private readonly SceneSettings _sceneSettings = new();
-    private TaskCompletionSource _tcs = new();
+    private readonly TaskCompletionSource _tcs = new();
 
     internal LevelEditorForm(string levPath)
     {
@@ -102,7 +100,7 @@ internal partial class LevelEditorForm : FormMod, IMessageFilter
         PostInit();
     }
 
-    internal void SetLevel(Level lev)
+    internal void SetLevel(ElmaFileObject<Level> lev)
     {
         SetExistingLev(lev);
         InitializeLevel();
@@ -128,10 +126,10 @@ internal partial class LevelEditorForm : FormMod, IMessageFilter
         }
     }
 
-    private void SetExistingLev(Level lev)
+    private void SetExistingLev(ElmaFileObject<Level> lev)
     {
-        Lev = lev;
-        _fromScratch = false;
+        Lev = lev.Obj;
+        _file = lev.File;
         SaveStartPosition();
     }
 
@@ -196,7 +194,7 @@ internal partial class LevelEditorForm : FormMod, IMessageFilter
 
     private ToolBase ToolBase => ((ToolBase) CurrentTool);
 
-    private List<string> CurrLevDirFiles
+    private List<string>? CurrLevDirFiles
     {
         get
         {
@@ -210,8 +208,9 @@ internal partial class LevelEditorForm : FormMod, IMessageFilter
     internal SceneSettings SceneSettings => _sceneSettings;
 
     internal PlayController PlayController { get; } = new() { Settings = Global.AppSettings.LevelEditor.PlayingSettings };
+    public Lgr.Lgr? EditorLgr => _editorLgr;
 
-    internal void TransformMenuItemClick(object sender = null, EventArgs e = null)
+    internal void TransformMenuItemClick(object? sender = null, EventArgs? e = null)
     {
         if (!CurrentTool.Busy)
         {
@@ -229,7 +228,7 @@ internal partial class LevelEditorForm : FormMod, IMessageFilter
         }
     }
 
-    internal void RedrawScene(object sender = null, EventArgs e = null)
+    internal void RedrawScene(object? sender = null, EventArgs? e = null)
     {
         if (PlayController.PlayingOrPaused)
         {
@@ -306,9 +305,9 @@ internal partial class LevelEditorForm : FormMod, IMessageFilter
         foreach (LevObject x in Lev.Objects)
             if (x.Position.Mark == VectorMark.Selected)
                 _selectedObjectCount++;
-        foreach (Picture x in Lev.Pictures)
+        foreach (GraphicElement x in Lev.GraphicElements)
             if (x.Position.Mark == VectorMark.Selected)
-                if (x.IsPicture)
+                if (x is GraphicElement.Picture)
                     _selectedPictureCount++;
                 else
                     _selectedTextureCount++;
@@ -344,7 +343,7 @@ internal partial class LevelEditorForm : FormMod, IMessageFilter
         RedrawScene();
     }
 
-    private void AutoGrassButtonChanged(object sender, EventArgs e)
+    private void AutoGrassButtonChanged(object? sender, EventArgs e)
     {
         if (AutoGrassButton.Checked)
             ChangeToolTo(11);
@@ -362,9 +361,9 @@ internal partial class LevelEditorForm : FormMod, IMessageFilter
         }
         else if (_selectedPictureIndex >= 0)
         {
-            var obj = Lev.Pictures[_selectedPictureIndex];
-            Lev.Pictures.RemoveAt(_selectedPictureIndex);
-            Lev.Pictures.Insert(0, obj);
+            var obj = Lev.GraphicElements[_selectedPictureIndex];
+            Lev.GraphicElements.RemoveAt(_selectedPictureIndex);
+            Lev.GraphicElements.Insert(0, obj);
             mod = LevModification.Decorations;
         }
 
@@ -493,7 +492,7 @@ internal partial class LevelEditorForm : FormMod, IMessageFilter
         topologyList.Font = new Font(topologyList.Font, FontStyle.Regular);
     }
 
-    private void CheckTopologyAndUpdate(object sender = null, EventArgs e = null)
+    private void CheckTopologyAndUpdate(object? sender = null, EventArgs? e = null)
     {
         CheckTopology();
         RedrawScene();
@@ -523,7 +522,7 @@ internal partial class LevelEditorForm : FormMod, IMessageFilter
         }
 
         Global.AppSettings.LevelEditor.WindowState = WindowState;
-        Global.AppSettings.LevelEditor.LastLevel = Lev.Path;
+        Global.AppSettings.LevelEditor.LastLevel = _file?.Path;
         if (PlayController.PlayingOrPaused)
         {
             e.Cancel = true;
@@ -536,7 +535,7 @@ internal partial class LevelEditorForm : FormMod, IMessageFilter
     {
         var copiedPolygons = new List<Polygon>();
         var copiedObjects = new List<LevObject>();
-        var copiedTextures = new List<Picture>();
+        var copiedTextures = new List<GraphicElement>();
         Vector.MarkDefault = VectorMark.Selected;
         var delta = Keyboard.IsKeyDown(Key.LeftShift)
             ? Global.AppSettings.LevelEditor.RenderingSettings.GridSize
@@ -565,9 +564,9 @@ internal partial class LevelEditorForm : FormMod, IMessageFilter
 
         foreach (LevObject x in Lev.Objects)
         {
-            if (x.Position.Mark == VectorMark.Selected && x.Type != ObjectType.Start)
+            if (x.Mark == VectorMark.Selected && x.Type != ObjectType.Start)
             {
-                x.Position.Mark = VectorMark.None;
+                x.Mark = VectorMark.None;
                 copiedObjects.Add(
                     new LevObject(
                         x.Position +
@@ -577,22 +576,20 @@ internal partial class LevelEditorForm : FormMod, IMessageFilter
             }
         }
 
-        foreach (Picture x in Lev.Pictures)
+        foreach (GraphicElement x in Lev.GraphicElements)
         {
             if (x.Position.Mark == VectorMark.Selected)
             {
-                Picture copiedPicture = x.Clone();
-                copiedPicture.Position.X += delta;
-                copiedPicture.Position.Y -= delta;
-                copiedTextures.Add(copiedPicture);
-                x.Position.Mark = VectorMark.None;
+                var copiedGraphicElement = x with { Position = new Vector(x.X + delta, x.Y - delta)};
+                copiedTextures.Add(copiedGraphicElement);
+                x.Mark = VectorMark.None;
             }
         }
 
         Vector.MarkDefault = VectorMark.None;
         Lev.Polygons.AddRange(copiedPolygons);
         Lev.Objects.AddRange(copiedObjects);
-        Lev.Pictures.AddRange(copiedTextures);
+        Lev.GraphicElements.AddRange(copiedTextures);
         var mod = LevModification.Nothing;
         if (copiedObjects.Count > 0)
         {
@@ -610,10 +607,7 @@ internal partial class LevelEditorForm : FormMod, IMessageFilter
         RedrawScene();
     }
 
-    private bool CurrLevDirExists()
-    {
-        return Directory.Exists(Path.GetDirectoryName(Lev.Path));
-    }
+    private bool CurrLevDirExists() => _file?.FileInfo.Directory?.Exists ?? false;
 
     private void DoRedrawScene()
     {
@@ -689,7 +683,7 @@ internal partial class LevelEditorForm : FormMod, IMessageFilter
             }
         }
 
-        foreach (Picture t in Lev.Pictures)
+        foreach (GraphicElement t in Lev.GraphicElements)
         {
             Vector z = t.Position;
             switch (z.Mark)
@@ -726,7 +720,7 @@ internal partial class LevelEditorForm : FormMod, IMessageFilter
         if (PlayController.PlayingOrPaused)
         {
             GL.Translate(-jf.X, -jf.Y, 0);
-            var driver = PlayController.Driver;
+            var driver = PlayController.Driver!;
             if (Global.AppSettings.LevelEditor.RenderingSettings.ShowObjects && Renderer.LgrGraphicsLoaded)
             {
                 Renderer.DrawPlayer(driver.GetState(), PlayController.RenderOptsLgr, _sceneSettings);
@@ -765,13 +759,13 @@ internal partial class LevelEditorForm : FormMod, IMessageFilter
         return drawAction;
     }
 
-    private void CutButtonChanged(object sender, EventArgs e)
+    private void CutButtonChanged(object? sender, EventArgs e)
     {
         if (CutConnectButton.Checked)
             ChangeToolTo(10);
     }
 
-    private void DeleteAllGrassToolStripMenuItemClick(object sender, EventArgs e)
+    private void DeleteAllGrassToolStripMenuItemClick(object? sender, EventArgs e)
     {
         var mod = LevModification.Nothing;
         for (int i = Lev.Polygons.Count - 1; i >= 0; i--)
@@ -788,7 +782,7 @@ internal partial class LevelEditorForm : FormMod, IMessageFilter
         RedrawScene();
     }
 
-    private void DeleteSelected(object sender, EventArgs e)
+    private void DeleteSelected(object? sender, EventArgs? e)
     {
         if (!CurrentTool.Busy)
         {
@@ -837,12 +831,12 @@ internal partial class LevelEditorForm : FormMod, IMessageFilter
                 }
             }
 
-            for (int i = Lev.Pictures.Count - 1; i >= 0; i--)
+            for (int i = Lev.GraphicElements.Count - 1; i >= 0; i--)
             {
-                Picture x = Lev.Pictures[i];
+                GraphicElement x = Lev.GraphicElements[i];
                 if (x.Position.Mark == VectorMark.Selected)
                 {
-                    Lev.Pictures.Remove(x);
+                    Lev.GraphicElements.Remove(x);
                     mod |= LevModification.Decorations;
                 }
             }
@@ -853,24 +847,24 @@ internal partial class LevelEditorForm : FormMod, IMessageFilter
         }
     }
 
-    private void DrawButtonChanged(object sender, EventArgs e)
+    private void DrawButtonChanged(object? sender, EventArgs e)
     {
         if (DrawButton.Checked)
             ChangeToolTo(2);
     }
 
-    private void EllipseButtonChanged(object sender, EventArgs e)
+    private void EllipseButtonChanged(object? sender, EventArgs e)
     {
         if (EllipseButton.Checked)
             ChangeToolTo(6);
     }
 
-    private void ExitToolStripMenuItemClick(object sender, EventArgs e)
+    private void ExitToolStripMenuItemClick(object? sender, EventArgs e)
     {
         Close();
     }
 
-    private void FilterChanged(object sender, EventArgs e)
+    private void FilterChanged(object? sender, EventArgs e)
     {
         _groundFilter = GroundPolygonsToolStripMenuItem.Checked;
         _grassFilter = GrassPolygonsToolStripMenuItem.Checked;
@@ -898,21 +892,21 @@ internal partial class LevelEditorForm : FormMod, IMessageFilter
                 case ObjectType.Flower:
                     if (!_flowerFilter)
                     {
-                        o.Position.Mark = VectorMark.None;
+                        o.Mark = VectorMark.None;
                     }
 
                     break;
                 case ObjectType.Apple:
                     if (!_appleFilter)
                     {
-                        o.Position.Mark = VectorMark.None;
+                        o.Mark = VectorMark.None;
                     }
 
                     break;
                 case ObjectType.Killer:
                     if (!_killerFilter)
                     {
-                        o.Position.Mark = VectorMark.None;
+                        o.Mark = VectorMark.None;
                     }
 
                     break;
@@ -923,15 +917,15 @@ internal partial class LevelEditorForm : FormMod, IMessageFilter
             }
         }
 
-        foreach (var picture in Lev.Pictures)
+        foreach (var picture in Lev.GraphicElements)
         {
-            if (picture.IsPicture && !_pictureFilter)
+            if (picture is GraphicElement.Picture && !_pictureFilter)
             {
-                picture.Position.Mark = VectorMark.None;
+                picture.Mark = VectorMark.None;
             }
-            else if (!picture.IsPicture && !_textureFilter)
+            else if (picture is GraphicElement.Texture && !_textureFilter)
             {
-                picture.Position.Mark = VectorMark.None;
+                picture.Mark = VectorMark.None;
             }
         }
 
@@ -939,7 +933,7 @@ internal partial class LevelEditorForm : FormMod, IMessageFilter
         SelectionFilterToolStripMenuItem.ShowDropDown();
     }
 
-    private void FrameButtonChanged(object sender, EventArgs e)
+    private void FrameButtonChanged(object? sender, EventArgs e)
     {
         if (FrameButton.Checked)
             ChangeToolTo(8);
@@ -963,9 +957,9 @@ internal partial class LevelEditorForm : FormMod, IMessageFilter
     private void HandleGrassMenu(object sender, EventArgs e)
     {
         var polys = Lev.Polygons.GetSelectedPolygons(includeGrass: true).ToList();
-        if (!polys.Any())
+        if (!polys.Any() && _grassInfo is not null)
         {
-            polys.Add(ToolBase.NearestPolygon);
+            polys.Add(_grassInfo.Polygon);
         }
 
         var mod = LevModification.Nothing;
@@ -1037,11 +1031,13 @@ internal partial class LevelEditorForm : FormMod, IMessageFilter
     private void Initialize()
     {
         if (!Physics)
+#pragma warning disable CS0162
         {
             playButton.Visible = false;
             stopButton.Visible = false;
             settingsButton.Visible = false;
         }
+#pragma warning restore CS0162
         PlayController.PlayingPaused += () => Invoke(new Action(SetNotPlaying));
         var graphics = CreateGraphics();
         _dpiX = graphics.DpiX / 96;
@@ -1094,8 +1090,7 @@ internal partial class LevelEditorForm : FormMod, IMessageFilter
     {
         await PlayController.NotifyLevelChanged();
         PlayTimeLabel.Text = "";
-        _camera = new ElmaCamera();
-        _zoomCtrl = new ZoomController(_camera, Lev, Global.AppSettings.LevelEditor.RenderingSettings, () => RedrawScene());
+        _zoomCtrl = new ZoomController(new ElmaCamera(), Lev, Global.AppSettings.LevelEditor.RenderingSettings, () => RedrawScene());
         SetNotModified();
         Renderer.InitializeLevel(Lev);
         _zoomCtrl.ZoomFill();
@@ -1113,7 +1108,7 @@ internal partial class LevelEditorForm : FormMod, IMessageFilter
         _errorPoints.Clear();
     }
 
-    private void KeyHandlerDown(object sender, KeyEventArgs e)
+    private void KeyHandlerDown(object? sender, KeyEventArgs e)
     {
         e = e.KeyCode switch
         {
@@ -1163,10 +1158,12 @@ internal partial class LevelEditorForm : FormMod, IMessageFilter
             case Keys.OemPeriod:
                 wasModified = PolyOpTool.PolyOpSelected(PolygonOperationType.Difference, Lev.Polygons);
                 break;
+#pragma warning disable CS0162
             case Keys.Enter when Physics:
                 PlayController.UpdateInputKeys();
                 playButton_Click(null, null);
                 break;
+#pragma warning restore CS0162
             case Keys.Oem2:
                 wasModified = PolyOpTool.PolyOpSelected(PolygonOperationType.SymmetricDifference, Lev.Polygons);
                 break;
@@ -1185,7 +1182,7 @@ internal partial class LevelEditorForm : FormMod, IMessageFilter
 
     private async void TexturizeSelection()
     {
-        if (!PictureToolAvailable)
+        if (_editorLgr is null)
         {
             UiUtils.ShowError("You need to select LGR file from settings before you can use texturize tool.", "Note",
                 MessageBoxIcon.Information);
@@ -1198,19 +1195,28 @@ internal partial class LevelEditorForm : FormMod, IMessageFilter
             return;
         }
 
-        PicForm.AutoTextureMode = true;
-        PicForm.AllowMultiple = false;
-        PicForm.SetDefaultsAutomatically = true;
-        PicForm.SetDefaultDistanceAndClipping();
-        PicForm.ShowDialog();
-        if (!PicForm.OkButtonPressed)
+        var picForm = new PictureForm(_editorLgr, null)
+        {
+            AutoTextureMode = true,
+            AllowMultiple = false,
+            SetDefaultsAutomatically = true
+        };
+        if (_texturizationOpts is { })
+        {
+            picForm.TexturizationOptions = _texturizationOpts;
+        }
+        picForm.SetDefaultDistanceAndClipping();
+        picForm.ShowDialog();
+        if (picForm.Selection is not ImageSelection.TextureSelection sel)
         {
             return;
         }
 
-        var masks = PicForm.SelectedMasks.Select(x => Renderer.DrawableImageFromName(x.Name)).ToList();
-        var texture =
-            Renderer.DrawableImages.First(i => i.Type == ImageType.Texture && i.Name == PicForm.Texture.Name);
+        var opts = picForm.TexturizationOptions;
+        _texturizationOpts = opts;
+
+        var masks = opts.SelectedMasks.Select(x => Renderer.DrawableImageFromName(_editorLgr.ImageFromName(x)!)).ToList();
+        var texture = Renderer.DrawableImageFromName(sel.Txt);
         var rects = masks
             .Select(i => new Envelope(0, i.WidthMinusMargin, 0, i.HeightMinusMargin));
 
@@ -1218,8 +1224,8 @@ internal partial class LevelEditorForm : FormMod, IMessageFilter
 
         var progress = new Progress<double>();
         var task = Task.Factory.StartNew(() => selected.FindCovering(rects, src.Token, progress,
-            iterations: PicForm.IterationCount,
-            minRectCover: PicForm.MinCoverPercentage / 100).ToList(), src.Token);
+            iterations: opts.Iterations,
+            minRectCover: opts.MinCoverPercentage / 100).ToList(), src.Token);
 
         var progressForm = new ProgressDialog(task, src, progress);
         BeginInvoke(new Action(() => { progressForm.ShowDialog(); }));
@@ -1243,9 +1249,9 @@ internal partial class LevelEditorForm : FormMod, IMessageFilter
                 masks.First(m => Math.Abs(m.WidthMinusMargin * m.HeightMinusMargin - env.Area) < 0.001));
         var pics = selmasks.Zip(covering,
             (m, c) =>
-                new Picture(PicForm.Clipping, PicForm.Distance,
+                GraphicElement.Text(sel.Clipping!.Value, sel.Distance!.Value,
                     new Vector(c.MinX - m.EmptyPixelXMargin, c.MaxY + m.EmptyPixelYMargin), texture, m));
-        Lev.Pictures.AddRange(pics);
+        Lev.GraphicElements.AddRange(pics);
         SetModified(LevModification.Decorations);
     }
 
@@ -1255,7 +1261,7 @@ internal partial class LevelEditorForm : FormMod, IMessageFilter
         RedrawScene();
     }
 
-    private void KeyHandlerUp(object sender, KeyEventArgs e)
+    private void KeyHandlerUp(object? sender, KeyEventArgs e)
     {
         switch (e.KeyCode)
         {
@@ -1270,7 +1276,7 @@ internal partial class LevelEditorForm : FormMod, IMessageFilter
 
     private void ItemsDropped(object sender, DragEventArgs e)
     {
-        var data = e.Data.GetData(DataFormats.FileDrop);
+        var data = e.Data?.GetData(DataFormats.FileDrop);
         // BeginInvoke is required for Wine
         BeginInvoke(new Action(() =>
         {
@@ -1288,24 +1294,24 @@ internal partial class LevelEditorForm : FormMod, IMessageFilter
         }));
     }
 
-    private void LevelPropertiesToolStripMenuItemClick(object sender, EventArgs e)
+    private void LevelPropertiesToolStripMenuItemClick(object? sender, EventArgs e)
     {
-        var levelProperties = new LevelPropertiesForm(Lev);
+        var levelProperties = new LevelPropertiesForm(Lev, _file);
         levelProperties.ShowDialog();
     }
 
-    private void LevelPropertyModified(object sender, EventArgs e)
+    private void LevelPropertyModified(object? sender, EventArgs e)
     {
         if (!_programmaticPropertyChange)
         {
             Lev.Title = TitleBox.Text;
             Lev.LgrFile = LGRBox.Text;
-            if (sender.Equals(SkyComboBox) || sender.Equals(GroundComboBox))
+            if (sender is not null && (sender.Equals(SkyComboBox) || sender.Equals(GroundComboBox)))
             {
                 if (sender.Equals(GroundComboBox))
-                    Lev.GroundTextureName = GroundComboBox.SelectedItem.ToString();
+                    Lev.GroundTextureName = GroundComboBox.SelectedItem.ToString() ?? "ground";
                 if (sender.Equals(SkyComboBox))
-                    Lev.SkyTextureName = SkyComboBox.SelectedItem.ToString();
+                    Lev.SkyTextureName = SkyComboBox.SelectedItem.ToString() ?? "sky";
                 if (Global.AppSettings.LevelEditor.RenderingSettings.DefaultGroundAndSky)
                     UiUtils.ShowError("Default ground and sky is enabled, so you won\'t see this change in editor.",
                         "Warning", MessageBoxIcon.Exclamation);
@@ -1319,9 +1325,7 @@ internal partial class LevelEditorForm : FormMod, IMessageFilter
 
     private void LoadFromHistory()
     {
-        var oldPath = Lev.Path;
         Lev = _history[_historyIndex].Clone();
-        Lev.Path = oldPath;
         Renderer.Lev = Lev;
         _zoomCtrl.Lev = Lev;
         Lev.DecomposeGroundPolygons();
@@ -1360,7 +1364,7 @@ internal partial class LevelEditorForm : FormMod, IMessageFilter
     {
         Vector p = GetMouseCoordinates();
         CurrentTool.MouseMove(p);
-        int nearestVertexIndex = ToolBase.GetNearestVertexIndex(p);
+        var info = ToolBase.GetNearestVertexInfo(p);
         int nearestObjectIndex = ToolBase.GetNearestObjectIndex(p);
         int nearestPictureIndex = ToolBase.GetNearestPictureIndex(p);
         var player = PlayController.GetNearestDriverBodyPart(p, ToolBase.CaptureRadiusScaled);
@@ -1445,9 +1449,10 @@ internal partial class LevelEditorForm : FormMod, IMessageFilter
                         }
                     }
 
-                    if (nearestVertexIndex >= -1)
+                    if (info is not null)
                     {
                         GrassMenuItem.Visible = true;
+                        _grassInfo = info;
                     }
 
                     _selectedPictureIndex = nearestPictureIndex;
@@ -1466,7 +1471,7 @@ internal partial class LevelEditorForm : FormMod, IMessageFilter
                             GravityDownMenuItem.Visible = true;
                             GravityLeftMenuItem.Visible = true;
                             GravityRightMenuItem.Visible = true;
-                            switch (PlayController.Driver.GravityDirection)
+                            switch (PlayController.Driver!.GravityDirection)
                             {
                                 case GravityDirection.Up:
                                     UpdateGravityMenu(GravityUpMenuItem);
@@ -1591,7 +1596,7 @@ internal partial class LevelEditorForm : FormMod, IMessageFilter
         ToolPanel.Focus();
     }
 
-    private void NewLevel(object sender = null, EventArgs e = null)
+    private void NewLevel(object? sender = null, EventArgs? e = null)
     {
         if (!PromptToSaveIfModified())
             return;
@@ -1599,7 +1604,7 @@ internal partial class LevelEditorForm : FormMod, IMessageFilter
         InitializeLevel();
     }
 
-    private void ObjectButtonChanged(object sender, EventArgs e)
+    private void ObjectButtonChanged(object? sender, EventArgs e)
     {
         if (ObjectButton.Checked)
             ChangeToolTo(3);
@@ -1633,7 +1638,7 @@ internal partial class LevelEditorForm : FormMod, IMessageFilter
         AfterSettingsClosed(oldLgr);
     }
 
-    private void OpenToolStripMenuItemClick(object sender, EventArgs e)
+    private void OpenToolStripMenuItemClick(object? sender, EventArgs e)
     {
         OpenFileDialog1.InitialDirectory = GetInitialDir();
         OpenFileDialog1.Multiselect = false;
@@ -1641,7 +1646,7 @@ internal partial class LevelEditorForm : FormMod, IMessageFilter
             OpenLevel(OpenFileDialog1.FileName);
     }
 
-    private void PictureButtonChanged(object sender, EventArgs e)
+    private void PictureButtonChanged(object? sender, EventArgs e)
     {
         if (PictureButton.Checked)
         {
@@ -1660,118 +1665,107 @@ internal partial class LevelEditorForm : FormMod, IMessageFilter
 
     private void PicturePropertiesToolStripMenuItemClick(object sender, EventArgs e)
     {
-        var selectedPics = Lev.Pictures.Where(p => p.Position.Mark == VectorMark.Selected).ToList();
-        PicForm.SetDefaultsAutomatically = Global.AppSettings.LevelEditor.AlwaysSetDefaultsInPictureTool;
-        if (selectedPics.Count > 0)
+        if (_editorLgr is null)
         {
-            PicForm.AllowMultiple = true;
-            PicForm.SelectMultiple(selectedPics);
+            return;
+        }
+        var selectedElems = Lev.GraphicElements.Where(p => p.Position.Mark == VectorMark.Selected).ToList();
+        var picForm = new PictureForm(_editorLgr, null)
+        {
+            SetDefaultsAutomatically = Global.AppSettings.LevelEditor.AlwaysSetDefaultsInPictureTool
+        };
+        if (selectedElems.Count > 0)
+        {
+            picForm.AllowMultiple = true;
+            picForm.SelectMultiple(selectedElems);
         }
         else
         {
-            PicForm.AllowMultiple = false;
-            selectedPics = new List<Picture> {Lev.Pictures[_selectedPictureIndex]};
-            PicForm.SelectElement(Lev.Pictures[_selectedPictureIndex]);
+            picForm.AllowMultiple = false;
+            var selectedElem = Lev.GraphicElements[_selectedPictureIndex];
+            picForm.SelectElement(selectedElem);
+            selectedElems = new List<GraphicElement> {selectedElem};
         }
 
-        PicForm.AutoTextureMode = false;
-        PicForm.ShowDialog();
-        if (PicForm.OkButtonPressed)
+        picForm.AutoTextureMode = false;
+        picForm.ShowDialog();
+        if (picForm.Selection is not { } sel) return;
+        Lev.GraphicElements = Lev.GraphicElements.Select(curr =>
         {
-            foreach (var selected in selectedPics)
+            if (selectedElems.Find(s => ReferenceEquals(s, curr)) is null)
             {
-                var clipping = PicForm.MultipleClippingSelected ? selected.Clipping : PicForm.Clipping;
-                var distance = PicForm.MultipleDistanceSelected ? selected.Distance : PicForm.Distance;
-                var mask = PicForm.MultipleMaskSelected
-                    ? Renderer.DrawableImageFromName(selected.Name)
-                    : Renderer.DrawableImageFromName(PicForm.Mask.Name);
-                var position = selected.Position;
-                var texture = PicForm.MultipleTexturesSelected
-                    ? Renderer.DrawableImageFromName(selected.TextureName)
-                    : Renderer.DrawableImageFromName(PicForm.Texture.Name);
-                var picture = PicForm.MultiplePicturesSelected
-                    ? Renderer.DrawableImageFromName(selected.Name)
-                    : Renderer.DrawableImageFromName(PicForm.Picture.Name);
-
-                if ((PicForm.TextureSelected && !PicForm.MultipleTexturesSelected))
-                {
-                    if (selected.IsPicture)
-                    {
-                        // need to set proper mask; otherwise the mask name will be picture name
-                        mask = Renderer.DrawableImageFromName(_editorLgr.ListedImages.First(i => i.Type == ImageType.Mask).Name);
-                    }
-
-                    selected.SetTexture(clipping, distance, position, texture,
-                        mask);
-                }
-                else if ((!PicForm.TextureSelected && !PicForm.MultiplePicturesSelected))
-                {
-                    selected.SetPicture(picture, position,
-                        distance,
-                        clipping);
-                }
-                else
-                {
-                    if (selected.IsPicture)
-                    {
-                        selected.SetPicture(picture, position,
-                            distance,
-                            clipping);
-                    }
-                    else
-                    {
-                        selected.SetTexture(clipping, distance, position, texture,
-                            mask);
-                    }
-                }
+                return curr;
             }
 
-            SetModified(LevModification.Decorations);
-            RedrawScene();
-        }
+            var clipping = sel.Clipping ?? curr.Clipping;
+            var distance = sel.Distance ?? curr.Distance;
+            var position = curr.Position;
+
+            return sel switch
+            {
+                ImageSelection.MixedSelection => curr with {Distance = distance, Clipping = clipping},
+                ImageSelection.PictureSelection(var pic, _, _) => GraphicElement.Pic(
+                    Renderer.DrawableImageFromName(pic), position, distance, clipping),
+                ImageSelection.TextureSelection(var txt, var mask, _, _) => GraphicElement.Text(clipping, distance,
+                    position,
+                    Renderer.DrawableImageFromName(txt),
+                    Renderer.DrawableImageFromName(mask)),
+                ImageSelection.TextureSelectionMultipleMasks(var txt, _, _) when
+                    curr is GraphicElement.Texture t =>
+                    GraphicElement.Text(clipping, distance, position, Renderer.DrawableImageFromName(txt), t.MaskInfo),
+                ImageSelection.TextureSelectionMultipleMasks(var txt, _, _) when curr is GraphicElement.Picture
+                    =>
+                    GraphicElement.Text(clipping, distance, position, Renderer.DrawableImageFromName(txt),
+                        Renderer.DrawableImageFromName(_editorLgr!.LgrImages.Values.First(i => i.Type == ImageType.Mask))),
+                ImageSelection.TextureSelectionMultipleTextures(var mask, _, _) when
+                    curr is GraphicElement.Texture t => GraphicElement.Text(clipping,
+                        distance, position, t.TextureInfo, Renderer.DrawableImageFromName(mask)),
+                ImageSelection.TextureSelectionMultipleTextures when
+                    curr is GraphicElement.Picture => curr with {Distance = distance, Clipping = clipping},
+                _ => throw new ArgumentOutOfRangeException(nameof(sel))
+            };
+        }).ToList();
+
+        SetModified(LevModification.Decorations);
+        RedrawScene();
     }
 
-    private void PipeButtonChanged(object sender, EventArgs e)
+    private void PipeButtonChanged(object? sender, EventArgs e)
     {
         if (PipeButton.Checked)
             ChangeToolTo(4);
     }
 
-    private void PolyOpButtonChanged(object sender, EventArgs e)
+    private void PolyOpButtonChanged(object? sender, EventArgs e)
     {
         if (PolyOpButton.Checked)
             ChangeToolTo(7);
     }
 
-    private void PrevNextButtonClick(object sender, EventArgs e)
+    private void PrevNextButtonClick(object? sender, EventArgs e)
     {
-        if (CurrLevDirExists())
+        if (CurrLevDirFiles?.Count > 0)
         {
-            if (CurrLevDirFiles.Count > 0)
+            if (_file is null)
+                OpenLevel(CurrLevDirFiles[0]);
+            else
             {
-                if (Lev.Path == null)
-                    OpenLevel(CurrLevDirFiles[0]);
+                int i = GetCurrentLevelIndex(_file, CurrLevDirFiles);
+                if (PreviousButton.Equals(sender) || previousLevelToolStripMenuItem.Equals(sender))
+                {
+                    i--;
+                    if (i < 0)
+                        i = CurrLevDirFiles.Count - 1;
+                }
                 else
                 {
-                    int i = GetCurrentLevelIndex();
-                    if (sender.Equals(PreviousButton) || sender.Equals(previousLevelToolStripMenuItem))
-                    {
-                        i--;
-                        if (i < 0)
-                            i = CurrLevDirFiles.Count - 1;
-                    }
-                    else
-                    {
-                        i++;
-                        if (i >= CurrLevDirFiles.Count)
-                            i = 0;
-                    }
-
-                    OpenLevel(CurrLevDirFiles[i]);
+                    i++;
+                    if (i >= CurrLevDirFiles.Count)
+                        i = 0;
                 }
+
+                OpenLevel(CurrLevDirFiles[i]);
             }
-            else
-                UiUtils.ShowError("There are no levels in this directory!");
         }
     }
 
@@ -1830,7 +1824,7 @@ internal partial class LevelEditorForm : FormMod, IMessageFilter
         _zoomCtrl.ZoomFill();
     }
 
-    private void SaveAs(object sender = null, EventArgs e = null)
+    private void SaveAs(object? sender = null, EventArgs? e = null)
     {
         string suggestion = string.Empty;
         if (Global.AppSettings.LevelEditor.UseFilenameSuggestion)
@@ -1877,29 +1871,24 @@ internal partial class LevelEditorForm : FormMod, IMessageFilter
         SaveFileDialog1.InitialDirectory = GetInitialDir();
         if (SaveFileDialog1.ShowDialog() == DialogResult.OK)
         {
-            Lev.Path = SaveFileDialog1.FileName;
-            SaveLevel();
+            SaveLevel(SaveFileDialog1.FileName);
         }
     }
 
     private string GetInitialDir()
     {
-        if (Lev.Path != null)
-        {
-            return Path.GetDirectoryName(Lev.Path);
-        }
-        return Global.AppSettings.General.LevelDirectory;
+        return _file is not null ? _file.FileInfo.DirectoryName! : Global.AppSettings.General.LevelDirectory;
     }
 
-    private void SaveClicked(object sender = null, EventArgs e = null)
+    private void SaveClicked(object? sender = null, EventArgs? e = null)
     {
-        if (Lev.Path == null)
+        if (_file is null)
             SaveAs();
         else
-            SaveLevel();
+            SaveLevel(_file.Path);
     }
 
-    private void SaveLevel()
+    private void SaveLevel(string path)
     {
         Lev.Title = TitleBox.Text;
         Lev.LgrFile = LGRBox.Text;
@@ -1916,19 +1905,18 @@ internal partial class LevelEditorForm : FormMod, IMessageFilter
         {
             if (Global.AppSettings.LevelEditor.CheckTopologyWhenSaving)
                 CheckTopologyAndUpdate();
-            if (Global.AppSettings.LevelEditor.UseFilenameForTitle && _fromScratch)
+            if (Global.AppSettings.LevelEditor.UseFilenameForTitle && _file is null)
             {
                 Lev.Title = Path.GetFileNameWithoutExtension(SaveFileDialog1.FileName);
             }
 
             try
             {
-                Lev.Save(Lev.Path);
+                _file = Lev.Save(path);
                 _savedIndex = _historyIndex;
-                _fromScratch = false;
-                if (!Global.GetLevelFiles().Contains(Lev.Path))
+                if (!Global.GetLevelFiles().Contains(path))
                 {
-                    Global.GetLevelFiles().Add(Lev.Path);
+                    Global.GetLevelFiles().Add(path);
                     UpdateCurrLevDirFiles(force: true);
                 }
 
@@ -1972,9 +1960,9 @@ internal partial class LevelEditorForm : FormMod, IMessageFilter
             }
         }
 
-        foreach (var texture in Lev.Pictures)
+        foreach (var texture in Lev.GraphicElements)
         {
-            if ((_textureFilter && !texture.IsPicture) || (_pictureFilter && texture.IsPicture))
+            if ((_textureFilter && texture is GraphicElement.Texture) || (_pictureFilter && texture is GraphicElement.Picture))
                 texture.Position.Select();
         }
 
@@ -1982,13 +1970,13 @@ internal partial class LevelEditorForm : FormMod, IMessageFilter
         UpdateSelectionInfo();
     }
 
-    private void SelectButtonChanged(object sender, EventArgs e)
+    private void SelectButtonChanged(object? sender, EventArgs e)
     {
         if (SelectButton.Checked)
             ChangeToolTo(0);
     }
 
-    private void SendToBackToolStripMenuItemClick(object sender, EventArgs e)
+    private void SendToBackToolStripMenuItemClick(object? sender, EventArgs e)
     {
         var mod = LevModification.Nothing;
         if (_selectedObjectIndex >= 0)
@@ -2000,20 +1988,20 @@ internal partial class LevelEditorForm : FormMod, IMessageFilter
         }
         else if (_selectedPictureIndex >= 0)
         {
-            var obj = Lev.Pictures[_selectedPictureIndex];
-            Lev.Pictures.RemoveAt(_selectedPictureIndex);
-            Lev.Pictures.Add(obj);
+            var obj = Lev.GraphicElements[_selectedPictureIndex];
+            Lev.GraphicElements.RemoveAt(_selectedPictureIndex);
+            Lev.GraphicElements.Add(obj);
             mod |= LevModification.Decorations;
         }
 
         SetModified(mod);
     }
 
-    private void SetAllFilters(object sender, EventArgs e)
+    private void SetAllFilters(object? sender, EventArgs e)
     {
         foreach (ToolStripMenuItem x in SelectionFilterToolStripMenuItem.DropDownItems)
             if (x.CheckOnClick)
-                x.Checked = sender.Equals(EnableAllToolStripMenuItem);
+                x.Checked = EnableAllToolStripMenuItem.Equals(sender);
     }
 
     private void SetDefaultLevelTitle()
@@ -2026,11 +2014,11 @@ internal partial class LevelEditorForm : FormMod, IMessageFilter
     {
         Lev = Global.AppSettings.LevelEditor.GetTemplateLevel();
         SetDefaultLevelTitle();
-        _fromScratch = true;
+        _file = null;
         _savedStartPosition = null;
     }
 
-    private void SettingChanged(object sender, EventArgs e)
+    private void SettingChanged(object? sender, EventArgs e)
     {
         var settings = Global.AppSettings.LevelEditor.RenderingSettings;
         settings.ShowGrassEdges = ShowGrassEdgesButton.Checked;
@@ -2096,7 +2084,7 @@ internal partial class LevelEditorForm : FormMod, IMessageFilter
         }
     }
 
-    private void MouseWheelZoom(object sender, MouseEventArgs e)
+    private void MouseWheelZoom(object? sender, MouseEventArgs e)
     {
         MouseWheelZoom(e.Delta);
     }
@@ -2108,15 +2096,15 @@ internal partial class LevelEditorForm : FormMod, IMessageFilter
                                x.Y.ToString(CoordinateFormat);
     }
 
-    private void SmoothenButtonChanged(object sender, EventArgs e)
+    private void SmoothenButtonChanged(object? sender, EventArgs e)
     {
         if (SmoothenButton.Checked)
             ChangeToolTo(9);
     }
 
-    private void StartingDrop(object sender, DragEventArgs e)
+    private void StartingDrop(object? sender, DragEventArgs e)
     {
-        var data = e.Data.GetData(DataFormats.FileDrop);
+        var data = e.Data?.GetData(DataFormats.FileDrop);
         if (data is string[] files)
         {
             if (files.All(filePath => File.Exists(filePath) && ImportableExtensions.Any(ext => Path.GetExtension(filePath).CompareWith(ext))))
@@ -2169,7 +2157,7 @@ internal partial class LevelEditorForm : FormMod, IMessageFilter
 
     private void UpdateCurrLevDirFiles(bool force = false)
     {
-        string levDir = Path.GetDirectoryName(Lev.Path);
+        string? levDir = _file?.FileInfo.DirectoryName;
         if (levDir == null)
         {
             return;
@@ -2192,7 +2180,7 @@ internal partial class LevelEditorForm : FormMod, IMessageFilter
 
     private void UpdateLabels()
     {
-        if (Lev.Path == null)
+        if (_file is null)
         {
             Text = "New - " + LevEditorName;
             filenameBox.Text = string.Empty;
@@ -2203,8 +2191,8 @@ internal partial class LevelEditorForm : FormMod, IMessageFilter
         }
         else
         {
-            Text = Lev.FileNameNoExt + " - " + LevEditorName;
-            filenameBox.Text = Lev.FileNameNoExt;
+            Text = _file.FileNameNoExt + " - " + LevEditorName;
+            filenameBox.Text = _file.FileNameNoExt;
             filenameBox.Enabled = true;
             deleteButton.Enabled = true;
             deleteLevMenuItem.Enabled = true;
@@ -2228,10 +2216,6 @@ internal partial class LevelEditorForm : FormMod, IMessageFilter
             PicturePropertiesMenuItem.Enabled = true;
             SkyComboBox.Enabled = true;
             GroundComboBox.Enabled = true;
-            if (PicForm != null)
-                PicForm.UpdateLgr(_editorLgr);
-            else
-                PicForm = new PictureForm(_editorLgr);
             SkyComboBox.Items.Clear();
             GroundComboBox.Items.Clear();
             foreach (var texture in _editorLgr.ListedImagesExcludingSpecial.Where(image =>
@@ -2259,13 +2243,13 @@ internal partial class LevelEditorForm : FormMod, IMessageFilter
         RedoToolStripMenuItem.Enabled = RedoButton.Enabled;
     }
 
-    private void VertexButtonChanged(object sender, EventArgs e)
+    private void VertexButtonChanged(object? sender, EventArgs e)
     {
         if (VertexButton.Checked)
             ChangeToolTo(1);
     }
 
-    private void ViewerResized(object sender = null, EventArgs e = null)
+    private void ViewerResized(object? sender = null, EventArgs? e = null)
     {
         if (EditorControl.Width > 0 && EditorControl.Height > 0)
         {
@@ -2286,18 +2270,18 @@ internal partial class LevelEditorForm : FormMod, IMessageFilter
         Renderer.ResetViewport(EditorControl.Width, EditorControl.Height);
     }
 
-    private void ZoomButtonChanged(object sender, EventArgs e)
+    private void ZoomButtonChanged(object? sender, EventArgs e)
     {
         if (ZoomButton.Checked)
             ChangeToolTo(5);
     }
 
-    private void ZoomFillToolStripMenuItemClick(object sender, EventArgs e)
+    private void ZoomFillToolStripMenuItemClick(object? sender, EventArgs e)
     {
         _zoomCtrl.ZoomFill();
     }
 
-    private void TitleBoxTextChanged(object sender, EventArgs e)
+    private void TitleBoxTextChanged(object? sender, EventArgs e)
     {
         int width = TextRenderer.MeasureText(TitleBox.Text, TitleBox.Font).Width;
         TitleBox.Width = Math.Max(width + 5, 120 * (int) _dpiX);
@@ -2330,7 +2314,7 @@ internal partial class LevelEditorForm : FormMod, IMessageFilter
             {
                 try
                 {
-                    lev = Level.FromPath(file);
+                    lev = Level.FromPath(file).Obj;
                 }
                 catch (BadFileException exception)
                 {
@@ -2413,7 +2397,7 @@ internal partial class LevelEditorForm : FormMod, IMessageFilter
 
     private void saveAsPictureToolStripMenuItem_Click(object sender, EventArgs e)
     {
-        saveAsPictureDialog.FileName = Lev.FileNameNoExt ?? "Untitled";
+        saveAsPictureDialog.FileName = _file?.FileNameNoExt ?? "Untitled";
         if (saveAsPictureDialog.ShowDialog() == DialogResult.OK)
         {
             if (saveAsPictureDialog.FileName.EndsWith(".png"))
@@ -2491,7 +2475,7 @@ internal partial class LevelEditorForm : FormMod, IMessageFilter
                     v.Position.Mark == VectorMark.Selected && v.Type != ObjectType.Start)
                 .Select(o => o.Position));
         selectedVertices.AddRange(
-            Lev.Pictures.Where(v => v.Position.Mark == VectorMark.Selected).Select(p => p.Position));
+            Lev.GraphicElements.Where(v => v.Position.Mark == VectorMark.Selected).Select(p => p.Position));
 
         void RemoveSelected()
         {
@@ -2505,7 +2489,7 @@ internal partial class LevelEditorForm : FormMod, IMessageFilter
 
             Lev.Objects.RemoveAll(o =>
                 o.Position.Mark == VectorMark.Selected && o.Type != ObjectType.Start);
-            Lev.Pictures.RemoveAll(p => p.Position.Mark == VectorMark.Selected);
+            Lev.GraphicElements.RemoveAll(p => p.Position.Mark == VectorMark.Selected);
         }
 
         var objType = ObjectType.Apple;
@@ -2524,29 +2508,30 @@ internal partial class LevelEditorForm : FormMod, IMessageFilter
         else
         {
             // handle picture
-            PicForm.AllowMultiple = false;
-            PicForm.AutoTextureMode = false;
-            PicForm.SetDefaultsAutomatically = true;
-            PicForm.SetDefaultDistanceAndClipping();
-            PicForm.ShowDialog();
-            if (PicForm.OkButtonPressed)
+            var picForm = new PictureForm(_editorLgr!, null)
+            {
+                AllowMultiple = false,
+                AutoTextureMode = false,
+                SetDefaultsAutomatically = true
+            };
+            picForm.SetDefaultDistanceAndClipping();
+            picForm.ShowDialog();
+            if (picForm.Selection is { } sel)
             {
                 RemoveSelected();
+                var clipping = sel.Clipping!.Value;
+                var distance = sel.Distance!.Value;
                 foreach (var selectedVertex in selectedVertices)
                 {
-                    if (PicForm.TextureSelected)
+                    GraphicElement g = picForm.Selection switch
                     {
-                        Lev.Pictures.Add(new Picture(PicForm.Clipping, PicForm.Distance,
-                            selectedVertex,
-                            Renderer.DrawableImageFromName(PicForm.Texture.Name),
-                            Renderer.DrawableImageFromName(PicForm.Mask.Name)));
-                    }
-                    else
-                    {
-                        Lev.Pictures.Add(new Picture(Renderer.DrawableImageFromName(PicForm.Picture.Name),
-                            selectedVertex, PicForm.Distance,
-                            PicForm.Clipping));
-                    }
+                        ImageSelection.TextureSelection t => GraphicElement.Text(clipping, distance, selectedVertex,
+                            Renderer.DrawableImageFromName(t.Txt), Renderer.DrawableImageFromName(t.Mask)),
+                        ImageSelection.PictureSelection p => GraphicElement.Pic(
+                            Renderer.DrawableImageFromName(p.Pic), selectedVertex, distance, clipping),
+                        _ => throw new Exception("Unexpected")
+                    };
+                    Lev.GraphicElements.Add(g);
                 }
             }
 
@@ -2580,7 +2565,7 @@ internal partial class LevelEditorForm : FormMod, IMessageFilter
 
     private void DeleteCurrentLevel()
     {
-        if (Lev.Path == null)
+        if (_file is null)
         {
             return;
         }
@@ -2589,10 +2574,10 @@ internal partial class LevelEditorForm : FormMod, IMessageFilter
                 MessageBoxIcon.Question) == DialogResult.Yes)
         {
             UpdateCurrLevDirFiles();
-            File.Delete(Lev.Path);
+            File.Delete(_file.Path);
 
-            int levIndex = GetCurrentLevelIndex();
-            CurrLevDirFiles.RemoveAt(levIndex);
+            int levIndex = GetCurrentLevelIndex(_file, CurrLevDirFiles!);
+            CurrLevDirFiles!.RemoveAt(levIndex);
             if (levIndex < CurrLevDirFiles.Count)
             {
                 OpenLevel(CurrLevDirFiles[levIndex]);
@@ -2604,10 +2589,10 @@ internal partial class LevelEditorForm : FormMod, IMessageFilter
         }
     }
 
-    private int GetCurrentLevelIndex()
+    private int GetCurrentLevelIndex(ElmaFile file, List<string> files)
     {
-        return CurrLevDirFiles.FindIndex(
-            path => string.Compare(path, Lev.Path, StringComparison.OrdinalIgnoreCase) == 0);
+        return files.FindIndex(
+            path => string.Compare(path, file.Path, StringComparison.OrdinalIgnoreCase) == 0);
     }
 
     private void deleteButton_Click(object sender, EventArgs e)
@@ -2615,21 +2600,21 @@ internal partial class LevelEditorForm : FormMod, IMessageFilter
         DeleteCurrentLevel();
     }
 
-    private void filenameBox_TextChanged(object sender = null, EventArgs e = null)
+    private void filenameBox_TextChanged(object? sender = null, EventArgs? e = null)
     {
-        bool showButtons = string.Compare(filenameBox.Text,
-            Lev.FileNameNoExt,
-            StringComparison.InvariantCulture) != 0 && Lev.Path != null;
+        bool showButtons = _file is not null && string.Compare(filenameBox.Text,
+            _file.FileNameNoExt,
+            StringComparison.InvariantCulture) != 0;
         filenameOkButton.Visible = showButtons;
         filenameCancelButton.Visible = showButtons;
     }
 
-    private void filenameCancelButton_Click(object sender = null, EventArgs e = null)
+    private void filenameCancelButton_Click(object? sender = null, EventArgs? e = null)
     {
-        filenameBox.Text = Lev.FileNameNoExt;
+        filenameBox.Text = _file?.FileNameNoExt;
     }
 
-    private void filenameOkButton_Click(object sender = null, EventArgs e = null)
+    private void filenameOkButton_Click(object? sender = null, EventArgs? e = null)
     {
         if (filenameBox.Text == string.Empty)
         {
@@ -2639,16 +2624,16 @@ internal partial class LevelEditorForm : FormMod, IMessageFilter
 
         try
         {
-            var newPath = Path.Combine(Path.GetDirectoryName(Lev.Path), filenameBox.Text + ".lev");
+            var newPath = Path.Combine(_file!.FileInfo.DirectoryName!, filenameBox.Text + ".lev");
             UpdateCurrLevDirFiles();
-            File.Move(Lev.Path, newPath);
+            File.Move(_file.Path, newPath);
             if (CurrLevDirFiles != null)
             {
-                int index = GetCurrentLevelIndex();
+                int index = GetCurrentLevelIndex(_file, CurrLevDirFiles);
                 CurrLevDirFiles[index] = newPath;
             }
 
-            Lev.Path = newPath;
+            _file = new ElmaFile(newPath);
             UpdateLabels();
             filenameBox_TextChanged();
         }
@@ -2664,7 +2649,7 @@ internal partial class LevelEditorForm : FormMod, IMessageFilter
 
     private void filenameBox_KeyDown(object sender, KeyEventArgs e)
     {
-        if (Lev.Path == null)
+        if (_file is null)
         {
             return;
         }
@@ -2719,7 +2704,7 @@ internal partial class LevelEditorForm : FormMod, IMessageFilter
         TexturizeSelection();
     }
 
-    private void SaveStartPosition(object sender = null, EventArgs e = null)
+    private void SaveStartPosition(object? sender = null, EventArgs? e = null)
     {
         foreach (var o in Lev.Objects)
         {
@@ -2791,7 +2776,7 @@ internal partial class LevelEditorForm : FormMod, IMessageFilter
         }
     }
 
-    private async void playButton_Click(object sender, EventArgs e)
+    private async void playButton_Click(object? sender, EventArgs? e)
     {
         if (PlayController.Paused)
         {
@@ -2810,7 +2795,7 @@ internal partial class LevelEditorForm : FormMod, IMessageFilter
         var t = new Timer(25);
         var updateTime = new Action(() =>
         {
-            PlayTimeLabel.Text = PlayController.Driver.CurrentTime.ToSeconds().ToTimeString(3);
+            PlayTimeLabel.Text = PlayController.Driver!.CurrentTime.ToSeconds().ToTimeString(3);
         });
         t.Elapsed += (_, _) =>
         {
@@ -2820,7 +2805,7 @@ internal partial class LevelEditorForm : FormMod, IMessageFilter
         CameraUtils.AllowScroll = false;
         await PlayController.BeginLoop(Lev, _sceneSettings, Renderer, _zoomCtrl, DoRedrawScene);
         t.Stop();
-        PlayTimeLabel.Text = PlayController.Driver.CurrentTime.ToSeconds().ToTimeString(3);
+        PlayTimeLabel.Text = PlayController.Driver!.CurrentTime.ToSeconds().ToTimeString(3);
         if (PlayController.Driver.Condition == DriverCondition.Finished)
         {
             PlayTimeLabel.Text += " F";
@@ -2843,7 +2828,7 @@ internal partial class LevelEditorForm : FormMod, IMessageFilter
         stopButton.Enabled = true;
     }
 
-    private void stopButton_Click(object sender, EventArgs e)
+    private void stopButton_Click(object? sender, EventArgs? e)
     {
         if (PlayController.PlayingOrPaused)
         {
@@ -2863,6 +2848,8 @@ internal partial class LevelEditorForm : FormMod, IMessageFilter
     }
 
     private static readonly string[] ImportableExtensions = {DirUtils.LevExtension, DirUtils.LebExtension, ".bmp", ".png", ".gif", ".tiff", ".exif", ".svg", ".svgz" };
+    private ToolBase.NearestVertexInfo? _grassInfo;
+    private TexturizationOptions? _texturizationOpts;
 
     public bool PreFilterMessage(ref Message m)
     {

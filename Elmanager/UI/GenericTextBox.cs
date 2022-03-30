@@ -5,10 +5,10 @@ using System.Windows.Forms;
 
 namespace Elmanager.UI;
 
-internal class GenericTextBox<T> : TextBox
+internal class GenericTextBox<T> : TextBox where T : struct
 {
     private T _defaultValue;
-    private Func<string, T> _parseInput;
+    private Func<string, T>? _parseInput;
 
     public GenericTextBox(Func<string, T> parser)
     {
@@ -37,7 +37,7 @@ internal class GenericTextBox<T> : TextBox
     {
         try
         {
-            _parseInput(Text);
+            _parseInput?.Invoke(Text);
             return true;
         }
         catch (Exception)
@@ -46,14 +46,14 @@ internal class GenericTextBox<T> : TextBox
         }
     }
 
-    public void SetParser(Func<string, T> val)
+    public void SetParser(Func<string, T>? val)
     {
         if (val == null)
             return;
         _parseInput = val;
     }
 
-    private void ValidateInput(object sender, EventArgs eventArgs)
+    private void ValidateInput(object? sender, EventArgs eventArgs)
     {
         BackColor = IsInputValid() ? SystemColors.Window : Color.Red;
     }

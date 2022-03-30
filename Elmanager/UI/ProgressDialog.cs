@@ -9,13 +9,9 @@ internal partial class ProgressDialog : FormMod
     private readonly CancellationTokenSource _cancelSrc;
     private readonly Task _task;
 
-    public ProgressDialog()
+    public ProgressDialog(Task task, CancellationTokenSource cancelSrc, Progress<double> progress)
     {
         InitializeComponent();
-    }
-
-    public ProgressDialog(Task task, CancellationTokenSource cancelSrc, Progress<double> progress) : this()
-    {
         _cancelSrc = cancelSrc;
         _task = task;
         progress.ProgressChanged += (sender, d) => { progressBar1.Value = (int) (d * 1000); };

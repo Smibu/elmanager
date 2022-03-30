@@ -13,7 +13,6 @@ internal abstract class ToolBase : IEditorToolBase
     protected Vector CurrentPos;
     private Control _editorControl;
     protected LevelEditorForm LevEditor;
-    internal Polygon NearestPolygon;
     protected ElmaRenderer Renderer;
 
     protected ToolBase(LevelEditorForm editor)
@@ -80,10 +79,10 @@ internal abstract class ToolBase : IEditorToolBase
         if (Global.AppSettings.LevelEditor.CapturePicturesAndTexturesFromBordersOnly)
         {
             var limit = ZoomCtrl.ZoomLevel * Global.AppSettings.LevelEditor.CaptureRadius;
-            for (int j = 0; j < Lev.Pictures.Count; j++)
+            for (int j = 0; j < Lev.GraphicElements.Count; j++)
             {
-                Picture z = Lev.Pictures[j];
-                if ((z.IsPicture && pictureFilter) || (!z.IsPicture && textureFilter))
+                GraphicElement z = Lev.GraphicElements[j];
+                if ((z is GraphicElement.Picture && pictureFilter) || (z is GraphicElement.Texture && textureFilter))
                 {
                     if (GeometryUtils.DistanceFromSegment(z.Position.X, z.Position.Y, z.Position.X + z.Width,
                             z.Position.Y, p.X, p.Y) < limit
@@ -105,10 +104,10 @@ internal abstract class ToolBase : IEditorToolBase
         }
         else
         {
-            for (int j = 0; j < Lev.Pictures.Count; j++)
+            for (int j = 0; j < Lev.GraphicElements.Count; j++)
             {
-                Picture z = Lev.Pictures[j];
-                if ((z.IsPicture && pictureFilter) || (!z.IsPicture && textureFilter))
+                GraphicElement z = Lev.GraphicElements[j];
+                if ((z is GraphicElement.Picture && pictureFilter) || (z is GraphicElement.Texture && textureFilter))
                 {
                     if (p.X > z.Position.X && p.X < z.Position.X + z.Width && p.Y < z.Position.Y &&
                         p.Y > z.Position.Y - z.Height)
@@ -126,15 +125,30 @@ internal abstract class ToolBase : IEditorToolBase
         return found;
     }
 
-    internal int GetNearestVertexIndex(Vector p)
+    internal record NearestVertexInfo
     {
-        bool nearestVertexFound = false;
-        bool nearestSelectedVertexFound = false;
+        internal record VertexInfo(int Index, Polygon P) : NearestVertexInfo;
+        internal record EdgeInfo(int StartIndex, int EndIndex, Polygon P) : NearestVertexInfo;
+
+        internal static VertexInfo Vertex(int index, Polygon p) => new(index, p);
+        internal static EdgeInfo Edge(int start, int end, Polygon p) => new(start, end, p);
+
+        internal Polygon Polygon => this switch
+        {
+            EdgeInfo edgeInfo => edgeInfo.P,
+            VertexInfo vertexInfo => vertexInfo.P,
+            _ => throw new ArgumentOutOfRangeException()
+        };
+    }
+
+    internal NearestVertexInfo? GetNearestVertexInfo(Vector p)
+    {
         int nearestIndex = -1;
         int nearestSelectedIndex = -1;
         double smallestDistance = double.MaxValue;
         double smallestSelectedDistance = double.MaxValue;
-        Polygon nearestSelectedPolygon = null;
+        Polygon? nearestSelectedPolygon = null;
+        Polygon? nearestPolygon = null;
         var grassFilter = LevEditor.EffectiveGrassFilter;
         var groundFilter = LevEditor.EffectiveGroundFilter;
         foreach (Polygon poly in Lev.Polygons)
@@ -147,9 +161,8 @@ internal abstract class ToolBase : IEditorToolBase
                 int currentIndex = poly.GetNearestVertexIndex(p);
                 if (currentDistance < smallestDistance)
                 {
-                    NearestPolygon = poly;
+                    nearestPolygon = poly;
                     nearestIndex = currentIndex;
-                    nearestVertexFound = true;
                     smallestDistance = currentDistance;
                 }
 
@@ -159,25 +172,30 @@ internal abstract class ToolBase : IEditorToolBase
                 {
                     nearestSelectedPolygon = poly;
                     nearestSelectedIndex = currentIndex;
-                    nearestSelectedVertexFound = true;
                     smallestSelectedDistance = currentDistance;
                 }
             }
         }
 
-        if (nearestSelectedVertexFound)
+        if (nearestSelectedPolygon is { })
         {
-            NearestPolygon = nearestSelectedPolygon;
-            return nearestSelectedIndex;
+            return NearestVertexInfo.Vertex(nearestSelectedIndex, nearestSelectedPolygon);
         }
 
-        if (nearestVertexFound)
+        if (nearestPolygon is { })
         {
-            return nearestIndex;
+            return NearestVertexInfo.Vertex(nearestIndex, nearestPolygon);
         }
 
-        smallestDistance = double.MaxValue;
-        bool nearestSegmentFound = false;
+        return GetNearestSegmentInfo(p);
+    }
+
+    internal NearestVertexInfo.EdgeInfo? GetNearestSegmentInfo(Vector p)
+    {
+        var smallestDistance = double.MaxValue;
+        Polygon? nearestPolygon = null;
+        var grassFilter = LevEditor.EffectiveGrassFilter;
+        var groundFilter = LevEditor.EffectiveGroundFilter;
         foreach (Polygon x in Lev.Polygons)
         {
             double currentDistance;
@@ -187,19 +205,19 @@ internal abstract class ToolBase : IEditorToolBase
             {
                 if (currentDistance < smallestDistance)
                 {
-                    nearestSegmentFound = true;
                     smallestDistance = currentDistance;
-                    NearestPolygon = x;
+                    nearestPolygon = x;
                 }
             }
         }
 
-        if (nearestSegmentFound)
+        if (nearestPolygon is { })
         {
-            return -1;
+            var nearestSegmentIndex = nearestPolygon.GetNearestSegmentIndex(p);
+            return NearestVertexInfo.Edge(nearestSegmentIndex, nearestSegmentIndex + 1 % nearestPolygon.Count, nearestPolygon);
         }
 
-        return -2; //Indicates that mouse wasn't near any edge nor vertex
+        return null;
     }
 
     public double CaptureRadiusScaled => ZoomCtrl.ZoomLevel * Global.AppSettings.LevelEditor.CaptureRadius;
@@ -225,11 +243,11 @@ internal abstract class ToolBase : IEditorToolBase
         }
 
         foreach (LevObject x in Lev.Objects)
-            if (x.Position.Mark == VectorMark.Highlight)
-                x.Position.Mark = VectorMark.None;
-        foreach (Picture z in Lev.Pictures)
-            if (z.Position.Mark == VectorMark.Highlight)
-                z.Position.Mark = VectorMark.None;
+            if (x.Mark == VectorMark.Highlight)
+                x.Mark = VectorMark.None;
+        foreach (GraphicElement z in Lev.GraphicElements)
+            if (z.Mark == VectorMark.Highlight)
+                z.Mark = VectorMark.None;
     }
 
     protected void ResetPolygonMarks()
@@ -286,8 +304,8 @@ internal abstract class ToolBase : IEditorToolBase
         }
 
         foreach (LevObject x in Lev.Objects)
-            x.Position.Mark = mark;
-        foreach (Picture x in Lev.Pictures)
-            x.Position.Mark = mark;
+            x.Mark = mark;
+        foreach (GraphicElement x in Lev.GraphicElements)
+            x.Mark = mark;
     }
 }

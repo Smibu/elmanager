@@ -1,25 +1,19 @@
 using System;
-using System.ComponentModel;
+using System.IO;
 
 namespace Elmanager.IO;
 
-internal class ElmaFile
+internal record ElmaFile(string Path)
 {
-    [Description("Date modified")] public DateTime DateModified;
-    public int Size;
-    internal string Path;
+    public DateTime DateModified => FileInfo.LastWriteTime;
+    public int Size => (int) FileInfo.Length;
 
-    [Description("Size (kB)")] public double SizeInKb => Size / 1024.0;
+    public double SizeInKb => Size / 1024.0;
 
-    [Description("File name")] public string FileNameNoExt => System.IO.Path.GetFileNameWithoutExtension(FileName);
+    public string FileNameNoExt => System.IO.Path.GetFileNameWithoutExtension(FileName);
 
-    public string FileName
-    {
-        get => System.IO.Path.GetFileName(Path);
-        set
-        {
-            var fileName = value + DirUtils.RecExtension;
-            Path = System.IO.Path.GetDirectoryName(Path) + "\\" + fileName;
-        }
-    }
+    public string FileName => FileInfo.Name;
+
+    public FileInfo FileInfo => _fileInfo ??= new FileInfo(Path);
+    private FileInfo? _fileInfo;
 }

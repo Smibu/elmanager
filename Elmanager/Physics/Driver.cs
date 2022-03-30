@@ -6,6 +6,8 @@ using Elmanager.Rec;
 
 namespace Elmanager.Physics;
 
+#pragma warning disable
+
 internal class Driver
 {
     public BodyPart Body;

@@ -10,7 +10,7 @@ namespace Elmanager.UI;
 
 internal class SvgImageToolStripButton : ToolStripButton
 {
-    private byte[] _svgData;
+    private byte[]? _svgData;
     private static readonly StreamSvgConverter SvgConverter = new(new WpfDrawingSettings
     {
         EnsureViewboxSize = true,
@@ -21,12 +21,16 @@ internal class SvgImageToolStripButton : ToolStripButton
         OptimizePath = false
     });
 
-    public byte[] SvgData
+    public byte[]? SvgData
     {
         get => _svgData;
         set
         {
             _svgData = value;
+            if (_svgData is null)
+            {
+                return;
+            }
             using var dest = new MemoryStream();
             using var src = new MemoryStream(_svgData);
             if (!SvgConverter.Convert(src, dest))

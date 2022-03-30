@@ -4,7 +4,6 @@ using System.IO;
 using System.Windows.Forms;
 using Elmanager.Application;
 using Elmanager.IO;
-using Elmanager.Rec;
 using Elmanager.UI;
 using Elmanager.Utilities;
 using Microsoft.VisualBasic;
@@ -13,10 +12,10 @@ namespace Elmanager.ReplayManager;
 
 internal partial class RenameForm : FormMod
 {
-    private readonly IList<Replay> _replaysToRename;
+    private readonly IList<ReplayItem> _replaysToRename;
     private readonly ReplayManagerForm _rm;
 
-    internal RenameForm(IList<Replay> replays, ReplayManagerForm rm)
+    internal RenameForm(IList<ReplayItem> replays, ReplayManagerForm rm)
     {
         InitializeComponent();
         _replaysToRename = replays;
@@ -49,9 +48,10 @@ internal partial class RenameForm : FormMod
                 }
             }
 
-            foreach (Replay rp in _replaysToRename)
+            foreach (var rp in _replaysToRename)
             {
-                string timePart = rp.Time.ToTimeString();
+                var rec = rp.Efo.Obj;
+                var timePart = rec.Time.ToTimeString();
                 timePart = timePart.Substring(0, timePart.Length - 1); //Delete 3rd decimal
                 int j;
                 for (j = 0; j <= 1; j++) //Remove leading zeroes (like from 00:23,56)
@@ -88,13 +88,13 @@ internal partial class RenameForm : FormMod
                     switch (PatternBox.Text[j])
                     {
                         case 'L':
-                            if (rp.IsInternal)
+                            if (rec.IsInternal)
                             {
-                                newName += Strings.Mid(rp.LevelFilename, 7, 2);
+                                newName += Strings.Mid(rec.LevelFilename, 7, 2);
                             }
                             else
                             {
-                                newName += Strings.Left(rp.LevelFilename, rp.LevelFilename.Length - 4);
+                                newName += Strings.Left(rec.LevelFilename, rec.LevelFilename.Length - 4);
                             }
 
                             break;
@@ -105,12 +105,12 @@ internal partial class RenameForm : FormMod
                             newName += timePart;
                             break;
                         case 'F':
-                            newName += Path.GetFileNameWithoutExtension(rp.FileName);
+                            newName += Path.GetFileNameWithoutExtension(rp.Efo.File.FileName);
                             break;
                     }
                 }
 
-                if (!rp.FileName.CompareWith(newName + DirUtils.RecExtension))
+                if (!rp.Efo.File.FileName.CompareWith(newName + DirUtils.RecExtension))
                 {
                     _rm.Rename(rp, newName);
                 }

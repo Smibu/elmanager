@@ -15,9 +15,7 @@ namespace Elmanager.LevelEditor.Tools;
 
 internal class SmoothenTool : ToolBase, IEditorTool
 {
-    private Polygon _currentPolygon;
-    private bool _smoothAll;
-    private List<Polygon> _smoothPolys;
+    private List<Polygon> _smoothPolys = new();
     private int _smoothSteps = 3;
     private int _smoothVertexOffset = 50;
     private bool _unsmooth;
@@ -28,7 +26,7 @@ internal class SmoothenTool : ToolBase, IEditorTool
     {
     }
 
-    private bool Smoothing { get; set; }
+    private SmoothState? Smoothing { get; set; }
 
     public void Activate()
     {
@@ -41,7 +39,7 @@ internal class SmoothenTool : ToolBase, IEditorTool
 
     public void ExtraRendering()
     {
-        if (Smoothing)
+        if (Smoothing is { })
             foreach (Polygon x in _smoothPolys)
                 Renderer.DrawPolygon(x, Color.Red);
     }
@@ -62,7 +60,7 @@ internal class SmoothenTool : ToolBase, IEditorTool
 
     public void KeyDown(KeyEventArgs key)
     {
-        if (Smoothing)
+        if (Smoothing is { })
         {
             switch (key.KeyCode)
             {
@@ -133,10 +131,9 @@ internal class SmoothenTool : ToolBase, IEditorTool
             switch (key.KeyCode)
             {
                 case Keys.Space:
-                    if (!Smoothing)
+                    if (Smoothing is null)
                     {
-                        Smoothing = true;
-                        _smoothAll = true;
+                        Smoothing = SmoothState.All;
                         _unsmooth = Keyboard.IsKeyDown(Key.LeftCtrl);
                         UpdateHelp();
                         UpdatePolygonSmooth();
@@ -149,36 +146,34 @@ internal class SmoothenTool : ToolBase, IEditorTool
 
     public void MouseDown(MouseEventArgs mouseData)
     {
-        int nearestVertexIndex = GetNearestVertexIndex(CurrentPos);
+        var info = GetNearestVertexInfo(CurrentPos);
         switch (mouseData.Button)
         {
             case MouseButtons.Left:
-                if (Smoothing)
+                if (Smoothing is { })
                 {
-                    if (_smoothAll)
+                    switch (Smoothing)
                     {
-                        for (int i = Lev.Polygons.Count - 1; i >= 0; i--)
+                        case SmoothState.AllSmooth:
                         {
-                            Polygon x = Lev.Polygons[i];
-                            if (IsSmoothable(x))
-                                Lev.Polygons.RemoveAt(i);
+                            Lev.Polygons.RemoveAll(IsSmoothable);
+                            break;
                         }
+                        case SmoothState.PolygonSmooth p:
+                            Lev.Polygons.Remove(p.P);
+                            break;
                     }
-                    else
-                        Lev.Polygons.Remove(_currentPolygon);
 
                     Lev.Polygons.AddRange(_smoothPolys);
-                    Smoothing = false;
+                    Smoothing = null;
                     LevEditor.SetModified(LevModification.Ground);
                     LevEditor.UpdateSelectionInfo();
                     foreach (Polygon x in _smoothPolys)
                         x.UpdateDecomposition();
                 }
-                else if (nearestVertexIndex >= -1)
+                else if (info is { } v)
                 {
-                    Smoothing = true;
-                    _smoothAll = false;
-                    _currentPolygon = NearestPolygon;
+                    Smoothing = SmoothState.Polygon(v.Polygon);
                     ResetHighlight();
                     _unsmooth = Keyboard.IsKeyDown(Key.LeftCtrl);
                     UpdateHelp();
@@ -197,13 +192,12 @@ internal class SmoothenTool : ToolBase, IEditorTool
     public void MouseMove(Vector p)
     {
         CurrentPos = p;
-        if (!Smoothing)
+        if (Smoothing is null)
         {
-            int nearest = GetNearestVertexIndex(p);
             ResetHighlight();
-            if (nearest >= -1)
+            if (GetNearestVertexInfo(p) is { } v)
             {
-                NearestPolygon.Mark = PolygonMark.Highlight;
+                v.Polygon.Mark = PolygonMark.Highlight;
                 ChangeCursorToHand();
             }
             else
@@ -224,7 +218,7 @@ internal class SmoothenTool : ToolBase, IEditorTool
 
     public void UpdateHelp()
     {
-        if (Smoothing)
+        if (Smoothing is { })
         {
             LevEditor.InfoLabel.Text = "Left click: apply; right click: cancel; (Ctrl) + +/-: adjust parameters.";
             if (!_unsmooth)
@@ -250,30 +244,30 @@ internal class SmoothenTool : ToolBase, IEditorTool
 
     private void CancelSmoothing()
     {
-        if (!Smoothing) return;
-        Smoothing = false;
+        if (Smoothing is null) return;
+        Smoothing = null;
         ResetHighlight();
     }
 
     private void UpdatePolygonSmooth()
     {
-        _smoothPolys = new List<Polygon>();
-        if (_smoothAll)
+        _smoothPolys = Smoothing switch
         {
-            foreach (Polygon x in Lev.Polygons.Where(IsSmoothable))
+            SmoothState.AllSmooth => Lev.Polygons.Where(IsSmoothable)
+                .Select(x => ApplyPolygonSmooth(x, true))
+                .ToList(),
+            SmoothState.PolygonSmooth(var p) => new List<Polygon>
             {
-                _smoothPolys.Add(!_unsmooth
-                    ? x.Smoothen(_smoothSteps, _smoothVertexOffset / 100.0, true)
-                    : x.Unsmoothen(_unsmoothAngle, _unsmoothLength, true));
-            }
-        }
-        else
-        {
-            _smoothPolys.Add(_unsmooth
-                ? _currentPolygon.Unsmoothen(_unsmoothAngle, _unsmoothLength, false)
-                : _currentPolygon.Smoothen(_smoothSteps, _smoothVertexOffset / 100.0, false));
-        }
+                ApplyPolygonSmooth(p, false)
+            },
+            _ => throw new ArgumentOutOfRangeException()
+        };
     }
 
-    public override bool Busy => Smoothing;
+    private Polygon ApplyPolygonSmooth(Polygon p, bool onlySelected) =>
+        _unsmooth
+            ? p.Unsmoothen(_unsmoothAngle, _unsmoothLength, onlySelected)
+            : p.Smoothen(_smoothSteps, _smoothVertexOffset / 100.0, onlySelected);
+
+    public override bool Busy => Smoothing is { };
 }

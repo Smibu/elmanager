@@ -161,7 +161,7 @@ internal partial class ConfigForm : FormMod
         }
     }
 
-    private void FilenameSuggestionBoxCheckedChanged(object sender, EventArgs e)
+    private void FilenameSuggestionBoxCheckedChanged(object? sender, EventArgs? e)
     {
         baseFilenameBox.Enabled = FilenameSuggestionBox.Checked;
         numberFormatBox.Enabled = FilenameSuggestionBox.Checked;
@@ -193,7 +193,7 @@ internal partial class ConfigForm : FormMod
         }
     }
 
-    private void SameAsFilenameBoxCheckedChanged(object sender, EventArgs e)
+    private void SameAsFilenameBoxCheckedChanged(object? sender, EventArgs? e)
     {
         DefaultTitleBox.Enabled = !SameAsFilenameBox.Checked;
     }

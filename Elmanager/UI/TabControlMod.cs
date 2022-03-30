@@ -5,12 +5,12 @@ namespace Elmanager.UI;
 
 internal class TabControlMod : TabControl
 {
-    public KeyDownEventHandler KeyDownEvent;
+    public KeyDownEventHandler? KeyDownEvent;
 
     internal new event KeyDownEventHandler KeyDown
     {
         add => KeyDownEvent = (KeyDownEventHandler) Delegate.Combine(KeyDownEvent, value);
-        remove => KeyDownEvent = (KeyDownEventHandler) Delegate.Remove(KeyDownEvent, value);
+        remove => KeyDownEvent = (KeyDownEventHandler?) Delegate.Remove(KeyDownEvent, value);
     }
 
     protected override void WndProc(ref Message m)
@@ -26,5 +26,5 @@ internal class TabControlMod : TabControl
         }
     }
 
-    internal delegate void KeyDownEventHandler(object sender, KeyEventArgs e);
+    internal delegate void KeyDownEventHandler(object? sender, KeyEventArgs e);
 }

@@ -7,7 +7,7 @@ namespace Elmanager.UI;
 
 internal class ToolStripMenuItemMod : ToolStripMenuItem
 {
-    private string _shortcutText;
+    private string _shortcutText = "";
 
     protected override void OnPaint(PaintEventArgs e)
     {
@@ -17,7 +17,7 @@ internal class ToolStripMenuItemMod : ToolStripMenuItem
             var renderer = Owner.Renderer;
             var rightToLeft = RightToLeft == RightToLeft.Yes;
             var textColor = SystemColors.MenuText;
-            var textRect = (Rectangle) this.GetPropertyValue("InternalLayout").GetPropertyValue("TextRectangle");
+            var textRect = (Rectangle) this.GetPropertyValue("InternalLayout")!.GetPropertyValue("TextRectangle")!;
             var g = e.Graphics;
             if ((DisplayStyle & ToolStripItemDisplayStyle.Text) == ToolStripItemDisplayStyle.Text)
             {

@@ -11,7 +11,7 @@ namespace Elmanager.LevelEditor.Tools;
 internal class DrawTool : ToolBase, IEditorTool
 {
     private const double ThresholdAdjustStep = 0.125;
-    private Polygon _currentPolygon;
+    private Polygon? _currentPolygon;
     private Vector _lastMousePosition;
     private double _mouseTrip;
 
@@ -20,7 +20,7 @@ internal class DrawTool : ToolBase, IEditorTool
     {
     }
 
-    private bool Drawing { get; set; }
+    private bool Drawing => _currentPolygon is { };
 
     public void Activate()
     {
@@ -35,7 +35,7 @@ internal class DrawTool : ToolBase, IEditorTool
 
     public void ExtraRendering()
     {
-        if (Drawing)
+        if (_currentPolygon is { })
             Renderer.DrawLine(_currentPolygon.GetLastVertex(), _currentPolygon.Vertices[0], Color.Red);
     }
 
@@ -46,7 +46,7 @@ internal class DrawTool : ToolBase, IEditorTool
 
     public void InActivate()
     {
-        Drawing = false;
+        _currentPolygon = null;
     }
 
     public void KeyDown(KeyEventArgs key)
@@ -73,7 +73,6 @@ internal class DrawTool : ToolBase, IEditorTool
         switch (mouseData.Button)
         {
             case MouseButtons.Left:
-                Drawing = true;
                 _currentPolygon = new Polygon();
                 _currentPolygon.Add(CurrentPos);
                 _mouseTrip = 0;
@@ -87,7 +86,7 @@ internal class DrawTool : ToolBase, IEditorTool
     public void MouseMove(Vector p)
     {
         CurrentPos = p;
-        if (!Drawing) return;
+        if (_currentPolygon is null) return;
         _mouseTrip += (p - _lastMousePosition).Length;
         _lastMousePosition = p;
         var scaledStep = Global.AppSettings.LevelEditor.DrawStep * ZoomCtrl.ZoomLevel * 0.1;
@@ -109,13 +108,14 @@ internal class DrawTool : ToolBase, IEditorTool
 
     public void MouseUp()
     {
-        if (!Drawing) return;
-        Drawing = false;
+        if (_currentPolygon is null) return;
         if (_currentPolygon.Count > 2)
         {
             _currentPolygon.UpdateDecomposition();
             LevEditor.SetModified(LevModification.Ground);
         }
+
+        _currentPolygon = null;
     }
 
     public override bool Busy => Drawing;

@@ -25,17 +25,17 @@ namespace Elmanager.ReplayManager;
 internal partial class ReplayManagerForm : FormMod, IManagerGui
 {
     private const string NoReplaysSelected = "No replays are selected!";
-    private ObjectListView list;
+    private ObjectListView list = null!;
     private bool _cellEditing;
     private readonly MaybeOpened<ReplayViewerForm> _currentViewer = new();
-    private readonly Manager<Replay> _manager;
-    private CancellationTokenSource _searchCancelToken;
+    private readonly Manager<ReplayItem> _manager;
+    private CancellationTokenSource? _searchCancelToken;
     protected override Size DefaultSize => new(600, 400);
 
     internal ReplayManagerForm()
     {
         InitializeComponent();
-        _manager = new Manager<Replay>(this);
+        _manager = new Manager<ReplayItem>(this);
 
         if (Global.AppSettings.ReplayManager.ShowTooltipInList)
         {
@@ -47,11 +47,11 @@ internal partial class ReplayManagerForm : FormMod, IManagerGui
         DisplaySelectionInfo();
     }
 
-    private TypedObjectListView<Replay> TypedList => _manager.TypedList;
+    private TypedObjectListView<ReplayItem> TypedList => _manager.TypedList;
 
-    internal string Rename(Replay replay, string newName, bool allowSameName = true)
+    internal string? Rename(ReplayItem replay, string newName, bool allowSameName = true)
     {
-        if (replay.FileName.ToLower() == newName.ToLower() + DirUtils.RecExtension && !allowSameName)
+        if (replay.Efo.File.FileName.ToLower() == newName.ToLower() + DirUtils.RecExtension && !allowSameName)
             return null;
         var T = string.Empty;
         var recDir = Path.GetDirectoryName(replay.Path);
@@ -70,11 +70,11 @@ internal partial class ReplayManagerForm : FormMod, IManagerGui
 
         try
         {
-            var fileName = newName + T;
-            FileSystem.RenameFile(replay.Path, fileName + DirUtils.RecExtension);
-            replay.FileName = fileName;
-            ObjectList.RefreshObject(replay);
-            return fileName;
+            var fileName = newName + T + DirUtils.RecExtension;
+            FileSystem.RenameFile(replay.Path, fileName);
+            var newPath = Path.Combine(replay.Efo.File.FileInfo.DirectoryName!, fileName);
+            UpdateReplay(replay, replay with { Efo = replay.Efo with { File = new ElmaFile(newPath) } });
+            return newName + T;
         }
         catch (ArgumentException)
         {
@@ -88,16 +88,23 @@ internal partial class ReplayManagerForm : FormMod, IManagerGui
         }
     }
 
+    private void UpdateReplay(ReplayItem replay, ReplayItem newR)
+    {
+        var ind = ObjectList.IndexOf(replay);
+        ObjectList.RemoveObject(replay);
+        ObjectList.InsertObjects(ind, new[] {newR});
+    }
+
     private static bool IsDiffLevel(IList<Replay> replays)
     {
         var levFileName = replays[0].LevelFilename;
         return replays.Any(x => !StringUtils.CompareWith(x.LevelFilename, levFileName));
     }
 
-    private static string GetReplayToolTip(OLVColumn col, Replay x)
+    private static string GetReplayToolTip(OLVColumn col, ReplayItem r)
     {
-        var rep = x;
-        var toolTipStr = $"Replay path: {rep.Path}";
+        var rep = r.Rec;
+        var toolTipStr = $"Replay path: {r.Path}";
         if (rep.LevelExists && !rep.IsInternal)
             toolTipStr += $"\r\nLevel path: {rep.LevelPath}";
         toolTipStr += $"\r\n\r\n---Player 1---\r\n{rep.Player1.GetPlayerInfoStr()}";
@@ -110,7 +117,7 @@ internal partial class ReplayManagerForm : FormMod, IManagerGui
     {
         if (!e.Cancel)
         {
-            var x = (Replay) e.RowObject;
+            var x = (ReplayItem) e.RowObject;
             var newName = Rename(x, e.Control.Text, false);
             if (newName != null)
                 e.Control.Text = newName;
@@ -190,8 +197,8 @@ internal partial class ReplayManagerForm : FormMod, IManagerGui
         var allFiles = Directory.GetFiles(Global.AppSettings.General.ReplayDirectory, "*.rec",
             SearchOption.AllDirectories);
         var replayFiles = SearchUtils.FilterByRegex(allFiles, "");
-        var dupes = replayFiles.GroupBy(x => Path.GetFileName(x)?.ToLower()).Where(g => g.Count() > 1)
-            .SelectMany(g => g).Select(x => new Replay(x));
+        var dupes = replayFiles.GroupBy(x => Path.GetFileName(x).ToLower()).Where(g => g.Count() > 1)
+            .SelectMany(g => g).Select(x => new ReplayItem(Replay.FromPath(x)));
         ObjectList.SetObjects(dupes);
         DisplaySelectionInfo();
     }
@@ -212,22 +219,16 @@ internal partial class ReplayManagerForm : FormMod, IManagerGui
         using (var md5 = MD5.Create())
         {
             var dupes = sameLengths.GroupBy(x => Convert.ToBase64String(md5.ComputeHash(File.ReadAllBytes(x))))
-                .Where(g => g.Count() > 1).SelectMany(g => g).Select(x => new Replay(x)).ToList();
+                .Where(g => g.Count() > 1).SelectMany(g => g).Select(x => new ReplayItem(Replay.FromPath(x))).ToList();
             ObjectList.SetObjects(dupes);
         }
 
         DisplaySelectionInfo();
     }
 
-    private List<Replay> GetSelectedReplays()
-    {
-        return TypedList.SelectedObjects.ToList();
-    }
+    private List<ElmaFileObject<Replay>> GetSelectedReplays() => TypedList.SelectedObjects.Select(o => o.Efo).ToList();
 
-    private Replay GetSelectedReplay()
-    {
-        return TypedList.SelectedObjects[0];
-    }
+    private ElmaFileObject<Replay> GetSelectedReplay() => TypedList.SelectedObjects[0].Efo;
 
     private byte[][] GetSelectedReplaysToArray()
     {
@@ -241,9 +242,9 @@ internal partial class ReplayManagerForm : FormMod, IManagerGui
     {
         double totalTime = 0;
         if (Global.AppSettings.ReplayManager.Decimal3Shown)
-            totalTime += TypedList.SelectedObjects.Sum(x => x.Time);
+            totalTime += TypedList.SelectedObjects.Sum(x => x.Efo.Obj.Time);
         else
-            totalTime += TypedList.SelectedObjects.Sum(x => Math.Floor(x.Time * 100) / 100);
+            totalTime += TypedList.SelectedObjects.Sum(x => Math.Floor(x.Efo.Obj.Time * 100) / 100);
         return totalTime;
     }
 
@@ -258,7 +259,7 @@ internal partial class ReplayManagerForm : FormMod, IManagerGui
         var firstReplay = GetSelectedReplay();
         return
             TypedList.SelectedObjects
-                .Any(x => x.IsMulti || !x.LevelFilename.CompareWith(firstReplay.LevelFilename));
+                .Any(x => x.IsMulti || !x.Efo.Obj.LevelFilename.CompareWith(firstReplay.Obj.LevelFilename));
     }
 
     private void MergeReplays(object sender, EventArgs e)
@@ -314,11 +315,11 @@ internal partial class ReplayManagerForm : FormMod, IManagerGui
         {
             try
             {
-                var dest = Path.Combine(FolderBrowserDialog1.SelectedPath, replay.FileName);
+                var dest = Path.Combine(FolderBrowserDialog1.SelectedPath, replay.Efo.File.FileName);
                 if (move)
                 {
                     FileSystem.MoveFile(replay.Path, dest, true);
-                    replay.Path = dest;
+                    UpdateReplay(replay, replay with {Efo = replay.Efo.WithPath(dest)});
                 }
                 else
                     FileSystem.CopyFile(replay.Path, dest, true);
@@ -339,15 +340,15 @@ internal partial class ReplayManagerForm : FormMod, IManagerGui
         }
 
         var selectedReplay = GetSelectedReplay();
-        if (selectedReplay.IsInternal)
+        if (selectedReplay.Obj.IsInternal)
         {
             UiUtils.ShowError("Cannot open level file from internal replays!");
             return;
         }
 
-        var levelFile = selectedReplay.LevelFilename;
+        var levelFile = selectedReplay.Obj.LevelFilename;
 
-        if (!selectedReplay.LevelExists)
+        if (!selectedReplay.Obj.LevelExists)
         {
             UiUtils.ShowError("Level file doesn\'t exist!");
             return;
@@ -370,13 +371,13 @@ internal partial class ReplayManagerForm : FormMod, IManagerGui
         }
 
         var rps = GetSelectedReplays();
-        if (IsDiffLevel(rps))
+        if (IsDiffLevel(rps.Select(o => o.Obj).ToList()))
         {
             UiUtils.ShowError("The replays must have the same level!");
             return;
         }
 
-        if (!rps[0].LevelExists)
+        if (!rps[0].Obj.LevelExists)
         {
             UiUtils.ShowError("Level for the replays was not found!");
             return;
@@ -390,7 +391,7 @@ internal partial class ReplayManagerForm : FormMod, IManagerGui
         Cursor = Cursors.Default;
     }
 
-    private void RemoveReplays(object sender = null, EventArgs e = null)
+    private void RemoveReplays(object? sender = null, EventArgs? e = null)
     {
         _manager.RemoveReplays();
     }
@@ -405,7 +406,7 @@ internal partial class ReplayManagerForm : FormMod, IManagerGui
 
         ObjectList.CellEditActivation = ObjectListView.CellEditActivateMode.F2Only;
         ObjectList.EditSubItem(ObjectList.SelectedItem,
-            ObjectList.AllColumns.FindIndex(c => c.AspectName == nameof(Replay.FileNameNoExt)));
+            ObjectList.AllColumns.FindIndex(c => c.AspectName == nameof(ReplayItem.FileNameNoExt)));
         ObjectList.CellEditActivation = ObjectListView.CellEditActivateMode.None;
     }
 
@@ -428,7 +429,7 @@ internal partial class ReplayManagerForm : FormMod, IManagerGui
         {
             Cursor = Cursors.WaitCursor;
             var selectedRp = GetSelectedReplay();
-            if (selectedRp.LevelExists)
+            if (selectedRp.Obj.LevelExists)
             {
                 _currentViewer.ExistingInstance.SetReplays(selectedRp);
             }
@@ -656,10 +657,10 @@ internal partial class ReplayManagerForm : FormMod, IManagerGui
         DuplicateFilenameButton.Enabled = false;
         ConfigButton.Enabled = false;
         clickedButton.Text = "Stop";
-        var foundReplays = new List<Replay>();
+        var foundReplays = new List<ReplayItem>();
         ToolStripProgressBar1.Maximum = replayFiles.Count;
 
-        var recsByLevel = new Dictionary<string, List<Replay>>();
+        var recsByLevel = new Dictionary<string, List<ReplayItem>>();
         var token = _searchCancelToken.Token;
         var progressHandler = new Progress<(int progress, int levels, int recs, int phase)>(value =>
         {
@@ -683,10 +684,10 @@ internal partial class ReplayManagerForm : FormMod, IManagerGui
                 foreach (var replayFile in replayFiles)
                 {
                     iter++;
-                    Replay srp;
+                    ElmaFileObject<Replay> srp;
                     try
                     {
-                        srp = new Replay(replayFile);
+                        srp = Replay.FromPath(replayFile);
                     }
                     catch (BadFileException)
                     {
@@ -698,18 +699,18 @@ internal partial class ReplayManagerForm : FormMod, IManagerGui
                     {
                         if (!searchForAllReplays)
                         {
-                            var key = srp.LevelFilename.ToLower() + srp.IsMulti;
+                            var key = srp.Obj.LevelFilename.ToLower() + srp.Obj.IsMulti;
                             recsByLevel.TryGetValue(key, out var recs);
                             if (recs == null)
                             {
-                                recs = new List<Replay>();
+                                recs = new List<ReplayItem>();
                                 recsByLevel[key] = recs;
                             }
 
-                            recs.Add(srp);
+                            recs.Add(new ReplayItem(srp));
                         }
                         else
-                            foundReplays.Add(srp);
+                            foundReplays.Add(new ReplayItem(srp));
                     }
 
                     if (iter % 10 == 0)

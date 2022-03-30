@@ -5,6 +5,8 @@ using Elmanager.Lev;
 
 namespace Elmanager.Physics;
 
+#pragma warning disable
+
 internal class Engine
 {
     public readonly HashSet<int> TakenApples = new();

@@ -26,8 +26,7 @@ internal class TextTool : ToolBase, IEditorTool
 {
     private TextToolOptions _currentOptions = TextToolOptions.Default;
 
-    private List<Polygon> _currentTextPolygons;
-    private bool _writing;
+    private List<Polygon>? _currentTextPolygons;
     private static readonly Dictionary<string, string> EmptySynonymMap = new();
 
     private static readonly Dictionary<string, string> SynonymMap = new()
@@ -45,12 +44,10 @@ internal class TextTool : ToolBase, IEditorTool
         switch (mouseData.Button)
         {
             case MouseButtons.Left:
-                _writing = true;
                 _currentTextPolygons = new List<Polygon>();
                 LevEditor.RedrawScene();
                 var result = TextToolForm.ShowDefault(_currentOptions, HandleChange);
-                _writing = false;
-                if (result.HasValue)
+                if (result is { })
                 {
                     _currentOptions = result.Value;
                     MarkAllAs(VectorMark.None);
@@ -106,7 +103,7 @@ internal class TextTool : ToolBase, IEditorTool
 
     public void ExtraRendering()
     {
-        if (_writing)
+        if (_currentTextPolygons is { })
         {
             _currentTextPolygons.ForEach(p => Renderer.DrawPolygon(p, Color.Blue));
         }
@@ -203,7 +200,7 @@ internal class TextTool : ToolBase, IEditorTool
                         break;
                     case MultiPolygon multiPolygon:
                         polys.AddRange(multiPolygon.Geometries.Select(geometry => geometry as NetTopologySuite.Geometries.Polygon)
-                            .SelectMany(poly => poly.ToElmaPolygons()));
+                            .SelectMany(poly => poly!.ToElmaPolygons()));
                         break;
                 }
 
@@ -253,10 +250,10 @@ internal class TextTool : ToolBase, IEditorTool
         return (polys, smoothness);
     }
 
-    private static Typeface FindTypeface(TextToolOptions options, FontFamily fontfamily,
+    private static Typeface? FindTypeface(TextToolOptions options, FontFamily fontfamily,
         Dictionary<string, string> synonymMap)
     {
-        Typeface typeface = null;
+        Typeface? typeface = null;
         foreach (var familyTypeface in fontfamily.GetTypefaces())
         {
             var faceName = familyTypeface.FaceNames[XmlLanguage.GetLanguage("en-US")];
@@ -335,7 +332,7 @@ internal class TextTool : ToolBase, IEditorTool
                 geometry.Children.Add(cg);
                 break;
             case EllipseGeometry eg:
-                if (gd.Pen != null && !opts.NeverWidenClosedPaths)
+                if (gd.Pen is { } && !opts.NeverWidenClosedPaths)
                 {
                     geometry.Children.Add(eg.GetWidenedPathGeometry(gd.Pen, opts.Smoothness, ToleranceType.Absolute).GetOutlinedPathGeometry(opts.Smoothness, ToleranceType.Absolute));
                 }
@@ -358,7 +355,7 @@ internal class TextTool : ToolBase, IEditorTool
             case PathGeometry pg:
                 for (int i = pg.Figures.Count - 1; i >= 0; i--)
                 {
-                    if (!pg.Figures[i].IsClosed || (gd.Pen != null && !opts.NeverWidenClosedPaths))
+                    if (!pg.Figures[i].IsClosed || (gd.Pen is { } && !opts.NeverWidenClosedPaths))
                     {
                         var penToUse = gd.Pen ?? defaultPen;
                         pg.AddGeometry(new PathGeometry(new List<PathFigure> {pg.Figures[i]})
@@ -371,7 +368,7 @@ internal class TextTool : ToolBase, IEditorTool
                 geometry.Children.Add(pg);
                 break;
             case RectangleGeometry rg:
-                if (gd.Pen != null && !opts.NeverWidenClosedPaths)
+                if (gd.Pen is { } && !opts.NeverWidenClosedPaths)
                 {
                     geometry.Children.Add(rg.GetWidenedPathGeometry(gd.Pen, opts.Smoothness, ToleranceType.Absolute).GetOutlinedPathGeometry(opts.Smoothness, ToleranceType.Absolute));
                 }

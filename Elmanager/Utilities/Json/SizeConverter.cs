@@ -12,15 +12,8 @@ internal class SizeConverter : JsonConverter<Size>
         Type typeToConvert,
         JsonSerializerOptions options)
     {
-        try
-        {
-            var hexStr = reader.GetString().Split("x");
-            return new Size(int.Parse(hexStr[0]), int.Parse(hexStr[1]));
-        }
-        catch (Exception)
-        {
-            throw new JsonException();
-        }
+        var (fst, snd) = reader.ReadTwoInts("x");
+        return new Size(fst, snd);
     }
 
     public override void Write(

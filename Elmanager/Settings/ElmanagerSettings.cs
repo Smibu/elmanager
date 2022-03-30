@@ -42,7 +42,7 @@ internal class ElmanagerSettings
         Converters = { new ColorConverter(), new SizeConverter(), new PointConverter() }
     };
 
-    public static string ElmanagerFolder => Path.GetDirectoryName(Process.GetCurrentProcess().MainModule.FileName);
+    public static string ElmanagerFolder => Path.GetDirectoryName(Process.GetCurrentProcess().MainModule!.FileName)!;
 
     public static ElmanagerSettings Load()
     {
@@ -59,7 +59,7 @@ internal class ElmanagerSettings
                 var oldFileDate = oldSettingFiles.Select(
                         path =>
                             DateTime.ParseExact(
-                                Path.GetFileNameWithoutExtension((string?) path).Substring(SettingsFileBaseName.Length),
+                                Path.GetFileNameWithoutExtension(path).Substring(SettingsFileBaseName.Length),
                                 SettingsFileDateFormat, CultureInfo.InvariantCulture))
                     .Max()
                     .ToString(SettingsFileDateFormat);
@@ -87,7 +87,7 @@ internal class ElmanagerSettings
         try
         {
             var loadedSettings = JsonSerializer.Deserialize<ElmanagerSettings>(File.ReadAllText(path), JsonSerializerOptions);
-            return loadedSettings;
+            return loadedSettings!;
         }
         catch (JsonException e)
         {

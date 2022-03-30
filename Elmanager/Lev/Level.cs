@@ -1,6 +1,5 @@
 using System;
 using System.Collections.Generic;
-using System.ComponentModel;
 using System.IO;
 using System.Linq;
 using System.Text;
@@ -13,7 +12,7 @@ using Elmanager.Utilities;
 
 namespace Elmanager.Lev;
 
-internal class Level : ElmaFile
+internal class Level
 {
     internal const double GlobalBodyDifferenceFromLeftWheelX = 0.85;
     internal const double GlobalBodyDifferenceFromLeftWheelY = 0.6;
@@ -55,28 +54,23 @@ internal class Level : ElmaFile
 
     internal bool AllPicturesFound = true;
     internal string GroundTextureName = "ground";
-    private double[] Integrity = new double[4];
-    private bool IsInternal;
+    private readonly double[] _integrity = new double[4];
 
     internal List<LevObject> Objects = new();
-    internal List<Picture> Pictures = new();
+    internal List<GraphicElement> GraphicElements = new();
     internal List<Polygon> Polygons = new();
     internal string SkyTextureName = "sky";
     internal readonly LevelTop10 Top10 = new();
     public int Identifier { get; private set; }
-    private List<LevelFileTexture> _textureData = new();
+    private List<GraphicElementFileItem> _graphicElementFileItems = new();
 
-    [Description("LGR")]
     public string LgrFile = "default";
     private string _title = "New level";
     private double _polygonXMin;
     private double _polygonYMin;
     private double _polygonXMax;
     private double _polygonYMax;
-    public string LevStartMagic { get; private set; }
-
-    [Description("Replays")]
-    public int Replays;
+    public string LevStartMagic { get; private set; } = "POT14";
 
     internal Level()
     {
@@ -90,15 +84,11 @@ internal class Level : ElmaFile
         UpdateBounds();
     }
 
-    internal static Level FromPath(string levelPath)
+    internal static ElmaFileObject<Level> FromPath(string levelPath)
     {
         using var stream = File.OpenRead(levelPath);
         var lev = FromStream(stream);
-        lev.Size = (int)new FileInfo(levelPath).Length;
-        lev.Path = levelPath;
-        lev.IsInternal = IsInternalLevel(lev.FileName);
-        lev.DateModified = File.GetLastWriteTime(levelPath);
-        return lev;
+        return ElmaFileObject<Level>.FromPath(levelPath, lev);
     }
 
     internal static Level FromStream(Stream data)
@@ -133,7 +123,7 @@ internal class Level : ElmaFile
         Identifier = lev.ReadInt32();
         for (var i = 0; i < 4; i++)
         {
-            Integrity[i] = lev.ReadDouble();
+            _integrity[i] = lev.ReadDouble();
         }
 
         Title = lev.ReadNullTerminatedString(IsAcrossLevel ? 59 : 51);
@@ -219,13 +209,13 @@ internal class Level : ElmaFile
                 var distance = lev.ReadInt32();
                 var clipping = (ClippingType) lev.ReadInt32();
                 if (pictureName == "")
-                    _textureData.Add(new LevelFileTexture(textureName,
+                    _graphicElementFileItems.Add(GraphicElementFileItem.Texture(textureName,
                         maskName, new Vector(x, y),
                         distance,
                         clipping));
                 else
-                    _textureData.Add(new LevelFileTexture(pictureName,
-                        null, new Vector(x, y),
+                    _graphicElementFileItems.Add(GraphicElementFileItem.Picture(pictureName,
+                        new Vector(x, y),
                         distance,
                         clipping));
             }
@@ -268,8 +258,6 @@ internal class Level : ElmaFile
 
     private Level(Level lev)
     {
-        Path = lev.Path;
-        IsInternal = lev.IsInternal;
         LevStartMagic = lev.LevStartMagic;
         foreach (var x in lev.Objects)
             Objects.Add(x.Clone());
@@ -280,49 +268,33 @@ internal class Level : ElmaFile
         YMin = lev.YMin;
         YMax = lev.YMax;
         for (var i = 0; i <= 3; i++)
-            Integrity[i] = lev.Integrity[i];
+            _integrity[i] = lev._integrity[i];
         _title = lev._title;
         LgrFile = lev.LgrFile;
         GroundTextureName = lev.GroundTextureName;
         SkyTextureName = lev.SkyTextureName;
-        foreach (var z in lev.Pictures)
+        foreach (var z in lev.GraphicElements)
         {
-            Pictures.Add(z.Clone());
+            GraphicElements.Add(z with { });
         }
     }
 
-    [Description("Single 1st")]
-    public ElmaTime? BestSingleTime => Top10.SinglePlayer.Count > 0 ? Top10.SinglePlayer[0].TimeInSecs : (ElmaTime?) null;
+    
+    public int AppleObjectCount => Objects.Count(x => x.Type == ObjectType.Apple);
 
-    [Description("Multi 1st")]
-    public ElmaTime? BestMultiTime => Top10.MultiPlayer.Count > 0 ? Top10.MultiPlayer[0].TimeInSecs : (ElmaTime?)null;
+    public int ExitObjectCount => Objects.Count(x => x.Type == ObjectType.Flower);
 
-    [Description("Times")]
-    public int SingleTimesCount => Top10.SinglePlayer.Count;
-
-    [Description("Times (m)")]
-    public int MultiTimesCount => Top10.MultiPlayer.Count;
-
-    [Description("Apples")] public int AppleObjectCount => Objects.Count(x => x.Type == ObjectType.Apple);
-
-    [Description("Grav.")]
-    public int GravApples => Objects.Count(x => x.Type == ObjectType.Apple && x.AppleType != AppleType.Normal);
-
-    [Description("Flowers")] public int ExitObjectCount => Objects.Count(x => x.Type == ObjectType.Flower);
-
-    [Description("Killers")]
     public int KillerObjectCount => Objects.Count(x => x.Type == ObjectType.Killer);
 
-    [Description("Polys")] public int PolygonCount => Polygons.Count;
+    public int PolygonCount => Polygons.Count;
 
-    [Description("Grass ps")] public int GrassPolygonCount => Polygons.Count(x => x.IsGrass);
+    public int GrassPolygonCount => Polygons.Count(x => x.IsGrass);
 
-    [Description("Grass vs")] public int GrassVertexCount =>
+    public int GrassVertexCount =>
         Polygons.Where(x => x.IsGrass).Sum(x => x.Count);
 
-    [Description("Ground ps")] public int GroundPolygonCount => Polygons.Count(x => !x.IsGrass);
+    public int GroundPolygonCount => Polygons.Count(x => !x.IsGrass);
 
-    [Description("Ground vs")]
     public int GroundVertexCount => Polygons.Where(x => !x.IsGrass).Sum(x => x.Count);
 
     internal bool HasTooLargePolygons
@@ -406,7 +378,7 @@ internal class Level : ElmaFile
         get
         {
             var padding = 11.898;
-            return Pictures.Where(p => !p.IsPicture).Any(p =>
+            return GraphicElements.Where(p => p is GraphicElement.Texture).Any(p =>
                 p.Position.X < _polygonXMin - padding ||
                 p.Position.X > _polygonXMax + padding ||
                 p.Position.Y < _polygonYMin - padding ||
@@ -414,25 +386,16 @@ internal class Level : ElmaFile
         }
     }
 
-    [Description("Width")]
     public double Width => XMax - XMin;
 
-    [Description("Height")]
     public double Height => YMax - YMin;
 
-    public int TextureCount => Pictures.Count(texture => !texture.IsPicture);
+    public int TextureCount => GraphicElements.Count(texture => texture is GraphicElement.Texture);
 
-    public int PictureCount => Pictures.Count(texture => texture.IsPicture);
+    public int PictureCount => GraphicElements.Count(texture => texture is GraphicElement.Picture);
+    
+    internal int PictureTextureCount => GraphicElements.Count;
 
-    [Description("Textures")]
-    public int LevelFileTextureCount => _textureData.Count(texture => !texture.IsPicture);
-
-    [Description("Pictures")]
-    public int LevelFilePictureCount => _textureData.Count(texture => texture.IsPicture);
-
-    internal int PictureTextureCount => Pictures.Count;
-
-    [Description("Title")]
     public string Title
     {
         get => _title;
@@ -460,7 +423,7 @@ internal class Level : ElmaFile
 
     private double ObjectSum => Objects.Sum(x => x.Position.X - x.Position.Y + (int) x.Type);
 
-    private double PictureSum => _textureData.Sum(x => x.Position.X - x.Position.Y);
+    private double PictureSum => _graphicElementFileItems.Sum(x => x.Position.X - x.Position.Y);
 
     private double PolygonSum => Polygons.Sum(x => x.Vertices.Sum(v => v.X - v.Y));
 
@@ -472,6 +435,8 @@ internal class Level : ElmaFile
 
     internal bool HasTooFewObjects => Objects.Count < 2;
 
+    public List<GraphicElementFileItem> GraphicElementFileItems => _graphicElementFileItems;
+
     internal static string GetPossiblyInternal(string level)
     {
         if (IsInternalLevel(level))
@@ -480,7 +445,7 @@ internal class Level : ElmaFile
             return index + " - " + InternalTitles[index - 1];
         }
 
-        return System.IO.Path.GetFileNameWithoutExtension(level);
+        return Path.GetFileNameWithoutExtension(level);
     }
 
     internal static bool IsInternalLevel(string levStr) =>
@@ -518,14 +483,14 @@ internal class Level : ElmaFile
         other.Polygons.ForEach(poly => poly.Move(diffV));
         other.Objects.ForEach(obj => obj.Position += diffV);
         other.Objects.RemoveAll(obj => obj.Type == ObjectType.Start);
-        other.Pictures.ForEach(pic => pic.Position += diffV);
+        other.GraphicElements.ForEach(pic => pic.Position += diffV);
         other.DecomposeGroundPolygons();
 
         Polygons.AddRange(other.Polygons);
         Objects.AddRange(other.Objects);
-        Pictures.AddRange(other.Pictures);
+        GraphicElements.AddRange(other.GraphicElements);
 
-        SaveImages();
+        UpdateGraphicElementFileItems();
 
         UpdateBounds();
     }
@@ -583,7 +548,7 @@ internal class Level : ElmaFile
             yMin = Math.Min(yMin, x.Position.Y);
         }
 
-        foreach (var x in Pictures.Where(p => p.Position.Mark == VectorMark.Selected))
+        foreach (var x in GraphicElements.Where(p => p.Position.Mark == VectorMark.Selected))
         {
             xMin = Math.Min(xMin, x.Position.X);
             xMax = Math.Max(xMax, x.Position.X + x.Width);
@@ -638,18 +603,17 @@ internal class Level : ElmaFile
                 t.Position = t.Position.Transform(matrix);
         }
 
-        foreach (var z in Pictures.Where(p => selector(p.Position)))
+        foreach (var z in GraphicElements.Where(p => selector(p.Position)))
         {
             var fix = new Vector(z.Width / 2, -z.Height / 2);
             z.Position.SetPosition((z.Position + fix) * matrix - fix);
         }
     }
 
-    internal void Save(string savePath, bool saveAsFresh = true)
+    internal ElmaFile Save(string savePath, bool saveAsFresh = true)
     {
-        Path = savePath;
         var levelFile = new List<byte>();
-        SaveImages();
+        UpdateGraphicElementFileItems();
         if (saveAsFresh)
         {
             Top10.Clear();
@@ -665,14 +629,14 @@ internal class Level : ElmaFile
         levelFile.Add(BitConverter.GetBytes(Identifier)[1]);
         levelFile.AddRange(BitConverter.GetBytes(Identifier));
         var sum = (PictureSum + ObjectSum + PolygonSum) * 3247.764325643;
-        Integrity[0] = sum;
-        Integrity[1] = rnd.Next(5871) + 11877 - sum;
+        _integrity[0] = sum;
+        _integrity[1] = rnd.Next(5871) + 11877 - sum;
         if (HasTopologyErrors)
-            Integrity[2] = rnd.Next(4982) + 20961 - sum;
+            _integrity[2] = rnd.Next(4982) + 20961 - sum;
         else
-            Integrity[2] = rnd.Next(5871) + 11877 - sum;
-        Integrity[3] = rnd.Next(6102) + 12112 - sum;
-        foreach (var x in Integrity)
+            _integrity[2] = rnd.Next(5871) + 11877 - sum;
+        _integrity[3] = rnd.Next(6102) + 12112 - sum;
+        foreach (var x in _integrity)
             levelFile.AddRange(BitConverter.GetBytes(x));
         levelFile.AddRange(GetByteArrayFromString(Title, 51));
         levelFile.AddRange(GetByteArrayFromString(LgrFile, 16));
@@ -704,21 +668,26 @@ internal class Level : ElmaFile
             levelFile.AddRange(BitConverter.GetBytes(x.AnimationNumber - 1));
         }
 
-        levelFile.AddRange(BitConverter.GetBytes(_textureData.Count + MagicDouble2));
-        foreach (var x in _textureData)
+        levelFile.AddRange(BitConverter.GetBytes(_graphicElementFileItems.Count + MagicDouble2));
+        foreach (var x in _graphicElementFileItems)
         {
-            if (x.MaskName == null)
+            switch (x)
             {
-                levelFile.AddRange(GetByteArrayFromString(x.Name, 10));
-                for (var i = 1; i <= 20; i++)
-                    levelFile.Add(0);
-            }
-            else
-            {
-                for (var i = 1; i <= 10; i++)
-                    levelFile.Add(0);
-                levelFile.AddRange(GetByteArrayFromString(x.Name, 10));
-                levelFile.AddRange(GetByteArrayFromString(x.MaskName, 10));
+                case GraphicElementFileItem.PictureFileItem p:
+                {
+                    levelFile.AddRange(GetByteArrayFromString(p.PictureName, 10));
+                    for (var i = 1; i <= 20; i++)
+                        levelFile.Add(0);
+                    break;
+                }
+                case GraphicElementFileItem.TextureFileItem t:
+                {
+                    for (var i = 1; i <= 10; i++)
+                        levelFile.Add(0);
+                    levelFile.AddRange(GetByteArrayFromString(t.TextureName, 10));
+                    levelFile.AddRange(GetByteArrayFromString(t.MaskName, 10));
+                    break;
+                }
             }
 
             levelFile.AddRange(BitConverter.GetBytes(x.Position.X));
@@ -733,11 +702,12 @@ internal class Level : ElmaFile
         CryptTop10(levelFile, levelFile.Count - 688);
         levelFile.AddRange(BitConverter.GetBytes(EndOfFileMagicNumber));
         File.WriteAllBytes(savePath, levelFile.ToArray());
+        return new ElmaFile(savePath);
     }
 
     internal void SortPictures()
     {
-        Pictures = Pictures.OrderBy(p => p.Clipping == ClippingType.Unclipped ? 1 : 0).ToList();
+        GraphicElements = GraphicElements.OrderBy(p => p.Clipping == ClippingType.Unclipped ? 1 : 0).ToList();
     }
 
     internal void UpdateBounds()
@@ -767,7 +737,7 @@ internal class Level : ElmaFile
             YMin = Math.Min(YMin, x.Position.Y);
         }
 
-        foreach (var x in Pictures)
+        foreach (var x in GraphicElements)
         {
             XMin = Math.Min(XMin, x.Position.X);
             XMax = Math.Max(XMax, x.Position.X + x.Width);
@@ -780,55 +750,25 @@ internal class Level : ElmaFile
     ///     This method should only be called once (when loading level).
     /// </summary>
     /// <param name="lgrImages"></param>
-    internal void UpdateImages(List<DrawableImage> lgrImages)
+    internal void UpdateImages(Dictionary<string, DrawableImage> lgrImages)
     {
-        Pictures = new List<Picture>();
-        AllPicturesFound = true;
-        foreach (var fileTexture in _textureData)
+        GraphicElements = new List<GraphicElement>();
+        foreach (var fileItem in _graphicElementFileItems)
         {
-            var pictureFound = false;
-            if (fileTexture.MaskName == null)
+            if (fileItem is GraphicElementFileItem.PictureFileItem pItem &&
+                lgrImages.TryGetValue(pItem.PictureName, out var p) && p.Type == ImageType.Picture)
             {
-                foreach (var z in lgrImages)
-                {
-                    if (z.Type == ImageType.Picture &&
-                        fileTexture.Name.Equals(z.Name, StringComparison.InvariantCultureIgnoreCase))
-                    {
-                        Pictures.Add(new Picture(z, fileTexture.Position, fileTexture.Distance,
-                            fileTexture.Clipping));
-                        pictureFound = true;
-                        break;
-                    }
-                }
+                GraphicElements.Add(GraphicElement.Pic(p, fileItem.Position, fileItem.Distance, fileItem.Clipping));
             }
-            else
+            else if (fileItem is GraphicElementFileItem.TextureFileItem tItem &&
+                     lgrImages.TryGetValue(tItem.TextureName, out var t) && t.Type == ImageType.Texture &&
+                     lgrImages.TryGetValue(tItem.MaskName, out var mask) && mask.Type == ImageType.Mask)
             {
-                foreach (var texture in lgrImages)
-                {
-                    if (texture.Type == ImageType.Texture &&
-                        fileTexture.Name.Equals(texture.Name, StringComparison.InvariantCultureIgnoreCase))
-                    {
-                        pictureFound = true;
-                        foreach (var mask in lgrImages)
-                        {
-                            if (mask.Type == ImageType.Mask && mask.Name.Equals(fileTexture.MaskName,
-                                    StringComparison.InvariantCultureIgnoreCase))
-                            {
-                                Pictures.Add(new Picture(fileTexture.Clipping, fileTexture.Distance,
-                                    fileTexture.Position, texture, mask));
-                                break;
-                            }
-                        }
-
-                        break;
-                    }
-                }
+                GraphicElements.Add(GraphicElement.Text(fileItem.Clipping, fileItem.Distance, fileItem.Position, t, mask));
             }
-
-            if (!pictureFound)
-                AllPicturesFound = false;
         }
 
+        AllPicturesFound = GraphicElements.Count == _graphicElementFileItems.Count;
         SortPictures();
     }
 
@@ -884,15 +824,9 @@ internal class Level : ElmaFile
         }
     }
 
-    private void SaveImages()
+    private void UpdateGraphicElementFileItems()
     {
-        _textureData = new List<LevelFileTexture>();
-        foreach (var x in Pictures)
-        {
-            _textureData.Add(x.IsPicture
-                ? new LevelFileTexture(x.Name, null, x.Position, x.Distance, x.Clipping)
-                : new LevelFileTexture(x.TextureName, x.Name, x.Position, x.Distance, x.Clipping));
-        }
+        _graphicElementFileItems = GraphicElements.Select(p => p.ToFileData()).ToList();
     }
 
     internal static Level FromDimensions(double width, double height)

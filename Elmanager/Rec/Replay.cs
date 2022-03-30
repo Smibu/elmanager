@@ -1,6 +1,5 @@
 using System;
 using System.Collections.Generic;
-using System.ComponentModel;
 using System.IO;
 using Elmanager.Application;
 using Elmanager.IO;
@@ -9,37 +8,30 @@ using Elmanager.Utilities;
 
 namespace Elmanager.Rec;
 
-internal class Replay : ElmaFile
+internal class Replay
 {
-    [Description("Finished")] public readonly bool Finished; //Is replay finished
+    public readonly bool Finished; //Is replay finished
 
-    [Description("Multi")] public readonly bool IsMulti; //Is it single or multi replay
+    public readonly bool IsMulti; //Is it single or multi replay
 
-    [Description("Level exists")] public readonly bool LevelExists; //Does the replay's level exist
-
-    [Description("Level")] public string LevelDesc => Level.GetPossiblyInternal(LevelFilename);
+    public bool LevelExists => LevelPath is not null || IsInternal; //Does the replay's level exist
 
     public readonly string LevelFilename; //Filename of the level of the replay
 
-    [Description("Time")] public string TimeStr => Time.ToTimeString();
-
     public readonly double Time; //Time of the replay
 
-    [Description("Wrong version")] public readonly bool WrongLevelVersion; //Is the version of the level wrong
+    public readonly bool WrongLevelVersion; //Is the version of the level wrong
     internal readonly bool AcrossLevel; //Is the level across level
     private readonly int _internalIndex;
     internal readonly bool IsInternal; //Is it internal or external replay
 
-    internal readonly string LevelPath; //Path of the level file if it is found
+    internal readonly string? LevelPath; //Path of the level file if it is found
     internal Player Player1 => Players[0];
     internal Player Player2 => Players[1];
     internal readonly List<Player> Players = new(2);
 
-    internal Replay(string replayPath)
+    private Replay(string replayPath)
     {
-        Path = replayPath;
-        Size = (int) new FileInfo(replayPath).Length;
-        DateModified = File.GetLastWriteTime(replayPath);
         using (var stream = File.OpenRead(replayPath))
         {
             var rec = new BinaryReader(stream);
@@ -105,7 +97,6 @@ internal class Replay : ElmaFile
 
         if (IsInternal)
         {
-            LevelExists = true;
             WrongLevelVersion = false;
             AcrossLevel = false;
             _internalIndex = int.Parse(LevelFilename.Substring(6, 2));
@@ -115,9 +106,8 @@ internal class Replay : ElmaFile
             _internalIndex = -1;
             foreach (var levelFile in Global.GetLevelFiles())
             {
-                if (System.IO.Path.GetFileName(levelFile).CompareWith(LevelFilename))
+                if (Path.GetFileName(levelFile).CompareWith(LevelFilename))
                 {
-                    LevelExists = true;
                     LevelPath = levelFile;
                     var fileStream = File.OpenRead(levelFile);
                     var levelStream = new BinaryReader(fileStream);
@@ -143,8 +133,6 @@ internal class Replay : ElmaFile
                             break;
                         }
                     }
-                    else
-                        LevelExists = false;
 
                     levelStream.Close();
                     break;
@@ -153,22 +141,25 @@ internal class Replay : ElmaFile
         }
     }
 
+    public static ElmaFileObject<Replay> FromPath(string replayPath) =>
+        ElmaFileObject<Replay>.FromPath(replayPath, new Replay(replayPath));
+
     public int LevId { get; }
 
     internal Level GetLevel()
     {
-        if (LevelExists)
+        if (LevelPath is not null)
         {
-            if (IsInternal)
-            {
-                while (Global.Internals == null)
-                {
-                }
+            return Level.FromPath(LevelPath).Obj;
+        }
 
-                return Global.Internals[_internalIndex - 1];
+        if (IsInternal)
+        {
+            while (Global.Internals == null)
+            {
             }
 
-            return Level.FromPath(LevelPath);
+            return Global.Internals[_internalIndex - 1];
         }
 
         throw new FileNotFoundException("The level file does not exist!", LevelFilename);

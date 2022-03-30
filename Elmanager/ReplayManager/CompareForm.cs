@@ -1,7 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 using System.Windows.Forms;
+using Elmanager.IO;
 using Elmanager.Rec;
 using Elmanager.UI;
 using Elmanager.Utilities;
@@ -13,18 +15,18 @@ internal partial class CompareForm : FormMod
     private readonly List<Replay> _comparingRps;
     private readonly int[][] _touchCheckPoints;
 
-    internal CompareForm(List<Replay> rps)
+    internal CompareForm(List<ElmaFileObject<Replay>> rps)
     {
         InitializeComponent();
         //Assuming replays are singleplayer replays and they have same level
-        _comparingRps = rps;
+        _comparingRps = rps.Select(o => o.Obj).ToList();
         LevelLabel.Text = "Level: ";
-        if (rps[0].IsInternal)
-            LevelLabel.Text += "Internal " + rps[0].LevelFilename.Substring(6, 2);
+        if (rps[0].Obj.IsInternal)
+            LevelLabel.Text += "Internal " + rps[0].Obj.LevelFilename.Substring(6, 2);
         else
-            LevelLabel.Text += rps[0].LevelFilename;
+            LevelLabel.Text += rps[0].Obj.LevelFilename;
         foreach (var t in rps)
-            CRBox.Items.Add(Path.GetFileName(t.Path));
+            CRBox.Items.Add(Path.GetFileName(t.File.Path));
         Array.Resize(ref _touchCheckPoints, rps.Count);
         for (int i = 0; i < rps.Count; i++)
             Array.Resize(ref _touchCheckPoints[i], 0);
@@ -128,7 +130,7 @@ internal partial class CompareForm : FormMod
         Label4.Text = "Combined time: " + combinedTime.ToTimeString();
     }
 
-    private void CrBoxSelectedIndexChanged(object sender, EventArgs e)
+    private void CrBoxSelectedIndexChanged(object? sender, EventArgs? e)
     {
         int j = CRBox.SelectedIndex;
         if (GTButton.Checked && j >= 0)
@@ -149,7 +151,7 @@ internal partial class CompareForm : FormMod
         }
     }
 
-    private void CpListBoxItemCheck(object sender, ItemCheckEventArgs e)
+    private void CpListBoxItemCheck(object? sender, ItemCheckEventArgs e)
     {
         if (CPListBox.Items.Count > 0)
         {

@@ -7,15 +7,15 @@ namespace Elmanager.LevelEditor.Tools;
 
 internal partial class TextToolForm : FormMod
 {
-    public event Action<TextToolOptions> EnteredTextChanged = delegate { };
-    private Font _font;
+    public event Action<TextToolOptions>? EnteredTextChanged;
+    private Font? _font;
     private string _fontStyleName = "";
     private const double LineHeightFactor = 500.0;
 
-    public TextToolForm()
+    private TextToolForm()
     {
         InitializeComponent();
-        void HandleChange(object sender, EventArgs e) => EnteredTextChanged(Result);
+        void HandleChange(object? sender, EventArgs e) => EnteredTextChanged?.Invoke(Result);
         textBox.TextChanged += HandleChange;
         smoothnessBar.ValueChanged += HandleChange;
         lineHeightBar.ValueChanged += HandleChange;
@@ -31,27 +31,27 @@ internal partial class TextToolForm : FormMod
         return null;
     }
 
-    public TextToolOptions Result
+    private TextToolOptions Result
     {
         get => new()
         {
-            Font = _font,
+            Font = _font!,
             Text = textBox.Text,
             Smoothness = Math.Pow(1.1, -smoothnessBar.Value),
             LineHeight = lineHeightBar.Value / LineHeightFactor,
             FontStyleName = _fontStyleName
         };
-        set
+        init
         {
             _font = value.Font;
             textBox.Text = value.Text;
             smoothnessBar.Value = (int) Math.Round(Math.Log(1 / value.Smoothness) / Math.Log(1.1));
             lineHeightBar.Value = (int) Math.Round(value.LineHeight * LineHeightFactor);
-            EnteredTextChanged(Result);
+            EnteredTextChanged?.Invoke(Result);
         }
     }
 
-    private void okButton_Click(object sender, EventArgs e)
+    private void okButton_Click(object? sender, EventArgs? e)
     {
         DialogResult = DialogResult.OK;
         Close();
@@ -73,12 +73,12 @@ internal partial class TextToolForm : FormMod
             MinSize = 1,
             MaxSize = 100
         };
-        dialog.Apply += (s, ev) =>
+        dialog.Apply += (_, _) =>
         {
             var r = Result;
-            r.Font = dialog.Font;
+            r.Font = dialog.Font!;
             r.FontStyleName = dialog.FontStyleName;
-            EnteredTextChanged(r);
+            EnteredTextChanged?.Invoke(r);
         };
         if (dialog.ShowDialog() == DialogResult.OK)
         {
@@ -86,7 +86,7 @@ internal partial class TextToolForm : FormMod
             _fontStyleName = dialog.FontStyleName;
         }
 
-        EnteredTextChanged(Result);
+        EnteredTextChanged?.Invoke(Result);
     }
 
     private void Prompt_KeyDown(object sender, KeyEventArgs e)

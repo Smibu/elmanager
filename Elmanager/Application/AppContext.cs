@@ -14,9 +14,9 @@ internal class AppContext : ApplicationContext
         form.Show();
     }
 
-    private async void FormClosed(object sender, FormClosedEventArgs formClosedEventArgs)
+    private async void FormClosed(object? sender, FormClosedEventArgs formClosedEventArgs)
     {
-        _forms.Remove((Form)sender);
+        _forms.Remove((Form)sender!);
         if (_forms.Count == 0)
         {
             await Global.AppSettings.Save();

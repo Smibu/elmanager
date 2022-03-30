@@ -1,6 +1,7 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
 using System.Text.RegularExpressions;
+using Elmanager.IO;
 using Elmanager.Lev;
 
 namespace Elmanager.Searching;
@@ -41,8 +42,9 @@ internal class LevelSearchParameters : SearchParameters
 
     internal Range<int> Replays = new(0, MaxCount);
 
-    public bool Matches(Level lev)
+    public bool Matches(ElmaFileObject<Level> o)
     {
+        var lev = o.Obj;
         return Title.IsMatch(lev.Title) && Lgr.IsMatch(lev.LgrFile) &&
                GroundTexture.IsMatch(lev.GroundTextureName) && SkyTexture.IsMatch(lev.SkyTextureName) &&
                (lev.Top10.SinglePlayer.Count == 0 ||
@@ -65,8 +67,8 @@ internal class LevelSearchParameters : SearchParameters
                Textures.Accepts(lev.TextureCount) &&
                Apples.Accepts(lev.AppleObjectCount) &&
                GravApples.All(kv => kv.Value.Accepts(lev.GetGravityAppleCount(kv.Key))) &&
-               Date.Accepts(lev.DateModified) &&
+               Date.Accepts(o.File.DateModified) &&
                (AcrossLev == BoolOption.Dontcare || !(AcrossLev == BoolOption.True ^ lev.IsAcrossLevel)) &&
-               Size.Accepts(lev.Size);
+               Size.Accepts(o.File.Size);
     }
 }

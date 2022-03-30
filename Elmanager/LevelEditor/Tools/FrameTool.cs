@@ -11,9 +11,9 @@ namespace Elmanager.LevelEditor.Tools;
 
 internal class FrameTool : ToolBase, IEditorTool
 {
-    private Polygon _currentPolygon;
+    private Polygon? _currentPolygon;
     private double _frameRadius = 0.2;
-    private List<Polygon> _frames;
+    private List<Polygon>? _frames;
     private FrameType _frameType = FrameType.Normal;
 
     private enum FrameType
@@ -28,7 +28,7 @@ internal class FrameTool : ToolBase, IEditorTool
     {
     }
 
-    private bool Framing { get; set; }
+    private bool Framing => _frames is { };
 
     public void Activate()
     {
@@ -45,20 +45,14 @@ internal class FrameTool : ToolBase, IEditorTool
 
     public void ExtraRendering()
     {
-        if (!Framing) return;
+        if (_frames is null) return;
         Renderer.DrawPolygon(_frames[0], Color.Blue);
         Renderer.DrawPolygon(_frames[1], Color.Blue);
     }
 
     public List<Polygon> GetExtraPolygons()
     {
-        var polys = new List<Polygon>();
-        if (Framing)
-        {
-            polys = _frames;
-        }
-
-        return polys;
+        return _frames ?? new List<Polygon>();
     }
 
     public void InActivate()
@@ -71,7 +65,7 @@ internal class FrameTool : ToolBase, IEditorTool
 
     public void KeyDown(KeyEventArgs key)
     {
-        if (!Framing) return;
+        if (_currentPolygon is null) return;
         switch (key.KeyCode)
         {
             case KeyUtils.Increase:
@@ -97,19 +91,17 @@ internal class FrameTool : ToolBase, IEditorTool
                 break;
         }
 
-        UpdateFrame();
+        UpdateFrame(_currentPolygon);
     }
 
     public void MouseDown(MouseEventArgs mouseData)
     {
-        int nearestVertexIndex = GetNearestVertexIndex(CurrentPos);
         switch (mouseData.Button)
         {
             case MouseButtons.Left:
-                if (nearestVertexIndex >= -1 && !Framing)
+                if (GetNearestVertexInfo(CurrentPos) is { } v && !Framing)
                 {
-                    Framing = true;
-                    _currentPolygon = NearestPolygon;
+                    _currentPolygon = v.Polygon;
                     if (!_currentPolygon.IsCounterClockwise)
                     {
                         _currentPolygon.ChangeOrientation();
@@ -117,14 +109,12 @@ internal class FrameTool : ToolBase, IEditorTool
 
                     _currentPolygon.Mark = PolygonMark.Selected;
                     Lev.Polygons.Remove(_currentPolygon);
-                    _frames = new List<Polygon>();
-                    _frames.AddRange(MakeClosedPipe(_currentPolygon, _frameRadius));
+                    UpdateFrame(_currentPolygon);
                 }
-                else if (Framing)
+                else if (_frames is { })
                 {
                     Lev.Polygons.AddRange(_frames);
                     _frames = null;
-                    Framing = false;
                     LevEditor.SetModified(LevModification.Ground);
                 }
 
@@ -144,12 +134,11 @@ internal class FrameTool : ToolBase, IEditorTool
         if (!Framing)
         {
             ResetHighlight();
-            int nearestVertex = GetNearestVertexIndex(p);
-            if (nearestVertex >= -1)
+            if (GetNearestVertexInfo(p) is { } v)
             {
                 ChangeCursorToHand();
-                if (NearestPolygon.Mark != PolygonMark.Selected)
-                    NearestPolygon.Mark = PolygonMark.Highlight;
+                if (v.Polygon.Mark != PolygonMark.Selected)
+                    v.Polygon.Mark = PolygonMark.Highlight;
             }
             else
                 ChangeToDefaultCursorIfHand();
@@ -172,19 +161,24 @@ internal class FrameTool : ToolBase, IEditorTool
 
     private void CancelFraming()
     {
+        if (_currentPolygon is null)
+        {
+            return;
+        }
         Lev.Polygons.Add(_currentPolygon);
         _currentPolygon.Mark = PolygonMark.None;
-        Framing = false;
+        _frames = null;
+        _currentPolygon = null;
     }
 
-    private void UpdateFrame()
+    private void UpdateFrame(Polygon p)
     {
-        _frames = MakeClosedPipe(_currentPolygon, _frameRadius);
+        _frames = MakeClosedPipe(p, _frameRadius);
     }
 
     private List<Polygon> MakeClosedPipe(Polygon pipeLine, double radius)
     {
-        List<Polygon> p = new List<Polygon> {new(), new()};
+        var p = new List<Polygon> {new(), new()};
         if (pipeLine.Vertices.Count < 2)
             return p;
         for (int i = 0; i < pipeLine.Vertices.Count; i++)

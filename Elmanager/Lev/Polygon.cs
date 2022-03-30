@@ -13,7 +13,7 @@ namespace Elmanager.Lev;
 
 internal class Polygon
 {
-    internal Vector[][] Decomposition;
+    internal Vector[][] Decomposition = null!;
     internal bool IsGrass;
     internal PolygonMark Mark;
     internal List<Vector> Vertices;
@@ -597,7 +597,7 @@ internal class Polygon
         return isInside;
     }
 
-    internal List<Polygon> Cut(Vector v1, Vector v2, double cutRadius)
+    internal List<Polygon>? Cut(Vector v1, Vector v2, double cutRadius)
     {
         var clone = new Polygon(this);
         Vector.MarkDefault = VectorMark.Selected;

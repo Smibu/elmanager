@@ -22,7 +22,7 @@ internal class Player
     private double? _topSpeed;
     private double? _trip;
     internal readonly int Turns;
-    private List<PlayerEvent<LogicalEventType>> _voltEvents;
+    private List<PlayerEvent<LogicalEventType>>? _voltEvents;
     private const double ArmForwardTime = 0.2;
     public const double ArmRotationDelay = 0.916;
     private const double HeadDiff = 0.0915;
@@ -301,11 +301,7 @@ internal class Player
 
     private double GetArmRotation(double currentTime)
     {
-        if (_voltEvents == null)
-        {
-            _voltEvents = GetEvents(LogicalEventType.LeftVolt, LogicalEventType.RightVolt,
-                LogicalEventType.SuperVolt);
-        }
+        _voltEvents ??= GetEvents(LogicalEventType.LeftVolt, LogicalEventType.RightVolt, LogicalEventType.SuperVolt);
 
         var upperIndex = _voltEvents.Count;
         var lowerIndex = 0;

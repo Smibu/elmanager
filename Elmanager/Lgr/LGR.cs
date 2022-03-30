@@ -10,8 +10,8 @@ namespace Elmanager.Lgr;
 
 internal class Lgr : IDisposable
 {
-    internal readonly List<LgrImage> LgrImages = new();
-    internal readonly List<ListedImage> ListedImages = new();
+    internal readonly Dictionary<string, LgrImage> LgrImages = new();
+    private readonly Dictionary<string, ListedImage> _listedImages = new();
     internal readonly string Path;
 
     public static readonly HashSet<string> TransparencyIgnoreSet =
@@ -28,7 +28,7 @@ internal class Lgr : IDisposable
     {
         get
         {
-            foreach (var listedImage in ListedImages)
+            foreach (var listedImage in _listedImages.Values)
             {
                 if (!listedImage.IsSpecial)
                 {
@@ -36,24 +36,14 @@ internal class Lgr : IDisposable
                 }
             }
 
-            var grassImg = GetImage("QGRASS");
+            var grassImg = ImageFromName("qgrass");
             if (grassImg != null)
             {
-                yield return new ListedImage
-                {
-                    ClippingType = ClippingType.Ground,
-                    Distance = 500,
-                    Name = grassImg.Name,
-                    Transparency = Transparency.Palette0,
-                    Type = ImageType.Texture
-                };
+                yield return new ListedImage(
+                    new ImageMeta(grassImg.Name, ImageType.Texture, ClippingType.Ground, 500),
+                    Transparency.Palette0);
             }
         }
-    }
-
-    private LgrImage GetImage(string name)
-    {
-        return LgrImages.FirstOrDefault(img => img.Name == name.ToLower());
     }
 
     internal Lgr(string lgrFile)
@@ -98,35 +88,27 @@ internal class Lgr : IDisposable
 
         for (int i = 0; i < numberOfOptPcXs; i++)
         {
-            ListedImages.Add(new ListedImage
-            {
-                Name = pcxNames[i].ToLower(),
-                Type = pcxTypes[i],
-                Distance = distances[i],
-                ClippingType = clippingTypes[i],
-                Transparency = transparencies[i]
-            });
+            var name = pcxNames[i].ToLower();
+            _listedImages[name] = new ListedImage(new ImageMeta(name, pcxTypes[i],
+                Distance: distances[i],
+                ClippingType: clippingTypes[i]), transparencies[i]);
         }
 
         for (int i = 0; i < numberOfPcXs; i++)
         {
-            string lgrImageName = System.IO.Path.GetFileNameWithoutExtension(lgr.ReadNullTerminatedString(12)).ToLower();
+            var lgrImageName = System.IO.Path.GetFileNameWithoutExtension(lgr.ReadNullTerminatedString(12)).ToLower();
             var isGrass = lgrImageName == "qgrass";
-            ImageType imgType = isGrass ? ImageType.Texture : ImageType.Picture;
+            var imgType = isGrass ? ImageType.Texture : ImageType.Picture;
             int imgDistance = 500;
-            ClippingType imgClippingType = isGrass ? ClippingType.Ground : ClippingType.Unclipped;
+            var imgClippingType = isGrass ? ClippingType.Ground : ClippingType.Unclipped;
             var transparency = Transparency.TopLeft;
-            foreach (ListedImage x in ListedImages)
+            var imageData = new ImageMeta(lgrImageName, imgType, imgClippingType, imgDistance);
+            if (_listedImages.TryGetValue(lgrImageName, out var x))
             {
-                if (x.Name == lgrImageName)
+                imageData = x.Data;
+                if (!TransparencyIgnoreSet.Contains(x.Name))
                 {
-                    imgType = x.Type;
-                    imgClippingType = x.ClippingType;
-                    imgDistance = x.Distance;
-                    if (!TransparencyIgnoreSet.Contains(x.Name))
-                    {
-                        transparency = x.Transparency;
-                    }
+                    transparency = x.Transparency;
                 }
             }
 
@@ -134,7 +116,7 @@ internal class Lgr : IDisposable
             lgr.ReadInt32(); // unknown, not used
             int sizeOfPcx = lgr.ReadInt32();
             Bitmap bmp = new Pcx(stream).ToBitmap();
-            if (imgType != ImageType.Texture)
+            if (imageData.Type != ImageType.Texture)
             {
                 switch (transparency)
                 {
@@ -160,21 +142,17 @@ internal class Lgr : IDisposable
                 }
             }
 
-            LgrImages.Add(new LgrImage(lgrImageName, bmp, imgType, imgDistance, imgClippingType));
+            LgrImages[imageData.Name] = new LgrImage(imageData, bmp);
         }
     }
 
     public void Dispose()
     {
-        foreach (LgrImage x in LgrImages)
+        foreach (var x in LgrImages.Values)
         {
             x.Bmp.Dispose();
-            x.Bmp = null;
         }
     }
 
-    internal LgrImage ImageFromName(string name)
-    {
-        return LgrImages.FirstOrDefault(x => x.Name == name);
-    }
+    internal LgrImage? ImageFromName(string name) => LgrImages.GetValueOrDefault(name);
 }

@@ -25,7 +25,7 @@ internal class LevelEditorSettings
     public Color HighlightColor { get; set; } = Color.Yellow;
     public double InitialHeight { get; set; } = 50.0;
     public double InitialWidth { get; set; } = 50.0;
-    public string LastLevel { get; set; }
+    public string? LastLevel { get; set; }
     public int MouseClickStep { get; set; } = 50;
     public string NumberFormat { get; set; } = "0";
     public double PipeRadius { get; set; } = 1.0;
@@ -58,8 +58,7 @@ internal class LevelEditorSettings
         {
             try
             {
-                var template = Level.FromPath(text);
-                template.Path = null;
+                var template = Level.FromPath(text).Obj;
                 return template;
             }
             catch (Exception)

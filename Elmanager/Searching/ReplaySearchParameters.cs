@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Text.RegularExpressions;
+using Elmanager.IO;
 using Elmanager.Rec;
 
 namespace Elmanager.Searching;
@@ -20,15 +21,16 @@ internal class ReplaySearchParameters : SearchParameters
     /// <summary>
     ///   Determines whether the search parameters match the given replay.
     /// </summary>
-    /// <param name = "r">Replay to check.</param>
+    /// <param name = "o">Replay to check.</param>
     /// <returns>True if the search parameters match this replay.</returns>
-    internal bool Matches(Replay r)
+    internal bool Matches(ElmaFileObject<Replay> o)
     {
+        var r = o.Obj;
         bool levOk = Check(LevExists, r.LevelExists) && Check(WrongLev, r.WrongLevelVersion) &&
                      Check(AcrossLev, r.AcrossLevel) && LevFilenameMatcher.IsMatch(r.LevelFilename);
         bool recOk = Check(InternalRec, r.IsInternal) && Check(Finished, r.Finished) &&
                      Check(MultiPlayer, r.IsMulti) &&
-                     Date.Accepts(r.DateModified) && Time.Accepts(r.Time) && Size.Accepts(r.Size);
+                     Date.Accepts(o.File.DateModified) && Time.Accepts(r.Time) && Size.Accepts(o.File.Size);
         bool playersOk = P1Bounds.Matches(r.Player1) && (!r.IsMulti || P2Bounds.Matches(r.Player2));
 
         return levOk && recOk && playersOk;

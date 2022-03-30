@@ -5,8 +5,8 @@ namespace Elmanager.Lev;
 
 internal class Top10EntrySingle : Top10Entry
 {
-    [Description("Player 1")] public override string PlayerA { get; protected set; }
-    public override string PlayerB { get; protected set; }
+    [Description("Player 1")] public override string PlayerA { get; protected set; } = null!;
+    public override string PlayerB { get; protected set; } = null!;
 
     internal Top10EntrySingle(string playerA, string playerB, int time)
     {

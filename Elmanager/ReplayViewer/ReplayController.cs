@@ -8,6 +8,7 @@ using System.Threading.Tasks;
 using System.Timers;
 using Elmanager.Application;
 using Elmanager.Geometry;
+using Elmanager.IO;
 using Elmanager.Lev;
 using Elmanager.Rec;
 using Elmanager.Rendering;
@@ -41,12 +42,12 @@ internal class ReplayController : IDisposable
         0xFFE0E0E0
     };
 
-    private List<PlayerEvent<LogicalEventType>> _currentEvents;
+    private List<PlayerEvent<LogicalEventType>> _currentEvents = new();
     private List<int> _activePlayerIndices = new();
     private bool _playing;
     private bool _requestPlayCancel;
     private List<int> _visiblePlayerIndices = new();
-    internal Level Lev;
+    internal Level? Lev;
     private double _playBackSpeed = 1.0;
     private readonly Stopwatch _playTimer = new();
     private bool _loopPlaying;
@@ -61,12 +62,12 @@ internal class ReplayController : IDisposable
     private bool _drawOnlyPlayerFrames;
     private bool _hideStartObject;
     private bool _multiSpy;
-    private List<PlayerEvent<LogicalEventType>> _currentPlayerAppleEvents;
+    private List<PlayerEvent<LogicalEventType>> _currentPlayerAppleEvents = new();
     private int _selectedReplayIndex;
     private double _fixx;
     private double _fixy;
     private readonly Timer _timer = new(25); // Don't update unnecessarily often to avoid overhead
-    private Task _playTask;
+    private Task? _playTask;
 
     public event ElapsedEventHandler PlayingElapsed
     {
@@ -234,9 +235,9 @@ internal class ReplayController : IDisposable
 
     internal double MaxTime { get; private set; }
 
-    internal List<PlayListObject> PlayListReplays { get; private set; }
+    internal List<PlayListObject> PlayListReplays { get; private set; } = new();
 
-    internal ZoomController ZoomCtrl { get; private set; }
+    internal ZoomController ZoomCtrl { get; private set; } = null!;
 
     internal ElmaRenderer Renderer { get; }
 
@@ -254,7 +255,7 @@ internal class ReplayController : IDisposable
         return new Vector(r.GlobalBodyX, r.GlobalBodyY);
     }
 
-    private Player FirstActivePlayer => GetActivePlayers().Select(p => p.Player).FirstOrDefault();
+    private Player? FirstActivePlayer => GetActivePlayers().Select(p => p.Player).FirstOrDefault();
 
     internal double GetSpeed()
     {
@@ -284,7 +285,7 @@ internal class ReplayController : IDisposable
 
         if (_hideStartObject)
         {
-            SceneSettings.HiddenObjectIndices.Add(Lev.Objects.FindIndex(o => o.Type == ObjectType.Start));
+            SceneSettings.HiddenObjectIndices.Add(Lev!.Objects.FindIndex(o => o.Type == ObjectType.Start));
         }
 
         _fixx = 0.0;
@@ -327,34 +328,38 @@ internal class ReplayController : IDisposable
         }
     }
 
-    private PlayListObject FirstVisiblePlayer => GetVisiblePlayers().FirstOrDefault();
+    private PlayListObject? FirstVisiblePlayer => GetVisiblePlayers().FirstOrDefault();
 
     public bool Playing => _playing;
 
     private void FocusIndicesChanged()
     {
-        if (!_wrongLevVersion && _activePlayerIndices.Count > 0)
+        if (!_wrongLevVersion && FirstActivePlayer is { } ap)
         {
-            _currentPlayerAppleEvents = FirstActivePlayer.GetEvents(LogicalEventType.AppleTake);
+            _currentPlayerAppleEvents = ap.GetEvents(LogicalEventType.AppleTake);
+        }
+        else
+        {
+            _currentPlayerAppleEvents.Clear();
         }
     }
 
-    public void SetReplays(List<Replay> replays)
+    public void SetReplays(List<ElmaFileObject<Replay>> replays)
     {
         PlayListReplays = new List<PlayListObject>();
         foreach (var replay in replays)
         {
             var playerNum = 1;
-            foreach (var player in replay.Players)
+            foreach (var player in replay.Obj.Players)
             {
-                PlayListReplays.Add(new PlayListObject(Path.GetFileNameWithoutExtension(replay.FileName),
+                PlayListReplays.Add(new PlayListObject(Path.GetFileNameWithoutExtension(replay.File.FileName),
                     playerNum,
                     player));
                 playerNum++;
             }
         }
 
-        var lev = replays[0].GetLevel();
+        var lev = replays[0].Obj.GetLevel();
         ZoomCtrl = new ZoomController(new ElmaCamera(),
             lev,
             Global.AppSettings.ReplayViewer.RenderingSettings,
@@ -365,7 +370,7 @@ internal class ReplayController : IDisposable
         Renderer.InitializeLevel(lev);
         _activePlayerIndices = new List<int>();
         _visiblePlayerIndices = new List<int>();
-        _wrongLevVersion = replays[0].WrongLevelVersion;
+        _wrongLevVersion = replays[0].Obj.WrongLevelVersion;
         for (var i = 0; i < PlayListReplays.Count; i++)
             PlayListReplays[i].DrivingLineColor = Color.FromArgb((int) _colourValues[i % _colourValues.Length]);
     }

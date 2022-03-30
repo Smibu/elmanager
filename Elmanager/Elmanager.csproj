@@ -15,6 +15,7 @@
         <ApplicationManifest>app.manifest</ApplicationManifest>
         <ApplicationIcon>Icons/Elma.ico</ApplicationIcon>
         <SatelliteResourceLanguages>en</SatelliteResourceLanguages>
+        <Nullable>enable</Nullable>
     </PropertyGroup>
     <ItemGroup>
         <PackageReference Include="NetTopologySuite">

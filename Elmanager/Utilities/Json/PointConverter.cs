@@ -12,8 +12,8 @@ internal class PointConverter : JsonConverter<Point>
         Type typeToConvert,
         JsonSerializerOptions options)
     {
-        var hexStr = reader.GetString().Split(",");
-        return new Point(int.Parse(hexStr[0]), int.Parse(hexStr[1]));
+        var (fst, snd) = reader.ReadTwoInts(",");
+        return new Point(fst, snd);
     }
 
     public override void Write(

@@ -96,7 +96,7 @@ internal class CutConnectTool : ToolBase, IEditorTool
         for (int i = Lev.Polygons.Count - 1; i >= 0; i--)
         {
             Polygon x = Lev.Polygons[i];
-            List<Polygon> cutPolygons = x.Cut(v1, v2, 0.01 * ZoomCtrl.ZoomLevel);
+            var cutPolygons = x.Cut(v1, v2, 0.01 * ZoomCtrl.ZoomLevel);
             if (cutPolygons == null) continue;
             anythingCut = true;
             Lev.Polygons.Remove(x);
@@ -118,9 +118,9 @@ internal class CutConnectTool : ToolBase, IEditorTool
         bool anythingConnected = false;
         if (intersectingPolygons.Count == 2)
         {
-            Polygon connected = GeometryUtils.Connect(intersectingPolygons[0], intersectingPolygons[1], _start,
+            var connected = GeometryUtils.Connect(intersectingPolygons[0], intersectingPolygons[1], _start,
                 CurrentPos, ZoomCtrl.ZoomLevel * 0.01);
-            if (connected != null)
+            if (connected is { })
             {
                 Lev.Polygons.Remove(intersectingPolygons[0]);
                 Lev.Polygons.Remove(intersectingPolygons[1]);

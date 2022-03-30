@@ -9,7 +9,7 @@ internal class ManagerSettings
 {
     public bool ConfirmDelete { get; set; } = true;
     public Point Location { get; set; }
-    public byte[] ListState { get; set; }
+    public byte[]? ListState { get; set; }
     public string SearchPattern { get; set; } = string.Empty;
     public SearchOption RecDirSearchOption { get; set; } = SearchOption.AllDirectories;
     public bool ShowGridInList { get; set; } = true;

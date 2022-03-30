@@ -24,7 +24,7 @@ internal static class UiUtils
     }
 
     public static void ConfigureColumns<T>(ObjectListView oList, bool addIndexColumn = false,
-        IEnumerable<string> hiddenColumns = null)
+        IEnumerable<string>? hiddenColumns = null)
     {
         var members = typeof(T).GetMembers(BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance);
         var cols = new List<OLVColumn>();

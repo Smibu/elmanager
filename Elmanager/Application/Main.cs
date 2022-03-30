@@ -16,14 +16,14 @@ namespace Elmanager.Application;
 
 internal static class Global
 {
-    internal static ElmanagerSettings AppSettings; //TODO Settings should not be global
+    internal static ElmanagerSettings AppSettings = null!; //TODO Settings should not be global
     internal static readonly List<Level> Internals = new();
-    private static List<string> _levelFiles;
+    private static List<string>? _levelFiles;
     internal static DateTime Version = new(2022, 2, 11);
 
     internal static List<string> GetLevelFiles()
     {
-        return _levelFiles ?? (_levelFiles = DirUtils.GetLevelFiles(SearchOption.AllDirectories));
+        return _levelFiles ??= DirUtils.GetLevelFiles(SearchOption.AllDirectories);
     }
 
     internal static void ResetLevelFiles()
@@ -74,13 +74,13 @@ internal static class Global
         {
             try
             {
-                var rp = new Replay(args[0]);
-                if (rp.LevelExists)
+                var rp = Replay.FromPath(args[0]);
+                if (rp.Obj.LevelExists)
                 {
                     ComponentManager.LaunchReplayViewer(rp);
                 }
                 else
-                    UiUtils.ShowError("Could not find level file: " + rp.LevelFilename);
+                    UiUtils.ShowError("Could not find level file: " + rp.Obj.LevelFilename);
             }
             catch (Exception ex)
             {

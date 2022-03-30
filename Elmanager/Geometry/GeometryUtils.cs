@@ -44,7 +44,7 @@ internal static class GeometryUtils
         return v2 + new Vector(angle + a.Angle) * radius;
     }
 
-    internal static Polygon Connect(Polygon p1, Polygon p2, Vector v1, Vector v2, double connectRadius)
+    internal static Polygon? Connect(Polygon p1, Polygon p2, Vector v1, Vector v2, double connectRadius)
     {
         if (p1.IntersectsWith(p2))
             return null;
@@ -398,7 +398,7 @@ internal static class GeometryUtils
             foreach (var rectangle in sortedRectangles)
             {
                 var bestArea = 0.0;
-                NetTopologySuite.Geometries.Geometry bestRect = null;
+                NetTopologySuite.Geometries.Geometry? bestRect = null;
                 var bestxmin = -1.0;
                 var bestymin = -1.0;
                 var bestxmax = -1.0;

@@ -17,7 +17,7 @@ namespace Elmanager.LevelEditor.Playing;
 
 internal class PlayController
 {
-    private Engine _engine;
+    private Engine? _engine;
     public bool PlayingStopRequested { get; set; }
     private bool PlayingRestartRequested { get; set; }
 
@@ -56,6 +56,7 @@ internal class PlayController
             }
             else
             {
+                Debug.Assert(Driver != null, nameof(Driver) + " != null");
                 if (Driver.Condition == DriverCondition.Dead && ShouldRestartAfterResuming)
                 {
                     PlayingRestartRequested = true;
@@ -73,15 +74,15 @@ internal class PlayController
     public bool FollowDriver { get; set; }
     public bool ShouldRestartAfterResuming { get; set; }
     public (int, int)? ResetViewPortRequested { get; set; }
-    private TaggedBodyPart _currentBodyPart;
+    private TaggedBodyPart? _currentBodyPart;
     private PlaySettings _settings = new();
     private readonly Stopwatch _timer = new();
-    private Task _playTask;
+    private Task? _playTask;
     private VectorMark _playerSelection;
     public readonly PlayerRenderOpts RenderOptsLgr = new(Color.Black, true, true, false);
     public readonly PlayerRenderOpts RenderOptsFrame = new(Color.Black, true, false, false);
     private PlayState _playState;
-    private Driver _savedDriverState;
+    private Driver? _savedDriverState;
     private SaveLoadRequest _saveLoadRequest = SaveLoadRequest.None;
 
     private enum SaveLoadRequest
@@ -91,9 +92,9 @@ internal class PlayController
         Load,
     }
 
-    public Driver Driver { get; private set; }
+    public Driver? Driver { get; private set; }
 
-    public TaggedBodyPart GetNearestDriverBodyPart(Vector p, double limit)
+    public TaggedBodyPart? GetNearestDriverBodyPart(Vector p, double limit)
     {
         return Driver?.BodyParts().OrderBy(bp => bp.Position.Dist(p)).FirstOrDefault(bp =>
             bp.Position.Dist(p) < Math.Max(ElmaRenderer.ObjectRadius, limit));
@@ -112,7 +113,7 @@ internal class PlayController
         }
     }
 
-    public TaggedBodyPart CurrentBodyPart
+    public TaggedBodyPart? CurrentBodyPart
     {
         get => _currentBodyPart;
         set
@@ -180,7 +181,7 @@ internal class PlayController
         Driver?.TakenApples.RemoveWhere(deletedApples.Contains);
     }
 
-    public event Action PlayingPaused;
+    public event Action? PlayingPaused;
 
     public async Task BeginLoop(Level lev, SceneSettings sceneSettings, ElmaRenderer renderer,
         ZoomController zoomCtrl, Action render)
@@ -301,7 +302,7 @@ internal class PlayController
                                 {
                                     ShouldRestartAfterResuming = true;
                                     PlayState = PlayState.Paused;
-                                    PlayingPaused();
+                                    PlayingPaused?.Invoke();
                                 }
 
                                 break;
@@ -337,7 +338,7 @@ internal class PlayController
                         _savedDriverState = Driver.Clone();
                         _saveLoadRequest = SaveLoadRequest.None;
                         break;
-                    case SaveLoadRequest.Load:
+                    case SaveLoadRequest.Load when _savedDriverState is not null:
                         Driver = _savedDriverState.Clone();
                         sceneSettings.FadedObjectIndices = Driver.TakenApples;
                         _saveLoadRequest = SaveLoadRequest.None;

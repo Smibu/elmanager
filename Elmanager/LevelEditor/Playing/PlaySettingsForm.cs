@@ -7,7 +7,7 @@ namespace Elmanager.LevelEditor.Playing;
 
 internal partial class PlaySettingsForm : FormMod
 {
-    private Button _currButton;
+    private Button? _currButton;
     public PlaySettings Settings { get; set; }
 
     public PlaySettingsForm(PlaySettings settings)
@@ -58,7 +58,7 @@ internal partial class PlaySettingsForm : FormMod
 
     private void KeyButtonClick(object sender, EventArgs e)
     {
-        WaitKeyChoose(sender as Button);
+        WaitKeyChoose((sender as Button)!);
     }
 
     private void WaitKeyChoose(Button button)

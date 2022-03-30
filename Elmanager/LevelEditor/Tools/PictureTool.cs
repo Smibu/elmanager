@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using System.Windows.Forms;
 using Elmanager.Application;
@@ -9,7 +10,7 @@ namespace Elmanager.LevelEditor.Tools;
 
 internal class PictureTool : ToolBase, IEditorTool
 {
-    private Picture _currentPicture;
+    private GraphicElement? _currentElem;
 
     internal PictureTool(LevelEditorForm editor)
         : base(editor)
@@ -19,8 +20,8 @@ internal class PictureTool : ToolBase, IEditorTool
     public void Activate()
     {
         UpdateHelp();
-        if (_currentPicture != null)
-            AddCurrent();
+        if (_currentElem is { })
+            AddCurrent(_currentElem);
     }
 
     public void ExtraRendering()
@@ -34,8 +35,8 @@ internal class PictureTool : ToolBase, IEditorTool
 
     public void InActivate()
     {
-        if (_currentPicture != null)
-            RemoveCurrent();
+        if (_currentElem is { })
+            RemoveCurrent(_currentElem);
     }
 
     public void KeyDown(KeyEventArgs key)
@@ -54,10 +55,10 @@ internal class PictureTool : ToolBase, IEditorTool
         {
             case MouseButtons.Left:
 
-                if (_currentPicture != null)
+                if (_currentElem is { })
                 {
-                    _currentPicture = _currentPicture.Clone();
-                    Lev.Pictures.Add(_currentPicture);
+                    _currentElem = _currentElem with {};
+                    Lev.GraphicElements.Add(_currentElem);
                     LevEditor.SetModified(LevModification.Decorations);
                 }
                 else
@@ -75,11 +76,9 @@ internal class PictureTool : ToolBase, IEditorTool
         CurrentPos = p;
         AdjustForGrid(ref CurrentPos);
 
-        if (_currentPicture != null)
+        if (_currentElem is { })
         {
-            _currentPicture.Position = CurrentPos;
-            _currentPicture.Position.X -= _currentPicture.Width / 2;
-            _currentPicture.Position.Y += _currentPicture.Height / 2;
+            _currentElem.Position = CurrentPos + new Vector(-_currentElem.Width / 2, _currentElem.Height / 2);
         }
     }
 
@@ -97,59 +96,60 @@ internal class PictureTool : ToolBase, IEditorTool
             "Left mouse button: insert new picture/texture, right mouse button: select picture type.";
     }
 
-    private void AddCurrent()
+    private void AddCurrent(GraphicElement currentGraphicElement)
     {
-        Lev.Pictures.Insert(0, _currentPicture);
+        Lev.GraphicElements.Insert(0, currentGraphicElement);
         Lev.SortPictures();
     }
 
-    private void OpenDialogNow(bool setDefaultsAutomatically)
+    private GraphicElement? OpenDialogNow(PictureForm picForm, bool setDefaultsAutomatically)
     {
-        LevEditor.PicForm.Location = Control.MousePosition;
-        LevEditor.PicForm.AllowMultiple = false;
-        LevEditor.PicForm.AutoTextureMode = false;
-        LevEditor.PicForm.SetDefaultsAutomatically = setDefaultsAutomatically;
-        LevEditor.PicForm.ShowDialog();
-        if (LevEditor.PicForm.OkButtonPressed)
+        picForm.Location = Control.MousePosition;
+        picForm.AllowMultiple = false;
+        picForm.AutoTextureMode = false;
+        picForm.SetDefaultsAutomatically = setDefaultsAutomatically;
+        picForm.ShowDialog();
+        if (picForm.Selection is { } sel)
         {
-            if (LevEditor.PicForm.TextureSelected)
+            var clipping = sel.Clipping!.Value;
+            var distance = sel.Distance!.Value;
+            return sel switch
             {
-                _currentPicture = new Picture(LevEditor.PicForm.Clipping, LevEditor.PicForm.Distance,
-                    CurrentPos,
-                    Renderer.DrawableImageFromName(LevEditor.PicForm.Texture.Name),
-                    Renderer.DrawableImageFromName(LevEditor.PicForm.Mask.Name));
-            }
-            else
-            {
-                _currentPicture = new Picture(Renderer.DrawableImageFromName(LevEditor.PicForm.Picture.Name),
-                    CurrentPos, LevEditor.PicForm.Distance,
-                    LevEditor.PicForm.Clipping);
-            }
-
-            AddCurrent();
+                ImageSelection.TextureSelection t => GraphicElement.Text(clipping, distance,
+                    CurrentPos, Renderer.DrawableImageFromName(t.Txt),
+                    Renderer.DrawableImageFromName(t.Mask)),
+                ImageSelection.PictureSelection p => GraphicElement.Pic(Renderer.DrawableImageFromName(p.Pic),
+                    CurrentPos, distance, clipping),
+                _ => throw new Exception("Unexpected")
+            };
         }
+
+        return null;
     }
 
     private void OpenDialog()
     {
-        if (_currentPicture == null)
+        var picForm = new PictureForm(LevEditor.EditorLgr!, _currentElem);
+        if (_currentElem is null)
         {
-            LevEditor.PicForm.SetDefaultDistanceAndClipping();
-            OpenDialogNow(setDefaultsAutomatically: true);
+            _currentElem = OpenDialogNow(picForm, setDefaultsAutomatically: true);
+            if (_currentElem is { })
+            {
+                AddCurrent(_currentElem);
+            }
         }
         else
         {
-            RemoveCurrent();
-            LevEditor.PicForm.SelectElement(_currentPicture);
-            OpenDialogNow(setDefaultsAutomatically: Global.AppSettings.LevelEditor.AlwaysSetDefaultsInPictureTool);
-            if (!LevEditor.PicForm.OkButtonPressed)
-                AddCurrent();
+            RemoveCurrent(_currentElem);
+            var newElem = OpenDialogNow(picForm, setDefaultsAutomatically: Global.AppSettings.LevelEditor.AlwaysSetDefaultsInPictureTool);
+            _currentElem = newElem ?? _currentElem;
+            AddCurrent(_currentElem);
         }
     }
 
-    private void RemoveCurrent()
+    private void RemoveCurrent(GraphicElement currentGraphicElement)
     {
-        Lev.Pictures.Remove(_currentPicture);
+        Lev.GraphicElements.Remove(currentGraphicElement);
     }
 
     public override bool Busy => false;

@@ -2,29 +2,8 @@ using Elmanager.Lgr;
 
 namespace Elmanager.Rendering;
 
-internal class DrawableImage
+internal record DrawableImage(int TextureId, double Width, double Height, ImageMeta Meta) : IImageMeta
 {
-    internal readonly ClippingType DefaultClipping;
-    internal readonly int DefaultDistance;
-    internal readonly double Height;
-    internal readonly string Name;
-    internal readonly int TextureIdentifier;
-    internal readonly ImageType Type;
-    internal readonly double Width;
-
-    internal DrawableImage(int textureId, double width, double height, ClippingType clipping,
-        int distance,
-        string name, ImageType type)
-    {
-        TextureIdentifier = textureId;
-        Width = width;
-        Height = height;
-        DefaultClipping = clipping;
-        DefaultDistance = distance;
-        Name = name;
-        Type = type;
-    }
-
     internal double WidthMinusMargin => Width - 2 * EmptyPixelXMargin;
 
     internal double HeightMinusMargin => Height - 2 * EmptyPixelYMargin;
@@ -46,4 +25,12 @@ internal class DrawableImage
             "maskbig" => 0.112,
             _ => 0.112
         };
+
+    public string Name => Meta.Name;
+
+    public ImageType Type => Meta.Type;
+
+    public ClippingType ClippingType => Meta.ClippingType;
+
+    public int Distance => Meta.Distance;
 }

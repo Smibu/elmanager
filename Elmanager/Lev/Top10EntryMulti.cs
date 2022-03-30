@@ -10,8 +10,8 @@ internal class Top10EntryMulti : Top10Entry
         Init(playerA, playerB, time);
     }
 
-    [Description("Player 1")] public override string PlayerA { get; protected set; }
-    [Description("Player 2")] public override string PlayerB { get; protected set; }
+    [Description("Player 1")] public override string PlayerA { get; protected set; } = null!;
+    [Description("Player 2")] public override string PlayerB { get; protected set; } = null!;
 
     public override string FormatEntry(int pad)
     {

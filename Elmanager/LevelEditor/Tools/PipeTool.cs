@@ -15,29 +15,19 @@ namespace Elmanager.LevelEditor.Tools;
 internal class PipeTool : ToolBase, IEditorTool
 {
     private const double AppleDistanceStep = 0.25;
-
-    private int _appleAmount = 20;
-    private double _appleDistance = 3.0;
-    private List<LevObject> _apples;
-    private Polygon _pipe;
     private PipeMode _pipeMode = PipeMode.NoApples;
     private double _pipeRadius = 1.0;
     private const double PipeStep = 0.02;
-    private Polygon _pipeline;
-
-    public enum PipeMode
-    {
-        NoApples = 0,
-        ApplesAmount = 1,
-        ApplesDistance = 2
-    }
+    private PipeSpec? _pipeSpec;
+    private int _appleAmount = 20;
+    private double _appleDistance = 3.0;
 
     internal PipeTool(LevelEditorForm editor)
         : base(editor)
     {
     }
 
-    private bool CreatingPipe => _pipeline != null;
+    private bool CreatingPipe => _pipeSpec is { };
 
     public void Activate()
     {
@@ -47,12 +37,12 @@ internal class PipeTool : ToolBase, IEditorTool
 
     public void ExtraRendering()
     {
-        if (CreatingPipe)
+        if (_pipeSpec is { })
         {
-            Renderer.DrawLineStrip(_pipeline, Color.Blue);
+            Renderer.DrawLineStrip(_pipeSpec.Pipeline, Color.Blue);
             if (Global.AppSettings.LevelEditor.RenderingSettings.ShowGroundEdges)
-                Renderer.DrawPolygon(_pipe, Global.AppSettings.LevelEditor.RenderingSettings.GroundEdgeColor);
-            foreach (LevObject x in _apples)
+                Renderer.DrawPolygon(_pipeSpec.Pipe, Global.AppSettings.LevelEditor.RenderingSettings.GroundEdgeColor);
+            foreach (LevObject x in _pipeSpec.Apples)
             {
                 if (Global.AppSettings.LevelEditor.RenderingSettings.ShowObjectFrames)
                     Renderer.DrawCircle(x.Position, ElmaRenderer.ObjectRadius,
@@ -66,16 +56,16 @@ internal class PipeTool : ToolBase, IEditorTool
     public List<Polygon> GetExtraPolygons()
     {
         var polys = new List<Polygon>();
-        if (CreatingPipe)
+        if (_pipeSpec is { })
         {
-            polys.Add(_pipe);
+            polys.Add(_pipeSpec.Pipe);
         }
         return polys;
     }
 
     public void InActivate()
     {
-        _pipeline = null;
+        _pipeSpec = null;
         Global.AppSettings.LevelEditor.PipeRadius = _pipeRadius;
     }
 
@@ -119,17 +109,14 @@ internal class PipeTool : ToolBase, IEditorTool
                             break;
 
                         case PipeMode.ApplesDistance:
-                            if (_appleDistance > AppleDistanceStep)
-                                _appleDistance -= AppleDistanceStep;
+                            if (_appleDistance > AppleDistanceStep) _appleDistance -= AppleDistanceStep;
                             break;
                         case PipeMode.ApplesAmount:
-                            if (_appleAmount > 1)
-                                _appleAmount--;
+                            if (_appleAmount > 1) _appleAmount--;
                             break;
                     }
                 }
-                else if (_pipeRadius > radiusStep)
-                    _pipeRadius -= radiusStep;
+                else if (_pipeRadius > radiusStep) _pipeRadius -= radiusStep;
 
                 break;
             case Keys.Space:
@@ -144,12 +131,15 @@ internal class PipeTool : ToolBase, IEditorTool
                 break;
         }
 
-        if (CreatingPipe)
-        {
-            UpdatePipe(_pipeline);
-        }
+        UpdatePipeSpec();
 
         UpdateHelp();
+    }
+
+    private void UpdatePipeSpec()
+    {
+        if (_pipeSpec is { })
+            _pipeSpec = new PipeSpec(_pipeSpec.Pipeline, _pipeRadius, _pipeMode, _appleDistance, _appleAmount);
     }
 
     public void MouseDown(MouseEventArgs mouseData)
@@ -157,39 +147,36 @@ internal class PipeTool : ToolBase, IEditorTool
         switch (mouseData.Button)
         {
             case MouseButtons.Left:
-                if (CreatingPipe)
-                    _pipeline.Add(CurrentPos);
+                if (_pipeSpec is { })
+                    _pipeSpec.Pipeline.Add(CurrentPos);
                 else
                 {
-                    _pipeline = new Polygon();
-                    _apples = new List<LevObject>();
-                    _pipeline.Add(CurrentPos);
-                    _pipeline.Add(CurrentPos);
+                    var pipeline = new Polygon();
+                    pipeline.Add(CurrentPos);
+                    pipeline.Add(CurrentPos);
+                    _pipeSpec = new PipeSpec(pipeline, _pipeRadius, _pipeMode, _appleDistance, _appleAmount);
                 }
 
                 break;
             case MouseButtons.Right:
-                if (CreatingPipe)
+                if (_pipeSpec is { })
                 {
-                    _pipeline.RemoveLastVertex();
-                    UpdatePipe(_pipeline);
-                    if (_pipeline.Count > 1)
+                    _pipeSpec.Pipeline.RemoveLastVertex();
+                    UpdatePipeSpec();
+                    if (_pipeSpec.Pipeline.Count > 1)
                     {
-                        Lev.Polygons.Add(_pipe);
-                        Lev.Objects.AddRange(_apples);
+                        Lev.Polygons.Add(_pipeSpec.Pipe);
+                        Lev.Objects.AddRange(_pipeSpec.Apples);
                         LevEditor.SetModified(LevModification.Ground);
                     }
 
-                    _pipeline = null;
+                    _pipeSpec = null;
                 }
 
                 break;
         }
 
-        if (CreatingPipe)
-        {
-            UpdatePipe(_pipeline);
-        }
+        UpdatePipeSpec();
 
         UpdateHelp();
     }
@@ -198,10 +185,10 @@ internal class PipeTool : ToolBase, IEditorTool
     {
         CurrentPos = p;
         AdjustForGrid(ref CurrentPos);
-        if (CreatingPipe)
+        if (_pipeSpec is { })
         {
-            _pipeline.Vertices[_pipeline.Vertices.Count - 1] = CurrentPos;
-            UpdatePipe(_pipeline);
+            _pipeSpec.Pipeline.Vertices[_pipeSpec.Pipeline.Vertices.Count - 1] = CurrentPos;
+            UpdatePipeSpec();
         }
     }
 
@@ -226,83 +213,10 @@ internal class PipeTool : ToolBase, IEditorTool
             case PipeMode.ApplesDistance:
                 LevEditor.InfoLabel.Text +=
                     string.Format(
-                        "Mode: Apples (distance: {0:F2} (adjust with Ctrl + +/-)) - Pipe radius: {1:F2} {2}",
-                        _appleDistance, _pipeRadius, help);
+                        "Mode: Apples (distance: {0:F2} (adjust with Ctrl + +/-)) - Pipe radius: {1:F2} {2}", _appleDistance, _pipeRadius, help);
                 break;
             case PipeMode.ApplesAmount:
-                LevEditor.InfoLabel.Text += string.Format("Mode: {0} apples - Pipe radius: {1:F2} {2}",
-                    _appleAmount, _pipeRadius, help);
-                break;
-        }
-    }
-
-    private List<LevObject> CalculateApples(double distance)
-    {
-        List<LevObject> apples = new List<LevObject>();
-        double currentDistanceToApple = distance;
-        for (int i = 0; i <= _pipeline.Count - 2; i++)
-        {
-            Vector z = _pipeline[i + 1] - _pipeline[i];
-            Vector zUnit = z.Unit();
-            double currVectorLength = z.Length;
-            if (currentDistanceToApple < currVectorLength)
-            {
-                double currVectorTrip = currentDistanceToApple;
-                while (!(currVectorTrip > currVectorLength))
-                {
-                    apples.Add(new LevObject(_pipeline[i] + zUnit * currVectorTrip, ObjectType.Apple,
-                        AppleType.Normal));
-                    currVectorTrip += distance;
-                }
-
-                currentDistanceToApple = currVectorTrip - currVectorLength;
-            }
-            else
-                currentDistanceToApple -= currVectorLength;
-        }
-
-        return apples;
-    }
-
-    private void UpdatePipe(Polygon pipeLine)
-    {
-        Polygon p = new Polygon();
-        if (pipeLine.Count < 2)
-            return;
-        double angle = (pipeLine[1] - pipeLine[0]).Angle;
-        p.Add(pipeLine[0] + new Vector(angle + 90) * _pipeRadius);
-        p.Add(pipeLine[0] - new Vector(angle + 90) * _pipeRadius);
-        for (int i = 1; i <= pipeLine.Count - 2; i++)
-        {
-            angle = (pipeLine[i + 1] - pipeLine[i]).Angle;
-            Vector point = GeometryUtils.FindPoint(pipeLine[i - 1], pipeLine[i], pipeLine[i + 1], -_pipeRadius);
-            p.Add(point);
-        }
-
-        p.Add(pipeLine.GetLastVertex() - new Vector(angle + 90) * _pipeRadius);
-        p.Add(pipeLine.GetLastVertex() + new Vector(angle + 90) * _pipeRadius);
-        for (int i = pipeLine.Count - 2; i >= 1; i--)
-        {
-            Vector point = GeometryUtils.FindPoint(pipeLine[i - 1], pipeLine[i], pipeLine[i + 1], _pipeRadius);
-            p.Add(point);
-        }
-
-        _pipe = p;
-        _pipe.UpdateDecomposition();
-        switch (_pipeMode)
-        {
-            case PipeMode.ApplesDistance:
-                _apples = CalculateApples(_appleDistance);
-                break;
-            case PipeMode.ApplesAmount:
-                double pipelineLength = 0.0;
-                for (int i = 0; i <= pipeLine.Count - 2; i++)
-                    pipelineLength += (pipeLine[i + 1] - pipeLine[i]).Length;
-                pipelineLength += 0.1;
-                _apples = CalculateApples(pipelineLength / (_appleAmount + 1));
-                break;
-            case PipeMode.NoApples:
-                _apples = new List<LevObject>();
+                LevEditor.InfoLabel.Text += string.Format("Mode: {0} apples - Pipe radius: {1:F2} {2}", _appleAmount, _pipeRadius, help);
                 break;
         }
     }

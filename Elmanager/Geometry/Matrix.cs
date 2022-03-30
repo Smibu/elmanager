@@ -17,12 +17,12 @@ internal struct Matrix
         Identity = CreateIdentity();
     }
 
-    public override bool Equals(object o)
+    public override bool Equals(object? o)
     {
-        if (!(o is Matrix))
+        if (o is not Matrix matrix)
             return false;
 
-        return this == (Matrix)o;
+        return this == matrix;
     }
 
     public override int GetHashCode()

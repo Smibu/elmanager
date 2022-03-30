@@ -345,8 +345,6 @@ namespace Elmanager.LevelEditor.Tools
             this.ShowInTaskbar = false;
             this.StartPosition = System.Windows.Forms.FormStartPosition.Manual;
             this.Text = "Picture/texture properties";
-            this.FormClosing += new System.Windows.Forms.FormClosingEventHandler(this.PreventClose);
-            this.VisibleChanged += new System.EventHandler(this.WhenShown);
             ((System.ComponentModel.ISupportInitialize)(this.ImageBox)).EndInit();
             this.Panel1.ResumeLayout(false);
             this.Panel1.PerformLayout();

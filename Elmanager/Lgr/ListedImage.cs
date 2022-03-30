@@ -3,7 +3,10 @@ using System.Linq;
 
 namespace Elmanager.Lgr;
 
-internal struct ListedImage
+internal record ListedImage(
+    ImageMeta Data,
+    Transparency Transparency
+) : IImageMeta
 {
     private static readonly string[] BodyPartNames =
         {"body", "thigh", "leg", "bike", "wheel", "susp1", "susp2", "forarm", "up_arm", "head"};
@@ -29,11 +32,13 @@ internal struct ListedImage
     private static readonly HashSet<string> SpecialNames =
         new(EnumSpecialNames().Union(Lgr.TransparencyIgnoreSet));
 
-    internal ClippingType ClippingType;
-    internal int Distance;
-    internal string Name;
-    internal ImageType Type;
-    internal Transparency Transparency;
-
     public bool IsSpecial => SpecialNames.Contains(Name);
+
+    public string Name => Data.Name;
+
+    public ImageType Type => Data.Type;
+
+    public ClippingType ClippingType => Data.ClippingType;
+
+    public int Distance => Data.Distance;
 }

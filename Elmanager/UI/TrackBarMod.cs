@@ -5,12 +5,12 @@ namespace Elmanager.UI;
 
 internal class TrackBarMod : TrackBar
 {
-    private MouseWheelEventHandler _mouseWheelEvent;
+    private MouseWheelEventHandler? _mouseWheelEvent;
 
     internal new event MouseWheelEventHandler MouseWheel
     {
         add => _mouseWheelEvent = (MouseWheelEventHandler) Delegate.Combine(_mouseWheelEvent, value);
-        remove => _mouseWheelEvent = (MouseWheelEventHandler) Delegate.Remove(_mouseWheelEvent, value);
+        remove => _mouseWheelEvent = (MouseWheelEventHandler?) Delegate.Remove(_mouseWheelEvent, value);
     }
 
     protected override void WndProc(ref Message m)

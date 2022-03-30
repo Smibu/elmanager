@@ -4,12 +4,9 @@ using NetTopologySuite.Geometries;
 
 namespace Elmanager.Geometry;
 
-internal struct Vector
+internal struct Vector : IPositionable
 {
     internal static VectorMark MarkDefault = VectorMark.None;
-    internal VectorMark Mark;
-    internal double X;
-    internal double Y;
 
     internal Vector(double x, double y)
     {
@@ -150,4 +147,9 @@ internal struct Vector
     {
         return $"({X:F3}, {Y:F3})";
     }
+
+    public double X { get; set; }
+    public double Y { get; set; }
+    public VectorMark Mark { get; set; }
+    public Vector Position => this;
 }

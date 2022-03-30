@@ -20,9 +20,9 @@ internal class SelectionTool : ToolBase, IEditorTool
     private Vector _lockPrev; //for lock lines -mode
     private bool _lockingLines;
     private Vector _moveStartPosition;
-    private Polygon _selectionPoly;
+    private Polygon? _selectionPoly;
 
-    private bool FreeSelecting { get; set; }
+    private bool FreeSelecting => _selectionPoly is { };
 
     private Vector _selectionStartPoint;
     private double _mouseTrip;
@@ -46,7 +46,7 @@ internal class SelectionTool : ToolBase, IEditorTool
     {
         if (RectSelecting)
             Renderer.DrawRectangle(_selectionStartPoint, CurrentPos, Color.Blue);
-        else if (FreeSelecting)
+        else if (_selectionPoly is { })
             Renderer.DrawPolygon(_selectionPoly, Color.Blue);
     }
 
@@ -116,7 +116,7 @@ internal class SelectionTool : ToolBase, IEditorTool
     {
         Vector p = CurrentPos;
         _currLevModification = LevModification.Nothing;
-        int nearestVertexIndex = GetNearestVertexIndex(p);
+        var nearestVertexIndex = GetNearestVertexInfo(p);
         int nearestObjectIndex = GetNearestObjectIndex(p);
         int nearestPictureIndex = GetNearestPictureIndex(p);
         var nearestBodyPart = LevEditor.PlayController.GetNearestDriverBodyPart(p, CaptureRadiusScaled);
@@ -124,15 +124,15 @@ internal class SelectionTool : ToolBase, IEditorTool
         {
             case MouseButtons.Left:
                 var somethingGrabbed = true;
-                if (nearestVertexIndex >= -1 && Keyboard.IsKeyDown(Key.LeftAlt))
+                if (nearestVertexIndex is { } nvi && Keyboard.IsKeyDown(Key.LeftAlt))
                 {
                     if (!Keyboard.IsKeyDown(Key.LeftCtrl))
                     {
                         MarkAllAs(VectorMark.None);
                     }
 
-                    NearestPolygon.MarkVectorsAs(VectorMark.Selected);
-                    var inearest = NearestPolygon.ToIPolygon();
+                    nvi.Polygon.MarkVectorsAs(VectorMark.Selected);
+                    var inearest = nvi.Polygon.ToIPolygon();
                     foreach (var polygon in Lev.Polygons.Where(polygon => polygon.ToIPolygon().Within(inearest)))
                     {
                         polygon.MarkVectorsAs(VectorMark.Selected);
@@ -140,64 +140,63 @@ internal class SelectionTool : ToolBase, IEditorTool
 
                     foreach (var obj in Lev.Objects)
                     {
-                        if (NearestPolygon.AreaHasPoint(obj.Position))
+                        if (nvi.Polygon.AreaHasPoint(obj.Position))
                         {
-                            obj.Position.Mark = VectorMark.Selected;
+                            obj.Mark = VectorMark.Selected;
                         }
                     }
 
-                    foreach (var pic in Lev.Pictures)
+                    foreach (var pic in Lev.GraphicElements)
                     {
-                        if (NearestPolygon.AreaHasPoint(pic.Position))
+                        if (nvi.Polygon.AreaHasPoint(pic.Position))
                         {
-                            pic.Position.Mark = VectorMark.Selected;
+                            pic.Position = pic.Position with {Mark = VectorMark.Selected};
                         }
                     }
 
                     EndSelectionHandling();
                 }
-                else if (nearestVertexIndex >= 0)
+                else if (nearestVertexIndex is NearestVertexInfo.VertexInfo vi)
                 {
-                    var v = NearestPolygon[nearestVertexIndex];
-                    HandleMark(ref v);
-                    NearestPolygon.Vertices[nearestVertexIndex] = v;
+                    var v = vi.Polygon[vi.Index];
+                    vi.Polygon.Vertices[vi.Index] = HandleMark(v);
                     if (Keyboard.IsKeyDown(Key.LeftShift))
                     {
-                        _lockCenter = NearestPolygon[nearestVertexIndex];
-                        _lockPrev = NearestPolygon[nearestVertexIndex - 1];
-                        _lockNext = NearestPolygon[nearestVertexIndex + 1];
+                        _lockCenter = vi.Polygon[vi.Index];
+                        _lockPrev = vi.Polygon[vi.Index - 1];
+                        _lockNext = vi.Polygon[vi.Index + 1];
                         _lockingLines = true;
                         _moveStartPosition = _lockCenter;
                     }
                 }
-                else if (nearestVertexIndex == -1)
+                else if (nearestVertexIndex is NearestVertexInfo.EdgeInfo ei)
                 {
-                    int nearestSegmentIndex = NearestPolygon.GetNearestSegmentIndex(p);
+                    int nearestSegmentIndex = ei.Polygon.GetNearestSegmentIndex(p);
                     AdjustForGrid(ref p);
                     if (Keyboard.IsKeyDown(Key.LeftShift))
                     {
                         MarkAllAs(VectorMark.None);
                         p.Mark = VectorMark.Selected;
-                        NearestPolygon.Insert(nearestSegmentIndex + 1, p);
-                        LevEditor.SetModified(NearestPolygon.IsGrass ? LevModification.Decorations : LevModification.Ground);
+                        ei.Polygon.Insert(nearestSegmentIndex + 1, p);
+                        LevEditor.SetModified(ei.Polygon.IsGrass ? LevModification.Decorations : LevModification.Ground);
                     }
                     else
                     {
                         if (
-                            !(NearestPolygon[nearestSegmentIndex].Mark == VectorMark.Selected &&
-                              NearestPolygon[nearestSegmentIndex + 1].Mark == VectorMark.Selected))
+                            !(ei.Polygon[nearestSegmentIndex].Mark == VectorMark.Selected &&
+                              ei.Polygon[nearestSegmentIndex + 1].Mark == VectorMark.Selected))
                         {
                             if (!Keyboard.IsKeyDown(Key.LeftCtrl))
                             {
                                 MarkAllAs(VectorMark.None);
-                                NearestPolygon.MarkVectorsAs(VectorMark.Selected);
+                                ei.Polygon.MarkVectorsAs(VectorMark.Selected);
                             }
                         }
 
                         if (Keyboard.IsKeyDown(Key.LeftCtrl))
                         {
-                            NearestPolygon.MarkVectorsAs(
-                                NearestPolygon.Vertices.TrueForAll(v => v.Mark == VectorMark.Selected)
+                            ei.Polygon.MarkVectorsAs(
+                                ei.Polygon.Vertices.TrueForAll(v => v.Mark == VectorMark.Selected)
                                     ? VectorMark.None
                                     : VectorMark.Selected);
                         }
@@ -206,10 +205,10 @@ internal class SelectionTool : ToolBase, IEditorTool
                     EndSelectionHandling();
                 }
                 else if (nearestObjectIndex >= 0)
-                    HandleMark(ref Lev.Objects[nearestObjectIndex].Position);
+                    HandleMark(Lev.Objects[nearestObjectIndex]);
                 else if (nearestPictureIndex >= 0)
-                    HandleMark(ref Lev.Pictures[nearestPictureIndex].Position);
-                else if (nearestBodyPart != null)
+                    HandleMark(Lev.GraphicElements[nearestPictureIndex]);
+                else if (nearestBodyPart is { })
                 {
                     LevEditor.PlayController.CurrentBodyPart = nearestBodyPart;
                     LevEditor.PlayController.PlayerSelection = VectorMark.Selected;
@@ -226,7 +225,6 @@ internal class SelectionTool : ToolBase, IEditorTool
 
                     if (Keyboard.IsKeyDown(Key.LeftShift))
                     {
-                        FreeSelecting = true;
                         _selectionPoly = new Polygon();
                         _selectionPoly.Add(CurrentPos);
                         _mouseTrip = 0;
@@ -241,7 +239,7 @@ internal class SelectionTool : ToolBase, IEditorTool
 
                 if (somethingGrabbed && LevEditor.PlayController.PlayerSelection == VectorMark.Selected)
                 {
-                    LevEditor.PlayController.CurrentBodyPart = LevEditor.PlayController.Driver.GetBody();
+                    LevEditor.PlayController.CurrentBodyPart = LevEditor.PlayController.Driver!.GetBody();
                 }
 
                 LevEditor.UpdateSelectionInfo();
@@ -298,7 +296,7 @@ internal class SelectionTool : ToolBase, IEditorTool
                 anythingMoved |= LevModification.Objects;
             }
 
-            foreach (Picture z in Lev.Pictures.Where(z => z.Position.Mark == VectorMark.Selected))
+            foreach (GraphicElement z in Lev.GraphicElements.Where(z => z.Position.Mark == VectorMark.Selected))
             {
                 z.Position += delta;
                 anythingMoved |= LevModification.Decorations;
@@ -310,7 +308,7 @@ internal class SelectionTool : ToolBase, IEditorTool
                 LevEditor.PlayController.UpdateEngine(Lev);
             }
 
-            if (LevEditor.PlayController.CurrentBodyPart != null)
+            if (LevEditor.PlayController.CurrentBodyPart is { })
             {
                 LevEditor.PlayController.CurrentBodyPart.Position += delta;
                 LevEditor.PlayController.ShouldRestartAfterResuming = false;
@@ -319,7 +317,7 @@ internal class SelectionTool : ToolBase, IEditorTool
             Vector.MarkDefault = VectorMark.None;
             _moveStartPosition = p;
         }
-        else if (FreeSelecting)
+        else if (_selectionPoly is { })
         {
             _mouseTrip += (p - _lastMousePosition).Length;
             _lastMousePosition = p;
@@ -334,45 +332,45 @@ internal class SelectionTool : ToolBase, IEditorTool
         else if (!Busy)
         {
             ResetHighlight();
-            int nearestVertex = GetNearestVertexIndex(p);
+            var nearestVertex = GetNearestVertexInfo(p);
             int nearestObject = GetNearestObjectIndex(p);
             int nearestTextureIndex = GetNearestPictureIndex(p);
             var nearestBodyPart = LevEditor.PlayController.GetNearestDriverBodyPart(p, CaptureRadiusScaled);
-            if (nearestVertex == -1)
+            if (nearestVertex is NearestVertexInfo.EdgeInfo ei)
             {
                 ChangeCursorToHand();
-                NearestPolygon.Mark = PolygonMark.Highlight;
-                LevEditor.HighlightLabel.Text = NearestPolygon.IsGrass ? "Grass" : "Ground";
-                LevEditor.HighlightLabel.Text += " polygon, " + NearestPolygon.Count + " vertices";
+                ei.Polygon.Mark = PolygonMark.Highlight;
+                LevEditor.HighlightLabel.Text = ei.Polygon.IsGrass ? "Grass" : "Ground";
+                LevEditor.HighlightLabel.Text += " polygon, " + ei.Polygon.Count + " vertices";
             }
-            else if (nearestVertex >= 0)
+            else if (nearestVertex is NearestVertexInfo.VertexInfo vi)
             {
                 ChangeCursorToHand();
-                Vector b = NearestPolygon.Vertices[nearestVertex];
+                Vector b = vi.Polygon.Vertices[vi.Index];
                 if (b.Mark == VectorMark.None)
                 {
                     b.Mark = VectorMark.Highlight;
-                    NearestPolygon.Vertices[nearestVertex] = b;
+                    vi.Polygon.Vertices[vi.Index] = b;
                 }
-                LevEditor.HighlightLabel.Text = NearestPolygon.IsGrass ? "Grass" : "Ground";
-                LevEditor.HighlightLabel.Text += " polygon, vertex " + (nearestVertex + 1) + " of " +
-                                                 NearestPolygon.Count + " vertices";
+                LevEditor.HighlightLabel.Text = vi.Polygon.IsGrass ? "Grass" : "Ground";
+                LevEditor.HighlightLabel.Text += " polygon, vertex " + (vi.Index + 1) + " of " +
+                                                 vi.Polygon.Count + " vertices";
             }
             else if (nearestObject >= 0)
             {
                 ChangeCursorToHand();
-                if (Lev.Objects[nearestObject].Position.Mark == VectorMark.None)
-                    Lev.Objects[nearestObject].Position.Mark = VectorMark.Highlight;
+                if (Lev.Objects[nearestObject].Mark == VectorMark.None)
+                    Lev.Objects[nearestObject].Mark = VectorMark.Highlight;
                 ShowObjectInfo(nearestObject);
             }
             else if (nearestTextureIndex >= 0)
             {
                 ChangeCursorToHand();
-                if (Lev.Pictures[nearestTextureIndex].Position.Mark == VectorMark.None)
-                    Lev.Pictures[nearestTextureIndex].Position.Mark = VectorMark.Highlight;
+                if (Lev.GraphicElements[nearestTextureIndex].Mark == VectorMark.None)
+                    Lev.GraphicElements[nearestTextureIndex].Mark = VectorMark.Highlight;
                 ShowTextureInfo(nearestTextureIndex);
             }
-            else if (nearestBodyPart != null)
+            else if (nearestBodyPart is { })
             {
                 ChangeCursorToHand();
                 LevEditor.HighlightLabel.Text = "Player";
@@ -424,7 +422,7 @@ internal class SelectionTool : ToolBase, IEditorTool
                     for (var index = 0; index < x.Vertices.Count; index++)
                     {
                         Vector t = x.Vertices[index];
-                        if (RectSelecting)
+                        if (_selectionPoly is null)
                             MarkSelectedInArea(ref t, selectionxMin, selectionxMax, selectionyMin, selectionyMax);
                         else
                         {
@@ -436,37 +434,40 @@ internal class SelectionTool : ToolBase, IEditorTool
                 }
             }
 
-            foreach (LevObject t in Lev.Objects)
+            foreach (var t in Lev.Objects)
             {
-                ObjectType type = t.Type;
+                var type = t.Type;
+                var x = t;
                 if (type == ObjectType.Start || (type == ObjectType.Apple && appleFilter) ||
                     (type == ObjectType.Killer && killerFilter) ||
                     (type == ObjectType.Flower && flowerFilter))
-                    if (RectSelecting)
-                        MarkSelectedInArea(ref t.Position, selectionxMin, selectionxMax, selectionyMin,
+                    if (_selectionPoly is null)
+                        
+                        MarkSelectedInArea(ref x, selectionxMin, selectionxMax, selectionyMin,
                             selectionyMax);
                     else
                     {
-                        MarkSelectedInArea(ref t.Position, _selectionPoly);
+                        MarkSelectedInArea(ref x, _selectionPoly);
                     }
             }
 
-            foreach (Picture z in Lev.Pictures)
+            foreach (var z in Lev.GraphicElements)
             {
-                if ((z.IsPicture && pictureFilter) || (!z.IsPicture && textureFilter))
-                    if (RectSelecting)
-                        MarkSelectedInArea(ref z.Position, selectionxMin, selectionxMax, selectionyMin, selectionyMax);
+                var x = z;
+                if ((z is GraphicElement.Picture && pictureFilter) || (z is GraphicElement.Texture && textureFilter))
+                    if (_selectionPoly is null)
+                        MarkSelectedInArea(ref x, selectionxMin, selectionxMax, selectionyMin, selectionyMax);
                     else
                     {
-                        MarkSelectedInArea(ref z.Position, _selectionPoly);
+                        MarkSelectedInArea(ref x, _selectionPoly);
                     }
             }
 
             if (LevEditor.PlayController.PlayingOrPaused)
             {
-                var x = LevEditor.PlayController.Driver.Body.Location;
+                var x = LevEditor.PlayController.Driver!.Body.Location;
                 x.Mark = LevEditor.PlayController.PlayerSelection;
-                if (RectSelecting)
+                if (_selectionPoly is null)
                 {
                     MarkSelectedInArea(ref x, selectionxMin, selectionxMax, selectionyMin, selectionyMax);
                 }
@@ -481,7 +482,7 @@ internal class SelectionTool : ToolBase, IEditorTool
             LevEditor.UpdateSelectionInfo();
             LevEditor.PreserveSelection();
             RectSelecting = false;
-            FreeSelecting = false;
+            _selectionPoly = null;
         }
         else if (Moving)
         {
@@ -492,9 +493,9 @@ internal class SelectionTool : ToolBase, IEditorTool
         }
     }
 
-    private static void MarkSelectedInArea(ref Vector z, Polygon selectionPoly)
+    private static void MarkSelectedInArea<T>(ref T z, Polygon selectionPoly) where T: IPositionable
     {
-        if (selectionPoly.AreaHasPoint(z))
+        if (selectionPoly.AreaHasPoint(z.Position))
         {
             z.Mark = z.Mark switch
             {
@@ -512,8 +513,9 @@ internal class SelectionTool : ToolBase, IEditorTool
         LevEditor.InfoLabel.Text = "Left mouse button: select level elements; Left Shift: Bend edge";
     }
 
-    private static void MarkSelectedInArea(ref Vector z, double selectionxMin, double selectionxMax,
-        double selectionyMin, double selectionyMax)
+    private static void MarkSelectedInArea<T>(ref T z, double selectionxMin, double selectionxMax,
+        double selectionyMin, double selectionyMax) where 
+        T: IPositionable
     {
         if (z.X < selectionxMax && z.X > selectionxMin && z.Y < selectionyMax && z.Y > selectionyMin)
         {
@@ -528,7 +530,7 @@ internal class SelectionTool : ToolBase, IEditorTool
             z.Mark = VectorMark.None;
     }
 
-    private void HandleMark(ref Vector v)
+    private T HandleMark<T>(T v) where T: IPositionable
     {
         if (!Keyboard.IsKeyDown(Key.LeftCtrl))
         {
@@ -544,6 +546,7 @@ internal class SelectionTool : ToolBase, IEditorTool
         }
 
         EndSelectionHandling();
+        return v;
     }
 
     private void EndSelectionHandling()
@@ -601,17 +604,16 @@ internal class SelectionTool : ToolBase, IEditorTool
 
     private void ShowTextureInfo(int index)
     {
-        Picture picture = Lev.Pictures[index];
-        if (picture.IsPicture)
-            LevEditor.HighlightLabel.Text = "Picture: " + picture.Name +
-                                            ", distance: " +
-                                            picture.Distance + ", clipping: " + picture.Clipping;
-        else
+        var graphicElement = Lev.GraphicElements[index];
+        LevEditor.HighlightLabel.Text = graphicElement switch
         {
-            LevEditor.HighlightLabel.Text = "Texture: " + picture.TextureName + ", mask: " + picture.Name +
-                                            ", distance: " +
-                                            picture.Distance + ", clipping: " + picture.Clipping;
-        }
+            GraphicElement.Picture p => "Picture: " + p.PictureInfo.Name + ", distance: " + graphicElement.Distance +
+                                        ", clipping: " + graphicElement.Clipping,
+            GraphicElement.Texture t => "Texture: " + t.TextureInfo.Name + ", mask: " + t.MaskInfo.Name +
+                                        ", distance: " + graphicElement.Distance + ", clipping: " +
+                                        graphicElement.Clipping,
+            _ => LevEditor.HighlightLabel.Text
+        };
     }
 
     public override bool Busy => RectSelecting || FreeSelecting || Moving;

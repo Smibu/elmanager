@@ -14,15 +14,15 @@ internal class AutoGrassTool : ToolBase, IEditorTool
 {
     private const double GrassHeight = 1.0;
     private const double MaximumGrassAngle = 60.0;
-    private Polygon _currentPolygon;
-    private List<Polygon> _currentAutograssPolys;
+    private Polygon? _currentPolygon;
+    private List<Polygon>? _currentAutograssPolys;
 
     internal AutoGrassTool(LevelEditorForm editor)
         : base(editor)
     {
     }
 
-    private bool AutoGrassPolygonSelected { get; set; }
+    private bool AutoGrassPolygonSelected => _currentPolygon is { };
 
     public void Activate()
     {
@@ -32,13 +32,14 @@ internal class AutoGrassTool : ToolBase, IEditorTool
     public void CancelAutoGrass()
     {
         if (!AutoGrassPolygonSelected) return;
-        AutoGrassPolygonSelected = false;
+        _currentPolygon = null;
+        _currentAutograssPolys = null;
         ResetPolygonMarks();
     }
 
     public void ExtraRendering()
     {
-        if (AutoGrassPolygonSelected)
+        if (_currentAutograssPolys is { })
         {
             _currentAutograssPolys.ForEach(poly => Renderer.DrawLineStrip(poly, Color.Red));
         }
@@ -56,7 +57,7 @@ internal class AutoGrassTool : ToolBase, IEditorTool
 
     public void KeyDown(KeyEventArgs key)
     {
-        if (AutoGrassPolygonSelected)
+        if (_currentPolygon is { })
         {
             var changed = true;
             switch (key.KeyCode)
@@ -83,23 +84,22 @@ internal class AutoGrassTool : ToolBase, IEditorTool
 
     public void MouseDown(MouseEventArgs mouseData)
     {
-        int nearestVertexIndex = GetNearestVertexIndex(CurrentPos);
         switch (mouseData.Button)
         {
             case MouseButtons.Left:
-                if (!AutoGrassPolygonSelected)
+                if (_currentPolygon is null)
                 {
-                    if (nearestVertexIndex >= -1 && !NearestPolygon.IsGrass)
+                    if (GetNearestVertexInfo(CurrentPos) is { } v && !v.Polygon.IsGrass)
                     {
-                        _currentPolygon = NearestPolygon;
+                        _currentPolygon = v.Polygon;
                         _currentAutograssPolys = AutoGrass(_currentPolygon);
-                        AutoGrassPolygonSelected = true;
                     }
                 }
                 else
                 {
                     Lev.Polygons.AddRange(AutoGrass(_currentPolygon));
-                    AutoGrassPolygonSelected = false;
+                    _currentPolygon = null;
+                    _currentAutograssPolys = null;
                     LevEditor.SetModified(LevModification.Decorations);
                 }
 
@@ -118,11 +118,10 @@ internal class AutoGrassTool : ToolBase, IEditorTool
         if (!AutoGrassPolygonSelected)
         {
             ResetHighlight();
-            int nearestVertex = GetNearestVertexIndex(p);
-            if (nearestVertex >= -1)
+            if (GetNearestVertexInfo(p) is { } v)
             {
                 ChangeCursorToHand();
-                NearestPolygon.Mark = PolygonMark.Highlight;
+                v.Polygon.Mark = PolygonMark.Highlight;
             }
             else
                 ChangeToDefaultCursorIfHand();

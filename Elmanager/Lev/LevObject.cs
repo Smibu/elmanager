@@ -3,11 +3,11 @@ using Elmanager.Geometry;
 
 namespace Elmanager.Lev;
 
-internal class LevObject
+internal class LevObject : IPositionable
 {
     internal int AnimationNumber;
     internal AppleType AppleType;
-    internal Vector Position;
+    public Vector Position { get; set; }
     internal ObjectType Type;
 
     internal LevObject(Vector position, ObjectType type, AppleType appleType, int animNum = 1)
@@ -39,5 +39,13 @@ internal class LevObject
     internal LevObject Clone()
     {
         return new(this);
+    }
+
+    public double X => Position.X;
+    public double Y => Position.Y;
+
+    public VectorMark Mark {
+        get => Position.Mark;
+        set => Position = Position with {Mark = value};
     }
 }
