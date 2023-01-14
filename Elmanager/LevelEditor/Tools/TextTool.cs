@@ -61,6 +61,8 @@ internal class TextTool : ToolBase, IEditorTool
                     LevEditor.UpdateSelectionInfo();
                 }
 
+                _currentTextPolygons = null;
+
                 LevEditor.RedrawScene();
                 break;
             case MouseButtons.None:
