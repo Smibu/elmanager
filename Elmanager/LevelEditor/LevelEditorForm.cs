@@ -27,7 +27,7 @@ using NetTopologySuite.Geometries;
 using OpenTK.Graphics.OpenGL;
 using SharpVectors.Converters;
 using SharpVectors.Renderers.Wpf;
-using SvgNet.SvgGdi;
+using SvgNet;
 using Color = System.Drawing.Color;
 using Cursor = System.Windows.Forms.Cursor;
 using Cursors = System.Windows.Forms.Cursors;
