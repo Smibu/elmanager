@@ -873,63 +873,6 @@ internal partial class LevelEditorForm : FormMod, IMessageFilter
         _flowerFilter = FlowersToolStripMenuItem.Checked;
         _pictureFilter = PicturesToolStripMenuItem.Checked;
         _textureFilter = TexturesToolStripMenuItem.Checked;
-        foreach (var polygon in Lev.Polygons)
-        {
-            if (polygon.IsGrass && !_grassFilter)
-            {
-                polygon.MarkVectorsAs(VectorMark.None);
-            }
-            else if (!polygon.IsGrass && !_groundFilter)
-            {
-                polygon.MarkVectorsAs(VectorMark.None);
-            }
-        }
-
-        foreach (var o in Lev.Objects)
-        {
-            switch (o.Type)
-            {
-                case ObjectType.Flower:
-                    if (!_flowerFilter)
-                    {
-                        o.Mark = VectorMark.None;
-                    }
-
-                    break;
-                case ObjectType.Apple:
-                    if (!_appleFilter)
-                    {
-                        o.Mark = VectorMark.None;
-                    }
-
-                    break;
-                case ObjectType.Killer:
-                    if (!_killerFilter)
-                    {
-                        o.Mark = VectorMark.None;
-                    }
-
-                    break;
-                case ObjectType.Start:
-                    break;
-                default:
-                    throw new ArgumentOutOfRangeException();
-            }
-        }
-
-        foreach (var picture in Lev.GraphicElements)
-        {
-            if (picture is GraphicElement.Picture && !_pictureFilter)
-            {
-                picture.Mark = VectorMark.None;
-            }
-            else if (picture is GraphicElement.Texture && !_textureFilter)
-            {
-                picture.Mark = VectorMark.None;
-            }
-        }
-
-        RedrawScene();
         SelectionFilterToolStripMenuItem.ShowDropDown();
     }
 
