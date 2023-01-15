@@ -27,13 +27,15 @@
         <PackageReference Include="OpenTK">
             <Version>4.7.5</Version>
         </PackageReference>
-        <PackageReference Include="OpenTK.WinForms" Version="4.0.0-pre.6" />
         <PackageReference Include="SharpVectors">
             <Version>1.8.1</Version>
         </PackageReference>
         <PackageReference Include="SvgNet">
             <Version>3.3.3</Version>
         </PackageReference>
+    </ItemGroup>
+    <ItemGroup>
+      <ProjectReference Include="..\OpenTK.WinForms\OpenTK.WinForms.csproj" />
     </ItemGroup>
     <ItemGroup>
         <EmbeddedResource Update="Properties\Resources.resx">
