@@ -75,7 +75,7 @@ namespace OpenTK.WinForms
             _designTimeTimer = new Timer();
             _designTimeTimer.Tick += OnDesignTimeTimerTick;
             _designTimeTimer.Interval = 100;
-            _designTimeTimer.Start();
+            // _designTimeTimer.Start();
         }
 
         /// <summary>
