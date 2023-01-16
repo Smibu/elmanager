@@ -52,7 +52,7 @@ internal partial class MainForm : FormMod
 
     private void linkLabel2_LinkClicked(object sender, LinkLabelLinkClickedEventArgs e)
     {
-        var txt = e.Link.Name == "License" ? Resources.LICENSE : Resources.LICENSE_3RD_PARTY;
+        var txt = e.Link!.Name == "License" ? Resources.LICENSE : Resources.LICENSE_3RD_PARTY;
 
         using var f = new LicenseForm(e.Link.Name, txt);
         f.ShowDialog();

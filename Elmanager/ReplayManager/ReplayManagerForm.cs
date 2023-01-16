@@ -444,8 +444,8 @@ internal partial class ReplayManagerForm : FormMod, IManagerGui
     {
         for (var i = 1; i <= 12; i++)
         {
-            TabControl1.TabPages[1].Controls[$"TextBox{i}"].Text = "0";
-            TabControl1.TabPages[1].Controls[$"TextBox{i + 12}"].Text = "10000";
+            TabControl1.TabPages[1].Controls[$"TextBox{i}"]!.Text = "0";
+            TabControl1.TabPages[1].Controls[$"TextBox{i + 12}"]!.Text = "10000";
         }
     }
 

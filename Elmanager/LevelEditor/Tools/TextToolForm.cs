@@ -67,7 +67,7 @@ internal partial class TextToolForm : FormMod
     {
         var dialog = new FontDialogMod
         {
-            Font = _font,
+            Font = _font!,
             FontMustExist = true,
             ShowEffects = true,
             MinSize = 1,

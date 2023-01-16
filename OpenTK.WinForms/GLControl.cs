@@ -458,7 +458,7 @@ namespace OpenTK.WinForms
                 return true;
 
             // Try walking the control tree to see if any ancestors are in DesignMode.
-            for (Control control = this; control != null; control = control.Parent)
+            for (Control? control = this; control != null; control = control.Parent)
             {
                 if (control.Site != null && control.Site.DesignMode)
                     return true;
@@ -554,7 +554,7 @@ namespace OpenTK.WinForms
         {
             // There is no good way to explain this event except to say
             // that it's just another name for OnControlCreated.
-            ((EventHandler)Events[EVENT_LOAD])?.Invoke(this, e);
+            ((EventHandler?)Events[EVENT_LOAD])?.Invoke(this, e);
         }
 
         /// <summary>

@@ -342,11 +342,11 @@ internal partial class LevelManagerForm : FormMod, IManagerGui
         if (UiUtils.Confirm("Delete the selected times - are you sure?"))
         {
             var list = GetSourceControl(sender);
-            if (list.Equals(singleTop10List))
+            if (singleTop10List.Equals(list))
             {
                 lev.Obj.Top10.SinglePlayer.RemoveAll(entry => _singleList.SelectedObjects.Contains(entry));
             }
-            else if (list.Equals(multiTop10List))
+            else if (multiTop10List.Equals(list))
             {
                 lev.Obj.Top10.MultiPlayer.RemoveAll(entry => _multiList.SelectedObjects.Contains(entry));
             }
@@ -364,7 +364,7 @@ internal partial class LevelManagerForm : FormMod, IManagerGui
         ObjectList.InsertObjects(ind, new[] {lev with {Obj = lev.Obj, File = f}});
     }
 
-    private static Control GetSourceControl(object sender)
+    private static Control? GetSourceControl(object sender)
     {
         return ((sender as ToolStripItem)!.Owner as ContextMenuStrip)!.SourceControl;
     }
@@ -457,11 +457,11 @@ internal partial class LevelManagerForm : FormMod, IManagerGui
             return;
         }
         var list = GetSourceControl(sender);
-        if (list.Equals(singleTop10List))
+        if (singleTop10List.Equals(list))
         {
             Clipboard.SetText(lev.Obj.Top10.GetSinglePlayerString());
         }
-        else if (list.Equals(multiTop10List))
+        else if (multiTop10List.Equals(list))
         {
             Clipboard.SetText(lev.Obj.Top10.GetMultiPlayerString());
         }
