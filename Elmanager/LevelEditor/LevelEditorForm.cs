@@ -2825,4 +2825,48 @@ internal partial class LevelEditorForm : FormMod, IMessageFilter
 
         return false;
     }
+
+    private void DeselectPolygonsWith(Func<Polygon, bool> cond)
+    {
+        foreach (var polygon in Lev.Polygons.Where(cond))
+        {
+            polygon.Vertices = polygon.Vertices.Select(v => v with { Mark = VectorMark.None }).ToList();
+        }
+
+        RedrawScene();
+    }
+
+    private void DeselectObjectsWith(Func<LevObject, bool> cond)
+    {
+        foreach (var obj in Lev.Objects.Where(cond))
+        {
+            obj.Mark = VectorMark.None;
+        }
+
+        RedrawScene();
+    }
+
+    private void DeselectGraphicElementsWith(Func<GraphicElement, bool> cond)
+    {
+        foreach (var elem in Lev.GraphicElements.Where(cond))
+        {
+            elem.Mark = VectorMark.None;
+        }
+
+        RedrawScene();
+    }
+
+    private void deselectGroundPolygonsToolStripMenuItem_Click(object sender, EventArgs e) => DeselectPolygonsWith(p => !p.IsGrass);
+
+    private void deselectGrassPolygonsToolStripMenuItem_Click(object sender, EventArgs e) => DeselectPolygonsWith(p => p.IsGrass);
+
+    private void deselectApplesToolStripMenuItem_Click(object sender, EventArgs e) => DeselectObjectsWith(o => o.Type == ObjectType.Apple);
+
+    private void deselectKillersToolStripMenuItem_Click(object sender, EventArgs e) => DeselectObjectsWith(o => o.Type == ObjectType.Killer);
+
+    private void deselectFlowersToolStripMenuItem_Click(object sender, EventArgs e) => DeselectObjectsWith(o => o.Type == ObjectType.Flower);
+
+    private void deselectPicturesToolStripMenuItem_Click(object sender, EventArgs e) => DeselectGraphicElementsWith(ge => ge is GraphicElement.Picture);
+
+    private void deselectTexturesToolStripMenuItem_Click(object sender, EventArgs e) => DeselectGraphicElementsWith(ge => ge is GraphicElement.Texture);
 }

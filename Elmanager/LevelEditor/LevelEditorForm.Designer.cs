@@ -73,8 +73,16 @@ namespace Elmanager.LevelEditor
             this.differenceToolStripMenuItem = new Elmanager.UI.ToolStripMenuItemMod();
             this.intersectionToolStripMenuItem = new Elmanager.UI.ToolStripMenuItemMod();
             this.symmetricDifferenceToolStripMenuItem = new Elmanager.UI.ToolStripMenuItemMod();
-            this.toolStripSeparator15 = new System.Windows.Forms.ToolStripSeparator();
+            this.toolStripSeparator17 = new System.Windows.Forms.ToolStripSeparator();
             this.texturizeMenuItem = new Elmanager.UI.ToolStripMenuItemMod();
+            this.toolStripSeparator15 = new System.Windows.Forms.ToolStripSeparator();
+            this.deselectGroundPolygonsToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.deselectGrassPolygonsToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.deselectApplesToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.deselectKillersToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.deselectFlowersToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.deselectPicturesToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.deselectTexturesToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.SelectionFilterToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.EnableAllToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.DisableAllToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
@@ -218,7 +226,7 @@ namespace Elmanager.LevelEditor
             this.MenuStrip1.Location = new System.Drawing.Point(0, 0);
             this.MenuStrip1.Name = "MenuStrip1";
             this.MenuStrip1.Padding = new System.Windows.Forms.Padding(12, 4, 0, 4);
-            this.MenuStrip1.Size = new System.Drawing.Size(1858, 44);
+            this.MenuStrip1.Size = new System.Drawing.Size(1858, 46);
             this.MenuStrip1.TabIndex = 0;
             this.MenuStrip1.Text = "MenuStrip1";
             // 
@@ -233,7 +241,7 @@ namespace Elmanager.LevelEditor
             this.deleteLevMenuItem,
             this.ExitToolStripMenuItem});
             this.FileToolStripMenuItem.Name = "FileToolStripMenuItem";
-            this.FileToolStripMenuItem.Size = new System.Drawing.Size(71, 36);
+            this.FileToolStripMenuItem.Size = new System.Drawing.Size(71, 38);
             this.FileToolStripMenuItem.Text = "File";
             // 
             // NewToolStripMenuItem
@@ -314,7 +322,7 @@ namespace Elmanager.LevelEditor
             this.selectAllToolStripMenuItem,
             this.importLevelsToolStripMenuItem});
             this.ActionsMenuItem.Name = "ActionsMenuItem";
-            this.ActionsMenuItem.Size = new System.Drawing.Size(89, 36);
+            this.ActionsMenuItem.Size = new System.Drawing.Size(89, 38);
             this.ActionsMenuItem.Text = "Tools";
             // 
             // QuickGrassToolStripMenuItem
@@ -440,10 +448,18 @@ namespace Elmanager.LevelEditor
             this.differenceToolStripMenuItem,
             this.intersectionToolStripMenuItem,
             this.symmetricDifferenceToolStripMenuItem,
+            this.toolStripSeparator17,
+            this.texturizeMenuItem,
             this.toolStripSeparator15,
-            this.texturizeMenuItem});
+            this.deselectGroundPolygonsToolStripMenuItem,
+            this.deselectGrassPolygonsToolStripMenuItem,
+            this.deselectApplesToolStripMenuItem,
+            this.deselectKillersToolStripMenuItem,
+            this.deselectFlowersToolStripMenuItem,
+            this.deselectPicturesToolStripMenuItem,
+            this.deselectTexturesToolStripMenuItem});
             this.selectionToolStripMenuItem.Name = "selectionToolStripMenuItem";
-            this.selectionToolStripMenuItem.Size = new System.Drawing.Size(132, 36);
+            this.selectionToolStripMenuItem.Size = new System.Drawing.Size(132, 38);
             this.selectionToolStripMenuItem.Text = "Selection";
             // 
             // toolStripMenuItem1
@@ -528,10 +544,10 @@ namespace Elmanager.LevelEditor
             this.symmetricDifferenceToolStripMenuItem.Text = "Symmetric difference";
             this.symmetricDifferenceToolStripMenuItem.Click += new System.EventHandler(this.symmetricDifferenceToolStripMenuItem_Click);
             // 
-            // toolStripSeparator15
+            // toolStripSeparator17
             // 
-            this.toolStripSeparator15.Name = "toolStripSeparator15";
-            this.toolStripSeparator15.Size = new System.Drawing.Size(528, 6);
+            this.toolStripSeparator17.Name = "toolStripSeparator17";
+            this.toolStripSeparator17.Size = new System.Drawing.Size(528, 6);
             // 
             // texturizeMenuItem
             // 
@@ -540,6 +556,60 @@ namespace Elmanager.LevelEditor
             this.texturizeMenuItem.Size = new System.Drawing.Size(531, 44);
             this.texturizeMenuItem.Text = "Texturize";
             this.texturizeMenuItem.Click += new System.EventHandler(this.texturizeMenuItem_Click);
+            // 
+            // toolStripSeparator15
+            // 
+            this.toolStripSeparator15.Name = "toolStripSeparator15";
+            this.toolStripSeparator15.Size = new System.Drawing.Size(528, 6);
+            // 
+            // deselectGroundPolygonsToolStripMenuItem
+            // 
+            this.deselectGroundPolygonsToolStripMenuItem.Name = "deselectGroundPolygonsToolStripMenuItem";
+            this.deselectGroundPolygonsToolStripMenuItem.Size = new System.Drawing.Size(531, 44);
+            this.deselectGroundPolygonsToolStripMenuItem.Text = "Deselect ground polygons";
+            this.deselectGroundPolygonsToolStripMenuItem.Click += new System.EventHandler(this.deselectGroundPolygonsToolStripMenuItem_Click);
+            // 
+            // deselectGrassPolygonsToolStripMenuItem
+            // 
+            this.deselectGrassPolygonsToolStripMenuItem.Name = "deselectGrassPolygonsToolStripMenuItem";
+            this.deselectGrassPolygonsToolStripMenuItem.Size = new System.Drawing.Size(531, 44);
+            this.deselectGrassPolygonsToolStripMenuItem.Text = "Deselect grass polygons";
+            this.deselectGrassPolygonsToolStripMenuItem.Click += new System.EventHandler(this.deselectGrassPolygonsToolStripMenuItem_Click);
+            // 
+            // deselectApplesToolStripMenuItem
+            // 
+            this.deselectApplesToolStripMenuItem.Name = "deselectApplesToolStripMenuItem";
+            this.deselectApplesToolStripMenuItem.Size = new System.Drawing.Size(531, 44);
+            this.deselectApplesToolStripMenuItem.Text = "Deselect apples";
+            this.deselectApplesToolStripMenuItem.Click += new System.EventHandler(this.deselectApplesToolStripMenuItem_Click);
+            // 
+            // deselectKillersToolStripMenuItem
+            // 
+            this.deselectKillersToolStripMenuItem.Name = "deselectKillersToolStripMenuItem";
+            this.deselectKillersToolStripMenuItem.Size = new System.Drawing.Size(531, 44);
+            this.deselectKillersToolStripMenuItem.Text = "Deselect killers";
+            this.deselectKillersToolStripMenuItem.Click += new System.EventHandler(this.deselectKillersToolStripMenuItem_Click);
+            // 
+            // deselectFlowersToolStripMenuItem
+            // 
+            this.deselectFlowersToolStripMenuItem.Name = "deselectFlowersToolStripMenuItem";
+            this.deselectFlowersToolStripMenuItem.Size = new System.Drawing.Size(531, 44);
+            this.deselectFlowersToolStripMenuItem.Text = "Deselect flowers";
+            this.deselectFlowersToolStripMenuItem.Click += new System.EventHandler(this.deselectFlowersToolStripMenuItem_Click);
+            // 
+            // deselectPicturesToolStripMenuItem
+            // 
+            this.deselectPicturesToolStripMenuItem.Name = "deselectPicturesToolStripMenuItem";
+            this.deselectPicturesToolStripMenuItem.Size = new System.Drawing.Size(531, 44);
+            this.deselectPicturesToolStripMenuItem.Text = "Deselect pictures";
+            this.deselectPicturesToolStripMenuItem.Click += new System.EventHandler(this.deselectPicturesToolStripMenuItem_Click);
+            // 
+            // deselectTexturesToolStripMenuItem
+            // 
+            this.deselectTexturesToolStripMenuItem.Name = "deselectTexturesToolStripMenuItem";
+            this.deselectTexturesToolStripMenuItem.Size = new System.Drawing.Size(531, 44);
+            this.deselectTexturesToolStripMenuItem.Text = "Deselect textures";
+            this.deselectTexturesToolStripMenuItem.Click += new System.EventHandler(this.deselectTexturesToolStripMenuItem_Click);
             // 
             // SelectionFilterToolStripMenuItem
             // 
@@ -554,20 +624,20 @@ namespace Elmanager.LevelEditor
             this.PicturesToolStripMenuItem,
             this.TexturesToolStripMenuItem});
             this.SelectionFilterToolStripMenuItem.Name = "SelectionFilterToolStripMenuItem";
-            this.SelectionFilterToolStripMenuItem.Size = new System.Drawing.Size(188, 36);
+            this.SelectionFilterToolStripMenuItem.Size = new System.Drawing.Size(188, 38);
             this.SelectionFilterToolStripMenuItem.Text = "Selection filter";
             // 
             // EnableAllToolStripMenuItem
             // 
             this.EnableAllToolStripMenuItem.Name = "EnableAllToolStripMenuItem";
-            this.EnableAllToolStripMenuItem.Size = new System.Drawing.Size(359, 44);
+            this.EnableAllToolStripMenuItem.Size = new System.Drawing.Size(332, 44);
             this.EnableAllToolStripMenuItem.Text = "Enable all";
             this.EnableAllToolStripMenuItem.Click += new System.EventHandler(this.SetAllFilters);
             // 
             // DisableAllToolStripMenuItem
             // 
             this.DisableAllToolStripMenuItem.Name = "DisableAllToolStripMenuItem";
-            this.DisableAllToolStripMenuItem.Size = new System.Drawing.Size(359, 44);
+            this.DisableAllToolStripMenuItem.Size = new System.Drawing.Size(332, 44);
             this.DisableAllToolStripMenuItem.Text = "Disable all";
             this.DisableAllToolStripMenuItem.Click += new System.EventHandler(this.SetAllFilters);
             // 
@@ -577,7 +647,7 @@ namespace Elmanager.LevelEditor
             this.GroundPolygonsToolStripMenuItem.CheckOnClick = true;
             this.GroundPolygonsToolStripMenuItem.CheckState = System.Windows.Forms.CheckState.Checked;
             this.GroundPolygonsToolStripMenuItem.Name = "GroundPolygonsToolStripMenuItem";
-            this.GroundPolygonsToolStripMenuItem.Size = new System.Drawing.Size(359, 44);
+            this.GroundPolygonsToolStripMenuItem.Size = new System.Drawing.Size(332, 44);
             this.GroundPolygonsToolStripMenuItem.Text = "Ground polygons";
             this.GroundPolygonsToolStripMenuItem.CheckedChanged += new System.EventHandler(this.FilterChanged);
             // 
@@ -587,7 +657,7 @@ namespace Elmanager.LevelEditor
             this.GrassPolygonsToolStripMenuItem.CheckOnClick = true;
             this.GrassPolygonsToolStripMenuItem.CheckState = System.Windows.Forms.CheckState.Checked;
             this.GrassPolygonsToolStripMenuItem.Name = "GrassPolygonsToolStripMenuItem";
-            this.GrassPolygonsToolStripMenuItem.Size = new System.Drawing.Size(359, 44);
+            this.GrassPolygonsToolStripMenuItem.Size = new System.Drawing.Size(332, 44);
             this.GrassPolygonsToolStripMenuItem.Text = "Grass polygons";
             this.GrassPolygonsToolStripMenuItem.CheckedChanged += new System.EventHandler(this.FilterChanged);
             // 
@@ -597,7 +667,7 @@ namespace Elmanager.LevelEditor
             this.ApplesToolStripMenuItem.CheckOnClick = true;
             this.ApplesToolStripMenuItem.CheckState = System.Windows.Forms.CheckState.Checked;
             this.ApplesToolStripMenuItem.Name = "ApplesToolStripMenuItem";
-            this.ApplesToolStripMenuItem.Size = new System.Drawing.Size(359, 44);
+            this.ApplesToolStripMenuItem.Size = new System.Drawing.Size(332, 44);
             this.ApplesToolStripMenuItem.Text = "Apples";
             this.ApplesToolStripMenuItem.CheckedChanged += new System.EventHandler(this.FilterChanged);
             // 
@@ -607,7 +677,7 @@ namespace Elmanager.LevelEditor
             this.KillersToolStripMenuItem.CheckOnClick = true;
             this.KillersToolStripMenuItem.CheckState = System.Windows.Forms.CheckState.Checked;
             this.KillersToolStripMenuItem.Name = "KillersToolStripMenuItem";
-            this.KillersToolStripMenuItem.Size = new System.Drawing.Size(359, 44);
+            this.KillersToolStripMenuItem.Size = new System.Drawing.Size(332, 44);
             this.KillersToolStripMenuItem.Text = "Killers";
             this.KillersToolStripMenuItem.CheckedChanged += new System.EventHandler(this.FilterChanged);
             // 
@@ -617,7 +687,7 @@ namespace Elmanager.LevelEditor
             this.FlowersToolStripMenuItem.CheckOnClick = true;
             this.FlowersToolStripMenuItem.CheckState = System.Windows.Forms.CheckState.Checked;
             this.FlowersToolStripMenuItem.Name = "FlowersToolStripMenuItem";
-            this.FlowersToolStripMenuItem.Size = new System.Drawing.Size(359, 44);
+            this.FlowersToolStripMenuItem.Size = new System.Drawing.Size(332, 44);
             this.FlowersToolStripMenuItem.Text = "Flowers";
             this.FlowersToolStripMenuItem.CheckedChanged += new System.EventHandler(this.FilterChanged);
             // 
@@ -627,7 +697,7 @@ namespace Elmanager.LevelEditor
             this.PicturesToolStripMenuItem.CheckOnClick = true;
             this.PicturesToolStripMenuItem.CheckState = System.Windows.Forms.CheckState.Checked;
             this.PicturesToolStripMenuItem.Name = "PicturesToolStripMenuItem";
-            this.PicturesToolStripMenuItem.Size = new System.Drawing.Size(359, 44);
+            this.PicturesToolStripMenuItem.Size = new System.Drawing.Size(332, 44);
             this.PicturesToolStripMenuItem.Text = "Pictures";
             this.PicturesToolStripMenuItem.CheckedChanged += new System.EventHandler(this.FilterChanged);
             // 
@@ -637,7 +707,7 @@ namespace Elmanager.LevelEditor
             this.TexturesToolStripMenuItem.CheckOnClick = true;
             this.TexturesToolStripMenuItem.CheckState = System.Windows.Forms.CheckState.Checked;
             this.TexturesToolStripMenuItem.Name = "TexturesToolStripMenuItem";
-            this.TexturesToolStripMenuItem.Size = new System.Drawing.Size(359, 44);
+            this.TexturesToolStripMenuItem.Size = new System.Drawing.Size(332, 44);
             this.TexturesToolStripMenuItem.Text = "Textures";
             this.TexturesToolStripMenuItem.CheckedChanged += new System.EventHandler(this.FilterChanged);
             // 
@@ -647,7 +717,7 @@ namespace Elmanager.LevelEditor
             this.MainConfigMenuItem,
             this.RenderingSettingsToolStripMenuItem});
             this.ConfigurationToolStripMenuItem.Name = "ConfigurationToolStripMenuItem";
-            this.ConfigurationToolStripMenuItem.Size = new System.Drawing.Size(181, 36);
+            this.ConfigurationToolStripMenuItem.Size = new System.Drawing.Size(181, 38);
             this.ConfigurationToolStripMenuItem.Text = "Configuration";
             // 
             // MainConfigMenuItem
@@ -674,11 +744,11 @@ namespace Elmanager.LevelEditor
             this.EditorControl.Dock = System.Windows.Forms.DockStyle.Fill;
             this.EditorControl.Flags = OpenTK.Windowing.Common.ContextFlags.Default;
             this.EditorControl.IsEventDriven = true;
-            this.EditorControl.Location = new System.Drawing.Point(168, 175);
+            this.EditorControl.Location = new System.Drawing.Point(168, 177);
             this.EditorControl.Margin = new System.Windows.Forms.Padding(6);
             this.EditorControl.Name = "EditorControl";
             this.EditorControl.Profile = OpenTK.Windowing.Common.ContextProfile.Compatability;
-            this.EditorControl.Size = new System.Drawing.Size(1690, 797);
+            this.EditorControl.Size = new System.Drawing.Size(1690, 795);
             this.EditorControl.TabIndex = 2;
             this.EditorControl.DragDrop += new System.Windows.Forms.DragEventHandler(this.ItemsDropped);
             this.EditorControl.DragEnter += new System.Windows.Forms.DragEventHandler(this.StartingDrop);
@@ -760,7 +830,7 @@ namespace Elmanager.LevelEditor
             this.ToolStripPanel1.Controls.Add(this.toolStrip3);
             this.ToolStripPanel1.Dock = System.Windows.Forms.DockStyle.Top;
             this.ToolStripPanel1.ForeColor = System.Drawing.SystemColors.ControlText;
-            this.ToolStripPanel1.Location = new System.Drawing.Point(0, 44);
+            this.ToolStripPanel1.Location = new System.Drawing.Point(0, 46);
             this.ToolStripPanel1.Name = "ToolStripPanel1";
             this.ToolStripPanel1.Orientation = System.Windows.Forms.Orientation.Horizontal;
             this.ToolStripPanel1.RowMargin = new System.Windows.Forms.Padding(0, 3, 0, 0);
@@ -1562,10 +1632,10 @@ namespace Elmanager.LevelEditor
             this.ToolPanel.Controls.Add(this.VertexButton);
             this.ToolPanel.Controls.Add(this.SelectButton);
             this.ToolPanel.Dock = System.Windows.Forms.DockStyle.Left;
-            this.ToolPanel.Location = new System.Drawing.Point(0, 175);
+            this.ToolPanel.Location = new System.Drawing.Point(0, 177);
             this.ToolPanel.Margin = new System.Windows.Forms.Padding(6);
             this.ToolPanel.Name = "ToolPanel";
-            this.ToolPanel.Size = new System.Drawing.Size(168, 797);
+            this.ToolPanel.Size = new System.Drawing.Size(168, 795);
             this.ToolPanel.TabIndex = 3;
             this.ToolPanel.Text = "Tools";
             // 
@@ -1964,6 +2034,14 @@ namespace Elmanager.LevelEditor
         private SvgImageToolStripButton playButton;
         private SvgImageToolStripButton stopButton;
         private SvgImageToolStripButton settingsButton;
-        }
+        private ToolStripMenuItem deselectGroundPolygonsToolStripMenuItem;
+        private ToolStripMenuItem deselectGrassPolygonsToolStripMenuItem;
+        private ToolStripSeparator toolStripSeparator17;
+        private ToolStripMenuItem deselectApplesToolStripMenuItem;
+        private ToolStripMenuItem deselectKillersToolStripMenuItem;
+        private ToolStripMenuItem deselectFlowersToolStripMenuItem;
+        private ToolStripMenuItem deselectPicturesToolStripMenuItem;
+        private ToolStripMenuItem deselectTexturesToolStripMenuItem;
+    }
 	
 }
