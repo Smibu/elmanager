@@ -65,6 +65,7 @@ internal partial class ConfigForm : FormMod
         }
 
         alwaysSetDefaultsInPictureTool.Checked = Global.AppSettings.LevelEditor.AlwaysSetDefaultsInPictureTool;
+        startPositionFeatureCheckBox.Checked = Global.AppSettings.LevelEditor.EnableStartPositionFeature;
         FilenameSuggestionBoxCheckedChanged(null, null);
         SameAsFilenameBoxCheckedChanged(null, null);
     }
@@ -248,6 +249,7 @@ internal partial class ConfigForm : FormMod
         }
 
         Global.AppSettings.LevelEditor.AlwaysSetDefaultsInPictureTool = alwaysSetDefaultsInPictureTool.Checked;
+        Global.AppSettings.LevelEditor.EnableStartPositionFeature = startPositionFeatureCheckBox.Checked;
         try
         {
             Global.AppSettings.LevelEditor.CaptureRadius = double.Parse(CaptureRadiusBox.Text);

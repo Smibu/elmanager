@@ -130,7 +130,10 @@ internal partial class LevelEditorForm : FormMod, IMessageFilter
     {
         Lev = lev.Obj;
         _file = lev.File;
-        SaveStartPosition();
+        if (Global.AppSettings.LevelEditor.EnableStartPositionFeature)
+        {
+            SaveStartPosition();
+        }
     }
 
     public LevelEditorForm()
@@ -1379,7 +1382,7 @@ internal partial class LevelEditorForm : FormMod, IMessageFilter
                                 break;
                             case ObjectType.Killer:
                                 break;
-                            case ObjectType.Start:
+                            case ObjectType.Start when Global.AppSettings.LevelEditor.EnableStartPositionFeature:
                                 saveStartPositionToolStripMenuItem.Visible = true;
                                 if (_savedStartPosition != null)
                                 {
@@ -1387,8 +1390,6 @@ internal partial class LevelEditorForm : FormMod, IMessageFilter
                                 }
 
                                 break;
-                            default:
-                                throw new ArgumentOutOfRangeException();
                         }
                     }
 
@@ -1558,6 +1559,10 @@ internal partial class LevelEditorForm : FormMod, IMessageFilter
         string oldLgr = Global.AppSettings.LevelEditor.RenderingSettings.LgrFile;
         ComponentManager.ShowConfiguration("sle");
         AfterSettingsClosed(oldLgr);
+        if (!Global.AppSettings.LevelEditor.EnableStartPositionFeature)
+        {
+            _savedStartPosition = null;
+        }
     }
 
     private void OpenLevel(string path)

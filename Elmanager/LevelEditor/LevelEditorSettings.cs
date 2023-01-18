@@ -46,6 +46,7 @@ internal class LevelEditorSettings
     public bool CapturePicturesAndTexturesFromBordersOnly { get; set; } = false;
     public bool AlwaysSetDefaultsInPictureTool { get; set; } = false;
     public PlaySettings PlayingSettings { get; set; } = new();
+    public bool EnableStartPositionFeature { get; set; } = true;
 
     internal static Level TryGetTemplateLevel(string text)
     {

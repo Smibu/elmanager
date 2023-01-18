@@ -94,6 +94,7 @@ namespace Elmanager.Settings
             this.CheckTopologyWhenSavingBox = new System.Windows.Forms.CheckBox();
             this.ColorDialog1 = new System.Windows.Forms.ColorDialog();
             this.toolTip1 = new System.Windows.Forms.ToolTip(this.components);
+            this.startPositionFeatureCheckBox = new System.Windows.Forms.CheckBox();
             this.TabControl1.SuspendLayout();
             this.generalTab.SuspendLayout();
             this.tableLayoutPanel1.SuspendLayout();
@@ -110,7 +111,7 @@ namespace Elmanager.Settings
             // RecDirButton
             // 
             this.RecDirButton.Location = new System.Drawing.Point(716, 6);
-            this.RecDirButton.Margin = new System.Windows.Forms.Padding(6, 6, 6, 6);
+            this.RecDirButton.Margin = new System.Windows.Forms.Padding(6);
             this.RecDirButton.Name = "RecDirButton";
             this.RecDirButton.Size = new System.Drawing.Size(134, 50);
             this.RecDirButton.TabIndex = 0;
@@ -121,7 +122,7 @@ namespace Elmanager.Settings
             // LevDirButton
             // 
             this.LevDirButton.Location = new System.Drawing.Point(716, 68);
-            this.LevDirButton.Margin = new System.Windows.Forms.Padding(6, 6, 6, 6);
+            this.LevDirButton.Margin = new System.Windows.Forms.Padding(6);
             this.LevDirButton.Name = "LevDirButton";
             this.LevDirButton.Size = new System.Drawing.Size(134, 50);
             this.LevDirButton.TabIndex = 1;
@@ -133,7 +134,7 @@ namespace Elmanager.Settings
             // 
             this.RecTextBox.Anchor = System.Windows.Forms.AnchorStyles.None;
             this.RecTextBox.Location = new System.Drawing.Point(208, 11);
-            this.RecTextBox.Margin = new System.Windows.Forms.Padding(6, 6, 6, 6);
+            this.RecTextBox.Margin = new System.Windows.Forms.Padding(6);
             this.RecTextBox.Name = "RecTextBox";
             this.RecTextBox.ReadOnly = true;
             this.RecTextBox.Size = new System.Drawing.Size(496, 39);
@@ -143,7 +144,7 @@ namespace Elmanager.Settings
             // 
             this.LevTextBox.Anchor = System.Windows.Forms.AnchorStyles.None;
             this.LevTextBox.Location = new System.Drawing.Point(208, 73);
-            this.LevTextBox.Margin = new System.Windows.Forms.Padding(6, 6, 6, 6);
+            this.LevTextBox.Margin = new System.Windows.Forms.Padding(6);
             this.LevTextBox.Name = "LevTextBox";
             this.LevTextBox.ReadOnly = true;
             this.LevTextBox.Size = new System.Drawing.Size(496, 39);
@@ -187,10 +188,10 @@ namespace Elmanager.Settings
             this.TabControl1.Controls.Add(this.sleTab);
             this.TabControl1.Dock = System.Windows.Forms.DockStyle.Fill;
             this.TabControl1.Location = new System.Drawing.Point(0, 0);
-            this.TabControl1.Margin = new System.Windows.Forms.Padding(6, 6, 6, 6);
+            this.TabControl1.Margin = new System.Windows.Forms.Padding(6);
             this.TabControl1.Name = "TabControl1";
             this.TabControl1.SelectedIndex = 0;
-            this.TabControl1.Size = new System.Drawing.Size(1278, 672);
+            this.TabControl1.Size = new System.Drawing.Size(1171, 849);
             this.TabControl1.TabIndex = 55;
             // 
             // generalTab
@@ -201,10 +202,10 @@ namespace Elmanager.Settings
             this.generalTab.Controls.Add(this.resetButton);
             this.generalTab.Controls.Add(this.CheckForUpdatesBox);
             this.generalTab.Location = new System.Drawing.Point(8, 46);
-            this.generalTab.Margin = new System.Windows.Forms.Padding(6, 6, 6, 6);
+            this.generalTab.Margin = new System.Windows.Forms.Padding(6);
             this.generalTab.Name = "generalTab";
-            this.generalTab.Padding = new System.Windows.Forms.Padding(6, 6, 6, 6);
-            this.generalTab.Size = new System.Drawing.Size(1262, 618);
+            this.generalTab.Padding = new System.Windows.Forms.Padding(6);
+            this.generalTab.Size = new System.Drawing.Size(1155, 795);
             this.generalTab.TabIndex = 0;
             this.generalTab.Text = "General";
             // 
@@ -228,7 +229,7 @@ namespace Elmanager.Settings
             this.tableLayoutPanel1.Controls.Add(this.LGRTextBox, 1, 2);
             this.tableLayoutPanel1.Controls.Add(this.RecDirButton, 2, 0);
             this.tableLayoutPanel1.Location = new System.Drawing.Point(12, 12);
-            this.tableLayoutPanel1.Margin = new System.Windows.Forms.Padding(6, 6, 6, 6);
+            this.tableLayoutPanel1.Margin = new System.Windows.Forms.Padding(6);
             this.tableLayoutPanel1.Name = "tableLayoutPanel1";
             this.tableLayoutPanel1.RowCount = 3;
             this.tableLayoutPanel1.RowStyles.Add(new System.Windows.Forms.RowStyle());
@@ -251,7 +252,7 @@ namespace Elmanager.Settings
             // ElmaDirButton
             // 
             this.ElmaDirButton.Location = new System.Drawing.Point(862, 68);
-            this.ElmaDirButton.Margin = new System.Windows.Forms.Padding(6, 6, 6, 6);
+            this.ElmaDirButton.Margin = new System.Windows.Forms.Padding(6);
             this.ElmaDirButton.Name = "ElmaDirButton";
             this.ElmaDirButton.Size = new System.Drawing.Size(260, 50);
             this.ElmaDirButton.TabIndex = 52;
@@ -262,7 +263,7 @@ namespace Elmanager.Settings
             // LGRDirButton
             // 
             this.LGRDirButton.Location = new System.Drawing.Point(716, 130);
-            this.LGRDirButton.Margin = new System.Windows.Forms.Padding(6, 6, 6, 6);
+            this.LGRDirButton.Margin = new System.Windows.Forms.Padding(6);
             this.LGRDirButton.Name = "LGRDirButton";
             this.LGRDirButton.Size = new System.Drawing.Size(134, 50);
             this.LGRDirButton.TabIndex = 49;
@@ -274,7 +275,7 @@ namespace Elmanager.Settings
             // 
             this.LGRTextBox.Anchor = System.Windows.Forms.AnchorStyles.None;
             this.LGRTextBox.Location = new System.Drawing.Point(208, 135);
-            this.LGRTextBox.Margin = new System.Windows.Forms.Padding(6, 6, 6, 6);
+            this.LGRTextBox.Margin = new System.Windows.Forms.Padding(6);
             this.LGRTextBox.Name = "LGRTextBox";
             this.LGRTextBox.ReadOnly = true;
             this.LGRTextBox.Size = new System.Drawing.Size(496, 39);
@@ -284,9 +285,9 @@ namespace Elmanager.Settings
             // 
             this.groupBox2.Controls.Add(this.panel1);
             this.groupBox2.Location = new System.Drawing.Point(16, 326);
-            this.groupBox2.Margin = new System.Windows.Forms.Padding(6, 6, 6, 6);
+            this.groupBox2.Margin = new System.Windows.Forms.Padding(6);
             this.groupBox2.Name = "groupBox2";
-            this.groupBox2.Padding = new System.Windows.Forms.Padding(6, 6, 6, 6);
+            this.groupBox2.Padding = new System.Windows.Forms.Padding(6);
             this.groupBox2.Size = new System.Drawing.Size(400, 94);
             this.groupBox2.TabIndex = 56;
             this.groupBox2.TabStop = false;
@@ -297,7 +298,7 @@ namespace Elmanager.Settings
             this.panel1.Controls.Add(this.DisableFrameBufferUsageCheckBox);
             this.panel1.Dock = System.Windows.Forms.DockStyle.Fill;
             this.panel1.Location = new System.Drawing.Point(6, 38);
-            this.panel1.Margin = new System.Windows.Forms.Padding(6, 6, 6, 6);
+            this.panel1.Margin = new System.Windows.Forms.Padding(6);
             this.panel1.Name = "panel1";
             this.panel1.Size = new System.Drawing.Size(388, 50);
             this.panel1.TabIndex = 0;
@@ -307,7 +308,7 @@ namespace Elmanager.Settings
             this.DisableFrameBufferUsageCheckBox.AutoSize = true;
             this.DisableFrameBufferUsageCheckBox.Dock = System.Windows.Forms.DockStyle.Fill;
             this.DisableFrameBufferUsageCheckBox.Location = new System.Drawing.Point(0, 0);
-            this.DisableFrameBufferUsageCheckBox.Margin = new System.Windows.Forms.Padding(6, 6, 6, 6);
+            this.DisableFrameBufferUsageCheckBox.Margin = new System.Windows.Forms.Padding(6);
             this.DisableFrameBufferUsageCheckBox.Name = "DisableFrameBufferUsageCheckBox";
             this.DisableFrameBufferUsageCheckBox.Size = new System.Drawing.Size(388, 50);
             this.DisableFrameBufferUsageCheckBox.TabIndex = 55;
@@ -317,8 +318,8 @@ namespace Elmanager.Settings
             // resetButton
             // 
             this.resetButton.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
-            this.resetButton.Location = new System.Drawing.Point(16, 548);
-            this.resetButton.Margin = new System.Windows.Forms.Padding(6, 6, 6, 6);
+            this.resetButton.Location = new System.Drawing.Point(16, 725);
+            this.resetButton.Margin = new System.Windows.Forms.Padding(6);
             this.resetButton.Name = "resetButton";
             this.resetButton.Size = new System.Drawing.Size(322, 50);
             this.resetButton.TabIndex = 53;
@@ -330,7 +331,7 @@ namespace Elmanager.Settings
             // 
             this.CheckForUpdatesBox.AutoSize = true;
             this.CheckForUpdatesBox.Location = new System.Drawing.Point(16, 250);
-            this.CheckForUpdatesBox.Margin = new System.Windows.Forms.Padding(6, 6, 6, 6);
+            this.CheckForUpdatesBox.Margin = new System.Windows.Forms.Padding(6);
             this.CheckForUpdatesBox.Name = "CheckForUpdatesBox";
             this.CheckForUpdatesBox.Size = new System.Drawing.Size(467, 36);
             this.CheckForUpdatesBox.TabIndex = 48;
@@ -346,10 +347,10 @@ namespace Elmanager.Settings
             this.rmTab.Controls.Add(this.SearchLevSubDirsBox);
             this.rmTab.Controls.Add(this.ShowReplayListGridBox);
             this.rmTab.Location = new System.Drawing.Point(8, 46);
-            this.rmTab.Margin = new System.Windows.Forms.Padding(6, 6, 6, 6);
+            this.rmTab.Margin = new System.Windows.Forms.Padding(6);
             this.rmTab.Name = "rmTab";
-            this.rmTab.Padding = new System.Windows.Forms.Padding(6, 6, 6, 6);
-            this.rmTab.Size = new System.Drawing.Size(1262, 618);
+            this.rmTab.Padding = new System.Windows.Forms.Padding(6);
+            this.rmTab.Size = new System.Drawing.Size(1155, 795);
             this.rmTab.TabIndex = 3;
             this.rmTab.Text = "Replay manager";
             this.rmTab.UseVisualStyleBackColor = true;
@@ -358,7 +359,7 @@ namespace Elmanager.Settings
             // 
             this.showTooltipForReplaysCheckBox.AutoSize = true;
             this.showTooltipForReplaysCheckBox.Location = new System.Drawing.Point(16, 104);
-            this.showTooltipForReplaysCheckBox.Margin = new System.Windows.Forms.Padding(6, 6, 6, 6);
+            this.showTooltipForReplaysCheckBox.Margin = new System.Windows.Forms.Padding(6);
             this.showTooltipForReplaysCheckBox.Name = "showTooltipForReplaysCheckBox";
             this.showTooltipForReplaysCheckBox.Size = new System.Drawing.Size(436, 36);
             this.showTooltipForReplaysCheckBox.TabIndex = 58;
@@ -369,7 +370,7 @@ namespace Elmanager.Settings
             // 
             this.DeleteConfirmCheckBox.AutoSize = true;
             this.DeleteConfirmCheckBox.Location = new System.Drawing.Point(516, 58);
-            this.DeleteConfirmCheckBox.Margin = new System.Windows.Forms.Padding(6, 6, 6, 6);
+            this.DeleteConfirmCheckBox.Margin = new System.Windows.Forms.Padding(6);
             this.DeleteConfirmCheckBox.Name = "DeleteConfirmCheckBox";
             this.DeleteConfirmCheckBox.Size = new System.Drawing.Size(227, 36);
             this.DeleteConfirmCheckBox.TabIndex = 57;
@@ -380,7 +381,7 @@ namespace Elmanager.Settings
             // 
             this.SearchRecSubDirsBox.AutoSize = true;
             this.SearchRecSubDirsBox.Location = new System.Drawing.Point(16, 12);
-            this.SearchRecSubDirsBox.Margin = new System.Windows.Forms.Padding(6, 6, 6, 6);
+            this.SearchRecSubDirsBox.Margin = new System.Windows.Forms.Padding(6);
             this.SearchRecSubDirsBox.Name = "SearchRecSubDirsBox";
             this.SearchRecSubDirsBox.Size = new System.Drawing.Size(491, 36);
             this.SearchRecSubDirsBox.TabIndex = 55;
@@ -391,7 +392,7 @@ namespace Elmanager.Settings
             // 
             this.NitroBox.AutoSize = true;
             this.NitroBox.Location = new System.Drawing.Point(516, 104);
-            this.NitroBox.Margin = new System.Windows.Forms.Padding(6, 6, 6, 6);
+            this.NitroBox.Margin = new System.Windows.Forms.Padding(6);
             this.NitroBox.Name = "NitroBox";
             this.NitroBox.Size = new System.Drawing.Size(385, 36);
             this.NitroBox.TabIndex = 53;
@@ -402,7 +403,7 @@ namespace Elmanager.Settings
             // 
             this.SearchLevSubDirsBox.AutoSize = true;
             this.SearchLevSubDirsBox.Location = new System.Drawing.Point(516, 12);
-            this.SearchLevSubDirsBox.Margin = new System.Windows.Forms.Padding(6, 6, 6, 6);
+            this.SearchLevSubDirsBox.Margin = new System.Windows.Forms.Padding(6);
             this.SearchLevSubDirsBox.Name = "SearchLevSubDirsBox";
             this.SearchLevSubDirsBox.Size = new System.Drawing.Size(476, 36);
             this.SearchLevSubDirsBox.TabIndex = 56;
@@ -413,7 +414,7 @@ namespace Elmanager.Settings
             // 
             this.ShowReplayListGridBox.AutoSize = true;
             this.ShowReplayListGridBox.Location = new System.Drawing.Point(16, 58);
-            this.ShowReplayListGridBox.Margin = new System.Windows.Forms.Padding(6, 6, 6, 6);
+            this.ShowReplayListGridBox.Margin = new System.Windows.Forms.Padding(6);
             this.ShowReplayListGridBox.Name = "ShowReplayListGridBox";
             this.ShowReplayListGridBox.Size = new System.Drawing.Size(289, 36);
             this.ShowReplayListGridBox.TabIndex = 54;
@@ -428,10 +429,10 @@ namespace Elmanager.Settings
             this.lmTab.Controls.Add(this.lmSearchLevSubDirs);
             this.lmTab.Controls.Add(this.lmShowGrid);
             this.lmTab.Location = new System.Drawing.Point(8, 46);
-            this.lmTab.Margin = new System.Windows.Forms.Padding(6, 6, 6, 6);
+            this.lmTab.Margin = new System.Windows.Forms.Padding(6);
             this.lmTab.Name = "lmTab";
-            this.lmTab.Padding = new System.Windows.Forms.Padding(6, 6, 6, 6);
-            this.lmTab.Size = new System.Drawing.Size(1262, 618);
+            this.lmTab.Padding = new System.Windows.Forms.Padding(6);
+            this.lmTab.Size = new System.Drawing.Size(1155, 795);
             this.lmTab.TabIndex = 5;
             this.lmTab.Text = "Level manager";
             this.lmTab.UseVisualStyleBackColor = true;
@@ -440,7 +441,7 @@ namespace Elmanager.Settings
             // 
             this.lmShowTooltip.AutoSize = true;
             this.lmShowTooltip.Location = new System.Drawing.Point(16, 104);
-            this.lmShowTooltip.Margin = new System.Windows.Forms.Padding(6, 6, 6, 6);
+            this.lmShowTooltip.Margin = new System.Windows.Forms.Padding(6);
             this.lmShowTooltip.Name = "lmShowTooltip";
             this.lmShowTooltip.Size = new System.Drawing.Size(406, 36);
             this.lmShowTooltip.TabIndex = 65;
@@ -451,7 +452,7 @@ namespace Elmanager.Settings
             // 
             this.lmConfirmDeletion.AutoSize = true;
             this.lmConfirmDeletion.Location = new System.Drawing.Point(516, 58);
-            this.lmConfirmDeletion.Margin = new System.Windows.Forms.Padding(6, 6, 6, 6);
+            this.lmConfirmDeletion.Margin = new System.Windows.Forms.Padding(6);
             this.lmConfirmDeletion.Name = "lmConfirmDeletion";
             this.lmConfirmDeletion.Size = new System.Drawing.Size(227, 36);
             this.lmConfirmDeletion.TabIndex = 64;
@@ -462,7 +463,7 @@ namespace Elmanager.Settings
             // 
             this.lmSearchRecSubDirs.AutoSize = true;
             this.lmSearchRecSubDirs.Location = new System.Drawing.Point(16, 12);
-            this.lmSearchRecSubDirs.Margin = new System.Windows.Forms.Padding(6, 6, 6, 6);
+            this.lmSearchRecSubDirs.Margin = new System.Windows.Forms.Padding(6);
             this.lmSearchRecSubDirs.Name = "lmSearchRecSubDirs";
             this.lmSearchRecSubDirs.Size = new System.Drawing.Size(491, 36);
             this.lmSearchRecSubDirs.TabIndex = 62;
@@ -473,7 +474,7 @@ namespace Elmanager.Settings
             // 
             this.lmSearchLevSubDirs.AutoSize = true;
             this.lmSearchLevSubDirs.Location = new System.Drawing.Point(516, 12);
-            this.lmSearchLevSubDirs.Margin = new System.Windows.Forms.Padding(6, 6, 6, 6);
+            this.lmSearchLevSubDirs.Margin = new System.Windows.Forms.Padding(6);
             this.lmSearchLevSubDirs.Name = "lmSearchLevSubDirs";
             this.lmSearchLevSubDirs.Size = new System.Drawing.Size(476, 36);
             this.lmSearchLevSubDirs.TabIndex = 63;
@@ -484,7 +485,7 @@ namespace Elmanager.Settings
             // 
             this.lmShowGrid.AutoSize = true;
             this.lmShowGrid.Location = new System.Drawing.Point(16, 58);
-            this.lmShowGrid.Margin = new System.Windows.Forms.Padding(6, 6, 6, 6);
+            this.lmShowGrid.Margin = new System.Windows.Forms.Padding(6);
             this.lmShowGrid.Name = "lmShowGrid";
             this.lmShowGrid.Size = new System.Drawing.Size(274, 36);
             this.lmShowGrid.TabIndex = 61;
@@ -493,6 +494,7 @@ namespace Elmanager.Settings
             // 
             // sleTab
             // 
+            this.sleTab.Controls.Add(this.startPositionFeatureCheckBox);
             this.sleTab.Controls.Add(this.tableLayoutPanel3);
             this.sleTab.Controls.Add(this.tableLayoutPanel2);
             this.sleTab.Controls.Add(this.HighlightBox);
@@ -504,9 +506,9 @@ namespace Elmanager.Settings
             this.sleTab.Controls.Add(this.DynamicCheckTopologyBox);
             this.sleTab.Controls.Add(this.CheckTopologyWhenSavingBox);
             this.sleTab.Location = new System.Drawing.Point(8, 46);
-            this.sleTab.Margin = new System.Windows.Forms.Padding(6, 6, 6, 6);
+            this.sleTab.Margin = new System.Windows.Forms.Padding(6);
             this.sleTab.Name = "sleTab";
-            this.sleTab.Size = new System.Drawing.Size(1262, 618);
+            this.sleTab.Size = new System.Drawing.Size(1155, 795);
             this.sleTab.TabIndex = 4;
             this.sleTab.Text = "SLE";
             this.sleTab.UseVisualStyleBackColor = true;
@@ -527,8 +529,8 @@ namespace Elmanager.Settings
             this.tableLayoutPanel3.Controls.Add(this.Label19, 2, 0);
             this.tableLayoutPanel3.Controls.Add(this.numberFormatBox, 3, 0);
             this.tableLayoutPanel3.Controls.Add(this.SameAsFilenameBox, 2, 1);
-            this.tableLayoutPanel3.Location = new System.Drawing.Point(24, 326);
-            this.tableLayoutPanel3.Margin = new System.Windows.Forms.Padding(6, 6, 6, 6);
+            this.tableLayoutPanel3.Location = new System.Drawing.Point(16, 503);
+            this.tableLayoutPanel3.Margin = new System.Windows.Forms.Padding(6);
             this.tableLayoutPanel3.Name = "tableLayoutPanel3";
             this.tableLayoutPanel3.RowCount = 2;
             this.tableLayoutPanel3.RowStyles.Add(new System.Windows.Forms.RowStyle());
@@ -562,7 +564,7 @@ namespace Elmanager.Settings
             // 
             this.baseFilenameBox.Anchor = System.Windows.Forms.AnchorStyles.None;
             this.baseFilenameBox.Location = new System.Drawing.Point(220, 6);
-            this.baseFilenameBox.Margin = new System.Windows.Forms.Padding(6, 6, 6, 6);
+            this.baseFilenameBox.Margin = new System.Windows.Forms.Padding(6);
             this.baseFilenameBox.Name = "baseFilenameBox";
             this.baseFilenameBox.Size = new System.Drawing.Size(196, 39);
             this.baseFilenameBox.TabIndex = 15;
@@ -572,7 +574,7 @@ namespace Elmanager.Settings
             // 
             this.DefaultTitleBox.Anchor = System.Windows.Forms.AnchorStyles.None;
             this.DefaultTitleBox.Location = new System.Drawing.Point(220, 57);
-            this.DefaultTitleBox.Margin = new System.Windows.Forms.Padding(6, 6, 6, 6);
+            this.DefaultTitleBox.Margin = new System.Windows.Forms.Padding(6);
             this.DefaultTitleBox.MaxLength = 50;
             this.DefaultTitleBox.Name = "DefaultTitleBox";
             this.DefaultTitleBox.Size = new System.Drawing.Size(196, 39);
@@ -594,7 +596,7 @@ namespace Elmanager.Settings
             // 
             this.numberFormatBox.Anchor = System.Windows.Forms.AnchorStyles.None;
             this.numberFormatBox.Location = new System.Drawing.Point(692, 6);
-            this.numberFormatBox.Margin = new System.Windows.Forms.Padding(6, 6, 6, 6);
+            this.numberFormatBox.Margin = new System.Windows.Forms.Padding(6);
             this.numberFormatBox.Name = "numberFormatBox";
             this.numberFormatBox.Size = new System.Drawing.Size(196, 39);
             this.numberFormatBox.TabIndex = 28;
@@ -604,7 +606,7 @@ namespace Elmanager.Settings
             this.SameAsFilenameBox.Anchor = System.Windows.Forms.AnchorStyles.Left;
             this.SameAsFilenameBox.AutoSize = true;
             this.SameAsFilenameBox.Location = new System.Drawing.Point(428, 58);
-            this.SameAsFilenameBox.Margin = new System.Windows.Forms.Padding(6, 6, 6, 6);
+            this.SameAsFilenameBox.Margin = new System.Windows.Forms.Padding(6);
             this.SameAsFilenameBox.Name = "SameAsFilenameBox";
             this.SameAsFilenameBox.Size = new System.Drawing.Size(234, 36);
             this.SameAsFilenameBox.TabIndex = 19;
@@ -626,7 +628,7 @@ namespace Elmanager.Settings
             this.tableLayoutPanel2.Controls.Add(this.Label6, 0, 0);
             this.tableLayoutPanel2.Controls.Add(this.Label8, 0, 1);
             this.tableLayoutPanel2.Location = new System.Drawing.Point(22, 6);
-            this.tableLayoutPanel2.Margin = new System.Windows.Forms.Padding(6, 6, 6, 6);
+            this.tableLayoutPanel2.Margin = new System.Windows.Forms.Padding(6);
             this.tableLayoutPanel2.Name = "tableLayoutPanel2";
             this.tableLayoutPanel2.RowCount = 2;
             this.tableLayoutPanel2.RowStyles.Add(new System.Windows.Forms.RowStyle());
@@ -638,7 +640,7 @@ namespace Elmanager.Settings
             // 
             this.CaptureRadiusBox.Anchor = System.Windows.Forms.AnchorStyles.Left;
             this.CaptureRadiusBox.Location = new System.Drawing.Point(268, 68);
-            this.CaptureRadiusBox.Margin = new System.Windows.Forms.Padding(6, 6, 6, 6);
+            this.CaptureRadiusBox.Margin = new System.Windows.Forms.Padding(6);
             this.CaptureRadiusBox.Name = "CaptureRadiusBox";
             this.CaptureRadiusBox.Size = new System.Drawing.Size(96, 39);
             this.CaptureRadiusBox.TabIndex = 5;
@@ -648,7 +650,7 @@ namespace Elmanager.Settings
             // 
             this.LevelTemplateBox.Anchor = System.Windows.Forms.AnchorStyles.None;
             this.LevelTemplateBox.Location = new System.Drawing.Point(268, 11);
-            this.LevelTemplateBox.Margin = new System.Windows.Forms.Padding(6, 6, 6, 6);
+            this.LevelTemplateBox.Margin = new System.Windows.Forms.Padding(6);
             this.LevelTemplateBox.Name = "LevelTemplateBox";
             this.LevelTemplateBox.Size = new System.Drawing.Size(396, 39);
             this.LevelTemplateBox.TabIndex = 2;
@@ -659,7 +661,7 @@ namespace Elmanager.Settings
             // 
             this.browseButton.Anchor = System.Windows.Forms.AnchorStyles.Left;
             this.browseButton.Location = new System.Drawing.Point(676, 6);
-            this.browseButton.Margin = new System.Windows.Forms.Padding(6, 6, 6, 6);
+            this.browseButton.Margin = new System.Windows.Forms.Padding(6);
             this.browseButton.Name = "browseButton";
             this.browseButton.Size = new System.Drawing.Size(150, 50);
             this.browseButton.TabIndex = 29;
@@ -692,8 +694,8 @@ namespace Elmanager.Settings
             // HighlightBox
             // 
             this.HighlightBox.AutoSize = true;
-            this.HighlightBox.Location = new System.Drawing.Point(34, 138);
-            this.HighlightBox.Margin = new System.Windows.Forms.Padding(6, 6, 6, 6);
+            this.HighlightBox.Location = new System.Drawing.Point(22, 131);
+            this.HighlightBox.Margin = new System.Windows.Forms.Padding(6);
             this.HighlightBox.Name = "HighlightBox";
             this.HighlightBox.Size = new System.Drawing.Size(456, 36);
             this.HighlightBox.TabIndex = 10;
@@ -703,8 +705,8 @@ namespace Elmanager.Settings
             // alwaysSetDefaultsInPictureTool
             // 
             this.alwaysSetDefaultsInPictureTool.AutoSize = true;
-            this.alwaysSetDefaultsInPictureTool.Location = new System.Drawing.Point(400, 276);
-            this.alwaysSetDefaultsInPictureTool.Margin = new System.Windows.Forms.Padding(6, 6, 6, 6);
+            this.alwaysSetDefaultsInPictureTool.Location = new System.Drawing.Point(22, 323);
+            this.alwaysSetDefaultsInPictureTool.Margin = new System.Windows.Forms.Padding(6);
             this.alwaysSetDefaultsInPictureTool.Name = "alwaysSetDefaultsInPictureTool";
             this.alwaysSetDefaultsInPictureTool.Size = new System.Drawing.Size(847, 36);
             this.alwaysSetDefaultsInPictureTool.TabIndex = 31;
@@ -714,8 +716,8 @@ namespace Elmanager.Settings
             // capturePicTextFromBordersCheckBox
             // 
             this.capturePicTextFromBordersCheckBox.AutoSize = true;
-            this.capturePicTextFromBordersCheckBox.Location = new System.Drawing.Point(34, 184);
-            this.capturePicTextFromBordersCheckBox.Margin = new System.Windows.Forms.Padding(6, 6, 6, 6);
+            this.capturePicTextFromBordersCheckBox.Location = new System.Drawing.Point(22, 179);
+            this.capturePicTextFromBordersCheckBox.Margin = new System.Windows.Forms.Padding(6);
             this.capturePicTextFromBordersCheckBox.Name = "capturePicTextFromBordersCheckBox";
             this.capturePicTextFromBordersCheckBox.Size = new System.Drawing.Size(559, 36);
             this.capturePicTextFromBordersCheckBox.TabIndex = 30;
@@ -725,8 +727,8 @@ namespace Elmanager.Settings
             // RenderingSettingsButton
             // 
             this.RenderingSettingsButton.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
-            this.RenderingSettingsButton.Location = new System.Drawing.Point(458, 546);
-            this.RenderingSettingsButton.Margin = new System.Windows.Forms.Padding(6, 6, 6, 6);
+            this.RenderingSettingsButton.Location = new System.Drawing.Point(458, 723);
+            this.RenderingSettingsButton.Margin = new System.Windows.Forms.Padding(6);
             this.RenderingSettingsButton.Name = "RenderingSettingsButton";
             this.RenderingSettingsButton.Size = new System.Drawing.Size(230, 50);
             this.RenderingSettingsButton.TabIndex = 27;
@@ -744,10 +746,10 @@ namespace Elmanager.Settings
             this.GroupBox1.Controls.Add(this.Label15);
             this.GroupBox1.Controls.Add(this.Label17);
             this.GroupBox1.Controls.Add(this.HighlightPanel);
-            this.GroupBox1.Location = new System.Drawing.Point(16, 440);
-            this.GroupBox1.Margin = new System.Windows.Forms.Padding(6, 6, 6, 6);
+            this.GroupBox1.Location = new System.Drawing.Point(16, 617);
+            this.GroupBox1.Margin = new System.Windows.Forms.Padding(6);
             this.GroupBox1.Name = "GroupBox1";
-            this.GroupBox1.Padding = new System.Windows.Forms.Padding(6, 6, 6, 6);
+            this.GroupBox1.Padding = new System.Windows.Forms.Padding(6);
             this.GroupBox1.Size = new System.Drawing.Size(414, 156);
             this.GroupBox1.TabIndex = 26;
             this.GroupBox1.TabStop = false;
@@ -758,7 +760,7 @@ namespace Elmanager.Settings
             this.crosshairPanel.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
             this.crosshairPanel.Cursor = System.Windows.Forms.Cursors.Hand;
             this.crosshairPanel.Location = new System.Drawing.Point(12, 94);
-            this.crosshairPanel.Margin = new System.Windows.Forms.Padding(6, 6, 6, 6);
+            this.crosshairPanel.Margin = new System.Windows.Forms.Padding(6);
             this.crosshairPanel.Name = "crosshairPanel";
             this.crosshairPanel.Size = new System.Drawing.Size(38, 38);
             this.crosshairPanel.TabIndex = 9;
@@ -779,7 +781,7 @@ namespace Elmanager.Settings
             this.SelectionPanel.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
             this.SelectionPanel.Cursor = System.Windows.Forms.Cursors.Hand;
             this.SelectionPanel.Location = new System.Drawing.Point(12, 44);
-            this.SelectionPanel.Margin = new System.Windows.Forms.Padding(6, 6, 6, 6);
+            this.SelectionPanel.Margin = new System.Windows.Forms.Padding(6);
             this.SelectionPanel.Name = "SelectionPanel";
             this.SelectionPanel.Size = new System.Drawing.Size(38, 38);
             this.SelectionPanel.TabIndex = 1;
@@ -810,7 +812,7 @@ namespace Elmanager.Settings
             this.HighlightPanel.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
             this.HighlightPanel.Cursor = System.Windows.Forms.Cursors.Hand;
             this.HighlightPanel.Location = new System.Drawing.Point(232, 44);
-            this.HighlightPanel.Margin = new System.Windows.Forms.Padding(6, 6, 6, 6);
+            this.HighlightPanel.Margin = new System.Windows.Forms.Padding(6);
             this.HighlightPanel.Name = "HighlightPanel";
             this.HighlightPanel.Size = new System.Drawing.Size(38, 38);
             this.HighlightPanel.TabIndex = 2;
@@ -819,8 +821,8 @@ namespace Elmanager.Settings
             // FilenameSuggestionBox
             // 
             this.FilenameSuggestionBox.AutoSize = true;
-            this.FilenameSuggestionBox.Location = new System.Drawing.Point(34, 276);
-            this.FilenameSuggestionBox.Margin = new System.Windows.Forms.Padding(6, 6, 6, 6);
+            this.FilenameSuggestionBox.Location = new System.Drawing.Point(22, 419);
+            this.FilenameSuggestionBox.Margin = new System.Windows.Forms.Padding(6);
             this.FilenameSuggestionBox.Name = "FilenameSuggestionBox";
             this.FilenameSuggestionBox.Size = new System.Drawing.Size(309, 36);
             this.FilenameSuggestionBox.TabIndex = 12;
@@ -831,8 +833,8 @@ namespace Elmanager.Settings
             // DynamicCheckTopologyBox
             // 
             this.DynamicCheckTopologyBox.AutoSize = true;
-            this.DynamicCheckTopologyBox.Location = new System.Drawing.Point(34, 230);
-            this.DynamicCheckTopologyBox.Margin = new System.Windows.Forms.Padding(6, 6, 6, 6);
+            this.DynamicCheckTopologyBox.Location = new System.Drawing.Point(22, 227);
+            this.DynamicCheckTopologyBox.Margin = new System.Windows.Forms.Padding(6);
             this.DynamicCheckTopologyBox.Name = "DynamicCheckTopologyBox";
             this.DynamicCheckTopologyBox.Size = new System.Drawing.Size(347, 36);
             this.DynamicCheckTopologyBox.TabIndex = 7;
@@ -842,8 +844,8 @@ namespace Elmanager.Settings
             // CheckTopologyWhenSavingBox
             // 
             this.CheckTopologyWhenSavingBox.AutoSize = true;
-            this.CheckTopologyWhenSavingBox.Location = new System.Drawing.Point(400, 230);
-            this.CheckTopologyWhenSavingBox.Margin = new System.Windows.Forms.Padding(6, 6, 6, 6);
+            this.CheckTopologyWhenSavingBox.Location = new System.Drawing.Point(22, 275);
+            this.CheckTopologyWhenSavingBox.Margin = new System.Windows.Forms.Padding(6);
             this.CheckTopologyWhenSavingBox.Name = "CheckTopologyWhenSavingBox";
             this.CheckTopologyWhenSavingBox.Size = new System.Drawing.Size(411, 36);
             this.CheckTopologyWhenSavingBox.TabIndex = 6;
@@ -854,15 +856,26 @@ namespace Elmanager.Settings
             // 
             this.ColorDialog1.FullOpen = true;
             // 
+            // startPositionFeatureCheckBox
+            // 
+            this.startPositionFeatureCheckBox.AutoSize = true;
+            this.startPositionFeatureCheckBox.Location = new System.Drawing.Point(22, 371);
+            this.startPositionFeatureCheckBox.Margin = new System.Windows.Forms.Padding(6);
+            this.startPositionFeatureCheckBox.Name = "startPositionFeatureCheckBox";
+            this.startPositionFeatureCheckBox.Size = new System.Drawing.Size(509, 36);
+            this.startPositionFeatureCheckBox.TabIndex = 34;
+            this.startPositionFeatureCheckBox.Text = "Enable \"Save/Restore start position\" feature";
+            this.startPositionFeatureCheckBox.UseVisualStyleBackColor = true;
+            // 
             // ConfigForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(192F, 192F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Dpi;
-            this.ClientSize = new System.Drawing.Size(1278, 672);
+            this.ClientSize = new System.Drawing.Size(1171, 849);
             this.Controls.Add(this.TabControl1);
             this.Font = new System.Drawing.Font("Segoe UI", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point);
             this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedSingle;
-            this.Margin = new System.Windows.Forms.Padding(6, 6, 6, 6);
+            this.Margin = new System.Windows.Forms.Padding(6);
             this.MaximizeBox = false;
             this.Name = "ConfigForm";
             this.Text = "Elmanager configuration";
@@ -954,6 +967,7 @@ namespace Elmanager.Settings
         private Panel panel1;
         private TableLayoutPanel tableLayoutPanel2;
         private TableLayoutPanel tableLayoutPanel3;
+        internal CheckBox startPositionFeatureCheckBox;
     }
 	
 }
