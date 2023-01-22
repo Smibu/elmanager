@@ -7,9 +7,9 @@ namespace Elmanager.ReplayViewer;
 internal class PlayListObject
 {
     [Description("File name")]
-    public readonly string FileName;
+    public string FileName { get; }
     [Description("#")]
-    public readonly int PlayerNum;
+    public int PlayerNum { get; }
     internal readonly Player Player;
     internal Color DrivingLineColor;
 
