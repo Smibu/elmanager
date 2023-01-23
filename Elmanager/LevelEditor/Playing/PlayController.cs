@@ -94,11 +94,11 @@ internal class PlayController
 
     public Driver? Driver { get; private set; }
 
-    public TaggedBodyPart? GetNearestDriverBodyPart(Vector p, double limit)
-    {
-        return Driver?.BodyParts().OrderBy(bp => bp.Position.Dist(p)).FirstOrDefault(bp =>
-            bp.Position.Dist(p) < Math.Max(ElmaRenderer.ObjectRadius, limit));
-    }
+    public TaggedBodyPart? GetNearestDriverBodyPart(Vector p, double limit) =>
+        PlayingOrPaused
+            ? Driver?.BodyParts().OrderBy(bp => bp.Position.Dist(p)).FirstOrDefault(bp =>
+                bp.Position.Dist(p) < Math.Max(ElmaRenderer.ObjectRadius, limit))
+            : null;
 
     public VectorMark PlayerSelection
     {
