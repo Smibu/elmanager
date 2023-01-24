@@ -29,6 +29,8 @@ namespace Elmanager.LevelEditor.Playing
         /// </summary>
         private void InitializeComponent()
         {
+            this.components = new System.ComponentModel.Container();
+            System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(PlaySettingsForm));
             this.flowLayoutPanel1 = new System.Windows.Forms.FlowLayoutPanel();
             this.cancelButton = new System.Windows.Forms.Button();
             this.okButton = new System.Windows.Forms.Button();
@@ -55,12 +57,16 @@ namespace Elmanager.LevelEditor.Playing
             this.saveButton = new System.Windows.Forms.Button();
             this.disableShortcutsCheckBox = new System.Windows.Forms.CheckBox();
             this.label14 = new System.Windows.Forms.Label();
+            this.flowLayoutPanel2 = new System.Windows.Forms.FlowLayoutPanel();
             this.fpsTextBox = new Elmanager.UI.IntTextBox();
+            this.constantFpsCheckBox = new System.Windows.Forms.CheckBox();
             this.label3 = new System.Windows.Forms.Label();
             this.label9 = new System.Windows.Forms.Label();
             this.label10 = new System.Windows.Forms.Label();
+            this.toolTip1 = new System.Windows.Forms.ToolTip(this.components);
             this.flowLayoutPanel1.SuspendLayout();
             this.tableLayoutPanel1.SuspendLayout();
+            this.flowLayoutPanel2.SuspendLayout();
             this.SuspendLayout();
             // 
             // flowLayoutPanel1
@@ -122,11 +128,11 @@ namespace Elmanager.LevelEditor.Playing
             this.tableLayoutPanel1.Controls.Add(this.saveButton, 1, 8);
             this.tableLayoutPanel1.Controls.Add(this.disableShortcutsCheckBox, 1, 10);
             this.tableLayoutPanel1.Controls.Add(this.label14, 0, 11);
-            this.tableLayoutPanel1.Controls.Add(this.fpsTextBox, 1, 11);
+            this.tableLayoutPanel1.Controls.Add(this.flowLayoutPanel2, 1, 11);
             this.tableLayoutPanel1.Dock = System.Windows.Forms.DockStyle.Top;
             this.tableLayoutPanel1.Location = new System.Drawing.Point(0, 0);
             this.tableLayoutPanel1.Name = "tableLayoutPanel1";
-            this.tableLayoutPanel1.RowCount = 12;
+            this.tableLayoutPanel1.RowCount = 13;
             this.tableLayoutPanel1.RowStyles.Add(new System.Windows.Forms.RowStyle());
             this.tableLayoutPanel1.RowStyles.Add(new System.Windows.Forms.RowStyle());
             this.tableLayoutPanel1.RowStyles.Add(new System.Windows.Forms.RowStyle());
@@ -139,7 +145,8 @@ namespace Elmanager.LevelEditor.Playing
             this.tableLayoutPanel1.RowStyles.Add(new System.Windows.Forms.RowStyle());
             this.tableLayoutPanel1.RowStyles.Add(new System.Windows.Forms.RowStyle());
             this.tableLayoutPanel1.RowStyles.Add(new System.Windows.Forms.RowStyle());
-            this.tableLayoutPanel1.Size = new System.Drawing.Size(742, 563);
+            this.tableLayoutPanel1.RowStyles.Add(new System.Windows.Forms.RowStyle());
+            this.tableLayoutPanel1.Size = new System.Drawing.Size(742, 569);
             this.tableLayoutPanel1.TabIndex = 1;
             // 
             // loadButton
@@ -388,21 +395,43 @@ namespace Elmanager.LevelEditor.Playing
             // 
             this.label14.Anchor = System.Windows.Forms.AnchorStyles.Right;
             this.label14.AutoSize = true;
-            this.label14.Location = new System.Drawing.Point(233, 524);
+            this.label14.Location = new System.Drawing.Point(233, 527);
             this.label14.Name = "label14";
             this.label14.Size = new System.Drawing.Size(135, 32);
             this.label14.TabIndex = 22;
             this.label14.Text = "Physics FPS";
             // 
+            // flowLayoutPanel2
+            // 
+            this.flowLayoutPanel2.AutoSize = true;
+            this.flowLayoutPanel2.Controls.Add(this.fpsTextBox);
+            this.flowLayoutPanel2.Controls.Add(this.constantFpsCheckBox);
+            this.flowLayoutPanel2.Location = new System.Drawing.Point(374, 521);
+            this.flowLayoutPanel2.Name = "flowLayoutPanel2";
+            this.flowLayoutPanel2.Size = new System.Drawing.Size(303, 45);
+            this.flowLayoutPanel2.TabIndex = 24;
+            // 
             // fpsTextBox
             // 
             this.fpsTextBox.BackColor = System.Drawing.SystemColors.Window;
             this.fpsTextBox.DefaultValue = 1000;
-            this.fpsTextBox.Location = new System.Drawing.Point(374, 521);
+            this.fpsTextBox.Location = new System.Drawing.Point(3, 3);
             this.fpsTextBox.Name = "fpsTextBox";
             this.fpsTextBox.Size = new System.Drawing.Size(150, 39);
             this.fpsTextBox.TabIndex = 23;
             this.fpsTextBox.Text = "1000";
+            // 
+            // constantFpsCheckBox
+            // 
+            this.constantFpsCheckBox.Anchor = System.Windows.Forms.AnchorStyles.None;
+            this.constantFpsCheckBox.AutoSize = true;
+            this.constantFpsCheckBox.Location = new System.Drawing.Point(159, 4);
+            this.constantFpsCheckBox.Name = "constantFpsCheckBox";
+            this.constantFpsCheckBox.Size = new System.Drawing.Size(141, 36);
+            this.constantFpsCheckBox.TabIndex = 22;
+            this.constantFpsCheckBox.Text = "Constant";
+            this.toolTip1.SetToolTip(this.constantFpsCheckBox, resources.GetString("constantFpsCheckBox.ToolTip"));
+            this.constantFpsCheckBox.UseVisualStyleBackColor = true;
             // 
             // label3
             // 
@@ -428,6 +457,13 @@ namespace Elmanager.LevelEditor.Playing
             this.label10.TabIndex = 0;
             this.label10.Text = "label10";
             // 
+            // toolTip1
+            // 
+            this.toolTip1.AutomaticDelay = 10;
+            this.toolTip1.AutoPopDelay = 0;
+            this.toolTip1.InitialDelay = 1;
+            this.toolTip1.ReshowDelay = 2;
+            // 
             // PlaySettingsForm
             // 
             this.AcceptButton = this.okButton;
@@ -443,6 +479,8 @@ namespace Elmanager.LevelEditor.Playing
             this.flowLayoutPanel1.ResumeLayout(false);
             this.tableLayoutPanel1.ResumeLayout(false);
             this.tableLayoutPanel1.PerformLayout();
+            this.flowLayoutPanel2.ResumeLayout(false);
+            this.flowLayoutPanel2.PerformLayout();
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -480,5 +518,8 @@ namespace Elmanager.LevelEditor.Playing
         private System.Windows.Forms.CheckBox disableShortcutsCheckBox;
         private System.Windows.Forms.Label label14;
         private UI.IntTextBox fpsTextBox;
+        private System.Windows.Forms.CheckBox constantFpsCheckBox;
+        private System.Windows.Forms.FlowLayoutPanel flowLayoutPanel2;
+        private System.Windows.Forms.ToolTip toolTip1;
     }
 }

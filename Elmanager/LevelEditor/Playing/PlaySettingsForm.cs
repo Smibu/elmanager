@@ -31,6 +31,7 @@ internal partial class PlaySettingsForm : FormMod
         saveButton.Text = Settings.Save.ToString();
         loadButton.Text = Settings.Load.ToString();
         disableShortcutsCheckBox.Checked = Settings.DisableShortcuts;
+        constantFpsCheckBox.Checked = Settings.ConstantFps;
         fpsTextBox.Text = Settings.PhysicsFps.ToString();
     }
 
@@ -39,6 +40,7 @@ internal partial class PlaySettingsForm : FormMod
         Settings.DyingBehavior = (DyingBehavior) dyingComboBox.SelectedIndex;
         Settings.FollowDriverOption = (FollowDriverOption) followDriverComboBox.SelectedIndex;
         Settings.DisableShortcuts = disableShortcutsCheckBox.Checked;
+        Settings.ConstantFps = constantFpsCheckBox.Checked;
         var newFps = fpsTextBox.Value;
         const int minFps = 79;
         const int maxFps = 1000;

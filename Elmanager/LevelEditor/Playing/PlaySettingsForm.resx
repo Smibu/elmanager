@@ -57,4 +57,15 @@
   <resheader name="writer">
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
+  <metadata name="toolTip1.TrayLocation" type="System.Drawing.Point, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a">
+    <value>17, 17</value>
+  </metadata>
+  <data name="constantFpsCheckBox.ToolTip" xml:space="preserve">
+    <value>If enabled, physics engine uses a constant timestep (derived from this FPS) for every frame.
+This gives perfectly deterministic rides for identical keypress sequences, but is not always desirable
+because Elma has non-constant physics FPS.
+
+If disabled, FPS value is randomized +/- 10% before computing timestep. This is closer to how Elma behaves
+and that's why this is the recommended setting.</value>
+  </data>
 </root>

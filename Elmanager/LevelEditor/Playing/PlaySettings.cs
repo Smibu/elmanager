@@ -16,6 +16,7 @@ internal class PlaySettings
     public FollowDriverOption FollowDriverOption { get; set; } = FollowDriverOption.WhenPressingKey;
     public bool DisableShortcuts { get; set; }
     public int PhysicsFps { get; set; } = 1000;
+    public bool ConstantFps { get; set; }
 
     public PlaySettings() { }
 
@@ -33,5 +34,6 @@ internal class PlaySettings
         FollowDriverOption = other.FollowDriverOption;
         DisableShortcuts = other.DisableShortcuts;
         PhysicsFps = other.PhysicsFps;
+        ConstantFps = other.ConstantFps;
     }
 }

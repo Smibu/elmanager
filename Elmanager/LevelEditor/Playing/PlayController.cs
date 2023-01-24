@@ -226,6 +226,8 @@ internal class PlayController
         FollowDriver = Settings.FollowDriverOption == FollowDriverOption.WhenPressingKey;
         sceneSettings.FadedObjectIndices = Driver.TakenApples;
         PlayerSelection = VectorMark.None;
+        var rnd = new Random();
+        var maxFpsVariation = Settings.PhysicsFps / 10;
         await Task.Run(() =>
         {
             renderer.MakeCurrent();
@@ -236,7 +238,10 @@ internal class PlayController
                 var elapsed = _timer.ElapsedMilliseconds;
                 while (physElapsed < elapsed)
                 {
-                    var step = ElmaTime.FromMilliSeconds(1000.0 / Settings.PhysicsFps);
+                    var fps = Settings.ConstantFps
+                        ? Settings.PhysicsFps
+                        : Math.Min(Settings.PhysicsFps + rnd.NextInt64(-maxFpsVariation, maxFpsVariation), 1000);
+                    var step = ElmaTime.FromMilliSeconds(1000.0 / fps);
                     if (step > maxPhysStep)
                     {
                         step = maxPhysStep;
