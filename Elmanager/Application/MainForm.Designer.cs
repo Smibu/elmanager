@@ -149,7 +149,8 @@ namespace Elmanager.Application
             this.linkLabel1.TabIndex = 5;
             this.linkLabel1.TabStop = true;
             this.linkLabel1.Text = "Testing && SLE toolbar graphics: Mawane (R.I.P.)";
-            this.toolTip1.SetToolTip(this.linkLabel1, "http://www.oscarstours.ca/avis-de-deces/m-marck-antoine-simoneau#defunt");
+            this.toolTip1.SetToolTip(this.linkLabel1, "https://web.archive.org/web/20160121234513/https://www.oscarstours.ca/avis-de-dec" +
+        "es/m-marck-antoine-simoneau");
             this.linkLabel1.UseCompatibleTextRendering = true;
             this.linkLabel1.LinkClicked += new System.Windows.Forms.LinkLabelLinkClickedEventHandler(this.LinkLabel1LinkClicked);
             // 
