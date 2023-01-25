@@ -15,7 +15,7 @@ internal class Lgr : IDisposable
     internal readonly string Path;
 
     public static readonly HashSet<string> TransparencyIgnoreSet =
-        new(Enumerable.Range(0, 18).SelectMany(TransparencyIgnoreHelper));
+        new(Enumerable.Range(0, 19).SelectMany(TransparencyIgnoreHelper));
 
     private static IEnumerable<string> TransparencyIgnoreHelper(int i)
     {
