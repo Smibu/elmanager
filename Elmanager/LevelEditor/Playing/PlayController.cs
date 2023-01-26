@@ -147,7 +147,7 @@ internal class PlayController
     public void UpdateInputKeys()
     {
         _keys.Gas = KeyboardUtils.IsKeyDown(Settings.Gas);
-        _keys.Brake = KeyboardUtils.IsKeyDown(Settings.Brake);
+        _keys.Brake = KeyboardUtils.IsKeyDown(Settings.Brake) || KeyboardUtils.IsKeyDown(Settings.BrakeAlias);
         _keys.LeftVolt = KeyboardUtils.IsKeyDown(Settings.LeftVolt);
         _keys.RightVolt = KeyboardUtils.IsKeyDown(Settings.RightVolt);
         _keys.AloVolt = KeyboardUtils.IsKeyDown(Settings.AloVolt);

@@ -6,6 +6,7 @@ internal class PlaySettings
 {
     public Keys Gas { get; set; } = Keys.Up;
     public Keys Brake { get; set; } = Keys.Down;
+    public Keys BrakeAlias { get; set; } = Keys.X;
     public Keys LeftVolt { get; set; } = Keys.Left;
     public Keys RightVolt { get; set; } = Keys.Right;
     public Keys AloVolt { get; set; } = Keys.Insert;
@@ -24,6 +25,7 @@ internal class PlaySettings
     {
         Gas = other.Gas;
         Brake = other.Brake;
+        BrakeAlias = other.BrakeAlias;
         LeftVolt = other.LeftVolt;
         RightVolt = other.RightVolt;
         AloVolt = other.AloVolt;

@@ -24,6 +24,7 @@ internal partial class PlaySettingsForm : FormMod
         followDriverComboBox.SelectedIndex = (int) Settings.FollowDriverOption;
         gasButton.Text = Settings.Gas.ToString();
         brakeButton.Text = Settings.Brake.ToString();
+        brakeAliasButton.Text = Settings.BrakeAlias.ToString();
         leftVoltButton.Text = Settings.LeftVolt.ToString();
         rightVoltButton.Text = Settings.RightVolt.ToString();
         aloVoltButton.Text = Settings.AloVolt.ToString();
@@ -124,6 +125,10 @@ internal partial class PlaySettingsForm : FormMod
         else if (_currButton == brakeButton)
         {
             Settings.Brake = key;
+        }
+        else if (_currButton == brakeAliasButton)
+        {
+            Settings.BrakeAlias = key;
         }
         else if (_currButton == leftVoltButton)
         {
