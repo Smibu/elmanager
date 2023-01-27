@@ -18,6 +18,7 @@ internal class PlaySettings
     public bool DisableShortcuts { get; set; }
     public int PhysicsFps { get; set; } = 1000;
     public bool ConstantFps { get; set; }
+    public bool ToggleFullscreen { get; set; }
 
     public PlaySettings() { }
 
@@ -37,5 +38,6 @@ internal class PlaySettings
         DisableShortcuts = other.DisableShortcuts;
         PhysicsFps = other.PhysicsFps;
         ConstantFps = other.ConstantFps;
+        ToggleFullscreen = other.ToggleFullscreen;
     }
 }

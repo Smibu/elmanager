@@ -18,6 +18,7 @@ using Elmanager.Rendering.Camera;
 using Elmanager.Settings;
 using Elmanager.UI;
 using Elmanager.Utilities;
+using Control = System.Windows.Forms.Control;
 using KeyEventArgs = System.Windows.Forms.KeyEventArgs;
 using MouseEventArgs = System.Windows.Forms.MouseEventArgs;
 using StringUtils = Elmanager.Utilities.StringUtils;
@@ -27,20 +28,20 @@ namespace Elmanager.ReplayViewer;
 internal partial class ReplayViewerForm : FormMod
 {
     private bool _draggingScreen;
-    private bool _fullScreen;
     private Point _lastLocation;
     private int _lastMouseX;
     private Vector _moveStartPosition;
-    private FormWindowState _windowState;
     private bool _zooming;
     private ReplayController _replayController = null!;
     private readonly TypedObjectListView<PlayListObject> _typedPlayList;
     private TaskCompletionSource _tcs = new();
+    private readonly FullScreenController _fullScreenController;
 
     public ReplayViewerForm()
     {
         InitializeComponent();
         _typedPlayList = new TypedObjectListView<PlayListObject>(PlayList);
+        _fullScreenController = new FullScreenController(this, ViewerResized, new List<Control> { TabControl1 });
         ViewerBox.HandleCreated += (s, e) =>
         {
             Initialize();
@@ -135,20 +136,9 @@ internal partial class ReplayViewerForm : FormMod
         UpdateLabels();
     }
 
-    private void FullScreen(object? sender, EventArgs? e)
+    private void ToggleFullScreen(object? sender, EventArgs? e)
     {
-        Resize -= ViewerResized;
-        _windowState = WindowState;
-        WindowState = FormWindowState.Normal;
-        TabControl1.Visible = false;
-        FormBorderStyle = FormBorderStyle.None;
-        ViewerBox.Location = new Point(0, 0);
-        TopMost = true;
-        WindowState = FormWindowState.Maximized;
-        _fullScreen = true;
-        ViewerBox.Size = Size;
-        ViewerResized();
-        Resize += ViewerResized;
+        _fullScreenController.Toggle();
     }
 
     private Vector GetMouseCoordinates()
@@ -234,20 +224,11 @@ internal partial class ReplayViewerForm : FormMod
         switch (e.KeyCode)
         {
             case Keys.Escape:
-                if (!_fullScreen)
+                if (!_fullScreenController.IsFullScreen)
                     Close();
                 else
                 {
-                    _fullScreen = false;
-                    Resize -= ViewerResized;
-                    FormBorderStyle = FormBorderStyle.Sizable;
-                    TopMost = false;
-                    WindowState = _windowState;
-                    TabControl1.Visible = true;
-                    ViewerBox.Location = new Point(TabControl1.Width + 1, 0);
-                    ViewerBox.Size = new Size(Width - TabControl1.Width - 17, Height - 36);
-                    Resize += ViewerResized;
-                    ViewerResized();
+                    _fullScreenController.Restore();
                 }
 
                 break;
@@ -275,7 +256,7 @@ internal partial class ReplayViewerForm : FormMod
                     PlayList.SelectedIndex++;
                 break;
             case Keys.F11:
-                FullScreen(null, null);
+                ToggleFullScreen(null, null);
                 break;
             case Keys.F5:
                 _replayController.ZoomCtrl.ZoomFill();

@@ -34,6 +34,7 @@ internal partial class PlaySettingsForm : FormMod
         disableShortcutsCheckBox.Checked = Settings.DisableShortcuts;
         constantFpsCheckBox.Checked = Settings.ConstantFps;
         fpsTextBox.Text = Settings.PhysicsFps.ToString();
+        toggleFullscreenCheckBox.Checked = Settings.ToggleFullscreen;
     }
 
     private void OkButtonClick(object sender, EventArgs e)
@@ -42,6 +43,7 @@ internal partial class PlaySettingsForm : FormMod
         Settings.FollowDriverOption = (FollowDriverOption) followDriverComboBox.SelectedIndex;
         Settings.DisableShortcuts = disableShortcutsCheckBox.Checked;
         Settings.ConstantFps = constantFpsCheckBox.Checked;
+        Settings.ToggleFullscreen = toggleFullscreenCheckBox.Checked;
         var newFps = fpsTextBox.Value;
         const int minFps = 79;
         const int maxFps = 1000;

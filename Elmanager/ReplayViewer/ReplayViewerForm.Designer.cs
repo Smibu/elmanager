@@ -326,7 +326,7 @@ namespace Elmanager.ReplayViewer
             this.FullScreenButton.TabIndex = 99;
             this.FullScreenButton.Text = "Full screen";
             this.FullScreenButton.UseVisualStyleBackColor = true;
-            this.FullScreenButton.Click += new EventHandler(this.FullScreen);
+            this.FullScreenButton.Click += new EventHandler(this.ToggleFullScreen);
             // 
             // SnapShotButton
             // 

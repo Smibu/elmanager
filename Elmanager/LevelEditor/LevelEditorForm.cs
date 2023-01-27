@@ -92,13 +92,18 @@ internal partial class LevelEditorForm : FormMod, IMessageFilter
     private ZoomController _zoomCtrl = null!;
     private readonly SceneSettings _sceneSettings = new();
     private readonly TaskCompletionSource _tcs = new();
+    private readonly FullScreenController _fullScreenController;
 
     internal LevelEditorForm(string levPath)
     {
         InitializeComponent();
+        _fullScreenController = CreateFullScreenController();
         TryLoadLevel(levPath);
         PostInit();
     }
+
+    private FullScreenController CreateFullScreenController() =>
+        new(this, ViewerResized, new List<Control> { ToolPanel, MenuStrip1, ToolStripPanel1, StatusStrip1 });
 
     internal void SetLevel(ElmaFileObject<Level> lev)
     {
@@ -139,6 +144,7 @@ internal partial class LevelEditorForm : FormMod, IMessageFilter
     public LevelEditorForm()
     {
         InitializeComponent();
+        _fullScreenController = CreateFullScreenController();
         if (Global.AppSettings.LevelEditor.LastLevel != null)
         {
             TryLoadLevel(Global.AppSettings.LevelEditor.LastLevel);
@@ -153,6 +159,7 @@ internal partial class LevelEditorForm : FormMod, IMessageFilter
         System.Windows.Forms.Application.AddMessageFilter(this);
         EditorControl.HandleCreated += (_, _) =>
         {
+            EditorControl.Context.SwapInterval = 0;
             Initialize();
             _tcs.SetResult();
         };
@@ -1114,7 +1121,15 @@ internal partial class LevelEditorForm : FormMod, IMessageFilter
                 wasModified = PolyOpTool.PolyOpSelected(PolygonOperationType.SymmetricDifference, Lev.Polygons);
                 break;
             case Keys.Escape:
+                if (!PlayController.PlayingOrPaused)
+                {
+                    _fullScreenController.Restore();
+                }
+
                 stopButton_Click(null, null);
+                break;
+            case Keys.F11:
+                _fullScreenController.Toggle();
                 break;
         }
 
@@ -2739,6 +2754,10 @@ internal partial class LevelEditorForm : FormMod, IMessageFilter
             return;
         }
 
+        if (Global.AppSettings.LevelEditor.PlayingSettings.ToggleFullscreen)
+        {
+            _fullScreenController.FullScreen();
+        }
         SetToPlaying();
         var t = new Timer(25);
         var updateTime = new Action(() =>
@@ -2761,6 +2780,10 @@ internal partial class LevelEditorForm : FormMod, IMessageFilter
         RedrawScene();
         SetNotPlaying();
         stopButton.Enabled = false;
+        if (Global.AppSettings.LevelEditor.PlayingSettings.ToggleFullscreen)
+        {
+            _fullScreenController.Restore();
+        }
     }
 
     private void SetNotPlaying()
@@ -2776,11 +2799,16 @@ internal partial class LevelEditorForm : FormMod, IMessageFilter
         stopButton.Enabled = true;
     }
 
-    private void stopButton_Click(object? sender, EventArgs? e)
+    private async void stopButton_Click(object? sender, EventArgs? e)
     {
         if (PlayController.PlayingOrPaused)
         {
-            PlayController.PlayingStopRequested = true;
+            await PlayController.StopPlaying();
+        }
+
+        if (Global.AppSettings.LevelEditor.PlayingSettings.ToggleFullscreen)
+        {
+            _fullScreenController.Restore();
         }
     }
 
@@ -2820,6 +2848,9 @@ internal partial class LevelEditorForm : FormMod, IMessageFilter
                                 break;
                             case Keys.Escape:
                                 stopButton_Click(null, null);
+                                break;
+                            case Keys.F11:
+                                _fullScreenController.Toggle();
                                 break;
                         }
                     }
