@@ -11,6 +11,7 @@ namespace Elmanager.LevelEditor.Tools;
 internal class PictureTool : ToolBase, IEditorTool
 {
     private GraphicElement? _currentElem;
+    private PlacementAnchor _anchor = PlacementAnchor.Center;
 
     internal PictureTool(LevelEditorForm editor)
         : base(editor)
@@ -46,7 +47,23 @@ internal class PictureTool : ToolBase, IEditorTool
             case Keys.Space:
                 OpenDialog();
                 break;
+            case Keys.D1:
+                _anchor = PlacementAnchor.Center;
+                break;
+            case Keys.D2:
+                _anchor = PlacementAnchor.TopLeft;
+                break;
+            case Keys.D3:
+                _anchor = PlacementAnchor.TopRight;
+                break;
+            case Keys.D4:
+                _anchor = PlacementAnchor.BottomLeft;
+                break;
+            case Keys.D5:
+                _anchor = PlacementAnchor.BottomRight;
+                break;
         }
+        UpdateCurrentElementPosition();
     }
 
     public void MouseDown(MouseEventArgs mouseData)
@@ -71,14 +88,29 @@ internal class PictureTool : ToolBase, IEditorTool
         }
     }
 
+    private Vector GetAnchorOffset(GraphicElement elem) =>
+        _anchor switch
+        {
+            PlacementAnchor.Center => new Vector(-elem.Width / 2, elem.Height / 2),
+            PlacementAnchor.TopLeft => new Vector(0, 0),
+            PlacementAnchor.TopRight => new Vector(-elem.Width, 0),
+            PlacementAnchor.BottomLeft => new Vector(0, elem.Height),
+            PlacementAnchor.BottomRight => new Vector(-elem.Width, elem.Height),
+            _ => throw new ArgumentOutOfRangeException()
+        };
+
     public void MouseMove(Vector p)
     {
         CurrentPos = p;
         AdjustForGrid(ref CurrentPos);
+        UpdateCurrentElementPosition();
+    }
 
+    private void UpdateCurrentElementPosition()
+    {
         if (_currentElem is { })
         {
-            _currentElem.Position = CurrentPos + new Vector(-_currentElem.Width / 2, _currentElem.Height / 2);
+            _currentElem.Position = CurrentPos + GetAnchorOffset(_currentElem);
         }
     }
 
@@ -93,7 +125,7 @@ internal class PictureTool : ToolBase, IEditorTool
     public void UpdateHelp()
     {
         LevEditor.InfoLabel.Text =
-            "Left mouse button: insert new picture/texture, right mouse button: select picture type.";
+            "Left mouse: insert new element, right mouse: select element type, 1-5: change placement anchor.";
     }
 
     private void AddCurrent(GraphicElement currentGraphicElement)
