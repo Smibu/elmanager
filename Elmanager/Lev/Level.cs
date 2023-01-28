@@ -53,7 +53,7 @@ internal class Level
         "Hang Tight", "Hooked", "Apple Harvest", "More Levels"
     };
 
-    internal bool AllPicturesFound = true;
+    internal bool AllPicturesFound => MissingElements.Count == 0;
     internal string GroundTextureName = "ground";
     private readonly double[] _integrity = new double[4];
 
@@ -64,6 +64,7 @@ internal class Level
     internal readonly LevelTop10 Top10 = new();
     public int Identifier { get; private set; }
     private List<GraphicElementFileItem> _graphicElementFileItems = new();
+    internal HashSet<(ImageType, string)> MissingElements = new();
 
     public string LgrFile = "default";
     private string _title = "New level";
@@ -754,22 +755,40 @@ internal class Level
     internal void UpdateImages(Dictionary<string, DrawableImage> lgrImages)
     {
         GraphicElements = new List<GraphicElement>();
+        MissingElements = new HashSet<(ImageType, string)>();
         foreach (var fileItem in _graphicElementFileItems)
         {
-            if (fileItem is GraphicElementFileItem.PictureFileItem pItem &&
-                lgrImages.TryGetValue(pItem.PictureName, out var p) && p.Type == ImageType.Picture)
+            if (fileItem is GraphicElementFileItem.PictureFileItem pItem)
             {
-                GraphicElements.Add(GraphicElement.Pic(p, fileItem.Position, fileItem.Distance, fileItem.Clipping));
+                if (lgrImages.TryGetValue(pItem.PictureName, out var p) && p.Type == ImageType.Picture)
+                {
+                    GraphicElements.Add(GraphicElement.Pic(p, fileItem.Position, fileItem.Distance, fileItem.Clipping));
+                }
+                else
+                {
+                    MissingElements.Add((ImageType.Picture, pItem.PictureName));
+                }
             }
-            else if (fileItem is GraphicElementFileItem.TextureFileItem tItem &&
-                     lgrImages.TryGetValue(tItem.TextureName, out var t) && t.Type == ImageType.Texture &&
-                     lgrImages.TryGetValue(tItem.MaskName, out var mask) && mask.Type == ImageType.Mask)
+            else if (fileItem is GraphicElementFileItem.TextureFileItem tItem)
             {
-                GraphicElements.Add(GraphicElement.Text(fileItem.Clipping, fileItem.Distance, fileItem.Position, t, mask));
+                if (lgrImages.TryGetValue(tItem.TextureName, out var t) && t.Type == ImageType.Texture)
+                {
+                    if (lgrImages.TryGetValue(tItem.MaskName, out var mask) && mask.Type == ImageType.Mask)
+                    {
+                        GraphicElements.Add(GraphicElement.Text(fileItem.Clipping, fileItem.Distance, fileItem.Position, t, mask));
+                    }
+                    else
+                    {
+                        MissingElements.Add((ImageType.Mask, tItem.MaskName));
+                    }
+                }
+                else
+                {
+                    MissingElements.Add((ImageType.Texture, tItem.TextureName));
+                }
             }
         }
 
-        AllPicturesFound = GraphicElements.Count == _graphicElementFileItems.Count;
         SortPictures();
     }
 

@@ -396,8 +396,9 @@ internal partial class LevelEditorForm : FormMod, IMessageFilter
     {
         if (!Lev.AllPicturesFound)
         {
-            const string text = "Some pictures or textures could not be found in the LGR file. " +
-                                "You will lose these pictures if you save this level.";
+            var text = "Level has pictures that the LGR is missing: " +
+                       string.Join(", ", Lev.MissingElements.Select(m => $"{m.Item2}")) +
+                       ". These pictures are lost if you save this level.";
             ShowWarning(text);
         }
     }
