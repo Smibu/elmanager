@@ -1,5 +1,20 @@
 # Elmanager changelog
 
+## Unreleased
+* SLE: Selection is no longer updated when changing selection filter. Separate menu items have been added to unselect all elements of a specific type.
+* SLE: Added option to disable "Save/restore start position" feature.
+* SLE: Added option to switch between constant and non-constant physics FPS. Default is non-constant.
+* SLE: Added brake alias key for playing.
+* SLE: Added option to change picture placement anchor.
+* SLE: Added fullscreen option (F11 and optionally automatic toggle on play/stop).
+* SLE: Zoom level while playing is now separate from normal zoom.
+* SLE: Adjusted tool help texts to be more complete and consistent.
+* SLE: If LGR is missing pictures, picture names are shown in the warning message.
+* SLE: Improved performance of level saving and topology checking.
+* SLE: Bugfix: After playing stopped, the player was still hoverable with mouse.
+* SLE: Bugfix: qup_18 and qdown_18 appeared in picture list although they are not usable as pictures.
+* SLE: Bugfix: Some Across levels failed to open because of different magic number in level file.
+
 ## 11.2.2022
 * SLE: Added basic saveload support when playing.
 * SLE: Physics FPS can be changed.
