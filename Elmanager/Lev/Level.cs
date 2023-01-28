@@ -25,8 +25,9 @@ internal class Level
     internal const int MaximumGroundVertexCount = 20000;
     internal const int MaximumPictureTextureCount = 5000;
     internal const double RightWheelDifferenceFromLeftWheelX = 1.698;
-    private const int EndOfDataMagicNumber = 0x67103A;
-    private const int EndOfFileMagicNumber = 0x845D52;
+    private const uint EndOfDataMagicNumber = 0x67103A;
+    private const uint EndOfDataMagicNumber2 = 0xB76A0515;
+    private const uint EndOfFileMagicNumber = 0x845D52;
     private const double MagicDouble = 0.4643643;
     private const double MagicDouble2 = 0.2345672;
 
@@ -227,19 +228,19 @@ internal class Level
 
     private void HandleLevEndRead(BinaryReader lev)
     {
-        int endOfData;
+        uint endOfData;
         try
         {
-            endOfData = lev.ReadInt32();
+            endOfData = lev.ReadUInt32();
         }
         catch (EndOfStreamException)
         {
             return;
         }
 
-        if (endOfData != EndOfDataMagicNumber)
+        if (endOfData != EndOfDataMagicNumber && endOfData != EndOfDataMagicNumber2)
         {
-            throw new BadFileException($"Wrong end of data marker: {endOfData}");
+            throw new BadFileException($"Wrong end of data marker: {endOfData:X}");
         }
 
         try
