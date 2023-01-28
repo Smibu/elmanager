@@ -328,20 +328,17 @@ internal static class GeometryUtils
     internal static List<Vector> GetIntersectionPoints(List<Polygon> polygons)
     {
         var f = GeometryFactory.Floating;
-        var iarray = polygons.Where(poly => !poly.IsGrass).Select(p => p.ToIPolygon()).ToArray();
-        var multipoly = f.CreateMultiPolygon(iarray);
-        var isects = iarray.Where(p => !p.IsValid).Select(p =>
+        var iPolygons = polygons.Where(poly => !poly.IsGrass).Select(p => p.ToIPolygon()).ToArray();
+        var multipoly = f.CreateMultiPolygon(iPolygons);
+        var isects = (from iPolygon in iPolygons
+            select new IsValidOp(iPolygon).ValidationError?.Coordinate
+            into validOp
+            where validOp != null
+            select new Vector(validOp.X, validOp.Y)).ToList();
+        var validOpMulti = new IsValidOp(multipoly).ValidationError;
+        if (validOpMulti is { ErrorType: TopologyValidationErrors.SelfIntersection })
         {
-            var validOp = new IsValidOp(p).ValidationError.Coordinate;
-            return new Vector(validOp.X, validOp.Y);
-        }).ToList();
-        if (!multipoly.IsValid)
-        {
-            var validOp = new IsValidOp(multipoly).ValidationError;
-            if (validOp.ErrorType == TopologyValidationErrors.SelfIntersection)
-            {
-                isects.Add(new Vector(validOp.Coordinate.X, validOp.Coordinate.Y));
-            }
+            isects.Add(new Vector(validOpMulti.Coordinate.X, validOpMulti.Coordinate.Y));
         }
 
         return isects;

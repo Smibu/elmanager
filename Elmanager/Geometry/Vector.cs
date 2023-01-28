@@ -152,4 +152,6 @@ internal struct Vector : IPositionable
     public double Y { get; set; }
     public VectorMark Mark { get; set; }
     public Vector Position => this;
+
+    public Coordinate ToCoordinate() => new(X, Y);
 }

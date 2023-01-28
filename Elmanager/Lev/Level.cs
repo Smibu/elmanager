@@ -9,6 +9,8 @@ using Elmanager.IO;
 using Elmanager.Lgr;
 using Elmanager.Rendering;
 using Elmanager.Utilities;
+using NetTopologySuite.Algorithm;
+using NetTopologySuite.Geometries;
 
 namespace Elmanager.Lev;
 
@@ -511,8 +513,17 @@ internal class Level
 
     internal bool IsSky(Polygon poly)
     {
-        var clipping = Polygons.Count(x => !x.Equals(poly) && !x.IsGrass && x.AreaHasPoint(poly.Vertices[0]));
-        return clipping % 2 == 0;
+        var counter = new RayCrossingCounter(poly.Vertices[0]);
+        foreach (var p in Polygons.Where(p => !p.IsGrass && !p.Equals(poly)))
+        {
+            for (var i = 0; i < p.Vertices.Count - 1; i++)
+            {
+                counter.CountSegment(p.Vertices[i], p.Vertices[i + 1]);
+            }
+            counter.CountSegment(p.Vertices[^1], p.Vertices[0]);
+        }
+
+        return counter.Location == Location.Exterior;
     }
 
     internal void MirrorAll()

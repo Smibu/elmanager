@@ -6,6 +6,7 @@ using Elmanager.Geometry;
 using Elmanager.LevelEditor;
 using Elmanager.UI;
 using Elmanager.Utilities;
+using NetTopologySuite.Algorithm;
 using NetTopologySuite.Geometries;
 using Coordinate = NetTopologySuite.Geometries.Coordinate;
 
@@ -545,57 +546,8 @@ internal class Polygon
         return GeometryUtils.SegmentsIntersect(Vertices[i], Vertices[0], v1, v2);
     }
 
-    internal bool AreaHasPoint(Vector p)
-    {
-        double x = p.X;
-        double y = p.Y;
-        bool isInside = false;
-        if (Contains(p))
-            return false;
-        double k;
-        double x1;
-        double y1;
-        double x2;
-        double y2;
-        for (int i = 0; i < Count - 1; i++)
-        {
-            x1 = Vertices[i].X;
-            y1 = Vertices[i].Y;
-            x2 = Vertices[i + 1].X;
-            y2 = Vertices[i + 1].Y;
-            if (!(y1 <= y ^ y2 > y))
-            {
-                if (x1 <= x && x2 <= x)
-                    isInside = !isInside;
-                else if (!(x1 <= x ^ x2 > x))
-                {
-                    k = (y2 - y1) / (x2 - x1);
-                    if (!(y < k * (x - x1) + y1 ^ k > 0))
-                        isInside = !isInside;
-                }
-            }
-        }
-
-        //Last edge
-        int f = Count - 1;
-        x1 = Vertices[0].X;
-        y1 = Vertices[0].Y;
-        x2 = Vertices[f].X;
-        y2 = Vertices[f].Y;
-        if (!(y1 <= y ^ y2 > y))
-        {
-            if (x1 <= x && x2 <= x)
-                isInside = !isInside;
-            else if (!(x1 <= x ^ x2 > x))
-            {
-                k = (y2 - y1) / (x2 - x1);
-                if (!(y < k * (x - x1) + y1 ^ k > 0))
-                    isInside = !isInside;
-            }
-        }
-
-        return isInside;
-    }
+    internal bool AreaHasPoint(Vector p) =>
+        RayCrossingCounter.LocatePointInRing(p, ToCoordinateArray()) == Location.Interior;
 
     internal List<Polygon>? Cut(Vector v1, Vector v2, double cutRadius)
     {
@@ -686,12 +638,15 @@ internal class Polygon
         return new(corner1, new Vector(corner2.X, corner1.Y), corner2, new Vector(corner1.X, corner2.Y));
     }
 
-    internal NetTopologySuite.Geometries.Polygon ToIPolygon()
+    internal NetTopologySuite.Geometries.Polygon ToIPolygon() => GeometryFactory.Floating.CreatePolygon(ToCoordinateArray());
+
+    private Coordinate[] ToCoordinateArray()
     {
-        var verts = Vertices.Select(v => new Coordinate(v.X, v.Y));
+        var verts = Vertices.Select(v => v.ToCoordinate());
         var ring = verts.ToList();
         ring.Add(ring.First());
-        return GeometryFactory.Floating.CreatePolygon(ring.ToArray());
+        var coordinates = ring.ToArray();
+        return coordinates;
     }
 
     public void RemoveDuplicateVertices()

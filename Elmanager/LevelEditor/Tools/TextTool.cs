@@ -11,7 +11,6 @@ using Elmanager.Lev;
 using NetTopologySuite.Geometries;
 using Brushes = System.Windows.Media.Brushes;
 using Color = System.Drawing.Color;
-using Coordinate = NetTopologySuite.Geometries.Coordinate;
 using FlowDirection = System.Windows.FlowDirection;
 using FontFamily = System.Windows.Media.FontFamily;
 using LineSegment = System.Windows.Media.LineSegment;
@@ -193,7 +192,7 @@ internal class TextTool : ToolBase, IEditorTool
 
                 NetTopologySuite.Geometries.Geometry union = f.CreateMultiPolygon(iarray);
                 union = isects.Aggregate(union,
-                    (current, vector) => current.Union(f.CreatePoint(new Coordinate(vector.X, vector.Y)).Buffer(0.0001, 1)));
+                    (current, vector) => current.Union(f.CreatePoint(vector).Buffer(0.0001, 1)));
                 polys.Clear();
                 switch (union)
                 {
