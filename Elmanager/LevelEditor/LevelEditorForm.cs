@@ -2770,7 +2770,21 @@ internal partial class LevelEditorForm : FormMod, IMessageFilter
         };
         t.Start();
         CameraUtils.AllowScroll = false;
+        var oldZoom = _zoomCtrl.ZoomLevel;
+
+        if (Global.AppSettings.LevelEditor.PlayingSettings.FollowDriverOption == FollowDriverOption.WhenPressingKey)
+        {
+            _zoomCtrl.ZoomLevel = Global.AppSettings.LevelEditor.PlayingSettings.PlayZoomLevel;
+        }
+        
         await PlayController.BeginLoop(Lev, _sceneSettings, Renderer, _zoomCtrl, DoRedrawScene);
+
+        if (Global.AppSettings.LevelEditor.PlayingSettings.FollowDriverOption == FollowDriverOption.WhenPressingKey)
+        {
+            Global.AppSettings.LevelEditor.PlayingSettings.PlayZoomLevel = _zoomCtrl.ZoomLevel;
+            _zoomCtrl.ZoomLevel = oldZoom;
+        }
+        
         t.Stop();
         PlayTimeLabel.Text = PlayController.Driver!.CurrentTime.ToSeconds().ToTimeString(3);
         if (PlayController.Driver.Condition == DriverCondition.Finished)

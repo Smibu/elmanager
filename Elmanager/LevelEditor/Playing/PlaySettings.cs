@@ -19,6 +19,7 @@ internal class PlaySettings
     public int PhysicsFps { get; set; } = 1000;
     public bool ConstantFps { get; set; }
     public bool ToggleFullscreen { get; set; }
+    public double PlayZoomLevel { get; set; } = 5;
 
     public PlaySettings() { }
 
@@ -39,5 +40,6 @@ internal class PlaySettings
         PhysicsFps = other.PhysicsFps;
         ConstantFps = other.ConstantFps;
         ToggleFullscreen = other.ToggleFullscreen;
+        PlayZoomLevel = other.PlayZoomLevel;
     }
 }
