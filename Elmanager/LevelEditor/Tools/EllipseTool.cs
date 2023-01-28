@@ -132,9 +132,9 @@ internal class EllipseTool : ToolBase, IEditorTool
     public void UpdateHelp()
     {
         if (CreatingEllipse)
-            LevEditor.InfoLabel.Text = "+/-: adjust number of sides. Edges in ellipse: " + _ellipseSteps;
+            LevEditor.InfoLabel.Text = $"+/-: adjust number of sides ({_ellipseSteps}); RMouse: cancel.";
         else
-            LevEditor.InfoLabel.Text = "Left mouse button: select center point of the ellipse.";
+            LevEditor.InfoLabel.Text = "LMouse: select center point of the ellipse.";
     }
 
     private void UpdateEllipse()

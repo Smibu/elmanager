@@ -36,15 +36,19 @@ internal class PolyOpTool : ToolBase, IEditorTool
         char polyChar = FirstSelected ? 'B' : 'A';
         LevEditor.InfoLabel.Text = _currentOpType switch
         {
-            PolygonOperationType.Union => "Click the polygon " + polyChar + " (operation = A+B).",
-            PolygonOperationType.Difference => "Click the polygon " + polyChar + " (operation = A-B).",
+            PolygonOperationType.Union => $"LMouse: select polygon {polyChar} (operation = A+B)",
+            PolygonOperationType.Difference => $"LMouse: select polygon {polyChar} (operation = A-B)",
             PolygonOperationType.Intersection => "(This mode is not yet implemented.)",
             _ => LevEditor.InfoLabel.Text
         };
 
-        if (!FirstSelected)
+        if (FirstSelected)
         {
-            LevEditor.InfoLabel.Text += " Space: Change mode.";
+            LevEditor.InfoLabel.Text += "; RMouse: cancel.";
+        }
+        else
+        {
+            LevEditor.InfoLabel.Text += "; Space: change mode.";
         }
     }
 

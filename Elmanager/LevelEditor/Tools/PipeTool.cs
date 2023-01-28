@@ -202,23 +202,22 @@ internal class PipeTool : ToolBase, IEditorTool
 
     public void UpdateHelp()
     {
-        LevEditor.InfoLabel.Text = "Space: change mode - ";
-        const string help = "(adjust with +/- or Page Up/Down)";
+        LevEditor.InfoLabel.Text = "LMouse: create pipe; Space: change mode (";
         switch (_pipeMode)
         {
             case PipeMode.NoApples:
-                LevEditor.InfoLabel.Text +=
-                    string.Format("Mode: No apples - Pipe radius: {0:F2} {1}", _pipeRadius, help);
+                LevEditor.InfoLabel.Text += "no apples)";
                 break;
             case PipeMode.ApplesDistance:
-                LevEditor.InfoLabel.Text +=
-                    string.Format(
-                        "Mode: Apples (distance: {0:F2} (adjust with Ctrl + +/-)) - Pipe radius: {1:F2} {2}", _appleDistance, _pipeRadius, help);
+                LevEditor.InfoLabel.Text += $"variable distance); Ctrl + +/-: adjust distance ({_appleDistance:F2})";
                 break;
             case PipeMode.ApplesAmount:
-                LevEditor.InfoLabel.Text += string.Format("Mode: {0} apples - Pipe radius: {1:F2} {2}", _appleAmount, _pipeRadius, help);
+                LevEditor.InfoLabel.Text += $"variable apples); Ctrl + +/-: adjust amount ({_appleAmount})";
                 break;
         }
+
+        LevEditor.InfoLabel.Text += $"; +/- or Pg Up/Down: adjust pipe radius ({_pipeRadius:F2})";
+
     }
 
     public override bool Busy => CreatingPipe;

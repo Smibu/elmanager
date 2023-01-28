@@ -85,8 +85,8 @@ internal class CutConnectTool : ToolBase, IEditorTool
     public void UpdateHelp()
     {
         LevEditor.InfoLabel.Text = StartSelected
-            ? "Left mouse button: set second vertex of the cut/connection edge."
-            : "Left mouse button: set first vertex of the cut/connection edge.";
+            ? "LMouse: set second vertex of the cut/connection edge; RMouse: cancel."
+            : "LMouse: set first vertex of the cut/connection edge.";
     }
 
     private void Cut(Vector v1, Vector v2)

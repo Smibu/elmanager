@@ -62,7 +62,7 @@ internal class ZoomTool : ToolBase, IEditorTool
 
     public void UpdateHelp()
     {
-        LevEditor.InfoLabel.Text = "Left mouse button: zoom in; right mouse button: zoom out.";
+        LevEditor.InfoLabel.Text = "LMouse: zoom in; RMouse: zoom out.";
     }
 
     public override bool Busy => false;

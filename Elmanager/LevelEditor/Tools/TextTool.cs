@@ -390,7 +390,7 @@ internal class TextTool : ToolBase, IEditorTool
 
     public void UpdateHelp()
     {
-        LevEditor.InfoLabel.Text = "Left mouse button: open text input dialog.";
+        LevEditor.InfoLabel.Text = "LMouse: open text input dialog.";
     }
 
     public override bool Busy => false; // dialog is modal

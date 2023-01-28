@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using System.Windows.Forms;
 using Elmanager.Application;
@@ -141,21 +142,14 @@ internal class ObjectTool : ToolBase, IEditorTool
 
     public void UpdateHelp()
     {
-        LevEditor.InfoLabel.Text = "Left mouse button: insert new ";
-        switch (_currentObjectType)
+        var objName = _currentObjectType switch
         {
-            case ObjectType.Apple:
-                LevEditor.InfoLabel.Text += "apple;";
-                break;
-            case ObjectType.Killer:
-                LevEditor.InfoLabel.Text += "killer;";
-                break;
-            case ObjectType.Flower:
-                LevEditor.InfoLabel.Text += "flower;";
-                break;
-        }
-
-        LevEditor.InfoLabel.Text += " Space: change object type.";
+            ObjectType.Apple => "apple",
+            ObjectType.Killer => "killer",
+            ObjectType.Flower => "flower",
+            _ => throw new Exception()
+        };
+        LevEditor.InfoLabel.Text = $"LMouse: insert new object; Space: change object type ({objName})";
     }
 
     public override bool Busy => false;

@@ -39,8 +39,8 @@ internal class FrameTool : ToolBase, IEditorTool
     public void UpdateHelp()
     {
         LevEditor.InfoLabel.Text = Framing
-            ? "Mouse left: create frame; mouse right: cancel; +/-: adjust width; Space: Change type - " + _frameType
-            : "Click the polygon to frame.";
+            ? $"LMouse: create frame; +/-: adjust width; Space: change type ({_frameType}); RMouse: cancel."
+            : "LMouse: select polygon to frame.";
     }
 
     public void ExtraRendering()

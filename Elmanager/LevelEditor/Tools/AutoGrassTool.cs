@@ -143,9 +143,8 @@ internal class AutoGrassTool : ToolBase, IEditorTool
     public void UpdateHelp()
     {
         LevEditor.InfoLabel.Text = AutoGrassPolygonSelected
-            ? "Left mouse: apply AutoGrass, right mouse: cancel. Thickness: "
-              + Global.AppSettings.LevelEditor.AutoGrassThickness.ToString("F3")
-            : "Click the ground polygon to create grass polygon for.";
+            ? $"LMouse: apply AutoGrass; +/-: adjust thickness ({Global.AppSettings.LevelEditor.AutoGrassThickness:F3}); RMouse: cancel."
+            : "LMouse: select ground polygon to create grass polygon for.";
     }
 
     internal List<Polygon> AutoGrass(Polygon p)

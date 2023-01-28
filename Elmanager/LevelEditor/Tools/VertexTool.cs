@@ -29,7 +29,7 @@ internal class VertexTool : ToolBase, IEditorTool
     public void UpdateHelp()
     {
         LevEditor.InfoLabel.Text =
-            "Left mouse button: create vertex. Click near an edge of a polygon to add vertices to it.";
+            "LMouse: create vertex. Click near an edge of a polygon to add vertices to it.";
         if (_currentPolygon is { })
         {
             var lngth = (_currentPolygon.Vertices[_currentPolygon.Count - 1] -
@@ -170,7 +170,6 @@ internal class VertexTool : ToolBase, IEditorTool
     {
         if (_currentPolygon is { })
         {
-            UpdateHelp();
             _currentPolygon.RemoveLastVertex();
             if (_currentPolygon.Count > 2)
             {
@@ -181,6 +180,7 @@ internal class VertexTool : ToolBase, IEditorTool
                 Lev.Polygons.Remove(_currentPolygon);
 
             _currentPolygon = null;
+            UpdateHelp();
         }
         else if (_rectangleStart is {})
         {

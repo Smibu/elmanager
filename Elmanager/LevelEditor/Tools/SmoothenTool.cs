@@ -220,7 +220,7 @@ internal class SmoothenTool : ToolBase, IEditorTool
     {
         if (Smoothing is { })
         {
-            LevEditor.InfoLabel.Text = "Left click: apply; right click: cancel; (Ctrl) + +/-: adjust parameters.";
+            LevEditor.InfoLabel.Text = "LMouse: apply; (Ctrl) + +/-: adjust parameters";
             if (!_unsmooth)
                 LevEditor.InfoLabel.Text += " (" + _smoothSteps + ", " +
                                             (_smoothVertexOffset / 100.0).ToString("F2") +
@@ -228,9 +228,11 @@ internal class SmoothenTool : ToolBase, IEditorTool
             else
                 LevEditor.InfoLabel.Text += " (" + _unsmoothLength.ToString("F2") + ", " +
                                             _unsmoothAngle.ToString("F2") + ")";
+
+            LevEditor.InfoLabel.Text += "; RMouse: cancel.";
         }
         else
-            LevEditor.InfoLabel.Text = "Click a polygon or press Space to smooth selected. Hold Ctrl to unsmooth.";
+            LevEditor.InfoLabel.Text = "LMouse: smooth a polygon; Space: smooth selected. Hold Ctrl to unsmooth.";
     }
 
     private static bool IsSmoothable(Polygon p)

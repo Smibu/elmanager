@@ -125,7 +125,7 @@ internal class PictureTool : ToolBase, IEditorTool
     public void UpdateHelp()
     {
         LevEditor.InfoLabel.Text =
-            "Left mouse: insert new element, right mouse: select element type, 1-5: change placement anchor.";
+            "LMouse: insert new element; RMouse: select element type; 1-5: change placement anchor.";
     }
 
     private void AddCurrent(GraphicElement currentGraphicElement)

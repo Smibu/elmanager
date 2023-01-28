@@ -30,7 +30,7 @@ internal class DrawTool : ToolBase, IEditorTool
     public void UpdateHelp()
     {
         LevEditor.InfoLabel.Text =
-            $"Press and hold left mouse button to create vertex. Threshold: {Global.AppSettings.LevelEditor.DrawStep:F2}";
+            $"Hold LMouse to create vertex; +/-: adjust threshold ({Global.AppSettings.LevelEditor.DrawStep:F2})";
     }
 
     public void ExtraRendering()
