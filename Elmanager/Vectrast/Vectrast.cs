@@ -32,149 +32,149 @@ internal class VectRast
 
     public SortedList createVectors(byte[,] pixelOn, Bitmap bmp)
     {
-        var vectors = new SortedList(bmp.Width*bmp.Height/32);
-        var vectorsReverse = new Hashtable(bmp.Width*bmp.Height/32);
+        var vectors = new SortedList(bmp.Width * bmp.Height / 32);
+        var vectorsReverse = new Hashtable(bmp.Width * bmp.Height / 32);
         var steps = 0;
         for (var j = 0; j < bmp.Height + 1; j++)
-        for (var i = 0; i < bmp.Width + 1; i++)
-        {
-            printProgress(ref steps, 400000);
-            var type =
-                (pixelOn[i, j] & 1) +
-                ((pixelOn[i + 1, j] & 1) << 1) +
-                ((pixelOn[i, j + 1] & 1) << 2) +
-                ((pixelOn[i + 1, j + 1] & 1) << 3);
-            if (type == 1 + 8 || type == 2 + 4)
+            for (var i = 0; i < bmp.Width + 1; i++)
             {
-                // get rid of illegal situations
-                pixelOn[i, j] |= 1;
-                pixelOn[i + 1, j] |= 1;
-                pixelOn[i, j + 1] |= 1;
-                pixelOn[i + 1, j + 1] |= 1;
-                printWarning("\nillegal pixel configuration at [" + i + ", " + j + "]");
-            }
-        }
-        for (var j = 0; j < bmp.Height; j++)
-        for (var i = 0; i < bmp.Width; i++)
-        {
-            printProgress(ref steps, 800000);
-            if ((pixelOn[i + 1, j + 1] & 1) == 1)
-            {
-                var type1 =
-                    (pixelOn[i + 1, j] & 1) +
-                    (pixelOn[i + 1, j + 2] & 1);
-                var type2 =
-                    (pixelOn[i, j + 1] & 1) +
-                    (pixelOn[i + 2, j + 1] & 1);
-                if (type1 == 2 && type2 == 0 || type1 == 0 && type2 == 2)
+                printProgress(ref steps, 400000);
+                var type =
+                    (pixelOn[i, j] & 1) +
+                    ((pixelOn[i + 1, j] & 1) << 1) +
+                    ((pixelOn[i, j + 1] & 1) << 2) +
+                    ((pixelOn[i + 1, j + 1] & 1) << 3);
+                if (type == 1 + 8 || type == 2 + 4)
                 {
                     // get rid of illegal situations
-                    pixelOn[i + 2, j + 1] |= 1;
-                    pixelOn[i + 1, j + 2] |= 1;
+                    pixelOn[i, j] |= 1;
+                    pixelOn[i + 1, j] |= 1;
+                    pixelOn[i, j + 1] |= 1;
+                    pixelOn[i + 1, j + 1] |= 1;
                     printWarning("\nillegal pixel configuration at [" + i + ", " + j + "]");
                 }
             }
-        }
+        for (var j = 0; j < bmp.Height; j++)
+            for (var i = 0; i < bmp.Width; i++)
+            {
+                printProgress(ref steps, 800000);
+                if ((pixelOn[i + 1, j + 1] & 1) == 1)
+                {
+                    var type1 =
+                        (pixelOn[i + 1, j] & 1) +
+                        (pixelOn[i + 1, j + 2] & 1);
+                    var type2 =
+                        (pixelOn[i, j + 1] & 1) +
+                        (pixelOn[i + 2, j + 1] & 1);
+                    if (type1 == 2 && type2 == 0 || type1 == 0 && type2 == 2)
+                    {
+                        // get rid of illegal situations
+                        pixelOn[i + 2, j + 1] |= 1;
+                        pixelOn[i + 1, j + 2] |= 1;
+                        printWarning("\nillegal pixel configuration at [" + i + ", " + j + "]");
+                    }
+                }
+            }
         for (var j = -1; j < bmp.Height; j++)
-        for (var i = -1; i < bmp.Width; i++)
-        {
-            printProgress(ref steps, 400000);
-            var type =
-                (pixelOn[i + 1, j + 1] & 1) +
-                ((pixelOn[i + 2, j + 1] & 1) << 1) +
-                ((pixelOn[i + 1, j + 2] & 1) << 2) +
-                ((pixelOn[i + 2, j + 2] & 1) << 3);
-            var fromPnt = new IntVector2();
-            var toPnt = new IntVector2();
-            switch (type)
+            for (var i = -1; i < bmp.Width; i++)
             {
-                // create horizontal and vertical vectors between adjacent pixels
-                case 3:
-                    // xx
-                    // --
-                    fromPnt = new IntVector2(i, j);
-                    toPnt = new IntVector2(i + 1, j);
-                    break;
-                case 12:
-                    // --
-                    // xx
-                    fromPnt = new IntVector2(i + 1, j + 1);
-                    toPnt = new IntVector2(i, j + 1);
-                    break;
-                case 5:
-                    // x-
-                    // x-
-                    fromPnt = new IntVector2(i, j + 1);
-                    toPnt = new IntVector2(i, j);
-                    break;
-                case 10:
-                    // -x
-                    // -x
-                    fromPnt = new IntVector2(i + 1, j);
-                    toPnt = new IntVector2(i + 1, j + 1);
-                    break;
-                case 14:
-                    // -x
-                    // xx
-                    fromPnt = new IntVector2(i + 1, j);
-                    toPnt = new IntVector2(i, j + 1);
-                    break;
-                case 13:
-                    // x-
-                    // xx
-                    fromPnt = new IntVector2(i + 1, j + 1);
-                    toPnt = new IntVector2(i, j);
-                    break;
-                case 11:
-                    // xx
-                    // -x
-                    fromPnt = new IntVector2(i, j);
-                    toPnt = new IntVector2(i + 1, j + 1);
-                    break;
-                case 7:
-                    // xx
-                    // x-
-                    fromPnt = new IntVector2(i, j + 1);
-                    toPnt = new IntVector2(i + 1, j);
-                    break;
-            }
-            if (fromPnt.defined)
-            {
-                if (vectorsReverse.Contains(fromPnt))
+                printProgress(ref steps, 400000);
+                var type =
+                    (pixelOn[i + 1, j + 1] & 1) +
+                    ((pixelOn[i + 2, j + 1] & 1) << 1) +
+                    ((pixelOn[i + 1, j + 2] & 1) << 2) +
+                    ((pixelOn[i + 2, j + 2] & 1) << 3);
+                var fromPnt = new IntVector2();
+                var toPnt = new IntVector2();
+                switch (type)
                 {
-                    var oldVP = (VectorPixel) vectorsReverse[fromPnt];
-                    if ((toPnt - fromPnt).extension(oldVP.toPnt - oldVP.fromPnt))
+                    // create horizontal and vertical vectors between adjacent pixels
+                    case 3:
+                        // xx
+                        // --
+                        fromPnt = new IntVector2(i, j);
+                        toPnt = new IntVector2(i + 1, j);
+                        break;
+                    case 12:
+                        // --
+                        // xx
+                        fromPnt = new IntVector2(i + 1, j + 1);
+                        toPnt = new IntVector2(i, j + 1);
+                        break;
+                    case 5:
+                        // x-
+                        // x-
+                        fromPnt = new IntVector2(i, j + 1);
+                        toPnt = new IntVector2(i, j);
+                        break;
+                    case 10:
+                        // -x
+                        // -x
+                        fromPnt = new IntVector2(i + 1, j);
+                        toPnt = new IntVector2(i + 1, j + 1);
+                        break;
+                    case 14:
+                        // -x
+                        // xx
+                        fromPnt = new IntVector2(i + 1, j);
+                        toPnt = new IntVector2(i, j + 1);
+                        break;
+                    case 13:
+                        // x-
+                        // xx
+                        fromPnt = new IntVector2(i + 1, j + 1);
+                        toPnt = new IntVector2(i, j);
+                        break;
+                    case 11:
+                        // xx
+                        // -x
+                        fromPnt = new IntVector2(i, j);
+                        toPnt = new IntVector2(i + 1, j + 1);
+                        break;
+                    case 7:
+                        // xx
+                        // x-
+                        fromPnt = new IntVector2(i, j + 1);
+                        toPnt = new IntVector2(i + 1, j);
+                        break;
+                }
+                if (fromPnt.defined)
+                {
+                    if (vectorsReverse.Contains(fromPnt))
                     {
-                        vectors.Remove(oldVP.fromPnt);
-                        vectorsReverse.Remove(oldVP.toPnt);
-                        fromPnt = oldVP.fromPnt;
+                        var oldVP = (VectorPixel)vectorsReverse[fromPnt];
+                        if ((toPnt - fromPnt).extension(oldVP.toPnt - oldVP.fromPnt))
+                        {
+                            vectors.Remove(oldVP.fromPnt);
+                            vectorsReverse.Remove(oldVP.toPnt);
+                            fromPnt = oldVP.fromPnt;
+                        }
+                    }
+                    if (vectors.Contains(toPnt))
+                    {
+                        var oldVP = (VectorPixel)vectors[toPnt];
+                        if ((toPnt - fromPnt).extension(oldVP.toPnt - oldVP.fromPnt))
+                        {
+                            vectors.Remove(oldVP.fromPnt);
+                            vectorsReverse.Remove(oldVP.toPnt);
+                            toPnt = oldVP.toPnt;
+                        }
+                    }
+                    if (!fromPnt.Equals(toPnt))
+                    {
+                        // do not add null vectors, they ugly :/
+                        var newVP = new VectorPixel(fromPnt, toPnt);
+                        if (vectors.Contains(newVP.fromPnt))
+                            throw new Exception("illegal edge configuration at pixel [" + newVP.fromPnt.x + ", " +
+                                                newVP.fromPnt.y + "]");
+                        vectors.Add(newVP.fromPnt, newVP);
+                        if (vectorsReverse.Contains(newVP.toPnt))
+                            throw new Exception("illegal edge configuration at pixel [" + newVP.toPnt.x + ", " +
+                                                newVP.toPnt.y + "]");
+                        vectorsReverse.Add(newVP.toPnt, newVP);
                     }
                 }
-                if (vectors.Contains(toPnt))
-                {
-                    var oldVP = (VectorPixel) vectors[toPnt];
-                    if ((toPnt - fromPnt).extension(oldVP.toPnt - oldVP.fromPnt))
-                    {
-                        vectors.Remove(oldVP.fromPnt);
-                        vectorsReverse.Remove(oldVP.toPnt);
-                        toPnt = oldVP.toPnt;
-                    }
-                }
-                if (!fromPnt.Equals(toPnt))
-                {
-                    // do not add null vectors, they ugly :/
-                    var newVP = new VectorPixel(fromPnt, toPnt);
-                    if (vectors.Contains(newVP.fromPnt))
-                        throw new Exception("illegal edge configuration at pixel [" + newVP.fromPnt.x + ", " +
-                                            newVP.fromPnt.y + "]");
-                    vectors.Add(newVP.fromPnt, newVP);
-                    if (vectorsReverse.Contains(newVP.toPnt))
-                        throw new Exception("illegal edge configuration at pixel [" + newVP.toPnt.x + ", " +
-                                            newVP.toPnt.y + "]");
-                    vectorsReverse.Add(newVP.toPnt, newVP);
-                }
             }
-        }
         return vectors;
     }
 
@@ -184,7 +184,7 @@ internal class VectRast
         var steps = 0;
         while (vectors.Count > 0)
         {
-            var vectorOld = (VectorPixel) vectors.GetByIndex(0);
+            var vectorOld = (VectorPixel)vectors.GetByIndex(0);
             // ensures we begin at start/end of some line (as opposed to an inner segment)
             var startPnt = vectorOld.fromPnt;
             VectorPixel vectorNow;
@@ -195,8 +195,8 @@ internal class VectRast
             do
             {
                 printProgress(ref steps, 2000);
-                vectorNow = (VectorPixel) vectors[vectorOld.toPnt];
-                vectorNew = (VectorPixel) vectors[vectorNow.toPnt];
+                vectorNow = (VectorPixel)vectors[vectorOld.toPnt];
+                vectorNew = (VectorPixel)vectors[vectorNow.toPnt];
                 if (!vectorNow.fromPnt.Equals(startPnt) && !vectorNow.toPnt.Equals(startPnt) &&
                     vectorNow.linkVector() && line.sameDir(vectorNow) && !vectorNew.linkVector() &&
                     line.sameDir(vectorNew))
@@ -216,7 +216,7 @@ internal class VectRast
                         vertices.Add(new DoubleVector2(line.toPnt));
                         vectors.Remove(vectorNew.fromPnt);
                         vectors.Remove(vectorNow.fromPnt);
-                        vectorOld = (VectorPixel) vectors[vectorNew.toPnt];
+                        vectorOld = (VectorPixel)vectors[vectorNew.toPnt];
                         line = new Line(vectorOld);
                     }
                     else
@@ -277,24 +277,24 @@ internal class VectRast
         var randGen = new Random();
         for (var j = 0; j < polygons.Count; j++)
         {
-            var vertices = (ArrayList) polygons[j];
+            var vertices = (ArrayList)polygons[j];
             for (var i = 0; i < vertices.Count; i++)
             {
-                var vertexOld = (DoubleVector2) vertices[i];
+                var vertexOld = (DoubleVector2)vertices[i];
                 vertices.RemoveAt(i);
-                var vertexNew = vertexOld*matrix;
+                var vertexNew = vertexOld * matrix;
                 // add a little random jitter so as to remove the 'horizontal line' bug
-                vertexNew.x += randGen.NextDouble()/100000.0;
-                vertexNew.y += randGen.NextDouble()/100000.0;
+                vertexNew.x += randGen.NextDouble() / 100000.0;
+                vertexNew.y += randGen.NextDouble() / 100000.0;
                 vertices.Insert(i, vertexNew);
             }
         }
         for (var i = 0; i < objects.Count; i++)
         {
-            var objectNow = (ElmaObject) objects[i];
+            var objectNow = (ElmaObject)objects[i];
             var vertexOld = new DoubleVector2(objectNow.x, objectNow.y);
             objects.RemoveAt(i);
-            var vertexNew = vertexOld*matrix;
+            var vertexNew = vertexOld * matrix;
             objectNow.x = vertexNew.x;
             objectNow.y = vertexNew.y;
             objects.Insert(i, objectNow);
@@ -314,14 +314,14 @@ internal class VectRast
         var randGen = new Random();
         var randomNum = new byte[4];
         randGen.NextBytes(randomNum);
-        byte[] POT14 = {(byte) 'P', (byte) 'O', (byte) 'T', (byte) '1', (byte) '4'};
+        byte[] POT14 = { (byte)'P', (byte)'O', (byte)'T', (byte)'1', (byte)'4' };
         double PSUM = 0;
         for (var j = 0; j < polygons.Count; j++)
         {
-            var vertices = (ArrayList) polygons[j];
+            var vertices = (ArrayList)polygons[j];
             for (var i = 0; i < vertices.Count; i++)
             {
-                var vertex = (DoubleVector2) vertices[i];
+                var vertex = (DoubleVector2)vertices[i];
                 PSUM += vertex.x + vertex.y;
             }
         }
@@ -329,21 +329,21 @@ internal class VectRast
         var objectNow = objects.GetEnumerator();
         while (objectNow.MoveNext())
         {
-            var elmaObject = (ElmaObject) objectNow.Current;
+            var elmaObject = (ElmaObject)objectNow.Current;
             OSUM += elmaObject.x + elmaObject.y + elmaObject.type;
         }
         double PICSUM = 0;
-        var SUM = (PSUM + OSUM + PICSUM)*3247.764325643;
+        var SUM = (PSUM + OSUM + PICSUM) * 3247.764325643;
         var integrity1 = SUM;
-        var integrity2 = ((double) (randGen.Next()%5871)) + 11877 - SUM;
-        var integrity3 = ((double) (randGen.Next()%5871)) + 11877 - SUM;
+        var integrity2 = ((double)(randGen.Next() % 5871)) + 11877 - SUM;
+        var integrity3 = ((double)(randGen.Next() % 5871)) + 11877 - SUM;
         var unknown = false;
         if (unknown)
-            integrity3 = ((double) (randGen.Next()%4982)) + 20961 - SUM;
-        var integrity4 = ((double) (randGen.Next()%6102)) + 12112 - SUM;
+            integrity3 = ((double)(randGen.Next() % 4982)) + 20961 - SUM;
+        var integrity4 = ((double)(randGen.Next() % 6102)) + 12112 - SUM;
         var locked = false;
         if (locked)
-            integrity4 = ((double) (randGen.Next()%6310)) + 23090 - SUM;
+            integrity4 = ((double)(randGen.Next() % 6310)) + 23090 - SUM;
         var endOfData = 0x0067103A;
         byte[] emptyTables =
         {
@@ -394,22 +394,22 @@ internal class VectRast
         levWriter.Write(integrity3);
         levWriter.Write(integrity4);
         for (var i = 0; i < 51; i++)
-            levWriter.Write(i < levelName.Length ? (byte) levelName[i] : (byte) 0);
+            levWriter.Write(i < levelName.Length ? (byte)levelName[i] : (byte)0);
         for (var i = 0; i < 16; i++)
-            levWriter.Write(i < LGRName.Length ? (byte) LGRName[i] : (byte) 0);
+            levWriter.Write(i < LGRName.Length ? (byte)LGRName[i] : (byte)0);
         for (var i = 0; i < 10; i++)
-            levWriter.Write(i < groundName.Length ? (byte) groundName[i] : (byte) 0);
+            levWriter.Write(i < groundName.Length ? (byte)groundName[i] : (byte)0);
         for (var i = 0; i < 10; i++)
-            levWriter.Write(i < skyName.Length ? (byte) skyName[i] : (byte) 0);
+            levWriter.Write(i < skyName.Length ? (byte)skyName[i] : (byte)0);
         levWriter.Write(numPolys + 0.4643643);
         for (var j = 0; j < numPolys; j++)
         {
-            var vertices = (ArrayList) polygons[j];
+            var vertices = (ArrayList)polygons[j];
             levWriter.Write(0);
             levWriter.Write(vertices.Count);
             for (var i = 0; i < vertices.Count; i++)
             {
-                var vertex = (DoubleVector2) vertices[i];
+                var vertex = (DoubleVector2)vertices[i];
                 levWriter.Write(vertex.x);
                 levWriter.Write(vertex.y);
             }
@@ -417,12 +417,12 @@ internal class VectRast
         levWriter.Write(objects.Count + 0.4643643);
         for (var i = 0; i < objects.Count; i++)
         {
-            var elmaObject = (ElmaObject) objects[i];
+            var elmaObject = (ElmaObject)objects[i];
             levWriter.Write(elmaObject.x);
             levWriter.Write(elmaObject.y);
-            levWriter.Write((int) elmaObject.type);
-            levWriter.Write((int) elmaObject.typeOfFood);
-            levWriter.Write((int) elmaObject.animationNumber);
+            levWriter.Write((int)elmaObject.type);
+            levWriter.Write((int)elmaObject.typeOfFood);
+            levWriter.Write((int)elmaObject.animationNumber);
         }
         levWriter.Write(0.2345672);
         levWriter.Write(endOfData);
@@ -435,7 +435,7 @@ internal class VectRast
     {
         var levReader = new BinaryReader(File.OpenRead(fileName));
         levReader.BaseStream.Seek(130, SeekOrigin.Begin);
-        var numPolys = (int) Math.Round(levReader.ReadDouble() - 0.4643643);
+        var numPolys = (int)Math.Round(levReader.ReadDouble() - 0.4643643);
         for (var j = 0; j < numPolys; j++)
         {
             var grassPoly = levReader.ReadInt32();
@@ -451,9 +451,9 @@ internal class VectRast
                 polygons.Add(vertices);
             }
             else
-                levReader.BaseStream.Seek(16*numVertices, SeekOrigin.Current);
+                levReader.BaseStream.Seek(16 * numVertices, SeekOrigin.Current);
         }
-        var numObjects = (int) Math.Round(levReader.ReadDouble() - 0.4643643);
+        var numObjects = (int)Math.Round(levReader.ReadDouble() - 0.4643643);
         objects = new ArrayList(numObjects);
         for (var j = 0; j < numObjects; j++)
         {
@@ -474,27 +474,27 @@ internal class VectRast
         pixelOn = new byte[bmp.Width + 2, bmp.Height + 2];
         var steps = 0;
         for (var j = -1; j <= bmp.Height; j++)
-        for (var i = -1; i <= bmp.Width; i++)
-        {
-            printProgress(ref steps, 200000);
-            if (j < 0 || j >= bmp.Height || i < 0 || i >= bmp.Width)
-                pixelOn[i + 1, j + 1] = merging;
-            else
+            for (var i = -1; i <= bmp.Width; i++)
             {
-                var col = bmp.GetPixel(i, j);
-                if (col.R < 250 || col.G < 250 || col.B < 250)
+                printProgress(ref steps, 200000);
+                if (j < 0 || j >= bmp.Height || i < 0 || i >= bmp.Width)
+                    pixelOn[i + 1, j + 1] = merging;
+                else
                 {
-                    pixelOn[i + 1, j + 1] = 1;
+                    var col = bmp.GetPixel(i, j);
+                    if (col.R < 250 || col.G < 250 || col.B < 250)
+                    {
+                        pixelOn[i + 1, j + 1] = 1;
+                    }
                 }
             }
-        }
         objects = new ArrayList();
         for (var i = 0; i < numFlowers; i++)
             objects.Add(new ElmaObject(
-                bmp.Width/2 + (2 + 6*Math.Cos(i*Math.PI/numFlowers))/zoom,
-                bmp.Height/2 - 6*Math.Sin(i*Math.PI/numFlowers)/zoom,
+                bmp.Width / 2 + (2 + 6 * Math.Cos(i * Math.PI / numFlowers)) / zoom,
+                bmp.Height / 2 - 6 * Math.Sin(i * Math.PI / numFlowers) / zoom,
                 1, 0, 0));
-        objects.Add(new ElmaObject(bmp.Width/2, bmp.Height/2, 4, 0, 0));
+        objects.Add(new ElmaObject(bmp.Width / 2, bmp.Height / 2, 4, 0, 0));
     }
 
     protected void saveAsBmp(string fileName)
@@ -506,15 +506,15 @@ internal class VectRast
             inPnt[i] = new ArrayList(20);
         for (var j = 0; j < polygons.Count; j++)
         {
-            var vertices = (ArrayList) polygons[j];
+            var vertices = (ArrayList)polygons[j];
             for (var i = 0; i < vertices.Count; i++)
             {
-                var vertex = (DoubleVector2) vertices[i];
+                var vertex = (DoubleVector2)vertices[i];
                 var vertexNext = i + 1 < vertices.Count
-                    ? (DoubleVector2) vertices[i + 1]
-                    : (DoubleVector2) vertices[0];
-                var pointFrom = new IntVector2((int) vertex.x - xmin, (int) vertex.y - ymin);
-                var pointTo = new IntVector2((int) vertexNext.x - xmin, (int) vertexNext.y - ymin);
+                    ? (DoubleVector2)vertices[i + 1]
+                    : (DoubleVector2)vertices[0];
+                var pointFrom = new IntVector2((int)vertex.x - xmin, (int)vertex.y - ymin);
+                var pointTo = new IntVector2((int)vertexNext.x - xmin, (int)vertexNext.y - ymin);
                 var vect = new VectorPixel(pointFrom, pointTo);
                 if (vect.dy != 1)
                 {
@@ -523,21 +523,21 @@ internal class VectRast
                     {
                         if (vect.dx > vect.dy)
                         {
-                            if (vect.sx*vect.sy == 1)
+                            if (vect.sx * vect.sy == 1)
                                 pointNow =
-                                    new IntVector2(pointFrom.x + vect.sx*(2*vect.dx*k + vect.dy - 1)/(2*vect.dy),
-                                        pointFrom.y + vect.sy*k);
+                                    new IntVector2(pointFrom.x + vect.sx * (2 * vect.dx * k + vect.dy - 1) / (2 * vect.dy),
+                                        pointFrom.y + vect.sy * k);
                             else
                                 pointNow =
                                     new IntVector2(
-                                        pointFrom.x + vect.sx*((2*vect.dx*(k + 1) + vect.dy - 1)/(2*vect.dy) - 1),
-                                        pointFrom.y + vect.sy*k);
+                                        pointFrom.x + vect.sx * ((2 * vect.dx * (k + 1) + vect.dy - 1) / (2 * vect.dy) - 1),
+                                        pointFrom.y + vect.sy * k);
                         }
                         else
                             pointNow =
                                 new IntVector2(
-                                    pointFrom.x + vect.sx*(2*(vect.dx - 1)*k + vect.dy - 1)/(2*(vect.dy - 1)),
-                                    pointFrom.y + vect.sy*k);
+                                    pointFrom.x + vect.sx * (2 * (vect.dx - 1) * k + vect.dy - 1) / (2 * (vect.dy - 1)),
+                                    pointFrom.y + vect.sy * k);
                         inPnt[pointNow.y].Add(new FromToInt(pointNow.x, vect.sx, vect.sy, pointFrom.x + pointTo.x));
                     }
                 }
@@ -550,12 +550,12 @@ internal class VectRast
         var startPtr = bmpData.Scan0.ToInt64();
         if (stride < 0)
         {
-            startPtr += stride*(bmpData.Height - 1);
+            startPtr += stride * (bmpData.Height - 1);
             stride = Math.Abs(stride);
         }
         var rowBytes = new byte[bmpData.Stride];
         for (var i = 0; i < bmpData.Height; i++) // make everything black first
-            Marshal.Copy(new IntPtr(startPtr + stride*i), rowBytes, 0, bmpData.Stride);
+            Marshal.Copy(new IntPtr(startPtr + stride * i), rowBytes, 0, bmpData.Stride);
         for (var i = 0; i < bmpData.Stride; i++)
             rowBytes[i] = 255;
         for (var i = 0; i < inPnt.Length; i++)
@@ -563,13 +563,13 @@ internal class VectRast
             inPnt[i].Sort();
             for (var j = 1; j < inPnt[i].Count; j++)
             {
-                var f = (FromToInt) inPnt[i][j];
-                var fprev = (FromToInt) inPnt[i][j - 1];
+                var f = (FromToInt)inPnt[i][j];
+                var fprev = (FromToInt)inPnt[i][j - 1];
                 if (f.sy > 0 && fprev.sy <= 0 && f.x - (fprev.x + 1) > 0) // insert empty space where appropriate
-                    Marshal.Copy(rowBytes, 0, new IntPtr(startPtr + stride*i + 4*(fprev.x + 1)),
-                        4*(f.x - (fprev.x + 1)));
-                f = (FromToInt) inPnt[i][j];
-                fprev = (FromToInt) inPnt[i][j - 1];
+                    Marshal.Copy(rowBytes, 0, new IntPtr(startPtr + stride * i + 4 * (fprev.x + 1)),
+                        4 * (f.x - (fprev.x + 1)));
+                f = (FromToInt)inPnt[i][j];
+                fprev = (FromToInt)inPnt[i][j - 1];
             }
         }
         bmp.UnlockBits(bmpData);
@@ -584,23 +584,23 @@ internal class VectRast
         ymax = int.MinValue;
         for (var j = 0; j < polygons.Count; j++)
         {
-            var vertices = (ArrayList) polygons[j];
+            var vertices = (ArrayList)polygons[j];
             for (var i = 0; i < vertices.Count; i++)
             {
-                var vertex = (DoubleVector2) vertices[i];
-                xmin = Math.Min(xmin, (int) vertex.x);
-                xmax = Math.Max(xmax, (int) vertex.x);
-                ymin = Math.Min(ymin, (int) vertex.y);
-                ymax = Math.Max(ymax, (int) vertex.y);
+                var vertex = (DoubleVector2)vertices[i];
+                xmin = Math.Min(xmin, (int)vertex.x);
+                xmax = Math.Max(xmax, (int)vertex.x);
+                ymin = Math.Min(ymin, (int)vertex.y);
+                ymax = Math.Max(ymax, (int)vertex.y);
             }
         }
         for (var i = 0; i < objects.Count; i++)
         {
-            var vertex = new DoubleVector2(((ElmaObject) objects[i]).x, ((ElmaObject) objects[i]).y);
-            xmin = Math.Min(xmin, (int) vertex.x);
-            xmax = Math.Max(xmax, (int) vertex.x);
-            ymin = Math.Min(ymin, (int) vertex.y);
-            ymax = Math.Max(ymax, (int) vertex.y);
+            var vertex = new DoubleVector2(((ElmaObject)objects[i]).x, ((ElmaObject)objects[i]).y);
+            xmin = Math.Min(xmin, (int)vertex.x);
+            xmax = Math.Max(xmax, (int)vertex.x);
+            ymin = Math.Min(ymin, (int)vertex.y);
+            ymax = Math.Max(ymax, (int)vertex.y);
         }
     }
 

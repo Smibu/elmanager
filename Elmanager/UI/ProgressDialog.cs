@@ -14,7 +14,7 @@ internal partial class ProgressDialog : FormMod
         InitializeComponent();
         _cancelSrc = cancelSrc;
         _task = task;
-        progress.ProgressChanged += (sender, d) => { progressBar1.Value = (int) (d * 1000); };
+        progress.ProgressChanged += (sender, d) => { progressBar1.Value = (int)(d * 1000); };
     }
 
     private void cancelButton_Click(object sender, EventArgs e)

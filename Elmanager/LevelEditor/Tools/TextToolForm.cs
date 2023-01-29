@@ -23,7 +23,7 @@ internal partial class TextToolForm : FormMod
 
     public static TextToolOptions? ShowDefault(TextToolOptions options, Action<TextToolOptions> handler)
     {
-        var prompt = new TextToolForm {Result = options};
+        var prompt = new TextToolForm { Result = options };
         prompt.EnteredTextChanged += handler;
         prompt.EnteredTextChanged(prompt.Result);
         if (prompt.ShowDialog() == DialogResult.OK)
@@ -45,8 +45,8 @@ internal partial class TextToolForm : FormMod
         {
             _font = value.Font;
             textBox.Text = value.Text;
-            smoothnessBar.Value = (int) Math.Round(Math.Log(1 / value.Smoothness) / Math.Log(1.1));
-            lineHeightBar.Value = (int) Math.Round(value.LineHeight * LineHeightFactor);
+            smoothnessBar.Value = (int)Math.Round(Math.Log(1 / value.Smoothness) / Math.Log(1.1));
+            lineHeightBar.Value = (int)Math.Round(value.LineHeight * LineHeightFactor);
             EnteredTextChanged?.Invoke(Result);
         }
     }

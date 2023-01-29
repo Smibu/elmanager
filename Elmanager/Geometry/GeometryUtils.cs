@@ -63,7 +63,7 @@ internal static class GeometryUtils
         for (int i = 0; i < p1.Vertices.Count; i++)
         {
             var isectPoint = GetIntersectionPoint(p1[i], p1[i + 1], v1, v2);
-            if (isectPoint is {} p)
+            if (isectPoint is { } p)
             {
                 p1IsectPoint = p;
                 p1C.InsertIntersection(p, Tolerance);
@@ -317,7 +317,7 @@ internal static class GeometryUtils
 
     internal static Vector[][] Decompose(Polygon polygon)
     {
-        var triangulatedPoly = new List<Polygon> {new(polygon)};
+        var triangulatedPoly = new List<Polygon> { new(polygon) };
         Decompose(triangulatedPoly);
         var triangulatedPolyArray = new Vector[triangulatedPoly.Count][];
         for (int i = 0; i < triangulatedPoly.Count; i++)
@@ -331,10 +331,10 @@ internal static class GeometryUtils
         var iPolygons = polygons.Where(poly => !poly.IsGrass).Select(p => p.ToIPolygon()).ToArray();
         var multipoly = f.CreateMultiPolygon(iPolygons);
         var isects = (from iPolygon in iPolygons
-            select new IsValidOp(iPolygon).ValidationError?.Coordinate
+                      select new IsValidOp(iPolygon).ValidationError?.Coordinate
             into validOp
-            where validOp != null
-            select new Vector(validOp.X, validOp.Y)).ToList();
+                      where validOp != null
+                      select new Vector(validOp.X, validOp.Y)).ToList();
         var validOpMulti = new IsValidOp(multipoly).ValidationError;
         if (validOpMulti is { ErrorType: TopologyValidationErrors.SelfIntersection })
         {

@@ -9,8 +9,8 @@ internal class RadioButtonMod : RadioButton
 
     internal new event KeyDownEventHandler KeyDown
     {
-        add => KeyDownEvent = (KeyDownEventHandler) Delegate.Combine(KeyDownEvent, value);
-        remove => KeyDownEvent = (KeyDownEventHandler?) Delegate.Remove(KeyDownEvent, value);
+        add => KeyDownEvent = (KeyDownEventHandler)Delegate.Combine(KeyDownEvent, value);
+        remove => KeyDownEvent = (KeyDownEventHandler?)Delegate.Remove(KeyDownEvent, value);
     }
 
     protected override bool IsInputKey(Keys keyData)
@@ -34,7 +34,7 @@ internal class RadioButtonMod : RadioButton
     {
         if (m.Msg == NativeUtils.WmKeydown)
         {
-            var pressedKey = (Keys) m.WParam;
+            var pressedKey = (Keys)m.WParam;
             if (pressedKey != Keys.Up && pressedKey != Keys.Down && pressedKey != Keys.Left &&
                 pressedKey != Keys.Right)
             {

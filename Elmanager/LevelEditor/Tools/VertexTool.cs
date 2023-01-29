@@ -42,7 +42,7 @@ internal class VertexTool : ToolBase, IEditorTool
     {
         if (_currentPolygon is { })
             Renderer.DrawLine(_currentPolygon.GetLastVertex(), _currentPolygon.Vertices[0], Color.Red);
-        else if (_rectangleStart is {} r)
+        else if (_rectangleStart is { } r)
         {
             AdjustForGrid(ref CurrentPos);
             Renderer.DrawRectangle(r, CurrentPos, Color.Blue);
@@ -83,7 +83,7 @@ internal class VertexTool : ToolBase, IEditorTool
             case MouseButtons.Left:
                 var nearestIndex = GetNearestSegmentInfo(CurrentPos);
                 AdjustForGrid(ref CurrentPos);
-                if (_rectangleStart is {} r)
+                if (_rectangleStart is { } r)
                 {
                     var rect = Polygon.Rectangle(r, CurrentPos);
                     Lev.Polygons.Add(rect);
@@ -182,11 +182,11 @@ internal class VertexTool : ToolBase, IEditorTool
             _currentPolygon = null;
             UpdateHelp();
         }
-        else if (_rectangleStart is {})
+        else if (_rectangleStart is { })
         {
             _rectangleStart = null;
         }
     }
 
-    public override bool Busy => _currentPolygon is {} || _rectangleStart is {};
+    public override bool Busy => _currentPolygon is { } || _rectangleStart is { };
 }

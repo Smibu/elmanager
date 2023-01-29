@@ -58,7 +58,7 @@ internal partial class ReplayViewerForm : FormMod
 
     internal void SetReplays(ElmaFileObject<Replay> replay)
     {
-        var oneReplay = new List<ElmaFileObject<Replay>> {replay};
+        var oneReplay = new List<ElmaFileObject<Replay>> { replay };
         SetReplays(oneReplay);
     }
 
@@ -92,7 +92,7 @@ internal partial class ReplayViewerForm : FormMod
         }
         TimeBox.Text = _replayController.CurrentTime.ToTimeString();
         timeBar.Value =
-            (int) (Math.Min(_replayController.CurrentTime, _replayController.MaxTime) / _replayController.MaxTime * timeBar.Maximum);
+            (int)(Math.Min(_replayController.CurrentTime, _replayController.MaxTime) / _replayController.MaxTime * timeBar.Maximum);
         ShowCoordinates();
         SpeedLabel.Text = "Speed: " + _replayController.GetSpeed().ToString("F2");
         if (refresh)
@@ -105,7 +105,7 @@ internal partial class ReplayViewerForm : FormMod
 
     private void ChangeRectColor(object sender, EventArgs e)
     {
-        var clickedRect = (Panel) sender;
+        var clickedRect = (Panel)sender;
         ColorDialog1.Color = clickedRect.BackColor;
         if (ColorDialog1.ShowDialog() == DialogResult.OK)
         {
@@ -167,16 +167,16 @@ internal partial class ReplayViewerForm : FormMod
 
     private void Goto(object sender, MouseEventArgs e)
     {
-        var selectedTime = _replayController.MaxTime * ((e.Location.X - 13) / (double) (timeBar.Width - 27));
+        var selectedTime = _replayController.MaxTime * ((e.Location.X - 13) / (double)(timeBar.Width - 27));
         selectedTime = Math.Min(selectedTime, _replayController.MaxTime);
         selectedTime = Math.Max(selectedTime, 0);
-        timeBar.Value = (int) (selectedTime * 1000 / _replayController.MaxTime);
+        timeBar.Value = (int)(selectedTime * 1000 / _replayController.MaxTime);
         _replayController.UpdateCurrFrameFromTime(selectedTime);
     }
 
     private void Initialize()
     {
-        UiUtils.ConfigureColumns<PlayListObject>(PlayList, hiddenColumns: new []{"Player"});
+        UiUtils.ConfigureColumns<PlayListObject>(PlayList, hiddenColumns: new[] { "Player" });
         _replayController = new ReplayController(ViewerBox, Global.AppSettings.ReplayViewer.RenderingSettings);
         _replayController.UpdateReplaySettings();
 
@@ -371,7 +371,7 @@ internal partial class ReplayViewerForm : FormMod
         {
             Invoke(ope);
         };
-            
+
         ZoomFillButton.MouseDown += (s, e) => _replayController.ZoomCtrl.ZoomFill();
         PlayButton.MouseDown += (s, e) => _replayController.TogglePlay();
         StopButton.MouseDown += async (s, e) =>
@@ -428,7 +428,7 @@ internal partial class ReplayViewerForm : FormMod
         if (e.Location == _lastLocation)
             return;
         toolTip1.SetToolTip(timeBar,
-            (_replayController.MaxTime * ((e.Location.X - 13) / (double) (timeBar.Width - 27))).ToTimeString
+            (_replayController.MaxTime * ((e.Location.X - 13) / (double)(timeBar.Width - 27))).ToTimeString
                 ());
         _lastLocation = e.Location;
     }

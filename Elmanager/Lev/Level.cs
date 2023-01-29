@@ -138,13 +138,13 @@ internal class Level
             SkyTextureName = lev.ReadNullTerminatedString(10).ToLower();
         }
 
-        var polygonCount = (int) Math.Round(lev.ReadDouble() - MagicDouble);
+        var polygonCount = (int)Math.Round(lev.ReadDouble() - MagicDouble);
         var objectCount = -1;
         if (IsLeb)
         {
-            objectCount = (int) Math.Round(lev.ReadDouble() - MagicDouble);
+            objectCount = (int)Math.Round(lev.ReadDouble() - MagicDouble);
         }
-            
+
         Polygons = new List<Polygon>();
         for (var i = 0; i < polygonCount; i++)
         {
@@ -169,7 +169,7 @@ internal class Level
 
         if (!IsLeb)
         {
-            objectCount = (int) Math.Round(lev.ReadDouble() - MagicDouble);
+            objectCount = (int)Math.Round(lev.ReadDouble() - MagicDouble);
         }
 
         var startFound = false;
@@ -177,7 +177,7 @@ internal class Level
         {
             var x = lev.ReadDouble();
             var y = -lev.ReadDouble();
-            var objectType = (ObjectType) lev.ReadInt32();
+            var objectType = (ObjectType)lev.ReadInt32();
             if (objectType == ObjectType.Start)
             {
                 startFound = true;
@@ -187,7 +187,7 @@ internal class Level
             var animNum = 0;
             if (!IsAcrossLevel)
             {
-                appleType = (AppleType) lev.ReadInt32();
+                appleType = (AppleType)lev.ReadInt32();
                 animNum = lev.ReadInt32();
             }
 
@@ -202,7 +202,7 @@ internal class Level
 
         if (!IsAcrossLevel)
         {
-            var numberOfPicturesPlusTextures = (int) Math.Round(lev.ReadDouble() - MagicDouble2);
+            var numberOfPicturesPlusTextures = (int)Math.Round(lev.ReadDouble() - MagicDouble2);
             for (var i = 0; i < numberOfPicturesPlusTextures; i++)
             {
                 var pictureName = lev.ReadNullTerminatedString(10);
@@ -211,7 +211,7 @@ internal class Level
                 var x = lev.ReadDouble();
                 var y = -lev.ReadDouble();
                 var distance = lev.ReadInt32();
-                var clipping = (ClippingType) lev.ReadInt32();
+                var clipping = (ClippingType)lev.ReadInt32();
                 if (pictureName == "")
                     _graphicElementFileItems.Add(GraphicElementFileItem.Texture(textureName,
                         maskName, new Vector(x, y),
@@ -283,7 +283,7 @@ internal class Level
         }
     }
 
-    
+
     public int AppleObjectCount => Objects.Count(x => x.Type == ObjectType.Apple);
 
     public int ExitObjectCount => Objects.Count(x => x.Type == ObjectType.Flower);
@@ -356,10 +356,10 @@ internal class Level
         get
         {
             var head = (from x in Objects
-                where x.Type == ObjectType.Start
-                select
-                    new Vector(x.Position.X + HeadDifferenceFromLeftWheelX,
-                        x.Position.Y + HeadDifferenceFromLeftWheelY)).FirstOrDefault();
+                        where x.Type == ObjectType.Start
+                        select
+                            new Vector(x.Position.X + HeadDifferenceFromLeftWheelX,
+                                x.Position.Y + HeadDifferenceFromLeftWheelY)).FirstOrDefault();
             return Polygons.Where(poly => !poly.IsGrass).Any(x => x.DistanceFromPoint(head) < ElmaConstants.HeadRadius);
         }
     }
@@ -397,7 +397,7 @@ internal class Level
     public int TextureCount => GraphicElements.Count(texture => texture is GraphicElement.Texture);
 
     public int PictureCount => GraphicElements.Count(texture => texture is GraphicElement.Picture);
-    
+
     internal int PictureTextureCount => GraphicElements.Count;
 
     public string Title
@@ -425,7 +425,7 @@ internal class Level
 
     internal double YMin { get; private set; }
 
-    private double ObjectSum => Objects.Sum(x => x.Position.X - x.Position.Y + (int) x.Type);
+    private double ObjectSum => Objects.Sum(x => x.Position.X - x.Position.Y + (int)x.Type);
 
     private double PictureSum => _graphicElementFileItems.Sum(x => x.Position.X - x.Position.Y);
 
@@ -676,8 +676,8 @@ internal class Level
         {
             levelFile.AddRange(BitConverter.GetBytes(x.Position.X));
             levelFile.AddRange(BitConverter.GetBytes(-x.Position.Y));
-            levelFile.AddRange(BitConverter.GetBytes((int) x.Type));
-            levelFile.AddRange(BitConverter.GetBytes((int) x.AppleType));
+            levelFile.AddRange(BitConverter.GetBytes((int)x.Type));
+            levelFile.AddRange(BitConverter.GetBytes((int)x.AppleType));
             levelFile.AddRange(BitConverter.GetBytes(x.AnimationNumber - 1));
         }
 
@@ -687,26 +687,22 @@ internal class Level
             switch (x)
             {
                 case GraphicElementFileItem.PictureFileItem p:
-                {
                     levelFile.AddRange(GetByteArrayFromString(p.PictureName, 10));
                     for (var i = 1; i <= 20; i++)
                         levelFile.Add(0);
                     break;
-                }
                 case GraphicElementFileItem.TextureFileItem t:
-                {
                     for (var i = 1; i <= 10; i++)
                         levelFile.Add(0);
                     levelFile.AddRange(GetByteArrayFromString(t.TextureName, 10));
                     levelFile.AddRange(GetByteArrayFromString(t.MaskName, 10));
                     break;
-                }
             }
 
             levelFile.AddRange(BitConverter.GetBytes(x.Position.X));
             levelFile.AddRange(BitConverter.GetBytes(-x.Position.Y));
             levelFile.AddRange(BitConverter.GetBytes(x.Distance));
-            levelFile.AddRange(BitConverter.GetBytes((int) x.Clipping));
+            levelFile.AddRange(BitConverter.GetBytes((int)x.Clipping));
         }
 
         levelFile.AddRange(BitConverter.GetBytes(EndOfDataMagicNumber));
@@ -810,8 +806,8 @@ internal class Level
         const int ebp = 3389;
         for (var j = 0; j <= 687; j++)
         {
-            level[top10Offset + j] = (byte) (level[top10Offset + j] ^ BitConverter.GetBytes(eax)[0]);
-            ecx += (((short) eax) % ebp) * ebp;
+            level[top10Offset + j] = (byte)(level[top10Offset + j] ^ BitConverter.GetBytes(eax)[0]);
+            ecx += (((short)eax) % ebp) * ebp;
             eax = ecx * 31 + ebp;
         }
     }

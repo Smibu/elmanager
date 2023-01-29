@@ -178,7 +178,7 @@ internal class FrameTool : ToolBase, IEditorTool
 
     private List<Polygon> MakeClosedPipe(Polygon pipeLine, double radius)
     {
-        var p = new List<Polygon> {new(), new()};
+        var p = new List<Polygon> { new(), new() };
         if (pipeLine.Vertices.Count < 2)
             return p;
         for (int i = 0; i < pipeLine.Vertices.Count; i++)

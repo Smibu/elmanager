@@ -20,8 +20,8 @@ internal partial class PlaySettingsForm : FormMod
     private void UpdateGui()
     {
         _currButton = null;
-        dyingComboBox.SelectedIndex = (int) Settings.DyingBehavior;
-        followDriverComboBox.SelectedIndex = (int) Settings.FollowDriverOption;
+        dyingComboBox.SelectedIndex = (int)Settings.DyingBehavior;
+        followDriverComboBox.SelectedIndex = (int)Settings.FollowDriverOption;
         gasButton.Text = Settings.Gas.ToString();
         brakeButton.Text = Settings.Brake.ToString();
         brakeAliasButton.Text = Settings.BrakeAlias.ToString();
@@ -39,8 +39,8 @@ internal partial class PlaySettingsForm : FormMod
 
     private void OkButtonClick(object sender, EventArgs e)
     {
-        Settings.DyingBehavior = (DyingBehavior) dyingComboBox.SelectedIndex;
-        Settings.FollowDriverOption = (FollowDriverOption) followDriverComboBox.SelectedIndex;
+        Settings.DyingBehavior = (DyingBehavior)dyingComboBox.SelectedIndex;
+        Settings.FollowDriverOption = (FollowDriverOption)followDriverComboBox.SelectedIndex;
         Settings.DisableShortcuts = disableShortcutsCheckBox.Checked;
         Settings.ConstantFps = constantFpsCheckBox.Checked;
         Settings.ToggleFullscreen = toggleFullscreenCheckBox.Checked;

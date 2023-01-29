@@ -5,7 +5,7 @@ using Microsoft.VisualBasic.FileIO;
 
 namespace Elmanager.UI;
 
-internal class Manager<T> where T: class, IElmaFileObject
+internal class Manager<T> where T : class, IElmaFileObject
 {
     private ObjectListView ObjectList => _managerGui.ObjectList;
     public readonly TypedObjectListView<T> TypedList;

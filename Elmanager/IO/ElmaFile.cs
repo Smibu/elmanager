@@ -6,7 +6,7 @@ namespace Elmanager.IO;
 internal record ElmaFile(string Path)
 {
     public DateTime DateModified => FileInfo.LastWriteTime;
-    public int Size => (int) FileInfo.Length;
+    public int Size => (int)FileInfo.Length;
 
     public double SizeInKb => Size / 1024.0;
 

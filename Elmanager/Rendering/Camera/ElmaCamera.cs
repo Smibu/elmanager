@@ -15,7 +15,7 @@ internal class ElmaCamera
         get
         {
             GL.GetInteger(GetPName.Viewport, _viewport);
-            return _viewport[2] / (double) _viewport[3];
+            return _viewport[2] / (double)_viewport[3];
         }
     }
 

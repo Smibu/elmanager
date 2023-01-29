@@ -85,7 +85,8 @@ internal class ReplayController : IDisposable
         foreach (var x in _visiblePlayerIndices)
         {
             var isSelected = _activePlayerIndices.Contains(x);
-            var opts = new PlayerRenderOpts {
+            var opts = new PlayerRenderOpts
+            {
                 Color = isSelected ? _activePlayerColor : _inActivePlayerColor,
                 IsActive = isSelected,
                 UseGraphics = !_drawOnlyPlayerFrames,
@@ -130,7 +131,7 @@ internal class ReplayController : IDisposable
             UpdateCameraAndDrawScene();
         }
     }
-        
+
     private void UpdateCameraAndDrawScene()
     {
         UpdateCamera(_followDriver);
@@ -363,7 +364,8 @@ internal class ReplayController : IDisposable
         ZoomCtrl = new ZoomController(new ElmaCamera(),
             lev,
             Global.AppSettings.ReplayViewer.RenderingSettings,
-            RedrawSceneIfNotPlaying) {ZoomLevel = 5.0};
+            RedrawSceneIfNotPlaying)
+        { ZoomLevel = 5.0 };
         MaxTime = PlayListReplays.Max(p => p.Player.FrameCount) / 30.0;
         CurrentTime = 0.0;
         Lev = lev;
@@ -372,7 +374,7 @@ internal class ReplayController : IDisposable
         _visiblePlayerIndices = new List<int>();
         _wrongLevVersion = replays[0].Obj.WrongLevelVersion;
         for (var i = 0; i < PlayListReplays.Count; i++)
-            PlayListReplays[i].DrivingLineColor = Color.FromArgb((int) _colourValues[i % _colourValues.Length]);
+            PlayListReplays[i].DrivingLineColor = Color.FromArgb((int)_colourValues[i % _colourValues.Length]);
     }
 
     public void SetInitialView()

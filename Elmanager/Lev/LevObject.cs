@@ -44,8 +44,9 @@ internal class LevObject : IPositionable
     public double X => Position.X;
     public double Y => Position.Y;
 
-    public VectorMark Mark {
+    public VectorMark Mark
+    {
         get => Position.Mark;
-        set => Position = Position with {Mark = value};
+        set => Position = Position with { Mark = value };
     }
 }

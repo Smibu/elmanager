@@ -45,7 +45,7 @@ internal static class UiUtils
 
         foreach (var m in members)
         {
-            var descs = (DescriptionAttribute[]) m.GetCustomAttributes(typeof(DescriptionAttribute), false);
+            var descs = (DescriptionAttribute[])m.GetCustomAttributes(typeof(DescriptionAttribute), false);
             if (descs.Length == 0)
             {
                 continue;

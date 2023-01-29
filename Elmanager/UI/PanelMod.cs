@@ -9,8 +9,8 @@ internal class PanelMod : Panel
 
     internal new event MouseWheelEventHandler MouseWheel
     {
-        add => _mouseWheelEvent = (MouseWheelEventHandler) Delegate.Combine(_mouseWheelEvent, value);
-        remove => _mouseWheelEvent = (MouseWheelEventHandler?) Delegate.Remove(_mouseWheelEvent, value);
+        add => _mouseWheelEvent = (MouseWheelEventHandler)Delegate.Combine(_mouseWheelEvent, value);
+        remove => _mouseWheelEvent = (MouseWheelEventHandler?)Delegate.Remove(_mouseWheelEvent, value);
     }
 
     protected override void WndProc(ref Message m)
@@ -19,9 +19,9 @@ internal class PanelMod : Panel
         {
             if (_mouseWheelEvent != null)
             {
-                long val = (long) m.WParam;
+                long val = (long)m.WParam;
                 if (val > int.MaxValue) return;
-                _mouseWheelEvent((int) val);
+                _mouseWheelEvent((int)val);
             }
         }
         else

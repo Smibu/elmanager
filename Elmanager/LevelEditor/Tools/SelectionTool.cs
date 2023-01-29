@@ -150,7 +150,7 @@ internal class SelectionTool : ToolBase, IEditorTool
                     {
                         if (nvi.Polygon.AreaHasPoint(pic.Position))
                         {
-                            pic.Position = pic.Position with {Mark = VectorMark.Selected};
+                            pic.Position = pic.Position with { Mark = VectorMark.Selected };
                         }
                     }
 
@@ -442,7 +442,7 @@ internal class SelectionTool : ToolBase, IEditorTool
                     (type == ObjectType.Killer && killerFilter) ||
                     (type == ObjectType.Flower && flowerFilter))
                     if (_selectionPoly is null)
-                        
+
                         MarkSelectedInArea(ref x, selectionxMin, selectionxMax, selectionyMin,
                             selectionyMax);
                     else
@@ -493,7 +493,7 @@ internal class SelectionTool : ToolBase, IEditorTool
         }
     }
 
-    private static void MarkSelectedInArea<T>(ref T z, Polygon selectionPoly) where T: IPositionable
+    private static void MarkSelectedInArea<T>(ref T z, Polygon selectionPoly) where T : IPositionable
     {
         if (selectionPoly.AreaHasPoint(z.Position))
         {
@@ -514,8 +514,8 @@ internal class SelectionTool : ToolBase, IEditorTool
     }
 
     private static void MarkSelectedInArea<T>(ref T z, double selectionxMin, double selectionxMax,
-        double selectionyMin, double selectionyMax) where 
-        T: IPositionable
+        double selectionyMin, double selectionyMax) where
+        T : IPositionable
     {
         if (z.X < selectionxMax && z.X > selectionxMin && z.Y < selectionyMax && z.Y > selectionyMin)
         {
@@ -530,7 +530,7 @@ internal class SelectionTool : ToolBase, IEditorTool
             z.Mark = VectorMark.None;
     }
 
-    private T HandleMark<T>(T v) where T: IPositionable
+    private T HandleMark<T>(T v) where T : IPositionable
     {
         if (!Keyboard.IsKeyDown(Key.LeftCtrl))
         {

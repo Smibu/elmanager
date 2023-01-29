@@ -39,7 +39,7 @@ internal static class DirUtils
     private const string AllLevs = "*" + LevExtension;
     internal const string LevExtension = ".lev";
     internal const string LebExtension = ".leb";
-    internal static readonly string[] LevLebExtensions = {LevExtension, LebExtension};
+    internal static readonly string[] LevLebExtensions = { LevExtension, LebExtension };
 
     internal const string LevOrRecDirNotFound =
         "Replay or level directory are not specified or they doesn\'t exist!";

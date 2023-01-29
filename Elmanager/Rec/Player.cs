@@ -58,7 +58,7 @@ internal class Player
             _globalBody[i].Y = rec.ReadSingle();
         }
 
-        foreach (var part in new[] {_leftWheel, _rightWheel, _head})
+        foreach (var part in new[] { _leftWheel, _rightWheel, _head })
         {
             for (var i = 0; i < frameCount; i++)
             {
@@ -76,7 +76,7 @@ internal class Player
             _bikeRotation.Add(rec.ReadInt16() / 10000.0 * 2 * Math.PI);
         }
 
-        foreach (var part in new[] {_leftWheelRotation, _rightWheelRotation})
+        foreach (var part in new[] { _leftWheelRotation, _rightWheelRotation })
         {
             for (var i = 0; i < frameCount; i++)
             {
@@ -95,7 +95,7 @@ internal class Player
         // Compute final head position
         for (var i = 0; i < frameCount; i++)
         {
-            var dirf = 2 * (int) _direction[i] - 1; // 0 -> -1, 1 -> 1
+            var dirf = 2 * (int)_direction[i] - 1; // 0 -> -1, 1 -> 1
             _head[i].X += Math.Cos(_bikeRotation[i] + Math.PI / 2) * HeightConst +
                           Math.Cos(_bikeRotation[i]) * HeadDiff * dirf;
             _head[i].Y += Math.Sin(_bikeRotation[i] + Math.PI / 2) * HeightConst +
@@ -111,7 +111,7 @@ internal class Player
             var eventTime = rec.ReadDouble() * ElmaTime.TimeConst;
             var info1 = rec.ReadByte();
             var info2 = rec.ReadByte();
-            var eventType = (ReplayEventType) rec.ReadByte();
+            var eventType = (ReplayEventType)rec.ReadByte();
             rec.ReadByte();
             var info3 = rec.ReadSingle();
             RawEvents.Add(new PlayerEvent<ReplayEventType>(eventType, eventTime, info1));
@@ -261,22 +261,22 @@ internal class Player
 
         if ((!Finished && !FakeFinish) || Time == 0)
             Time = Math.Round(frameCount / 30.0, 3);
-            
+
         // calculating gas events
         bool gasOn = false;
         for (int i = 0; i < frameCount; i++)
         {
             if (gas[i] == gasOn)
                 continue;
-                
+
             gasOn = gas[i];
             var eventTime = Math.Round(i / 30.0, 3);
             if (eventTime >= Time)
                 break;
-                
+
             Events.Add(new PlayerEvent<LogicalEventType>(gasOn ? LogicalEventType.GasOn : LogicalEventType.GasOff, eventTime));
         }
-            
+
         Events.Sort((a, b) => a.Time.CompareTo(b.Time));
     }
 
@@ -426,8 +426,8 @@ internal class Player
     internal double[] GetEventTimes(params LogicalEventType[] eventTypes)
     {
         return (from x in Events
-            where eventTypes.Contains(x.Type)
-            select x.Time).ToArray();
+                where eventTypes.Contains(x.Type)
+                select x.Time).ToArray();
     }
 
     internal List<PlayerEvent<LogicalEventType>> GetEvents(params LogicalEventType[] eventTypes)

@@ -74,7 +74,7 @@ internal class PictureTool : ToolBase, IEditorTool
 
                 if (_currentElem is { })
                 {
-                    _currentElem = _currentElem with {};
+                    _currentElem = _currentElem with { };
                     Lev.GraphicElements.Add(_currentElem);
                     LevEditor.SetModified(LevModification.Decorations);
                 }

@@ -8,6 +8,6 @@ internal static class OsUtils
     {
         Process.Start(
             new ProcessStartInfo(url)
-                {UseShellExecute = true});
+            { UseShellExecute = true });
     }
 }

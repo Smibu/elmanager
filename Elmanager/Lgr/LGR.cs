@@ -68,7 +68,7 @@ internal class Lgr : IDisposable
 
         for (int i = 0; i < numberOfOptPcXs; i++)
         {
-            pcxTypes.Add((ImageType) lgr.ReadInt32());
+            pcxTypes.Add((ImageType)lgr.ReadInt32());
         }
 
         for (int i = 0; i < numberOfOptPcXs; i++)
@@ -78,12 +78,12 @@ internal class Lgr : IDisposable
 
         for (int i = 0; i < numberOfOptPcXs; i++)
         {
-            clippingTypes.Add((ClippingType) lgr.ReadInt32());
+            clippingTypes.Add((ClippingType)lgr.ReadInt32());
         }
 
         for (int i = 0; i < numberOfOptPcXs; i++)
         {
-            transparencies.Add((Transparency) lgr.ReadInt32());
+            transparencies.Add((Transparency)lgr.ReadInt32());
         }
 
         for (int i = 0; i < numberOfOptPcXs; i++)

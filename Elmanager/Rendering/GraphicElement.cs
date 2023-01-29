@@ -16,7 +16,7 @@ internal abstract record GraphicElement(
     public VectorMark Mark
     {
         get => Position.Mark;
-        set => Position = Position with {Mark = value};
+        set => Position = Position with { Mark = value };
     }
 
     internal record Picture(

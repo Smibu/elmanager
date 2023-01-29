@@ -9,8 +9,8 @@ internal class TrackBarMod : TrackBar
 
     internal new event MouseWheelEventHandler MouseWheel
     {
-        add => _mouseWheelEvent = (MouseWheelEventHandler) Delegate.Combine(_mouseWheelEvent, value);
-        remove => _mouseWheelEvent = (MouseWheelEventHandler?) Delegate.Remove(_mouseWheelEvent, value);
+        add => _mouseWheelEvent = (MouseWheelEventHandler)Delegate.Combine(_mouseWheelEvent, value);
+        remove => _mouseWheelEvent = (MouseWheelEventHandler?)Delegate.Remove(_mouseWheelEvent, value);
     }
 
     protected override void WndProc(ref Message m)

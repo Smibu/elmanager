@@ -155,10 +155,8 @@ internal class SmoothenTool : ToolBase, IEditorTool
                     switch (Smoothing)
                     {
                         case SmoothState.AllSmooth:
-                        {
                             Lev.Polygons.RemoveAll(IsSmoothable);
                             break;
-                        }
                         case SmoothState.PolygonSmooth p:
                             Lev.Polygons.Remove(p.P);
                             break;

@@ -237,7 +237,7 @@ internal class TextTool : ToolBase, IEditorTool
                                 .SelectMany(segment => segment switch
                                 {
                                     PolyLineSegment s => s.Points.ToArray(),
-                                    LineSegment l => new[] {l.Point},
+                                    LineSegment l => new[] { l.Point },
                                     _ => throw new TopologyException("Segment wasn't flattened?")
                                 })
                                 .Select(p =>
@@ -297,8 +297,8 @@ internal class TextTool : ToolBase, IEditorTool
 
     public static System.Windows.Media.Geometry CreateGeometry(DrawingGroup drawingGroup, SvgImportOptions opts)
     {
-        var geometry = new GeometryGroup {FillRule = opts.FillRule};
-        var defaultPen = new Pen(new SolidColorBrush(System.Windows.Media.Color.FromRgb(0,0,0)), 1);
+        var geometry = new GeometryGroup { FillRule = opts.FillRule };
+        var defaultPen = new Pen(new SolidColorBrush(System.Windows.Media.Color.FromRgb(0, 0, 0)), 1);
         foreach (var drawing in drawingGroup.Children)
         {
             switch (drawing)
@@ -310,7 +310,8 @@ internal class TextTool : ToolBase, IEditorTool
                     geometry.Children.Add(grd.GlyphRun.BuildGeometry());
                     break;
                 case DrawingGroup dg:
-                    var c = new SvgImportOptions {
+                    var c = new SvgImportOptions
+                    {
                         FillRule = FillRule.EvenOdd,
                         Smoothness = opts.Smoothness,
                         UseOutlinedGeometry = opts.UseOutlinedGeometry,
@@ -359,7 +360,7 @@ internal class TextTool : ToolBase, IEditorTool
                     if (!pg.Figures[i].IsClosed || (gd.Pen is { } && !opts.NeverWidenClosedPaths))
                     {
                         var penToUse = gd.Pen ?? defaultPen;
-                        pg.AddGeometry(new PathGeometry(new List<PathFigure> {pg.Figures[i]})
+                        pg.AddGeometry(new PathGeometry(new List<PathFigure> { pg.Figures[i] })
                             .GetWidenedPathGeometry(penToUse, opts.Smoothness, ToleranceType.Absolute)
                             .GetOutlinedPathGeometry(opts.Smoothness, ToleranceType.Absolute));
                         pg.Figures.RemoveAt(i);

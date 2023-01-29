@@ -15,14 +15,14 @@ internal partial class PictureForm
     internal ImageSelection? Selection;
     private readonly Lgr.Lgr _lgr;
     private bool _autoTextureMode;
-    private static readonly HashSet<string> KnownMaskNames = new() {"maskbig", "maskhor", "masklitt"};
+    private static readonly HashSet<string> KnownMaskNames = new() { "maskbig", "maskhor", "masklitt" };
 
     internal PictureForm(Lgr.Lgr lgr, GraphicElement? elem)
     {
         InitializeComponent();
         _lgr = lgr;
         SetupUi();
-        if (elem is {})
+        if (elem is { })
         {
             SelectElement(elem);
         }
@@ -47,10 +47,10 @@ internal partial class PictureForm
                 break;
         }
 
-        if (sel is {Distance: { } d, Clipping: { } c})
+        if (sel is { Distance: { } d, Clipping: { } c })
         {
             DistanceBox.Text = d.ToString();
-            ClippingComboBox.SelectedIndex = (int) c;
+            ClippingComboBox.SelectedIndex = (int)c;
         }
         else
         {
@@ -130,14 +130,14 @@ internal partial class PictureForm
 
     private object[] GetNamesOf(ImageType type) =>
         _lgr.ListedImagesExcludingSpecial.Where(i => i.Type == type).Select(i => i.Name)
-            .Concat(new object[] {MultipleValues}).ToArray();
+            .Concat(new object[] { MultipleValues }).ToArray();
 
     private void SetupUi()
     {
         TextureComboBox.SelectedIndexChanged -= TextureComboBoxSelectedIndexChanged;
         PictureComboBox.SelectedIndexChanged -= PictureComboBoxSelectedIndexChanged;
         TextureButton.CheckedChanged -= TextureButtonCheckedChanged;
-        ClippingComboBox.Items.AddRange(new object[] {"Unclipped", "Ground", "Sky", MultipleValues});
+        ClippingComboBox.Items.AddRange(new object[] { "Unclipped", "Ground", "Sky", MultipleValues });
         ClippingComboBox.SelectedIndex = 0;
         var maskNames = GetNamesOf(ImageType.Mask);
         MaskComboBox.Items.AddRange(maskNames);
@@ -208,7 +208,7 @@ internal partial class PictureForm
         }
 
         DistanceBox.Text = graphicElement.Distance.ToString();
-        ClippingComboBox.SelectedIndex = (int) graphicElement.Clipping;
+        ClippingComboBox.SelectedIndex = (int)graphicElement.Clipping;
         TextureButtonCheckedChanged();
     }
 
@@ -249,7 +249,7 @@ internal partial class PictureForm
 
         if (pictures.TrueForAll(p => p.Clipping == pictures[0].Clipping))
         {
-            ClippingComboBox.SelectedIndex = (int) (pictures[0].Clipping);
+            ClippingComboBox.SelectedIndex = (int)(pictures[0].Clipping);
         }
         else
         {
@@ -343,8 +343,8 @@ internal partial class PictureForm
             }
 
             var clipping = MultipleClippingSelected
-                ? (ClippingType?) null
-                : (ClippingType) ClippingComboBox.SelectedIndex;
+                ? (ClippingType?)null
+                : (ClippingType)ClippingComboBox.SelectedIndex;
 
             int? distance;
             try
@@ -445,7 +445,7 @@ internal partial class PictureForm
         if (element is { })
         {
             DistanceBox.Text = element.Distance.ToString();
-            ClippingComboBox.SelectedIndex = (int) element.ClippingType;
+            ClippingComboBox.SelectedIndex = (int)element.ClippingType;
         }
     }
 

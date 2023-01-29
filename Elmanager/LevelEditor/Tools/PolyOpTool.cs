@@ -184,7 +184,7 @@ internal class PolyOpTool : ToolBase, IEditorTool
             return false;
         }
 
-        var others = touching.ToIPolygons().Aggregate((Func<NetGeometry, NetGeometry, NetGeometry>) SymDiff);
+        var others = touching.ToIPolygons().Aggregate((Func<NetGeometry, NetGeometry, NetGeometry>)SymDiff);
         var remaining = polygons.Where(p =>
         {
             if (p.IsGrass)
@@ -193,7 +193,7 @@ internal class PolyOpTool : ToolBase, IEditorTool
             return !touching.Contains(p) && !polys.Contains(p) && ipoly.Within(others);
         }).ToList();
 
-        others = remaining.ToIPolygons().Aggregate(others, (Func<NetGeometry, NetGeometry, NetGeometry>) SymDiff);
+        others = remaining.ToIPolygons().Aggregate(others, (Func<NetGeometry, NetGeometry, NetGeometry>)SymDiff);
 
         NetGeometry result;
         try
@@ -221,23 +221,16 @@ internal class PolyOpTool : ToolBase, IEditorTool
         switch (result)
         {
             case MultiPolygon polygon:
-            {
-                foreach (var geometry in polygon.Geometries.Cast<NetTopologySuite.Geometries.Polygon>().Where(p => !p.IsEmpty))
+                foreach (var geometry in polygon.Geometries.Cast<NetTopologySuite.Geometries.Polygon>()
+                             .Where(p => !p.IsEmpty))
                 {
-                    var newPolys = geometry.ToElmaPolygons().ToList();
-                    newPolys.ForEach(p => p.RemoveDuplicateVertices());
-                    polygons.AddRange(newPolys);
+                    polygons.AddRange(geometry.ToElmaPolygons().Select(p => p.RemoveDuplicateVertices()));
                 }
 
                 break;
-            }
-            case NetTopologySuite.Geometries.Polygon polygon1 when !polygon1.IsEmpty:
-            {
-                var newPolys = polygon1.ToElmaPolygons().ToList();
-                newPolys.ForEach(p => p.RemoveDuplicateVertices());
-                polygons.AddRange(newPolys);
+            case NetTopologySuite.Geometries.Polygon { IsEmpty: false } polygon:
+                polygons.AddRange(polygon.ToElmaPolygons().Select(p => p.RemoveDuplicateVertices()));
                 break;
-            }
         }
 
         if (!polygons.Any())

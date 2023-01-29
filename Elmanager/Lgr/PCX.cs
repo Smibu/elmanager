@@ -107,8 +107,8 @@ internal class Pcx
             }
 
             for (int i = 0; i < Height; i++)
-            for (int j = 0; j < Width; j++)
-                PixelData[i * Width + j] = palette[uncompressedDataPtr[i * BytesPerLine + j]];
+                for (int j = 0; j < Width; j++)
+                    PixelData[i * Width + j] = palette[uncompressedDataPtr[i * BytesPerLine + j]];
         }
         else
             throw new Exception("This version of PCX file is not supported!");

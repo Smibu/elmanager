@@ -170,7 +170,7 @@ internal partial class ConfigForm : FormMod
 
     private void PanelClick(object sender, EventArgs e)
     {
-        Panel clickedPanel = (Panel) sender;
+        Panel clickedPanel = (Panel)sender;
         ColorDialog1.Color = clickedPanel.BackColor;
         if (ColorDialog1.ShowDialog() == DialogResult.OK)
             clickedPanel.BackColor = ColorDialog1.Color;

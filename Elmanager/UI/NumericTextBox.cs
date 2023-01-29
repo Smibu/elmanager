@@ -9,5 +9,5 @@ internal class NumericTextBox : GenericTextBox<double>
         DefaultValue = 0;
     }
 
-    public int ValueAsInt => (int) Value;
+    public int ValueAsInt => (int)Value;
 }

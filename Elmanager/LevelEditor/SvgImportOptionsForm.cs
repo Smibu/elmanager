@@ -16,7 +16,7 @@ internal partial class SvgImportOptionsForm : FormMod
 
     public static SvgImportOptions? ShowDefault(SvgImportOptions options, string svgFile)
     {
-        var prompt = new SvgImportOptionsForm { Result = options, Text = $"SVG import options for {Path.GetFileNameWithoutExtension(svgFile)}"};
+        var prompt = new SvgImportOptionsForm { Result = options, Text = $"SVG import options for {Path.GetFileNameWithoutExtension(svgFile)}" };
         if (prompt.ShowDialog() == DialogResult.OK)
             return prompt.Result;
         return null;

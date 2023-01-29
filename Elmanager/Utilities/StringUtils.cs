@@ -20,8 +20,8 @@ internal static class StringUtils
     {
         double T = Math.Abs(time);
         StringBuilder timeStr = new StringBuilder(9);
-        int minutes = (int) Math.Floor(T / 60);
-        int hours = (int) Math.Floor(T / 3600);
+        int minutes = (int)Math.Floor(T / 60);
+        int hours = (int)Math.Floor(T / 3600);
         if (hours > 0)
         {
             timeStr.Append(hours);

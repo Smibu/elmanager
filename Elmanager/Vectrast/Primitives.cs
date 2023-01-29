@@ -20,7 +20,7 @@ internal struct IntVector2 : IComparable
     int IComparable.CompareTo(object o)
     {
         // lexicographic
-        var v = (IntVector2) o;
+        var v = (IntVector2)o;
         if (x < v.x || x == v.x && y < v.y)
             return -1;
         if (x > v.x || x == v.x && y > v.y)
@@ -35,19 +35,19 @@ internal struct IntVector2 : IComparable
 
     public bool extension(IntVector2 otherVector)
     {
-        return (x*y == 0 && x*otherVector.y - y*otherVector.x == 0); // parallel to either axis AND colinear
+        return (x * y == 0 && x * otherVector.y - y * otherVector.x == 0); // parallel to either axis AND colinear
     }
 
     public override int GetHashCode()
     {
-        return x + y*7919;
+        return x + y * 7919;
     }
 
     public override bool Equals(object v)
     {
         try
         {
-            return x == ((IntVector2) v).x && y == ((IntVector2) v).y;
+            return x == ((IntVector2)v).x && y == ((IntVector2)v).y;
         }
         catch
         {
@@ -74,7 +74,7 @@ internal struct DoubleVector2
 
     public double length
     {
-        get { return Math.Sqrt(x*x + y*y); }
+        get { return Math.Sqrt(x * x + y * y); }
     }
 
     public DoubleVector2 perpendicular
@@ -92,7 +92,7 @@ internal struct DoubleVector2
 
     public double scalarProduct(DoubleVector2 dv2)
     {
-        return (x*dv2.x + y*dv2.y);
+        return (x * dv2.x + y * dv2.y);
     }
 
     public static DoubleVector2 operator -(DoubleVector2 v1, DoubleVector2 v2)
@@ -164,9 +164,9 @@ internal class Matrix2D
     public static Matrix2D rotationM(double x)
     {
         var matrix = identityM();
-        matrix.elements[0, 0] = Math.Cos(x*Math.PI/180);
+        matrix.elements[0, 0] = Math.Cos(x * Math.PI / 180);
         matrix.elements[1, 1] = matrix.elements[0, 0];
-        matrix.elements[1, 0] = Math.Sin(x*Math.PI/180);
+        matrix.elements[1, 0] = Math.Sin(x * Math.PI / 180);
         matrix.elements[0, 1] = -matrix.elements[1, 0];
         return matrix;
     }
@@ -175,21 +175,21 @@ internal class Matrix2D
     {
         var matrix = new Matrix2D();
         for (var i = 0; i < 3; i++)
-        for (var j = 0; j < 3; j++)
-        {
-            double sum = 0;
-            for (var k = 0; k < 3; k++)
-                sum += m1.elements[k, j]*m2.elements[i, k];
-            matrix.elements[i, j] = sum;
-        }
+            for (var j = 0; j < 3; j++)
+            {
+                double sum = 0;
+                for (var k = 0; k < 3; k++)
+                    sum += m1.elements[k, j] * m2.elements[i, k];
+                matrix.elements[i, j] = sum;
+            }
         return matrix;
     }
 
     public static DoubleVector2 operator *(DoubleVector2 v, Matrix2D m)
     {
         var vector = new DoubleVector2();
-        vector.x = v.x*m.elements[0, 0] + v.y*m.elements[0, 1] + m.elements[0, 2];
-        vector.y = v.x*m.elements[1, 0] + v.y*m.elements[1, 1] + m.elements[1, 2];
+        vector.x = v.x * m.elements[0, 0] + v.y * m.elements[0, 1] + m.elements[0, 2];
+        vector.y = v.x * m.elements[1, 0] + v.y * m.elements[1, 1] + m.elements[1, 2];
         return vector;
     }
 }
@@ -314,18 +314,18 @@ internal class Line : VectorPixel
             d1 = dy;
             d2 = dx;
         }
-        maxleft = Math.Max(maxleft, 1.0*(d1 - 1)/d2);
-        minright = Math.Min(minright, 1.0*(d1 + 1)/d2);
-        var dmin = maxleft*(d2 + 1) + 0.5 - d1;
-        var dmax = minright*(d2 + 1) - 0.5 - d1;
+        maxleft = Math.Max(maxleft, 1.0 * (d1 - 1) / d2);
+        minright = Math.Min(minright, 1.0 * (d1 + 1) / d2);
+        var dmin = maxleft * (d2 + 1) + 0.5 - d1;
+        var dmax = minright * (d2 + 1) - 0.5 - d1;
         if (Math.Ceiling(dmin) - dmin == 0.5)
             dmin += 0.5;
         if (Math.Ceiling(dmax) - dmax == 0.5)
             dmax -= 0.5;
         if (dx > dy)
         {
-            nextmindx = (int) Math.Round(dmin);
-            nextmaxdx = (int) Math.Round(dmax);
+            nextmindx = (int)Math.Round(dmin);
+            nextmaxdx = (int)Math.Round(dmax);
             nextmindy = 0;
             nextmaxdy = 1;
         }
@@ -333,8 +333,8 @@ internal class Line : VectorPixel
         {
             nextmindx = 0;
             nextmaxdx = 1;
-            nextmindy = (int) Math.Round(dmin);
-            nextmaxdy = (int) Math.Round(dmax);
+            nextmindy = (int)Math.Round(dmin);
+            nextmaxdy = (int)Math.Round(dmax);
         }
         else
         {
@@ -389,7 +389,7 @@ internal struct FromToInt : IComparable
 
     int IComparable.CompareTo(object o)
     {
-        var f = (FromToInt) o;
+        var f = (FromToInt)o;
         return x == f.x ? px.CompareTo(f.px) : x.CompareTo(f.x);
     }
 }

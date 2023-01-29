@@ -9,15 +9,15 @@ internal class TabControlMod : TabControl
 
     internal new event KeyDownEventHandler KeyDown
     {
-        add => KeyDownEvent = (KeyDownEventHandler) Delegate.Combine(KeyDownEvent, value);
-        remove => KeyDownEvent = (KeyDownEventHandler?) Delegate.Remove(KeyDownEvent, value);
+        add => KeyDownEvent = (KeyDownEventHandler)Delegate.Combine(KeyDownEvent, value);
+        remove => KeyDownEvent = (KeyDownEventHandler?)Delegate.Remove(KeyDownEvent, value);
     }
 
     protected override void WndProc(ref Message m)
     {
         if (m.Msg == NativeUtils.WmKeydown)
         {
-            var key = (Keys) m.WParam;
+            var key = (Keys)m.WParam;
             KeyDownEvent?.Invoke(null, new KeyEventArgs(key));
         }
         else

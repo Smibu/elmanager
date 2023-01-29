@@ -115,7 +115,7 @@ internal class ElmaRenderer : IDisposable
             var height = _maxRenderbufferSize;
             GL.BindFramebuffer(FramebufferTarget.ReadFramebuffer, _frameBuffer);
             GL.BindFramebuffer(FramebufferTarget.DrawFramebuffer, _frameBuffer);
-            var oldViewPort = (int[]) zoomCtrl.Cam.Viewport.Clone();
+            var oldViewPort = (int[])zoomCtrl.Cam.Viewport.Clone();
             ResetViewport(width, height);
             zoomCtrl.ZoomFill();
             DrawScene(zoomCtrl.Cam, sceneSettings);
@@ -174,8 +174,8 @@ internal class ElmaRenderer : IDisposable
         GL.Color4(circleColor);
         GL.Begin(PrimitiveType.LineLoop);
         for (var i = 0; i <= accuracy; i++)
-            GL.Vertex2(x + Math.Cos(i * 360 / (double) accuracy * Math.PI / 180) * radius,
-                y + Math.Sin(i * 360 / (double) accuracy * Math.PI / 180) * radius);
+            GL.Vertex2(x + Math.Cos(i * 360 / (double)accuracy * Math.PI / 180) * radius,
+                y + Math.Sin(i * 360 / (double)accuracy * Math.PI / 180) * radius);
         GL.End();
     }
 
@@ -198,8 +198,8 @@ internal class ElmaRenderer : IDisposable
         const double depth = ZFar - (ZFar - ZNear) * SkyDepth;
         GL.Begin(PrimitiveType.Triangles);
         foreach (var triangle in triangles)
-        foreach (var x in triangle)
-            GL.Vertex3(x.X, x.Y, depth);
+            foreach (var x in triangle)
+                GL.Vertex3(x.X, x.Y, depth);
         GL.End();
     }
 
@@ -576,7 +576,7 @@ internal class ElmaRenderer : IDisposable
                         DrawObject(GetApple(x.AnimationNumber), x.Position, depth);
                         break;
                     case ObjectType.Start:
-                        DrawDummyPlayer(x.Position.X, x.Position.Y, sceneSettings, new PlayerRenderOpts {IsActive = true, UseTransparency = false, UseGraphics = true});
+                        DrawDummyPlayer(x.Position.X, x.Position.Y, sceneSettings, new PlayerRenderOpts { IsActive = true, UseTransparency = false, UseGraphics = true });
                         break;
                 }
             }
@@ -592,7 +592,7 @@ internal class ElmaRenderer : IDisposable
         if (_settings.ShowMaxDimensions)
         {
             GL.Enable(EnableCap.LineStipple);
-            GL.LineStipple((int) _settings.LineWidth * 2, LinePattern);
+            GL.LineStipple((int)_settings.LineWidth * 2, LinePattern);
             var levCenterX = (Lev.XMin + Lev.XMax) / 2;
             var levCenterY = (Lev.YMin + Lev.YMax) / 2;
             DrawRectangle(levCenterX - Level.MaximumSize / 2,
@@ -690,10 +690,10 @@ internal class ElmaRenderer : IDisposable
 
     private void DoPictureScissor(GraphicElement graphicElement, ElmaCamera cam)
     {
-        var x = (int) ((graphicElement.Position.X - cam.XMin) / (cam.XMax - cam.XMin) * cam.ViewPortWidth);
-        var y = (int) (((graphicElement.Position.Y - graphicElement.Height) - cam.YMin) / (cam.YMax - cam.YMin) * cam.ViewPortHeight);
-        var w = (int) ((graphicElement.Position.X + graphicElement.Width - cam.XMin) / (cam.XMax - cam.XMin) * cam.ViewPortWidth) - x;
-        var h = (int) ((graphicElement.Position.Y - cam.YMin) / (cam.YMax - cam.YMin) * cam.ViewPortHeight) - y;
+        var x = (int)((graphicElement.Position.X - cam.XMin) / (cam.XMax - cam.XMin) * cam.ViewPortWidth);
+        var y = (int)(((graphicElement.Position.Y - graphicElement.Height) - cam.YMin) / (cam.YMax - cam.YMin) * cam.ViewPortHeight);
+        var w = (int)((graphicElement.Position.X + graphicElement.Width - cam.XMin) / (cam.XMax - cam.XMin) * cam.ViewPortWidth) - x;
+        var h = (int)((graphicElement.Position.Y - cam.YMin) / (cam.YMax - cam.YMin) * cam.ViewPortHeight) - y;
         GL.Scissor(x, y, w, h);
     }
 
@@ -841,7 +841,7 @@ internal class ElmaRenderer : IDisposable
 
         GL.ClearColor(newSettings.SkyFillColor);
         GL.LineWidth(newSettings.LineWidth);
-        GL.PointSize((float) (newSettings.VertexSize * 300));
+        GL.PointSize((float)(newSettings.VertexSize * 300));
         _settings = newSettings.Clone();
     }
 
@@ -903,8 +903,8 @@ internal class ElmaRenderer : IDisposable
     private static void DrawFilledTrianglesFast(IEnumerable<Vector[]> triangles, double depth = 0.0)
     {
         foreach (var triangle in triangles)
-        foreach (var x in triangle)
-            GL.Vertex3(x.X, x.Y, depth);
+            foreach (var x in triangle)
+                GL.Vertex3(x.X, x.Y, depth);
     }
 
     private static void DrawObject(int picture, double x, double y, double depth = 0.5 * (ZFar - ZNear) + ZNear)
@@ -957,11 +957,11 @@ internal class ElmaRenderer : IDisposable
         var bmpData = bmp.LockBits(new Rectangle(0, 0, bmp.Width, bmp.Height), ImageLockMode.ReadOnly,
             PixelFormat.Format32bppArgb);
         GL.TexParameter(TextureTarget.Texture2D, TextureParameterName.TextureMinFilter,
-            (float) TextureMinFilter.Linear);
+            (float)TextureMinFilter.Linear);
         GL.TexParameter(TextureTarget.Texture2D, TextureParameterName.TextureMagFilter,
-            (float) TextureMagFilter.Nearest);
-        GL.TexParameter(TextureTarget.Texture2D, TextureParameterName.TextureWrapS, (float) TextureWrapMode.Repeat);
-        GL.TexParameter(TextureTarget.Texture2D, TextureParameterName.TextureWrapT, (float) TextureWrapMode.Repeat);
+            (float)TextureMagFilter.Nearest);
+        GL.TexParameter(TextureTarget.Texture2D, TextureParameterName.TextureWrapS, (float)TextureWrapMode.Repeat);
+        GL.TexParameter(TextureTarget.Texture2D, TextureParameterName.TextureWrapT, (float)TextureWrapMode.Repeat);
         GL.TexImage2D(TextureTarget.Texture2D, 0, PixelInternalFormat.Rgba, bmpData.Width, bmpData.Height, 0,
             OpenTK.Graphics.OpenGL.PixelFormat.Bgra, PixelType.UnsignedByte, bmpData.Scan0);
         bmp.UnlockBits(bmpData);
@@ -1026,7 +1026,7 @@ internal class ElmaRenderer : IDisposable
     private void EnableDashLines(short pattern)
     {
         GL.Enable(EnableCap.LineStipple);
-        GL.LineStipple((int) _settings.LineWidth, pattern);
+        GL.LineStipple((int)_settings.LineWidth, pattern);
     }
 
     private void DrawObjectCenters(SceneSettings sceneSettings)
@@ -1293,7 +1293,7 @@ internal class ElmaRenderer : IDisposable
             if (!opts.IsActive)
             {
                 GL.Enable(EnableCap.LineStipple);
-                GL.LineStipple((int) _settings.LineWidth, LinePattern);
+                GL.LineStipple((int)_settings.LineWidth, LinePattern);
             }
 
             DrawPlayerFrames(player, opts.Color);
@@ -1372,7 +1372,7 @@ internal class ElmaRenderer : IDisposable
         GL.Hint(HintTarget.PolygonSmoothHint, HintMode.Fastest);
         GL.Hint(HintTarget.LineSmoothHint, HintMode.Fastest);
         GL.Enable(EnableCap.PointSmooth);
-        GL.TexEnv(TextureEnvTarget.TextureEnv, TextureEnvParameter.TextureEnvMode, (float) TextureEnvMode.Replace);
+        GL.TexEnv(TextureEnvTarget.TextureEnv, TextureEnvParameter.TextureEnvMode, (float)TextureEnvMode.Replace);
 
         _maxRenderbufferSize = Math.Min(GL.GetInteger(GetPName.MaxRenderbufferSize), 4096);
 
@@ -1504,7 +1504,7 @@ internal class ElmaRenderer : IDisposable
     public void DrawDashLine(double x1, double y1, double x2, double y2, Color color)
     {
         GL.Enable(EnableCap.LineStipple);
-        GL.LineStipple((int) _settings.LineWidth, LinePattern);
+        GL.LineStipple((int)_settings.LineWidth, LinePattern);
         DrawLine(x1, y1, x2, y2, color);
         GL.Disable(EnableCap.LineStipple);
         GL.LineWidth(_settings.LineWidth);

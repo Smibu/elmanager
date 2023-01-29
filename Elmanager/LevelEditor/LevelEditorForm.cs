@@ -202,7 +202,7 @@ internal partial class LevelEditorForm : FormMod, IMessageFilter
     private int SelectedElementCount => _selectedObjectCount + _selectedPictureCount + _selectedVerticeCount +
                                         _selectedTextureCount;
 
-    private ToolBase ToolBase => ((ToolBase) CurrentTool);
+    private ToolBase ToolBase => ((ToolBase)CurrentTool);
 
     private List<string>? CurrLevDirFiles
     {
@@ -591,7 +591,7 @@ internal partial class LevelEditorForm : FormMod, IMessageFilter
         {
             if (x.Position.Mark == VectorMark.Selected)
             {
-                var copiedGraphicElement = x with { Position = new Vector(x.X + delta, x.Y - delta)};
+                var copiedGraphicElement = x with { Position = new Vector(x.X + delta, x.Y - delta) };
                 copiedTextures.Add(copiedGraphicElement);
                 x.Mark = VectorMark.None;
             }
@@ -764,7 +764,7 @@ internal partial class LevelEditorForm : FormMod, IMessageFilter
     private Action<Vector, Color> GetVertexDrawAction()
     {
         var drawAction = Global.AppSettings.LevelEditor.RenderingSettings.UseCirclesForVertices
-            ? (Action<Vector, Color>) ((pt, color) => Renderer.DrawPoint(pt, color))
+            ? (Action<Vector, Color>)((pt, color) => Renderer.DrawPoint(pt, color))
             : ((pt, color) => Renderer.DrawEquilateralTriangle(pt,
                 _zoomCtrl.Cam.ZoomLevel * Global.AppSettings.LevelEditor.RenderingSettings.VertexSize, color));
         return drawAction;
@@ -895,7 +895,7 @@ internal partial class LevelEditorForm : FormMod, IMessageFilter
 
     private Vector GetMouseCoordinates()
     {
-        var mousePosNoTr = (Point) Invoke(new Func<Point>(() => EditorControl.PointToClient(MousePosition)));
+        var mousePosNoTr = (Point)Invoke(new Func<Point>(() => EditorControl.PointToClient(MousePosition)));
         var mousePos = new Vector
         {
             X =
@@ -996,8 +996,8 @@ internal partial class LevelEditorForm : FormMod, IMessageFilter
         var graphics = CreateGraphics();
         _dpiX = graphics.DpiX / 96;
         _dpiY = graphics.DpiY / 96;
-        var dpiXint = (int) _dpiX;
-        var dpiYint = (int) _dpiY;
+        var dpiXint = (int)_dpiX;
+        var dpiYint = (int)_dpiY;
         ToolStrip1.ImageScalingSize = new Size(32 * dpiXint, 32 * dpiYint);
         ToolStrip2.ImageScalingSize = new Size(32 * dpiXint, 32 * dpiYint);
         MenuStrip1.ImageScalingSize = new Size(16 * dpiXint, 16 * dpiYint);
@@ -1016,7 +1016,7 @@ internal partial class LevelEditorForm : FormMod, IMessageFilter
         UpdateButtons();
         Size = Global.AppSettings.LevelEditor.Size;
         Renderer = new ElmaRenderer(EditorControl, Global.AppSettings.LevelEditor.RenderingSettings);
-            
+
         Tools = new IEditorTool[]
         {
             new SelectionTool(this),
@@ -1648,7 +1648,7 @@ internal partial class LevelEditorForm : FormMod, IMessageFilter
             picForm.AllowMultiple = false;
             var selectedElem = Lev.GraphicElements[_selectedPictureIndex];
             picForm.SelectElement(selectedElem);
-            selectedElems = new List<GraphicElement> {selectedElem};
+            selectedElems = new List<GraphicElement> { selectedElem };
         }
 
         picForm.AutoTextureMode = false;
@@ -1667,7 +1667,7 @@ internal partial class LevelEditorForm : FormMod, IMessageFilter
 
             return sel switch
             {
-                ImageSelection.MixedSelection => curr with {Distance = distance, Clipping = clipping},
+                ImageSelection.MixedSelection => curr with { Distance = distance, Clipping = clipping },
                 ImageSelection.PictureSelection(var pic, _, _) => GraphicElement.Pic(
                     Renderer.DrawableImageFromName(pic), position, distance, clipping),
                 ImageSelection.TextureSelection(var txt, var mask, _, _) => GraphicElement.Text(clipping, distance,
@@ -1685,7 +1685,7 @@ internal partial class LevelEditorForm : FormMod, IMessageFilter
                     curr is GraphicElement.Texture t => GraphicElement.Text(clipping,
                         distance, position, t.TextureInfo, Renderer.DrawableImageFromName(mask)),
                 ImageSelection.TextureSelectionMultipleTextures when
-                    curr is GraphicElement.Picture => curr with {Distance = distance, Clipping = clipping},
+                    curr is GraphicElement.Picture => curr with { Distance = distance, Clipping = clipping },
                 _ => throw new ArgumentOutOfRangeException(nameof(sel))
             };
         }).ToList();
@@ -1760,7 +1760,7 @@ internal partial class LevelEditorForm : FormMod, IMessageFilter
             Polygon x = Lev.Polygons[i];
             if (!x.IsGrass)
             {
-                var autoGrass = ((AutoGrassTool) (Tools[11])).AutoGrass(x);
+                var autoGrass = ((AutoGrassTool)(Tools[11])).AutoGrass(x);
                 Lev.Polygons.AddRange(autoGrass);
                 if (autoGrass.Count > 0)
                 {
@@ -2220,7 +2220,7 @@ internal partial class LevelEditorForm : FormMod, IMessageFilter
             if (PlayController.PlayingOrPaused)
             {
                 PlayController.ResetViewPortRequested = (EditorControl.Width, EditorControl.Height);
-            } 
+            }
             else
             {
                 ResetViewPort();
@@ -2248,7 +2248,7 @@ internal partial class LevelEditorForm : FormMod, IMessageFilter
     private void TitleBoxTextChanged(object? sender, EventArgs e)
     {
         int width = TextRenderer.MeasureText(TitleBox.Text, TitleBox.Font).Width;
-        TitleBox.Width = Math.Max(width + 5, 120 * (int) _dpiX);
+        TitleBox.Width = Math.Max(width + 5, 120 * (int)_dpiX);
         TitleBox.BackColor = Regex.IsMatch(TitleBox.Text, "[^a-zA-Z0-9!\"%&/()=?`^*-_,.;:<>\\[\\]+# ]")
             ? Color.Red
             : Color.White;
@@ -2302,7 +2302,7 @@ internal partial class LevelEditorForm : FormMod, IMessageFilter
                 var newOpts = result.Value;
                 _svgImportOptions = newOpts;
                 var settings = new WpfDrawingSettings
-                    {IncludeRuntime = false, TextAsGeometry = true, IgnoreRootViewbox = true};
+                { IncludeRuntime = false, TextAsGeometry = true, IgnoreRootViewbox = true };
                 using var converter = new FileSvgReader(settings);
                 var drawingGroup = converter.Read(new Uri(file));
                 List<Polygon> polys;
@@ -2383,7 +2383,7 @@ internal partial class LevelEditorForm : FormMod, IMessageFilter
                     {
                         g.DrawLines(greenPen, p
                             .ApplyTransformation(m)
-                            .Vertices.Select(v => new PointF((float) v.X, (float) v.Y)).ToArray());
+                            .Vertices.Select(v => new PointF((float)v.X, (float)v.Y)).ToArray());
                     }
                     else if (!p.IsGrass && Global.AppSettings.LevelEditor.RenderingSettings.ShowGroundOrEdges)
                     {
@@ -2418,8 +2418,8 @@ internal partial class LevelEditorForm : FormMod, IMessageFilter
                 }
 
                 var svgBody = g.WriteSVGString();
-                var width = (int) ((Lev.Width + 2) * scale);
-                var height = (int) ((Lev.Height + 2) * scale);
+                var width = (int)((Lev.Width + 2) * scale);
+                var height = (int)((Lev.Height + 2) * scale);
                 svgBody = svgBody.Replace("<svg ", $@"<svg width=""{width}"" height=""{height}"" ");
                 File.WriteAllText(saveAsPictureDialog.FileName, svgBody);
             }
@@ -2777,7 +2777,7 @@ internal partial class LevelEditorForm : FormMod, IMessageFilter
         {
             _zoomCtrl.ZoomLevel = Global.AppSettings.LevelEditor.PlayingSettings.PlayZoomLevel;
         }
-        
+
         await PlayController.BeginLoop(Lev, _sceneSettings, Renderer, _zoomCtrl, DoRedrawScene);
 
         if (Global.AppSettings.LevelEditor.PlayingSettings.FollowDriverOption == FollowDriverOption.WhenPressingKey)
@@ -2785,7 +2785,7 @@ internal partial class LevelEditorForm : FormMod, IMessageFilter
             Global.AppSettings.LevelEditor.PlayingSettings.PlayZoomLevel = _zoomCtrl.ZoomLevel;
             _zoomCtrl.ZoomLevel = oldZoom;
         }
-        
+
         t.Stop();
         PlayTimeLabel.Text = PlayController.Driver!.CurrentTime.ToSeconds().ToTimeString(3);
         if (PlayController.Driver.Condition == DriverCondition.Finished)
@@ -2838,7 +2838,7 @@ internal partial class LevelEditorForm : FormMod, IMessageFilter
         }
     }
 
-    private static readonly string[] ImportableExtensions = {DirUtils.LevExtension, DirUtils.LebExtension, ".bmp", ".png", ".gif", ".tiff", ".exif", ".svg", ".svgz" };
+    private static readonly string[] ImportableExtensions = { DirUtils.LevExtension, DirUtils.LebExtension, ".bmp", ".png", ".gif", ".tiff", ".exif", ".svg", ".svgz" };
     private ToolBase.NearestVertexInfo? _grassInfo;
     private TexturizationOptions? _texturizationOpts;
 

@@ -13,8 +13,8 @@ internal partial class MainForm : FormMod
         InitializeComponent();
         versionLabel.Text =
             $"Version: {Global.Version:dd MMMM yyyy}";
-        linkLabel2.Links.Add(new LinkLabel.Link(0, 7) {Name = "License"});
-        linkLabel2.Links.Add(new LinkLabel.Link(9, 9) {Name = "Libraries"});
+        linkLabel2.Links.Add(new LinkLabel.Link(0, 7) { Name = "License" });
+        linkLabel2.Links.Add(new LinkLabel.Link(9, 9) { Name = "Libraries" });
     }
 
     private void ConfigButtonClick(object sender, EventArgs e)

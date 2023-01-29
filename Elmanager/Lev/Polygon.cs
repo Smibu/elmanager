@@ -77,7 +77,7 @@ internal class Polygon
             yield return Vertices[0];
         }
     }
-        
+
     internal Vector this[int index] =>
         index < 0 ? Vertices[Vertices.Count + index] : Vertices[index % Vertices.Count];
 
@@ -432,7 +432,7 @@ internal class Polygon
 
             for (int j = 0; j < numPoints; j++)
             {
-                double t = j / (double) (steps - 1);
+                double t = j / (double)(steps - 1);
                 smoothPoly.Add((1 - t) * (1 - t) * startPoint + 2 * (1 - t) * t * midPoint +
                                t * t * endPoint);
             }
@@ -525,9 +525,9 @@ internal class Polygon
         int i;
         int j = 0;
         for (i = 0; i <= Vertices.Count - 2; i++)
-        for (j = 0; j <= p.Vertices.Count - 2; j++)
-            if (GeometryUtils.SegmentsIntersect(Vertices[i], Vertices[i + 1], p.Vertices[j], p.Vertices[j + 1]))
-                return true;
+            for (j = 0; j <= p.Vertices.Count - 2; j++)
+                if (GeometryUtils.SegmentsIntersect(Vertices[i], Vertices[i + 1], p.Vertices[j], p.Vertices[j + 1]))
+                    return true;
         for (i = 0; i <= Vertices.Count - 2; i++)
             if (GeometryUtils.SegmentsIntersect(Vertices[i], Vertices[i + 1], p.Vertices[j], p.Vertices[0]))
                 return true;
@@ -567,7 +567,7 @@ internal class Polygon
         Vector.MarkDefault = VectorMark.None;
         if (numberOfIntersections % 2 == 0 && numberOfIntersections > 0)
         {
-            var result = new List<Polygon> {new()};
+            var result = new List<Polygon> { new() };
             int k = 0;
             bool isBeginning = true;
             while (k != clone.Count)
@@ -649,7 +649,7 @@ internal class Polygon
         return coordinates;
     }
 
-    public void RemoveDuplicateVertices()
+    public Polygon RemoveDuplicateVertices()
     {
         for (int i = Vertices.Count; i >= 1; i--)
         {
@@ -658,5 +658,7 @@ internal class Polygon
                 Vertices.RemoveAt(i % Vertices.Count);
             }
         }
+
+        return this;
     }
 }

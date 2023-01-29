@@ -116,7 +116,7 @@ internal class Replay
                     if (fileStream.Length > 0)
                     {
                         if (levelStream.ReadByte() == 49)
-                            //If Level(3) = 49, it is Elma lev, otherwise (when 48) Across lev
+                        //If Level(3) = 49, it is Elma lev, otherwise (when 48) Across lev
                         {
                             AcrossLevel = false;
                             fileStream.Seek(7, SeekOrigin.Begin);

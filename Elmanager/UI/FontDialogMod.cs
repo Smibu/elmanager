@@ -45,7 +45,7 @@ internal class FontDialogMod : FontDialog
         switch (msg)
         {
             case WmCommand:
-                switch ((int) wparam)
+                switch ((int)wparam)
                 {
                     case ApplyClick:
                         var sb = new StringBuilder();

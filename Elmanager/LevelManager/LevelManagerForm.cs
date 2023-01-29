@@ -125,7 +125,7 @@ internal partial class LevelManagerForm : FormMod, IManagerGui
             searchProgressBar.Value = progressValue;
             statusLabel.Text = status;
         });
-        var progress = (IProgress<(int progress, string statusText)>) progressHandler;
+        var progress = (IProgress<(int progress, string statusText)>)progressHandler;
 
         var errorFiles = new List<string>();
         _recsByLevel = new Dictionary<string, List<ElmaFileObject<Replay>>>();
@@ -179,7 +179,7 @@ internal partial class LevelManagerForm : FormMod, IManagerGui
         {
             AcrossLev = SearchParameters.GetBoolOptionFromTriSelect(elmaAcrossSelect),
             Date = new Range<DateTime>(minDateTime.Value, maxDateTime.Value),
-            Size = new Range<int>((int) minFileSizeBox.Value * 1024, (int) maxFileSizeBox.Value * 1024),
+            Size = new Range<int>((int)minFileSizeBox.Value * 1024, (int)maxFileSizeBox.Value * 1024),
             Title = titleRe,
             Lgr = lgrRe,
             GroundTexture = gtRe,
@@ -208,7 +208,7 @@ internal partial class LevelManagerForm : FormMod, IManagerGui
                 {AppleType.GravityRight, Range<int>.FromNumericBoxes(minGravRightApplesBox, maxGravRightApplesBox)}
             }
         };
-            
+
         try
         {
             await Task.Run(() =>
@@ -361,7 +361,7 @@ internal partial class LevelManagerForm : FormMod, IManagerGui
         RefreshTop10Lists();
         var ind = ObjectList.IndexOf(lev);
         ObjectList.RemoveObject(lev);
-        ObjectList.InsertObjects(ind, new[] {lev with {Obj = lev.Obj, File = f}});
+        ObjectList.InsertObjects(ind, new[] { lev with { Obj = lev.Obj, File = f } });
     }
 
     private static Control? GetSourceControl(object sender)

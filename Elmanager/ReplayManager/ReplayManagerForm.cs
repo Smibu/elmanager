@@ -92,7 +92,7 @@ internal partial class ReplayManagerForm : FormMod, IManagerGui
     {
         var ind = ObjectList.IndexOf(replay);
         ObjectList.RemoveObject(replay);
-        ObjectList.InsertObjects(ind, new[] {newR});
+        ObjectList.InsertObjects(ind, new[] { newR });
     }
 
     private static bool IsDiffLevel(IList<Replay> replays)
@@ -117,7 +117,7 @@ internal partial class ReplayManagerForm : FormMod, IManagerGui
     {
         if (!e.Cancel)
         {
-            var x = (ReplayItem) e.RowObject;
+            var x = (ReplayItem)e.RowObject;
             var newName = Rename(x, e.Control.Text, false);
             if (newName != null)
                 e.Control.Text = newName;
@@ -319,7 +319,7 @@ internal partial class ReplayManagerForm : FormMod, IManagerGui
                 if (move)
                 {
                     FileSystem.MoveFile(replay.Path, dest, true);
-                    UpdateReplay(replay, replay with {Efo = replay.Efo.WithPath(dest)});
+                    UpdateReplay(replay, replay with { Efo = replay.Efo.WithPath(dest) });
                 }
                 else
                     FileSystem.CopyFile(replay.Path, dest, true);
@@ -419,7 +419,7 @@ internal partial class ReplayManagerForm : FormMod, IManagerGui
         }
 
         var rForm = new RenameForm(TypedList.SelectedObjects, this)
-            {Location = new Point(MousePosition.X, MousePosition.Y)};
+        { Location = new Point(MousePosition.X, MousePosition.Y) };
         rForm.ShowDialog();
     }
 
@@ -452,7 +452,7 @@ internal partial class ReplayManagerForm : FormMod, IManagerGui
     private void ResizeControls(object sender, EventArgs e)
     {
         if (ToolStripProgressBar1.ProgressBar != null)
-            ToolStripProgressBar1.ProgressBar.Width = (int) (Width * 0.6);
+            ToolStripProgressBar1.ProgressBar.Width = (int)(Width * 0.6);
     }
 
     private void SaveListToTextFile(object sender, EventArgs e)
@@ -544,7 +544,7 @@ internal partial class ReplayManagerForm : FormMod, IManagerGui
 
         bool searchForFastestReplays;
         bool searchForAllReplays;
-        var clickedButton = (Button) sender;
+        var clickedButton = (Button)sender;
         if (clickedButton.Equals(SearchButton))
         {
             searchForAllReplays = fastestSlowestSelect.SelectedOption == 2;
@@ -588,7 +588,7 @@ internal partial class ReplayManagerForm : FormMod, IManagerGui
             return;
         }
 
-        var size = new Range<int>((int) minFileSizeBox.Value * 1024, (int) maxFileSizeBox.Value * 1024);
+        var size = new Range<int>((int)minFileSizeBox.Value * 1024, (int)maxFileSizeBox.Value * 1024);
 
         Regex levFilenameMatcher;
         try
@@ -675,7 +675,7 @@ internal partial class ReplayManagerForm : FormMod, IManagerGui
                 statusLabel.Text = phase == 1 ? $"Phase 1: {levels} levels" : $"Phase 2: {recs} replays";
             }
         });
-        var progress = (IProgress<(int progress, int levels, int recs, int phase)>) progressHandler;
+        var progress = (IProgress<(int progress, int levels, int recs, int phase)>)progressHandler;
         var iter = 0;
         try
         {
