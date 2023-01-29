@@ -12,16 +12,13 @@ internal static class VectrastWrapper
     internal static Level LoadLevelFromImage(string imageFileName)
     {
         var lev = new Level();
-        var vr = new VectRast(false, false);
+        var vr = new VectRast();
         byte[,] pixelOn;
         Bitmap bmp;
         var transformMatrix = Matrix2D.scaleM(1, -1);
-        const int numFlowers = 0;
         try
         {
-            vr.loadAsBmp(imageFileName, out bmp, out pixelOn,
-                Math.Abs(transformMatrix.elements[0, 0]) + Math.Abs(transformMatrix.elements[1, 1]),
-                1, numFlowers);
+            vr.loadAsBmp(imageFileName, out bmp, out pixelOn, 1);
         }
         catch (ArgumentException)
         {

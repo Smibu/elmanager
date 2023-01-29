@@ -1,7 +1,6 @@
 #nullable disable
 
 using System;
-using System.Drawing;
 
 namespace vectrast;
 
@@ -72,58 +71,9 @@ internal struct DoubleVector2
         y = v.y;
     }
 
-    public double length
-    {
-        get { return Math.Sqrt(x * x + y * y); }
-    }
-
-    public DoubleVector2 perpendicular
-    {
-        get { return new(y, -x); }
-    }
-
-    public void normalize()
-    {
-        // throws exception for zero length
-        var l = length;
-        x /= l;
-        y /= l;
-    }
-
-    public double scalarProduct(DoubleVector2 dv2)
-    {
-        return (x * dv2.x + y * dv2.y);
-    }
-
     public static DoubleVector2 operator -(DoubleVector2 v1, DoubleVector2 v2)
     {
         return new(v1.x - v2.x, v1.y - v2.y);
-    }
-}
-
-internal enum ObjectTypes
-{
-    Flower = 1,
-    Food = 2,
-    Killer = 3,
-    Start = 4
-}
-
-internal struct ElmaObject
-{
-    public uint animationNumber;
-    public uint type;
-    public uint typeOfFood;
-    public double x;
-    public double y;
-
-    public ElmaObject(double x, double y, uint type, uint typeOfFood, uint animationNumber)
-    {
-        this.x = x;
-        this.y = y;
-        this.type = type;
-        this.typeOfFood = typeOfFood;
-        this.animationNumber = animationNumber;
     }
 }
 
@@ -158,16 +108,6 @@ internal class Matrix2D
         matrix.elements[0, 0] = x;
         matrix.elements[1, 1] = y;
         matrix.elements[2, 2] = 1;
-        return matrix;
-    }
-
-    public static Matrix2D rotationM(double x)
-    {
-        var matrix = identityM();
-        matrix.elements[0, 0] = Math.Cos(x * Math.PI / 180);
-        matrix.elements[1, 1] = matrix.elements[0, 0];
-        matrix.elements[1, 0] = Math.Sin(x * Math.PI / 180);
-        matrix.elements[0, 1] = -matrix.elements[1, 0];
         return matrix;
     }
 
@@ -343,53 +283,5 @@ internal class Line : VectorPixel
             nextmindy = 0;
             nextmaxdy = 2;
         }
-        //Console.WriteLine("({0}, {1}) - ({2}, {3})", outerFromPnt.x, outerFromPnt.y, toPnt.x, toPnt.y);
-    }
-
-    public void finishLine(Bitmap bmp_out)
-    {
-        //Console.WriteLine("({0}, {1}) - ({2}, {3})", outerFromPnt.x, outerFromPnt.y, toPnt.x, toPnt.y);
-        if (outerFromPnt.x < 0 || outerFromPnt.y < 0 ||
-            outerFromPnt.x >= bmp_out.Width || outerFromPnt.y >= bmp_out.Height)
-        {
-        }
-        else
-            bmp_out.SetPixel(outerFromPnt.x, outerFromPnt.y, Color.Green);
-        if (toPnt.x < 0 || toPnt.y < 0 ||
-            toPnt.x >= bmp_out.Width || toPnt.y >= bmp_out.Height)
-        {
-        }
-        else
-            bmp_out.SetPixel(toPnt.x, toPnt.y, Color.Green);
-    }
-}
-
-internal enum IOType
-{
-    Level,
-    Bitmap,
-    LevelBitmap,
-    None
-};
-
-internal struct FromToInt : IComparable
-{
-    public int px;
-    public int sx;
-    public int sy;
-    public int x;
-
-    public FromToInt(int x, int sx, int sy, int px)
-    {
-        this.x = x;
-        this.sx = sx;
-        this.sy = sy;
-        this.px = px;
-    }
-
-    int IComparable.CompareTo(object o)
-    {
-        var f = (FromToInt)o;
-        return x == f.x ? px.CompareTo(f.px) : x.CompareTo(f.x);
     }
 }
