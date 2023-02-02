@@ -24,7 +24,6 @@ using Elmanager.Settings;
 using Elmanager.UI;
 using Elmanager.Utilities;
 using OpenTK.Graphics.OpenGL;
-using SvgNet;
 using Color = System.Drawing.Color;
 using Cursor = System.Windows.Forms.Cursor;
 using Cursors = System.Windows.Forms.Cursors;
@@ -2342,58 +2341,8 @@ internal partial class LevelEditorForm : FormMod, IMessageFilter
             }
             else if (saveAsPictureDialog.FileName.EndsWith(".svg"))
             {
-                var g = new SvgGraphics(Color.LightGray);
-                var blackPen = Pens.Black;
-                var greenPen = Pens.Green;
-                const int scale = 10;
-                var m = Matrix.CreateTranslation(-Lev.XMin + 1, -Lev.YMin + 1) * Matrix.CreateScaling(scale, scale);
-                var objOffset = new Vector(-0.4, -0.4);
-                const float oSize = (float)0.8 * scale;
-                Lev.Polygons.ForEach(p =>
-                {
-                    if (p.IsGrass && Global.AppSettings.LevelEditor.RenderingSettings.ShowGrassOrEdges)
-                    {
-                        g.DrawLines(greenPen, p
-                            .ApplyTransformation(m)
-                            .Vertices.Select(v => new PointF((float)v.X, (float)v.Y)).ToArray());
-                    }
-                    else if (!p.IsGrass && Global.AppSettings.LevelEditor.RenderingSettings.ShowGroundOrEdges)
-                    {
-                        g.DrawPolygon(blackPen, p
-                            .ApplyTransformation(m)
-                            .Vertices.Select(v => new PointF((float)v.X, (float)v.Y)).ToArray());
-                    }
-                });
-                if (Global.AppSettings.LevelEditor.RenderingSettings.ShowObjectsOrFrames)
-                {
-                    Lev.Objects.ForEach(o =>
-                    {
-                        var pos = (o.Position + objOffset) * m;
-                        switch (o.Type)
-                        {
-                            case ObjectType.Flower:
-                                g.DrawEllipse(Pens.White, (float)pos.X, (float)pos.Y, oSize, oSize);
-                                break;
-                            case ObjectType.Apple:
-                                g.DrawEllipse(Pens.Red, (float)pos.X, (float)pos.Y, oSize, oSize);
-                                break;
-                            case ObjectType.Killer:
-                                g.DrawEllipse(Pens.Brown, (float)pos.X, (float)pos.Y, oSize, oSize);
-                                break;
-                            case ObjectType.Start:
-                                g.DrawEllipse(Pens.Blue, (float)pos.X, (float)pos.Y, oSize, oSize);
-                                break;
-                            default:
-                                throw new ArgumentOutOfRangeException();
-                        }
-                    });
-                }
-
-                var svgBody = g.WriteSVGString();
-                var width = (int)((Lev.Width + 2) * scale);
-                var height = (int)((Lev.Height + 2) * scale);
-                svgBody = svgBody.Replace("<svg ", $@"<svg width=""{width}"" height=""{height}"" ");
-                File.WriteAllText(saveAsPictureDialog.FileName, svgBody);
+                SvgExporter.ExportAsSvg(Lev, Global.AppSettings.LevelEditor.RenderingSettings,
+                    saveAsPictureDialog.FileName);
             }
             else
             {
