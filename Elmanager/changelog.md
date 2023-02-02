@@ -13,6 +13,7 @@
 * SLE: Improved performance of level saving and topology checking.
 * SLE: Bugfix: After playing stopped, the player was still hoverable with mouse.
 * SLE: Bugfix: qup_18 and qdown_18 appeared in picture list although they are not usable as pictures.
+* SLE: Bugfix: SVG export was upside down.
 * SLE: Bugfix: Some Across levels failed to open because of different magic number in level file.
 
 ## 11.2.2022

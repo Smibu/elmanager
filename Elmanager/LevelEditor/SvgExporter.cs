@@ -17,8 +17,8 @@ internal static class SvgExporter
         var blackPen = Pens.Black;
         var greenPen = Pens.Green;
         const int scale = 10;
-        var m = Matrix.CreateTranslation(-level.XMin + 1, -level.YMin + 1) * Matrix.CreateScaling(scale, scale);
-        var objOffset = new Vector(-0.4, -0.4);
+        var m = Matrix.CreateTranslation(-level.XMin + 1, -level.YMax - 1) * Matrix.CreateScaling(scale, -scale);
+        var objOffset = new Vector(-0.4, 0.4);
         const float oSize = (float)0.8 * scale;
         level.Polygons.ForEach(p =>
         {
