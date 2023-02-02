@@ -23,10 +23,7 @@ using Elmanager.Rendering.Camera;
 using Elmanager.Settings;
 using Elmanager.UI;
 using Elmanager.Utilities;
-using NetTopologySuite.Geometries;
 using OpenTK.Graphics.OpenGL;
-using SharpVectors.Converters;
-using SharpVectors.Renderers.Wpf;
 using SvgNet;
 using Color = System.Drawing.Color;
 using Cursor = System.Windows.Forms.Cursor;
@@ -2294,55 +2291,30 @@ internal partial class LevelEditorForm : FormMod, IMessageFilter
             else if (file.EndsWith(".svg") || file.EndsWith(".svgz"))
             {
                 var result = SvgImportOptionsForm.ShowDefault(_svgImportOptions, file);
-                if (!result.HasValue)
+                if (result is not { } newOpts)
                 {
                     return;
                 }
 
-                var newOpts = result.Value;
                 _svgImportOptions = newOpts;
-                var settings = new WpfDrawingSettings
-                { IncludeRuntime = false, TextAsGeometry = true, IgnoreRootViewbox = true };
-                using var converter = new FileSvgReader(settings);
-                var drawingGroup = converter.Read(new Uri(file));
-                List<Polygon> polys;
+                using var fileStream = File.OpenText(file);
                 try
                 {
-                    (polys, _) = TextTool.BuildPolygons(
-                        TextTool.CreateGeometry(drawingGroup, newOpts),
-                        new Vector(),
-                        newOpts.Smoothness,
-                        newOpts.UseOutlinedGeometry);
+                    lev = SvgImporter.FromStream(fileStream, newOpts);
                 }
                 catch (PolygonException)
                 {
                     UiUtils.ShowError($"Failed to import SVG {file}. Invalid or animated SVGs are not supported.");
                     return;
                 }
-
-                try
-                {
-                    TextTool.FinalizePolygons(polys);
-                }
-                catch (TopologyException)
-                {
-                }
-                catch (ArgumentException)
-                {
-                }
-
-                var m = Matrix.CreateScaling(1 / 10.0, 1 / 10.0);
-                polys = polys.Select(p => p.ApplyTransformation(m)).ToList();
-                lev = new Level();
-                lev.Polygons.AddRange(polys);
             }
             else
             {
                 try
                 {
-                    lev = VectrastWrapper.LoadLevelFromImage(file);
+                    lev = BitmapImporter.FromPath(file);
                 }
-                catch (VectrastException ex)
+                catch (ImportException ex)
                 {
                     UiUtils.ShowError(ex.Message);
                     return;
