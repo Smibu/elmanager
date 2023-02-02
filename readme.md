@@ -1,16 +1,14 @@
 # Elmanager
-Elmanager is a tool for managing [Elasto Mania](http://www.elastomania.com) replays and levels. Most important features include replay/level searching and viewing and a level editor.
-
-Elmanager is written in C#.
+Elmanager is a tool for managing [Elasto Mania](https://elastomania.com) replays and levels. Most important features include replay/level searching and viewing and a level editor.
 
 ## System requirements
-Windows 7/8/10.
+Windows 10/11.
 
 ## Installation
 Unzip `Elmanager.zip` to any directory, such as `C:\Elma\Elmanager`. Program settings are also saved in this directory.
 
 ## Features
-Elmanager has basically three components: replay manager, level manager and a level editor (named SLE, "Smibu's level editor").
+Elmanager has three components: replay manager, level manager and a level editor (named SLE, "Smibu's level editor").
 
 ### Replay manager
 
@@ -51,7 +49,6 @@ Elmanager has basically three components: replay manager, level manager and a le
   -   Save properties of selected replays to a text file
   -   Merge two singleplayer replays to a multiplayer replay
 
-#### Screenshots
 ![Main window](pictures/RM.png)
 
 ![Replay viewer](pictures/RMviewer.png)
@@ -68,7 +65,6 @@ Elmanager has basically three components: replay manager, level manager and a le
 - Delete selected times from top 10
 - View replays in a level
 
-#### Screenshots
 ![Main window](pictures/LM.png)
 
 ### Level editor (SLE)
@@ -90,5 +86,4 @@ Elmanager has basically three components: replay manager, level manager and a le
   -   Create text with almost any system font
   -   Many customizable options (e.g. colors)
 
-#### Screenshots
 ![Main window](pictures/leveleditor.png)
