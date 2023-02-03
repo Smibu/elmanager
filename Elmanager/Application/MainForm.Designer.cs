@@ -101,10 +101,10 @@ namespace Elmanager.Application
             // 
             this.versionLabel.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
-            this.versionLabel.Location = new System.Drawing.Point(24, 188);
+            this.versionLabel.Location = new System.Drawing.Point(24, 181);
             this.versionLabel.Margin = new System.Windows.Forms.Padding(6, 0, 6, 0);
             this.versionLabel.Name = "versionLabel";
-            this.versionLabel.Size = new System.Drawing.Size(576, 26);
+            this.versionLabel.Size = new System.Drawing.Size(576, 32);
             this.versionLabel.TabIndex = 5;
             this.versionLabel.Text = "Version";
             this.versionLabel.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
@@ -116,7 +116,7 @@ namespace Elmanager.Application
             this.homePageLabel.Location = new System.Drawing.Point(24, 232);
             this.homePageLabel.Margin = new System.Windows.Forms.Padding(6, 0, 6, 0);
             this.homePageLabel.Name = "homePageLabel";
-            this.homePageLabel.Size = new System.Drawing.Size(576, 26);
+            this.homePageLabel.Size = new System.Drawing.Size(576, 32);
             this.homePageLabel.TabIndex = 7;
             this.homePageLabel.TabStop = true;
             this.homePageLabel.Text = "https://m-l.fi/Elma/";
