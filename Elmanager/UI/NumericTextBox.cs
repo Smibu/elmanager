@@ -1,10 +1,8 @@
-﻿using System;
-
-namespace Elmanager.UI;
+﻿namespace Elmanager.UI;
 
 internal class NumericTextBox : GenericTextBox<double>
 {
-    public NumericTextBox() : base(Double.Parse)
+    public NumericTextBox() : base(double.Parse)
     {
         DefaultValue = 0;
     }

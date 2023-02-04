@@ -18,7 +18,7 @@ internal static class SearchUtils
         }
         catch (Exception)
         {
-            matcher = new Regex(String.Empty, RegexOptions.IgnoreCase);
+            matcher = new Regex(string.Empty, RegexOptions.IgnoreCase);
         }
 
         return files.Where(x =>
