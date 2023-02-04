@@ -3,10 +3,10 @@ using System.Windows.Forms;
 
 namespace Elmanager.IO;
 
-internal static class KeyboardUtils
+internal static partial class KeyboardUtils
 {
-    [DllImport("user32.dll")]
-    private static extern short GetAsyncKeyState(Keys key);
+    [LibraryImport("user32.dll")]
+    private static partial short GetAsyncKeyState(Keys key);
 
     public static bool IsKeyDown(Keys key)
     {

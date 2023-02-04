@@ -1,31 +1,30 @@
 ﻿using System;
 using System.Runtime.InteropServices;
-using System.Text;
 using System.Windows.Forms;
 
 namespace Elmanager.UI;
 
-internal class FontDialogMod : FontDialog
+internal partial class FontDialogMod : FontDialog
 {
     private const int ApplyClick = 0x402;
-    private readonly IntPtr _applyCommand = new(ApplyClick);
+    private readonly nint _applyCommand = new(ApplyClick);
     public string FontStyleName { get; private set; }
     private const int WmCommand = 0x0111;
 
     [return: MarshalAs(UnmanagedType.Bool)]
-    [DllImport("user32.dll")]
-    private static extern bool PostMessage(IntPtr hWnd, int wMsg, IntPtr wParam, IntPtr lParam);
+    [LibraryImport("user32.dll")]
+    private static partial bool PostMessageW(nint hWnd, int wMsg, nint wParam, nint lParam);
 
-    [DllImport("user32.dll", SetLastError = true)]
-    private static extern uint GetDlgItemText(IntPtr hDlg, int nIdDlgItem,
-        [Out] StringBuilder lpString, int nMaxCount);
+    [LibraryImport("user32.dll", SetLastError = true)]
+    private static partial uint GetDlgItemTextW(nint hDlg, int nIdDlgItem,
+        [Out] char[] lpString, int nMaxCount);
 
     public FontDialogMod()
     {
         FontStyleName = "";
     }
 
-    protected override bool RunDialog(IntPtr hWndOwner)
+    protected override bool RunDialog(nint hWndOwner)
     {
         while (true)
         {
@@ -40,7 +39,7 @@ internal class FontDialogMod : FontDialog
         }
     }
 
-    protected override IntPtr HookProc(IntPtr hWnd, int msg, IntPtr wparam, IntPtr lparam)
+    protected override nint HookProc(nint hWnd, int msg, nint wparam, nint lparam)
     {
         switch (msg)
         {
@@ -48,9 +47,9 @@ internal class FontDialogMod : FontDialog
                 switch ((int)wparam)
                 {
                     case ApplyClick:
-                        var sb = new StringBuilder();
-                        GetDlgItemText(hWnd, 0x471, sb, 100);
-                        FontStyleName = sb.ToString();
+                        var buffer = new char[100];
+                        GetDlgItemTextW(hWnd, 0x471, buffer, buffer.Length);
+                        FontStyleName = new string(buffer);
                         break;
                     case 0x10472: // font size selected with listbox
                     case 0x50472: // font size changed with textbox
@@ -60,7 +59,7 @@ internal class FontDialogMod : FontDialog
                     case 0x411: // underline effect toggled
 
                         // simulates Apply button click
-                        PostMessage(hWnd, WmCommand, _applyCommand, IntPtr.Zero);
+                        PostMessageW(hWnd, WmCommand, _applyCommand, nint.Zero);
                         break;
                 }
 
@@ -73,7 +72,7 @@ internal class FontDialogMod : FontDialog
         }
         catch (ArgumentException)
         {
-            return IntPtr.Zero;
+            return nint.Zero;
         }
     }
 }

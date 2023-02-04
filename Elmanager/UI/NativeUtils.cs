@@ -1,12 +1,12 @@
-using System;
 using System.Runtime.InteropServices;
 
 namespace Elmanager.UI;
 
-internal static class NativeUtils
+internal static partial class NativeUtils
 {
-    [DllImport("user32.dll")]
-    public static extern bool IsChild(IntPtr hWndParent, IntPtr hWnd);
+    [return: MarshalAs(UnmanagedType.Bool)]
+    [LibraryImport("user32.dll")]
+    public static partial bool IsChild(nint hWndParent, nint hWnd);
 
     public const int WmKeydown = 0x100;
     public const int WmKeyup = 0x101;

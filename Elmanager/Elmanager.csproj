@@ -16,6 +16,7 @@
         <ApplicationIcon>Icons/Elma.ico</ApplicationIcon>
         <SatelliteResourceLanguages>en</SatelliteResourceLanguages>
         <Nullable>enable</Nullable>
+		<AllowUnsafeBlocks>true</AllowUnsafeBlocks>
     </PropertyGroup>
     <ItemGroup>
         <PackageReference Include="NetTopologySuite">
