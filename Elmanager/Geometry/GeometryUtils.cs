@@ -14,8 +14,6 @@ namespace Elmanager.Geometry;
 
 internal static class GeometryUtils
 {
-    private const int RoundingPrecision = 10;
-
     internal static IEnumerable<Polygon> ToElmaPolygons(this NetTopologySuite.Geometries.Polygon poly)
     {
         var p = new Polygon(poly.Shell);
@@ -161,151 +159,30 @@ internal static class GeometryUtils
         return result;
     }
 
-    /// <summary>
-    ///   Determines whether two line segments intersect.
-    /// </summary>
-    /// <param name = "a1">Start point of first segment</param>
-    /// <param name = "a2">End point of first segment</param>
-    /// <param name = "b1">Start point of second segment</param>
-    /// <param name = "b2">End point of second segment</param>
-    /// <returns></returns>
-    internal static bool SegmentsIntersect(Vector a1, Vector a2, Vector b1, Vector b2)
-    {
-        double b2Minusb1X = b2.X - b1.X;
-        double b2Minusb1Y = b2.Y - b1.Y;
-        double a2Minusa1X = a2.X - a1.X;
-        double a2Minusa1Y = a2.Y - a1.Y;
-        double a1Minusb1X = a1.X - b1.X;
-        double a1Minusb1Y = a1.Y - b1.Y;
-        if (a2Minusa1X == 0 && a2Minusa1Y == 0 || b2Minusb1X == 0 && b2Minusb1Y == 0)
-        {
-            return false;
-        }
+    internal static bool SegmentsIntersect(Vector a1, Vector a2, Vector b1, Vector b2) =>
+        GetIntersectionPoint(a1, a2, b1, b2) != null;
 
-        double uaT = b2Minusb1X * a1Minusb1Y - b2Minusb1Y * a1Minusb1X;
-        double ubT = a2Minusa1X * a1Minusb1Y - a2Minusa1Y * a1Minusb1X;
-        double uB = b2Minusb1Y * a2Minusa1X - b2Minusb1X * a2Minusa1Y;
-        if (Math.Round(uB, RoundingPrecision) != 0)
-        {
-            double ua = uaT / uB;
-            double ub = ubT / uB;
-            return 0 <= ua && ua <= 1 && 0 <= ub && ub <= 1;
-            //Intersection point is
-            //X = a1.x + ua * (a2.x - a1.x);
-            //Y = a1.y + ua * (a2.y - a1.y);
-        }
+    internal static Vector? GetIntersectionPoint(Vector a1, Vector a2, Vector b1, Vector b2) =>
+        new LineSegment(a1, a2).Intersection(new LineSegment(b1, b2))?.ToVector();
 
-        if (Math.Round(ubT, RoundingPrecision) != 0)
-            return false;
-        return Math.Round(uaT, RoundingPrecision) != 0;
-    }
+    internal static double DistanceFromSegment(double ax, double ay, double bx, double by, double px, double py) =>
+        new LineSegment(new Coordinate(ax, ay), new Coordinate(bx, by)).Distance(new Coordinate(px, py));
 
-    internal static Vector? GetIntersectionPoint(Vector a1, Vector a2, Vector b1, Vector b2)
-    {
-        double b2Minusb1X = b2.X - b1.X;
-        double b2Minusb1Y = b2.Y - b1.Y;
-        double a2Minusa1X = a2.X - a1.X;
-        double a2Minusa1Y = a2.Y - a1.Y;
-        double a1Minusb1X = a1.X - b1.X;
-        double a1Minusb1Y = a1.Y - b1.Y;
-        double uaT = b2Minusb1X * a1Minusb1Y - b2Minusb1Y * a1Minusb1X;
-        double ubT = a2Minusa1X * a1Minusb1Y - a2Minusa1Y * a1Minusb1X;
-        double uB = b2Minusb1Y * a2Minusa1X - b2Minusb1X * a2Minusa1Y;
-        if (Math.Round(uB, RoundingPrecision) != 0)
-        {
-            double ua = uaT / uB;
-            double ub = ubT / uB;
-            if (0 <= ua && ua <= 1 && 0 <= ub && ub <= 1)
-                return new Vector(a1.X + ua * (a2.X - a1.X), a1.Y + ua * (a2.Y - a1.Y));
-            return null;
-        }
+    internal static double DistanceFromLine(Vector a, Vector b, Vector p) =>
+        new LineSegment(a, b).DistancePerpendicular(p);
 
-        return null;
-    }
-
-    internal static double DistanceFromSegment(double ax, double ay, double bx, double by, double px, double py)
-    {
-        double aMinusBx = ax - bx;
-        double aMinusBy = ay - by;
-        double aMinusBMinusPx = aMinusBx - px;
-        double aMinusBMinusPy = aMinusBy - py;
-        double aMinusBLengthSquared = aMinusBx * aMinusBx + aMinusBy * aMinusBy;
-        double v1 = ax * aMinusBMinusPx + ay * aMinusBMinusPy;
-        double v2 = bx * px + by * py;
-        double r = (v1 + v2) / aMinusBLengthSquared;
-        if (r >= 0 && r <= 1)
-        {
-            double v3 = px - ax + r * aMinusBx;
-            double v4 = py - ay + r * aMinusBy;
-            return Math.Sqrt(v3 * v3 + v4 * v4);
-        }
-
-        double v5 = px - ax;
-        double v6 = py - ay;
-        double v7 = Math.Sqrt(v5 * v5 + v6 * v6);
-        double v8 = px - bx;
-        double v9 = py - by;
-        double v10 = Math.Sqrt(v8 * v8 + v9 * v9);
-        return Math.Min(v7, v10);
-    }
-
-    /// <summary>
-    ///   Gets the distance between a straight line and a point in a 2D plane.
-    /// </summary>
-    /// <param name = "ax">X-coordinate of the first point that defines the line.</param>
-    /// <param name = "ay">Y-coordinate of the first point that defines the line.</param>
-    /// <param name = "bx">X-coordinate of the second point that defines the line.</param>
-    /// <param name = "by">Y-coordinate of the second point that defines the line.</param>
-    /// <param name = "px">X-coordinate of the point.</param>
-    /// <param name = "py">Y-coordinate of the point.</param>
-    /// <returns>The distance between the line and the point.</returns>
-    private static double DistanceFromLine(double ax, double ay, double bx, double by, double px, double py)
-    {
-        double aMinusBx = ax - bx;
-        double aMinusBy = ay - by;
-        double aMinusBMinusPx = aMinusBx - px;
-        double aMinusBMinusPy = aMinusBy - py;
-        double aMinusBLengthSquared = aMinusBx * aMinusBx + aMinusBy * aMinusBy;
-        double v1 = ax * aMinusBMinusPx + ay * aMinusBMinusPy;
-        double v2 = bx * px + by * py;
-        double r = (v1 + v2) / aMinusBLengthSquared;
-        double v3 = px - ax + r * aMinusBx;
-        double v4 = py - ay + r * aMinusBy;
-        return Math.Sqrt(v3 * v3 + v4 * v4);
-    }
-
-    internal static double DistanceFromLine(Vector a, Vector b, Vector p)
-    {
-        return DistanceFromLine(a.X, a.Y, b.X, b.Y, p.X, p.Y);
-    }
-
-    private static Vector OrthogonalProjection(double ax, double ay, double bx, double by, double px, double py)
-    {
-        double aMinusBx = ax - bx;
-        double aMinusBy = ay - by;
-        double aMinusBMinusPx = aMinusBx - px;
-        double aMinusBMinusPy = aMinusBy - py;
-        double aMinusBLengthSquared = aMinusBx * aMinusBx + aMinusBy * aMinusBy;
-        double v1 = ax * aMinusBMinusPx + ay * aMinusBMinusPy;
-        double v2 = bx * px + by * py;
-        double r = (v1 + v2) / aMinusBLengthSquared;
-        return new Vector(ax - r * aMinusBx, ay - r * aMinusBy);
-    }
-
-    internal static Vector OrthogonalProjection(Vector a, Vector b, Vector p)
-    {
-        return OrthogonalProjection(a.X, a.Y, b.X, b.Y, p.X, p.Y);
-    }
+    internal static Vector OrthogonalProjection(Vector a, Vector b, Vector p) =>
+        new LineSegment(a, b).Project(p).ToVector();
 
     private static void Decompose(List<Polygon> polygons)
     {
         for (int i = 0; i < polygons.Count; i++)
         {
-            Polygon poly = polygons[i];
+            var poly = polygons[i];
             if (poly.Vertices.Count <= 3)
                 continue;
-            int firstDiagonal = 0;
-            int secondDiagonal = 2;
+            const int firstDiagonal = 0;
+            const int secondDiagonal = 2;
             var newPoly = new Polygon();
             for (int j = firstDiagonal; j <= secondDiagonal; j++)
                 newPoly.Add(poly.Vertices[j]);
@@ -456,6 +333,8 @@ internal static class GeometryUtils
             token.ThrowIfCancellationRequested();
         }
     }
+
+    public static Vector ToVector(this Coordinate coord) => new(coord.X, coord.Y);
 
     public const double Tolerance = 0.00000001;
 }
