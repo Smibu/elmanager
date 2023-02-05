@@ -181,7 +181,7 @@ internal class TextTool : ToolBase, IEditorTool
     public static void FinalizePolygons(List<Polygon> polys)
     {
         polys.ForEach(p => p.RemoveDuplicateVertices());
-        polys.RemoveAll(p => p.Count < 3);
+        polys.RemoveAll(p => p.Vertices.Count < 3);
         try
         {
             var isects = GeometryUtils.GetIntersectionPoints(polys);
@@ -246,7 +246,7 @@ internal class TextTool : ToolBase, IEditorTool
                     )
             );
             smoothness *= 0.5;
-        } while (polys.Any(p => p.Count < 3));
+        } while (polys.Any(p => p.Vertices.Count < 3));
 
         return (polys, smoothness);
     }
@@ -310,13 +310,7 @@ internal class TextTool : ToolBase, IEditorTool
                     geometry.Children.Add(grd.GlyphRun.BuildGeometry());
                     break;
                 case DrawingGroup dg:
-                    var c = new SvgImportOptions
-                    {
-                        FillRule = FillRule.EvenOdd,
-                        Smoothness = opts.Smoothness,
-                        UseOutlinedGeometry = opts.UseOutlinedGeometry,
-                        NeverWidenClosedPaths = opts.NeverWidenClosedPaths
-                    };
+                    var c = opts with { FillRule = FillRule.EvenOdd };
                     geometry.Children.Add(CreateGeometry(dg, c));
                     break;
             }

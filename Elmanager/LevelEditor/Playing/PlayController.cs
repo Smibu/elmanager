@@ -18,7 +18,7 @@ namespace Elmanager.LevelEditor.Playing;
 internal class PlayController
 {
     private Engine? _engine;
-    public bool PlayingStopRequested { get; set; }
+    private bool PlayingStopRequested { get; set; }
     private bool PlayingRestartRequested { get; set; }
 
     public PlaySettings Settings

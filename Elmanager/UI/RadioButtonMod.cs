@@ -5,12 +5,12 @@ namespace Elmanager.UI;
 
 internal class RadioButtonMod : RadioButton
 {
-    public KeyDownEventHandler? KeyDownEvent;
+    private KeyDownEventHandler? _keyDownEvent;
 
     internal new event KeyDownEventHandler KeyDown
     {
-        add => KeyDownEvent = (KeyDownEventHandler)Delegate.Combine(KeyDownEvent, value);
-        remove => KeyDownEvent = (KeyDownEventHandler?)Delegate.Remove(KeyDownEvent, value);
+        add => _keyDownEvent = (KeyDownEventHandler)Delegate.Combine(_keyDownEvent, value);
+        remove => _keyDownEvent = (KeyDownEventHandler?)Delegate.Remove(_keyDownEvent, value);
     }
 
     protected override bool IsInputKey(Keys keyData)
@@ -21,7 +21,7 @@ internal class RadioButtonMod : RadioButton
             case Keys.Down:
             case Keys.Left:
             case Keys.Right:
-                KeyDownEvent?.Invoke(null, new KeyEventArgs(keyData));
+                _keyDownEvent?.Invoke(null, new KeyEventArgs(keyData));
                 return true;
             case Keys.Tab:
                 return true;
@@ -38,7 +38,7 @@ internal class RadioButtonMod : RadioButton
             if (pressedKey != Keys.Up && pressedKey != Keys.Down && pressedKey != Keys.Left &&
                 pressedKey != Keys.Right)
             {
-                KeyDownEvent?.Invoke(null, new KeyEventArgs(pressedKey));
+                _keyDownEvent?.Invoke(null, new KeyEventArgs(pressedKey));
             }
 
             return;

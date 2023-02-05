@@ -1,9 +1,8 @@
 ﻿using System;
-using System.Collections;
 using System.Drawing;
 using Elmanager.Geometry;
 using Elmanager.Lev;
-using vectrast;
+using Elmanager.Vectrast;
 
 namespace Elmanager.LevelEditor;
 
@@ -15,10 +14,10 @@ internal static class BitmapImporter
         var vr = new VectRast();
         byte[,] pixelOn;
         Bitmap bmp;
-        var transformMatrix = Matrix2D.scaleM(1, -1);
+        var transformMatrix = Matrix2D.ScaleM(1, -1);
         try
         {
-            vr.loadAsBmp(imageFileName, out bmp, out pixelOn, 1);
+            vr.LoadAsBmp(imageFileName, out bmp, out pixelOn, 1);
         }
         catch (ArgumentException)
         {
@@ -27,37 +26,37 @@ internal static class BitmapImporter
 
         try
         {
-            vr.collapseVectors(vr.createVectors(pixelOn, bmp));
+            vr.CollapseVectors(vr.CreateVectors(pixelOn, bmp));
         }
         catch (Exception e)
         {
             throw new ImportException(e.Message);
         }
 
-        transformMatrix = Matrix2D.translationM(-bmp.Width / 2.0, -bmp.Height / 2.0) * transformMatrix;
-        transformMatrix = transformMatrix * Matrix2D.scaleM(0.1, 0.1);
+        transformMatrix = Matrix2D.TranslationM(-bmp.Width / 2.0, -bmp.Height / 2.0) * transformMatrix;
+        transformMatrix = transformMatrix * Matrix2D.ScaleM(0.1, 0.1);
         bmp.Dispose();
 
         try
         {
-            vr.transformVectors(transformMatrix);
+            vr.TransformVectors(transformMatrix);
         }
         catch (Exception e)
         {
             throw new ImportException(e.Message);
         }
 
-        if (vr.polygons.Count == 0)
+        if (vr.Polygons.Count == 0)
         {
             throw new ImportException($"Failed to vectorize the image file {imageFileName}.");
         }
 
-        foreach (ArrayList polygon in vr.polygons)
+        foreach (var polygon in vr.Polygons)
         {
             var elmaPolygon = new Polygon();
-            foreach (DoubleVector2 vertex in polygon)
+            foreach (var vertex in polygon)
             {
-                elmaPolygon.Add(new Vector(vertex.x, vertex.y));
+                elmaPolygon.Add(new Vector(vertex.X, vertex.Y));
             }
 
             lev.Polygons.Add(elmaPolygon);

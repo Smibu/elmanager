@@ -341,7 +341,7 @@ internal class SelectionTool : ToolBase, IEditorTool
                 ChangeCursorToHand();
                 ei.Polygon.Mark = PolygonMark.Highlight;
                 LevEditor.HighlightLabel.Text = ei.Polygon.IsGrass ? "Grass" : "Ground";
-                LevEditor.HighlightLabel.Text += " polygon, " + ei.Polygon.Count + " vertices";
+                LevEditor.HighlightLabel.Text += " polygon, " + ei.Polygon.Vertices.Count + " vertices";
             }
             else if (nearestVertex is NearestVertexInfo.VertexInfo vi)
             {
@@ -354,7 +354,7 @@ internal class SelectionTool : ToolBase, IEditorTool
                 }
                 LevEditor.HighlightLabel.Text = vi.Polygon.IsGrass ? "Grass" : "Ground";
                 LevEditor.HighlightLabel.Text += " polygon, vertex " + (vi.Index + 1) + " of " +
-                                                 vi.Polygon.Count + " vertices";
+                                                 vi.Polygon.Vertices.Count + " vertices";
             }
             else if (nearestObject >= 0)
             {

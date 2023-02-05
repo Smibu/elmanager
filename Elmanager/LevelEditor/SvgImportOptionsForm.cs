@@ -9,7 +9,8 @@ namespace Elmanager.LevelEditor;
 internal partial class SvgImportOptionsForm : FormMod
 {
     private const double Pow = 1.09648;
-    public SvgImportOptionsForm()
+
+    private SvgImportOptionsForm()
     {
         InitializeComponent();
     }
@@ -22,7 +23,7 @@ internal partial class SvgImportOptionsForm : FormMod
         return null;
     }
 
-    public SvgImportOptions Result
+    private SvgImportOptions Result
     {
         get => new()
         {
@@ -31,7 +32,7 @@ internal partial class SvgImportOptionsForm : FormMod
             UseOutlinedGeometry = useOutlinedGeometryBox.Checked,
             NeverWidenClosedPaths = neverWidenClosedPathsBox.Checked
         };
-        set
+        init
         {
             smoothnessBar.Value = (int)Math.Round(-Math.Log(value.Smoothness / 10) / Math.Log(Pow));
             useOutlinedGeometryBox.Checked = value.UseOutlinedGeometry;

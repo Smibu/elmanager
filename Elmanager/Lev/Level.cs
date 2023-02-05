@@ -22,7 +22,7 @@ internal class Level
     internal const double HeadDifferenceFromLeftWheelY = 1.67;
     internal const int MaximumObjectCount = 252;
     internal const int MaximumPolygonCount = 1200;
-    internal const int MaximumPolygonVertexCount = 1000;
+    private const int MaximumPolygonVertexCount = 1000;
     internal const double MaximumSize = 188.0;
     internal const int MaximumGroundVertexCount = 20000;
     internal const int MaximumPictureTextureCount = 5000;
@@ -36,7 +36,7 @@ internal class Level
     private const int Top10NameSize = 15;
     private const int Top10Entries = 10;
 
-    internal static readonly string[] InternalTitles =
+    private static readonly string[] InternalTitles =
     {
         "Warm Up", "Flat Track", "Twin Peaks", "Over and Under",
         "Uphill Battle", "Long Haul", "Hi Flyer", "Tag",
@@ -74,7 +74,7 @@ internal class Level
     private double _polygonYMin;
     private double _polygonXMax;
     private double _polygonYMax;
-    public string LevStartMagic { get; private set; } = "POT14";
+    private string LevStartMagic { get; set; } = "POT14";
 
     internal Level()
     {
@@ -295,18 +295,18 @@ internal class Level
     public int GrassPolygonCount => Polygons.Count(x => x.IsGrass);
 
     public int GrassVertexCount =>
-        Polygons.Where(x => x.IsGrass).Sum(x => x.Count);
+        Polygons.Where(x => x.IsGrass).Sum(x => x.Vertices.Count);
 
     public int GroundPolygonCount => Polygons.Count(x => !x.IsGrass);
 
-    public int GroundVertexCount => Polygons.Where(x => !x.IsGrass).Sum(x => x.Count);
+    public int GroundVertexCount => Polygons.Where(x => !x.IsGrass).Sum(x => x.Vertices.Count);
 
     internal bool HasTooLargePolygons
     {
         get
         {
             var foundTooLarge = false;
-            foreach (var x in Polygons.Where(x => x.Count > MaximumPolygonVertexCount))
+            foreach (var x in Polygons.Where(x => x.Vertices.Count > MaximumPolygonVertexCount))
             {
                 x.Mark = PolygonMark.Erroneous;
                 foundTooLarge = true;
@@ -321,7 +321,7 @@ internal class Level
         var result = new List<Vector>();
         foreach (var p in Polygons)
         {
-            for (var i = 0; i < p.Count; i++)
+            for (var i = 0; i < p.Vertices.Count; i++)
             {
                 if ((p[i] - p[i + 1]).Length < 0.00000001)
                 {
@@ -344,10 +344,10 @@ internal class Level
 
     internal bool HasTooManyVertices => GroundVertexCount > MaximumGroundVertexCount;
 
-    internal bool HasTopologyErrors => HasTooLargePolygons || HasTooManyObjects || HasTooFewObjects ||
-                                       HasTooManyPolygons || HasTooManyVertices || HasTooManyPictures ||
-                                       WheelLiesOnEdge || HasTexturesOutOfBounds || HeadTouchesGround || TooTall ||
-                                       TooWide || GetIntersectionPoints().Count > 0 || GetTooShortEdges().Count > 0;
+    private bool HasTopologyErrors => HasTooLargePolygons || HasTooManyObjects || HasTooFewObjects ||
+                                      HasTooManyPolygons || HasTooManyVertices || HasTooManyPictures ||
+                                      WheelLiesOnEdge || HasTexturesOutOfBounds || HeadTouchesGround || TooTall ||
+                                      TooWide || GetIntersectionPoints().Count > 0 || GetTooShortEdges().Count > 0;
 
     internal bool HasTooManyPictures => PictureTextureCount > MaximumPictureTextureCount;
 
@@ -415,7 +415,7 @@ internal class Level
 
     internal bool TooWide => _polygonXMax - _polygonXMin >= MaximumSize;
 
-    internal int VertexCount => Polygons.Sum(x => x.Count);
+    internal int VertexCount => Polygons.Sum(x => x.Vertices.Count);
 
     internal double XMax { get; private set; }
 
@@ -431,11 +431,11 @@ internal class Level
 
     private double PolygonSum => Polygons.Sum(x => x.Vertices.Sum(v => v.X - v.Y));
 
-    internal bool IsElmaLevel => LevStartMagic == "POT14";
+    private bool IsElmaLevel => LevStartMagic == "POT14";
 
     internal bool IsAcrossLevel => LevStartMagic == "POT06";
 
-    internal bool IsLeb => LevStartMagic == "@@^!@";
+    private bool IsLeb => LevStartMagic == "@@^!@";
 
     internal bool HasTooFewObjects => Objects.Count < 2;
 
@@ -499,13 +499,13 @@ internal class Level
         UpdateBounds();
     }
 
-    internal bool IsObjectInsideGround(LevObject o)
+    private bool IsObjectInsideGround(LevObject o)
     {
         return !Polygons.Any(polygon => polygon.DistanceFromPoint(o.Position) < ElmaRenderer.ObjectRadius) &&
                IsPointInGround(o.Position);
     }
 
-    internal bool IsPointInGround(Vector p)
+    private bool IsPointInGround(Vector p)
     {
         var clipping = Polygons.Count(x => !x.IsGrass && x.AreaHasPoint(p));
         return clipping % 2 == 0;
@@ -578,7 +578,7 @@ internal class Level
         Transform(mirrorMatrix, v => v.Mark == VectorMark.Selected);
     }
 
-    internal void Transform(Matrix matrix, Func<Vector, bool> selector)
+    private void Transform(Matrix matrix, Func<Vector, bool> selector)
     {
         foreach (var x in Polygons)
         {
@@ -623,7 +623,7 @@ internal class Level
             Top10.Clear();
         }
 
-        levelFile.AddRange(Encoding.ASCII.GetBytes("POT14"));
+        levelFile.AddRange("POT14"u8.ToArray());
         var rnd = new Random();
         if (saveAsFresh)
         {

@@ -8,7 +8,7 @@ internal class LevObject : IPositionable
     internal int AnimationNumber;
     internal AppleType AppleType;
     public Vector Position { get; set; }
-    internal ObjectType Type;
+    internal readonly ObjectType Type;
 
     internal LevObject(Vector position, ObjectType type, AppleType appleType, int animNum = 1)
     {

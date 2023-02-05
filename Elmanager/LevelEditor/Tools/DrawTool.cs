@@ -95,9 +95,9 @@ internal class DrawTool : ToolBase, IEditorTool
             while (!(_mouseTrip < scaledStep))
                 _mouseTrip -= scaledStep;
             _currentPolygon.Add(p);
-            if (_currentPolygon.Count == 3)
+            if (_currentPolygon.Vertices.Count == 3)
                 Lev.Polygons.Add(_currentPolygon);
-            if (_currentPolygon.Count > 2)
+            if (_currentPolygon.Vertices.Count > 2)
                 _currentPolygon.UpdateDecomposition();
         }
     }
@@ -109,7 +109,7 @@ internal class DrawTool : ToolBase, IEditorTool
     public void MouseUp()
     {
         if (_currentPolygon is null) return;
-        if (_currentPolygon.Count > 2)
+        if (_currentPolygon.Vertices.Count > 2)
         {
             _currentPolygon.UpdateDecomposition();
             LevEditor.SetModified(LevModification.Ground);

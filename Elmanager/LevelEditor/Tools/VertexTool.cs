@@ -32,8 +32,8 @@ internal class VertexTool : ToolBase, IEditorTool
             "LMouse: create vertex. Click near an edge of a polygon to add vertices to it.";
         if (_currentPolygon is { })
         {
-            var lngth = (_currentPolygon.Vertices[_currentPolygon.Count - 1] -
-                         _currentPolygon.Vertices[_currentPolygon.Count - 2]).Length;
+            var lngth = (_currentPolygon.Vertices[^1] -
+                         _currentPolygon.Vertices[^2]).Length;
             LevEditor.InfoLabel.Text += $" Edge length: {lngth:F3}";
         }
     }
@@ -116,7 +116,7 @@ internal class VertexTool : ToolBase, IEditorTool
                 else
                 {
                     _currentPolygon.Add(CurrentPos);
-                    if (_currentPolygon.Count == 3)
+                    if (_currentPolygon.Vertices.Count == 3)
                     {
                         Lev.Polygons.Add(_currentPolygon);
                         _currentPolygon.UpdateDecomposition(false);
@@ -136,8 +136,8 @@ internal class VertexTool : ToolBase, IEditorTool
         if (_currentPolygon is { })
         {
             AdjustForGrid(ref CurrentPos);
-            _currentPolygon.Vertices[_currentPolygon.Count - 1] = CurrentPos;
-            if (_currentPolygon.Count > 2)
+            _currentPolygon.Vertices[^1] = CurrentPos;
+            if (_currentPolygon.Vertices.Count > 2)
                 _currentPolygon.UpdateDecomposition(false);
             UpdateHelp();
         }
@@ -171,7 +171,7 @@ internal class VertexTool : ToolBase, IEditorTool
         if (_currentPolygon is { })
         {
             _currentPolygon.RemoveLastVertex();
-            if (_currentPolygon.Count > 2)
+            if (_currentPolygon.Vertices.Count > 2)
             {
                 _currentPolygon.UpdateDecomposition();
                 LevEditor.SetModified(_currentPolygon.IsGrass ? LevModification.Decorations : LevModification.Ground);

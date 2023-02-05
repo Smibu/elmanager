@@ -242,7 +242,7 @@ internal class ReplayController : IDisposable
 
     internal ElmaRenderer Renderer { get; }
 
-    public SceneSettings SceneSettings { get; } = new();
+    private SceneSettings SceneSettings { get; } = new();
 
     internal Vector GetBikeCoordinates()
     {

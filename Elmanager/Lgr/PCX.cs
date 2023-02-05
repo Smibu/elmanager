@@ -6,35 +6,32 @@ using System.Runtime.InteropServices;
 
 namespace Elmanager.Lgr;
 
-/// <summary>
-///   Reads PCX files.
-/// </summary>
 internal class Pcx
 {
-    internal byte BitsPerPixel;
-    internal short BytesPerLine;
-    internal byte[] Colormap = new byte[48];
-    internal byte Encoding;
-    internal short HDpi;
-    internal int Height;
-    internal int HscreenSize;
-    internal byte Manufacturer;
-    internal byte NumPlanes;
-    internal short PaletteInfo;
-    internal int[] PixelData;
-    internal short VDpi;
-    internal byte Version;
-    internal int VscreenSize;
+    private byte BitsPerPixel { get; }
+    private short BytesPerLine { get; }
+    private byte[] Colormap { get; } = new byte[48];
+    private byte Encoding { get; }
+    private short HDpi { get; }
+    private int Height { get; }
+    private int HscreenSize { get; }
+    private byte Manufacturer { get; }
+    private byte NumPlanes { get; }
+    private short PaletteInfo { get; }
+    private int[] PixelData { get; }
+    private short VDpi { get; }
+    private byte Version { get; }
+    private int VscreenSize { get; }
 
-    internal int Width;
-    internal short Xmax;
-    internal short Xmin;
-    internal short Ymax;
-    internal short Ymin;
+    private int Width { get; }
+    private short Xmax { get; }
+    private short Xmin { get; }
+    private short Ymax { get; }
+    private short Ymin { get; }
 
     internal Pcx(Stream pcxStream)
     {
-        BinaryReader pb = new BinaryReader(pcxStream);
+        var pb = new BinaryReader(pcxStream);
         // pcxStream.Seek(0, SeekOrigin.Begin);
         Manufacturer = pb.ReadByte();
         Version = pb.ReadByte();
@@ -56,23 +53,22 @@ internal class Pcx
         pb.BaseStream.Seek(54, SeekOrigin.Current);
         Width = Xmax - Xmin + 1;
         Height = Ymax - Ymin + 1;
-        int totalBytes = NumPlanes * BytesPerLine;
-        byte[] uncompressedData = new byte[totalBytes * Height];
-        var uncompressedDataPtr = uncompressedData;
-        int total = 0;
-        for (int i = 0; i < Height; i++)
+        var totalBytes = NumPlanes * BytesPerLine;
+        var uncompressedData = new byte[totalBytes * Height];
+        var total = 0;
+        for (var i = 0; i < Height; i++)
         {
-            int subTotal = 0;
+            var subTotal = 0;
             while (subTotal != totalBytes)
             {
-                byte data = pb.ReadByte();
+                var data = pb.ReadByte();
                 if (data >= 192)
                 {
-                    int count = data & 0x3F;
+                    var count = data & 0x3F;
                     data = pb.ReadByte();
-                    for (int k = 1; k <= count; k++)
+                    for (var k = 1; k <= count; k++)
                     {
-                        uncompressedDataPtr[total] = data;
+                        uncompressedData[total] = data;
                         total++;
                     }
 
@@ -80,7 +76,7 @@ internal class Pcx
                 }
                 else
                 {
-                    uncompressedDataPtr[total] = data;
+                    uncompressedData[total] = data;
                     subTotal++;
                     total++;
                 }
@@ -90,10 +86,10 @@ internal class Pcx
         pb.ReadByte();
         if (Version == 5)
         {
-            int[] palette = new int[256];
+            var palette = new int[256];
             PixelData = new int[Width * Height];
 
-            for (int i = 0; i < 256; i++)
+            for (var i = 0; i < 256; i++)
             {
                 int red = pb.ReadByte();
                 int green = pb.ReadByte();
@@ -101,9 +97,9 @@ internal class Pcx
                 palette[i] = (red << 16) + (green << 8) + (blue << 0);
             }
 
-            for (int i = 0; i < Height; i++)
-                for (int j = 0; j < Width; j++)
-                    PixelData[i * Width + j] = palette[uncompressedDataPtr[i * BytesPerLine + j]];
+            for (var i = 0; i < Height; i++)
+                for (var j = 0; j < Width; j++)
+                    PixelData[i * Width + j] = palette[uncompressedData[i * BytesPerLine + j]];
         }
         else
             throw new Exception("This version of PCX file is not supported!");
@@ -112,14 +108,10 @@ internal class Pcx
         // pb.Close();
     }
 
-    /// <summary>
-    ///   Converts this PCX instance to a System.Drawing.Bitmap.
-    /// </summary>
-    /// <returns>This instance converted to a System.Drawing.Bitmap.</returns>
     internal Bitmap ToBitmap()
     {
-        Bitmap bmp = new Bitmap(Width, Height, PixelFormat.Format24bppRgb);
-        BitmapData bmpData = bmp.LockBits(
+        var bmp = new Bitmap(Width, Height, PixelFormat.Format24bppRgb);
+        var bmpData = bmp.LockBits(
             new Rectangle(0, 0, bmp.Width, bmp.Height),
             ImageLockMode.WriteOnly, PixelFormat.Format32bppArgb);
         Marshal.Copy(PixelData, 0, bmpData.Scan0, PixelData.Length);

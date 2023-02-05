@@ -4,7 +4,7 @@ namespace Elmanager.Application;
 
 internal sealed partial class LicenseForm : FormMod
 {
-    public LicenseForm()
+    private LicenseForm()
     {
         InitializeComponent();
     }

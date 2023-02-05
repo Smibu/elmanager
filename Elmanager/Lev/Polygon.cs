@@ -63,8 +63,6 @@ internal class Polygon
         return new(Vertices.Select(v => new Vector(v.X, -v.Y)), IsGrass);
     }
 
-    internal int Count => Vertices.Count;
-
     internal IEnumerable<Vector> VerticesRing
     {
         get
@@ -81,7 +79,7 @@ internal class Polygon
     internal Vector this[int index] =>
         index < 0 ? Vertices[Vertices.Count + index] : Vertices[index % Vertices.Count];
 
-    internal double SignedArea
+    private double SignedArea
     {
         get
         {
@@ -140,7 +138,7 @@ internal class Polygon
         }
     }
 
-    internal bool IsSimple
+    private bool IsSimple
     {
         get
         {
@@ -173,7 +171,7 @@ internal class Polygon
         Decomposition = GeometryUtils.Decompose(this);
         if (updateGrass && IsGrass)
         {
-            double longest = Math.Abs(Vertices[Vertices.Count - 1].X - Vertices[0].X);
+            double longest = Math.Abs(Vertices[^1].X - Vertices[0].X);
             int longestIndex = Vertices.Count - 1;
             for (int i = 0; i < Vertices.Count - 1; i++)
             {
@@ -297,7 +295,7 @@ internal class Polygon
 
     internal Vector GetLastVertex()
     {
-        return Vertices[Vertices.Count - 1];
+        return Vertices[^1];
     }
 
     internal void MarkVectorsAs(VectorMark mark)
@@ -439,7 +437,7 @@ internal class Polygon
     internal Polygon Unsmoothen(double angle, double length, bool onlySelected)
     {
         var unsmoothPoly = new Polygon(this);
-        if (unsmoothPoly.Count == 3)
+        if (unsmoothPoly.Vertices.Count == 3)
             return unsmoothPoly;
         for (int i = 0; i < unsmoothPoly.Vertices.Count; i++)
         {
@@ -458,12 +456,12 @@ internal class Polygon
                     (unsmoothPoly[i + 1] - unsmoothPoly[i]).AngleBetween(
                         unsmoothPoly[i + 2] - unsmoothPoly[i + 1])) <
                 angle)
-                unsmoothPoly.Vertices.RemoveAt((i + 1) % unsmoothPoly.Count);
+                unsmoothPoly.Vertices.RemoveAt((i + 1) % unsmoothPoly.Vertices.Count);
             else if ((unsmoothPoly[i + 1] - unsmoothPoly[i]).Length < length)
-                unsmoothPoly.Vertices.RemoveAt((i + 1) % unsmoothPoly.Count);
+                unsmoothPoly.Vertices.RemoveAt((i + 1) % unsmoothPoly.Vertices.Count);
             else if ((unsmoothPoly[i + 2] - unsmoothPoly[i + 1]).Length < length)
-                unsmoothPoly.Vertices.RemoveAt((i + 1) % unsmoothPoly.Count);
-            if (unsmoothPoly.Count == 3)
+                unsmoothPoly.Vertices.RemoveAt((i + 1) % unsmoothPoly.Vertices.Count);
+            if (unsmoothPoly.Vertices.Count == 3)
                 break;
         }
 
@@ -565,7 +563,7 @@ internal class Polygon
             var result = new List<Polygon> { new() };
             int k = 0;
             bool isBeginning = true;
-            while (k != clone.Count)
+            while (k != clone.Vertices.Count)
             {
                 if (clone.Vertices[k].Mark == VectorMark.Selected)
                 {
@@ -584,13 +582,13 @@ internal class Polygon
                         cutVector = cutVector / cutVector.Length * Math.Min(distance1, distance2) / 2;
                     if (!isBeginning)
                     {
-                        result[result.Count - 1].Add(clone.Vertices[k] - cutVector);
+                        result[^1].Add(clone.Vertices[k] - cutVector);
                         result[0].Add(clone.Vertices[k] + cutVector);
                     }
                     else
                     {
                         result.Add(new Polygon());
-                        result[result.Count - 1].Add(clone.Vertices[k] + cutVector);
+                        result[^1].Add(clone.Vertices[k] + cutVector);
                         result[0].Add(clone.Vertices[k] - cutVector);
                     }
 
@@ -601,14 +599,14 @@ internal class Polygon
                     if (isBeginning)
                         result[0].Add(clone.Vertices[k]);
                     else
-                        result[result.Count - 1].Add(clone.Vertices[k]);
+                        result[^1].Add(clone.Vertices[k]);
                 }
 
                 k++;
             }
 
             result.ForEach(p => p.IsGrass = IsGrass);
-            return result.Any(polygon => polygon.Count < 3) ? null : result;
+            return result.Any(polygon => polygon.Vertices.Count < 3) ? null : result;
         }
 
         return null;

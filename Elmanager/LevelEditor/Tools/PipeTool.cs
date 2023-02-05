@@ -163,7 +163,7 @@ internal class PipeTool : ToolBase, IEditorTool
                 {
                     _pipeSpec.Pipeline.RemoveLastVertex();
                     UpdatePipeSpec();
-                    if (_pipeSpec.Pipeline.Count > 1)
+                    if (_pipeSpec.Pipeline.Vertices.Count > 1)
                     {
                         Lev.Polygons.Add(_pipeSpec.Pipe);
                         Lev.Objects.AddRange(_pipeSpec.Apples);
@@ -187,7 +187,7 @@ internal class PipeTool : ToolBase, IEditorTool
         AdjustForGrid(ref CurrentPos);
         if (_pipeSpec is { })
         {
-            _pipeSpec.Pipeline.Vertices[_pipeSpec.Pipeline.Vertices.Count - 1] = CurrentPos;
+            _pipeSpec.Pipeline.Vertices[^1] = CurrentPos;
             UpdatePipeSpec();
         }
     }

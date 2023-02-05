@@ -235,7 +235,7 @@ internal class SmoothenTool : ToolBase, IEditorTool
 
     private static bool IsSmoothable(Polygon p)
     {
-        for (int i = 0; i < p.Count; i++)
+        for (int i = 0; i < p.Vertices.Count; i++)
             if (p[i].Mark == VectorMark.Selected && p[i + 1].Mark == VectorMark.Selected &&
                 p[i + 2].Mark == VectorMark.Selected)
                 return true;

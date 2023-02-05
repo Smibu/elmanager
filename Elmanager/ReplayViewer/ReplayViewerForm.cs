@@ -34,7 +34,7 @@ internal partial class ReplayViewerForm : FormMod
     private bool _zooming;
     private ReplayController _replayController = null!;
     private readonly TypedObjectListView<PlayListObject> _typedPlayList;
-    private TaskCompletionSource _tcs = new();
+    private readonly TaskCompletionSource _tcs = new();
     private readonly FullScreenController _fullScreenController;
 
     public ReplayViewerForm()

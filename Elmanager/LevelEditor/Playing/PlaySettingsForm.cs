@@ -8,7 +8,7 @@ namespace Elmanager.LevelEditor.Playing;
 internal partial class PlaySettingsForm : FormMod
 {
     private Button? _currButton;
-    public PlaySettings Settings { get; set; }
+    public PlaySettings Settings { get; }
 
     public PlaySettingsForm(PlaySettings settings)
     {

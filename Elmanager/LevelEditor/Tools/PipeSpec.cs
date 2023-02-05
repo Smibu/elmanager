@@ -23,7 +23,7 @@ internal class PipeSpec
     {
         List<LevObject> apples = new List<LevObject>();
         double currentDistanceToApple = distance;
-        for (int i = 0; i <= Pipeline.Count - 2; i++)
+        for (int i = 0; i <= Pipeline.Vertices.Count - 2; i++)
         {
             Vector z = Pipeline[i + 1] - Pipeline[i];
             Vector zUnit = z.Unit();
@@ -54,7 +54,7 @@ internal class PipeSpec
         double angle = (pipeLine[1] - pipeLine[0]).Angle;
         p.Add(pipeLine[0] + new Vector(angle + 90) * pipeRadius);
         p.Add(pipeLine[0] - new Vector(angle + 90) * pipeRadius);
-        for (int i = 1; i <= pipeLine.Count - 2; i++)
+        for (int i = 1; i <= pipeLine.Vertices.Count - 2; i++)
         {
             angle = (pipeLine[i + 1] - pipeLine[i]).Angle;
             Vector point = GeometryUtils.FindPoint(pipeLine[i - 1], pipeLine[i], pipeLine[i + 1], -pipeRadius);
@@ -63,7 +63,7 @@ internal class PipeSpec
 
         p.Add(pipeLine.GetLastVertex() - new Vector(angle + 90) * pipeRadius);
         p.Add(pipeLine.GetLastVertex() + new Vector(angle + 90) * pipeRadius);
-        for (int i = pipeLine.Count - 2; i >= 1; i--)
+        for (int i = pipeLine.Vertices.Count - 2; i >= 1; i--)
         {
             Vector point = GeometryUtils.FindPoint(pipeLine[i - 1], pipeLine[i], pipeLine[i + 1], pipeRadius);
             p.Add(point);
@@ -78,7 +78,7 @@ internal class PipeSpec
                 break;
             case PipeMode.ApplesAmount:
                 double pipelineLength = 0.0;
-                for (int i = 0; i <= pipeLine.Count - 2; i++)
+                for (int i = 0; i <= pipeLine.Vertices.Count - 2; i++)
                     pipelineLength += (pipeLine[i + 1] - pipeLine[i]).Length;
                 pipelineLength += 0.1;
                 apples = CalculateApples(pipelineLength / (appleAmount + 1));

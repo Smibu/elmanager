@@ -30,7 +30,7 @@ internal struct Matrix
         return base.GetHashCode();
     }
 
-    internal Matrix(double m11, double m12, double m21, double m22, double offsetX, double offsetY)
+    private Matrix(double m11, double m12, double m21, double m22, double offsetX, double offsetY)
     {
         _m11 = m11;
         _m12 = m12;
@@ -59,7 +59,7 @@ internal struct Matrix
         return MultiplyMatrix(trans1, trans2);
     }
 
-    internal static Matrix CreateRotationRadians(double angle, double centerX = 0, double centerY = 0)
+    private static Matrix CreateRotationRadians(double angle, double centerX = 0, double centerY = 0)
     {
         double sin = Math.Sin(angle);
         double cos = Math.Cos(angle);
@@ -77,7 +77,7 @@ internal struct Matrix
         return new(1, 0, 0, 1, offsetX, offsetY);
     }
 
-    internal static Matrix MultiplyMatrix(Matrix matrix1, Matrix matrix2)
+    private static Matrix MultiplyMatrix(Matrix matrix1, Matrix matrix2)
     {
         return new(
             matrix1._m11 * matrix2._m11 + matrix1._m12 * matrix2._m21,
@@ -90,7 +90,7 @@ internal struct Matrix
             matrix2._offsetY);
     }
 
-    internal Vector MultiplyVector(Vector v)
+    private Vector MultiplyVector(Vector v)
     {
         return new() { X = v.X * _m11 + v.Y * _m21 + _offsetX, Y = v.Y * _m22 + v.X * _m12 + _offsetY, Mark = v.Mark };
     }

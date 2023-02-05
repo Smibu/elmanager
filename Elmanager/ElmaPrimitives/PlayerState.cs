@@ -2,7 +2,7 @@ using Elmanager.Rec;
 
 namespace Elmanager.ElmaPrimitives;
 
-internal struct PlayerState
+internal readonly struct PlayerState
 {
     public PlayerState(double globalBodyX, double globalBodyY, double leftWheelX, double leftWheelY, double rightWheelX, double rightWheelY, double leftWheelRotation, double rightWheelRotation, double headX, double headY, double bikeRotation, Direction direction, double armRotation)
     {

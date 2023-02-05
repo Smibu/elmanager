@@ -12,8 +12,8 @@ namespace Elmanager.Rec;
 internal class Player
 {
     internal readonly int Apples; // Number of appletakes and bugapples
-    internal readonly List<PlayerEvent<ReplayEventType>> RawEvents = new();
-    internal readonly List<PlayerEvent<LogicalEventType>> Events = new();
+    private readonly List<PlayerEvent<ReplayEventType>> RawEvents = new();
+    private readonly List<PlayerEvent<LogicalEventType>> Events = new();
     internal readonly int GroundTouches;
     internal readonly int LeftVolts;
     internal readonly int RightVolts;

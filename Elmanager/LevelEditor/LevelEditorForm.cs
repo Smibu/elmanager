@@ -244,13 +244,13 @@ internal partial class LevelEditorForm : FormMod, IMessageFilter
         DoRedrawScene();
     }
 
-    internal void ActivateCurrentAndRedraw()
+    private void ActivateCurrentAndRedraw()
     {
         CurrentTool.Activate();
         RedrawScene();
     }
 
-    internal void InactivateCurrentAndRedraw()
+    private void InactivateCurrentAndRedraw()
     {
         CurrentTool.InActivate();
         RedrawScene();
@@ -561,7 +561,7 @@ internal partial class LevelEditorForm : FormMod, IMessageFilter
                 }
             }
 
-            if (copy.Count > 2)
+            if (copy.Vertices.Count > 2)
             {
                 copiedPolygons.Add(copy);
                 copy.IsGrass = x.IsGrass;
@@ -2366,7 +2366,7 @@ internal partial class LevelEditorForm : FormMod, IMessageFilter
         {
             var first = Lev.Polygons.First().Clone();
             Lev.Polygons.ForEach(p => p.Vertices.RemoveAll(v => v.Mark == VectorMark.Selected));
-            Lev.Polygons.RemoveAll(p => p.Count < 3);
+            Lev.Polygons.RemoveAll(p => p.Vertices.Count < 3);
             if (Lev.Polygons.Count == 0)
             {
                 Lev.Polygons.Add(first);

@@ -93,7 +93,7 @@ internal static class GeometryUtils
         bool p1CCurrent = true;
         var p1ConnectVector = new Vector();
         var p2ConnectVector = new Vector();
-        while (!(p1Index == 0 && p1CCurrent && result.Count > 0))
+        while (!(p1Index == 0 && p1CCurrent && result.Vertices.Count > 0))
         {
             if (p1CCurrent)
             {
@@ -140,7 +140,7 @@ internal static class GeometryUtils
                 }
 
                 p1Index++;
-                p1Index = p1Index % p1C.Count;
+                p1Index = p1Index % p1C.Vertices.Count;
             }
             else
             {
@@ -259,7 +259,7 @@ internal static class GeometryUtils
     /// <param name = "px">X-coordinate of the point.</param>
     /// <param name = "py">Y-coordinate of the point.</param>
     /// <returns>The distance between the line and the point.</returns>
-    internal static double DistanceFromLine(double ax, double ay, double bx, double by, double px, double py)
+    private static double DistanceFromLine(double ax, double ay, double bx, double by, double px, double py)
     {
         double aMinusBx = ax - bx;
         double aMinusBy = ay - by;
@@ -279,7 +279,7 @@ internal static class GeometryUtils
         return DistanceFromLine(a.X, a.Y, b.X, b.Y, p.X, p.Y);
     }
 
-    internal static Vector OrthogonalProjection(double ax, double ay, double bx, double by, double px, double py)
+    private static Vector OrthogonalProjection(double ax, double ay, double bx, double by, double px, double py)
     {
         double aMinusBx = ax - bx;
         double aMinusBy = ay - by;
@@ -297,12 +297,12 @@ internal static class GeometryUtils
         return OrthogonalProjection(a.X, a.Y, b.X, b.Y, p.X, p.Y);
     }
 
-    internal static void Decompose(List<Polygon> polygons)
+    private static void Decompose(List<Polygon> polygons)
     {
         for (int i = 0; i < polygons.Count; i++)
         {
             Polygon poly = polygons[i];
-            if (poly.Count <= 3)
+            if (poly.Vertices.Count <= 3)
                 continue;
             int firstDiagonal = 0;
             int secondDiagonal = 2;

@@ -5,12 +5,12 @@ namespace Elmanager.UI;
 
 internal class TabControlMod : TabControl
 {
-    public KeyDownEventHandler? KeyDownEvent;
+    private KeyDownEventHandler? _keyDownEvent;
 
     internal new event KeyDownEventHandler KeyDown
     {
-        add => KeyDownEvent = (KeyDownEventHandler)Delegate.Combine(KeyDownEvent, value);
-        remove => KeyDownEvent = (KeyDownEventHandler?)Delegate.Remove(KeyDownEvent, value);
+        add => _keyDownEvent = (KeyDownEventHandler)Delegate.Combine(_keyDownEvent, value);
+        remove => _keyDownEvent = (KeyDownEventHandler?)Delegate.Remove(_keyDownEvent, value);
     }
 
     protected override void WndProc(ref Message m)
@@ -18,7 +18,7 @@ internal class TabControlMod : TabControl
         if (m.Msg == NativeUtils.WmKeydown)
         {
             var key = (Keys)m.WParam;
-            KeyDownEvent?.Invoke(null, new KeyEventArgs(key));
+            _keyDownEvent?.Invoke(null, new KeyEventArgs(key));
         }
         else
         {

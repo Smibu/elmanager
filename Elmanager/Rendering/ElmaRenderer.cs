@@ -56,17 +56,17 @@ internal class ElmaRenderer : IDisposable
     private readonly Dictionary<int, int> _applePics = new();
     private int _armPic;
     private int _bikePic;
-    private double _bikePicTranslateXFacingLeft;
-    private double _bikePicTranslateXFacingRight;
-    private double _bikePicTranslateYFacingLeft;
-    private double _bikePicTranslateYFacingRight;
+    private readonly double _bikePicTranslateXFacingLeft;
+    private readonly double _bikePicTranslateXFacingRight;
+    private readonly double _bikePicTranslateYFacingLeft;
+    private readonly double _bikePicTranslateYFacingRight;
     private int _bodyPic;
     private bool _disposed;
 
-    public Dictionary<string, DrawableImage> DrawableImages { get; set; } = new();
+    public Dictionary<string, DrawableImage> DrawableImages { get; private set; } = new();
 
     private int _flowerPic;
-    private IGraphicsContext _gfxContext;
+    private readonly IGraphicsContext _gfxContext;
     private DrawableImage? _groundTexture;
     private DrawableImage? _skyTexture;
     private int _handPic;
@@ -106,7 +106,7 @@ internal class ElmaRenderer : IDisposable
         Dispose(true);
     }
 
-    internal Bitmap GetSnapShot(ZoomController zoomCtrl, SceneSettings sceneSettings)
+    private Bitmap GetSnapShot(ZoomController zoomCtrl, SceneSettings sceneSettings)
     {
         Bitmap snapShotBmp;
         if (_maxRenderbufferSize > 0)
@@ -168,7 +168,7 @@ internal class ElmaRenderer : IDisposable
         GL.Disable(EnableCap.AlphaTest);
     }
 
-    internal void DrawCircle(double x, double y, double radius, Color circleColor)
+    private void DrawCircle(double x, double y, double radius, Color circleColor)
     {
         var accuracy = _settings.CircleDrawingAccuracy;
         GL.Color4(circleColor);
@@ -220,7 +220,7 @@ internal class ElmaRenderer : IDisposable
         GL.End();
     }
 
-    internal void DrawLine(double x1, double y1, double x2, double y2, Color color, double depth = 0)
+    private void DrawLine(double x1, double y1, double x2, double y2, Color color, double depth = 0)
     {
         GL.Color4(color);
         GL.Begin(PrimitiveType.Lines);
@@ -229,7 +229,7 @@ internal class ElmaRenderer : IDisposable
         GL.End();
     }
 
-    internal void DrawLineFast(double x1, double y1, double x2, double y2, double depth = 0)
+    private void DrawLineFast(double x1, double y1, double x2, double y2, double depth = 0)
     {
         GL.Vertex3(x1, y1, depth);
         GL.Vertex3(x2, y2, depth);
@@ -244,7 +244,7 @@ internal class ElmaRenderer : IDisposable
         GL.End();
     }
 
-    internal void DrawPicture(int pic, double startx, double starty, double endx, double endy, double width,
+    private void DrawPicture(int pic, double startx, double starty, double endx, double endy, double width,
         double dist, bool mirror, double offset = 0.0)
     {
         var lx = endx - startx;
@@ -291,7 +291,7 @@ internal class ElmaRenderer : IDisposable
         GL.End();
     }
 
-    internal void DrawPoint(double x, double y, Color color, double depth = 0)
+    private void DrawPoint(double x, double y, Color color, double depth = 0)
     {
         GL.Color4(color);
         GL.Begin(PrimitiveType.Points);
@@ -319,7 +319,7 @@ internal class ElmaRenderer : IDisposable
         GL.End();
     }
 
-    internal void DrawRectangle(double x1, double y1, double x2, double y2)
+    private void DrawRectangle(double x1, double y1, double x2, double y2)
     {
         GL.Begin(PrimitiveType.LineLoop);
         GL.Vertex2(x1, y1);
@@ -835,7 +835,7 @@ internal class ElmaRenderer : IDisposable
         _settings = newSettings.Clone();
     }
 
-    protected void Dispose(bool disposing)
+    private void Dispose(bool disposing)
     {
         // Check to see if Dispose has already been called.
         if (!_disposed)
@@ -928,7 +928,7 @@ internal class ElmaRenderer : IDisposable
     {
         var newBmp = new Bitmap(srcRect.Width, srcRect.Height, pcx.Bmp.PixelFormat);
         var gfx = Graphics.FromImage(newBmp);
-        gfx.DrawImage(pcx.Bmp, new Rectangle(0, 0, srcRect.Width, srcRect.Height), srcRect.X, srcRect.Y,
+        gfx.DrawImage(pcx.Bmp, srcRect with { X = 0, Y = 0 }, srcRect.X, srcRect.Y,
             srcRect.Width, srcRect.Height, GraphicsUnit.Pixel);
         gfx.Dispose();
         return LoadTexture(newBmp);

@@ -1,113 +1,99 @@
 #nullable disable
 
 using System;
+using static System.Math;
 
-namespace vectrast;
+namespace Elmanager.Vectrast;
 
-internal struct IntVector2 : IComparable
+internal readonly struct IntVector2 : IComparable
 {
-    public bool defined;
-    public int x, y;
+    public readonly bool Defined;
+    public readonly int X;
+    public readonly int Y;
 
     public IntVector2(int x, int y)
     {
-        this.x = x;
-        this.y = y;
-        defined = true;
+        X = x;
+        Y = y;
+        Defined = true;
     }
 
     int IComparable.CompareTo(object o)
     {
         // lexicographic
         var v = (IntVector2)o;
-        if (x < v.x || x == v.x && y < v.y)
+        if (X < v.X || X == v.X && Y < v.Y)
             return -1;
-        if (x > v.x || x == v.x && y > v.y)
+        if (X > v.X || X == v.X && Y > v.Y)
             return 1;
         return 0;
     }
 
-    public static IntVector2 operator -(IntVector2 v1, IntVector2 v2)
-    {
-        return new(v1.x - v2.x, v1.y - v2.y);
-    }
+    public static IntVector2 operator -(IntVector2 v1, IntVector2 v2) => new(v1.X - v2.X, v1.Y - v2.Y);
 
-    public bool extension(IntVector2 otherVector)
-    {
-        return (x * y == 0 && x * otherVector.y - y * otherVector.x == 0); // parallel to either axis AND colinear
-    }
+    public bool Extension(IntVector2 otherVector) => X * Y == 0 && X * otherVector.Y - Y * otherVector.X == 0; // parallel to either axis AND colinear
 
-    public override int GetHashCode()
-    {
-        return x + y * 7919;
-    }
+    public override int GetHashCode() => X + Y * 7919;
 
-    public override bool Equals(object v)
-    {
-        try
-        {
-            return x == ((IntVector2)v).x && y == ((IntVector2)v).y;
-        }
-        catch
-        {
-            return false;
-        }
-    }
+    public override bool Equals(object o) => o is IntVector2 v && X == v.X && Y == v.Y;
 }
 
 internal struct DoubleVector2
 {
-    public double x, y;
+    public double X;
+    public double Y;
 
-    public DoubleVector2(double x, double y)
+    private DoubleVector2(double x, double y)
     {
-        this.x = x;
-        this.y = y;
+        X = x;
+        Y = y;
     }
 
     public DoubleVector2(IntVector2 v)
     {
-        x = v.x;
-        y = v.y;
+        X = v.X;
+        Y = v.Y;
     }
 
-    public static DoubleVector2 operator -(DoubleVector2 v1, DoubleVector2 v2)
-    {
-        return new(v1.x - v2.x, v1.y - v2.y);
-    }
+    public static DoubleVector2 operator -(DoubleVector2 v1, DoubleVector2 v2) => new(v1.X - v2.X, v1.Y - v2.Y);
 }
 
 internal class Matrix2D
 {
-    public double[,] elements;
+    private readonly double[,] _elements;
 
-    public Matrix2D()
+    private Matrix2D()
     {
-        elements = new double[3, 3];
+        _elements = new double[3, 3];
     }
 
-    public static Matrix2D identityM()
+    private static Matrix2D IdentityM()
     {
         var matrix = new Matrix2D();
         for (var i = 0; i < 3; i++)
-            matrix.elements[i, i] = 1;
+            matrix._elements[i, i] = 1;
         return matrix;
     }
 
-    public static Matrix2D translationM(double x, double y)
+    public static Matrix2D TranslationM(double x, double y)
     {
-        var matrix = identityM();
-        matrix.elements[0, 2] = x;
-        matrix.elements[1, 2] = y;
+        var matrix = IdentityM();
+        matrix._elements[0, 2] = x;
+        matrix._elements[1, 2] = y;
         return matrix;
     }
 
-    public static Matrix2D scaleM(double x, double y)
+    public static Matrix2D ScaleM(double x, double y)
     {
-        var matrix = new Matrix2D();
-        matrix.elements[0, 0] = x;
-        matrix.elements[1, 1] = y;
-        matrix.elements[2, 2] = 1;
+        var matrix = new Matrix2D
+        {
+            _elements =
+            {
+                [0, 0] = x,
+                [1, 1] = y,
+                [2, 2] = 1
+            }
+        };
         return matrix;
     }
 
@@ -119,159 +105,149 @@ internal class Matrix2D
             {
                 double sum = 0;
                 for (var k = 0; k < 3; k++)
-                    sum += m1.elements[k, j] * m2.elements[i, k];
-                matrix.elements[i, j] = sum;
+                    sum += m1._elements[k, j] * m2._elements[i, k];
+                matrix._elements[i, j] = sum;
             }
         return matrix;
     }
 
     public static DoubleVector2 operator *(DoubleVector2 v, Matrix2D m)
     {
-        var vector = new DoubleVector2();
-        vector.x = v.x * m.elements[0, 0] + v.y * m.elements[0, 1] + m.elements[0, 2];
-        vector.y = v.x * m.elements[1, 0] + v.y * m.elements[1, 1] + m.elements[1, 2];
+        var vector = new DoubleVector2
+        {
+            X = v.X * m._elements[0, 0] + v.Y * m._elements[0, 1] + m._elements[0, 2],
+            Y = v.X * m._elements[1, 0] + v.Y * m._elements[1, 1] + m._elements[1, 2]
+        };
         return vector;
     }
 }
 
 internal class VectorPixel
 {
-    public IntVector2 fromPnt;
-    public IntVector2 toPnt;
+    public IntVector2 FromPnt;
+    public IntVector2 ToPnt;
 
-    public VectorPixel()
+    protected VectorPixel()
     {
     }
 
     public VectorPixel(IntVector2 fromPnt, IntVector2 toPnt)
     {
-        this.fromPnt = fromPnt;
-        this.toPnt = toPnt;
+        FromPnt = fromPnt;
+        ToPnt = toPnt;
     }
 
-    public int dx
-    {
-        get { return Math.Abs(toPnt.x - fromPnt.x) + 1; }
-    }
+    protected int Dx => Abs(ToPnt.X - FromPnt.X) + 1;
 
-    public int dy
-    {
-        get { return Math.Abs(toPnt.y - fromPnt.y) + 1; }
-    }
+    protected int Dy => Abs(ToPnt.Y - FromPnt.Y) + 1;
 
-    public bool linkVector()
-    {
-        return dx == 2 && dy == 2;
-    }
+    public bool LinkVector() => Dx == 2 && Dy == 2;
 }
 
 internal class Line : VectorPixel
 {
-    private double maxleft;
-    private double minright;
-    private int nextmaxdx;
-    private int nextmaxdy;
-    private int nextmindx;
-    private int nextmindy;
-    public IntVector2 outerFromPnt;
+    private double _maxleft;
+    private double _minright;
+    private int _nextmaxdx;
+    private int _nextmaxdy;
+    private int _nextmindx;
+    private int _nextmindy;
+    private readonly IntVector2 _outerFromPnt;
 
     public Line(VectorPixel v)
     {
-        maxleft = double.MinValue;
-        minright = double.MaxValue;
-        outerFromPnt = v.fromPnt;
-        toPnt = v.toPnt;
-        nextmindx = 0;
-        nextmaxdx = int.MaxValue;
-        nextmindy = 0;
-        nextmaxdy = int.MaxValue;
+        _maxleft = double.MinValue;
+        _minright = double.MaxValue;
+        _outerFromPnt = v.FromPnt;
+        ToPnt = v.ToPnt;
+        _nextmindx = 0;
+        _nextmaxdx = int.MaxValue;
+        _nextmindy = 0;
+        _nextmaxdy = int.MaxValue;
     }
 
-    public bool satisfiesOuter(VectorPixel v)
+    public bool SatisfiesOuter(VectorPixel v)
     {
         return
-            Math.Abs(v.toPnt.x - toPnt.x) <= nextmaxdx &&
-            Math.Abs(v.toPnt.y - toPnt.y) <= nextmaxdy; // outer segment must be shorter than inner segment
+            Abs(v.ToPnt.X - ToPnt.X) <= _nextmaxdx &&
+            Abs(v.ToPnt.Y - ToPnt.Y) <= _nextmaxdy; // outer segment must be shorter than inner segment
     }
 
-    public bool satisfiesInner(VectorPixel v)
+    public bool SatisfiesInner(VectorPixel v)
     {
-        if (!fromPnt.defined)
-            return Math.Abs(toPnt.x - outerFromPnt.x) == Math.Abs(toPnt.y - outerFromPnt.y)
-                ? true
-                : // anything goes
-                Math.Abs(v.toPnt.x - toPnt.x) >= Math.Abs(v.fromPnt.x - outerFromPnt.x) &&
-                Math.Abs(v.toPnt.y - toPnt.y) >= Math.Abs(v.fromPnt.y - outerFromPnt.y);
+        if (!FromPnt.Defined)
+            return Abs(ToPnt.X - _outerFromPnt.X) == Abs(ToPnt.Y - _outerFromPnt.Y) || Abs(v.ToPnt.X - ToPnt.X) >= Abs(v.FromPnt.X - _outerFromPnt.X) &&
+                Abs(v.ToPnt.Y - ToPnt.Y) >= Abs(v.FromPnt.Y - _outerFromPnt.Y);
         // inner segment must be >= the outer segment
         return
-            nextmindx <= Math.Abs(v.toPnt.x - toPnt.x) && Math.Abs(v.toPnt.x - toPnt.x) <= nextmaxdx &&
-            nextmindy <= Math.Abs(v.toPnt.y - toPnt.y) && Math.Abs(v.toPnt.y - toPnt.y) <= nextmaxdy;
+            _nextmindx <= Abs(v.ToPnt.X - ToPnt.X) && Abs(v.ToPnt.X - ToPnt.X) <= _nextmaxdx &&
+            _nextmindy <= Abs(v.ToPnt.Y - ToPnt.Y) && Abs(v.ToPnt.Y - ToPnt.Y) <= _nextmaxdy;
     }
 
-    public bool sameDir(VectorPixel v)
+    public bool SameDir(VectorPixel v)
     {
-        if (v.linkVector())
+        if (v.LinkVector())
             return
-                Math.Abs(Math.Sign(toPnt.x - outerFromPnt.x) - (v.toPnt.x - toPnt.x)) <= 1 &&
-                Math.Abs(Math.Sign(toPnt.y - outerFromPnt.y) - (v.toPnt.y - toPnt.y)) <= 1;
-        if (Math.Abs(toPnt.x - outerFromPnt.x) > Math.Abs(toPnt.y - outerFromPnt.y))
+                Abs(Sign(ToPnt.X - _outerFromPnt.X) - (v.ToPnt.X - ToPnt.X)) <= 1 &&
+                Abs(Sign(ToPnt.Y - _outerFromPnt.Y) - (v.ToPnt.Y - ToPnt.Y)) <= 1;
+        if (Abs(ToPnt.X - _outerFromPnt.X) > Abs(ToPnt.Y - _outerFromPnt.Y))
             return
-                Math.Sign(toPnt.x - outerFromPnt.x) == Math.Sign(v.toPnt.x - toPnt.x) &&
-                Math.Abs(Math.Sign(toPnt.y - outerFromPnt.y) - (v.toPnt.y - toPnt.y)) <= 1;
-        if (Math.Abs(toPnt.x - outerFromPnt.x) < Math.Abs(toPnt.y - outerFromPnt.y))
+                Sign(ToPnt.X - _outerFromPnt.X) == Sign(v.ToPnt.X - ToPnt.X) &&
+                Abs(Sign(ToPnt.Y - _outerFromPnt.Y) - (v.ToPnt.Y - ToPnt.Y)) <= 1;
+        if (Abs(ToPnt.X - _outerFromPnt.X) < Abs(ToPnt.Y - _outerFromPnt.Y))
             return
-                Math.Abs(Math.Sign(toPnt.x - outerFromPnt.x) - (v.toPnt.x - toPnt.x)) <= 1 &&
-                Math.Sign(toPnt.y - outerFromPnt.y) == Math.Sign(v.toPnt.y - toPnt.y);
+                Abs(Sign(ToPnt.X - _outerFromPnt.X) - (v.ToPnt.X - ToPnt.X)) <= 1 &&
+                Sign(ToPnt.Y - _outerFromPnt.Y) == Sign(v.ToPnt.Y - ToPnt.Y);
         return
-            Math.Abs(Math.Sign(toPnt.x - outerFromPnt.x) - Math.Sign(v.toPnt.x - toPnt.x)) <= 1 &&
-            Math.Abs(Math.Sign(toPnt.y - outerFromPnt.y) - Math.Sign(v.toPnt.y - toPnt.y)) <= 1;
+            Abs(Sign(ToPnt.X - _outerFromPnt.X) - Sign(v.ToPnt.X - ToPnt.X)) <= 1 &&
+            Abs(Sign(ToPnt.Y - _outerFromPnt.Y) - Sign(v.ToPnt.Y - ToPnt.Y)) <= 1;
     }
 
-    public void update(VectorPixel v)
+    public void Update(VectorPixel v)
     {
-        if (!fromPnt.defined)
-            fromPnt = v.fromPnt;
-        toPnt = v.toPnt;
+        if (!FromPnt.Defined)
+            FromPnt = v.FromPnt;
+        ToPnt = v.ToPnt;
         int d1;
         int d2;
-        if (dx > dy)
+        if (Dx > Dy)
         {
-            d1 = dx;
-            d2 = dy;
+            d1 = Dx;
+            d2 = Dy;
         }
         else
         {
-            d1 = dy;
-            d2 = dx;
+            d1 = Dy;
+            d2 = Dx;
         }
-        maxleft = Math.Max(maxleft, 1.0 * (d1 - 1) / d2);
-        minright = Math.Min(minright, 1.0 * (d1 + 1) / d2);
-        var dmin = maxleft * (d2 + 1) + 0.5 - d1;
-        var dmax = minright * (d2 + 1) - 0.5 - d1;
-        if (Math.Ceiling(dmin) - dmin == 0.5)
+        _maxleft = Max(_maxleft, 1.0 * (d1 - 1) / d2);
+        _minright = Min(_minright, 1.0 * (d1 + 1) / d2);
+        var dmin = _maxleft * (d2 + 1) + 0.5 - d1;
+        var dmax = _minright * (d2 + 1) - 0.5 - d1;
+        if (Ceiling(dmin) - dmin == 0.5)
             dmin += 0.5;
-        if (Math.Ceiling(dmax) - dmax == 0.5)
+        if (Ceiling(dmax) - dmax == 0.5)
             dmax -= 0.5;
-        if (dx > dy)
+        if (Dx > Dy)
         {
-            nextmindx = (int)Math.Round(dmin);
-            nextmaxdx = (int)Math.Round(dmax);
-            nextmindy = 0;
-            nextmaxdy = 1;
+            _nextmindx = (int)Round(dmin);
+            _nextmaxdx = (int)Round(dmax);
+            _nextmindy = 0;
+            _nextmaxdy = 1;
         }
-        else if (dx < dy)
+        else if (Dx < Dy)
         {
-            nextmindx = 0;
-            nextmaxdx = 1;
-            nextmindy = (int)Math.Round(dmin);
-            nextmaxdy = (int)Math.Round(dmax);
+            _nextmindx = 0;
+            _nextmaxdx = 1;
+            _nextmindy = (int)Round(dmin);
+            _nextmaxdy = (int)Round(dmax);
         }
         else
         {
-            nextmindx = 0;
-            nextmaxdx = 2;
-            nextmindy = 0;
-            nextmaxdy = 2;
+            _nextmindx = 0;
+            _nextmaxdx = 2;
+            _nextmindy = 0;
+            _nextmaxdy = 2;
         }
     }
 }

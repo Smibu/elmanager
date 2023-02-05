@@ -29,7 +29,7 @@ internal class AutoGrassTool : ToolBase, IEditorTool
         UpdateHelp();
     }
 
-    public void CancelAutoGrass()
+    private void CancelAutoGrass()
     {
         if (!AutoGrassPolygonSelected) return;
         _currentPolygon = null;
@@ -241,15 +241,15 @@ internal class AutoGrassTool : ToolBase, IEditorTool
                     directionVector.Unit() * 0.0;
 
             grassPolys.Add(new Polygon());
-            grassPolys[grassPolys.Count - 1].IsGrass = true;
-            grassPolys[grassPolys.Count - 1].Add(firstGrassVertex);
+            grassPolys[^1].IsGrass = true;
+            grassPolys[^1].Add(firstGrassVertex);
             bool found = false;
             if (Math.Abs((p[j + 2] - p[j + 1]).Angle) <= MaximumGrassAngle)
             {
                 while (!(Math.Abs((p[j + 2] - p[j + 1]).Angle) > MaximumGrassAngle))
                 {
                     j++;
-                    grassPolys[grassPolys.Count - 1].Add(GeometryUtils.FindPoint(p[j - 1], p[j], p[j + 1],
+                    grassPolys[^1].Add(GeometryUtils.FindPoint(p[j - 1], p[j], p[j + 1],
                         autoGrassThickness));
                 }
 
@@ -258,7 +258,7 @@ internal class AutoGrassTool : ToolBase, IEditorTool
             }
             else
             {
-                grassPolys[grassPolys.Count - 1].Add(firstGrassVertex + directionVector.Unit() * 0.1);
+                grassPolys[^1].Add(firstGrassVertex + directionVector.Unit() * 0.1);
                 j++;
             }
 
@@ -279,13 +279,13 @@ internal class AutoGrassTool : ToolBase, IEditorTool
                            Vector.CrossProduct(directionVector, nextDirectionVector);
                 if (s > 1)
                 {
-                    if (grassPolys[grassPolys.Count - 1].Count < 3)
+                    if (grassPolys[^1].Vertices.Count < 3)
                     {
                         if (found)
                         {
-                            Polygon x = grassPolys[grassPolys.Count - 1];
-                            Vector dirvect = x.Vertices[x.Count - 1] - x.Vertices[x.Count - 2];
-                            lastGrassVertex = x.Vertices[x.Count - 1] - dirvect.Unit() * 0.1;
+                            Polygon x = grassPolys[^1];
+                            Vector dirvect = x.Vertices[^1] - x.Vertices[^2];
+                            lastGrassVertex = x.Vertices[^1] - dirvect.Unit() * 0.1;
                         }
                         else
                         {
@@ -323,7 +323,7 @@ internal class AutoGrassTool : ToolBase, IEditorTool
                     p[j].Y +
                     autoGrassThickness / Math.Cos(directionVector.Angle * MathUtils.DegToRad));
 
-            grassPolys[grassPolys.Count - 1].Add(lastGrassVertex);
+            grassPolys[^1].Add(lastGrassVertex);
         }
 
         return grassPolys.Select(x => x.WithYNegated()).ToList();

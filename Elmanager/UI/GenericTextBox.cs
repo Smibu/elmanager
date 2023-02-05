@@ -10,7 +10,7 @@ internal class GenericTextBox<T> : TextBox where T : struct
     private T _defaultValue;
     private Func<string, T>? _parseInput;
 
-    public GenericTextBox(Func<string, T> parser)
+    protected GenericTextBox(Func<string, T> parser)
     {
         TextChanged += ValidateInput;
         SetParser(parser);
@@ -33,7 +33,7 @@ internal class GenericTextBox<T> : TextBox where T : struct
         }
     }
 
-    public bool IsInputValid()
+    private bool IsInputValid()
     {
         try
         {
@@ -46,7 +46,7 @@ internal class GenericTextBox<T> : TextBox where T : struct
         }
     }
 
-    public void SetParser(Func<string, T>? val)
+    private void SetParser(Func<string, T>? val)
     {
         if (val == null)
             return;

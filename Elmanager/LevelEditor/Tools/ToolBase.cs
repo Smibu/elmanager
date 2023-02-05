@@ -11,9 +11,9 @@ namespace Elmanager.LevelEditor.Tools;
 internal abstract class ToolBase : IEditorToolBase
 {
     protected Vector CurrentPos;
-    private Control _editorControl;
-    protected LevelEditorForm LevEditor;
-    protected ElmaRenderer Renderer;
+    private readonly Control _editorControl;
+    protected readonly LevelEditorForm LevEditor;
+    protected readonly ElmaRenderer Renderer;
 
     protected ToolBase(LevelEditorForm editor)
     {
@@ -214,7 +214,7 @@ internal abstract class ToolBase : IEditorToolBase
         if (nearestPolygon is { })
         {
             var nearestSegmentIndex = nearestPolygon.GetNearestSegmentIndex(p);
-            return NearestVertexInfo.Edge(nearestSegmentIndex, nearestSegmentIndex + 1 % nearestPolygon.Count, nearestPolygon);
+            return NearestVertexInfo.Edge(nearestSegmentIndex, nearestSegmentIndex + 1 % nearestPolygon.Vertices.Count, nearestPolygon);
         }
 
         return null;
