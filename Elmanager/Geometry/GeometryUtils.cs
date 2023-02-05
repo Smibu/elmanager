@@ -226,12 +226,12 @@ internal static class GeometryUtils
     internal static double DistanceFromSegment(double ax, double ay, double bx, double by, double px, double py)
     {
         double aMinusBx = ax - bx;
-        double aMinusBy = ay - @by;
+        double aMinusBy = ay - by;
         double aMinusBMinusPx = aMinusBx - px;
         double aMinusBMinusPy = aMinusBy - py;
         double aMinusBLengthSquared = aMinusBx * aMinusBx + aMinusBy * aMinusBy;
         double v1 = ax * aMinusBMinusPx + ay * aMinusBMinusPy;
-        double v2 = bx * px + @by * py;
+        double v2 = bx * px + by * py;
         double r = (v1 + v2) / aMinusBLengthSquared;
         if (r >= 0 && r <= 1)
         {
@@ -244,7 +244,7 @@ internal static class GeometryUtils
         double v6 = py - ay;
         double v7 = Math.Sqrt(v5 * v5 + v6 * v6);
         double v8 = px - bx;
-        double v9 = py - @by;
+        double v9 = py - by;
         double v10 = Math.Sqrt(v8 * v8 + v9 * v9);
         return Math.Min(v7, v10);
     }
@@ -262,12 +262,12 @@ internal static class GeometryUtils
     internal static double DistanceFromLine(double ax, double ay, double bx, double by, double px, double py)
     {
         double aMinusBx = ax - bx;
-        double aMinusBy = ay - @by;
+        double aMinusBy = ay - by;
         double aMinusBMinusPx = aMinusBx - px;
         double aMinusBMinusPy = aMinusBy - py;
         double aMinusBLengthSquared = aMinusBx * aMinusBx + aMinusBy * aMinusBy;
         double v1 = ax * aMinusBMinusPx + ay * aMinusBMinusPy;
-        double v2 = bx * px + @by * py;
+        double v2 = bx * px + by * py;
         double r = (v1 + v2) / aMinusBLengthSquared;
         double v3 = px - ax + r * aMinusBx;
         double v4 = py - ay + r * aMinusBy;
@@ -282,12 +282,12 @@ internal static class GeometryUtils
     internal static Vector OrthogonalProjection(double ax, double ay, double bx, double by, double px, double py)
     {
         double aMinusBx = ax - bx;
-        double aMinusBy = ay - @by;
+        double aMinusBy = ay - by;
         double aMinusBMinusPx = aMinusBx - px;
         double aMinusBMinusPy = aMinusBy - py;
         double aMinusBLengthSquared = aMinusBx * aMinusBx + aMinusBy * aMinusBy;
         double v1 = ax * aMinusBMinusPx + ay * aMinusBMinusPy;
-        double v2 = bx * px + @by * py;
+        double v2 = bx * px + by * py;
         double r = (v1 + v2) / aMinusBLengthSquared;
         return new Vector(ax - r * aMinusBx, ay - r * aMinusBy);
     }

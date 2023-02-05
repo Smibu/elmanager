@@ -76,7 +76,7 @@ internal partial class TextToolForm : FormMod
         dialog.Apply += (_, _) =>
         {
             var r = Result;
-            r.Font = dialog.Font!;
+            r.Font = dialog.Font;
             r.FontStyleName = dialog.FontStyleName;
             EnteredTextChanged?.Invoke(r);
         };

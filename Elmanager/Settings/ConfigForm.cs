@@ -33,7 +33,7 @@ internal partial class ConfigForm : FormMod
         lmConfirmDeletion.Checked = Global.AppSettings.LevelManager.ConfirmDelete;
         lmShowTooltip.Checked = Global.AppSettings.LevelManager.ShowTooltipInList;
 
-        LevelTemplateBox.Text = Global.AppSettings.LevelEditor.LevelTemplate ?? "50,50";
+        LevelTemplateBox.Text = Global.AppSettings.LevelEditor.LevelTemplate;
         CaptureRadiusBox.Text = Global.AppSettings.LevelEditor.CaptureRadius.ToString();
         CheckTopologyWhenSavingBox.Checked = Global.AppSettings.LevelEditor.CheckTopologyWhenSaving;
         DynamicCheckTopologyBox.Checked = Global.AppSettings.LevelEditor.CheckTopologyDynamically;

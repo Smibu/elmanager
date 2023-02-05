@@ -891,7 +891,7 @@ internal partial class LevelEditorForm : FormMod, IMessageFilter
 
     private Vector GetMouseCoordinates()
     {
-        var mousePosNoTr = (Point)Invoke(new Func<Point>(() => EditorControl.PointToClient(MousePosition)));
+        var mousePosNoTr = Invoke(() => EditorControl.PointToClient(MousePosition));
         var mousePos = new Vector
         {
             X =
@@ -988,7 +988,7 @@ internal partial class LevelEditorForm : FormMod, IMessageFilter
             settingsButton.Visible = false;
         }
 #pragma warning restore CS0162
-        PlayController.PlayingPaused += () => Invoke(new Action(SetNotPlaying));
+        PlayController.PlayingPaused += () => Invoke(SetNotPlaying);
         var graphics = CreateGraphics();
         _dpiX = graphics.DpiX / 96;
         _dpiY = graphics.DpiY / 96;
@@ -1186,7 +1186,7 @@ internal partial class LevelEditorForm : FormMod, IMessageFilter
             minRectCover: opts.MinCoverPercentage / 100).ToList(), src.Token);
 
         var progressForm = new ProgressDialog(task, src, progress);
-        BeginInvoke(new Action(() => { progressForm.ShowDialog(); }));
+        BeginInvoke(() => { progressForm.ShowDialog(); });
         List<Envelope> covering;
         try
         {
@@ -1236,7 +1236,7 @@ internal partial class LevelEditorForm : FormMod, IMessageFilter
     {
         var data = e.Data?.GetData(DataFormats.FileDrop);
         // BeginInvoke is required for Wine
-        BeginInvoke(new Action(() =>
+        BeginInvoke(() =>
         {
             if (data is string[] files)
             {
@@ -1249,7 +1249,7 @@ internal partial class LevelEditorForm : FormMod, IMessageFilter
                     ImportFiles(files);
                 }
             }
-        }));
+        });
     }
 
     private void LevelPropertiesToolStripMenuItemClick(object? sender, EventArgs e)

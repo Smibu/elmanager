@@ -24,7 +24,7 @@ internal static class SearchUtils
         return files.Where(x =>
         {
             var f = Path.GetFileNameWithoutExtension(x);
-            return f != null && matcher.IsMatch(f);
+            return matcher.IsMatch(f);
         });
     }
 

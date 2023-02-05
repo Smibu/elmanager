@@ -246,7 +246,7 @@ internal class TextTool : ToolBase, IEditorTool
                     )
             );
             smoothness *= 0.5;
-        } while (polys.Any(p => p.Count < 3 || false));
+        } while (polys.Any(p => p.Count < 3));
 
         return (polys, smoothness);
     }

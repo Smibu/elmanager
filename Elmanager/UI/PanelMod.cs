@@ -19,7 +19,7 @@ internal class PanelMod : Panel
         {
             if (_mouseWheelEvent != null)
             {
-                long val = (long)m.WParam;
+                long val = m.WParam;
                 if (val > int.MaxValue) return;
                 _mouseWheelEvent((int)val);
             }
