@@ -23,8 +23,6 @@ internal class LevelEditorSettings
     public double FrameRadius { get; set; } = 0.2;
     public Color CrosshairColor { get; set; } = Color.Blue;
     public Color HighlightColor { get; set; } = Color.Yellow;
-    public double InitialHeight { get; set; } = 50.0;
-    public double InitialWidth { get; set; } = 50.0;
     public string? LastLevel { get; set; }
     public int MouseClickStep { get; set; } = 50;
     public string NumberFormat { get; set; } = "0";
@@ -43,8 +41,8 @@ internal class LevelEditorSettings
     public bool UseHighlight { get; set; } = true;
     public FormWindowState WindowState { get; set; } = FormWindowState.Normal;
     public string LevelTemplate { get; set; } = "50,50";
-    public bool CapturePicturesAndTexturesFromBordersOnly { get; set; } = false;
-    public bool AlwaysSetDefaultsInPictureTool { get; set; } = false;
+    public bool CapturePicturesAndTexturesFromBordersOnly { get; set; }
+    public bool AlwaysSetDefaultsInPictureTool { get; set; }
     public PlaySettings PlayingSettings { get; set; } = new();
     public bool EnableStartPositionFeature { get; set; } = true;
 

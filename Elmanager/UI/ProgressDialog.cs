@@ -14,7 +14,7 @@ internal partial class ProgressDialog : FormMod
         InitializeComponent();
         _cancelSrc = cancelSrc;
         _task = task;
-        progress.ProgressChanged += (sender, d) => { progressBar1.Value = (int)(d * 1000); };
+        progress.ProgressChanged += (_, d) => { progressBar1.Value = (int)(d * 1000); };
     }
 
     private void cancelButton_Click(object sender, EventArgs e)
@@ -26,6 +26,6 @@ internal partial class ProgressDialog : FormMod
 
     private void ProgressDialog_Shown(object sender, EventArgs e)
     {
-        _task.ContinueWith(t => { Close(); }, TaskScheduler.FromCurrentSynchronizationContext());
+        _task.ContinueWith(_ => { Close(); }, TaskScheduler.FromCurrentSynchronizationContext());
     }
 }

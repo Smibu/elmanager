@@ -31,7 +31,7 @@ internal static class UiUtils
         if (addIndexColumn)
         {
             cols.Add(new OLVColumn("#", null));
-            oList.FormatRow += (sender, args) => { args.Item.Text = (args.RowIndex + 1).ToString(); };
+            oList.FormatRow += (_, args) => { args.Item.Text = (args.RowIndex + 1).ToString(); };
         }
 
         var hiddens = new HashSet<string>();

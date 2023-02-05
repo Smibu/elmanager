@@ -42,7 +42,7 @@ internal partial class ReplayViewerForm : FormMod
         InitializeComponent();
         _typedPlayList = new TypedObjectListView<PlayListObject>(PlayList);
         _fullScreenController = new FullScreenController(this, ViewerResized, new List<Control> { TabControl1 });
-        ViewerBox.HandleCreated += (s, e) =>
+        ViewerBox.HandleCreated += (_, _) =>
         {
             ViewerBox.Context.SwapInterval = 0;
             Initialize();
@@ -367,24 +367,24 @@ internal partial class ReplayViewerForm : FormMod
     {
         Resize += ViewerResized;
         var ope = new Action(() => UpdateLabels());
-        _replayController.PlayingElapsed += (s, e) =>
+        _replayController.PlayingElapsed += (_, _) =>
         {
             Invoke(ope);
         };
 
-        ZoomFillButton.MouseDown += (s, e) => _replayController.ZoomCtrl.ZoomFill();
-        PlayButton.MouseDown += (s, e) => _replayController.TogglePlay();
-        StopButton.MouseDown += async (s, e) =>
+        ZoomFillButton.MouseDown += (_, _) => _replayController.ZoomCtrl.ZoomFill();
+        PlayButton.MouseDown += (_, _) => _replayController.TogglePlay();
+        StopButton.MouseDown += async (_, _) =>
         {
             await _replayController.StopPlaying();
             UpdateLabels();
         };
-        PrevFrameButton.MouseDown += (s, e) =>
+        PrevFrameButton.MouseDown += (_, _) =>
         {
             _replayController.PreviousFrame();
             UpdateLabels();
         };
-        NextFrameButton.MouseDown += (s, e) =>
+        NextFrameButton.MouseDown += (_, _) =>
         {
             _replayController.NextFrame();
             UpdateLabels();

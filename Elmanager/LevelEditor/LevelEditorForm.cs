@@ -341,7 +341,7 @@ internal partial class LevelEditorForm : FormMod, IMessageFilter
         UpdateUndoRedo();
     }
 
-    private void AfterSettingsClosed(string oldLgr)
+    private void AfterSettingsClosed()
     {
         Renderer.UpdateSettings(Global.AppSettings.LevelEditor.RenderingSettings);
         UpdateLgrTools();
@@ -1570,7 +1570,7 @@ internal partial class LevelEditorForm : FormMod, IMessageFilter
     {
         string oldLgr = Global.AppSettings.LevelEditor.RenderingSettings.LgrFile;
         ComponentManager.ShowConfiguration("sle");
-        AfterSettingsClosed(oldLgr);
+        AfterSettingsClosed();
         if (!Global.AppSettings.LevelEditor.EnableStartPositionFeature)
         {
             _savedStartPosition = null;
@@ -1595,7 +1595,7 @@ internal partial class LevelEditorForm : FormMod, IMessageFilter
             RedrawScene();
         };
         rSettings.ShowDialog();
-        AfterSettingsClosed(oldLgr);
+        AfterSettingsClosed();
     }
 
     private void OpenToolStripMenuItemClick(object? sender, EventArgs e)
@@ -2006,7 +2006,7 @@ internal partial class LevelEditorForm : FormMod, IMessageFilter
     {
         Resize += ViewerResized;
         EditorControl.Paint += RedrawScene;
-        ZoomFillButton.Click += (s, e) => _zoomCtrl.ZoomFill();
+        ZoomFillButton.Click += (_, _) => _zoomCtrl.ZoomFill();
         ObjectButton.CheckedChanged += ObjectButtonChanged;
         VertexButton.CheckedChanged += VertexButtonChanged;
         PipeButton.CheckedChanged += PipeButtonChanged;

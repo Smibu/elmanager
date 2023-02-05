@@ -91,44 +91,6 @@ internal class ZoomController
         PerformZoom(newZoomLevel, (ZoomFillxMax + ZoomFillxMin) / 2, (ZoomFillyMax + ZoomFillyMin) / 2);
     }
 
-    internal void ZoomRect(Vector startPoint, Vector endPoint)
-    {
-        if (!Equals(startPoint, endPoint))
-        {
-            double x1;
-            double x2;
-            if (startPoint.X < endPoint.X)
-            {
-                x1 = startPoint.X;
-                x2 = endPoint.X;
-            }
-            else
-            {
-                x2 = startPoint.X;
-                x1 = endPoint.X;
-            }
-
-            double y1;
-            double y2;
-            if (startPoint.Y < endPoint.Y)
-            {
-                y1 = startPoint.Y;
-                y2 = endPoint.Y;
-            }
-            else
-            {
-                y2 = startPoint.Y;
-                y1 = endPoint.Y;
-            }
-
-            var i = (y2 - y1) / 2;
-            var rectAspectRatio = (x2 - x1) / (y2 - y1);
-            if (rectAspectRatio > Cam.AspectRatio)
-                i = (x2 - x1) / 2 / Cam.AspectRatio;
-            PerformZoom(i, (x2 + x1) / 2, (y2 + y1) / 2);
-        }
-    }
-
     private void PerformZoom(double newZoomLevel, double newCenterX, double newCenterY)
     {
         if (_settings.SmoothZoomEnabled)

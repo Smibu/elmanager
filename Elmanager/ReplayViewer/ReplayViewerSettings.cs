@@ -26,5 +26,5 @@ internal class ReplayViewerSettings
     public Size Size { get; set; } = new(800, 600);
     public FormWindowState WindowState { get; set; } = FormWindowState.Normal;
     public double ZoomLevel { get; set; } = 5.0;
-    public bool FollowAlsoWhenZooming { get; set; } = false;
+    public bool FollowAlsoWhenZooming { get; set; }
 }

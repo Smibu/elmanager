@@ -40,8 +40,6 @@ internal class LevelSearchParameters : SearchParameters
     internal Range<double> SinglePlayerBestTime = new(0, double.MaxValue);
     internal Range<double> MultiPlayerBestTime = new(0, double.MaxValue);
 
-    internal Range<int> Replays = new(0, MaxCount);
-
     public bool Matches(ElmaFileObject<Level> o)
     {
         var lev = o.Obj;

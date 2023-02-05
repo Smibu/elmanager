@@ -32,11 +32,6 @@ internal class Pcx
     internal short Ymax;
     internal short Ymin;
 
-    internal Pcx(string pcxFile)
-        : this(new FileStream(pcxFile, FileMode.Open, FileAccess.Read, FileShare.Read))
-    {
-    }
-
     internal Pcx(Stream pcxStream)
     {
         BinaryReader pb = new BinaryReader(pcxStream);

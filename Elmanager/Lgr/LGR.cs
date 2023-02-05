@@ -54,7 +54,7 @@ internal class Lgr : IDisposable
         if (lgr.ReadString(5) != "LGR12")
             throw new Exception($"The LGR file {lgrFile} is not valid (magic start string not found)");
         int numberOfPcXs = lgr.ReadInt32();
-        int picturesLstVersion = lgr.ReadInt32(); // unused
+        lgr.ReadInt32(); // pictures.lst version, not needed
         int numberOfOptPcXs = lgr.ReadInt32();
         var pcxNames = new List<string>();
         var pcxTypes = new List<ImageType>();
@@ -114,7 +114,7 @@ internal class Lgr : IDisposable
 
             lgr.ReadInt32(); // unknown, not used
             lgr.ReadInt32(); // unknown, not used
-            int sizeOfPcx = lgr.ReadInt32();
+            lgr.ReadInt32(); // size of PCX
             Bitmap bmp = new Pcx(stream).ToBitmap();
             if (imageData.Type != ImageType.Texture)
             {

@@ -6,7 +6,7 @@ namespace Elmanager.Lgr;
 internal record ListedImage(
     ImageMeta Data,
     Transparency Transparency
-) : IImageMeta
+)
 {
     private static readonly string[] BodyPartNames =
         {"body", "thigh", "leg", "bike", "wheel", "susp1", "susp2", "forarm", "up_arm", "head"};

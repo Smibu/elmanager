@@ -159,16 +159,6 @@ internal class VectorPixel
         get { return Math.Abs(toPnt.y - fromPnt.y) + 1; }
     }
 
-    public int sx
-    {
-        get { return Math.Sign(toPnt.x - fromPnt.x); }
-    }
-
-    public int sy
-    {
-        get { return Math.Sign(toPnt.y - fromPnt.y); }
-    }
-
     public bool linkVector()
     {
         return dx == 2 && dy == 2;

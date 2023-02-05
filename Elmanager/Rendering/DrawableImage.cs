@@ -2,7 +2,7 @@ using Elmanager.Lgr;
 
 namespace Elmanager.Rendering;
 
-internal record DrawableImage(int TextureId, double Width, double Height, ImageMeta Meta) : IImageMeta
+internal record DrawableImage(int TextureId, double Width, double Height, ImageMeta Meta)
 {
     internal double WidthMinusMargin => Width - 2 * EmptyPixelXMargin;
 

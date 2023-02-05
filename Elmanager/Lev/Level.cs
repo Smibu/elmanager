@@ -526,15 +526,6 @@ internal class Level
         return counter.Location == Location.Exterior;
     }
 
-    internal void MirrorAll()
-    {
-        var mirrorMatrix = Matrix.Identity;
-        mirrorMatrix.Translate(-(XMax + XMin) / 2, -(YMax + YMin) / 2);
-        mirrorMatrix.Scale(-1.0, 1.0);
-        mirrorMatrix.Translate((XMax + XMin) / 2, (YMax + YMin) / 2);
-        Transform(mirrorMatrix, v => true);
-    }
-
     internal void MirrorSelected(MirrorOption mirrorOption)
     {
         var xMin = double.PositiveInfinity;

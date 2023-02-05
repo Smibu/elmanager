@@ -193,16 +193,6 @@ internal class ElmaRenderer : IDisposable
             0, Direction.Left, 0), opts, sceneSettings);
     }
 
-    internal void DrawFilledTriangles(IEnumerable<Vector[]> triangles)
-    {
-        const double depth = ZFar - (ZFar - ZNear) * SkyDepth;
-        GL.Begin(PrimitiveType.Triangles);
-        foreach (var triangle in triangles)
-            foreach (var x in triangle)
-                GL.Vertex3(x.X, x.Y, depth);
-        GL.End();
-    }
-
     internal void DrawFlower(Vector v)
     {
         GL.Enable(EnableCap.Texture2D);
@@ -611,7 +601,7 @@ internal class ElmaRenderer : IDisposable
         if (_settings.ShowGravityAppleArrows &&
             (_settings.ShowObjectFrames || (_lgrGraphicsLoaded && _settings.ShowObjects)))
         {
-            foreach (var (o, i) in GetVisibleObjects(sceneSettings))
+            foreach (var (o, _) in GetVisibleObjects(sceneSettings))
             {
                 DrawGravityArrowMaybe(o);
             }
@@ -845,7 +835,7 @@ internal class ElmaRenderer : IDisposable
         _settings = newSettings.Clone();
     }
 
-    protected virtual void Dispose(bool disposing)
+    protected void Dispose(bool disposing)
     {
         // Check to see if Dispose has already been called.
         if (!_disposed)
@@ -1031,7 +1021,7 @@ internal class ElmaRenderer : IDisposable
 
     private void DrawObjectCenters(SceneSettings sceneSettings)
     {
-        foreach (var (x, i) in GetVisibleObjects(sceneSettings))
+        foreach (var (x, _) in GetVisibleObjects(sceneSettings))
         {
             switch (x.Type)
             {

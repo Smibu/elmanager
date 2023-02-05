@@ -12,5 +12,4 @@ internal interface IManagerGui
     bool Busy { get; }
     void DisplaySelectionInfo();
     bool ConfirmDeletion();
-    void NotifyAboutModification();
 }

@@ -85,7 +85,7 @@ internal class Polygon
     {
         get
         {
-            double result = Vertices.Select((t, i) => this[i].X * this[i + 1].Y - this[i + 1].X * this[i].Y).Sum();
+            double result = Vertices.Select((_, i) => this[i].X * this[i + 1].Y - this[i + 1].X * this[i].Y).Sum();
             return result / 2;
         }
     }
@@ -244,11 +244,6 @@ internal class Polygon
     private int GetIndex(int index)
     {
         return index % Vertices.Count;
-    }
-
-    internal bool Contains(Vector p)
-    {
-        return Vertices.Contains(p);
     }
 
     internal void Move(Vector delta)
