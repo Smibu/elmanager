@@ -126,11 +126,6 @@ internal struct Vector : IPositionable
         return new(X, Y, Mark);
     }
 
-    internal void Select()
-    {
-        Mark = VectorMark.Selected;
-    }
-
     internal Vector Unit()
     {
         return this / Length;

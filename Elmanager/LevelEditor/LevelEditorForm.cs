@@ -1897,7 +1897,7 @@ internal partial class LevelEditorForm : FormMod, IMessageFilter
     {
         foreach (var polygon in Lev.Polygons)
         {
-            if ((polygon.IsGrass && _grassFilter) || (!polygon.IsGrass && _groundFilter))
+            if ((polygon.IsGrass && EffectiveGrassFilter) || (!polygon.IsGrass && EffectiveGroundFilter))
                 polygon.MarkVectorsAs(VectorMark.Selected);
         }
 
@@ -1906,24 +1906,25 @@ internal partial class LevelEditorForm : FormMod, IMessageFilter
             switch (levelObject.Type)
             {
                 case ObjectType.Apple:
-                    if (_appleFilter)
-                        levelObject.Position.Select();
+                    if (EffectiveAppleFilter)
+                        levelObject.Mark = VectorMark.Selected;
                     break;
                 case ObjectType.Killer:
-                    if (_killerFilter)
-                        levelObject.Position.Select();
+                    if (EffectiveKillerFilter)
+                        levelObject.Mark = VectorMark.Selected;
                     break;
                 case ObjectType.Flower:
-                    if (_flowerFilter)
-                        levelObject.Position.Select();
+                    if (EffectiveFlowerFilter)
+                        levelObject.Mark = VectorMark.Selected;
                     break;
             }
         }
 
-        foreach (var texture in Lev.GraphicElements)
+        foreach (var ge in Lev.GraphicElements)
         {
-            if ((_textureFilter && texture is GraphicElement.Texture) || (_pictureFilter && texture is GraphicElement.Picture))
-                texture.Position.Select();
+            if ((EffectiveTextureFilter && ge is GraphicElement.Texture) ||
+                (EffectivePictureFilter && ge is GraphicElement.Picture))
+                ge.Mark = VectorMark.Selected;
         }
 
         RedrawScene();
