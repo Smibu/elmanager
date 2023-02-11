@@ -510,7 +510,7 @@ internal class SelectionTool : ToolBase, IEditorTool
 
     public void UpdateHelp()
     {
-        LevEditor.InfoLabel.Text = "LMouse: select level elements; LShift: Bend edge; LShift + click: lock edge angle; LAlt + click: select all inside.";
+        LevEditor.InfoLabel.Text = "LMouse: select level elements; LShift: bend edge; LShift + click: lock edge angle; LAlt + click: select all inside.";
     }
 
     private static void MarkSelectedInArea<T>(ref T z, double selectionxMin, double selectionxMax,
