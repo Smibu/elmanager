@@ -138,33 +138,7 @@ internal class Polygon
         }
     }
 
-    private bool IsSimple
-    {
-        get
-        {
-            for (int i = 0; i < Vertices.Count; i++)
-            {
-                if (Vertices[i].Equals(Vertices[(i + 1) % Vertices.Count]))
-                {
-                    return false;
-                }
-            }
-
-            for (int i = 0; i <= Vertices.Count - 2; i++)
-            {
-                for (int j = i + 2; j < Vertices.Count; j++)
-                {
-                    if (i == 0 && j == Vertices.Count - 1)
-                        continue;
-                    if (GeometryUtils.SegmentsIntersect(Vertices[i], Vertices[i + 1], Vertices[j],
-                            Vertices[(j + 1) % Vertices.Count]))
-                        return false;
-                }
-            }
-
-            return true;
-        }
-    }
+    private bool IsSimple => ToIPolygon().IsSimple;
 
     internal void UpdateDecomposition(bool updateGrass = true)
     {
@@ -511,32 +485,6 @@ internal class Polygon
     internal void ChangeOrientation()
     {
         Vertices.Reverse();
-    }
-
-    internal bool IntersectsWith(Polygon p)
-    {
-        int i;
-        int j = 0;
-        for (i = 0; i <= Vertices.Count - 2; i++)
-            for (j = 0; j <= p.Vertices.Count - 2; j++)
-                if (GeometryUtils.SegmentsIntersect(Vertices[i], Vertices[i + 1], p.Vertices[j], p.Vertices[j + 1]))
-                    return true;
-        for (i = 0; i <= Vertices.Count - 2; i++)
-            if (GeometryUtils.SegmentsIntersect(Vertices[i], Vertices[i + 1], p.Vertices[j], p.Vertices[0]))
-                return true;
-        for (j = 0; j <= p.Vertices.Count - 2; j++)
-            if (GeometryUtils.SegmentsIntersect(Vertices[i], Vertices[0], p.Vertices[j], p.Vertices[j + 1]))
-                return true;
-        return GeometryUtils.SegmentsIntersect(Vertices[i], Vertices[0], p.Vertices[j], p.Vertices[0]);
-    }
-
-    internal bool IntersectsWith(Vector v1, Vector v2)
-    {
-        int i;
-        for (i = 0; i <= Vertices.Count - 2; i++)
-            if (GeometryUtils.SegmentsIntersect(Vertices[i], Vertices[i + 1], v1, v2))
-                return true;
-        return GeometryUtils.SegmentsIntersect(Vertices[i], Vertices[0], v1, v2);
     }
 
     internal bool AreaHasPoint(Vector p) =>

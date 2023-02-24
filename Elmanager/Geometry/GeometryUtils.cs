@@ -44,7 +44,7 @@ internal static class GeometryUtils
 
     internal static Polygon? Connect(Polygon p1, Polygon p2, Vector v1, Vector v2, double connectRadius)
     {
-        if (p1.IntersectsWith(p2))
+        if (p1.ToIPolygon().Crosses(p2.ToIPolygon()))
             return null;
         bool isContained = p1.AreaHasPoint(p2[0]) || p2.AreaHasPoint(p1[0]);
         var p1C = new Polygon(p1);
@@ -158,9 +158,6 @@ internal static class GeometryUtils
         result.UpdateDecomposition();
         return result;
     }
-
-    internal static bool SegmentsIntersect(Vector a1, Vector a2, Vector b1, Vector b2) =>
-        GetIntersectionPoint(a1, a2, b1, b2) != null;
 
     internal static Vector? GetIntersectionPoint(Vector a1, Vector a2, Vector b1, Vector b2) =>
         new LineSegment(a1, a2).Intersection(new LineSegment(b1, b2))?.ToVector();

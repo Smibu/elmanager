@@ -3,7 +3,8 @@ using System.Drawing;
 using System.Linq;
 using System.Windows.Forms;
 using Elmanager.Geometry;
-using Elmanager.Lev;
+using NetTopologySuite.Geometries;
+using Polygon = Elmanager.Lev.Polygon;
 
 namespace Elmanager.LevelEditor.Tools;
 
@@ -114,7 +115,10 @@ internal class CutConnectTool : ToolBase, IEditorTool
     {
         MarkAllAs(VectorMark.None);
         List<Polygon> intersectingPolygons =
-            Lev.Polygons.Where(x => !x.IsGrass && x.IntersectsWith(v1, v2)).ToList();
+            Lev.Polygons.Where(x =>
+                    !x.IsGrass && x.ToIPolygon()
+                        .Crosses(new LineSegment(v1, v2).ToGeometry(GeometryFactory.Floating)))
+                .ToList();
         bool anythingConnected = false;
         if (intersectingPolygons.Count == 2)
         {
