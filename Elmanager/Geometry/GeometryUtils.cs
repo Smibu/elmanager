@@ -228,14 +228,7 @@ internal static class GeometryUtils
     {
         var polys = px.GetSelectedPolygons().ToList();
         var multipoly = GeometryFactory.Floating.CreateMultiPolygon(polys.ToIPolygons().ToArray());
-        if (multipoly.IsEmpty)
-        {
-            return multipoly;
-        }
-
-        NetTopologySuite.Geometries.Geometry SymDiff(NetTopologySuite.Geometries.Geometry g, NetTopologySuite.Geometries.Geometry p) => p.SymmetricDifference(g);
-        var selection = multipoly.Geometries.Aggregate(SymDiff);
-        return selection;
+        return multipoly.IsEmpty ? multipoly : multipoly.Geometries.Aggregate((g, p) => p.SymmetricDifference(g));
     }
 
     internal static IEnumerable<Envelope> FindCovering(this NetTopologySuite.Geometries.Geometry g, IEnumerable<Envelope> rectangles,

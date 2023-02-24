@@ -276,8 +276,7 @@ internal class Polygon
     {
         for (var index = 0; index < Vertices.Count; index++)
         {
-            Vector t = Vertices[index];
-            Vertices[index] = new Vector(t.X, t.Y, mark);
+            Vertices[index] = Vertices[index] with { Mark = mark };
         }
     }
 
