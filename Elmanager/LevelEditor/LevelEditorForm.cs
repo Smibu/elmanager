@@ -2179,12 +2179,10 @@ internal partial class LevelEditorForm : FormMod, IMessageFilter
             GroundComboBox.Enabled = true;
             SkyComboBox.Items.Clear();
             GroundComboBox.Items.Clear();
-            foreach (var texture in _editorLgr.ListedImagesExcludingSpecial.Where(image =>
-                         image.Type == ImageType.Texture))
-            {
-                SkyComboBox.Items.Add(texture.Name);
-                GroundComboBox.Items.Add(texture.Name);
-            }
+            var names = _editorLgr.ListedImagesExcludingSpecial.Where(image =>
+                image.Type == ImageType.Texture).Select(image => image.Name).ToArray();
+            SkyComboBox.Items.AddRange(names);
+            GroundComboBox.Items.AddRange(names);
         }
         else if (!PictureToolAvailable)
         {
