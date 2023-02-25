@@ -19,7 +19,7 @@ namespace Elmanager.Properties {
     // class via a tool like ResGen or Visual Studio.
     // To add or remove a member, edit your .ResX file then rerun ResGen
     // with the /str option, or rebuild your VS project.
-    [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Resources.Tools.StronglyTypedResourceBuilder", "16.0.0.0")]
+    [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Resources.Tools.StronglyTypedResourceBuilder", "17.0.0.0")]
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
     [global::System.Runtime.CompilerServices.CompilerGeneratedAttribute()]
     internal class Resources {
@@ -354,12 +354,12 @@ namespace Elmanager.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized resource of type System.Byte[].
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
         /// </summary>
-        internal static byte[] Pause {
+        internal static System.Drawing.Bitmap Pause {
             get {
                 object obj = ResourceManager.GetObject("Pause", resourceCulture);
-                return ((byte[])(obj));
+                return ((System.Drawing.Bitmap)(obj));
             }
         }
         
@@ -384,12 +384,12 @@ namespace Elmanager.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized resource of type System.Byte[].
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
         /// </summary>
-        internal static byte[] Play {
+        internal static System.Drawing.Bitmap Play {
             get {
                 object obj = ResourceManager.GetObject("Play", resourceCulture);
-                return ((byte[])(obj));
+                return ((System.Drawing.Bitmap)(obj));
             }
         }
         
@@ -444,12 +444,12 @@ namespace Elmanager.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized resource of type System.Byte[].
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
         /// </summary>
-        internal static byte[] Settings {
+        internal static System.Drawing.Bitmap Settings {
             get {
                 object obj = ResourceManager.GetObject("Settings", resourceCulture);
-                return ((byte[])(obj));
+                return ((System.Drawing.Bitmap)(obj));
             }
         }
         
@@ -474,12 +474,12 @@ namespace Elmanager.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized resource of type System.Byte[].
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
         /// </summary>
-        internal static byte[] Stop {
+        internal static System.Drawing.Bitmap Stop {
             get {
                 object obj = ResourceManager.GetObject("Stop", resourceCulture);
-                return ((byte[])(obj));
+                return ((System.Drawing.Bitmap)(obj));
             }
         }
         

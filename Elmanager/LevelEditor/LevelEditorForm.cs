@@ -2725,13 +2725,13 @@ internal partial class LevelEditorForm : FormMod, IMessageFilter
 
     private void SetNotPlaying()
     {
-        playButton.SvgData = Resources.Play;
+        playButton.Image = Resources.Play;
         playButton.ToolTipText = "Play";
     }
 
     private void SetToPlaying()
     {
-        playButton.SvgData = Resources.Pause;
+        playButton.Image = Resources.Pause;
         playButton.ToolTipText = "Pause";
         stopButton.Enabled = true;
     }

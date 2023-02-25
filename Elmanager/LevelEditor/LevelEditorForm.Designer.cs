@@ -159,9 +159,9 @@ namespace Elmanager.LevelEditor
             this.BestTimeLabel = new System.Windows.Forms.ToolStripLabel();
             this.topologyList = new System.Windows.Forms.ToolStripDropDownButton();
             this.toolStripSeparator16 = new System.Windows.Forms.ToolStripSeparator();
-            this.playButton = new Elmanager.UI.SvgImageToolStripButton();
-            this.stopButton = new Elmanager.UI.SvgImageToolStripButton();
-            this.settingsButton = new Elmanager.UI.SvgImageToolStripButton();
+            this.playButton = new System.Windows.Forms.ToolStripButton();
+            this.stopButton = new System.Windows.Forms.ToolStripButton();
+            this.settingsButton = new System.Windows.Forms.ToolStripButton();
             this.PlayTimeLabel = new System.Windows.Forms.ToolStripLabel();
             this.toolStrip3 = new System.Windows.Forms.ToolStrip();
             this.InfoLabel = new System.Windows.Forms.ToolStripLabel();
@@ -1371,10 +1371,9 @@ namespace Elmanager.LevelEditor
             // playButton
             // 
             this.playButton.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
-            this.playButton.Image = ((System.Drawing.Image)(resources.GetObject("playButton.Image")));
+            this.playButton.Image = global::Elmanager.Properties.Resources.Play;
             this.playButton.Name = "playButton";
             this.playButton.Size = new System.Drawing.Size(46, 36);
-            this.playButton.SvgData = global::Elmanager.Properties.Resources.Play;
             this.playButton.ToolTipText = "Play";
             this.playButton.Click += new System.EventHandler(this.playButton_Click);
             // 
@@ -1382,20 +1381,18 @@ namespace Elmanager.LevelEditor
             // 
             this.stopButton.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
             this.stopButton.Enabled = false;
-            this.stopButton.Image = ((System.Drawing.Image)(resources.GetObject("stopButton.Image")));
+            this.stopButton.Image = global::Elmanager.Properties.Resources.Stop;
             this.stopButton.Name = "stopButton";
             this.stopButton.Size = new System.Drawing.Size(46, 36);
-            this.stopButton.SvgData = global::Elmanager.Properties.Resources.Stop;
             this.stopButton.ToolTipText = "Stop";
             this.stopButton.Click += new System.EventHandler(this.stopButton_Click);
             // 
             // settingsButton
             // 
             this.settingsButton.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
-            this.settingsButton.Image = ((System.Drawing.Image)(resources.GetObject("settingsButton.Image")));
+            this.settingsButton.Image = global::Elmanager.Properties.Resources.Settings;
             this.settingsButton.Name = "settingsButton";
             this.settingsButton.Size = new System.Drawing.Size(46, 36);
-            this.settingsButton.SvgData = global::Elmanager.Properties.Resources.Settings;
             this.settingsButton.ToolTipText = "Settings";
             this.settingsButton.Click += new System.EventHandler(this.settingsButton_Click);
             // 
@@ -2031,9 +2028,9 @@ namespace Elmanager.LevelEditor
         private ToolStrip toolStrip3;
         internal ToolStripLabel InfoLabel;
         private ToolStripSeparator toolStripSeparator16;
-        private SvgImageToolStripButton playButton;
-        private SvgImageToolStripButton stopButton;
-        private SvgImageToolStripButton settingsButton;
+        private ToolStripButton playButton;
+        private ToolStripButton stopButton;
+        private ToolStripButton settingsButton;
         private ToolStripMenuItem deselectGroundPolygonsToolStripMenuItem;
         private ToolStripMenuItem deselectGrassPolygonsToolStripMenuItem;
         private ToolStripSeparator toolStripSeparator17;
