@@ -1,6 +1,6 @@
 # Elmanager changelog
 
-## Unreleased
+## 24.2.2023
 * SLE: Selection is no longer updated when changing selection filter. Separate menu items have been added to unselect all elements of a specific type.
 * SLE: Added option to disable "Save/restore start position" feature.
 * SLE: Added option to switch between constant and non-constant physics FPS. Default is non-constant.
