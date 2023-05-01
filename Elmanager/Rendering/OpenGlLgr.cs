@@ -147,7 +147,7 @@ internal class OpenGlLgr : IDisposable
             }
         }
 
-        RefreshGrassPics(newSettings);
+        RefreshGrassPics(lev, newSettings);
         UpdateGroundAndSky(lev, newSettings.DefaultGroundAndSky);
     }
 
@@ -627,13 +627,35 @@ internal class OpenGlLgr : IDisposable
 
     private static double GetGrassFactor(double zoom) => 48.0 * zoom;
 
-    public void RefreshGrassPics(RenderingSettings settings)
+    public void RefreshGrassPics(Level lev, RenderingSettings settings)
     {
         if (_qgrassImage == null)
         {
             return;
         }
+
+        var oldQgrassId = _qgrass?.TextureId;
+        if (_qgrass != null)
+        {
+            GL.DeleteTexture(_qgrass.TextureId);
+        }
+        DeleteGrassPics();
+
         _qgrass = FromLgrImage(_qgrassImage, new TextureOptions(), 1 / GetGrassFactor(settings.GrassZoom));
+        DrawableImages["qgrass"] = _qgrass;
+        UpdateGroundAndSky(lev, settings.DefaultGroundAndSky);
+
+        // If the lev has qgrass textures, they must be updated too.
+        lev.GraphicElements = lev.GraphicElements.Select(element =>
+        {
+            if (element is GraphicElement.Texture t && t.TextureInfo.TextureId == oldQgrassId)
+            {
+                return t with { TextureInfo = _qgrass };
+            }
+
+            return element;
+        }).ToList();
+
         int grassHeightExtension = (int)(settings.GrassZoom * 40 - 20); // this is how eolconf seems to compute the extension
         var imgs = _grassImages.AsParallel().Select(img => img.SetAlphaIgnore(GrassIgnoreAlpha, grassHeightExtension))
             .ToList();
@@ -704,9 +726,15 @@ internal class OpenGlLgr : IDisposable
             GL.DeleteTexture(x.TextureIdentifier);
         }
 
+        DeleteGrassPics();
+    }
+
+    private void DeleteGrassPics()
+    {
         foreach (var x in _grassPics)
         {
             GL.DeleteTexture(x.Image.TextureId);
+            x.Bmp.Dispose();
         }
     }
 

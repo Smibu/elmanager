@@ -661,7 +661,7 @@ internal class ElmaRenderer : IDisposable
             var grassZoomChanged = Math.Abs(_settings.GrassZoom - newSettings.GrassZoom) > double.Epsilon;
             if (grassZoomChanged)
             {
-                OpenGlLgr.RefreshGrassPics(newSettings);
+                OpenGlLgr.RefreshGrassPics(Lev, newSettings);
                 foreach (var polygon in Lev.Polygons.Where(p => p.IsGrass))
                 {
                     polygon.SlopeInfo = new GrassSlopeInfo(polygon, Lev.GroundBounds, newSettings.GrassZoom);
