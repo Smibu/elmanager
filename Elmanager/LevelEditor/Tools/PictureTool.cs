@@ -136,6 +136,10 @@ internal class PictureTool : ToolBase, IEditorTool
 
     private GraphicElement? OpenDialogNow(PictureForm picForm, bool setDefaultsAutomatically)
     {
+        if (Renderer.OpenGlLgr == null)
+        {
+            return null;
+        }
         picForm.Location = Control.MousePosition;
         picForm.AllowMultiple = false;
         picForm.AutoTextureMode = false;
@@ -148,9 +152,9 @@ internal class PictureTool : ToolBase, IEditorTool
             return sel switch
             {
                 ImageSelection.TextureSelection t => GraphicElement.Text(clipping, distance,
-                    CurrentPos, Renderer.DrawableImageFromName(t.Txt),
-                    Renderer.DrawableImageFromName(t.Mask)),
-                ImageSelection.PictureSelection p => GraphicElement.Pic(Renderer.DrawableImageFromName(p.Pic),
+                    CurrentPos, Renderer.OpenGlLgr.DrawableImageFromName(t.Txt),
+                    Renderer.OpenGlLgr.DrawableImageFromName(t.Mask)),
+                ImageSelection.PictureSelection p => GraphicElement.Pic(Renderer.OpenGlLgr.DrawableImageFromName(p.Pic),
                     CurrentPos, distance, clipping),
                 _ => throw new Exception("Unexpected")
             };

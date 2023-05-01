@@ -45,10 +45,10 @@ internal class PipeTool : ToolBase, IEditorTool
             foreach (LevObject x in _pipeSpec.Apples)
             {
                 if (Global.AppSettings.LevelEditor.RenderingSettings.ShowObjectFrames)
-                    Renderer.DrawCircle(x.Position, ElmaRenderer.ObjectRadius,
+                    Renderer.DrawCircle(x.Position, OpenGlLgr.ObjectRadius,
                         Global.AppSettings.LevelEditor.RenderingSettings.AppleColor);
-                if (Renderer.LgrGraphicsLoaded && Global.AppSettings.LevelEditor.RenderingSettings.ShowObjects)
-                    Renderer.DrawApple(x.Position);
+                if (Renderer.OpenGlLgr != null && Global.AppSettings.LevelEditor.RenderingSettings.ShowObjects)
+                    Renderer.OpenGlLgr.DrawAppleSingle(x.Position);
             }
         }
     }

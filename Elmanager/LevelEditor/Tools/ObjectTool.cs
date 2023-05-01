@@ -33,32 +33,32 @@ internal class ObjectTool : ToolBase, IEditorTool
             switch (_currentObjectType)
             {
                 case ObjectType.Killer:
-                    Renderer.DrawCircle(CurrentPos, ElmaRenderer.ObjectRadius,
+                    Renderer.DrawCircle(CurrentPos, OpenGlLgr.ObjectRadius,
                         Global.AppSettings.LevelEditor.RenderingSettings.KillerColor);
                     break;
                 case ObjectType.Apple:
-                    Renderer.DrawCircle(CurrentPos, ElmaRenderer.ObjectRadius,
+                    Renderer.DrawCircle(CurrentPos, OpenGlLgr.ObjectRadius,
                         Global.AppSettings.LevelEditor.RenderingSettings.AppleColor);
                     break;
                 case ObjectType.Flower:
-                    Renderer.DrawCircle(CurrentPos, ElmaRenderer.ObjectRadius,
+                    Renderer.DrawCircle(CurrentPos, OpenGlLgr.ObjectRadius,
                         Global.AppSettings.LevelEditor.RenderingSettings.FlowerColor);
                     break;
             }
         }
 
-        if (!Global.AppSettings.LevelEditor.RenderingSettings.ShowObjects || !Renderer.LgrGraphicsLoaded)
+        if (!Global.AppSettings.LevelEditor.RenderingSettings.ShowObjects || Renderer.OpenGlLgr == null)
             return;
         switch (_currentObjectType)
         {
             case ObjectType.Killer:
-                Renderer.DrawKiller(CurrentPos);
+                Renderer.OpenGlLgr.DrawKillerSingle(CurrentPos);
                 break;
             case ObjectType.Apple:
-                Renderer.DrawApple(CurrentPos, _animNum);
+                Renderer.OpenGlLgr.DrawAppleSingle(CurrentPos, _animNum);
                 break;
             case ObjectType.Flower:
-                Renderer.DrawFlower(CurrentPos);
+                Renderer.OpenGlLgr.DrawFlowerSingle(CurrentPos);
                 break;
         }
     }

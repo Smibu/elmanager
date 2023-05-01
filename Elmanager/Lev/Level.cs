@@ -486,7 +486,7 @@ internal class Level
 
     private bool IsObjectInsideGround(LevObject o)
     {
-        return !Polygons.Any(polygon => polygon.DistanceFromPoint(o.Position) < ElmaRenderer.ObjectRadius) &&
+        return !Polygons.Any(polygon => polygon.DistanceFromPoint(o.Position) < OpenGlLgr.ObjectRadius) &&
                IsPointInGround(o.Position);
     }
 

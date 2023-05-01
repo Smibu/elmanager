@@ -726,7 +726,7 @@ internal partial class LevelEditorForm : FormMod, IMessageFilter
         {
             GL.Translate(-jf.X, -jf.Y, 0);
             var driver = PlayController.Driver!;
-            if (Settings.RenderingSettings.ShowObjects && Renderer.LgrGraphicsLoaded)
+            if (Settings.RenderingSettings.ShowObjects && Renderer.OpenGlLgr != null)
             {
                 Renderer.DrawPlayer(driver.GetState(), PlayController.RenderOptsLgr, _sceneSettings);
             }
@@ -1140,7 +1140,7 @@ internal partial class LevelEditorForm : FormMod, IMessageFilter
 
     private async void TexturizeSelection()
     {
-        if (_editorLgr is null)
+        if (Renderer.OpenGlLgr is null)
         {
             UiUtils.ShowError("You need to select LGR file from settings before you can use texturize tool.", "Note",
                 MessageBoxIcon.Information);
@@ -1153,7 +1153,7 @@ internal partial class LevelEditorForm : FormMod, IMessageFilter
             return;
         }
 
-        var picForm = new PictureForm(_editorLgr, null)
+        var picForm = new PictureForm(Renderer.OpenGlLgr.CurrentLgr, null)
         {
             AutoTextureMode = true,
             AllowMultiple = false,
@@ -1173,8 +1173,8 @@ internal partial class LevelEditorForm : FormMod, IMessageFilter
         var opts = picForm.TexturizationOptions;
         _texturizationOpts = opts;
 
-        var masks = opts.SelectedMasks.Select(x => Renderer.DrawableImageFromName(_editorLgr.ImageFromName(x)!)).ToList();
-        var texture = Renderer.DrawableImageFromName(sel.Txt);
+        var masks = opts.SelectedMasks.Select(x => Renderer.OpenGlLgr.DrawableImageFromName(Renderer.OpenGlLgr.CurrentLgr.ImageFromName(x)!)).ToList();
+        var texture = Renderer.OpenGlLgr.DrawableImageFromName(sel.Txt);
         var rects = masks
             .Select(i => new Envelope(0, i.WidthMinusMargin, 0, i.HeightMinusMargin));
 
@@ -1273,7 +1273,7 @@ internal partial class LevelEditorForm : FormMod, IMessageFilter
                 if (Settings.RenderingSettings.DefaultGroundAndSky)
                     UiUtils.ShowError("Default ground and sky is enabled, so you won\'t see this change in editor.",
                         "Warning", MessageBoxIcon.Exclamation);
-                Renderer.UpdateGroundAndSky(Settings.RenderingSettings.DefaultGroundAndSky);
+                Renderer.OpenGlLgr?.UpdateGroundAndSky(Lev, Settings.RenderingSettings.DefaultGroundAndSky);
                 RedrawScene();
             }
 
@@ -1291,7 +1291,7 @@ internal partial class LevelEditorForm : FormMod, IMessageFilter
         topologyList.DropDownItems.Clear();
         topologyList.Text = "";
         _errorPoints.Clear();
-        Renderer.UpdateGroundAndSky(Settings.RenderingSettings.DefaultGroundAndSky);
+        Renderer.OpenGlLgr?.UpdateGroundAndSky(Lev, Settings.RenderingSettings.DefaultGroundAndSky);
         CurrentTool.InActivate();
         ActivateCurrentAndRedraw();
         UpdateLabels();
@@ -1626,12 +1626,12 @@ internal partial class LevelEditorForm : FormMod, IMessageFilter
 
     private void PicturePropertiesToolStripMenuItemClick(object sender, EventArgs e)
     {
-        if (_editorLgr is null)
+        if (Renderer.OpenGlLgr is null)
         {
             return;
         }
         var selectedElems = Lev.GraphicElements.Where(p => p.Position.Mark == VectorMark.Selected).ToList();
-        var picForm = new PictureForm(_editorLgr, null)
+        var picForm = new PictureForm(Renderer.OpenGlLgr.CurrentLgr, null)
         {
             SetDefaultsAutomatically = Settings.AlwaysSetDefaultsInPictureTool
         };
@@ -1666,21 +1666,21 @@ internal partial class LevelEditorForm : FormMod, IMessageFilter
             {
                 ImageSelection.MixedSelection => curr with { Distance = distance, Clipping = clipping },
                 ImageSelection.PictureSelection(var pic, _, _) => GraphicElement.Pic(
-                    Renderer.DrawableImageFromName(pic), position, distance, clipping),
+                    Renderer.OpenGlLgr.DrawableImageFromName(pic), position, distance, clipping),
                 ImageSelection.TextureSelection(var txt, var mask, _, _) => GraphicElement.Text(clipping, distance,
                     position,
-                    Renderer.DrawableImageFromName(txt),
-                    Renderer.DrawableImageFromName(mask)),
+                    Renderer.OpenGlLgr.DrawableImageFromName(txt),
+                    Renderer.OpenGlLgr.DrawableImageFromName(mask)),
                 ImageSelection.TextureSelectionMultipleMasks(var txt, _, _) when
                     curr is GraphicElement.Texture t =>
-                    GraphicElement.Text(clipping, distance, position, Renderer.DrawableImageFromName(txt), t.MaskInfo),
+                    GraphicElement.Text(clipping, distance, position, Renderer.OpenGlLgr.DrawableImageFromName(txt), t.MaskInfo),
                 ImageSelection.TextureSelectionMultipleMasks(var txt, _, _) when curr is GraphicElement.Picture
                     =>
-                    GraphicElement.Text(clipping, distance, position, Renderer.DrawableImageFromName(txt),
-                        Renderer.DrawableImageFromName(_editorLgr!.LgrImages.Values.First(i => i.Type == ImageType.Mask))),
+                    GraphicElement.Text(clipping, distance, position, Renderer.OpenGlLgr.DrawableImageFromName(txt),
+                        Renderer.OpenGlLgr.DrawableImageFromName(_editorLgr!.LgrImages.Values.First(i => i.Type == ImageType.Mask))),
                 ImageSelection.TextureSelectionMultipleTextures(var mask, _, _) when
                     curr is GraphicElement.Texture t => GraphicElement.Text(clipping,
-                        distance, position, t.TextureInfo, Renderer.DrawableImageFromName(mask)),
+                        distance, position, t.TextureInfo, Renderer.OpenGlLgr.DrawableImageFromName(mask)),
                 ImageSelection.TextureSelectionMultipleTextures when
                     curr is GraphicElement.Picture => curr with { Distance = distance, Clipping = clipping },
                 _ => throw new ArgumentOutOfRangeException(nameof(sel))
@@ -2174,9 +2174,9 @@ internal partial class LevelEditorForm : FormMod, IMessageFilter
 
     private void UpdateLgrTools()
     {
-        if (Renderer.CurrentLgr != null && _editorLgr?.Path != Renderer.CurrentLgr.Path)
+        if (Renderer.OpenGlLgr != null && _editorLgr?.Path != Renderer.OpenGlLgr.CurrentLgr.Path)
         {
-            _editorLgr = Renderer.CurrentLgr;
+            _editorLgr = Renderer.OpenGlLgr.CurrentLgr;
             PicturePropertiesMenuItem.Enabled = true;
             SkyComboBox.Enabled = true;
             GroundComboBox.Enabled = true;
@@ -2287,7 +2287,10 @@ internal partial class LevelEditorForm : FormMod, IMessageFilter
                     lev = new Level();
                 }
 
-                lev.UpdateImages(Renderer.DrawableImages);
+                if (Renderer.OpenGlLgr != null)
+                {
+                    lev.UpdateImages(Renderer.OpenGlLgr.DrawableImages);
+                }
             }
             else if (file.EndsWith(".svg") || file.EndsWith(".svgz"))
             {
@@ -2396,7 +2399,7 @@ internal partial class LevelEditorForm : FormMod, IMessageFilter
         else
         {
             // handle picture
-            var picForm = new PictureForm(_editorLgr!, null)
+            var picForm = new PictureForm(Renderer.OpenGlLgr!.CurrentLgr, null)
             {
                 AllowMultiple = false,
                 AutoTextureMode = false,
@@ -2414,9 +2417,9 @@ internal partial class LevelEditorForm : FormMod, IMessageFilter
                     GraphicElement g = picForm.Selection switch
                     {
                         ImageSelection.TextureSelection t => GraphicElement.Text(clipping, distance, selectedVertex,
-                            Renderer.DrawableImageFromName(t.Txt), Renderer.DrawableImageFromName(t.Mask)),
+                            Renderer.OpenGlLgr.DrawableImageFromName(t.Txt), Renderer.OpenGlLgr.DrawableImageFromName(t.Mask)),
                         ImageSelection.PictureSelection p => GraphicElement.Pic(
-                            Renderer.DrawableImageFromName(p.Pic), selectedVertex, distance, clipping),
+                            Renderer.OpenGlLgr.DrawableImageFromName(p.Pic), selectedVertex, distance, clipping),
                         _ => throw new Exception("Unexpected")
                     };
                     Lev.GraphicElements.Add(g);

@@ -66,7 +66,7 @@ internal abstract class ToolBase : IEditorToolBase
         }
 
         if (Math.Sqrt(smallest) <
-            Math.Max(ZoomCtrl.ZoomLevel * Global.AppSettings.LevelEditor.CaptureRadius, ElmaRenderer.ObjectRadius))
+            Math.Max(ZoomCtrl.ZoomLevel * Global.AppSettings.LevelEditor.CaptureRadius, OpenGlLgr.ObjectRadius))
             return index;
         return -1;
     }
