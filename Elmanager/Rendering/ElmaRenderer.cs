@@ -16,6 +16,7 @@ using Elmanager.Utilities;
 using OpenTK.Graphics.OpenGL;
 using OpenTK.Windowing.Common;
 using OpenTK.WinForms;
+using Color = System.Drawing.Color;
 using PixelFormat = System.Drawing.Imaging.PixelFormat;
 
 namespace Elmanager.Rendering;
@@ -37,18 +38,20 @@ internal class ElmaRenderer : IDisposable
     private const double BodyWidth = 0.7;
     private const double GroundDepth = 0;
     private const int GroundStencil = 2;
-    private const double PictureFactor = 1 / 48.0;
     private const double SkyDepth = 0;
     private const int SkyStencil = 1;
     private const int StencilMask = 255;
     private const double Suspension1Factor = 1 / 170.0;
     private const double Suspension2Factor = 1 / 220.0;
-    private const double TextureCoordConst = TextureVertexConst * 7.0 / 3.0;
+    private const double TextureCoordConst = TextureVertexConst * 2;
     private const double TextureVertexConst = 1000;
     private const double TextureZoomConst = 10000.0;
     private const double ZFar = 1;
     private const double ZNear = -1;
     private const int LinePattern = 0b0101010101010101;
+    private const int GrassIgnoreAlpha = 0x7F;
+
+    private double GetGrassFactor(double zoom) => 48.0 * zoom;
 
     internal Lgr.Lgr? CurrentLgr;
     internal Level Lev = new();
@@ -83,6 +86,10 @@ internal class ElmaRenderer : IDisposable
     private int _colorRenderBuffer;
     private int _depthStencilRenderBuffer;
     private int _maxRenderbufferSize;
+    private List<GrassPic> _grassPics = new();
+    private DrawableImage? _qgrass;
+    private List<GrassImage> _grassImages = new();
+    private LgrImage? _qgrassImage;
 
     internal ElmaRenderer(GLControl renderingTarget, RenderingSettings settings)
     {
@@ -376,33 +383,14 @@ internal class ElmaRenderer : IDisposable
         GL.Enable(EnableCap.DepthTest);
         GL.StencilFunc(StencilFunction.Equal, GroundStencil, StencilMask);
         GL.StencilOp(StencilOp.Keep, StencilOp.Keep, StencilOp.Replace);
-        var midX = (Lev.XMin + Lev.XMax) / 2;
-        var midY = (Lev.YMin + Lev.YMax) / 2;
+        var midX = (Lev.Bounds.XMin + Lev.Bounds.XMax) / 2;
+        var midY = (Lev.Bounds.YMin + Lev.Bounds.YMax) / 2;
         if (_settings.ShowGround)
         {
             const double depth = ZFar - (ZFar - ZNear) * GroundDepth;
             if (_settings.GroundTextureEnabled && LgrGraphicsLoaded)
             {
-                GL.BindTexture(TextureTarget.Texture2D, _groundTexture!.TextureId);
-                var gtW = _groundTexture.Width;
-                var gtH = _groundTexture.Height;
-                var zl = cam.ZoomLevel;
-                var c = TextureZoomConst;
-                if (_settings.ZoomTextures)
-                {
-                    zl = 1;
-                    c = TextureCoordConst;
-                }
-                GL.Begin(PrimitiveType.Quads);
-                GL.TexCoord2(0, c / gtW * gtW / gtH / zl);
-                GL.Vertex3(midX - TextureVertexConst, midY - TextureVertexConst, depth);
-                GL.TexCoord2(c / gtW / zl, c / gtW * gtW / gtH / zl);
-                GL.Vertex3(midX + TextureVertexConst, midY - TextureVertexConst, depth);
-                GL.TexCoord2(c / gtW / zl, 0);
-                GL.Vertex3(midX + TextureVertexConst, midY + TextureVertexConst, depth);
-                GL.TexCoord2(0, 0);
-                GL.Vertex3(midX - TextureVertexConst, midY + TextureVertexConst, depth);
-                GL.End();
+                DrawFullScreenTexture(cam, _groundTexture!, midX, midY, depth);
             }
             else
             {
@@ -512,32 +500,41 @@ internal class ElmaRenderer : IDisposable
                     DrawPicture(t.MaskInfo.TextureId, picture.Position.X, picture.Position.Y, picture.Width, -picture.Height,
                         depth + 0.001);
 
-                    GL.BindTexture(TextureTarget.Texture2D, t.TextureInfo.TextureId);
+                    var info = t.TextureInfo;
                     GL.StencilFunc(StencilFunction.Lequal, 5, StencilMask);
-                    var zl = cam.ZoomLevel;
-                    var c = TextureZoomConst;
-                    if (_settings.ZoomTextures)
-                    {
-                        zl = 1;
-                        c = TextureCoordConst;
-                    }
-                    GL.Begin(PrimitiveType.Quads);
-                    var ymin = -(midY - TextureVertexConst);
-                    var ymax = -(midY + TextureVertexConst);
-                    GL.TexCoord2(0, 0);
-                    GL.Vertex3(midX - TextureVertexConst, ymin, depth);
-                    GL.TexCoord2(c / t.TextureInfo.Width / zl, 0);
-                    GL.Vertex3(midX + TextureVertexConst, ymin, depth);
-                    GL.TexCoord2(c / t.TextureInfo.Width / zl, c / t.TextureInfo.Width * t.AspectRatio / zl);
-                    GL.Vertex3(midX + TextureVertexConst, ymax, depth);
-                    GL.TexCoord2(0, c / t.TextureInfo.Width * t.AspectRatio / zl);
-                    GL.Vertex3(midX - TextureVertexConst, ymax, depth);
-                    GL.End();
+                    DrawFullScreenTexture(cam, info, midX, midY, depth);
                 }
             }
 
             GL.Disable(EnableCap.ScissorTest);
             GL.DepthFunc(DepthFunction.Gequal);
+            if (_settings.ShowGrass && _grassPics.Count > 0 && _qgrass != null)
+            {
+                GL.StencilOp(StencilOp.Keep, StencilOp.Keep, StencilOp.Keep);
+                GL.StencilFunc(StencilFunction.Equal, GroundStencil, StencilMask);
+                GL.AlphaFunc(AlphaFunction.Notequal, GrassIgnoreAlpha / 255f);
+                GL.Disable(EnableCap.Blend);
+                for (var i = Lev.Polygons.Count - 1; i >= 0; i--)
+                {
+                    var p = Lev.Polygons[i];
+                    if (p is { IsGrass: true, SlopeInfo: { } })
+                    {
+                        foreach (var pic in p.SlopeInfo.GetGrassPics(_grassPics))
+                        {
+                            var depth = pic.Distance / 1000.0 * (ZFar - ZNear) + ZNear;
+                            DrawPicture(pic.PictureInfo.TextureId, pic.Position.X, pic.Position.Y, pic.Width,
+                                pic.Height,
+                                depth, 1, 0);
+                        }
+                    }
+                }
+
+                GL.AlphaFunc(AlphaFunction.Gequal, 0.9f);
+                GL.Enable(EnableCap.Blend);
+                GL.BlendFunc(BlendingFactor.OneMinusDstAlpha, BlendingFactor.DstAlpha);
+                DrawFullScreenTexture(cam, _qgrass, midX, midY, 0);
+                GL.BlendFunc(BlendingFactor.One, BlendingFactor.OneMinusDstColor);
+            }
         }
 
         GL.Disable(EnableCap.StencilTest);
@@ -583,8 +580,8 @@ internal class ElmaRenderer : IDisposable
         {
             GL.Enable(EnableCap.LineStipple);
             GL.LineStipple((int)_settings.LineWidth * 2, LinePattern);
-            var levCenterX = (Lev.XMin + Lev.XMax) / 2;
-            var levCenterY = (Lev.YMin + Lev.YMax) / 2;
+            var levCenterX = (Lev.Bounds.XMin + Lev.Bounds.XMax) / 2;
+            var levCenterY = (Lev.Bounds.YMin + Lev.Bounds.YMax) / 2;
             DrawRectangle(levCenterX - Level.MaximumSize / 2,
                 levCenterY - Level.MaximumSize / 2,
                 levCenterX + Level.MaximumSize / 2,
@@ -613,11 +610,8 @@ internal class ElmaRenderer : IDisposable
             {
                 if (_settings.ShowGrassEdges)
                 {
-                    DrawLineStrip(x, _settings.GrassEdgeColor);
-                    if (_settings.ShowInactiveGrassEdges)
-                    {
-                        DrawDashLine(x.Vertices.First(), x.Vertices.Last(), _settings.GrassEdgeColor);
-                    }
+                    var color = x.SlopeInfo?.HasError ?? false ? Color.Red : _settings.GrassEdgeColor;
+                    DrawGrassPolygon(x, color, _settings.ShowInactiveGrassEdges);
                 }
             }
             else if (_settings.ShowGroundEdges)
@@ -644,7 +638,7 @@ internal class ElmaRenderer : IDisposable
 
         if (_settings.ShowVertices)
         {
-            var showGrassVertices = _settings.ShowGrassEdges;
+            var showGrassVertices = _settings.ShowGrassEdges || _settings.ShowGrass;
             var showGroundVertices = _settings.ShowGroundEdges || (_settings.ShowGround && _lgrGraphicsLoaded);
             GL.Color3(_settings.VertexColor);
             if (_settings.UseCirclesForVertices)
@@ -665,6 +659,60 @@ internal class ElmaRenderer : IDisposable
             }
 
             GL.End();
+        }
+    }
+
+    private void DrawFullScreenTexture(ElmaCamera cam, DrawableImage info, double midX, double midY, double depth)
+    {
+        GL.BindTexture(TextureTarget.Texture2D, info.TextureId);
+        var zl = cam.ZoomLevel;
+        var c = TextureZoomConst;
+        if (_settings.ZoomTextures)
+        {
+            zl = 1;
+            c = TextureCoordConst;
+        }
+
+        GL.Begin(PrimitiveType.Quads);
+        var ymin = -(midY - TextureVertexConst);
+        var ymax = -(midY + TextureVertexConst);
+        var pixelAlignedX = GrassSlopeInfo.AdjustBound(midX - TextureVertexConst, GetGrassFactor(_settings.GrassZoom));
+        var diffX = midX - TextureVertexConst - pixelAlignedX;
+        var pixelAlignedY = GrassSlopeInfo.AdjustBound(ymin, GetGrassFactor(_settings.GrassZoom));
+        var diffY = ymin - pixelAlignedY;
+        GL.TexCoord2(0, 0);
+        GL.Vertex3(midX - TextureVertexConst - diffX, ymin - diffY, depth);
+        GL.TexCoord2(c / info.Width / zl, 0);
+        GL.Vertex3(midX + TextureVertexConst - diffX, ymin - diffY, depth);
+        GL.TexCoord2(c / info.Width / zl, c / info.Width * info.AspectRatio / zl);
+        GL.Vertex3(midX + TextureVertexConst - diffX, ymax - diffY, depth);
+        GL.TexCoord2(0, c / info.Width * info.AspectRatio / zl);
+        GL.Vertex3(midX - TextureVertexConst - diffX, ymax - diffY, depth);
+        GL.End();
+    }
+
+    public void DrawGrassPolygon(Polygon polygon, Color color, bool drawInactiveGrassEdge)
+    {
+        GL.Color4(color);
+        GL.Begin(PrimitiveType.LineStrip);
+        for (var index = polygon.GrassStart; index < polygon.Vertices.Count; index++)
+        {
+            var z = polygon.Vertices[index];
+            GL.Vertex3(z.X, z.Y, 0);
+        }
+
+        for (var index = 0; index < polygon.GrassStart; index++)
+        {
+            var z = polygon.Vertices[index];
+            GL.Vertex3(z.X, z.Y, 0);
+        }
+
+        GL.End();
+        if (drawInactiveGrassEdge)
+        {
+            DrawDashLine(polygon.Vertices[polygon.GrassStart == 0 ? ^1 : polygon.GrassStart - 1],
+                polygon.Vertices[polygon.GrassStart],
+                color);
         }
     }
 
@@ -754,9 +802,9 @@ internal class ElmaRenderer : IDisposable
             ObjectType.Start => 4,
             _ => throw new ArgumentOutOfRangeException()
         }).ToList();
-        Lev.DecomposeGroundPolygons();
-        Lev.UpdateImages(DrawableImages);
         Lev.UpdateBounds();
+        Lev.UpdateAllPolygons(_settings.GrassZoom);
+        Lev.UpdateImages(DrawableImages);
         UpdateGroundAndSky(_settings.DefaultGroundAndSky);
     }
 
@@ -819,14 +867,26 @@ internal class ElmaRenderer : IDisposable
             CurrentLgr?.Dispose();
             if (File.Exists(newSettings.LgrFile))
             {
-                LoadLgrGraphics(newSettings.LgrFile);
+                LoadLgrGraphics(newSettings.LgrFile, newSettings);
                 Lev.UpdateImages(DrawableImages);
                 UpdateGroundAndSky(newSettings.DefaultGroundAndSky);
             }
         }
-        else if (_settings.DefaultGroundAndSky != newSettings.DefaultGroundAndSky)
+        else
         {
-            UpdateGroundAndSky(newSettings.DefaultGroundAndSky);
+            var grassZoomChanged = Math.Abs(_settings.GrassZoom - newSettings.GrassZoom) > double.Epsilon;
+            if (grassZoomChanged)
+            {
+                RefreshGrassPics(newSettings);
+                foreach (var polygon in Lev.Polygons.Where(p => p.IsGrass))
+                {
+                    polygon.SlopeInfo = new GrassSlopeInfo(polygon, Lev.GroundBounds, newSettings.GrassZoom);
+                }
+            }
+            if (_settings.DefaultGroundAndSky != newSettings.DefaultGroundAndSky)
+            {
+                UpdateGroundAndSky(newSettings.DefaultGroundAndSky);
+            }
         }
 
         GL.ClearColor(newSettings.SkyFillColor);
@@ -901,7 +961,7 @@ internal class ElmaRenderer : IDisposable
     {
         x -= ObjectRadius;
         y -= ObjectRadius;
-        DrawPicture(picture, x, y, ObjectDiameter, ObjectDiameter, depth, -1);
+        DrawPicture(picture, x, y, ObjectDiameter, ObjectDiameter, depth, texcoordyEnd: -1);
     }
 
     private static void DrawObject(int picture, Vector v, double depth = 0.5 * (ZFar - ZNear) + ZNear)
@@ -909,17 +969,24 @@ internal class ElmaRenderer : IDisposable
         DrawObject(picture, v.X, v.Y, depth);
     }
 
-    private static void DrawPicture(int picture, double x, double y, double width, double height, double depth, double texcoordy = 1)
+    private static void DrawPicture(int picture,
+        double x,
+        double y,
+        double width,
+        double height,
+        double depth,
+        double texcoordyStart = 0,
+        double texcoordyEnd = 1)
     {
         GL.BindTexture(TextureTarget.Texture2D, picture);
         GL.Begin(PrimitiveType.Quads);
-        GL.TexCoord2(0, 0);
+        GL.TexCoord2(0, texcoordyStart);
         GL.Vertex3(x, y, depth);
-        GL.TexCoord2(1, 0);
+        GL.TexCoord2(1, texcoordyStart);
         GL.Vertex3(x + width, y, depth);
-        GL.TexCoord2(1, texcoordy);
+        GL.TexCoord2(1, texcoordyEnd);
         GL.Vertex3(x + width, y + height, depth);
-        GL.TexCoord2(0, texcoordy);
+        GL.TexCoord2(0, texcoordyEnd);
         GL.Vertex3(x, y + height, depth);
         GL.End();
     }
@@ -934,24 +1001,23 @@ internal class ElmaRenderer : IDisposable
         return LoadTexture(newBmp);
     }
 
-    private static int LoadTexture(LgrImage pcx, RotateFlipType flip = RotateFlipType.RotateNoneFlipNone)
-    {
-        return LoadTexture(pcx.Bmp, flip);
-    }
+    private static int LoadTexture(LgrImage pcx, TextureOptions? textureOptions = null) =>
+        LoadTexture(pcx.Bmp, textureOptions);
 
-    private static int LoadTexture(Bitmap bmp, RotateFlipType flip = RotateFlipType.RotateNoneFlipNone)
+    private static int LoadTexture(Bitmap bmp, TextureOptions? textureOptions = null)
     {
+        textureOptions ??= new TextureOptions();
         var textureIdentifier = GL.GenTexture();
         GL.BindTexture(TextureTarget.Texture2D, textureIdentifier);
-        bmp.RotateFlip(flip);
+        bmp.RotateFlip(textureOptions.Flip);
         var bmpData = bmp.LockBits(new Rectangle(0, 0, bmp.Width, bmp.Height), ImageLockMode.ReadOnly,
             PixelFormat.Format32bppArgb);
         GL.TexParameter(TextureTarget.Texture2D, TextureParameterName.TextureMinFilter,
-            (float)TextureMinFilter.Linear);
+            (int)TextureMinFilter.Nearest);
         GL.TexParameter(TextureTarget.Texture2D, TextureParameterName.TextureMagFilter,
-            (float)TextureMagFilter.Nearest);
-        GL.TexParameter(TextureTarget.Texture2D, TextureParameterName.TextureWrapS, (float)TextureWrapMode.Repeat);
-        GL.TexParameter(TextureTarget.Texture2D, TextureParameterName.TextureWrapT, (float)TextureWrapMode.Repeat);
+            (int)TextureMagFilter.Nearest);
+        GL.TexParameter(TextureTarget.Texture2D, TextureParameterName.TextureWrapS, (int)textureOptions.WrapMode);
+        GL.TexParameter(TextureTarget.Texture2D, TextureParameterName.TextureWrapT, (int)textureOptions.WrapMode);
         GL.TexImage2D(TextureTarget.Texture2D, 0, PixelInternalFormat.Rgba, bmpData.Width, bmpData.Height, 0,
             OpenTK.Graphics.OpenGL.PixelFormat.Bgra, PixelType.UnsignedByte, bmpData.Scan0);
         bmp.UnlockBits(bmpData);
@@ -1399,7 +1465,7 @@ internal class ElmaRenderer : IDisposable
         _openGlInitialized = true;
     }
 
-    private void LoadLgrGraphics(string lgr)
+    private void LoadLgrGraphics(string lgr, RenderingSettings settings)
     {
         DeleteTextures();
         DrawableImages = new Dictionary<string, DrawableImage>();
@@ -1412,8 +1478,8 @@ internal class ElmaRenderer : IDisposable
             UiUtils.ShowError("Error occurred when loading LGR file! Reason:\r\n\r\n" + ex.Message);
             return;
         }
-
         var firstFrameRect = new Rectangle(0, 0, 40, 40);
+        _grassImages = new List<GrassImage>();
         foreach (var x in CurrentLgr.LgrImages.Values)
         {
             var isSpecial = true;
@@ -1429,19 +1495,19 @@ internal class ElmaRenderer : IDisposable
                     _bikePic = LoadTexture(x);
                     break;
                 case "q1body":
-                    _bodyPic = LoadTexture(x, RotateFlipType.RotateNoneFlipX);
+                    _bodyPic = LoadTexture(x, new TextureOptions(RotateFlipType.RotateNoneFlipX));
                     break;
                 case "q1thigh":
-                    _thighPic = LoadTexture(x, RotateFlipType.RotateNoneFlipX);
+                    _thighPic = LoadTexture(x, new TextureOptions(RotateFlipType.RotateNoneFlipX));
                     break;
                 case "q1leg":
-                    _legPic = LoadTexture(x, RotateFlipType.RotateNoneFlipY);
+                    _legPic = LoadTexture(x, new TextureOptions(RotateFlipType.RotateNoneFlipY));
                     break;
                 case "q1forarm":
-                    _handPic = LoadTexture(x, RotateFlipType.RotateNoneFlipX);
+                    _handPic = LoadTexture(x, new TextureOptions(RotateFlipType.RotateNoneFlipX));
                     break;
                 case "q1up_arm":
-                    _armPic = LoadTexture(x, RotateFlipType.RotateNoneFlipX);
+                    _armPic = LoadTexture(x, new TextureOptions(RotateFlipType.RotateNoneFlipX));
                     break;
                 case "qexit":
                     _flowerPic = LoadTexture(x, firstFrameRect);
@@ -1462,14 +1528,24 @@ internal class ElmaRenderer : IDisposable
                     _killerPic = LoadTexture(x, firstFrameRect);
                     break;
                 case "q1susp1":
-                    _suspensions[0] = new Suspension(LoadTexture(x, RotateFlipType.RotateNoneFlipY), -0.5, 0.35,
+                    _suspensions[0] = new Suspension(LoadTexture(x, new TextureOptions(RotateFlipType.RotateNoneFlipY)), -0.5, 0.35,
                         x.Bmp.Height * Suspension1Factor,
                         x.Bmp.Height * Suspension1Factor / 2.0, 0);
                     break;
                 case "q1susp2":
-                    _suspensions[1] = new Suspension(LoadTexture(x, RotateFlipType.Rotate180FlipY), 0.0, -0.4,
+                    _suspensions[1] = new Suspension(LoadTexture(x, new TextureOptions(RotateFlipType.Rotate180FlipY)), 0.0, -0.4,
                         x.Bmp.Height * Suspension2Factor,
                         x.Bmp.Height * Suspension2Factor / 1.3, 1);
+                    break;
+                case "qgrass":
+                    _qgrassImage = x;
+                    isSpecial = false;
+                    break;
+                case { } when x.Name.StartsWith("qup_"):
+                    _grassImages.Add(new GrassImage(x, x.Bmp.Height - 41));
+                    break;
+                case { } when x.Name.StartsWith("qdown_"):
+                    _grassImages.Add(new GrassImage(x, 41 - x.Bmp.Height));
                     break;
                 default:
                     isSpecial = false;
@@ -1478,13 +1554,35 @@ internal class ElmaRenderer : IDisposable
 
             if (!isSpecial)
             {
-                DrawableImages[x.Name] = new DrawableImage(LoadTexture(x), x.Bmp.Width * PictureFactor,
-                    x.Bmp.Height * PictureFactor, x.Meta);
+                DrawableImages[x.Name!] = FromLgrImage(x, new TextureOptions(), 1 / 48.0);
             }
         }
 
+        RefreshGrassPics(settings);
+
         _lgrGraphicsLoaded = true;
     }
+
+    private void RefreshGrassPics(RenderingSettings settings)
+    {
+        if (_qgrassImage == null)
+        {
+            return;
+        }
+        _qgrass = FromLgrImage(_qgrassImage, new TextureOptions(), 1 / GetGrassFactor(settings.GrassZoom));
+        int grassHeightExtension = (int)(settings.GrassZoom * 40 - 20); // this is how eolconf seems to compute the extension
+        var imgs = _grassImages.AsParallel().Select(img => img.SetAlphaIgnore(GrassIgnoreAlpha, grassHeightExtension))
+            .ToList();
+
+        _grassPics = imgs.Select(img =>
+            new GrassPic(
+                FromLgrImage(img.Image, new TextureOptions { WrapMode = TextureWrapMode.Clamp },
+                    1 / GetGrassFactor(settings.GrassZoom)),
+                img.Image.Bmp, img.Delta, grassHeightExtension)).ToList();
+    }
+
+    private static DrawableImage FromLgrImage(LgrImage x, TextureOptions opts, double pixelFactor) => new(LoadTexture(x, opts),
+        x.Bmp.Width * pixelFactor, x.Bmp.Height * pixelFactor, x.Meta);
 
     public void DrawDashLine(Vector v1, Vector v2, Color color)
     {

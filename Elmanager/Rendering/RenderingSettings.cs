@@ -16,6 +16,7 @@ internal class RenderingSettings
     private float _lineWidth = 2.0f;
     private int _smoothZoomDuration = 200;
     private double _vertexSize = 0.02;
+    private double _grassZoom = 1.0;
 
     public RenderingSettings()
     {
@@ -89,6 +90,7 @@ internal class RenderingSettings
         ShowMaxDimensions = s.ShowMaxDimensions;
         ShowInactiveGrassEdges = s.ShowInactiveGrassEdges;
         DisableFrameBuffer = s.DisableFrameBuffer;
+        GrassZoom = s.GrassZoom;
     }
 
     internal RenderingSettings Clone()
@@ -258,7 +260,7 @@ internal class RenderingSettings
     [Category("Visibility"), DisplayName("Textures")]
     public bool ShowTextures { get; set; }
 
-    [Category("Visibility"), DisplayName("Grass (not done yet)")]
+    [Category("Visibility"), DisplayName("Grass")]
     public bool ShowGrass { get; set; }
 
     [Category("Visibility"), DisplayName("Objects")]
@@ -283,6 +285,13 @@ internal class RenderingSettings
     public bool DisableFrameBuffer { get; set; }
 
     public bool ShowObjectsOrFrames => ShowObjects || ShowObjectFrames;
-    public bool ShowGrassOrEdges => ShowGrassEdges; // ShowGrass is not implemented.
+    public bool ShowGrassOrEdges => ShowGrassEdges;
     public bool ShowGroundOrEdges => ShowGround || ShowGroundEdges;
+
+    [DisplayName("Grass zoom")]
+    public double GrassZoom
+    {
+        get => _grassZoom;
+        set => _grassZoom = Math.Clamp(value, 1, 3);
+    }
 }

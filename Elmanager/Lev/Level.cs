@@ -70,10 +70,7 @@ internal class Level
 
     public string LgrFile = "default";
     private string _title = "New level";
-    private double _polygonXMin;
-    private double _polygonYMin;
-    private double _polygonXMax;
-    private double _polygonYMax;
+    private Bounds _polygonBounds;
     private string LevStartMagic { get; set; } = "POT14";
 
     internal Level()
@@ -267,10 +264,7 @@ internal class Level
             Objects.Add(x.Clone());
         foreach (var x in lev.Polygons)
             Polygons.Add(x.Clone());
-        XMin = lev.XMin;
-        XMax = lev.XMax;
-        YMin = lev.YMin;
-        YMax = lev.YMax;
+        Bounds = lev.Bounds;
         for (var i = 0; i <= 3; i++)
             _integrity[i] = lev._integrity[i];
         _title = lev._title;
@@ -383,16 +377,16 @@ internal class Level
         {
             var padding = 11.898;
             return GraphicElements.Where(p => p is GraphicElement.Texture).Any(p =>
-                p.Position.X < _polygonXMin - padding ||
-                p.Position.X > _polygonXMax + padding ||
-                p.Position.Y < _polygonYMin - padding ||
-                p.Position.Y > _polygonYMax + padding);
+                p.Position.X < _polygonBounds.XMin - padding ||
+                p.Position.X > _polygonBounds.XMax + padding ||
+                p.Position.Y < _polygonBounds.YMin - padding ||
+                p.Position.Y > _polygonBounds.YMax + padding);
         }
     }
 
-    public double Width => XMax - XMin;
+    public double Width => Bounds.XMax - Bounds.XMin;
 
-    public double Height => YMax - YMin;
+    public double Height => Bounds.YMax - Bounds.YMin;
 
     public int TextureCount => GraphicElements.Count(texture => texture is GraphicElement.Texture);
 
@@ -411,19 +405,11 @@ internal class Level
         }
     }
 
-    internal bool TooTall => _polygonYMax - _polygonYMin >= MaximumSize;
+    internal bool TooTall => _polygonBounds.YMax - _polygonBounds.YMin >= MaximumSize;
 
-    internal bool TooWide => _polygonXMax - _polygonXMin >= MaximumSize;
+    internal bool TooWide => _polygonBounds.XMax - _polygonBounds.XMin >= MaximumSize;
 
     internal int VertexCount => Polygons.Sum(x => x.Vertices.Count);
-
-    internal double XMax { get; private set; }
-
-    internal double XMin { get; private set; }
-
-    internal double YMax { get; private set; }
-
-    internal double YMin { get; private set; }
 
     private double ObjectSum => Objects.Sum(x => x.Position.X - x.Position.Y + (int)x.Type);
 
@@ -457,11 +443,11 @@ internal class Level
 
     internal Level Clone() => new(this);
 
-    internal void DecomposeGroundPolygons()
+    internal void UpdateAllPolygons(double grassZoom)
     {
         foreach (var x in Polygons)
         {
-            x.UpdateDecomposition();
+            x.UpdateDecompositionOrGrassSlopes(GroundBounds, grassZoom);
         }
     }
 
@@ -479,8 +465,8 @@ internal class Level
         UpdateBounds();
         other.UpdateBounds();
 
-        var xDiff = XMax - other.XMin + 5;
-        var yDiff = YMax - other.YMax;
+        var xDiff = Bounds.XMax - other.Bounds.XMin + 5;
+        var yDiff = Bounds.YMax - other.Bounds.YMax;
 
         var diffV = new Vector(xDiff, yDiff);
 
@@ -488,7 +474,6 @@ internal class Level
         other.Objects.ForEach(obj => obj.Position += diffV);
         other.Objects.RemoveAll(obj => obj.Type == ObjectType.Start);
         other.GraphicElements.ForEach(pic => pic.Position += diffV);
-        other.DecomposeGroundPolygons();
 
         Polygons.AddRange(other.Polygons);
         Objects.AddRange(other.Objects);
@@ -592,7 +577,6 @@ internal class Level
                 x.Vertices[i] = v.Transform(matrix);
             }
 
-            x.UpdateDecomposition();
         }
 
         foreach (var t in Objects.Where(o => selector(o.Position)))
@@ -712,39 +696,50 @@ internal class Level
 
     internal void UpdateBounds()
     {
-        var first = Polygons.First();
-        XMin = first.XMin;
-        XMax = first.XMax;
-        YMin = first.YMin;
-        YMax = first.YMax;
-        foreach (var x in Polygons)
+        var b = Polygons.Skip(1).Aggregate(Polygons.First().Bounds, (current, x) => current.Max(x.Bounds));
+
+        _polygonBounds = b;
+
+        Bounds? groundBounds = null;
+
+        foreach (var polygon in Polygons.Where(p => !p.IsGrass))
         {
-            XMin = Math.Min(XMin, x.XMin);
-            XMax = Math.Max(XMax, x.XMax);
-            YMax = Math.Max(YMax, x.YMax);
-            YMin = Math.Min(YMin, x.YMin);
+            if (groundBounds is { } bp)
+            {
+                groundBounds = bp.Max(polygon.Bounds);
+            }
+            else
+            {
+                groundBounds = polygon.Bounds;
+            }
         }
 
-        _polygonXMin = XMin;
-        _polygonYMin = YMin;
-        _polygonXMax = XMax;
-        _polygonYMax = YMax;
+        GroundBounds = groundBounds!.Value;
+
+        b = b.Max(groundBounds.Value);
+
         foreach (var x in Objects)
         {
-            XMin = Math.Min(XMin, x.Position.X);
-            XMax = Math.Max(XMax, x.Position.X);
-            YMax = Math.Max(YMax, x.Position.Y);
-            YMin = Math.Min(YMin, x.Position.Y);
+            b.XMin = Math.Min(b.XMin, x.Position.X);
+            b.XMax = Math.Max(b.XMax, x.Position.X);
+            b.YMax = Math.Max(b.YMax, x.Position.Y);
+            b.YMin = Math.Min(b.YMin, x.Position.Y);
         }
 
         foreach (var x in GraphicElements)
         {
-            XMin = Math.Min(XMin, x.Position.X);
-            XMax = Math.Max(XMax, x.Position.X + x.Width);
-            YMax = Math.Max(YMax, x.Position.Y + x.Height);
-            YMin = Math.Min(YMin, x.Position.Y);
+            b.XMin = Math.Min(b.XMin, x.Position.X);
+            b.XMax = Math.Max(b.XMax, x.Position.X + x.Width);
+            b.YMax = Math.Max(b.YMax, x.Position.Y + x.Height);
+            b.YMin = Math.Min(b.YMin, x.Position.Y);
         }
+
+        Bounds = b;
     }
+
+    public Bounds GroundBounds { get; set; }
+
+    public Bounds Bounds { get; private set; }
 
     /// <summary>
     ///     This method should only be called once (when loading level).

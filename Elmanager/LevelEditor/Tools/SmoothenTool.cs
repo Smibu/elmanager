@@ -167,7 +167,7 @@ internal class SmoothenTool : ToolBase, IEditorTool
                     LevEditor.SetModified(LevModification.Ground);
                     LevEditor.UpdateSelectionInfo();
                     foreach (Polygon x in _smoothPolys)
-                        x.UpdateDecomposition();
+                        x.UpdateDecompositionOrGrassSlopes(Lev.GroundBounds, LevEditor.Settings.RenderingSettings.GrassZoom);
                 }
                 else if (info is { } v)
                 {

@@ -73,7 +73,7 @@ internal class VertexTool : ToolBase, IEditorTool
         _currentPolygon.RemoveLastVertex();
         _currentPolygon.ChangeOrientation();
         _currentPolygon.Add(CurrentPos);
-        _currentPolygon.UpdateDecomposition(false);
+        _currentPolygon.UpdateDecompositionOrGrassSlopes(Lev.GroundBounds, LevEditor.Settings.RenderingSettings.GrassZoom);
     }
 
     public void MouseDown(MouseEventArgs mouseData)
@@ -87,7 +87,7 @@ internal class VertexTool : ToolBase, IEditorTool
                 {
                     var rect = Polygon.Rectangle(r, CurrentPos);
                     Lev.Polygons.Add(rect);
-                    rect.UpdateDecomposition();
+                    rect.UpdateDecompositionOrGrassSlopes(Lev.GroundBounds, LevEditor.Settings.RenderingSettings.GrassZoom);
                     LevEditor.SetModified(LevModification.Ground);
                     _rectangleStart = null;
                     return;
@@ -119,7 +119,7 @@ internal class VertexTool : ToolBase, IEditorTool
                     if (_currentPolygon.Vertices.Count == 3)
                     {
                         Lev.Polygons.Add(_currentPolygon);
-                        _currentPolygon.UpdateDecomposition(false);
+                        _currentPolygon.UpdateDecompositionOrGrassSlopes(Lev.GroundBounds, LevEditor.Settings.RenderingSettings.GrassZoom);
                     }
                 }
 
@@ -138,7 +138,7 @@ internal class VertexTool : ToolBase, IEditorTool
             AdjustForGrid(ref CurrentPos);
             _currentPolygon.Vertices[^1] = CurrentPos;
             if (_currentPolygon.Vertices.Count > 2)
-                _currentPolygon.UpdateDecomposition(false);
+                _currentPolygon.UpdateDecompositionOrGrassSlopes(Lev.GroundBounds, LevEditor.Settings.RenderingSettings.GrassZoom);
             UpdateHelp();
         }
         else if (_rectangleStart is null)
@@ -173,7 +173,7 @@ internal class VertexTool : ToolBase, IEditorTool
             _currentPolygon.RemoveLastVertex();
             if (_currentPolygon.Vertices.Count > 2)
             {
-                _currentPolygon.UpdateDecomposition();
+                _currentPolygon.UpdateDecompositionOrGrassSlopes(Lev.GroundBounds, LevEditor.Settings.RenderingSettings.GrassZoom);
                 LevEditor.SetModified(_currentPolygon.IsGrass ? LevModification.Decorations : LevModification.Ground);
             }
             else

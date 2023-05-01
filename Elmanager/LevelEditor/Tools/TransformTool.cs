@@ -252,7 +252,8 @@ internal class TransformTool : ToolBase, IEditorTool
         {
             Lev.Polygons[Lev.Polygons.Count - 1 - i] =
                 _transformState.OriginalTransformPolygons[i].ApplyTransformation(transformMatrix, true);
-            Lev.Polygons[Lev.Polygons.Count - 1 - i].UpdateDecomposition();
+            Lev.Polygons[Lev.Polygons.Count - 1 - i].UpdateDecompositionOrGrassSlopes(Lev.GroundBounds,
+                LevEditor.Settings.RenderingSettings.GrassZoom);
         }
 
         for (int i = 0; i < _transformState.OriginalTransformObjects.Count; i++)

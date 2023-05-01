@@ -131,7 +131,7 @@ internal partial class LevelEditorForm : FormMod, IMessageFilter
     {
         Lev = lev.Obj;
         _file = lev.File;
-        if (Global.AppSettings.LevelEditor.EnableStartPositionFeature)
+        if (Settings.EnableStartPositionFeature)
         {
             SaveStartPosition();
         }
@@ -141,9 +141,9 @@ internal partial class LevelEditorForm : FormMod, IMessageFilter
     {
         InitializeComponent();
         _fullScreenController = CreateFullScreenController();
-        if (Global.AppSettings.LevelEditor.LastLevel != null)
+        if (Settings.LastLevel != null)
         {
-            TryLoadLevel(Global.AppSettings.LevelEditor.LastLevel);
+            TryLoadLevel(Settings.LastLevel);
         }
         else
             SetBlankLevel();
@@ -181,7 +181,9 @@ internal partial class LevelEditorForm : FormMod, IMessageFilter
                                            (ShowObjectFramesButton.Checked ||
                                             (ShowObjectsButton.Checked && PictureToolAvailable));
 
-    internal bool EffectiveGrassFilter => _grassFilter && (ShowGrassEdgesButton.Checked);
+    internal bool EffectiveGrassFilter => _grassFilter &&
+                                          (ShowGrassEdgesButton.Checked ||
+                                           (showGrassButton.Checked && PictureToolAvailable));
 
     internal bool EffectiveGroundFilter => _groundFilter &&
                                            (ShowGroundEdgesButton.Checked ||
@@ -269,7 +271,7 @@ internal partial class LevelEditorForm : FormMod, IMessageFilter
             Lev.UpdateBounds();
             if (updateHistory)
                 AddToHistory();
-            if (Global.AppSettings.LevelEditor.CheckTopologyDynamically)
+            if (Settings.CheckTopologyDynamically)
                 CheckTopology();
         }
 
@@ -343,7 +345,7 @@ internal partial class LevelEditorForm : FormMod, IMessageFilter
 
     private void AfterSettingsClosed()
     {
-        Renderer.UpdateSettings(Global.AppSettings.LevelEditor.RenderingSettings);
+        Renderer.UpdateSettings(Settings.RenderingSettings);
         UpdateLgrTools();
         UpdateButtons();
         RedrawScene();
@@ -525,11 +527,11 @@ internal partial class LevelEditorForm : FormMod, IMessageFilter
 
         if (WindowState == FormWindowState.Normal)
         {
-            Global.AppSettings.LevelEditor.Size = Size;
+            Settings.Size = Size;
         }
 
-        Global.AppSettings.LevelEditor.WindowState = WindowState;
-        Global.AppSettings.LevelEditor.LastLevel = _file?.Path;
+        Settings.WindowState = WindowState;
+        Settings.LastLevel = _file?.Path;
         if (PlayController.PlayingOrPaused)
         {
             e.Cancel = true;
@@ -545,7 +547,7 @@ internal partial class LevelEditorForm : FormMod, IMessageFilter
         var copiedTextures = new List<GraphicElement>();
         Vector.MarkDefault = VectorMark.Selected;
         var delta = Keyboard.IsKeyDown(Key.LeftShift)
-            ? Global.AppSettings.LevelEditor.RenderingSettings.GridSize
+            ? Settings.RenderingSettings.GridSize
             : _zoomCtrl.Cam.ZoomLevel * 0.1;
         foreach (Polygon x in Lev.Polygons)
         {
@@ -565,7 +567,7 @@ internal partial class LevelEditorForm : FormMod, IMessageFilter
             {
                 copiedPolygons.Add(copy);
                 copy.IsGrass = x.IsGrass;
-                copy.UpdateDecomposition();
+                copy.UpdateDecompositionOrGrassSlopes(Lev.GroundBounds, Settings.RenderingSettings.GrassZoom);
             }
         }
 
@@ -624,13 +626,13 @@ internal partial class LevelEditorForm : FormMod, IMessageFilter
 
         var drawAction = GetVertexDrawAction();
 
-        if (Global.AppSettings.LevelEditor.ShowCrossHair)
+        if (Settings.ShowCrossHair)
         {
             var mouse = GetMouseCoordinates();
             Renderer.DrawDashLine(_zoomCtrl.Cam.XMin, mouse.Y, _zoomCtrl.Cam.XMax,
-                mouse.Y, Global.AppSettings.LevelEditor.CrosshairColor);
+                mouse.Y, Settings.CrosshairColor);
             Renderer.DrawDashLine(mouse.X, _zoomCtrl.Cam.YMin, mouse.X,
-                _zoomCtrl.Cam.YMax, Global.AppSettings.LevelEditor.CrosshairColor);
+                _zoomCtrl.Cam.YMax, Settings.CrosshairColor);
         }
 
         foreach (Polygon x in Lev.Polygons)
@@ -638,18 +640,14 @@ internal partial class LevelEditorForm : FormMod, IMessageFilter
             switch (x.Mark)
             {
                 case PolygonMark.Highlight:
-                    if (Global.AppSettings.LevelEditor.UseHighlight)
+                    if (Settings.UseHighlight)
                         if (x.IsGrass)
                         {
-                            Renderer.DrawLineStrip(x, Global.AppSettings.LevelEditor.HighlightColor);
-                            if (Global.AppSettings.LevelEditor.RenderingSettings.ShowInactiveGrassEdges)
-                            {
-                                Renderer.DrawDashLine(x.Vertices.First(), x.Vertices.Last(),
-                                    Global.AppSettings.LevelEditor.HighlightColor);
-                            }
+                            Renderer.DrawGrassPolygon(x, Settings.HighlightColor,
+                                Settings.RenderingSettings.ShowInactiveGrassEdges);
                         }
                         else
-                            Renderer.DrawPolygon(x, Global.AppSettings.LevelEditor.HighlightColor);
+                            Renderer.DrawPolygon(x, Settings.HighlightColor);
 
                     break;
                 case PolygonMark.Selected:
@@ -665,11 +663,11 @@ internal partial class LevelEditorForm : FormMod, IMessageFilter
                 switch (z.Mark)
                 {
                     case VectorMark.Selected:
-                        drawAction(z, Global.AppSettings.LevelEditor.SelectionColor);
+                        drawAction(z, Settings.SelectionColor);
                         break;
                     case VectorMark.Highlight:
-                        if (Global.AppSettings.LevelEditor.UseHighlight)
-                            drawAction(z, Global.AppSettings.LevelEditor.HighlightColor);
+                        if (Settings.UseHighlight)
+                            drawAction(z, Settings.HighlightColor);
                         break;
                 }
             }
@@ -681,11 +679,11 @@ internal partial class LevelEditorForm : FormMod, IMessageFilter
             switch (z.Mark)
             {
                 case VectorMark.Selected:
-                    drawAction(z, Global.AppSettings.LevelEditor.SelectionColor);
+                    drawAction(z, Settings.SelectionColor);
                     break;
                 case VectorMark.Highlight:
-                    if (Global.AppSettings.LevelEditor.UseHighlight)
-                        drawAction(z, Global.AppSettings.LevelEditor.HighlightColor);
+                    if (Settings.UseHighlight)
+                        drawAction(z, Settings.HighlightColor);
                     break;
             }
         }
@@ -697,11 +695,11 @@ internal partial class LevelEditorForm : FormMod, IMessageFilter
             {
                 case VectorMark.Selected:
                     Renderer.DrawRectangle(z.X, z.Y, z.X + t.Width, z.Y - t.Height,
-                        Global.AppSettings.LevelEditor.SelectionColor);
+                        Settings.SelectionColor);
                     break;
                 case VectorMark.Highlight:
                     Renderer.DrawRectangle(z.X, z.Y, z.X + t.Width, z.Y - t.Height,
-                        Global.AppSettings.LevelEditor.HighlightColor);
+                        Settings.HighlightColor);
                     break;
             }
         }
@@ -710,12 +708,12 @@ internal partial class LevelEditorForm : FormMod, IMessageFilter
             Renderer.DrawSquare(x, _zoomCtrl.Cam.ZoomLevel / 25, Color.Red);
         if (_savedStartPosition is { } p)
         {
-            if (Global.AppSettings.LevelEditor.RenderingSettings.ShowObjects)
+            if (Settings.RenderingSettings.ShowObjects)
             {
                 Renderer.DrawDummyPlayer(p.X, p.Y, _sceneSettings, new PlayerRenderOpts(Color.Green, false, true, true));
             }
 
-            if (Global.AppSettings.LevelEditor.RenderingSettings.ShowObjectFrames)
+            if (Settings.RenderingSettings.ShowObjectFrames)
             {
                 Renderer.DrawDummyPlayer(p.X, p.Y, _sceneSettings, new PlayerRenderOpts(Color.Green, false, false, true));
             }
@@ -728,11 +726,11 @@ internal partial class LevelEditorForm : FormMod, IMessageFilter
         {
             GL.Translate(-jf.X, -jf.Y, 0);
             var driver = PlayController.Driver!;
-            if (Global.AppSettings.LevelEditor.RenderingSettings.ShowObjects && Renderer.LgrGraphicsLoaded)
+            if (Settings.RenderingSettings.ShowObjects && Renderer.LgrGraphicsLoaded)
             {
                 Renderer.DrawPlayer(driver.GetState(), PlayController.RenderOptsLgr, _sceneSettings);
             }
-            else if (Global.AppSettings.LevelEditor.RenderingSettings.ShowObjectFrames)
+            else if (Settings.RenderingSettings.ShowObjectFrames)
             {
                 Renderer.DrawPlayer(driver.GetState(), PlayController.RenderOptsFrame, _sceneSettings);
             }
@@ -743,10 +741,10 @@ internal partial class LevelEditorForm : FormMod, IMessageFilter
             switch (PlayController.PlayerSelection)
             {
                 case VectorMark.Selected:
-                    drawAction(driver.Body.Location, Global.AppSettings.LevelEditor.SelectionColor);
+                    drawAction(driver.Body.Location, Settings.SelectionColor);
                     break;
                 case VectorMark.Highlight:
-                    drawAction(driver.Body.Location, Global.AppSettings.LevelEditor.HighlightColor);
+                    drawAction(driver.Body.Location, Settings.HighlightColor);
                     break;
             }
             GL.Translate(jf.X, jf.Y, 0);
@@ -757,12 +755,14 @@ internal partial class LevelEditorForm : FormMod, IMessageFilter
         Renderer.Swap();
     }
 
+    internal LevelEditorSettings Settings => Global.AppSettings.LevelEditor;
+
     private Action<Vector, Color> GetVertexDrawAction()
     {
-        var drawAction = Global.AppSettings.LevelEditor.RenderingSettings.UseCirclesForVertices
+        var drawAction = Settings.RenderingSettings.UseCirclesForVertices
             ? (Action<Vector, Color>)((pt, color) => Renderer.DrawPoint(pt, color))
             : ((pt, color) => Renderer.DrawEquilateralTriangle(pt,
-                _zoomCtrl.Cam.ZoomLevel * Global.AppSettings.LevelEditor.RenderingSettings.VertexSize, color));
+                _zoomCtrl.Cam.ZoomLevel * Settings.RenderingSettings.VertexSize, color));
         return drawAction;
     }
 
@@ -819,7 +819,7 @@ internal partial class LevelEditorForm : FormMod, IMessageFilter
                 if (x.Vertices.Count < 3)
                     Lev.Polygons.Remove(x);
                 else if (polyModified)
-                    x.UpdateDecomposition();
+                    x.UpdateDecompositionOrGrassSlopes(Lev.GroundBounds, Settings.RenderingSettings.GrassZoom);
             }
 
             var deletedApples = new HashSet<int>();
@@ -924,7 +924,7 @@ internal partial class LevelEditorForm : FormMod, IMessageFilter
             {
                 mod |= LevModification.Decorations;
             }
-            p.UpdateDecomposition();
+            p.UpdateDecompositionOrGrassSlopes(Lev.GroundBounds, Settings.RenderingSettings.GrassZoom);
         });
         SetModified(mod);
         RedrawScene();
@@ -973,7 +973,7 @@ internal partial class LevelEditorForm : FormMod, IMessageFilter
             var lgr = Path.Combine(Global.AppSettings.General.LgrDirectory, Lev.LgrFile.ToLower() + ".lgr");
             if (File.Exists(lgr))
             {
-                Global.AppSettings.LevelEditor.RenderingSettings.LgrFile = lgr;
+                Settings.RenderingSettings.LgrFile = lgr;
             }
         }
     }
@@ -1007,11 +1007,11 @@ internal partial class LevelEditorForm : FormMod, IMessageFilter
         LGRBox.Width *= dpiXint;
         GroundComboBox.Width *= dpiXint;
         SkyComboBox.Width *= dpiXint;
-        WindowState = Global.AppSettings.LevelEditor.WindowState;
+        WindowState = Settings.WindowState;
         SelectButton.Select();
         UpdateButtons();
-        Size = Global.AppSettings.LevelEditor.Size;
-        Renderer = new ElmaRenderer(EditorControl, Global.AppSettings.LevelEditor.RenderingSettings);
+        Size = Settings.Size;
+        Renderer = new ElmaRenderer(EditorControl, Settings.RenderingSettings);
 
         Tools = new IEditorTool[]
         {
@@ -1040,12 +1040,12 @@ internal partial class LevelEditorForm : FormMod, IMessageFilter
     {
         await PlayController.NotifyLevelChanged();
         PlayTimeLabel.Text = "";
-        _zoomCtrl = new ZoomController(new ElmaCamera(), Lev, Global.AppSettings.LevelEditor.RenderingSettings, () => RedrawScene());
+        _zoomCtrl = new ZoomController(new ElmaCamera(), Lev, Settings.RenderingSettings, () => RedrawScene());
         SetNotModified();
         Renderer.InitializeLevel(Lev);
         _zoomCtrl.ZoomFill();
         UpdateLgrFromLev();
-        Renderer.UpdateSettings(Global.AppSettings.LevelEditor.RenderingSettings);
+        Renderer.UpdateSettings(Settings.RenderingSettings);
         topologyList.Text = string.Empty;
         topologyList.DropDownItems.Clear();
         ResetTopologyListStyle();
@@ -1270,10 +1270,10 @@ internal partial class LevelEditorForm : FormMod, IMessageFilter
                     Lev.GroundTextureName = GroundComboBox.SelectedItem.ToString() ?? "ground";
                 if (sender.Equals(SkyComboBox))
                     Lev.SkyTextureName = SkyComboBox.SelectedItem.ToString() ?? "sky";
-                if (Global.AppSettings.LevelEditor.RenderingSettings.DefaultGroundAndSky)
+                if (Settings.RenderingSettings.DefaultGroundAndSky)
                     UiUtils.ShowError("Default ground and sky is enabled, so you won\'t see this change in editor.",
                         "Warning", MessageBoxIcon.Exclamation);
-                Renderer.UpdateGroundAndSky(Global.AppSettings.LevelEditor.RenderingSettings.DefaultGroundAndSky);
+                Renderer.UpdateGroundAndSky(Settings.RenderingSettings.DefaultGroundAndSky);
                 RedrawScene();
             }
 
@@ -1286,12 +1286,12 @@ internal partial class LevelEditorForm : FormMod, IMessageFilter
         Lev = _history[_historyIndex].Clone();
         Renderer.Lev = Lev;
         _zoomCtrl.Lev = Lev;
-        Lev.DecomposeGroundPolygons();
+        Lev.UpdateAllPolygons(Settings.RenderingSettings.GrassZoom);
         UpdateUndoRedo();
         topologyList.DropDownItems.Clear();
         topologyList.Text = "";
         _errorPoints.Clear();
-        Renderer.UpdateGroundAndSky(Global.AppSettings.LevelEditor.RenderingSettings.DefaultGroundAndSky);
+        Renderer.UpdateGroundAndSky(Settings.RenderingSettings.DefaultGroundAndSky);
         CurrentTool.InActivate();
         ActivateCurrentAndRedraw();
         UpdateLabels();
@@ -1314,6 +1314,7 @@ internal partial class LevelEditorForm : FormMod, IMessageFilter
     private void MirrorHorizontallyToolStripMenuItem_Click(object sender, EventArgs e)
     {
         Lev.MirrorSelected(MirrorOption.Horizontal);
+        Lev.UpdateAllPolygons(Settings.RenderingSettings.GrassZoom);
         SetModified(LevModification.Objects | LevModification.Ground | LevModification.Decorations);
         RedrawScene();
     }
@@ -1394,7 +1395,7 @@ internal partial class LevelEditorForm : FormMod, IMessageFilter
                                 break;
                             case ObjectType.Killer:
                                 break;
-                            case ObjectType.Start when Global.AppSettings.LevelEditor.EnableStartPositionFeature:
+                            case ObjectType.Start when Settings.EnableStartPositionFeature:
                                 saveStartPositionToolStripMenuItem.Visible = true;
                                 if (_savedStartPosition != null)
                                 {
@@ -1512,7 +1513,7 @@ internal partial class LevelEditorForm : FormMod, IMessageFilter
     {
         if (Keyboard.IsKeyDown(Key.LeftCtrl))
         {
-            double currSize = Global.AppSettings.LevelEditor.RenderingSettings.GridSize;
+            double currSize = Settings.RenderingSettings.GridSize;
             double newSize = currSize + Math.Sign(delta) * _zoomCtrl.Cam.ZoomLevel / 50.0;
             if (newSize > 0)
             {
@@ -1533,7 +1534,7 @@ internal partial class LevelEditorForm : FormMod, IMessageFilter
 
     private void SetGridSizeWithMouse(double newSize, Vector mouseCoords)
     {
-        var settings = Global.AppSettings.LevelEditor.RenderingSettings;
+        var settings = Settings.RenderingSettings;
         var gx = _sceneSettings.GridOffset.X;
         _sceneSettings.GridOffset.X = (gx + ElmaRenderer.GetFirstGridLine(newSize, gx, _zoomCtrl.Cam.XMin)
             - mouseCoords.X + GetGridMouseRatio(settings.GridSize, gx, _zoomCtrl.Cam.XMin, mouseCoords.X) *
@@ -1568,10 +1569,10 @@ internal partial class LevelEditorForm : FormMod, IMessageFilter
 
     private void OpenConfig(object sender, EventArgs e)
     {
-        string oldLgr = Global.AppSettings.LevelEditor.RenderingSettings.LgrFile;
+        string oldLgr = Settings.RenderingSettings.LgrFile;
         ComponentManager.ShowConfiguration("sle");
         AfterSettingsClosed();
-        if (!Global.AppSettings.LevelEditor.EnableStartPositionFeature)
+        if (!Settings.EnableStartPositionFeature)
         {
             _savedStartPosition = null;
         }
@@ -1587,8 +1588,8 @@ internal partial class LevelEditorForm : FormMod, IMessageFilter
 
     private void OpenRenderingSettings(object sender, EventArgs e)
     {
-        string oldLgr = Global.AppSettings.LevelEditor.RenderingSettings.LgrFile;
-        var rSettings = new RenderingSettingsForm(Global.AppSettings.LevelEditor.RenderingSettings);
+        string oldLgr = Settings.RenderingSettings.LgrFile;
+        var rSettings = new RenderingSettingsForm(Settings.RenderingSettings);
         rSettings.Changed += x =>
         {
             Renderer.UpdateSettings(x);
@@ -1632,7 +1633,7 @@ internal partial class LevelEditorForm : FormMod, IMessageFilter
         var selectedElems = Lev.GraphicElements.Where(p => p.Position.Mark == VectorMark.Selected).ToList();
         var picForm = new PictureForm(_editorLgr, null)
         {
-            SetDefaultsAutomatically = Global.AppSettings.LevelEditor.AlwaysSetDefaultsInPictureTool
+            SetDefaultsAutomatically = Settings.AlwaysSetDefaultsInPictureTool
         };
         if (selectedElems.Count > 0)
         {
@@ -1787,9 +1788,9 @@ internal partial class LevelEditorForm : FormMod, IMessageFilter
     private void SaveAs(object? sender = null, EventArgs? e = null)
     {
         string suggestion = string.Empty;
-        if (Global.AppSettings.LevelEditor.UseFilenameSuggestion)
+        if (Settings.UseFilenameSuggestion)
         {
-            var filenameStart = Global.AppSettings.LevelEditor.BaseFilename;
+            var filenameStart = Settings.BaseFilename;
             int highestNumber = 0;
             int lowestNumber = int.MaxValue;
             foreach (string levelFile in Global.GetLevelFiles())
@@ -1818,7 +1819,7 @@ internal partial class LevelEditorForm : FormMod, IMessageFilter
                     newNumber = lowestNumber - 1;
                 }
 
-                suggestion = filenameStart + newNumber.ToString(Global.AppSettings.LevelEditor.NumberFormat);
+                suggestion = filenameStart + newNumber.ToString(Settings.NumberFormat);
             }
             catch (FormatException)
             {
@@ -1863,9 +1864,9 @@ internal partial class LevelEditorForm : FormMod, IMessageFilter
             MessageBox.Show("This level has times in top 10. Do you still want to save the level?", "Warning",
                 MessageBoxButtons.YesNo, MessageBoxIcon.Warning) == DialogResult.Yes)
         {
-            if (Global.AppSettings.LevelEditor.CheckTopologyWhenSaving)
+            if (Settings.CheckTopologyWhenSaving)
                 CheckTopologyAndUpdate();
-            if (Global.AppSettings.LevelEditor.UseFilenameForTitle && _file is null)
+            if (Settings.UseFilenameForTitle && _file is null)
             {
                 Lev.Title = Path.GetFileNameWithoutExtension(SaveFileDialog1.FileName);
             }
@@ -1967,13 +1968,13 @@ internal partial class LevelEditorForm : FormMod, IMessageFilter
 
     private void SetDefaultLevelTitle()
     {
-        if (!Global.AppSettings.LevelEditor.UseFilenameForTitle)
-            Lev.Title = Global.AppSettings.LevelEditor.DefaultTitle;
+        if (!Settings.UseFilenameForTitle)
+            Lev.Title = Settings.DefaultTitle;
     }
 
     private void SetBlankLevel()
     {
-        Lev = Global.AppSettings.LevelEditor.GetTemplateLevel();
+        Lev = Settings.GetTemplateLevel();
         SetDefaultLevelTitle();
         _file = null;
         _savedStartPosition = null;
@@ -1981,7 +1982,8 @@ internal partial class LevelEditorForm : FormMod, IMessageFilter
 
     private void SettingChanged(object? sender, EventArgs e)
     {
-        var settings = Global.AppSettings.LevelEditor.RenderingSettings;
+        var settings = Settings.RenderingSettings;
+        settings.ShowGrass = showGrassButton.Checked;
         settings.ShowGrassEdges = ShowGrassEdgesButton.Checked;
         settings.ShowGroundEdges = ShowGroundEdgesButton.Checked;
         settings.ShowGrid = ShowGridButton.Checked;
@@ -1997,8 +1999,8 @@ internal partial class LevelEditorForm : FormMod, IMessageFilter
         settings.SkyTextureEnabled = ShowSkyTextureButton.Checked;
         settings.ZoomTextures = ZoomTexturesButton.Checked;
         settings.ShowGravityAppleArrows = ShowGravityAppleArrowsButton.Checked;
-        Global.AppSettings.LevelEditor.SnapToGrid = snapToGridButton.Checked;
-        Global.AppSettings.LevelEditor.ShowCrossHair = showCrossHairButton.Checked;
+        Settings.SnapToGrid = snapToGridButton.Checked;
+        Settings.ShowCrossHair = showCrossHairButton.Checked;
         Renderer.UpdateSettings(settings);
         RedrawScene();
     }
@@ -2088,7 +2090,8 @@ internal partial class LevelEditorForm : FormMod, IMessageFilter
 
     private void UpdateButtons()
     {
-        var settings = Global.AppSettings.LevelEditor.RenderingSettings;
+        var settings = Settings.RenderingSettings;
+        showGrassButton.Checked = settings.ShowGrass;
         ShowGrassEdgesButton.Checked = settings.ShowGrassEdges;
         ShowGroundEdgesButton.Checked = settings.ShowGroundEdges;
         ShowGridButton.Checked = settings.ShowGrid;
@@ -2104,8 +2107,8 @@ internal partial class LevelEditorForm : FormMod, IMessageFilter
         ShowSkyTextureButton.Checked = settings.SkyTextureEnabled;
         ZoomTexturesButton.Checked = settings.ZoomTextures;
         ShowGravityAppleArrowsButton.Checked = settings.ShowGravityAppleArrows;
-        snapToGridButton.Checked = Global.AppSettings.LevelEditor.SnapToGrid;
-        showCrossHairButton.Checked = Global.AppSettings.LevelEditor.ShowCrossHair;
+        snapToGridButton.Checked = Settings.SnapToGrid;
+        showCrossHairButton.Checked = Settings.ShowCrossHair;
     }
 
     private void UpdatePrevNextButtons()
@@ -2321,6 +2324,7 @@ internal partial class LevelEditorForm : FormMod, IMessageFilter
 
             imported++;
             Lev.Import(lev);
+            Lev.UpdateAllPolygons(Settings.RenderingSettings.GrassZoom);
         });
         if (imported > 0)
         {
@@ -2340,7 +2344,7 @@ internal partial class LevelEditorForm : FormMod, IMessageFilter
             }
             else if (saveAsPictureDialog.FileName.EndsWith(".svg"))
             {
-                SvgExporter.ExportAsSvg(Lev, Global.AppSettings.LevelEditor.RenderingSettings,
+                SvgExporter.ExportAsSvg(Lev, Settings.RenderingSettings,
                     saveAsPictureDialog.FileName);
             }
             else
@@ -2622,6 +2626,7 @@ internal partial class LevelEditorForm : FormMod, IMessageFilter
     private void MirrorVerticallyToolStripMenuItem_Click(object sender, EventArgs e)
     {
         Lev.MirrorSelected(MirrorOption.Vertical);
+        Lev.UpdateAllPolygons(Settings.RenderingSettings.GrassZoom);
         SetModified(LevModification.Decorations | LevModification.Ground | LevModification.Objects);
         RedrawScene();
     }
@@ -2675,7 +2680,7 @@ internal partial class LevelEditorForm : FormMod, IMessageFilter
             return;
         }
 
-        if (Global.AppSettings.LevelEditor.PlayingSettings.ToggleFullscreen)
+        if (Settings.PlayingSettings.ToggleFullscreen)
         {
             _fullScreenController.FullScreen();
         }
@@ -2693,16 +2698,16 @@ internal partial class LevelEditorForm : FormMod, IMessageFilter
         CameraUtils.AllowScroll = false;
         var oldZoom = _zoomCtrl.ZoomLevel;
 
-        if (Global.AppSettings.LevelEditor.PlayingSettings.FollowDriverOption == FollowDriverOption.WhenPressingKey)
+        if (Settings.PlayingSettings.FollowDriverOption == FollowDriverOption.WhenPressingKey)
         {
-            _zoomCtrl.ZoomLevel = Global.AppSettings.LevelEditor.PlayingSettings.PlayZoomLevel;
+            _zoomCtrl.ZoomLevel = Settings.PlayingSettings.PlayZoomLevel;
         }
 
         await PlayController.BeginLoop(Lev, _sceneSettings, Renderer, _zoomCtrl, DoRedrawScene);
 
-        if (Global.AppSettings.LevelEditor.PlayingSettings.FollowDriverOption == FollowDriverOption.WhenPressingKey)
+        if (Settings.PlayingSettings.FollowDriverOption == FollowDriverOption.WhenPressingKey)
         {
-            Global.AppSettings.LevelEditor.PlayingSettings.PlayZoomLevel = _zoomCtrl.ZoomLevel;
+            Settings.PlayingSettings.PlayZoomLevel = _zoomCtrl.ZoomLevel;
             _zoomCtrl.ZoomLevel = oldZoom;
         }
 
@@ -2715,7 +2720,7 @@ internal partial class LevelEditorForm : FormMod, IMessageFilter
         RedrawScene();
         SetNotPlaying();
         stopButton.Enabled = false;
-        if (Global.AppSettings.LevelEditor.PlayingSettings.ToggleFullscreen)
+        if (Settings.PlayingSettings.ToggleFullscreen)
         {
             _fullScreenController.Restore();
         }
@@ -2741,7 +2746,7 @@ internal partial class LevelEditorForm : FormMod, IMessageFilter
             await PlayController.StopPlaying();
         }
 
-        if (Global.AppSettings.LevelEditor.PlayingSettings.ToggleFullscreen)
+        if (Settings.PlayingSettings.ToggleFullscreen)
         {
             _fullScreenController.Restore();
         }
@@ -2754,7 +2759,7 @@ internal partial class LevelEditorForm : FormMod, IMessageFilter
         if (result == DialogResult.OK)
         {
             PlayController.Settings = f.Settings;
-            Global.AppSettings.LevelEditor.PlayingSettings = f.Settings;
+            Settings.PlayingSettings = f.Settings;
         }
     }
 

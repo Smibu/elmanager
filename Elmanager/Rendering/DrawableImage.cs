@@ -33,4 +33,6 @@ internal record DrawableImage(int TextureId, double Width, double Height, ImageM
     public ClippingType ClippingType => Meta.ClippingType;
 
     public int Distance => Meta.Distance;
+
+    internal double AspectRatio => Width / Height;
 }

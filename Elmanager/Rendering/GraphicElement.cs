@@ -41,7 +41,7 @@ internal abstract record GraphicElement(
         DrawableImage MaskInfo
     ) : GraphicElement(Clipping, Distance, Position)
     {
-        internal double AspectRatio => TextureInfo.Width / TextureInfo.Height;
+        internal double AspectRatio => TextureInfo.AspectRatio;
         internal override double Width => MaskInfo.Width;
         internal override double Height => MaskInfo.Height;
 

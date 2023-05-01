@@ -65,10 +65,10 @@ internal class ZoomController
 
     internal ElmaCamera Cam { get; }
 
-    private double ZoomFillxMin => (1 + ZoomFillMargin) * Lev.XMin - ZoomFillMargin * Lev.XMax;
-    private double ZoomFillxMax => (1 + ZoomFillMargin) * Lev.XMax - ZoomFillMargin * Lev.XMin;
-    private double ZoomFillyMin => (1 + ZoomFillMargin) * Lev.YMin - ZoomFillMargin * Lev.YMax;
-    private double ZoomFillyMax => (1 + ZoomFillMargin) * Lev.YMax - ZoomFillMargin * Lev.YMin;
+    private double ZoomFillxMin => (1 + ZoomFillMargin) * Lev.Bounds.XMin - ZoomFillMargin * Lev.Bounds.XMax;
+    private double ZoomFillxMax => (1 + ZoomFillMargin) * Lev.Bounds.XMax - ZoomFillMargin * Lev.Bounds.XMin;
+    private double ZoomFillyMin => (1 + ZoomFillMargin) * Lev.Bounds.YMin - ZoomFillMargin * Lev.Bounds.YMax;
+    private double ZoomFillyMax => (1 + ZoomFillMargin) * Lev.Bounds.YMax - ZoomFillMargin * Lev.Bounds.YMin;
 
     public Level Lev { get; set; }
 

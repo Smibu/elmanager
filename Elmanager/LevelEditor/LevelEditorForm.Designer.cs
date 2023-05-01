@@ -202,6 +202,7 @@ namespace Elmanager.LevelEditor
             DrawButton = new RadioButtonMod();
             VertexButton = new RadioButtonMod();
             SelectButton = new RadioButtonMod();
+            showGrassButton = new ToolStripButton();
             MenuStrip1.SuspendLayout();
             StatusStrip1.SuspendLayout();
             ToolStripPanel1.SuspendLayout();
@@ -1037,11 +1038,11 @@ namespace Elmanager.LevelEditor
             ToolStrip2.Dock = DockStyle.None;
             ToolStrip2.GripStyle = ToolStripGripStyle.Hidden;
             ToolStrip2.ImageScalingSize = new Size(32, 32);
-            ToolStrip2.Items.AddRange(new ToolStripItem[] { ShowGridButton, snapToGridButton, showCrossHairButton, ShowGrassEdgesButton, ShowGroundEdgesButton, ShowVerticesButton, ShowTextureFramesButton, ShowPictureFramesButton, ShowTexturesButton, ShowPicturesButton, ShowObjectFramesButton, ShowObjectsButton, ShowGravityAppleArrowsButton, ShowGroundButton, ShowGroundTextureButton, ShowSkyTextureButton, ZoomTexturesButton, toolStripSeparator12, BestTimeLabel, topologyList, toolStripSeparator16, playButton, stopButton, settingsButton, PlayTimeLabel });
+            ToolStrip2.Items.AddRange(new ToolStripItem[] { ShowGridButton, snapToGridButton, showCrossHairButton, ShowGrassEdgesButton, showGrassButton, ShowGroundEdgesButton, ShowVerticesButton, ShowTextureFramesButton, ShowPictureFramesButton, ShowTexturesButton, ShowPicturesButton, ShowObjectFramesButton, ShowObjectsButton, ShowGravityAppleArrowsButton, ShowGroundButton, ShowGroundTextureButton, ShowSkyTextureButton, ZoomTexturesButton, toolStripSeparator12, BestTimeLabel, topologyList, toolStripSeparator16, playButton, stopButton, settingsButton, PlayTimeLabel });
             ToolStrip2.LayoutStyle = ToolStripLayoutStyle.HorizontalStackWithOverflow;
             ToolStrip2.Location = new Point(0, 48);
             ToolStrip2.Name = "ToolStrip2";
-            ToolStrip2.Size = new Size(1280, 42);
+            ToolStrip2.Size = new Size(1326, 42);
             ToolStrip2.TabIndex = 15;
             ToolStrip2.Text = "ToolStrip2";
             // 
@@ -1687,6 +1688,16 @@ namespace Elmanager.LevelEditor
             SelectButton.TextAlign = ContentAlignment.MiddleCenter;
             SelectButton.UseVisualStyleBackColor = true;
             // 
+            // showGrassButton
+            // 
+            showGrassButton.CheckOnClick = true;
+            showGrassButton.DisplayStyle = ToolStripItemDisplayStyle.Image;
+            showGrassButton.Image = Resources.Grass;
+            showGrassButton.ImageTransparentColor = Color.Magenta;
+            showGrassButton.Name = "showGrassButton";
+            showGrassButton.Size = new Size(46, 36);
+            showGrassButton.Text = "Show grass";
+            // 
             // LevelEditorForm
             // 
             AutoScaleDimensions = new SizeF(192F, 192F);
@@ -1891,6 +1902,7 @@ namespace Elmanager.LevelEditor
         private ToolStripMenuItem deselectFlowersToolStripMenuItem;
         private ToolStripMenuItem deselectPicturesToolStripMenuItem;
         private ToolStripMenuItem deselectTexturesToolStripMenuItem;
+        internal ToolStripButton showGrassButton;
     }
 
 }

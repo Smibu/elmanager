@@ -4,6 +4,7 @@ using System.Linq;
 using Elmanager.Application;
 using Elmanager.Geometry;
 using Elmanager.LevelEditor;
+using Elmanager.Rendering;
 using Elmanager.UI;
 using Elmanager.Utilities;
 using NetTopologySuite.Algorithm;
@@ -18,8 +19,11 @@ internal class Polygon
     internal bool IsGrass;
     internal PolygonMark Mark;
     internal List<Vector> Vertices;
+    internal int GrassStart;
 
     internal const double BufferDistance = -1e-10;
+
+    public GrassSlopeInfo? SlopeInfo { get; set; }
 
     internal Polygon(IEnumerable<Vector> vertices, bool isGrass = false)
     {
@@ -41,6 +45,8 @@ internal class Polygon
         Mark = PolygonMark.None;
         IsGrass = p.IsGrass;
         Decomposition = p.Decomposition;
+        GrassStart = p.GrassStart;
+        SlopeInfo = p.SlopeInfo;
     }
 
     internal Polygon(params Vector[] vertices)
@@ -90,60 +96,33 @@ internal class Polygon
 
     internal bool IsCounterClockwise => SignedArea > 0;
 
-    internal double XMin
+    internal Bounds Bounds
     {
         get
         {
-            double result = Vertices[0].X;
-            foreach (Vector x in Vertices)
-                if (x.X < result)
-                    result = x.X;
-            return result;
-        }
-    }
+            var f = Vertices[0];
+            var b = new Bounds { XMax = f.X, XMin = f.X, YMax = f.Y, YMin = f.Y };
+            foreach (var vertex in Vertices.Skip(1))
+            {
+                b.XMin = Math.Min(b.XMin, vertex.X);
+                b.XMax = Math.Max(b.XMax, vertex.X);
+                b.YMin = Math.Min(b.YMin, vertex.Y);
+                b.YMax = Math.Max(b.YMax, vertex.Y);
+            }
 
-    internal double XMax
-    {
-        get
-        {
-            double result = Vertices[0].X;
-            foreach (Vector x in Vertices)
-                if (x.X > result)
-                    result = x.X;
-            return result;
-        }
-    }
-
-    internal double YMax
-    {
-        get
-        {
-            double result = Vertices[0].Y;
-            foreach (Vector x in Vertices)
-                if (x.Y > result)
-                    result = x.Y;
-            return result;
-        }
-    }
-
-    internal double YMin
-    {
-        get
-        {
-            double result = Vertices[0].Y;
-            foreach (Vector x in Vertices)
-                if (x.Y < result)
-                    result = x.Y;
-            return result;
+            return b;
         }
     }
 
     private bool IsSimple => ToIPolygon().IsSimple;
 
-    internal void UpdateDecomposition(bool updateGrass = true)
+    internal void UpdateDecompositionOrGrassSlopes(Bounds bounds, double grassZoom)
     {
-        Decomposition = GeometryUtils.Decompose(this);
-        if (updateGrass && IsGrass)
+        if (!IsGrass)
+        {
+            UpdateDecomposition();
+        }
+        else
         {
             double longest = Math.Abs(Vertices[^1].X - Vertices[0].X);
             int longestIndex = Vertices.Count - 1;
@@ -157,7 +136,8 @@ internal class Polygon
                 }
             }
 
-            SetBeginPoint(longestIndex + 1);
+            GrassStart = (longestIndex + 1) % Vertices.Count;
+            SlopeInfo = new GrassSlopeInfo(this, bounds, grassZoom);
         }
     }
 
@@ -187,6 +167,11 @@ internal class Polygon
 
         p.UpdateDecomposition();
         return p;
+    }
+
+    internal void UpdateDecomposition()
+    {
+        Decomposition = GeometryUtils.Decompose(this);
     }
 
     internal void Add(Vector p)
@@ -228,10 +213,26 @@ internal class Polygon
 
     internal double DistanceFromPoint(Vector p)
     {
-        double smallest = Math.Sqrt(Math.Pow((Vertices[0].X - p.X), 2) + Math.Pow((Vertices[0].Y - p.Y), 2));
+        double smallest = double.MaxValue;
         double current;
         int c = Vertices.Count - 1;
-        for (int i = 0; i < c; i++)
+        for (int i = GrassStart; i < c; i++)
+        {
+            current = GeometryUtils.DistanceFromSegment(Vertices[i].X, Vertices[i].Y, Vertices[i + 1].X,
+                Vertices[i + 1].Y, p.X, p.Y);
+            if (current < smallest)
+                smallest = current;
+        }
+
+        if (!IsGrass || GrassStart != 0)
+        {
+            current = GeometryUtils.DistanceFromSegment(Vertices[c].X, Vertices[c].Y, Vertices[0].X,
+                Vertices[0].Y, p.X, p.Y);
+            if (current < smallest)
+                smallest = current;
+        }
+
+        for (int i = 0; i < GrassStart - 1; i++)
         {
             current = GeometryUtils.DistanceFromSegment(Vertices[i].X, Vertices[i].Y, Vertices[i + 1].X,
                 Vertices[i + 1].Y, p.X, p.Y);
@@ -241,7 +242,8 @@ internal class Polygon
 
         if (!IsGrass || Global.AppSettings.LevelEditor.RenderingSettings.ShowInactiveGrassEdges)
         {
-            current = GeometryUtils.DistanceFromSegment(Vertices[c].X, Vertices[c].Y, Vertices[0].X, Vertices[0].Y, p.X,
+            var s = GrassStart == 0 ? Vertices.Count - 1 : GrassStart - 1;
+            current = GeometryUtils.DistanceFromSegment(Vertices[s].X, Vertices[s].Y, Vertices[GrassStart].X, Vertices[GrassStart].Y, p.X,
                 p.Y);
             if (current < smallest)
                 smallest = current;
