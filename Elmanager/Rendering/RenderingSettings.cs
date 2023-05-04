@@ -290,8 +290,13 @@ internal class RenderingSettings
     [Category("Workarounds"), DisplayName("Disable framebuffer usage")]
     public bool DisableFrameBuffer { get; set; }
 
+    [Browsable(false)]
     public bool ShowObjectsOrFrames => ShowObjects || ShowObjectFrames;
+
+    [Browsable(false)]
     public bool ShowGrassOrEdges => ShowGrassEdges;
+
+    [Browsable(false)]
     public bool ShowGroundOrEdges => ShowGround || ShowGroundEdges;
 
     [DisplayName("Grass zoom")]
