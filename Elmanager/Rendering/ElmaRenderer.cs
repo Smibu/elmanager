@@ -624,7 +624,6 @@ internal class ElmaRenderer : IDisposable
             ObjectType.Start => 4,
             _ => throw new ArgumentOutOfRangeException()
         }).ToList();
-        Lev.UpdateBounds();
         Lev.UpdateAllPolygons(_settings.GrassZoom);
         if (OpenGlLgr != null)
         {

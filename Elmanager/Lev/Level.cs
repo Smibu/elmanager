@@ -445,9 +445,10 @@ internal class Level
 
     internal void UpdateAllPolygons(double grassZoom)
     {
+        var groundBounds = GetGroundBounds();
         foreach (var x in Polygons)
         {
-            x.UpdateDecompositionOrGrassSlopes(GroundBounds, grassZoom);
+            x.UpdateDecompositionOrGrassSlopes(groundBounds, grassZoom);
         }
     }
 
@@ -700,23 +701,9 @@ internal class Level
 
         _polygonBounds = b;
 
-        Bounds? groundBounds = null;
+        var groundBounds = GetGroundBounds();
 
-        foreach (var polygon in Polygons.Where(p => !p.IsGrass))
-        {
-            if (groundBounds is { } bp)
-            {
-                groundBounds = bp.Max(polygon.Bounds);
-            }
-            else
-            {
-                groundBounds = polygon.Bounds;
-            }
-        }
-
-        GroundBounds = groundBounds!.Value;
-
-        b = b.Max(groundBounds.Value);
+        b = b.Max(groundBounds);
 
         foreach (var x in Objects)
         {
@@ -735,6 +722,26 @@ internal class Level
         }
 
         Bounds = b;
+        GroundBounds = groundBounds;
+    }
+
+    private Bounds GetGroundBounds()
+    {
+        Bounds? groundBounds = null;
+
+        foreach (var polygon in Polygons.Where(p => !p.IsGrass))
+        {
+            if (groundBounds is { } bp)
+            {
+                groundBounds = bp.Max(polygon.Bounds);
+            }
+            else
+            {
+                groundBounds = polygon.Bounds;
+            }
+        }
+
+        return groundBounds!.Value;
     }
 
     public Bounds GroundBounds { get; set; }

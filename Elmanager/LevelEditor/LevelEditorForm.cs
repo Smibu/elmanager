@@ -1031,8 +1031,9 @@ internal partial class LevelEditorForm : FormMod, IMessageFilter
         _zoomCtrl = new ZoomController(new ElmaCamera(), Lev, Settings.RenderingSettings, () => RedrawScene());
         SetNotModified();
         Renderer.InitializeLevel(Lev);
-        _zoomCtrl.ZoomFill();
         Renderer.UpdateSettings(Settings.RenderingSettings);
+        Lev.UpdateBounds();
+        _zoomCtrl.ZoomFill();
         topologyList.Text = string.Empty;
         topologyList.DropDownItems.Clear();
         ResetTopologyListStyle();
