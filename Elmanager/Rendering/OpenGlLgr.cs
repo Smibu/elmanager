@@ -733,6 +733,7 @@ internal class OpenGlLgr : IDisposable
     {
         foreach (var x in _grassPics)
         {
+            // At least on some machines, deleting grass pic textures causes incorrect grass rendering when changing LGR.
             GL.DeleteTexture(x.Image.TextureId);
             x.Bmp.Dispose();
         }
