@@ -299,7 +299,9 @@ internal class RenderingSettings
     [Browsable(false)]
     public bool ShowGroundOrEdges => ShowGround || ShowGroundEdges;
 
-    [DisplayName("Grass zoom")]
+    [DisplayName("Grass zoom"),
+     Description("Grass detail level. Set this the same as eolconf zoom to make grass look the same as in EOL.")
+    ]
     public double GrassZoom
     {
         get => _grassZoom;
