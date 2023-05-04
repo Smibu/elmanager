@@ -110,7 +110,7 @@ internal partial class RenameForm : FormMod
                     }
                 }
 
-                if (!rp.Efo.File.FileName.CompareWith(newName + DirUtils.RecExtension))
+                if (!rp.Efo.File.FileName.EqualsIgnoreCase(newName + DirUtils.RecExtension))
                 {
                     _rm.Rename(rp, newName);
                 }

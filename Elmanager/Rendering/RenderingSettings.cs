@@ -3,6 +3,8 @@ using System.ComponentModel;
 using System.Drawing;
 using System.Drawing.Design;
 using System.IO;
+using Elmanager.Application;
+using Elmanager.Lev;
 using Elmanager.Settings;
 using Elmanager.Utilities;
 
@@ -12,7 +14,7 @@ internal class RenderingSettings
 {
     private int _circleDrawingAccuracy = 30;
     private double _gridSize = 1.0;
-    private string _lgrFile = "";
+    private string? _lgrOverride;
     private float _lineWidth = 2.0f;
     private int _smoothZoomDuration = 200;
     private double _vertexSize = 0.02;
@@ -62,7 +64,7 @@ internal class RenderingSettings
         AppleGravityArrowColor = s.AppleGravityArrowColor;
         MaxDimensionColor = s.MaxDimensionColor;
         SmoothZoomDuration = s.SmoothZoomDuration;
-        LgrFile = s.LgrFile;
+        LgrOverride = s.LgrOverride;
         GridSize = s.GridSize;
         LineWidth = s.LineWidth;
         VertexSize = s.VertexSize;
@@ -166,19 +168,23 @@ internal class RenderingSettings
         }
     }
 
-    [DisplayName("LGR file"), Editor(typeof(CustomFileNameEditor), typeof(UITypeEditor))]
-    public string LgrFile
+    [DisplayName("LGR override"),
+     Editor(typeof(CustomFileNameEditor), typeof(UITypeEditor)),
+     Description("If set, this LGR is always used instead of <lgrdir>/<levellgr>.lgr")
+    ]
+    public string? LgrOverride
     {
-        get => _lgrFile;
+        get => _lgrOverride;
         set
         {
-            if (value != string.Empty)
+            if (string.IsNullOrEmpty(value))
             {
-                if (Path.GetExtension(value).CompareWith(".lgr"))
-                    _lgrFile = value;
-                else
-                    throw (new ArgumentException("The specified file is not LGR file!"));
+                _lgrOverride = null;
             }
+            else if (Path.GetExtension(value).EqualsIgnoreCase(".lgr"))
+                _lgrOverride = value;
+            else
+                throw (new ArgumentException("The specified file is not LGR file!"));
         }
     }
 
@@ -293,5 +299,33 @@ internal class RenderingSettings
     {
         get => _grassZoom;
         set => _grassZoom = Math.Clamp(value, 1, 3);
+    }
+
+    public string? ResolveLgr(Level lev)
+    {
+        if (File.Exists(LgrOverride))
+        {
+            return LgrOverride;
+        }
+
+        var lgrDir = Global.AppSettings.General.LgrDirectory;
+        if (!Directory.Exists(lgrDir))
+        {
+            return null;
+        }
+
+        var levLgr = Path.Combine(lgrDir, lev.LgrFile + ".lgr");
+        if (File.Exists(levLgr))
+        {
+            return levLgr;
+        }
+
+        var defaultLgr = Path.Combine(lgrDir, "default.lgr");
+        if (File.Exists(defaultLgr))
+        {
+            return defaultLgr;
+        }
+
+        return null;
     }
 }

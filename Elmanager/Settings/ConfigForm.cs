@@ -81,22 +81,6 @@ internal partial class ConfigForm : FormMod
         return string.Empty;
     }
 
-    private static void UpdateLgrDirsIfEmpty()
-    {
-        if (Directory.Exists(Global.AppSettings.General.LgrDirectory))
-        {
-            string[] lgrFiles = Directory.GetFiles(Global.AppSettings.General.LgrDirectory, "*.lgr",
-                SearchOption.AllDirectories);
-            if (lgrFiles.Length > 0)
-            {
-                if (Global.AppSettings.LevelEditor.RenderingSettings.LgrFile == string.Empty)
-                    Global.AppSettings.LevelEditor.RenderingSettings.LgrFile = GetDefaultLgrFile(lgrFiles);
-                if (Global.AppSettings.ReplayViewer.RenderingSettings.LgrFile == string.Empty)
-                    Global.AppSettings.ReplayViewer.RenderingSettings.LgrFile = GetDefaultLgrFile(lgrFiles);
-            }
-        }
-    }
-
     private void BrowseForElmaDir(object sender, EventArgs e)
     {
         FolderBrowserDialog1.Description = "Browse for Elasto Mania directory";
@@ -119,7 +103,6 @@ internal partial class ConfigForm : FormMod
             {
                 LGRTextBox.Text = FolderBrowserDialog1.SelectedPath + "\\Lgr";
                 Global.AppSettings.General.LgrDirectory = LGRTextBox.Text;
-                UpdateLgrDirsIfEmpty();
             }
         }
     }
@@ -146,7 +129,6 @@ internal partial class ConfigForm : FormMod
         {
             LGRTextBox.Text = FolderBrowserDialog1.SelectedPath + "\\";
             Global.AppSettings.General.LgrDirectory = LGRTextBox.Text;
-            UpdateLgrDirsIfEmpty();
         }
     }
 

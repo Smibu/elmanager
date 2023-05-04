@@ -40,7 +40,7 @@ internal class ElmaRenderer : IDisposable
     private bool _disposed;
 
     private readonly IGraphicsContext _gfxContext;
-    private RenderingSettings _settings = new();
+    private RenderingSettings _settings = null!;
     private int _frameBuffer;
     private int _colorRenderBuffer;
     private int _depthStencilRenderBuffer;
@@ -640,15 +640,18 @@ internal class ElmaRenderer : IDisposable
 
     internal void UpdateSettings(RenderingSettings newSettings)
     {
-        if (_settings.LgrFile != newSettings.LgrFile)
+        var currentLgr = OpenGlLgr?.CurrentLgr.Path;
+        var newLgr = newSettings.ResolveLgr(Lev);
+        if (!currentLgr.EqualsIgnoreCase(newLgr))
         {
-            OpenGlLgr?.Dispose();
-            if (File.Exists(newSettings.LgrFile))
+            if (File.Exists(newLgr))
             {
+                var old = OpenGlLgr;
                 try
                 {
-                    OpenGlLgr = new OpenGlLgr(Lev, newSettings);
+                    OpenGlLgr = new OpenGlLgr(Lev, new Lgr.Lgr(newLgr), newSettings);
                     Lev.UpdateImages(OpenGlLgr.DrawableImages);
+                    old?.Dispose();
                 }
                 catch (Exception e)
                 {

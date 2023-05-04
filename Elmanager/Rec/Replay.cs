@@ -106,7 +106,7 @@ internal class Replay
             _internalIndex = -1;
             foreach (var levelFile in Global.GetLevelFiles())
             {
-                if (Path.GetFileName(levelFile).CompareWith(LevelFilename))
+                if (Path.GetFileName(levelFile).EqualsIgnoreCase(LevelFilename))
                 {
                     LevelPath = levelFile;
                     var fileStream = File.OpenRead(levelFile);

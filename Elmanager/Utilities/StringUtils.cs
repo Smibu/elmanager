@@ -5,9 +5,9 @@ namespace Elmanager.Utilities;
 
 internal static class StringUtils
 {
-    internal static bool CompareWith(this string str1, string str2)
+    internal static bool EqualsIgnoreCase(this string? str1, string? str2)
     {
-        return str1.Equals(str2, StringComparison.OrdinalIgnoreCase);
+        return str1 == null && str2 == null || str1 != null && str1.Equals(str2, StringComparison.OrdinalIgnoreCase);
     }
 
     internal static double StringToTime(string timeStr)

@@ -439,7 +439,7 @@ internal class Level
     }
 
     internal static bool IsInternalLevel(string levStr) =>
-        levStr.Length == 12 && levStr.Substring(0, 6).CompareWith("QWQUU0");
+        levStr.Length == 12 && levStr.Substring(0, 6).EqualsIgnoreCase("QWQUU0");
 
     internal Level Clone() => new(this);
 

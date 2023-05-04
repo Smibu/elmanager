@@ -98,7 +98,7 @@ internal partial class ReplayManagerForm : FormMod, IManagerGui
     private static bool IsDiffLevel(IList<Replay> replays)
     {
         var levFileName = replays[0].LevelFilename;
-        return replays.Any(x => !StringUtils.CompareWith(x.LevelFilename, levFileName));
+        return replays.Any(x => !StringUtils.EqualsIgnoreCase(x.LevelFilename, levFileName));
     }
 
     private static string GetReplayToolTip(OLVColumn col, ReplayItem r)
@@ -259,7 +259,7 @@ internal partial class ReplayManagerForm : FormMod, IManagerGui
         var firstReplay = GetSelectedReplay();
         return
             TypedList.SelectedObjects
-                .Any(x => x.IsMulti || !x.Efo.Obj.LevelFilename.CompareWith(firstReplay.Obj.LevelFilename));
+                .Any(x => x.IsMulti || !x.Efo.Obj.LevelFilename.EqualsIgnoreCase(firstReplay.Obj.LevelFilename));
     }
 
     private void MergeReplays(object sender, EventArgs e)
@@ -354,7 +354,7 @@ internal partial class ReplayManagerForm : FormMod, IManagerGui
             return;
         }
 
-        var file = Global.GetLevelFiles().FirstOrDefault(t => Path.GetFileName(t).CompareWith(levelFile));
+        var file = Global.GetLevelFiles().FirstOrDefault(t => Path.GetFileName(t).EqualsIgnoreCase(levelFile));
         if (file != null)
         {
             OsUtils.ShellExecute(file);

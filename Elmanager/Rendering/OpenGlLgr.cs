@@ -65,9 +65,9 @@ internal class OpenGlLgr : IDisposable
     public DrawableImage SkyTexture { get; private set; } = null!;
     public Dictionary<string, DrawableImage> DrawableImages { get; } = new();
 
-    public OpenGlLgr(Level lev, RenderingSettings newSettings)
+    public OpenGlLgr(Level lev, Lgr.Lgr lgr, RenderingSettings newSettings)
     {
-        CurrentLgr = new Lgr.Lgr(newSettings.LgrFile);
+        CurrentLgr = lgr;
         var firstFrameRect = new Rectangle(0, 0, 40, 40);
         foreach (var x in CurrentLgr.LgrImages.Values)
         {

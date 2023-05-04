@@ -966,18 +966,6 @@ internal partial class LevelEditorForm : FormMod, IMessageFilter
         }
     }
 
-    private void UpdateLgrFromLev()
-    {
-        if (Directory.Exists(Global.AppSettings.General.LgrDirectory))
-        {
-            var lgr = Path.Combine(Global.AppSettings.General.LgrDirectory, Lev.LgrFile.ToLower() + ".lgr");
-            if (File.Exists(lgr))
-            {
-                Settings.RenderingSettings.LgrFile = lgr;
-            }
-        }
-    }
-
     private void Initialize()
     {
         if (!Physics)
@@ -1044,7 +1032,6 @@ internal partial class LevelEditorForm : FormMod, IMessageFilter
         SetNotModified();
         Renderer.InitializeLevel(Lev);
         _zoomCtrl.ZoomFill();
-        UpdateLgrFromLev();
         Renderer.UpdateSettings(Settings.RenderingSettings);
         topologyList.Text = string.Empty;
         topologyList.DropDownItems.Clear();
@@ -1569,7 +1556,6 @@ internal partial class LevelEditorForm : FormMod, IMessageFilter
 
     private void OpenConfig(object sender, EventArgs e)
     {
-        string oldLgr = Settings.RenderingSettings.LgrFile;
         ComponentManager.ShowConfiguration("sle");
         AfterSettingsClosed();
         if (!Settings.EnableStartPositionFeature)
@@ -1588,7 +1574,6 @@ internal partial class LevelEditorForm : FormMod, IMessageFilter
 
     private void OpenRenderingSettings(object sender, EventArgs e)
     {
-        string oldLgr = Settings.RenderingSettings.LgrFile;
         var rSettings = new RenderingSettingsForm(Settings.RenderingSettings);
         rSettings.Changed += x =>
         {
@@ -2070,7 +2055,7 @@ internal partial class LevelEditorForm : FormMod, IMessageFilter
         var data = e.Data?.GetData(DataFormats.FileDrop);
         if (data is string[] files)
         {
-            if (files.All(filePath => File.Exists(filePath) && ImportableExtensions.Any(ext => Path.GetExtension(filePath).CompareWith(ext))))
+            if (files.All(filePath => File.Exists(filePath) && ImportableExtensions.Any(ext => Path.GetExtension(filePath).EqualsIgnoreCase(ext))))
             {
                 e.Effect = DragDropEffects.Copy;
             }
