@@ -306,9 +306,9 @@ internal class OpenGlLgr : IDisposable
         GL.Begin(PrimitiveType.Quads);
         var ymin = -(midY - ElmaRenderer.TextureVertexConst);
         var ymax = -(midY + ElmaRenderer.TextureVertexConst);
-        var pixelAlignedX = GrassSlopeInfo.AdjustBound(midX - ElmaRenderer.TextureVertexConst, GetGrassFactor(settings.GrassZoom));
+        var pixelAlignedX = GrassSlopeInfo.RoundToPixelMiddle(midX - ElmaRenderer.TextureVertexConst, GetGrassFactor(settings.GrassZoom));
         var diffX = midX - ElmaRenderer.TextureVertexConst - pixelAlignedX;
-        var pixelAlignedY = GrassSlopeInfo.AdjustBound(ymin, GetGrassFactor(settings.GrassZoom));
+        var pixelAlignedY = GrassSlopeInfo.RoundToPixelMiddle(ymin, GetGrassFactor(settings.GrassZoom));
         var diffY = ymin - pixelAlignedY;
         GL.TexCoord2(0, 0);
         GL.Vertex3(midX - ElmaRenderer.TextureVertexConst - diffX, ymin - diffY, depth);

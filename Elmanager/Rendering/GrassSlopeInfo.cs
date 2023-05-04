@@ -21,8 +21,8 @@ internal class GrassSlopeInfo
         _zoom = grassZoom;
         _bounds = groundBounds with
         {
-            XMin = AdjustBound(groundBounds.XMin - 10000.0 / Factor, Factor),
-            YMin = AdjustBound(groundBounds.YMin - 1000.0 / Factor, Factor)
+            XMin = RoundToPixelMiddle(groundBounds.XMin - 10000.0 / Factor, Factor),
+            YMin = RoundToPixelMiddle(groundBounds.YMin - 1000.0 / Factor, Factor)
         };
         var maxEdgeEndIndex = polygon.GrassStart;
         var maxEdgeBeginIndex = maxEdgeEndIndex - 1;
@@ -53,7 +53,7 @@ internal class GrassSlopeInfo
         }
     }
 
-    public static double AdjustBound(double value, double factor) => ((int)(value * factor) + 0.5) / factor;
+    public static double RoundToPixelMiddle(double value, double factor) => ((int)(value * factor) + 0.5) / factor;
 
     private int ProcessEdge(Polygon polygon, int i1, int i2, int currX)
     {
