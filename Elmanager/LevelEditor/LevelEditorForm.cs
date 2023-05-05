@@ -1737,22 +1737,13 @@ internal partial class LevelEditorForm : FormMod, IMessageFilter
 
     private void QuickGrassToolStripMenuItemClick(object sender, EventArgs e)
     {
-        var mod = LevModification.Nothing;
-        for (int i = Lev.Polygons.Count - 1; i >= 0; i--)
-        {
-            Polygon x = Lev.Polygons[i];
-            if (!x.IsGrass)
-            {
-                var autoGrass = ((AutoGrassTool)(Tools[11])).AutoGrass(x);
-                Lev.Polygons.AddRange(autoGrass);
-                if (autoGrass.Count > 0)
-                {
-                    mod = LevModification.Decorations;
-                }
-            }
-        }
-
-        SetModified(mod);
+        var autoGrassTool = (AutoGrassTool)Tools[11];
+        var grassPolys = Lev.Polygons.Where(x => !x.IsGrass)
+            .SelectMany(autoGrassTool.AutoGrass).ToList();
+        grassPolys.ForEach(p =>
+            p.UpdateDecompositionOrGrassSlopes(Lev.GroundBounds, Settings.RenderingSettings.GrassZoom));
+        Lev.Polygons.AddRange(grassPolys);
+        SetModified(grassPolys.Count > 0 ? LevModification.Decorations : LevModification.Nothing);
         RedrawScene();
     }
 

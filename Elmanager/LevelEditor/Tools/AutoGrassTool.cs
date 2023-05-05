@@ -45,10 +45,7 @@ internal class AutoGrassTool : ToolBase, IEditorTool
         }
     }
 
-    public List<Polygon> GetExtraPolygons()
-    {
-        return new();
-    }
+    public List<Polygon> GetExtraPolygons() => _currentAutograssPolys ?? new();
 
     public void InActivate()
     {
@@ -93,11 +90,13 @@ internal class AutoGrassTool : ToolBase, IEditorTool
                     {
                         _currentPolygon = v.Polygon;
                         _currentAutograssPolys = AutoGrass(_currentPolygon);
+                        _currentAutograssPolys.ForEach(p => p.UpdateDecompositionOrGrassSlopes(Lev.GroundBounds,
+                            LevEditor.Settings.RenderingSettings.GrassZoom));
                     }
                 }
                 else
                 {
-                    Lev.Polygons.AddRange(AutoGrass(_currentPolygon));
+                    Lev.Polygons.AddRange(_currentAutograssPolys!);
                     _currentPolygon = null;
                     _currentAutograssPolys = null;
                     LevEditor.SetModified(LevModification.Decorations);

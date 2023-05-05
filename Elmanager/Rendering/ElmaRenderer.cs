@@ -386,7 +386,7 @@ internal class ElmaRenderer : IDisposable
             GL.DepthFunc(DepthFunction.Gequal);
             if (_settings.ShowGrass)
             {
-                OpenGlLgr.DrawGrass(Lev, cam, midX, midY, _settings);
+                OpenGlLgr.DrawGrass(Lev, cam, midX, midY, _settings, sceneSettings);
             }
         }
 

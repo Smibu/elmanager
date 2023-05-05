@@ -667,7 +667,8 @@ internal class OpenGlLgr : IDisposable
                 img.Image.Bmp, img.Delta, grassHeightExtension)).ToList();
     }
 
-    public void DrawGrass(Level lev, ElmaCamera cam, double midX, double midY, RenderingSettings settings)
+    public void DrawGrass(Level lev, ElmaCamera cam, double midX, double midY, RenderingSettings settings,
+        SceneSettings sceneSettings)
     {
         if (_grassPics.Count > 0 && _qgrass != null)
         {
@@ -675,20 +676,13 @@ internal class OpenGlLgr : IDisposable
             GL.StencilFunc(StencilFunction.Equal, ElmaRenderer.GroundStencil, ElmaRenderer.StencilMask);
             GL.AlphaFunc(AlphaFunction.Notequal, GrassIgnoreAlpha / 255f);
             GL.Disable(EnableCap.Blend);
+            for (var i = sceneSettings.AdditionalPolys.Count - 1; i >= 0; i--)
+            {
+                DrawPolygonGrass(sceneSettings.AdditionalPolys[i]);
+            }
             for (var i = lev.Polygons.Count - 1; i >= 0; i--)
             {
-                var p = lev.Polygons[i];
-                if (p is { IsGrass: true, SlopeInfo: { } })
-                {
-                    foreach (var pic in p.SlopeInfo.GetGrassPics(_grassPics))
-                    {
-                        var depth = pic.Distance / 1000.0 * (ElmaRenderer.ZFar - ElmaRenderer.ZNear) +
-                                    ElmaRenderer.ZNear;
-                        DrawPicture(pic.PictureInfo.TextureId, pic.Position.X, pic.Position.Y, pic.Width,
-                            pic.Height,
-                            depth, 1, 0);
-                    }
-                }
+                DrawPolygonGrass(lev.Polygons[i]);
             }
 
             GL.AlphaFunc(AlphaFunction.Gequal, 0.9f);
@@ -696,6 +690,21 @@ internal class OpenGlLgr : IDisposable
             GL.BlendFunc(BlendingFactor.OneMinusDstAlpha, BlendingFactor.DstAlpha);
             DrawFullScreenTexture(cam, _qgrass, midX, midY, 0, settings);
             GL.BlendFunc(BlendingFactor.One, BlendingFactor.OneMinusDstColor);
+        }
+    }
+
+    private void DrawPolygonGrass(Polygon p)
+    {
+        if (p is { IsGrass: true, SlopeInfo: { } })
+        {
+            foreach (var pic in p.SlopeInfo.GetGrassPics(_grassPics))
+            {
+                var depth = pic.Distance / 1000.0 * (ElmaRenderer.ZFar - ElmaRenderer.ZNear) +
+                            ElmaRenderer.ZNear;
+                DrawPicture(pic.PictureInfo.TextureId, pic.Position.X, pic.Position.Y, pic.Width,
+                    pic.Height,
+                    depth, 1, 0);
+            }
         }
     }
 
