@@ -285,7 +285,7 @@ internal class SelectionTool : ToolBase, IEditorTool
 
                 if (polygonMoved)
                 {
-                    x.UpdateDecompositionOrGrassSlopes(Lev.GroundBounds, LevEditor.Settings.RenderingSettings.GrassZoom);
+                    x.UpdateDecompositionOrGrassSlopeInfo(Lev.GroundBounds, LevEditor.Settings.RenderingSettings.GrassZoom);
                     anythingMoved |= x.IsGrass ? LevModification.Decorations : LevModification.Ground;
                 }
             }

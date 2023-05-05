@@ -448,7 +448,7 @@ internal class Level
         var groundBounds = GetGroundBounds();
         foreach (var x in Polygons)
         {
-            x.UpdateDecompositionOrGrassSlopes(groundBounds, grassZoom);
+            x.UpdateDecompositionOrGrassSlopeInfo(groundBounds, grassZoom);
         }
     }
 

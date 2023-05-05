@@ -567,7 +567,7 @@ internal partial class LevelEditorForm : FormMod, IMessageFilter
             {
                 copiedPolygons.Add(copy);
                 copy.IsGrass = x.IsGrass;
-                copy.UpdateDecompositionOrGrassSlopes(Lev.GroundBounds, Settings.RenderingSettings.GrassZoom);
+                copy.UpdateDecompositionOrGrassSlopeInfo(Lev.GroundBounds, Settings.RenderingSettings.GrassZoom);
             }
         }
 
@@ -819,7 +819,7 @@ internal partial class LevelEditorForm : FormMod, IMessageFilter
                 if (x.Vertices.Count < 3)
                     Lev.Polygons.Remove(x);
                 else if (polyModified)
-                    x.UpdateDecompositionOrGrassSlopes(Lev.GroundBounds, Settings.RenderingSettings.GrassZoom);
+                    x.UpdateDecompositionOrGrassSlopeInfo(Lev.GroundBounds, Settings.RenderingSettings.GrassZoom);
             }
 
             var deletedApples = new HashSet<int>();
@@ -924,7 +924,7 @@ internal partial class LevelEditorForm : FormMod, IMessageFilter
             {
                 mod |= LevModification.Decorations;
             }
-            p.UpdateDecompositionOrGrassSlopes(Lev.GroundBounds, Settings.RenderingSettings.GrassZoom);
+            p.UpdateDecompositionOrGrassSlopeInfo(Lev.GroundBounds, Settings.RenderingSettings.GrassZoom);
         });
         SetModified(mod);
         RedrawScene();
@@ -1741,7 +1741,7 @@ internal partial class LevelEditorForm : FormMod, IMessageFilter
         var grassPolys = Lev.Polygons.Where(x => !x.IsGrass)
             .SelectMany(autoGrassTool.AutoGrass).ToList();
         grassPolys.ForEach(p =>
-            p.UpdateDecompositionOrGrassSlopes(Lev.GroundBounds, Settings.RenderingSettings.GrassZoom));
+            p.UpdateDecompositionOrGrassSlopeInfo(Lev.GroundBounds, Settings.RenderingSettings.GrassZoom));
         Lev.Polygons.AddRange(grassPolys);
         SetModified(grassPolys.Count > 0 ? LevModification.Decorations : LevModification.Nothing);
         RedrawScene();

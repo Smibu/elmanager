@@ -116,7 +116,7 @@ internal class Polygon
 
     private bool IsSimple => ToIPolygon().IsSimple;
 
-    internal void UpdateDecompositionOrGrassSlopes(Bounds bounds, double grassZoom)
+    internal void UpdateDecompositionOrGrassSlopeInfo(Bounds bounds, double grassZoom)
     {
         if (!IsGrass)
         {

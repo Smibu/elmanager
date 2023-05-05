@@ -90,7 +90,7 @@ internal class AutoGrassTool : ToolBase, IEditorTool
                     {
                         _currentPolygon = v.Polygon;
                         _currentAutograssPolys = AutoGrass(_currentPolygon);
-                        _currentAutograssPolys.ForEach(p => p.UpdateDecompositionOrGrassSlopes(Lev.GroundBounds,
+                        _currentAutograssPolys.ForEach(p => p.UpdateDecompositionOrGrassSlopeInfo(Lev.GroundBounds,
                             LevEditor.Settings.RenderingSettings.GrassZoom));
                     }
                 }
