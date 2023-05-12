@@ -3,6 +3,7 @@
 ## Beta
 * SLE & Replay viewer: Added grass rendering support.
 * In rendering settings, LGRFile is now LGROverride. If set, this LGR is always used instead of `<lgrdir>/<levellgr>.lgr`. The earlier setting was messy and not clear what it meant.
+* SLE: Bugfix: Frame tool sometimes added the source polygon back when switching to another tool.
 
 ## 24.2.2023
 * SLE: Selection is no longer updated when changing selection filter. Separate menu items have been added to unselect all elements of a specific type.
