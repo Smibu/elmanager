@@ -11,9 +11,8 @@ namespace Elmanager.LevelEditor.Tools;
 
 internal class FrameTool : ToolBase, IEditorTool
 {
-    private Polygon? _currentPolygon;
+    private FrameState? _frame;
     private double _frameRadius = 0.2;
-    private List<Polygon>? _frames;
     private FrameType _frameType = FrameType.Normal;
 
     private enum FrameType
@@ -28,7 +27,7 @@ internal class FrameTool : ToolBase, IEditorTool
     {
     }
 
-    private bool Framing => _frames is { };
+    private bool Framing => _frame is { };
 
     public void Activate()
     {
@@ -45,15 +44,12 @@ internal class FrameTool : ToolBase, IEditorTool
 
     public void ExtraRendering()
     {
-        if (_frames is null) return;
-        Renderer.DrawPolygon(_frames[0], Color.Blue);
-        Renderer.DrawPolygon(_frames[1], Color.Blue);
+        if (_frame is null) return;
+        Renderer.DrawPolygon(_frame.Frames[0], Color.Blue);
+        Renderer.DrawPolygon(_frame.Frames[1], Color.Blue);
     }
 
-    public List<Polygon> GetExtraPolygons()
-    {
-        return _frames ?? new List<Polygon>();
-    }
+    public List<Polygon> GetExtraPolygons() => _frame?.Frames ?? new List<Polygon>();
 
     public void InActivate()
     {
@@ -65,7 +61,7 @@ internal class FrameTool : ToolBase, IEditorTool
 
     public void KeyDown(KeyEventArgs key)
     {
-        if (_currentPolygon is null) return;
+        if (_frame is null) return;
         switch (key.KeyCode)
         {
             case KeyUtils.Increase:
@@ -91,7 +87,7 @@ internal class FrameTool : ToolBase, IEditorTool
                 break;
         }
 
-        UpdateFrame(_currentPolygon);
+        UpdateFrame(_frame.Polygon);
     }
 
     public void MouseDown(MouseEventArgs mouseData)
@@ -101,20 +97,20 @@ internal class FrameTool : ToolBase, IEditorTool
             case MouseButtons.Left:
                 if (GetNearestVertexInfo(CurrentPos) is { } v && !Framing)
                 {
-                    _currentPolygon = v.Polygon;
-                    if (!_currentPolygon.IsCounterClockwise)
+                    var poly = v.Polygon;
+                    if (!poly.IsCounterClockwise)
                     {
-                        _currentPolygon.ChangeOrientation();
+                        poly.ChangeOrientation();
                     }
 
-                    _currentPolygon.Mark = PolygonMark.Selected;
-                    Lev.Polygons.Remove(_currentPolygon);
-                    UpdateFrame(_currentPolygon);
+                    poly.Mark = PolygonMark.None;
+                    Lev.Polygons.Remove(poly);
+                    UpdateFrame(poly);
                 }
-                else if (_frames is { })
+                else if (_frame is { })
                 {
-                    Lev.Polygons.AddRange(_frames);
-                    _frames = null;
+                    Lev.Polygons.AddRange(_frame.Frames);
+                    _frame = null;
                     LevEditor.SetModified(LevModification.Ground);
                 }
 
@@ -161,19 +157,17 @@ internal class FrameTool : ToolBase, IEditorTool
 
     private void CancelFraming()
     {
-        if (_currentPolygon is null)
+        if (_frame is null)
         {
             return;
         }
-        Lev.Polygons.Add(_currentPolygon);
-        _currentPolygon.Mark = PolygonMark.None;
-        _frames = null;
-        _currentPolygon = null;
+        Lev.Polygons.Add(_frame.Polygon);
+        _frame = null;
     }
 
     private void UpdateFrame(Polygon p)
     {
-        _frames = MakeClosedPipe(p, _frameRadius);
+        _frame = new FrameState(p, MakeClosedPipe(p, _frameRadius));
     }
 
     private List<Polygon> MakeClosedPipe(Polygon pipeLine, double radius)
