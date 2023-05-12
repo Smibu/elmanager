@@ -90,8 +90,6 @@ internal class AutoGrassTool : ToolBase, IEditorTool
                     {
                         _currentPolygon = v.Polygon;
                         _currentAutograssPolys = AutoGrass(_currentPolygon);
-                        _currentAutograssPolys.ForEach(p => p.UpdateDecompositionOrGrassSlopeInfo(Lev.GroundBounds,
-                            LevEditor.Settings.RenderingSettings.GrassZoom));
                     }
                 }
                 else
@@ -146,7 +144,15 @@ internal class AutoGrassTool : ToolBase, IEditorTool
             : "LMouse: select ground polygon to create grass polygon for.";
     }
 
-    internal List<Polygon> AutoGrass(Polygon p)
+    internal List<Polygon> AutoGrass(Polygon poly)
+    {
+        var polygons = CreateGrassPolygons(poly);
+        polygons.ForEach(p => p.UpdateDecompositionOrGrassSlopeInfo(Lev.GroundBounds,
+            LevEditor.Settings.RenderingSettings.GrassZoom));
+        return polygons;
+    }
+
+    private List<Polygon> CreateGrassPolygons(Polygon p)
     {
         double autoGrassThickness = Global.AppSettings.LevelEditor.AutoGrassThickness;
         List<Polygon> grassPolys = new List<Polygon>();

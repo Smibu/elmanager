@@ -1740,8 +1740,6 @@ internal partial class LevelEditorForm : FormMod, IMessageFilter
         var autoGrassTool = (AutoGrassTool)Tools[11];
         var grassPolys = Lev.Polygons.Where(x => !x.IsGrass)
             .SelectMany(autoGrassTool.AutoGrass).ToList();
-        grassPolys.ForEach(p =>
-            p.UpdateDecompositionOrGrassSlopeInfo(Lev.GroundBounds, Settings.RenderingSettings.GrassZoom));
         Lev.Polygons.AddRange(grassPolys);
         SetModified(grassPolys.Count > 0 ? LevModification.Decorations : LevModification.Nothing);
         RedrawScene();
