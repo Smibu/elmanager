@@ -17,7 +17,7 @@ internal class ReplayViewerSettings
     public bool LockedCamera { get; set; }
     public bool LoopPlaying { get; set; }
     public int MouseClickStep { get; set; } = 50;
-    public int MouseWheelStep { get; set; } = 50;
+    public int MouseWheelStep { get; set; } = 20;
     public bool MultiSpy { get; set; }
     public bool PicturesInBackGround { get; set; }
     public RenderingSettings RenderingSettings { get; set; } = new();
