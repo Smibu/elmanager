@@ -12,7 +12,7 @@ namespace OpenTK.WinForms
         /// <summary>
         /// The one-and-only instance of this class.
         /// </summary>
-        public static DummyGLFWGraphicsContext Instance { get; }  = new DummyGLFWGraphicsContext();
+        public static DummyGLFWGraphicsContext Instance { get; } = new DummyGLFWGraphicsContext();
 
         /// <summary>
         /// The mandatory WindowPtr, which is always a null handle.

@@ -198,7 +198,7 @@ internal class OpenGlLgr : IDisposable
         }
 
         GroundTexture = ground!;
-        SkyTexture= sky!;
+        SkyTexture = sky!;
     }
 
     public DrawableImage DrawableImageFromName(LgrImage img) => DrawableImages[img.Name];
