@@ -19,6 +19,8 @@ using Elmanager.Settings;
 using Elmanager.UI;
 using Elmanager.Utilities;
 using Control = System.Windows.Forms.Control;
+using Cursor = System.Windows.Forms.Cursor;
+using Cursors = System.Windows.Forms.Cursors;
 using KeyEventArgs = System.Windows.Forms.KeyEventArgs;
 using MouseEventArgs = System.Windows.Forms.MouseEventArgs;
 using StringUtils = Elmanager.Utilities.StringUtils;
@@ -36,6 +38,7 @@ internal partial class ReplayViewerForm : FormMod
     private readonly TypedObjectListView<PlayListObject> _typedPlayList;
     private readonly TaskCompletionSource _tcs = new();
     private readonly FullScreenController _fullScreenController;
+    private bool _bikeClicked;
 
     public ReplayViewerForm()
     {
@@ -237,11 +240,11 @@ internal partial class ReplayViewerForm : FormMod
                 _replayController.TogglePlay();
                 break;
             case KeyUtils.Decrease:
-                if (!(Keyboard.IsKeyDown(Key.LeftCtrl) || Keyboard.IsKeyDown(Key.RightCtrl)))
+                if (!IsCtrlDown())
                     _replayController.PreviousFrame();
                 break;
             case KeyUtils.Increase:
-                if (!(Keyboard.IsKeyDown(Key.LeftCtrl) || Keyboard.IsKeyDown(Key.RightCtrl)))
+                if (!IsCtrlDown())
                     _replayController.NextFrame();
                 break;
             case Keys.Oemcomma:
@@ -271,6 +274,8 @@ internal partial class ReplayViewerForm : FormMod
         }
     }
 
+    private static bool IsCtrlDown() => Keyboard.IsKeyDown(Key.LeftCtrl) || Keyboard.IsKeyDown(Key.RightCtrl);
+
     private void MouseClickZoomBoxTextChanged(object sender, EventArgs e)
     {
         Global.AppSettings.ReplayViewer.MouseClickStep = MouseClickZoomBox.ValueAsInt;
@@ -278,6 +283,10 @@ internal partial class ReplayViewerForm : FormMod
 
     private void MouseWheelZoom(object sender, MouseEventArgs e)
     {
+        if (!ViewerBox.ClientRectangle.Contains(ViewerBox.PointToClient(Cursor.Position)))
+        {
+            return;
+        }
         Zoom(e.Delta > 0, 1 - Global.AppSettings.ReplayViewer.MouseWheelStep / 100.0);
     }
 
@@ -319,7 +328,16 @@ internal partial class ReplayViewerForm : FormMod
         }
 
         UpdateEventsLists();
-        _replayController.UpdateCameraAndDrawSceneIfNotPlaying();
+        if (_bikeClicked)
+        {
+            _replayController.RedrawSceneIfNotPlaying();
+        }
+        else
+        {
+            _replayController.UpdateCameraAndDrawSceneIfNotPlaying();
+        }
+
+        _bikeClicked = false;
     }
 
     private void RenderingOptionsChanged(object? sender = null, EventArgs? e = null)
@@ -510,12 +528,28 @@ internal partial class ReplayViewerForm : FormMod
         switch (e.Button)
         {
             case MouseButtons.Left:
-                Zoom(e.Button == MouseButtons.Left,
-                    1 - Global.AppSettings.ReplayViewer.MouseClickStep / 100.0);
+                if (_replayController.HighlightPlayerIndex is { } i)
+                {
+                    if (IsCtrlDown())
+                    {
+                        if (PlayList.SelectedIndices.Contains(i))
+                        {
+                            PlayList.SelectedIndices.Remove(i);
+                        }
+                        else
+                        {
+                            PlayList.SelectedIndices.Add(i);
+                        }
+                    }
+                    else
+                    {
+                        PlayList.SelectedIndex = i;
+                    }
+
+                    _bikeClicked = true;
+                }
                 break;
             case MouseButtons.Right:
-                Zoom(e.Button == MouseButtons.Left,
-                    1 - Global.AppSettings.ReplayViewer.MouseClickStep / 100.0);
                 break;
             case MouseButtons.Middle:
                 _moveStartPosition = z;
@@ -527,14 +561,19 @@ internal partial class ReplayViewerForm : FormMod
     private void ViewerMouseMoving(object sender, MouseEventArgs e)
     {
         ShowCoordinates();
-        var z = GetMouseCoordinates();
+        var mouse = GetMouseCoordinates();
         var zoomCtrl = _replayController.ZoomCtrl;
         if (_draggingScreen)
         {
-            zoomCtrl.CenterX = _moveStartPosition.X + (zoomCtrl.Cam.XMax + zoomCtrl.Cam.XMin) / 2 - z.X;
-            zoomCtrl.CenterY = _moveStartPosition.Y + (zoomCtrl.Cam.YMax + zoomCtrl.Cam.YMin) / 2 - z.Y;
-            RedrawSceneIfNotPlaying();
+            zoomCtrl.CenterX = _moveStartPosition.X + (zoomCtrl.Cam.XMax + zoomCtrl.Cam.XMin) / 2 - mouse.X;
+            zoomCtrl.CenterY = _moveStartPosition.Y + (zoomCtrl.Cam.YMax + zoomCtrl.Cam.YMin) / 2 - mouse.Y;
         }
+        else
+        {
+            var ind = _replayController.UpdateHighlight(mouse);
+            ViewerBox.Cursor = ind is not null ? Cursors.Hand : Cursors.Default;
+        }
+        RedrawSceneIfNotPlaying();
     }
 
     private void ViewerMouseUp(object sender, MouseEventArgs e)

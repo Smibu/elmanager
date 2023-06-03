@@ -7,6 +7,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using System.Timers;
 using Elmanager.Application;
+using Elmanager.ElmaPrimitives;
 using Elmanager.Geometry;
 using Elmanager.IO;
 using Elmanager.Lev;
@@ -47,6 +48,7 @@ internal class ReplayController : IDisposable
     private bool _playing;
     private bool _requestPlayCancel;
     private List<int> _visiblePlayerIndices = new();
+    public int? HighlightPlayerIndex { get; set; }
     internal Level? Lev;
     private double _playBackSpeed = 1.0;
     private readonly Stopwatch _playTimer = new();
@@ -442,6 +444,17 @@ internal class ReplayController : IDisposable
             }
         }
 
+        if (HighlightPlayerIndex is { } i)
+        {
+            GL.Disable(EnableCap.Texture2D);
+            GL.Disable(EnableCap.DepthTest);
+            var p = PlayListReplays[i].Player;
+            var s = p.GetInterpolatedState(CurrentTime);
+            Renderer.DrawCircle(s.LeftWheel, ElmaConstants.WheelRadius, Color.Yellow);
+            Renderer.DrawCircle(s.RightWheel, ElmaConstants.WheelRadius, Color.Yellow);
+            Renderer.DrawCircle(s.Head, ElmaConstants.HeadRadius, Color.Yellow);
+        }
+
         Renderer.Swap();
     }
 
@@ -480,5 +493,25 @@ internal class ReplayController : IDisposable
             Renderer.ResetViewport(width, height);
             TogglePlay();
         }
+    }
+
+    public int? UpdateHighlight(Vector mousePos)
+    {
+        HighlightPlayerIndex = null;
+        foreach (var index in _activePlayerIndices.AsEnumerable().Reverse()
+                     .Concat(_visiblePlayerIndices.AsEnumerable().Reverse()))
+        {
+            var p = PlayListReplays[index].Player;
+            var s = p.GetInterpolatedState(CurrentTime);
+            if (s.LeftWheel.Dist(mousePos) < ElmaConstants.WheelRadius ||
+                s.RightWheel.Dist(mousePos) < ElmaConstants.WheelRadius ||
+                s.Head.Dist(mousePos) < ElmaConstants.HeadRadius)
+            {
+                HighlightPlayerIndex = index;
+                break;
+            }
+        }
+
+        return HighlightPlayerIndex;
     }
 }

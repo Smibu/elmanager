@@ -1,3 +1,4 @@
+using Elmanager.Geometry;
 using Elmanager.Rec;
 
 namespace Elmanager.ElmaPrimitives;
@@ -35,4 +36,8 @@ internal readonly struct PlayerState
     public readonly Direction Direction;
     public readonly double ArmRotation;
     public bool IsRight => Direction == Direction.Right;
+
+    public Vector LeftWheel => new(LeftWheelX, LeftWheelY);
+    public Vector RightWheel => new(RightWheelX, RightWheelY);
+    public Vector Head => new(HeadX, HeadY);
 }
