@@ -234,7 +234,7 @@ namespace Elmanager.LevelEditor
             // 
             // NewToolStripMenuItem
             // 
-            NewToolStripMenuItem.Image = Resources.New16;
+            NewToolStripMenuItem.Image = Resources._New;
             NewToolStripMenuItem.Name = "NewToolStripMenuItem";
             NewToolStripMenuItem.ShortcutKeys = Keys.Control | Keys.N;
             NewToolStripMenuItem.Size = new Size(402, 44);
@@ -262,7 +262,7 @@ namespace Elmanager.LevelEditor
             // 
             // SaveAsToolStripMenuItem
             // 
-            SaveAsToolStripMenuItem.Image = Resources.SaveAs16;
+            SaveAsToolStripMenuItem.Image = Resources.SaveAs;
             SaveAsToolStripMenuItem.Name = "SaveAsToolStripMenuItem";
             SaveAsToolStripMenuItem.Size = new Size(402, 44);
             SaveAsToolStripMenuItem.Text = "Save as...";
@@ -286,7 +286,7 @@ namespace Elmanager.LevelEditor
             // 
             // ExitToolStripMenuItem
             // 
-            ExitToolStripMenuItem.Image = Resources.Exit16;
+            ExitToolStripMenuItem.Image = Resources._Exit;
             ExitToolStripMenuItem.Name = "ExitToolStripMenuItem";
             ExitToolStripMenuItem.Size = new Size(402, 44);
             ExitToolStripMenuItem.Text = "Exit";
@@ -343,7 +343,7 @@ namespace Elmanager.LevelEditor
             // 
             // ZoomFillToolStripMenuItem
             // 
-            ZoomFillToolStripMenuItem.Image = Resources.ZoomFill16;
+            ZoomFillToolStripMenuItem.Image = Resources.ZoomFill;
             ZoomFillToolStripMenuItem.Name = "ZoomFillToolStripMenuItem";
             ZoomFillToolStripMenuItem.ShortcutKeys = Keys.F5;
             ZoomFillToolStripMenuItem.Size = new Size(495, 44);
@@ -434,7 +434,7 @@ namespace Elmanager.LevelEditor
             // 
             // MirrorHorizontallyToolStripMenuItem
             // 
-            MirrorHorizontallyToolStripMenuItem.Image = Resources.Mirror16;
+            MirrorHorizontallyToolStripMenuItem.Image = Resources.Mirror;
             MirrorHorizontallyToolStripMenuItem.Name = "MirrorHorizontallyToolStripMenuItem";
             MirrorHorizontallyToolStripMenuItem.ShortcutKeys = Keys.Control | Keys.M;
             MirrorHorizontallyToolStripMenuItem.Size = new Size(531, 44);
@@ -443,7 +443,7 @@ namespace Elmanager.LevelEditor
             // 
             // MirrorVerticallyToolStripMenuItem
             // 
-            MirrorVerticallyToolStripMenuItem.Image = Resources.Mirror16;
+            MirrorVerticallyToolStripMenuItem.Image = Resources.Mirror;
             MirrorVerticallyToolStripMenuItem.Name = "MirrorVerticallyToolStripMenuItem";
             MirrorVerticallyToolStripMenuItem.ShortcutKeys = Keys.Control | Keys.Shift | Keys.M;
             MirrorVerticallyToolStripMenuItem.Size = new Size(531, 44);
