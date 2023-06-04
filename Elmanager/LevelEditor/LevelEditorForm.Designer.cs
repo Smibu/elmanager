@@ -41,6 +41,7 @@ namespace Elmanager.LevelEditor
             FileToolStripMenuItem = new ToolStripMenuItem();
             NewToolStripMenuItem = new ToolStripMenuItem();
             OpenToolStripMenuItem = new ToolStripMenuItem();
+            openInternalToolStripMenuItem = new ToolStripMenuItem();
             SaveToolStripMenuItem = new ToolStripMenuItem();
             SaveAsToolStripMenuItem = new ToolStripMenuItem();
             saveAsPictureToolStripMenuItem = new ToolStripMenuItem();
@@ -203,6 +204,8 @@ namespace Elmanager.LevelEditor
             DrawButton = new RadioButtonMod();
             VertexButton = new RadioButtonMod();
             SelectButton = new RadioButtonMod();
+            openInternalPart1ToolStripMenuItem = new ToolStripMenuItem();
+            openInternalPart2ToolStripMenuItem = new ToolStripMenuItem();
             MenuStrip1.SuspendLayout();
             StatusStrip1.SuspendLayout();
             ToolStripPanel1.SuspendLayout();
@@ -227,7 +230,7 @@ namespace Elmanager.LevelEditor
             // 
             // FileToolStripMenuItem
             // 
-            FileToolStripMenuItem.DropDownItems.AddRange(new ToolStripItem[] { NewToolStripMenuItem, OpenToolStripMenuItem, SaveToolStripMenuItem, SaveAsToolStripMenuItem, saveAsPictureToolStripMenuItem, deleteLevMenuItem, ExitToolStripMenuItem });
+            FileToolStripMenuItem.DropDownItems.AddRange(new ToolStripItem[] { NewToolStripMenuItem, OpenToolStripMenuItem, openInternalToolStripMenuItem, SaveToolStripMenuItem, SaveAsToolStripMenuItem, saveAsPictureToolStripMenuItem, deleteLevMenuItem, ExitToolStripMenuItem });
             FileToolStripMenuItem.Name = "FileToolStripMenuItem";
             FileToolStripMenuItem.Size = new Size(71, 36);
             FileToolStripMenuItem.Text = "File";
@@ -249,6 +252,13 @@ namespace Elmanager.LevelEditor
             OpenToolStripMenuItem.Size = new Size(402, 44);
             OpenToolStripMenuItem.Text = "Open";
             OpenToolStripMenuItem.Click += OpenToolStripMenuItemClick;
+            // 
+            // openInternalToolStripMenuItem
+            // 
+            openInternalToolStripMenuItem.DropDownItems.AddRange(new ToolStripItem[] { openInternalPart1ToolStripMenuItem, openInternalPart2ToolStripMenuItem });
+            openInternalToolStripMenuItem.Name = "openInternalToolStripMenuItem";
+            openInternalToolStripMenuItem.Size = new Size(402, 44);
+            openInternalToolStripMenuItem.Text = "Open internal";
             // 
             // SaveToolStripMenuItem
             // 
@@ -1447,7 +1457,7 @@ namespace Elmanager.LevelEditor
             saveStartPositionToolStripMenuItem.Name = "saveStartPositionToolStripMenuItem";
             saveStartPositionToolStripMenuItem.Size = new Size(313, 40);
             saveStartPositionToolStripMenuItem.Text = "Save start position";
-            saveStartPositionToolStripMenuItem.Click += SaveStartPosition;
+            saveStartPositionToolStripMenuItem.Click += SaveStartPosition_Click;
             // 
             // restoreStartPositionToolStripMenuItem
             // 
@@ -1698,6 +1708,18 @@ namespace Elmanager.LevelEditor
             SelectButton.TextAlign = ContentAlignment.MiddleCenter;
             SelectButton.UseVisualStyleBackColor = true;
             // 
+            // openInternalPart1ToolStripMenuItem
+            // 
+            openInternalPart1ToolStripMenuItem.Name = "openInternalPart1ToolStripMenuItem";
+            openInternalPart1ToolStripMenuItem.Size = new Size(359, 44);
+            openInternalPart1ToolStripMenuItem.Text = "1 - 28";
+            // 
+            // openInternalPart2ToolStripMenuItem
+            // 
+            openInternalPart2ToolStripMenuItem.Name = "openInternalPart2ToolStripMenuItem";
+            openInternalPart2ToolStripMenuItem.Size = new Size(359, 44);
+            openInternalPart2ToolStripMenuItem.Text = "29 - 55";
+            // 
             // LevelEditorForm
             // 
             AutoScaleDimensions = new SizeF(192F, 192F);
@@ -1903,6 +1925,9 @@ namespace Elmanager.LevelEditor
         private ToolStripMenuItem deselectPicturesToolStripMenuItem;
         private ToolStripMenuItem deselectTexturesToolStripMenuItem;
         internal ToolStripButton showGrassButton;
+        private ToolStripMenuItem openInternalToolStripMenuItem;
+        private ToolStripMenuItem openInternalPart1ToolStripMenuItem;
+        private ToolStripMenuItem openInternalPart2ToolStripMenuItem;
     }
 
 }

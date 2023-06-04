@@ -25,6 +25,7 @@ using Elmanager.UI;
 using Elmanager.Utilities;
 using OpenTK.Graphics.OpenGL;
 using Color = System.Drawing.Color;
+using Control = System.Windows.Forms.Control;
 using Cursor = System.Windows.Forms.Cursor;
 using Cursors = System.Windows.Forms.Cursors;
 using Envelope = NetTopologySuite.Geometries.Envelope;
@@ -52,8 +53,9 @@ internal partial class LevelEditorForm : FormMod, IMessageFilter
     private bool _pictureFilter = true;
     private bool _textureFilter = true;
     internal IEditorTool CurrentTool = null!;
-    internal Level Lev = null!;
-    private ElmaFile? _file;
+    private EditorLev _editorLev = null!;
+    internal Level Lev => _editorLev.Lev;
+    private ElmaFile? LevFile => _editorLev.File;
     internal ElmaRenderer Renderer = null!;
     internal IEditorTool[] Tools = null!;
     private List<string>? _currLevDirFiles;
@@ -93,9 +95,28 @@ internal partial class LevelEditorForm : FormMod, IMessageFilter
     internal LevelEditorForm(string levPath)
     {
         InitializeComponent();
+        InitializeInternalMenu();
         _fullScreenController = CreateFullScreenController();
-        TryLoadLevel(levPath);
-        PostInit();
+        var lev = TryLoadLevel(levPath);
+        PostInit(lev);
+    }
+
+    private void InitializeInternalMenu()
+    {
+        for (var i = 0; i < Global.Internals.Count; i++)
+        {
+            var level = Global.Internals[i];
+            var menu = i < 28 ? openInternalPart1ToolStripMenuItem : openInternalPart2ToolStripMenuItem;
+            menu.DropDownItems.Add($"{i + 1}. {Level.InternalTitles[i]}", null,
+                (_, _) => { InitializeLevelButPromptIfModified(new EditorLev(level, null)); });
+        }
+    }
+
+    public void InitializeLevelButPromptIfModified(EditorLev level)
+    {
+        if (!PromptToSaveIfModified())
+            return;
+        InitializeLevel(level);
     }
 
     private FullScreenController CreateFullScreenController() =>
@@ -103,60 +124,56 @@ internal partial class LevelEditorForm : FormMod, IMessageFilter
 
     internal void SetLevel(ElmaFileObject<Level> lev)
     {
-        SetExistingLev(lev);
-        InitializeLevel();
+        SaveStartPositionIfEnabled(lev);
+        InitializeLevel(new EditorLev(lev.Obj, lev.File));
     }
 
-    private void TryLoadLevel(string levPath)
+    public EditorLev TryLoadLevel(string levPath)
     {
         try
         {
             var lev = Level.FromPath(levPath);
-            SetExistingLev(lev);
+            return new EditorLev(lev.Obj, lev.File);
         }
         catch (BadFileException ex)
         {
             UiUtils.ShowError("Error occurred while loading level file: " + ex.Message, "Warning",
                 MessageBoxIcon.Exclamation);
-            SetBlankLevel();
+            return CreateBlankLevel();
         }
         catch (Exception ex) when (ex is FileNotFoundException || ex is DirectoryNotFoundException)
         {
-            SetBlankLevel();
-            ShowWarning($"The last opened level {levPath} was not found.");
+            ShowWarning($"The level {levPath} was not found.");
+            return CreateBlankLevel();
         }
     }
 
-    private void SetExistingLev(ElmaFileObject<Level> lev)
+    private void SaveStartPositionIfEnabled(ElmaFileObject<Level> lev)
     {
-        Lev = lev.Obj;
-        _file = lev.File;
         if (Settings.EnableStartPositionFeature)
         {
-            SaveStartPosition();
+            SaveStartPosition(lev.Obj);
         }
     }
 
     public LevelEditorForm()
     {
         InitializeComponent();
+        InitializeInternalMenu();
         _fullScreenController = CreateFullScreenController();
-        if (Settings.LastLevel != null)
-        {
-            TryLoadLevel(Settings.LastLevel);
-        }
-        else
-            SetBlankLevel();
-        PostInit();
+        var lev = Settings.LastLevel != null
+            ? TryLoadLevel(Settings.LastLevel)
+            : CreateBlankLevel();
+        PostInit(lev);
     }
 
-    private void PostInit()
+    private void PostInit(EditorLev lev)
     {
         System.Windows.Forms.Application.AddMessageFilter(this);
         EditorControl.HandleCreated += (_, _) =>
         {
             EditorControl.Context.SwapInterval = 0;
-            Initialize();
+            Initialize(lev);
             _tcs.SetResult();
         };
         Closed += (_, _) => System.Windows.Forms.Application.RemoveMessageFilter(this);
@@ -531,7 +548,7 @@ internal partial class LevelEditorForm : FormMod, IMessageFilter
         }
 
         Settings.WindowState = WindowState;
-        Settings.LastLevel = _file?.Path;
+        Settings.LastLevel = LevFile?.Path;
         if (PlayController.PlayingOrPaused)
         {
             e.Cancel = true;
@@ -616,7 +633,7 @@ internal partial class LevelEditorForm : FormMod, IMessageFilter
         RedrawScene();
     }
 
-    private bool CurrLevDirExists() => _file?.FileInfo.Directory?.Exists ?? false;
+    private bool CurrLevDirExists() => LevFile?.FileInfo.Directory?.Exists ?? false;
 
     private void DoRedrawScene()
     {
@@ -966,7 +983,7 @@ internal partial class LevelEditorForm : FormMod, IMessageFilter
         }
     }
 
-    private void Initialize()
+    private void Initialize(EditorLev lev)
     {
         if (!Physics)
 #pragma warning disable CS0162
@@ -1021,11 +1038,16 @@ internal partial class LevelEditorForm : FormMod, IMessageFilter
         };
         CurrentTool = Tools[0];
         SetupEventHandlers();
-        InitializeLevel();
+        InitializeLevel(lev);
     }
 
-    private async void InitializeLevel()
+    public async void InitializeLevel(EditorLev lev)
     {
+        _editorLev = lev;
+        if (lev.File is not null)
+        {
+            SaveStartPositionIfEnabled(new ElmaFileObject<Level>(lev.File, lev.Lev));
+        }
         await PlayController.NotifyLevelChanged();
         PlayTimeLabel.Text = "";
         _zoomCtrl = new ZoomController(new ElmaCamera(), Lev, Settings.RenderingSettings, () => RedrawScene());
@@ -1242,7 +1264,7 @@ internal partial class LevelEditorForm : FormMod, IMessageFilter
 
     private void LevelPropertiesToolStripMenuItemClick(object? sender, EventArgs e)
     {
-        var levelProperties = new LevelPropertiesForm(Lev, _file);
+        var levelProperties = new LevelPropertiesForm(Lev, LevFile);
         levelProperties.ShowDialog();
     }
 
@@ -1271,7 +1293,7 @@ internal partial class LevelEditorForm : FormMod, IMessageFilter
 
     private void LoadFromHistory()
     {
-        Lev = _history[_historyIndex].Clone();
+        _editorLev = _editorLev with { Lev = _history[_historyIndex].Clone() };
         Renderer.Lev = Lev;
         _zoomCtrl.Lev = Lev;
         Lev.UpdateAllPolygons(Settings.RenderingSettings.GrassZoom);
@@ -1545,8 +1567,8 @@ internal partial class LevelEditorForm : FormMod, IMessageFilter
     {
         if (!PromptToSaveIfModified())
             return;
-        SetBlankLevel();
-        InitializeLevel();
+        var lev = CreateBlankLevel();
+        InitializeLevel(lev);
     }
 
     private void ObjectButtonChanged(object? sender, EventArgs e)
@@ -1565,12 +1587,12 @@ internal partial class LevelEditorForm : FormMod, IMessageFilter
         }
     }
 
-    private void OpenLevel(string path)
+    public void OpenLevel(string path)
     {
         if (!PromptToSaveIfModified())
             return;
-        TryLoadLevel(path);
-        InitializeLevel();
+        var lev = TryLoadLevel(path);
+        InitializeLevel(lev);
     }
 
     private void OpenRenderingSettings(object sender, EventArgs e)
@@ -1693,11 +1715,11 @@ internal partial class LevelEditorForm : FormMod, IMessageFilter
     {
         if (CurrLevDirFiles?.Count > 0)
         {
-            if (_file is null)
+            if (LevFile is null)
                 OpenLevel(CurrLevDirFiles[0]);
             else
             {
-                int i = GetCurrentLevelIndex(_file, CurrLevDirFiles);
+                int i = GetCurrentLevelIndex(LevFile, CurrLevDirFiles);
                 if (PreviousButton.Equals(sender) || previousLevelToolStripMenuItem.Equals(sender))
                 {
                     i--;
@@ -1813,15 +1835,15 @@ internal partial class LevelEditorForm : FormMod, IMessageFilter
 
     private string GetInitialDir()
     {
-        return _file is not null ? _file.FileInfo.DirectoryName! : Global.AppSettings.General.LevelDirectory;
+        return LevFile is not null ? LevFile.FileInfo.DirectoryName! : Global.AppSettings.General.LevelDirectory;
     }
 
     private void SaveClicked(object? sender = null, EventArgs? e = null)
     {
-        if (_file is null)
+        if (LevFile is null)
             SaveAs();
         else
-            SaveLevel(_file.Path);
+            SaveLevel(LevFile.Path);
     }
 
     private void SaveLevel(string path)
@@ -1841,14 +1863,14 @@ internal partial class LevelEditorForm : FormMod, IMessageFilter
         {
             if (Settings.CheckTopologyWhenSaving)
                 CheckTopologyAndUpdate();
-            if (Settings.UseFilenameForTitle && _file is null)
+            if (Settings.UseFilenameForTitle && LevFile is null)
             {
                 Lev.Title = Path.GetFileNameWithoutExtension(SaveFileDialog1.FileName);
             }
 
             try
             {
-                _file = Lev.Save(path);
+                _editorLev = _editorLev with { File = Lev.Save(path) };
                 _savedIndex = _historyIndex;
                 if (!Global.GetLevelFiles().Contains(path))
                 {
@@ -1941,18 +1963,13 @@ internal partial class LevelEditorForm : FormMod, IMessageFilter
                 x.Checked = EnableAllToolStripMenuItem.Equals(sender);
     }
 
-    private void SetDefaultLevelTitle()
+    private EditorLev CreateBlankLevel()
     {
+        var lev = Settings.GetTemplateLevel();
         if (!Settings.UseFilenameForTitle)
-            Lev.Title = Settings.DefaultTitle;
-    }
-
-    private void SetBlankLevel()
-    {
-        Lev = Settings.GetTemplateLevel();
-        SetDefaultLevelTitle();
-        _file = null;
+            lev.Title = Settings.DefaultTitle;
         _savedStartPosition = null;
+        return new EditorLev(lev, null);
     }
 
     private void SettingChanged(object? sender, EventArgs e)
@@ -2096,7 +2113,7 @@ internal partial class LevelEditorForm : FormMod, IMessageFilter
 
     private void UpdateCurrLevDirFiles(bool force = false)
     {
-        string? levDir = _file?.FileInfo.DirectoryName;
+        string? levDir = LevFile?.FileInfo.DirectoryName;
         if (levDir == null)
         {
             return;
@@ -2119,7 +2136,7 @@ internal partial class LevelEditorForm : FormMod, IMessageFilter
 
     private void UpdateLabels()
     {
-        if (_file is null)
+        if (LevFile is null)
         {
             Text = "New - " + LevEditorName;
             filenameBox.Text = string.Empty;
@@ -2130,8 +2147,8 @@ internal partial class LevelEditorForm : FormMod, IMessageFilter
         }
         else
         {
-            Text = _file.FileNameNoExt + " - " + LevEditorName;
-            filenameBox.Text = _file.FileNameNoExt;
+            Text = LevFile.FileNameNoExt + " - " + LevEditorName;
+            filenameBox.Text = LevFile.FileNameNoExt;
             filenameBox.Enabled = true;
             deleteButton.Enabled = true;
             deleteLevMenuItem.Enabled = true;
@@ -2313,7 +2330,7 @@ internal partial class LevelEditorForm : FormMod, IMessageFilter
 
     private void saveAsPictureToolStripMenuItem_Click(object sender, EventArgs e)
     {
-        saveAsPictureDialog.FileName = _file?.FileNameNoExt ?? "Untitled";
+        saveAsPictureDialog.FileName = LevFile?.FileNameNoExt ?? "Untitled";
         if (saveAsPictureDialog.ShowDialog() == DialogResult.OK)
         {
             if (saveAsPictureDialog.FileName.EndsWith(".png"))
@@ -2431,7 +2448,7 @@ internal partial class LevelEditorForm : FormMod, IMessageFilter
 
     private void DeleteCurrentLevel()
     {
-        if (_file is null)
+        if (LevFile is null)
         {
             return;
         }
@@ -2440,9 +2457,9 @@ internal partial class LevelEditorForm : FormMod, IMessageFilter
                 MessageBoxIcon.Question) == DialogResult.Yes)
         {
             UpdateCurrLevDirFiles();
-            File.Delete(_file.Path);
+            File.Delete(LevFile.Path);
 
-            int levIndex = GetCurrentLevelIndex(_file, CurrLevDirFiles!);
+            int levIndex = GetCurrentLevelIndex(LevFile, CurrLevDirFiles!);
             CurrLevDirFiles!.RemoveAt(levIndex);
             if (levIndex < CurrLevDirFiles.Count)
             {
@@ -2468,8 +2485,8 @@ internal partial class LevelEditorForm : FormMod, IMessageFilter
 
     private void filenameBox_TextChanged(object? sender = null, EventArgs? e = null)
     {
-        bool showButtons = _file is not null && string.Compare(filenameBox.Text,
-            _file.FileNameNoExt,
+        bool showButtons = LevFile is not null && string.Compare(filenameBox.Text,
+            LevFile.FileNameNoExt,
             StringComparison.InvariantCulture) != 0;
         filenameOkButton.Visible = showButtons;
         filenameCancelButton.Visible = showButtons;
@@ -2477,7 +2494,7 @@ internal partial class LevelEditorForm : FormMod, IMessageFilter
 
     private void filenameCancelButton_Click(object? sender = null, EventArgs? e = null)
     {
-        filenameBox.Text = _file?.FileNameNoExt;
+        filenameBox.Text = LevFile?.FileNameNoExt;
     }
 
     private void filenameOkButton_Click(object? sender = null, EventArgs? e = null)
@@ -2490,16 +2507,16 @@ internal partial class LevelEditorForm : FormMod, IMessageFilter
 
         try
         {
-            var newPath = Path.Combine(_file!.FileInfo.DirectoryName!, filenameBox.Text + ".lev");
+            var newPath = Path.Combine(LevFile!.FileInfo.DirectoryName!, filenameBox.Text + ".lev");
             UpdateCurrLevDirFiles();
-            File.Move(_file.Path, newPath);
+            File.Move(LevFile.Path, newPath);
             if (CurrLevDirFiles != null)
             {
-                int index = GetCurrentLevelIndex(_file, CurrLevDirFiles);
+                int index = GetCurrentLevelIndex(LevFile, CurrLevDirFiles);
                 CurrLevDirFiles[index] = newPath;
             }
 
-            _file = new ElmaFile(newPath);
+            _editorLev = _editorLev with { File = new ElmaFile(newPath) };
             UpdateLabels();
             filenameBox_TextChanged();
         }
@@ -2515,7 +2532,7 @@ internal partial class LevelEditorForm : FormMod, IMessageFilter
 
     private void filenameBox_KeyDown(object sender, KeyEventArgs e)
     {
-        if (_file is null)
+        if (LevFile is null)
         {
             return;
         }
@@ -2570,9 +2587,14 @@ internal partial class LevelEditorForm : FormMod, IMessageFilter
         TexturizeSelection();
     }
 
-    private void SaveStartPosition(object? sender = null, EventArgs? e = null)
+    private void SaveStartPosition_Click(object sender, EventArgs e)
     {
-        foreach (var o in Lev.Objects)
+        SaveStartPosition(Lev);
+    }
+
+    private void SaveStartPosition(Level level)
+    {
+        foreach (var o in level.Objects)
         {
             if (o.Type == ObjectType.Start)
             {

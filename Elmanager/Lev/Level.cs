@@ -36,7 +36,7 @@ internal class Level
     private const int Top10NameSize = 15;
     private const int Top10Entries = 10;
 
-    private static readonly string[] InternalTitles =
+    public static readonly string[] InternalTitles =
     {
         "Warm Up", "Flat Track", "Twin Peaks", "Over and Under",
         "Uphill Battle", "Long Haul", "Hi Flyer", "Tag",
