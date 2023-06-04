@@ -1,6 +1,6 @@
 # Elmanager changelog
 
-## Beta
+## 4.6.2023
 * SLE & Replay viewer: Added grass rendering support.
 * SLE: Internal levels can be directly opened from the menu.
 * SLE: A warning is shown if LGR doesn't have ground/sky texture of the level.
