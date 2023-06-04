@@ -19,7 +19,7 @@ internal static class Global
     internal static ElmanagerSettings AppSettings = null!; //TODO Settings should not be global
     internal static readonly List<Level> Internals = new();
     private static List<string>? _levelFiles;
-    internal static DateTime Version = new(2023, 5, 12);
+    internal static DateTime Version = new(2023, 6, 4);
 
     internal static List<string> GetLevelFiles()
     {
