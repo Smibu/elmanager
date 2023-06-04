@@ -152,9 +152,9 @@ internal class PictureTool : ToolBase, IEditorTool
             return sel switch
             {
                 ImageSelection.TextureSelection t => GraphicElement.Text(clipping, distance,
-                    CurrentPos, Renderer.OpenGlLgr.DrawableImageFromName(t.Txt),
-                    Renderer.OpenGlLgr.DrawableImageFromName(t.Mask)),
-                ImageSelection.PictureSelection p => GraphicElement.Pic(Renderer.OpenGlLgr.DrawableImageFromName(p.Pic),
+                    CurrentPos, Renderer.OpenGlLgr.DrawableImageFromLgrImage(t.Txt),
+                    Renderer.OpenGlLgr.DrawableImageFromLgrImage(t.Mask)),
+                ImageSelection.PictureSelection p => GraphicElement.Pic(Renderer.OpenGlLgr.DrawableImageFromLgrImage(p.Pic),
                     CurrentPos, distance, clipping),
                 _ => throw new Exception("Unexpected")
             };

@@ -173,6 +173,9 @@ internal class OpenGlLgr : IDisposable
             }
         }
 
+        ground ??= DrawableImageFromName("ground", ImageType.Texture);
+        sky ??= DrawableImageFromName("sky", ImageType.Texture);
+
         if (ground == null)
         {
             foreach (var x in DrawableImages.Values)
@@ -201,7 +204,18 @@ internal class OpenGlLgr : IDisposable
         SkyTexture = sky!;
     }
 
-    public DrawableImage DrawableImageFromName(LgrImage img) => DrawableImages[img.Name];
+    public DrawableImage DrawableImageFromLgrImage(LgrImage img) => DrawableImages[img.Name];
+
+    private DrawableImage? DrawableImageFromName(string name, ImageType type)
+    {
+        DrawableImages.TryGetValue(name, out var val);
+        if (val is not null && val.Type == type)
+        {
+            return val;
+        }
+
+        return null;
+    }
 
     private int GetApple(int animNum) => _applePics.TryGetValue(animNum, out var apple) ? apple : _applePics[1];
 

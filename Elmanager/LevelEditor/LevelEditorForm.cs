@@ -1183,8 +1183,8 @@ internal partial class LevelEditorForm : FormMod, IMessageFilter
         var opts = picForm.TexturizationOptions;
         _texturizationOpts = opts;
 
-        var masks = opts.SelectedMasks.Select(x => Renderer.OpenGlLgr.DrawableImageFromName(Renderer.OpenGlLgr.CurrentLgr.ImageFromName(x)!)).ToList();
-        var texture = Renderer.OpenGlLgr.DrawableImageFromName(sel.Txt);
+        var masks = opts.SelectedMasks.Select(x => Renderer.OpenGlLgr.DrawableImageFromLgrImage(Renderer.OpenGlLgr.CurrentLgr.ImageFromName(x)!)).ToList();
+        var texture = Renderer.OpenGlLgr.DrawableImageFromLgrImage(sel.Txt);
         var rects = masks
             .Select(i => new Envelope(0, i.WidthMinusMargin, 0, i.HeightMinusMargin));
 
@@ -1674,21 +1674,21 @@ internal partial class LevelEditorForm : FormMod, IMessageFilter
             {
                 ImageSelection.MixedSelection => curr with { Distance = distance, Clipping = clipping },
                 ImageSelection.PictureSelection(var pic, _, _) => GraphicElement.Pic(
-                    Renderer.OpenGlLgr.DrawableImageFromName(pic), position, distance, clipping),
+                    Renderer.OpenGlLgr.DrawableImageFromLgrImage(pic), position, distance, clipping),
                 ImageSelection.TextureSelection(var txt, var mask, _, _) => GraphicElement.Text(clipping, distance,
                     position,
-                    Renderer.OpenGlLgr.DrawableImageFromName(txt),
-                    Renderer.OpenGlLgr.DrawableImageFromName(mask)),
+                    Renderer.OpenGlLgr.DrawableImageFromLgrImage(txt),
+                    Renderer.OpenGlLgr.DrawableImageFromLgrImage(mask)),
                 ImageSelection.TextureSelectionMultipleMasks(var txt, _, _) when
                     curr is GraphicElement.Texture t =>
-                    GraphicElement.Text(clipping, distance, position, Renderer.OpenGlLgr.DrawableImageFromName(txt), t.MaskInfo),
+                    GraphicElement.Text(clipping, distance, position, Renderer.OpenGlLgr.DrawableImageFromLgrImage(txt), t.MaskInfo),
                 ImageSelection.TextureSelectionMultipleMasks(var txt, _, _) when curr is GraphicElement.Picture
                     =>
-                    GraphicElement.Text(clipping, distance, position, Renderer.OpenGlLgr.DrawableImageFromName(txt),
-                        Renderer.OpenGlLgr.DrawableImageFromName(_editorLgr!.LgrImages.Values.First(i => i.Type == ImageType.Mask))),
+                    GraphicElement.Text(clipping, distance, position, Renderer.OpenGlLgr.DrawableImageFromLgrImage(txt),
+                        Renderer.OpenGlLgr.DrawableImageFromLgrImage(_editorLgr!.LgrImages.Values.First(i => i.Type == ImageType.Mask))),
                 ImageSelection.TextureSelectionMultipleTextures(var mask, _, _) when
                     curr is GraphicElement.Texture t => GraphicElement.Text(clipping,
-                        distance, position, t.TextureInfo, Renderer.OpenGlLgr.DrawableImageFromName(mask)),
+                        distance, position, t.TextureInfo, Renderer.OpenGlLgr.DrawableImageFromLgrImage(mask)),
                 ImageSelection.TextureSelectionMultipleTextures when
                     curr is GraphicElement.Picture => curr with { Distance = distance, Clipping = clipping },
                 _ => throw new ArgumentOutOfRangeException(nameof(sel))
@@ -2157,6 +2157,17 @@ internal partial class LevelEditorForm : FormMod, IMessageFilter
         _programmaticPropertyChange = true;
         TitleBox.Text = Lev.Title;
         LGRBox.Text = Lev.LgrFile;
+        if (PictureToolAvailable)
+        {
+            if (!GroundComboBox.Items.Contains(Lev.GroundTextureName))
+            {
+                ShowWarning($"The current LGR does not have level ground texture: {Lev.GroundTextureName}");
+            }
+            if (!SkyComboBox.Items.Contains(Lev.SkyTextureName))
+            {
+                ShowWarning($"The current LGR does not have level sky texture: {Lev.SkyTextureName}");
+            }
+        }
         GroundComboBox.Text = Lev.GroundTextureName;
         SkyComboBox.Text = Lev.SkyTextureName;
         _programmaticPropertyChange = false;
@@ -2409,9 +2420,9 @@ internal partial class LevelEditorForm : FormMod, IMessageFilter
                     GraphicElement g = picForm.Selection switch
                     {
                         ImageSelection.TextureSelection t => GraphicElement.Text(clipping, distance, selectedVertex,
-                            Renderer.OpenGlLgr.DrawableImageFromName(t.Txt), Renderer.OpenGlLgr.DrawableImageFromName(t.Mask)),
+                            Renderer.OpenGlLgr.DrawableImageFromLgrImage(t.Txt), Renderer.OpenGlLgr.DrawableImageFromLgrImage(t.Mask)),
                         ImageSelection.PictureSelection p => GraphicElement.Pic(
-                            Renderer.OpenGlLgr.DrawableImageFromName(p.Pic), selectedVertex, distance, clipping),
+                            Renderer.OpenGlLgr.DrawableImageFromLgrImage(p.Pic), selectedVertex, distance, clipping),
                         _ => throw new Exception("Unexpected")
                     };
                     Lev.GraphicElements.Add(g);
