@@ -3,6 +3,7 @@
 ## Beta
 * SLE & Replay viewer: Added grass rendering support.
 * SLE: Internal levels can be directly opened from the menu.
+* SLE: A warning is shown if LGR doesn't have ground/sky texture of the level.
 * Replay viewer: Players can be selected from the viewing area.
 * In rendering settings, LGRFile is now LGROverride. If set, this LGR is always used instead of `<lgrdir>/<levellgr>.lgr`. The earlier setting was messy and not clear what it meant.
 * SLE: Bugfix: Frame tool sometimes added the source polygon back when switching to another tool.
