@@ -141,6 +141,7 @@ namespace Elmanager.LevelEditor
             snapToGridButton = new ToolStripButton();
             showCrossHairButton = new ToolStripButton();
             ShowGrassEdgesButton = new ToolStripButton();
+            showGrassButton = new ToolStripButton();
             ShowGroundEdgesButton = new ToolStripButton();
             ShowVerticesButton = new ToolStripButton();
             ShowTextureFramesButton = new ToolStripButton();
@@ -202,7 +203,6 @@ namespace Elmanager.LevelEditor
             DrawButton = new RadioButtonMod();
             VertexButton = new RadioButtonMod();
             SelectButton = new RadioButtonMod();
-            showGrassButton = new ToolStripButton();
             MenuStrip1.SuspendLayout();
             StatusStrip1.SuspendLayout();
             ToolStripPanel1.SuspendLayout();
@@ -1086,6 +1086,16 @@ namespace Elmanager.LevelEditor
             ShowGrassEdgesButton.Size = new Size(46, 36);
             ShowGrassEdgesButton.Text = "Show grass edges";
             // 
+            // showGrassButton
+            // 
+            showGrassButton.CheckOnClick = true;
+            showGrassButton.DisplayStyle = ToolStripItemDisplayStyle.Image;
+            showGrassButton.Image = Resources.Grass;
+            showGrassButton.ImageTransparentColor = Color.Magenta;
+            showGrassButton.Name = "showGrassButton";
+            showGrassButton.Size = new Size(46, 36);
+            showGrassButton.Text = "Show grass";
+            // 
             // ShowGroundEdgesButton
             // 
             ShowGroundEdgesButton.CheckOnClick = true;
@@ -1687,16 +1697,6 @@ namespace Elmanager.LevelEditor
             SelectButton.Text = "&Select";
             SelectButton.TextAlign = ContentAlignment.MiddleCenter;
             SelectButton.UseVisualStyleBackColor = true;
-            // 
-            // showGrassButton
-            // 
-            showGrassButton.CheckOnClick = true;
-            showGrassButton.DisplayStyle = ToolStripItemDisplayStyle.Image;
-            showGrassButton.Image = Resources.Grass;
-            showGrassButton.ImageTransparentColor = Color.Magenta;
-            showGrassButton.Name = "showGrassButton";
-            showGrassButton.Size = new Size(46, 36);
-            showGrassButton.Text = "Show grass";
             // 
             // LevelEditorForm
             // 
