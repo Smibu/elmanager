@@ -2666,7 +2666,7 @@ internal partial class LevelEditorForm : FormMod, IMessageFilter
         var t = new Timer(25);
         var updateTime = new Action(() =>
         {
-            PlayTimeLabel.Text = PlayController.Driver!.CurrentTime.ToSeconds().ToTimeString(3);
+            PlayTimeLabel.Text = PlayController.Driver!.CurrentTime.ToSeconds().ToTimeString();
         });
         t.Elapsed += (_, _) =>
         {
@@ -2690,7 +2690,7 @@ internal partial class LevelEditorForm : FormMod, IMessageFilter
         }
 
         t.Stop();
-        PlayTimeLabel.Text = PlayController.Driver!.CurrentTime.ToSeconds().ToTimeString(3);
+        PlayTimeLabel.Text = PlayController.Driver!.CurrentTime.ToSeconds().ToTimeString();
         if (PlayController.Driver.Condition == DriverCondition.Finished)
         {
             PlayTimeLabel.Text += " F";
