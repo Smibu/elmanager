@@ -1,5 +1,9 @@
 # Elmanager changelog
 
+## Unreleased
+* SLE: Texture names are sorted in ground and sky dropdowns.
+* SLE: Bugfix: Sky texture was not rendered correctly if zoom textures was disabled.
+
 ## 4.6.2023
 * SLE & Replay viewer: Added grass rendering support.
 * SLE: Internal levels can be directly opened from the menu.
