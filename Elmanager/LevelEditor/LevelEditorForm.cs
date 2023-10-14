@@ -2186,7 +2186,7 @@ internal partial class LevelEditorForm : FormMod, IMessageFilter
             SkyComboBox.Items.Clear();
             GroundComboBox.Items.Clear();
             var names = _editorLgr.ListedImagesExcludingSpecial.Where(image =>
-                image.Type == ImageType.Texture).Select(image => image.Name).ToArray();
+                image.Type == ImageType.Texture).Select(image => image.Name).OrderBy(x => x).ToArray();
             SkyComboBox.Items.AddRange(names);
             GroundComboBox.Items.AddRange(names);
         }
