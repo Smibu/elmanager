@@ -304,19 +304,21 @@ internal class ElmaRenderer : IDisposable
             else
             {
                 var xdelta = centerX / OpenGlLgr.SkyTexture.Width;
+                var skyAspectRatio = OpenGlLgr.SkyTexture.AspectRatio;
+                const int xRepeat = 3;
                 GL.PushMatrix();
                 GL.LoadIdentity();
                 GL.Ortho(0, 1, 0, 1, ZNear, ZFar);
                 GL.Begin(PrimitiveType.Quads);
                 GL.TexCoord2(xdelta, 0);
                 GL.Vertex3(0, 1, depth);
-                GL.TexCoord2(2 + xdelta, 0);
+                GL.TexCoord2(xRepeat + xdelta, 0);
                 GL.Vertex3(1, 1, depth);
-                GL.TexCoord2(2 + xdelta,
-                    2 / aspectRatio);
+                GL.TexCoord2(xRepeat + xdelta,
+                    xRepeat * skyAspectRatio / aspectRatio);
                 GL.Vertex3(1, 0, depth);
                 GL.TexCoord2(xdelta,
-                    2 / aspectRatio);
+                    xRepeat * skyAspectRatio / aspectRatio);
                 GL.Vertex3(0, 0, depth);
                 GL.End();
                 GL.PopMatrix();
