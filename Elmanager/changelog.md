@@ -3,6 +3,7 @@
 ## Unreleased
 * SLE: Texture names are sorted in ground and sky dropdowns.
 * SLE: Bugfix: Sky texture was not rendered correctly if zoom textures was disabled.
+* SLE: Bugfix: Moving polygons while playing sometimes caused a crash.
 
 ## 4.6.2023
 * SLE & Replay viewer: Added grass rendering support.
