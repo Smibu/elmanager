@@ -31,6 +31,7 @@ internal class LevelEditorSettings
     public Color SelectionColor { get; set; } = Color.Blue;
     public Size Size { get; set; } = new(800, 600);
     public bool SnapToGrid { get; set; }
+    public bool LockGrid { get; set; }
     public bool ShowCrossHair { get; set; }
     public int SmoothSteps { get; set; } = 3;
     public int SmoothVertexOffset { get; set; } = 50;

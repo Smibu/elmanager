@@ -140,6 +140,7 @@ namespace Elmanager.LevelEditor
             ToolStrip2 = new ToolStrip();
             ShowGridButton = new ToolStripButton();
             snapToGridButton = new ToolStripButton();
+            lockGridButton = new ToolStripButton();
             showCrossHairButton = new ToolStripButton();
             ShowGrassEdgesButton = new ToolStripButton();
             showGrassButton = new ToolStripButton();
@@ -1048,7 +1049,7 @@ namespace Elmanager.LevelEditor
             ToolStrip2.Dock = DockStyle.None;
             ToolStrip2.GripStyle = ToolStripGripStyle.Hidden;
             ToolStrip2.ImageScalingSize = new Size(32, 32);
-            ToolStrip2.Items.AddRange(new ToolStripItem[] { ShowGridButton, snapToGridButton, showCrossHairButton, ShowGrassEdgesButton, showGrassButton, ShowGroundEdgesButton, ShowVerticesButton, ShowTextureFramesButton, ShowPictureFramesButton, ShowTexturesButton, ShowPicturesButton, ShowObjectFramesButton, ShowObjectsButton, ShowGravityAppleArrowsButton, ShowGroundButton, ShowGroundTextureButton, ShowSkyTextureButton, ZoomTexturesButton, toolStripSeparator12, BestTimeLabel, topologyList, toolStripSeparator16, playButton, stopButton, settingsButton, PlayTimeLabel });
+            ToolStrip2.Items.AddRange(new ToolStripItem[] { ShowGridButton, snapToGridButton, lockGridButton, showCrossHairButton, ShowGrassEdgesButton, showGrassButton, ShowGroundEdgesButton, ShowVerticesButton, ShowTextureFramesButton, ShowPictureFramesButton, ShowTexturesButton, ShowPicturesButton, ShowObjectFramesButton, ShowObjectsButton, ShowGravityAppleArrowsButton, ShowGroundButton, ShowGroundTextureButton, ShowSkyTextureButton, ZoomTexturesButton, toolStripSeparator12, BestTimeLabel, topologyList, toolStripSeparator16, playButton, stopButton, settingsButton, PlayTimeLabel });
             ToolStrip2.LayoutStyle = ToolStripLayoutStyle.HorizontalStackWithOverflow;
             ToolStrip2.Location = new Point(0, 48);
             ToolStrip2.Name = "ToolStrip2";
@@ -1075,6 +1076,16 @@ namespace Elmanager.LevelEditor
             snapToGridButton.Name = "snapToGridButton";
             snapToGridButton.Size = new Size(46, 36);
             snapToGridButton.Text = "Snap to grid";
+            // 
+            // lockGridButton
+            // 
+            lockGridButton.CheckOnClick = true;
+            lockGridButton.DisplayStyle = ToolStripItemDisplayStyle.Image;
+            lockGridButton.Image = Resources.LockGrid;
+            lockGridButton.ImageTransparentColor = Color.Magenta;
+            lockGridButton.Name = "lockGridButton";
+            lockGridButton.Size = new Size(46, 36);
+            lockGridButton.Text = "Lock grid";
             // 
             // showCrossHairButton
             // 
@@ -1869,6 +1880,7 @@ namespace Elmanager.LevelEditor
         private ToolStripSeparator toolStripSeparator11;
         private ToolStripMenuItem selectAllToolStripMenuItem;
         private ToolStripButton snapToGridButton;
+        private ToolStripButton lockGridButton;
         private ToolStripMenuItem bringToFrontToolStripMenuItem;
         private ToolStripMenuItem sendToBackToolStripMenuItem;
         private ToolStripButton showCrossHairButton;

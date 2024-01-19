@@ -1495,7 +1495,7 @@ internal partial class LevelEditorForm : FormMod, IMessageFilter
         if (_draggingScreen || _draggingGrid)
         {
             Vector z = GetMouseCoordinates();
-            if (_draggingGrid)
+            if (!Settings.LockGrid && _draggingGrid)
             {
                 _sceneSettings.GridOffset = _gridStartOffset + _moveStartPosition - z;
             }
@@ -1521,7 +1521,7 @@ internal partial class LevelEditorForm : FormMod, IMessageFilter
 
     private void MouseWheelZoom(long delta)
     {
-        if (Keyboard.IsKeyDown(Key.LeftCtrl))
+        if (!Settings.LockGrid && Keyboard.IsKeyDown(Key.LeftCtrl))
         {
             double currSize = Settings.RenderingSettings.GridSize;
             double newSize = currSize + Math.Sign(delta) * _zoomCtrl.Cam.ZoomLevel / 50.0;
@@ -1992,6 +1992,7 @@ internal partial class LevelEditorForm : FormMod, IMessageFilter
         settings.ZoomTextures = ZoomTexturesButton.Checked;
         settings.ShowGravityAppleArrows = ShowGravityAppleArrowsButton.Checked;
         Settings.SnapToGrid = snapToGridButton.Checked;
+        Settings.LockGrid = lockGridButton.Checked;
         Settings.ShowCrossHair = showCrossHairButton.Checked;
         Renderer.UpdateSettings(settings);
         RedrawScene();
@@ -2100,6 +2101,7 @@ internal partial class LevelEditorForm : FormMod, IMessageFilter
         ZoomTexturesButton.Checked = settings.ZoomTextures;
         ShowGravityAppleArrowsButton.Checked = settings.ShowGravityAppleArrows;
         snapToGridButton.Checked = Settings.SnapToGrid;
+        lockGridButton.Checked = Settings.LockGrid;
         showCrossHairButton.Checked = Settings.ShowCrossHair;
     }
 
