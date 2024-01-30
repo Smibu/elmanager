@@ -60,5 +60,5 @@ internal readonly struct ElmaTime : IComparable
         return _val * TimeConst;
     }
 
-    internal const double TimeConst = 625.0 / 273.0;
+    internal const double TimeConst = 0.001 / (0.182 * 0.0024);
 }
