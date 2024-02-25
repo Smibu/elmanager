@@ -277,7 +277,9 @@ internal class Player
             Events.Add(new PlayerEvent<LogicalEventType>(gasOn ? LogicalEventType.GasOn : LogicalEventType.GasOff, eventTime));
         }
 
-        Events.Sort((a, b) => a.Time.CompareTo(b.Time));
+        // Need stable sort here. Otherwise FlowerTouch and Finish events may
+        // end up in wrong order, marking replay incorrectly as unfinished.
+        Events = Events.OrderBy(x => x.Time).ToList();
     }
 
     private void ComputeTripAndTopSpeed()
