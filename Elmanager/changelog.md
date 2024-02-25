@@ -1,5 +1,11 @@
 # Elmanager changelog
 
+## 25.2.2024
+* SLE: Added setting to disable grid resizing and panning shortcuts. (@SjurdurS)
+* Bugfix: Corrupted level top10 sometimes caused a crash.
+* Bugfix: Replay finishing time was sometimes rounded incorrectly.
+* Bugfix: Replay was sometimes marked incorrectly as unfinished.
+
 ## 23.10.2023
 * SLE: Texture names are sorted in ground and sky dropdowns.
 * SLE: Bugfix: Sky texture was not rendered correctly if zoom textures was disabled.
