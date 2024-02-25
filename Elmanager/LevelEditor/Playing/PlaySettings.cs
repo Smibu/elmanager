@@ -1,24 +1,41 @@
-﻿using System.Windows.Forms;
+﻿using System.Text.Json.Serialization;
+using System.Windows.Forms;
 
 namespace Elmanager.LevelEditor.Playing;
 
 internal class PlaySettings
 {
+    [JsonPropertyName("Gas")]
     public Keys Gas { get; set; } = Keys.Up;
+    [JsonPropertyName("Brake")]
     public Keys Brake { get; set; } = Keys.Down;
+    [JsonPropertyName("BrakeAlias")]
     public Keys BrakeAlias { get; set; } = Keys.X;
+    [JsonPropertyName("LeftVolt")]
     public Keys LeftVolt { get; set; } = Keys.Left;
+    [JsonPropertyName("RightVolt")]
     public Keys RightVolt { get; set; } = Keys.Right;
+    [JsonPropertyName("AloVolt")]
     public Keys AloVolt { get; set; } = Keys.Insert;
+    [JsonPropertyName("Turn")]
     public Keys Turn { get; set; } = Keys.Space;
+    [JsonPropertyName("Save")]
     public Keys Save { get; set; } = Keys.LShiftKey;
+    [JsonPropertyName("Load")]
     public Keys Load { get; set; } = Keys.RShiftKey;
+    [JsonPropertyName("DyingBehavior")]
     public DyingBehavior DyingBehavior { get; set; } = DyingBehavior.StopPlaying;
+    [JsonPropertyName("FollowDriverOption")]
     public FollowDriverOption FollowDriverOption { get; set; } = FollowDriverOption.WhenPressingKey;
+    [JsonPropertyName("DisableShortcuts")]
     public bool DisableShortcuts { get; set; }
+    [JsonPropertyName("PhysicsFps")]
     public int PhysicsFps { get; set; } = 1000;
+    [JsonPropertyName("ConstantFps")]
     public bool ConstantFps { get; set; }
+    [JsonPropertyName("ToggleFullscreen")]
     public bool ToggleFullscreen { get; set; }
+    [JsonPropertyName("PlayZoomLevel")]
     public double PlayZoomLevel { get; set; } = 5;
 
     public PlaySettings() { }

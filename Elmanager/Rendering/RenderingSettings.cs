@@ -7,6 +7,7 @@ using Elmanager.Application;
 using Elmanager.Lev;
 using Elmanager.Settings;
 using Elmanager.Utilities;
+using System.Text.Json.Serialization;
 
 namespace Elmanager.Rendering;
 
@@ -100,49 +101,49 @@ internal class RenderingSettings
         return new(this);
     }
 
-    [Category("Colors"), DisplayName("Ground fill")]
+    [Category("Colors"), DisplayName("Ground fill"), JsonPropertyName("GroundFillColor")]
     public Color GroundFillColor { get; set; }
 
-    [Category("Colors"), DisplayName("Ground edge")]
+    [Category("Colors"), DisplayName("Ground edge"), JsonPropertyName("GroundEdgeColor")]
     public Color GroundEdgeColor { get; set; }
 
-    [Category("Colors"), DisplayName("Grass edge")]
+    [Category("Colors"), DisplayName("Grass edge"), JsonPropertyName("GrassEdgeColor")]
     public Color GrassEdgeColor { get; set; }
 
-    [Category("Colors"), DisplayName("Sky fill")]
+    [Category("Colors"), DisplayName("Sky fill"), JsonPropertyName("SkyFillColor")]
     public Color SkyFillColor { get; set; }
 
-    [Category("Colors"), DisplayName("Apple")]
+    [Category("Colors"), DisplayName("Apple"), JsonPropertyName("AppleColor")]
     public Color AppleColor { get; set; }
 
-    [Category("Colors"), DisplayName("Flower")]
+    [Category("Colors"), DisplayName("Flower"), JsonPropertyName("FlowerColor")]
     public Color FlowerColor { get; set; }
 
-    [Category("Colors"), DisplayName("Start")]
+    [Category("Colors"), DisplayName("Start"), JsonPropertyName("StartColor")]
     public Color StartColor { get; set; }
 
-    [Category("Colors"), DisplayName("Killer")]
+    [Category("Colors"), DisplayName("Killer"), JsonPropertyName("KillerColor")]
     public Color KillerColor { get; set; }
 
-    [Category("Colors"), DisplayName("Grid")]
+    [Category("Colors"), DisplayName("Grid"), JsonPropertyName("GridColor")]
     public Color GridColor { get; set; }
 
-    [Category("Colors"), DisplayName("Vertex")]
+    [Category("Colors"), DisplayName("Vertex"), JsonPropertyName("VertexColor")]
     public Color VertexColor { get; set; }
 
-    [Category("Colors"), DisplayName("Picture frame")]
+    [Category("Colors"), DisplayName("Picture frame"), JsonPropertyName("PictureFrameColor")]
     public Color PictureFrameColor { get; set; }
 
-    [Category("Colors"), DisplayName("Texture frame")]
+    [Category("Colors"), DisplayName("Texture frame"), JsonPropertyName("TextureFrameColor")]
     public Color TextureFrameColor { get; set; }
 
-    [Category("Colors"), DisplayName("Apple gravity arrow")]
+    [Category("Colors"), DisplayName("Apple gravity arrow"), JsonPropertyName("AppleGravityArrowColor")]
     public Color AppleGravityArrowColor { get; set; }
 
-    [Category("Colors"), DisplayName("Maximum dimensions")]
+    [Category("Colors"), DisplayName("Maximum dimensions"), JsonPropertyName("MaxDimensionColor")]
     public Color MaxDimensionColor { get; set; }
 
-    [DisplayName("Smooth zoom duration")]
+    [DisplayName("Smooth zoom duration"), JsonPropertyName("SmoothZoomDuration")]
     public int SmoothZoomDuration
     {
         get => _smoothZoomDuration;
@@ -155,7 +156,7 @@ internal class RenderingSettings
         }
     }
 
-    [DisplayName("Circle drawing accuracy"), Description("The number of vertices used to draw a circle.")]
+    [DisplayName("Circle drawing accuracy"), Description("The number of vertices used to draw a circle."), JsonPropertyName("CircleDrawingAccuracy")]
     public int CircleDrawingAccuracy
     {
         get => _circleDrawingAccuracy;
@@ -170,6 +171,7 @@ internal class RenderingSettings
 
     [DisplayName("LGR override"),
      Editor(typeof(CustomFileNameEditor), typeof(UITypeEditor)),
+     JsonPropertyName("LgrOverride"),
      Description("If set, this LGR is always used instead of <lgrdir>/<levellgr>.lgr")
     ]
     public string? LgrOverride
@@ -188,7 +190,7 @@ internal class RenderingSettings
         }
     }
 
-    [DisplayName("Grid size")]
+    [DisplayName("Grid size"), JsonPropertyName("GridSize")]
     public double GridSize
     {
         get => _gridSize;
@@ -201,7 +203,7 @@ internal class RenderingSettings
         }
     }
 
-    [DisplayName("Line width")]
+    [DisplayName("Line width"), JsonPropertyName("LineWidth")]
     public float LineWidth
     {
         get => _lineWidth;
@@ -214,80 +216,80 @@ internal class RenderingSettings
         }
     }
 
-    [DisplayName("Vertex size")]
+    [DisplayName("Vertex size"), JsonPropertyName("VertexSize")]
     public double VertexSize
     {
         get => _vertexSize;
         set => _vertexSize = value > 0 ? value : 0.02;
     }
 
-    [DisplayName("Use circles for vertices")]
+    [DisplayName("Use circles for vertices"), JsonPropertyName("UseCirclesForVertices")]
     public bool UseCirclesForVertices { get; set; }
 
-    [DisplayName("Smooth zoom enabled")]
+    [DisplayName("Smooth zoom enabled"), JsonPropertyName("SmoothZoomEnabled")]
     public bool SmoothZoomEnabled { get; set; }
 
-    [Category("Visibility"), DisplayName("Ground")]
+    [Category("Visibility"), DisplayName("Ground"), JsonPropertyName("ShowGround")]
     public bool ShowGround { get; set; }
 
-    [Category("Visibility"), DisplayName("Center points of objects")]
+    [Category("Visibility"), DisplayName("Center points of objects"), JsonPropertyName("ShowObjectCenters")]
     public bool ShowObjectCenters { get; set; }
 
-    [Category("Visibility"), DisplayName("Ground edges")]
+    [Category("Visibility"), DisplayName("Ground edges"), JsonPropertyName("ShowGroundEdges")]
     public bool ShowGroundEdges { get; set; }
 
-    [Category("Visibility"), DisplayName("Vertices")]
+    [Category("Visibility"), DisplayName("Vertices"), JsonPropertyName("ShowVertices")]
     public bool ShowVertices { get; set; }
 
-    [Category("Visibility"), DisplayName("Picture frames")]
+    [Category("Visibility"), DisplayName("Picture frames"), JsonPropertyName("ShowPictureFrames")]
     public bool ShowPictureFrames { get; set; }
 
-    [Category("Visibility"), DisplayName("Texture frames")]
+    [Category("Visibility"), DisplayName("Texture frames"), JsonPropertyName("ShowTextureFrames")]
     public bool ShowTextureFrames { get; set; }
 
-    [Category("Visibility"), DisplayName("Grass edges")]
+    [Category("Visibility"), DisplayName("Grass edges"), JsonPropertyName("ShowGrassEdges")]
     public bool ShowGrassEdges { get; set; }
 
-    [Category("Visibility"), DisplayName("Grid")]
+    [Category("Visibility"), DisplayName("Grid"), JsonPropertyName("ShowGrid")]
     public bool ShowGrid { get; set; }
 
-    [DisplayName("Default ground and sky")]
+    [DisplayName("Default ground and sky"), JsonPropertyName("DefaultGroundAndSky")]
     public bool DefaultGroundAndSky { get; set; }
 
-    [Category("Visibility"), DisplayName("Ground texture")]
+    [Category("Visibility"), DisplayName("Ground texture"), JsonPropertyName("GroundTextureEnabled")]
     public bool GroundTextureEnabled { get; set; }
 
-    [Category("Visibility"), DisplayName("Sky texture")]
+    [Category("Visibility"), DisplayName("Sky texture"), JsonPropertyName("SkyTextureEnabled")]
     public bool SkyTextureEnabled { get; set; }
 
-    [Category("Visibility"), DisplayName("Pictures")]
+    [Category("Visibility"), DisplayName("Pictures"), JsonPropertyName("ShowPictures")]
     public bool ShowPictures { get; set; }
 
-    [Category("Visibility"), DisplayName("Textures")]
+    [Category("Visibility"), DisplayName("Textures"), JsonPropertyName("ShowTextures")]
     public bool ShowTextures { get; set; }
 
-    [Category("Visibility"), DisplayName("Grass")]
+    [Category("Visibility"), DisplayName("Grass"), JsonPropertyName("ShowGrass")]
     public bool ShowGrass { get; set; }
 
-    [Category("Visibility"), DisplayName("Objects")]
+    [Category("Visibility"), DisplayName("Objects"), JsonPropertyName("ShowObjects")]
     public bool ShowObjects { get; set; }
 
-    [Category("Visibility"), DisplayName("Object frames")]
+    [Category("Visibility"), DisplayName("Object frames"), JsonPropertyName("ShowObjectFrames")]
     public bool ShowObjectFrames { get; set; }
 
-    [Category("Visibility"), DisplayName("Gravity apple arrows")]
+    [Category("Visibility"), DisplayName("Gravity apple arrows"), JsonPropertyName("ShowGravityAppleArrows")]
     public bool ShowGravityAppleArrows { get; set; }
 
-    [Category("Visibility"), DisplayName("Maximum dimensions")]
+    [Category("Visibility"), DisplayName("Maximum dimensions"), JsonPropertyName("ShowMaxDimensions")]
     public bool ShowMaxDimensions { get; set; }
 
-    [Category("Visibility"), DisplayName("Inactive grass edges")]
+    [Category("Visibility"), DisplayName("Inactive grass edges"), JsonPropertyName("ShowInactiveGrassEdges")]
     public bool ShowInactiveGrassEdges { get; set; }
 
-    [DisplayName("Zoom textures")]
+    [DisplayName("Zoom textures"), JsonPropertyName("ZoomTextures")]
     public bool ZoomTextures { get; set; }
 
-    [Category("Workarounds"), DisplayName("Disable framebuffer usage")]
+    [Category("Workarounds"), DisplayName("Disable framebuffer usage"), JsonPropertyName("DisableFrameBuffer")]
     public bool DisableFrameBuffer { get; set; }
 
     [Browsable(false)]
@@ -300,7 +302,8 @@ internal class RenderingSettings
     public bool ShowGroundOrEdges => ShowGround || ShowGroundEdges;
 
     [DisplayName("Grass zoom"),
-     Description("Grass detail level. Set this the same as eolconf zoom to make grass look the same as in EOL.")
+     Description("Grass detail level. Set this the same as eolconf zoom to make grass look the same as in EOL."),
+     JsonPropertyName("GrassZoom")
     ]
     public double GrassZoom
     {

@@ -24,15 +24,15 @@ internal class ElmanagerSettings
     private static readonly string _settingsFile =
         SettingsFileBaseName + Global.Version.ToString(SettingsFileDateFormat) + ".json";
 
-    [JsonInclude]
+    [JsonPropertyName("General"), JsonInclude]
     public GeneralSettings General = new();
-    [JsonInclude]
+    [JsonPropertyName("LevelEditor"), JsonInclude]
     public LevelEditorSettings LevelEditor = new();
-    [JsonInclude]
+    [JsonPropertyName("ReplayManager"), JsonInclude]
     public ReplayManagerSettings ReplayManager = new();
-    [JsonInclude]
+    [JsonPropertyName("LevelManager"), JsonInclude]
     public LevelManagerSettings LevelManager = new();
-    [JsonInclude]
+    [JsonPropertyName("ReplayViewer"), JsonInclude]
     public ReplayViewerSettings ReplayViewer = new();
 
     private static readonly JsonSerializerOptions JsonSerializerOptions = new()
