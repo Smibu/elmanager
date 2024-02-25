@@ -751,9 +751,9 @@ internal class Level
     /// <summary>
     ///     This method should only be called once (when loading level).
     /// </summary>
-    /// <param name="lgrImages"></param>
-    internal void UpdateImages(Dictionary<string, DrawableImage> lgrImages)
+    internal void UpdateImages(OpenGlLgr lgr)
     {
+        var lgrImages = lgr.DrawableImages;
         GraphicElements = new List<GraphicElement>();
         MissingElements = new HashSet<(ImageType, string)>();
         foreach (var fileItem in _graphicElementFileItems)

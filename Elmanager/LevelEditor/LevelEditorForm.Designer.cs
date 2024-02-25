@@ -129,7 +129,7 @@ namespace Elmanager.LevelEditor
             TitleBox = new ToolStripTextBox();
             ToolStripSeparator4 = new ToolStripSeparator();
             ToolStripLabel2 = new ToolStripLabel();
-            LGRBox = new ToolStripTextBox();
+            LGRBox = new ToolStripComboBox();
             ToolStripSeparator5 = new ToolStripSeparator();
             ToolStripLabel3 = new ToolStripLabel();
             GroundComboBox = new ToolStripComboBox();
@@ -993,10 +993,9 @@ namespace Elmanager.LevelEditor
             // LGRBox
             // 
             LGRBox.AutoSize = false;
-            LGRBox.BorderStyle = BorderStyle.FixedSingle;
-            LGRBox.MaxLength = 8;
+            LGRBox.DropDownStyle = ComboBoxStyle.DropDownList;
             LGRBox.Name = "LGRBox";
-            LGRBox.Size = new Size(119, 39);
+            LGRBox.Size = new Size(200, 39);
             // 
             // ToolStripSeparator5
             // 
@@ -1839,7 +1838,7 @@ namespace Elmanager.LevelEditor
         internal ToolStripLabel ToolStripLabel1;
         internal ToolStripSeparator ToolStripSeparator4;
         internal ToolStripLabel ToolStripLabel2;
-        internal ToolStripTextBox LGRBox;
+        internal ToolStripComboBox LGRBox;
         internal ToolStripSeparator ToolStripSeparator5;
         internal ToolStripLabel ToolStripLabel3;
         internal ToolStripComboBox GroundComboBox;

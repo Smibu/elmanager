@@ -28,26 +28,27 @@ internal class ObjectTool : ToolBase, IEditorTool
     {
         if (!_hasFocus)
             return;
-        if (Global.AppSettings.LevelEditor.RenderingSettings.ShowObjectFrames)
+        var settings = Global.AppSettings.LevelEditor.RenderingSettings;
+        if (settings.ShowObjectFrames)
         {
             switch (_currentObjectType)
             {
                 case ObjectType.Killer:
                     Renderer.DrawCircle(CurrentPos, OpenGlLgr.ObjectRadius,
-                        Global.AppSettings.LevelEditor.RenderingSettings.KillerColor);
+                        settings.KillerColor, settings.CircleDrawingAccuracy);
                     break;
                 case ObjectType.Apple:
                     Renderer.DrawCircle(CurrentPos, OpenGlLgr.ObjectRadius,
-                        Global.AppSettings.LevelEditor.RenderingSettings.AppleColor);
+                        settings.AppleColor, settings.CircleDrawingAccuracy);
                     break;
                 case ObjectType.Flower:
                     Renderer.DrawCircle(CurrentPos, OpenGlLgr.ObjectRadius,
-                        Global.AppSettings.LevelEditor.RenderingSettings.FlowerColor);
+                        settings.FlowerColor, settings.CircleDrawingAccuracy);
                     break;
             }
         }
 
-        if (!Global.AppSettings.LevelEditor.RenderingSettings.ShowObjects || Renderer.OpenGlLgr == null)
+        if (!settings.ShowObjects || Renderer.OpenGlLgr == null)
             return;
         switch (_currentObjectType)
         {

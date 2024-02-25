@@ -55,8 +55,7 @@ internal class OpenGlLgr : IDisposable
     private readonly Suspension[] _suspensions = new Suspension[2];
     private readonly int _thighPic;
     private readonly int _wheelPic;
-    private List<GrassPic> _grassPics = new();
-    private DrawableImage? _qgrass;
+    private DrawableGrass? _grassData;
     private readonly List<GrassImage> _grassImages = new();
     private readonly LgrImage? _qgrassImage;
     public readonly Lgr.Lgr CurrentLgr;
@@ -648,23 +647,26 @@ internal class OpenGlLgr : IDisposable
             return;
         }
 
-        var oldQgrassId = _qgrass?.TextureId;
-        if (_qgrass != null)
+        var oldQgrassId = _grassData?.Qgrass.TextureId;
+        if (_grassData != null)
         {
-            GL.DeleteTexture(_qgrass.TextureId);
+            if (Math.Abs(_grassData.GrassZoom - settings.GrassZoom) < 0.00001)
+            {
+                return;
+            }
+            GL.DeleteTexture(_grassData.Qgrass.TextureId);
         }
         DeleteGrassPics();
 
-        _qgrass = FromLgrImage(_qgrassImage, new TextureOptions(), 1 / GetGrassFactor(settings.GrassZoom));
-        DrawableImages["qgrass"] = _qgrass;
-        UpdateGroundAndSky(lev, settings.DefaultGroundAndSky);
+        var qgrass = FromLgrImage(_qgrassImage, new TextureOptions(), 1 / GetGrassFactor(settings.GrassZoom));
+        DrawableImages["qgrass"] = qgrass;
 
         // If the lev has qgrass textures, they must be updated too.
         lev.GraphicElements = lev.GraphicElements.Select(element =>
         {
             if (element is GraphicElement.Texture t && t.TextureInfo.TextureId == oldQgrassId)
             {
-                return t with { TextureInfo = _qgrass };
+                return t with { TextureInfo = qgrass };
             }
 
             return element;
@@ -674,17 +676,22 @@ internal class OpenGlLgr : IDisposable
         var imgs = _grassImages.AsParallel().Select(img => img.SetAlphaIgnore(GrassIgnoreAlpha, grassHeightExtension))
             .ToList();
 
-        _grassPics = imgs.Select(img =>
+        var grassPics = imgs.Select(img =>
             new GrassPic(
                 FromLgrImage(img.Image, new TextureOptions { WrapMode = TextureWrapMode.Clamp },
                     1 / GetGrassFactor(settings.GrassZoom)),
                 img.Image.Bmp, img.Delta, grassHeightExtension)).ToList();
+        _grassData = new DrawableGrass(grassPics, qgrass, settings.GrassZoom);
+        foreach (var polygon in lev.Polygons.Where(p => p.IsGrass))
+        {
+            polygon.SlopeInfo = new GrassSlopeInfo(polygon, lev.GroundBounds, settings.GrassZoom);
+        }
     }
 
     public void DrawGrass(Level lev, ElmaCamera cam, double midX, double midY, RenderingSettings settings,
         SceneSettings sceneSettings)
     {
-        if (_grassPics.Count > 0 && _qgrass != null)
+        if (_grassData is { GrassPics.Count: > 0 })
         {
             GL.StencilOp(StencilOp.Keep, StencilOp.Keep, StencilOp.Keep);
             GL.StencilFunc(StencilFunction.Equal, ElmaRenderer.GroundStencil, ElmaRenderer.StencilMask);
@@ -692,26 +699,26 @@ internal class OpenGlLgr : IDisposable
             GL.Disable(EnableCap.Blend);
             for (var i = sceneSettings.AdditionalPolys.Count - 1; i >= 0; i--)
             {
-                DrawPolygonGrass(sceneSettings.AdditionalPolys[i]);
+                DrawPolygonGrass(sceneSettings.AdditionalPolys[i], _grassData);
             }
             for (var i = lev.Polygons.Count - 1; i >= 0; i--)
             {
-                DrawPolygonGrass(lev.Polygons[i]);
+                DrawPolygonGrass(lev.Polygons[i], _grassData);
             }
 
             GL.AlphaFunc(AlphaFunction.Gequal, 0.9f);
             GL.Enable(EnableCap.Blend);
             GL.BlendFunc(BlendingFactor.OneMinusDstAlpha, BlendingFactor.DstAlpha);
-            DrawFullScreenTexture(cam, _qgrass, midX, midY, 0, settings);
+            DrawFullScreenTexture(cam, _grassData.Qgrass, midX, midY, 0, settings);
             GL.BlendFunc(BlendingFactor.One, BlendingFactor.OneMinusDstColor);
         }
     }
 
-    private void DrawPolygonGrass(Polygon p)
+    private void DrawPolygonGrass(Polygon p, DrawableGrass drawableGrass)
     {
         if (p is { IsGrass: true, SlopeInfo: { } })
         {
-            foreach (var pic in p.SlopeInfo.GetGrassPics(_grassPics))
+            foreach (var pic in p.SlopeInfo.GetGrassPics(drawableGrass.GrassPics))
             {
                 var depth = pic.Distance / 1000.0 * (ElmaRenderer.ZFar - ElmaRenderer.ZNear) +
                             ElmaRenderer.ZNear;
@@ -754,7 +761,11 @@ internal class OpenGlLgr : IDisposable
 
     private void DeleteGrassPics()
     {
-        foreach (var x in _grassPics)
+        if (_grassData == null)
+        {
+            return;
+        }
+        foreach (var x in _grassData.GrassPics)
         {
             // At least on some machines, deleting grass pic textures causes incorrect grass rendering when changing LGR.
             GL.DeleteTexture(x.Image.TextureId);

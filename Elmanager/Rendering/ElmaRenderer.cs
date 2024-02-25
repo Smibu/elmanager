@@ -21,6 +21,8 @@ using PixelFormat = System.Drawing.Imaging.PixelFormat;
 
 namespace Elmanager.Rendering;
 
+internal record SettingsChangeResult(bool LgrUpdated);
+
 internal class ElmaRenderer : IDisposable
 {
     private const double GroundDepth = 0;
@@ -35,12 +37,9 @@ internal class ElmaRenderer : IDisposable
     public const double ZNear = -1;
     private const int LinePattern = 0b0101010101010101;
 
-    internal Level Lev = new();
-
     private bool _disposed;
 
     private readonly IGraphicsContext _gfxContext;
-    private RenderingSettings _settings = null!;
     private int _frameBuffer;
     private int _colorRenderBuffer;
     private int _depthStencilRenderBuffer;
@@ -50,7 +49,6 @@ internal class ElmaRenderer : IDisposable
     {
         _gfxContext = renderingTarget.Context;
         InitializeOpengl(disableFrameBuffer: settings.DisableFrameBuffer);
-        UpdateSettings(settings);
     }
 
     public OpenGlLgr? OpenGlLgr { get; private set; }
@@ -60,7 +58,7 @@ internal class ElmaRenderer : IDisposable
         Dispose(true);
     }
 
-    private Bitmap GetSnapShot(ZoomController zoomCtrl, SceneSettings sceneSettings)
+    private Bitmap GetSnapShot(Level lev, ZoomController zoomCtrl, SceneSettings sceneSettings, RenderingSettings settings)
     {
         Bitmap snapShotBmp;
         if (_maxRenderbufferSize > 0)
@@ -71,8 +69,8 @@ internal class ElmaRenderer : IDisposable
             GL.BindFramebuffer(FramebufferTarget.DrawFramebuffer, _frameBuffer);
             var oldViewPort = (int[])zoomCtrl.Cam.Viewport.Clone();
             ResetViewport(width, height);
-            zoomCtrl.ZoomFill();
-            DrawScene(zoomCtrl.Cam, sceneSettings);
+            zoomCtrl.ZoomFill(settings);
+            DrawScene(lev, zoomCtrl.Cam, sceneSettings, settings);
             snapShotBmp = new Bitmap(width, height);
             var bmpData = snapShotBmp.LockBits(new Rectangle(0, 0, width, height), ImageLockMode.WriteOnly,
                 PixelFormat.Format24bppRgb);
@@ -108,9 +106,8 @@ internal class ElmaRenderer : IDisposable
         return snapShotBmp;
     }
 
-    private void DrawCircle(double x, double y, double radius, Color circleColor)
+    private void DrawCircle(double x, double y, double radius, Color circleColor, int accuracy)
     {
-        var accuracy = _settings.CircleDrawingAccuracy;
         GL.Color4(circleColor);
         GL.Begin(PrimitiveType.LineLoop);
         for (var i = 0; i <= accuracy; i++)
@@ -119,18 +116,18 @@ internal class ElmaRenderer : IDisposable
         GL.End();
     }
 
-    internal void DrawCircle(Vector v, double radius, Color circleColor)
+    internal void DrawCircle(Vector v, double radius, Color circleColor, int accuracy)
     {
-        DrawCircle(v.X, v.Y, radius, circleColor);
+        DrawCircle(v.X, v.Y, radius, circleColor, accuracy);
     }
 
-    internal void DrawDummyPlayer(double leftWheelx, double leftWheely, SceneSettings sceneSettings, PlayerRenderOpts opts)
+    internal void DrawDummyPlayer(double leftWheelx, double leftWheely, SceneSettings sceneSettings, PlayerRenderOpts opts, RenderingSettings settings)
     {
         DrawPlayer(new PlayerState(leftWheelx + Level.GlobalBodyDifferenceFromLeftWheelX,
             leftWheely + Level.GlobalBodyDifferenceFromLeftWheelY, leftWheelx, leftWheely,
             leftWheelx + Level.RightWheelDifferenceFromLeftWheelX, leftWheely, 0, 0,
             leftWheelx + Level.HeadDifferenceFromLeftWheelX, leftWheely + Level.HeadDifferenceFromLeftWheelY,
-            0, Direction.Left, 0), opts, sceneSettings);
+            0, Direction.Left, 0), opts, sceneSettings, settings);
     }
 
     internal void DrawLine(Vector v1, Vector v2, Color color, double depth = 0)
@@ -233,7 +230,7 @@ internal class ElmaRenderer : IDisposable
         _gfxContext.MakeNoneCurrent();
     }
 
-    internal void DrawScene(ElmaCamera cam, SceneSettings sceneSettings)
+    internal void DrawScene(Level lev, ElmaCamera cam, SceneSettings sceneSettings, RenderingSettings settings)
     {
         MakeCurrent();
         var aspectRatio = cam.AspectRatio;
@@ -250,7 +247,7 @@ internal class ElmaRenderer : IDisposable
         GL.StencilFunc(StencilFunction.Equal, GroundStencil, StencilMask);
         GL.ColorMask(false, false, false, false);
         GL.Begin(PrimitiveType.Triangles);
-        foreach (var k in Lev.Polygons.Concat(sceneSettings.AdditionalPolys))
+        foreach (var k in lev.Polygons.Concat(sceneSettings.AdditionalPolys))
             if (!k.IsGrass)
                 DrawFilledTrianglesFast(k.Decomposition, ZFar - (ZFar - ZNear) * SkyDepth);
         GL.End();
@@ -259,19 +256,19 @@ internal class ElmaRenderer : IDisposable
         GL.Enable(EnableCap.DepthTest);
         GL.StencilFunc(StencilFunction.Equal, GroundStencil, StencilMask);
         GL.StencilOp(StencilOp.Keep, StencilOp.Keep, StencilOp.Replace);
-        var midX = (Lev.Bounds.XMin + Lev.Bounds.XMax) / 2;
-        var midY = (Lev.Bounds.YMin + Lev.Bounds.YMax) / 2;
-        if (_settings.ShowGround)
+        var midX = (lev.Bounds.XMin + lev.Bounds.XMax) / 2;
+        var midY = (lev.Bounds.YMin + lev.Bounds.YMax) / 2;
+        if (settings.ShowGround)
         {
             const double depth = ZFar - (ZFar - ZNear) * GroundDepth;
-            if (_settings.GroundTextureEnabled && OpenGlLgr != null)
+            if (settings.GroundTextureEnabled && OpenGlLgr != null)
             {
-                OpenGlLgr.DrawFullScreenTexture(cam, OpenGlLgr.GroundTexture, midX, midY, depth, _settings);
+                OpenGlLgr.DrawFullScreenTexture(cam, OpenGlLgr.GroundTexture, midX, midY, depth, settings);
             }
             else
             {
                 GL.Disable(EnableCap.Texture2D);
-                GL.Color4(_settings.GroundFillColor);
+                GL.Color4(settings.GroundFillColor);
                 GL.Begin(PrimitiveType.Quads);
                 GL.Vertex3(midX - TextureVertexConst, midY - TextureVertexConst, depth);
                 GL.Vertex3(midX + TextureVertexConst, midY - TextureVertexConst, depth);
@@ -283,11 +280,11 @@ internal class ElmaRenderer : IDisposable
         }
 
         GL.StencilFunc(StencilFunction.Equal, SkyStencil, StencilMask);
-        if (_settings.SkyTextureEnabled && OpenGlLgr != null)
+        if (settings.SkyTextureEnabled && OpenGlLgr != null)
         {
             const double depth = ZFar - (ZFar - ZNear) * SkyDepth;
             GL.BindTexture(TextureTarget.Texture2D, OpenGlLgr.SkyTexture.TextureId);
-            if (_settings.ZoomTextures)
+            if (settings.ZoomTextures)
             {
                 GL.Begin(PrimitiveType.Quads);
                 GL.TexCoord2(0, TextureCoordConst / OpenGlLgr.SkyTexture.Width * OpenGlLgr.SkyTexture.Width / OpenGlLgr.SkyTexture.Height);
@@ -330,11 +327,11 @@ internal class ElmaRenderer : IDisposable
         {
             GL.DepthFunc(DepthFunction.Gequal);
             GL.Enable(EnableCap.ScissorTest);
-            for (var i = Lev.GraphicElements.Count - 1; i >= 0; --i)
+            for (var i = lev.GraphicElements.Count - 1; i >= 0; --i)
             {
-                var picture = Lev.GraphicElements[i];
+                var picture = lev.GraphicElements[i];
                 DoPictureScissor(picture, cam);
-                if (picture is GraphicElement.Picture p && _settings.ShowPictures)
+                if (picture is GraphicElement.Picture p && settings.ShowPictures)
                 {
                     GL.StencilOp(StencilOp.Keep, StencilOp.Keep, StencilOp.Keep);
                     switch (picture.Clipping)
@@ -355,10 +352,10 @@ internal class ElmaRenderer : IDisposable
                 }
             }
 
-            foreach (var picture in Lev.GraphicElements)
+            foreach (var picture in lev.GraphicElements)
             {
                 DoPictureScissor(picture, cam);
-                if (picture is GraphicElement.Texture t && _settings.ShowTextures)
+                if (picture is GraphicElement.Texture t && settings.ShowTextures)
                 {
                     GL.StencilOp(StencilOp.Keep, StencilOp.Keep, StencilOp.Invert);
                     switch (picture.Clipping)
@@ -380,23 +377,23 @@ internal class ElmaRenderer : IDisposable
 
                     var info = t.TextureInfo;
                     GL.StencilFunc(StencilFunction.Lequal, 5, StencilMask);
-                    OpenGlLgr.DrawFullScreenTexture(cam, info, midX, midY, depth, _settings);
+                    OpenGlLgr.DrawFullScreenTexture(cam, info, midX, midY, depth, settings);
                 }
             }
 
             GL.Disable(EnableCap.ScissorTest);
             GL.DepthFunc(DepthFunction.Gequal);
-            if (_settings.ShowGrass)
+            if (settings.ShowGrass)
             {
-                OpenGlLgr.DrawGrass(Lev, cam, midX, midY, _settings, sceneSettings);
+                OpenGlLgr.DrawGrass(lev, cam, midX, midY, settings, sceneSettings);
             }
         }
 
         GL.Disable(EnableCap.StencilTest);
-        if (_settings.ShowObjects && OpenGlLgr != null)
+        if (settings.ShowObjects && OpenGlLgr != null)
         {
             var depth = sceneSettings.PicturesInBackground ? 0 : 0.5 * (ZFar - ZNear) + ZNear;
-            foreach (var (x, i) in GetVisibleObjects(sceneSettings))
+            foreach (var (x, i) in GetVisibleObjects(lev, sceneSettings))
             {
                 if (sceneSettings.FadedObjectIndices.Contains(i))
                 {
@@ -418,7 +415,9 @@ internal class ElmaRenderer : IDisposable
                         OpenGlLgr.DrawApple(x.Position, x.AnimationNumber, depth);
                         break;
                     case ObjectType.Start:
-                        DrawDummyPlayer(x.Position.X, x.Position.Y, sceneSettings, new PlayerRenderOpts { IsActive = true, UseTransparency = false, UseGraphics = true });
+                        DrawDummyPlayer(x.Position.X, x.Position.Y, sceneSettings,
+                            new PlayerRenderOpts { IsActive = true, UseTransparency = false, UseGraphics = true },
+                            settings);
                         break;
                 }
             }
@@ -429,77 +428,77 @@ internal class ElmaRenderer : IDisposable
         GL.Disable(EnableCap.DepthTest);
         GL.Disable(EnableCap.AlphaTest);
         GL.Disable(EnableCap.Blend);
-        if (_settings.ShowGrid)
-            DrawGrid(cam, sceneSettings.GridOffset, _settings.GridSize);
-        if (_settings.ShowMaxDimensions)
+        if (settings.ShowGrid)
+            DrawGrid(cam, sceneSettings, settings);
+        if (settings.ShowMaxDimensions)
         {
             GL.Enable(EnableCap.LineStipple);
-            GL.LineStipple((int)_settings.LineWidth * 2, LinePattern);
-            var levCenterX = (Lev.Bounds.XMin + Lev.Bounds.XMax) / 2;
-            var levCenterY = (Lev.Bounds.YMin + Lev.Bounds.YMax) / 2;
+            GL.LineStipple((int)settings.LineWidth * 2, LinePattern);
+            var levCenterX = (lev.Bounds.XMin + lev.Bounds.XMax) / 2;
+            var levCenterY = (lev.Bounds.YMin + lev.Bounds.YMax) / 2;
             DrawRectangle(levCenterX - Level.MaximumSize / 2,
                 levCenterY - Level.MaximumSize / 2,
                 levCenterX + Level.MaximumSize / 2,
                 levCenterY + Level.MaximumSize / 2,
-                _settings.MaxDimensionColor);
+                settings.MaxDimensionColor);
             GL.Disable(EnableCap.LineStipple);
-            GL.LineWidth(_settings.LineWidth);
+            GL.LineWidth(settings.LineWidth);
         }
 
-        if (_settings.ShowObjectFrames)
-            DrawObjectFrames(sceneSettings);
-        if (_settings.ShowObjectCenters)
-            DrawObjectCenters(sceneSettings);
-        if (_settings.ShowGravityAppleArrows &&
-            (_settings.ShowObjectFrames || (OpenGlLgr != null && _settings.ShowObjects)))
+        if (settings.ShowObjectFrames)
+            DrawObjectFrames(lev, sceneSettings, settings);
+        if (settings.ShowObjectCenters)
+            DrawObjectCenters(lev, sceneSettings, settings);
+        if (settings.ShowGravityAppleArrows &&
+            (settings.ShowObjectFrames || (OpenGlLgr != null && settings.ShowObjects)))
         {
-            foreach (var (o, _) in GetVisibleObjects(sceneSettings))
+            foreach (var (o, _) in GetVisibleObjects(lev, sceneSettings))
             {
-                DrawGravityArrowMaybe(o);
+                DrawGravityArrowMaybe(o, settings);
             }
         }
 
-        foreach (var x in Lev.Polygons)
+        foreach (var x in lev.Polygons)
         {
             if (x.IsGrass)
             {
-                if (_settings.ShowGrassEdges)
+                if (settings.ShowGrassEdges)
                 {
-                    var color = x.SlopeInfo?.HasError ?? false ? Color.Red : _settings.GrassEdgeColor;
-                    DrawGrassPolygon(x, color, _settings.ShowInactiveGrassEdges);
+                    var color = x.SlopeInfo?.HasError ?? false ? Color.Red : settings.GrassEdgeColor;
+                    DrawGrassPolygon(x, color, settings.ShowInactiveGrassEdges, settings);
                 }
             }
-            else if (_settings.ShowGroundEdges)
-                DrawPolygon(x, _settings.GroundEdgeColor);
+            else if (settings.ShowGroundEdges)
+                DrawPolygon(x, settings.GroundEdgeColor);
         }
 
-        GL.Color4(_settings.TextureFrameColor);
-        foreach (var z in Lev.GraphicElements)
+        GL.Color4(settings.TextureFrameColor);
+        foreach (var z in lev.GraphicElements)
         {
             if (z is GraphicElement.Picture)
             {
-                if (!_settings.ShowPictureFrames) continue;
-                GL.Color4(_settings.PictureFrameColor);
+                if (!settings.ShowPictureFrames) continue;
+                GL.Color4(settings.PictureFrameColor);
             }
             else
             {
-                if (!_settings.ShowTextureFrames)
+                if (!settings.ShowTextureFrames)
                     continue;
-                GL.Color4(_settings.TextureFrameColor);
+                GL.Color4(settings.TextureFrameColor);
             }
 
             DrawRectangle(z.Position.X, z.Position.Y, z.Position.X + z.Width, z.Position.Y - z.Height);
         }
 
-        if (_settings.ShowVertices)
+        if (settings.ShowVertices)
         {
-            var showGrassVertices = _settings.ShowGrassEdges || _settings.ShowGrass;
-            var showGroundVertices = _settings.ShowGroundEdges || (_settings.ShowGround && OpenGlLgr != null);
-            GL.Color3(_settings.VertexColor);
-            if (_settings.UseCirclesForVertices)
+            var showGrassVertices = settings.ShowGrassEdges || settings.ShowGrass;
+            var showGroundVertices = settings.ShowGroundEdges || (settings.ShowGround && OpenGlLgr != null);
+            GL.Color3(settings.VertexColor);
+            if (settings.UseCirclesForVertices)
             {
                 GL.Begin(PrimitiveType.Points);
-                foreach (var x in Lev.Polygons)
+                foreach (var x in lev.Polygons)
                     if ((showGrassVertices && x.IsGrass) || (showGroundVertices && !x.IsGrass))
                         foreach (var z in x.Vertices)
                             GL.Vertex3(z.X, z.Y, 0);
@@ -507,17 +506,17 @@ internal class ElmaRenderer : IDisposable
             else
             {
                 GL.Begin(PrimitiveType.Triangles);
-                foreach (var x in Lev.Polygons)
+                foreach (var x in lev.Polygons)
                     if ((showGrassVertices && x.IsGrass) || (showGroundVertices && !x.IsGrass))
                         foreach (var z in x.Vertices)
-                            DrawEquilateralTriangleFast(z, cam.ZoomLevel * _settings.VertexSize);
+                            DrawEquilateralTriangleFast(z, cam.ZoomLevel * settings.VertexSize);
             }
 
             GL.End();
         }
     }
 
-    public void DrawGrassPolygon(Polygon polygon, Color color, bool drawInactiveGrassEdge)
+    public void DrawGrassPolygon(Polygon polygon, Color color, bool drawInactiveGrassEdge, RenderingSettings settings)
     {
         GL.Color4(color);
         GL.Begin(PrimitiveType.LineStrip);
@@ -538,7 +537,7 @@ internal class ElmaRenderer : IDisposable
         {
             DrawDashLine(polygon.Vertices[polygon.GrassStart == 0 ? ^1 : polygon.GrassStart - 1],
                 polygon.Vertices[polygon.GrassStart],
-                color);
+                color, settings);
         }
     }
 
@@ -547,9 +546,9 @@ internal class ElmaRenderer : IDisposable
         _gfxContext.SwapBuffers();
     }
 
-    private IEnumerable<(LevObject, int)> GetVisibleObjects(SceneSettings sceneSettings)
+    private IEnumerable<(LevObject, int)> GetVisibleObjects(Level lev, SceneSettings sceneSettings)
     {
-        return Lev.Objects.Select((t, i) => (t, i)).Where(t => !sceneSettings.HiddenObjectIndices.Contains(t.i));
+        return lev.Objects.Select((t, i) => (t, i)).Where(t => !sceneSettings.HiddenObjectIndices.Contains(t.i));
     }
 
     private void DoPictureScissor(GraphicElement graphicElement, ElmaCamera cam)
@@ -561,11 +560,11 @@ internal class ElmaRenderer : IDisposable
         GL.Scissor(x, y, w, h);
     }
 
-    private void DrawGravityArrowMaybe(LevObject o)
+    private void DrawGravityArrowMaybe(LevObject o, RenderingSettings settings)
     {
         if (o.Type == ObjectType.Apple && o.AppleType != AppleType.Normal)
         {
-            GL.Color3(_settings.AppleGravityArrowColor);
+            GL.Color3(settings.AppleGravityArrowColor);
             double arrowRotation = o.AppleType switch
             {
                 AppleType.GravityUp => 0.0,
@@ -615,10 +614,9 @@ internal class ElmaRenderer : IDisposable
         GL.Vertex3(center.X - side / 2, center.Y - side * factor, 0);
     }
 
-    internal void InitializeLevel(Level level)
+    internal void InitializeLevel(Level lev, RenderingSettings settings)
     {
-        Lev = level;
-        Lev.Objects = Lev.Objects.OrderBy(o => o.Type switch
+        lev.Objects = lev.Objects.OrderBy(o => o.Type switch
         {
             ObjectType.Flower => 3,
             ObjectType.Apple => 2,
@@ -626,11 +624,11 @@ internal class ElmaRenderer : IDisposable
             ObjectType.Start => 4,
             _ => throw new ArgumentOutOfRangeException()
         }).ToList();
-        Lev.UpdateAllPolygons(_settings.GrassZoom);
+        lev.UpdateAllPolygons(settings.GrassZoom);
         if (OpenGlLgr != null)
         {
-            Lev.UpdateImages(OpenGlLgr.DrawableImages);
-            OpenGlLgr.UpdateGroundAndSky(Lev, _settings.DefaultGroundAndSky);
+            lev.UpdateImages(OpenGlLgr);
+            OpenGlLgr.UpdateGroundAndSky(lev, settings.DefaultGroundAndSky);
         }
     }
 
@@ -639,10 +637,11 @@ internal class ElmaRenderer : IDisposable
         GL.Viewport(0, 0, width, height);
     }
 
-    internal void UpdateSettings(RenderingSettings newSettings)
+    internal SettingsChangeResult UpdateSettings(Level lev, RenderingSettings newSettings)
     {
         var currentLgr = OpenGlLgr?.CurrentLgr.Path;
-        var newLgr = newSettings.ResolveLgr(Lev);
+        var newLgr = newSettings.ResolveLgr(lev);
+        var lgrUpdated = false;
         if (!currentLgr.EqualsIgnoreCase(newLgr))
         {
             if (File.Exists(newLgr))
@@ -650,9 +649,10 @@ internal class ElmaRenderer : IDisposable
                 var old = OpenGlLgr;
                 try
                 {
-                    OpenGlLgr = new OpenGlLgr(Lev, new Lgr.Lgr(newLgr), newSettings);
-                    Lev.UpdateImages(OpenGlLgr.DrawableImages);
+                    OpenGlLgr = new OpenGlLgr(lev, new Lgr.Lgr(newLgr), newSettings);
+                    lev.UpdateImages(OpenGlLgr);
                     old?.Dispose();
+                    lgrUpdated = true;
                 }
                 catch (Exception e)
                 {
@@ -662,25 +662,14 @@ internal class ElmaRenderer : IDisposable
         }
         else if (OpenGlLgr != null)
         {
-            var grassZoomChanged = Math.Abs(_settings.GrassZoom - newSettings.GrassZoom) > double.Epsilon;
-            if (grassZoomChanged)
-            {
-                OpenGlLgr.RefreshGrassPics(Lev, newSettings);
-                foreach (var polygon in Lev.Polygons.Where(p => p.IsGrass))
-                {
-                    polygon.SlopeInfo = new GrassSlopeInfo(polygon, Lev.GroundBounds, newSettings.GrassZoom);
-                }
-            }
-            if (_settings.DefaultGroundAndSky != newSettings.DefaultGroundAndSky)
-            {
-                OpenGlLgr.UpdateGroundAndSky(Lev, newSettings.DefaultGroundAndSky);
-            }
+            OpenGlLgr.RefreshGrassPics(lev, newSettings);
+            OpenGlLgr.UpdateGroundAndSky(lev, newSettings.DefaultGroundAndSky);
         }
 
         GL.ClearColor(newSettings.SkyFillColor);
         GL.LineWidth(newSettings.LineWidth);
         GL.PointSize((float)(newSettings.VertexSize * 300));
-        _settings = newSettings.Clone();
+        return new SettingsChangeResult(lgrUpdated);
     }
 
     private void Dispose(bool disposing)
@@ -721,11 +710,12 @@ internal class ElmaRenderer : IDisposable
                 GL.Vertex3(x.X, x.Y, depth);
     }
 
-    private void DrawGrid(ElmaCamera cam, Vector gridOffset, double gridSize)
+    private void DrawGrid(ElmaCamera cam, SceneSettings sceneSettings, RenderingSettings settings)
     {
-        var current = GetFirstGridLine(gridSize, gridOffset.X, cam.XMin);
-        EnableDashLines(LinePattern);
-        GL.Color3(_settings.GridColor);
+        var gridSize = settings.GridSize;
+        var current = GetFirstGridLine(gridSize, sceneSettings.GridOffset.X, cam.XMin);
+        EnableDashLines(LinePattern, settings);
+        GL.Color3(settings.GridColor);
         GL.Begin(PrimitiveType.Lines);
         while (!(current > cam.XMax))
         {
@@ -733,7 +723,7 @@ internal class ElmaRenderer : IDisposable
             current += gridSize;
         }
 
-        current = GetFirstGridLine(gridSize, gridOffset.Y, cam.YMin);
+        current = GetFirstGridLine(gridSize, sceneSettings.GridOffset.Y, cam.YMin);
         while (!(current > cam.YMax))
         {
             DrawLineFast(cam.XMin, current, cam.XMax, current);
@@ -742,32 +732,32 @@ internal class ElmaRenderer : IDisposable
 
         GL.End();
         GL.Disable(EnableCap.LineStipple);
-        GL.LineWidth(_settings.LineWidth);
+        GL.LineWidth(settings.LineWidth);
     }
 
-    private void EnableDashLines(short pattern)
+    private void EnableDashLines(short pattern, RenderingSettings settings)
     {
         GL.Enable(EnableCap.LineStipple);
-        GL.LineStipple((int)_settings.LineWidth, pattern);
+        GL.LineStipple((int)settings.LineWidth, pattern);
     }
 
-    private void DrawObjectCenters(SceneSettings sceneSettings)
+    private void DrawObjectCenters(Level lev, SceneSettings sceneSettings, RenderingSettings settings)
     {
-        foreach (var (x, _) in GetVisibleObjects(sceneSettings))
+        foreach (var (x, _) in GetVisibleObjects(lev, sceneSettings))
         {
             switch (x.Type)
             {
                 case ObjectType.Flower:
-                    DrawPoint(x.Position, _settings.FlowerColor);
+                    DrawPoint(x.Position, settings.FlowerColor);
                     break;
                 case ObjectType.Killer:
-                    DrawPoint(x.Position, _settings.KillerColor);
+                    DrawPoint(x.Position, settings.KillerColor);
                     break;
                 case ObjectType.Apple:
-                    DrawPoint(x.Position, _settings.AppleColor);
+                    DrawPoint(x.Position, settings.AppleColor);
                     break;
                 case ObjectType.Start:
-                    DrawPoint(x.Position, _settings.StartColor);
+                    DrawPoint(x.Position, settings.StartColor);
                     DrawPoint(x.Position.X + Level.RightWheelDifferenceFromLeftWheelX, x.Position.Y,
                         Global.AppSettings.LevelEditor.RenderingSettings.StartColor);
                     DrawPoint(x.Position.X + Level.HeadDifferenceFromLeftWheelX,
@@ -778,13 +768,13 @@ internal class ElmaRenderer : IDisposable
         }
     }
 
-    private void DrawObjectFrames(SceneSettings sceneSettings)
+    private void DrawObjectFrames(Level lev, SceneSettings sceneSettings, RenderingSettings settings)
     {
-        foreach (var (x, i) in GetVisibleObjects(sceneSettings))
+        foreach (var (x, i) in GetVisibleObjects(lev, sceneSettings))
         {
             if (sceneSettings.FadedObjectIndices.Contains(i))
             {
-                EnableDashLines(0b0110011001100110);
+                EnableDashLines(0b0110011001100110, settings);
             }
             else
             {
@@ -793,23 +783,24 @@ internal class ElmaRenderer : IDisposable
             switch (x.Type)
             {
                 case ObjectType.Flower:
-                    DrawCircle(x.Position, OpenGlLgr.ObjectRadius, _settings.FlowerColor);
+                    DrawCircle(x.Position, OpenGlLgr.ObjectRadius, settings.FlowerColor, settings.CircleDrawingAccuracy);
                     break;
                 case ObjectType.Killer:
-                    DrawCircle(x.Position, OpenGlLgr.ObjectRadius, _settings.KillerColor);
+                    DrawCircle(x.Position, OpenGlLgr.ObjectRadius, settings.KillerColor, settings.CircleDrawingAccuracy);
                     break;
                 case ObjectType.Apple:
-                    DrawCircle(x.Position, OpenGlLgr.ObjectRadius, _settings.AppleColor);
+                    DrawCircle(x.Position, OpenGlLgr.ObjectRadius, settings.AppleColor, settings.CircleDrawingAccuracy);
                     break;
                 case ObjectType.Start:
-                    DrawDummyPlayer(x.Position.X, x.Position.Y, sceneSettings, new PlayerRenderOpts(_settings.StartColor, true, false, false));
+                    DrawDummyPlayer(x.Position.X, x.Position.Y, sceneSettings,
+                        new PlayerRenderOpts(settings.StartColor, true, false, false), settings);
                     break;
             }
         }
         GL.Disable(EnableCap.LineStipple);
     }
 
-    internal void DrawPlayer(PlayerState player, PlayerRenderOpts opts, SceneSettings sceneSettings)
+    internal void DrawPlayer(PlayerState player, PlayerRenderOpts opts, SceneSettings sceneSettings, RenderingSettings settings)
     {
         if (opts.UseGraphics && OpenGlLgr != null)
         {
@@ -822,10 +813,10 @@ internal class ElmaRenderer : IDisposable
             if (!opts.IsActive)
             {
                 GL.Enable(EnableCap.LineStipple);
-                GL.LineStipple((int)_settings.LineWidth, LinePattern);
+                GL.LineStipple((int)settings.LineWidth, LinePattern);
             }
 
-            DrawPlayerFrames(player, opts.Color);
+            DrawPlayerFrames(player, opts.Color, settings);
             if (!opts.IsActive)
             {
                 GL.Disable(EnableCap.LineStipple);
@@ -833,15 +824,15 @@ internal class ElmaRenderer : IDisposable
         }
     }
 
-    private void DrawPlayerFrames(PlayerState player, Color playerColor)
+    private void DrawPlayerFrames(PlayerState player, Color playerColor, RenderingSettings settings)
     {
         var headCos = Math.Cos(player.BikeRotation * MathUtils.DegToRad);
         var headSin = Math.Sin(player.BikeRotation * MathUtils.DegToRad);
         var f = player.IsRight ? 1 : -1;
         var headLineEndPointX = player.HeadX + f * headCos * ElmaConstants.HeadDiameter / 2;
         var headLineEndPointY = player.HeadY + f * headSin * ElmaConstants.HeadDiameter / 2;
-        DrawCircle(player.LeftWheelX, player.LeftWheelY, OpenGlLgr.ObjectRadius, playerColor);
-        DrawCircle(player.RightWheelX, player.RightWheelY, OpenGlLgr.ObjectRadius, playerColor);
+        DrawCircle(player.LeftWheelX, player.LeftWheelY, OpenGlLgr.ObjectRadius, playerColor, settings.CircleDrawingAccuracy);
+        DrawCircle(player.RightWheelX, player.RightWheelY, OpenGlLgr.ObjectRadius, playerColor, settings.CircleDrawingAccuracy);
         GL.Begin(PrimitiveType.Lines);
         for (var k = 0; k < 2; k++)
         {
@@ -870,7 +861,7 @@ internal class ElmaRenderer : IDisposable
         }
 
         GL.End();
-        DrawCircle(player.HeadX, player.HeadY, ElmaConstants.HeadDiameter / 2, playerColor);
+        DrawCircle(player.HeadX, player.HeadY, ElmaConstants.HeadDiameter / 2, playerColor, settings.CircleDrawingAccuracy);
         GL.Begin(PrimitiveType.Lines);
         GL.Vertex2(player.HeadX, player.HeadY);
         GL.Vertex2(headLineEndPointX, headLineEndPointY);
@@ -927,23 +918,23 @@ internal class ElmaRenderer : IDisposable
         }
     }
 
-    public void DrawDashLine(Vector v1, Vector v2, Color color)
+    private void DrawDashLine(Vector v1, Vector v2, Color color, RenderingSettings settings)
     {
-        DrawDashLine(v1.X, v1.Y, v2.X, v2.Y, color);
+        DrawDashLine(v1.X, v1.Y, v2.X, v2.Y, color, settings);
     }
 
-    public void DrawDashLine(double x1, double y1, double x2, double y2, Color color)
+    public void DrawDashLine(double x1, double y1, double x2, double y2, Color color, RenderingSettings settings)
     {
         GL.Enable(EnableCap.LineStipple);
-        GL.LineStipple((int)_settings.LineWidth, LinePattern);
+        GL.LineStipple((int)settings.LineWidth, LinePattern);
         DrawLine(x1, y1, x2, y2, color);
         GL.Disable(EnableCap.LineStipple);
-        GL.LineWidth(_settings.LineWidth);
+        GL.LineWidth(settings.LineWidth);
     }
 
-    public void SaveSnapShot(string fileName, ZoomController zoomCtrl, SceneSettings sceneSettings)
+    public void SaveSnapShot(Level lev, string fileName, ZoomController zoomCtrl, SceneSettings sceneSettings, RenderingSettings settings)
     {
-        using var bmp = GetSnapShot(zoomCtrl, sceneSettings);
+        using var bmp = GetSnapShot(lev, zoomCtrl, sceneSettings, settings);
         bmp.Save(fileName, ImageFormat.Png);
     }
 

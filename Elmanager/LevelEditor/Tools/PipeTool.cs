@@ -40,14 +40,15 @@ internal class PipeTool : ToolBase, IEditorTool
         if (_pipeSpec is { })
         {
             Renderer.DrawLineStrip(_pipeSpec.Pipeline, Color.Blue);
-            if (Global.AppSettings.LevelEditor.RenderingSettings.ShowGroundEdges)
-                Renderer.DrawPolygon(_pipeSpec.Pipe, Global.AppSettings.LevelEditor.RenderingSettings.GroundEdgeColor);
+            var settings = Global.AppSettings.LevelEditor.RenderingSettings;
+            if (settings.ShowGroundEdges)
+                Renderer.DrawPolygon(_pipeSpec.Pipe, settings.GroundEdgeColor);
             foreach (LevObject x in _pipeSpec.Apples)
             {
-                if (Global.AppSettings.LevelEditor.RenderingSettings.ShowObjectFrames)
+                if (settings.ShowObjectFrames)
                     Renderer.DrawCircle(x.Position, OpenGlLgr.ObjectRadius,
-                        Global.AppSettings.LevelEditor.RenderingSettings.AppleColor);
-                if (Renderer.OpenGlLgr != null && Global.AppSettings.LevelEditor.RenderingSettings.ShowObjects)
+                        settings.AppleColor, settings.CircleDrawingAccuracy);
+                if (Renderer.OpenGlLgr != null && settings.ShowObjects)
                     Renderer.OpenGlLgr.DrawAppleSingle(x.Position);
             }
         }

@@ -42,7 +42,8 @@ internal class ZoomTool : ToolBase, IEditorTool
             case MouseButtons.Left:
             case MouseButtons.Right:
                 ZoomCtrl.Zoom(CurrentPos, mouseData.Button == MouseButtons.Left,
-                    1 - Global.AppSettings.LevelEditor.MouseClickStep / 100.0);
+                    1 - Global.AppSettings.LevelEditor.MouseClickStep / 100.0,
+                    Global.AppSettings.LevelEditor.RenderingSettings);
                 break;
         }
     }

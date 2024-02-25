@@ -263,7 +263,7 @@ internal partial class ReplayViewerForm : FormMod
                 ToggleFullScreen(null, null);
                 break;
             case Keys.F5:
-                _replayController.ZoomCtrl.ZoomFill();
+                _replayController.ZoomCtrl.ZoomFill(RenderingSettings);
                 break;
             case Keys.Enter:
                 TextBoxKeyPress(e);
@@ -273,6 +273,8 @@ internal partial class ReplayViewerForm : FormMod
                 break;
         }
     }
+
+    private RenderingSettings RenderingSettings => Global.AppSettings.ReplayViewer.RenderingSettings;
 
     private static bool IsCtrlDown() => Keyboard.IsKeyDown(Key.LeftCtrl) || Keyboard.IsKeyDown(Key.RightCtrl);
 
@@ -292,7 +294,7 @@ internal partial class ReplayViewerForm : FormMod
 
     private void Zoom(bool zoomIn, double zoomFactor)
     {
-        _replayController.ZoomCtrl.Zoom(GetMouseCoordinates(), zoomIn, zoomFactor);
+        _replayController.ZoomCtrl.Zoom(GetMouseCoordinates(), zoomIn, zoomFactor, RenderingSettings);
         Global.AppSettings.ReplayViewer.ZoomLevel = _replayController.ZoomCtrl.ZoomLevel;
     }
 
@@ -355,7 +357,7 @@ internal partial class ReplayViewerForm : FormMod
         var settingsForm = new RenderingSettingsForm(Global.AppSettings.ReplayViewer.RenderingSettings);
         settingsForm.Changed += x =>
         {
-            _replayController.Renderer.UpdateSettings(x);
+            _replayController.Renderer.UpdateSettings(_replayController.Lev!, x);
             RedrawSceneIfNotPlaying();
         };
         settingsForm.ShowDialog();
@@ -390,7 +392,7 @@ internal partial class ReplayViewerForm : FormMod
             Invoke(ope);
         };
 
-        ZoomFillButton.MouseDown += (_, _) => _replayController.ZoomCtrl.ZoomFill();
+        ZoomFillButton.MouseDown += (_, _) => _replayController.ZoomCtrl.ZoomFill(RenderingSettings);
         PlayButton.MouseDown += (_, _) => _replayController.TogglePlay();
         StopButton.MouseDown += async (_, _) =>
         {
