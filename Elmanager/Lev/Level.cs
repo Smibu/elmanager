@@ -250,7 +250,7 @@ internal class Level
             Top10.SinglePlayer = ReadTop10Part(top10data, 0, (a, b, t) => new Top10EntrySingle(a, b, t));
             Top10.MultiPlayer = ReadTop10Part(top10data, 0 + 344, (a, b, t) => new Top10EntryMulti(a, b, t));
         }
-        catch (IndexOutOfRangeException)
+        catch (Exception)
         {
             throw new BadFileException(
                 "Top 10 list is corrupted. The list will be cleared if you save the level.");
