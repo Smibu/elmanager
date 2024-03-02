@@ -35,13 +35,6 @@ internal class ElmanagerSettings
     [JsonPropertyName("ReplayViewer"), JsonInclude]
     public ReplayViewerSettings ReplayViewer = new();
 
-    private static readonly JsonSerializerOptions JsonSerializerOptions = new()
-    {
-        WriteIndented = true,
-        IgnoreReadOnlyProperties = true,
-        Converters = { new ColorConverter(), new SizeConverter(), new PointConverter() }
-    };
-
     public static string ElmanagerFolder => Path.GetDirectoryName(Process.GetCurrentProcess().MainModule!.FileName)!;
 
     public static ElmanagerSettings Load()
@@ -78,7 +71,7 @@ internal class ElmanagerSettings
     public async Task Save()
     {
         await using var appSettingsFile = new FileStream(Path.Combine(ElmanagerFolder, _settingsFile), FileMode.Create);
-        await JsonSerializer.SerializeAsync(appSettingsFile, this, JsonSerializerOptions);
+        await JsonSerializer.SerializeAsync(appSettingsFile, this, SourceGenerationContext.GetOptions());
     }
 
     private static ElmanagerSettings GetSettings(string settingsFile)
@@ -86,7 +79,8 @@ internal class ElmanagerSettings
         var path = Path.Combine(ElmanagerFolder, settingsFile);
         try
         {
-            var loadedSettings = JsonSerializer.Deserialize<ElmanagerSettings>(File.ReadAllText(path), JsonSerializerOptions);
+            var loadedSettings = JsonSerializer.Deserialize(File.ReadAllText(path),
+                typeof(ElmanagerSettings), SourceGenerationContext.GetOptions()) as ElmanagerSettings;
             return loadedSettings!;
         }
         catch (JsonException e)

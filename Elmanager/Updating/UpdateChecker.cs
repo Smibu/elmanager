@@ -2,6 +2,7 @@
 using System.Net.Http;
 using System.Text.Json;
 using Elmanager.Application;
+using Elmanager.Utilities.Json;
 
 namespace Elmanager.Updating;
 
@@ -17,8 +18,7 @@ internal static class UpdateChecker
         try
         {
             var result = await client.GetStreamAsync(VersionUri);
-            var info = JsonSerializer.Deserialize<UpdateInfo>(result);
-            if (info is not null && info.Date > Global.Version)
+            if (await JsonSerializer.DeserializeAsync(result, typeof(UpdateInfo), SourceGenerationContext.GetOptions()) is UpdateInfo info && info.Date > Global.Version)
             {
                 var newDlg = new NewVersionForm(info);
                 newDlg.ShowDialog();
