@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Drawing;
 using System.IO;
 using System.Linq;
@@ -141,7 +142,8 @@ internal class Lgr : IDisposable
                         break;
                 }
             }
-
+            // { "tree1", new Size(1, 1) },
+            Debug.WriteLine($"{{ \"{imageData.Name}\", new Size({bmp.Width}, {bmp.Height}) }},");
             LgrImages[imageData.Name] = new LgrImage(imageData, bmp);
         }
     }

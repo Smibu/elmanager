@@ -410,20 +410,6 @@ internal partial class LevelEditorForm : FormMod, IMessageFilter
         ActivateCurrentAndRedraw();
     }
 
-    private void CheckForPictureLoss()
-    {
-        topologyList.DropDownItems.Clear();
-        topologyList.Text = "";
-        ResetTopologyListStyle();
-        if (!Lev.AllPicturesFound)
-        {
-            var text = "Level has pictures that the LGR is missing: " +
-                       string.Join(", ", Lev.MissingElements.Select(m => $"{m.Item2}")) +
-                       ". These pictures are lost if you save this level.";
-            ShowWarning(text);
-        }
-    }
-
     private void ShowWarning(string text)
     {
         topologyList.Text = "Warning";
@@ -493,11 +479,31 @@ internal partial class LevelEditorForm : FormMod, IMessageFilter
                 items.Add("Some polygon edges are too short.");
             }
 
+            var hasErrors = items.Count > 0;
+            var missingNames = Lev.GraphicElements.Select(e => e switch
+            {
+                GraphicElement.MissingPicture missingPicture => missingPicture.Name,
+                GraphicElement.MissingTexture missingTexture => missingTexture.TextureName,
+                _ => null
+            }).Where(name => name != null).Distinct().ToList();
+            var hasWarnings = missingNames.Any();
+            if (hasWarnings)
+            {
+                var text = $"Level has pictures that the LGR is missing: {string.Join(", ", missingNames)}";
+                items.Add(text);
+            }
+
             var c = items.Count;
             if (c == 0)
             {
                 topologyList.Text = "No problems.";
                 ResetTopologyListStyle();
+            }
+            else if (!hasErrors && hasWarnings)
+            {
+                topologyList.Text = "1 warning was found!";
+                topologyList.ForeColor = Color.DarkOrange;
+                topologyList.Font = new Font(topologyList.Font, FontStyle.Bold);
             }
             else
             {
@@ -1286,9 +1292,9 @@ internal partial class LevelEditorForm : FormMod, IMessageFilter
                 if (sender.Equals(SkyComboBox) || sender.Equals(GroundComboBox) || sender.Equals(LGRBox))
                 {
                     if (sender.Equals(GroundComboBox))
-                        Lev.GroundTextureName = GroundComboBox.SelectedItem.ToString() ?? "ground";
+                        Lev.GroundTextureName = GroundComboBox.SelectedItem?.ToString() ?? "ground";
                     if (sender.Equals(SkyComboBox))
-                        Lev.SkyTextureName = SkyComboBox.SelectedItem.ToString() ?? "sky";
+                        Lev.SkyTextureName = SkyComboBox.SelectedItem?.ToString() ?? "sky";
                     if (Settings.RenderingSettings.DefaultGroundAndSky)
                         UiUtils.ShowError("Default ground and sky is enabled, so you won\'t see this change in editor.",
                             "Warning", MessageBoxIcon.Exclamation);
@@ -2236,8 +2242,6 @@ internal partial class LevelEditorForm : FormMod, IMessageFilter
             SkyComboBox.Enabled = false;
             GroundComboBox.Enabled = false;
         }
-
-        CheckForPictureLoss();
     }
 
     private void UpdateUndoRedo()

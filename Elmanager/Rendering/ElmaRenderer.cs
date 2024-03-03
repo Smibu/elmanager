@@ -475,16 +475,26 @@ internal class ElmaRenderer : IDisposable
         GL.Color4(settings.TextureFrameColor);
         foreach (var z in lev.GraphicElements)
         {
-            if (z is GraphicElement.Picture)
+            switch (z)
             {
-                if (!settings.ShowPictureFrames) continue;
-                GL.Color4(settings.PictureFrameColor);
-            }
-            else
-            {
-                if (!settings.ShowTextureFrames)
+                case GraphicElement.Picture when !settings.ShowPictureFrames:
                     continue;
-                GL.Color4(settings.TextureFrameColor);
+                case GraphicElement.Texture when !settings.ShowTextureFrames:
+                    continue;
+                case GraphicElement.Picture:
+                    GL.Color4(settings.PictureFrameColor);
+                    break;
+                case GraphicElement.Texture:
+                    GL.Color4(settings.TextureFrameColor);
+                    break;
+                case GraphicElement.MissingPicture when settings.ShowPictureFrames || settings.ShowPictures:
+                    DrawLine(z.Position.X, z.Position.Y, z.Position.X + z.Width, z.Position.Y - z.Height, settings.PictureFrameColor);
+                    DrawLine(z.Position.X + z.Width, z.Position.Y, z.Position.X, z.Position.Y - z.Height, settings.PictureFrameColor);
+                    break;
+                case GraphicElement.MissingTexture when settings.ShowTextureFrames || settings.ShowTextures:
+                    DrawLine(z.Position.X, z.Position.Y, z.Position.X + z.Width, z.Position.Y - z.Height, settings.TextureFrameColor);
+                    DrawLine(z.Position.X + z.Width, z.Position.Y, z.Position.X, z.Position.Y - z.Height, settings.TextureFrameColor);
+                    break;
             }
 
             DrawRectangle(z.Position.X, z.Position.Y, z.Position.X + z.Width, z.Position.Y - z.Height);
