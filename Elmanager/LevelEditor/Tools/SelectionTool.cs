@@ -454,7 +454,8 @@ internal class SelectionTool : ToolBase, IEditorTool
             foreach (var z in Lev.GraphicElements)
             {
                 var x = z;
-                if ((z is GraphicElement.Picture && pictureFilter) || (z is GraphicElement.Texture && textureFilter))
+                if ((z is GraphicElement.Picture or GraphicElement.MissingPicture && pictureFilter) ||
+                    (z is GraphicElement.Texture or GraphicElement.MissingTexture && textureFilter))
                     if (_selectionPoly is null)
                         MarkSelectedInArea(ref x, selectionxMin, selectionxMax, selectionyMin, selectionyMax);
                     else
@@ -607,11 +608,12 @@ internal class SelectionTool : ToolBase, IEditorTool
         var graphicElement = Lev.GraphicElements[index];
         LevEditor.HighlightLabel.Text = graphicElement switch
         {
-            GraphicElement.Picture p => "Picture: " + p.PictureInfo.Name + ", distance: " + graphicElement.Distance +
-                                        ", clipping: " + graphicElement.Clipping,
-            GraphicElement.Texture t => "Texture: " + t.TextureInfo.Name + ", mask: " + t.MaskInfo.Name +
-                                        ", distance: " + graphicElement.Distance + ", clipping: " +
-                                        graphicElement.Clipping,
+            GraphicElement.Picture p =>
+                $"Picture: {p.PictureInfo.Name}, distance: {graphicElement.Distance}, clipping: {graphicElement.Clipping}",
+            GraphicElement.Texture t =>
+                $"Texture: {t.TextureInfo.Name}, mask: {t.MaskInfo.Name}, distance: {graphicElement.Distance}, clipping: {graphicElement.Clipping}",
+            GraphicElement.MissingPicture p => $"Missing picture: {p.Name}, distance: {graphicElement.Distance}, clipping: {graphicElement.Clipping}",
+            GraphicElement.MissingTexture t => $"Missing texture: {t.TextureName}, mask: {t.MaskName}, distance: {graphicElement.Distance}, clipping: {graphicElement.Clipping}",
             _ => LevEditor.HighlightLabel.Text
         };
     }
