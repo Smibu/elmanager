@@ -357,7 +357,7 @@ internal partial class PictureForm
                 return;
             }
 
-            if (distance is not (> 0 and < 1000))
+            if (!MultipleDistanceSelected && distance is not (> 0 and < 1000))
             {
                 DistanceError();
                 return;
