@@ -1,5 +1,10 @@
 # Elmanager changelog
 
+## 11.5.2024
+* SLE: Bugfix: Changing properties for multiple pictures/textures with different distances wasn't working.
+* SLE: Bugfix: Mirroring for pictures/textures wasn't working.
+* SLE: Bugfix: Player didn't die to killer while touching flower.
+
 ## 25.2.2024
 * SLE: Added setting to disable grid resizing and panning shortcuts. (@SjurdurS)
 * Bugfix: Corrupted level top10 sometimes caused a crash.
