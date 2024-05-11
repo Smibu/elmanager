@@ -58,11 +58,7 @@ internal struct Vector : IPositionable
         return this * m;
     }
 
-    public void SetPosition(Vector v)
-    {
-        X = v.X;
-        Y = v.Y;
-    }
+    public Vector WithPosition(Vector v) => new(v.X, v.Y, Mark);
 
     public static implicit operator Coordinate(Vector v)
     {

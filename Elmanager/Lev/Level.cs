@@ -586,7 +586,7 @@ internal class Level
             if (t.Type == ObjectType.Start)
             {
                 var fix = new Vector(RightWheelDifferenceFromLeftWheelX / 2, 0);
-                t.Position.SetPosition((z + fix) * matrix - fix);
+                t.Position = t.Position.WithPosition((z + fix) * matrix - fix);
             }
             else
                 t.Position = t.Position.Transform(matrix);
@@ -595,7 +595,7 @@ internal class Level
         foreach (var z in GraphicElements.Where(p => selector(p.Position)))
         {
             var fix = new Vector(z.Width / 2, -z.Height / 2);
-            z.Position.SetPosition((z.Position + fix) * matrix - fix);
+            z.Position = z.Position.WithPosition((z.Position + fix) * matrix - fix);
         }
     }
 
