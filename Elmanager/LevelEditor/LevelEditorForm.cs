@@ -1030,7 +1030,6 @@ internal partial class LevelEditorForm : FormMod, IMessageFilter
             new DrawTool(this),
             new ObjectTool(this),
             new PipeTool(this),
-            new ZoomTool(this),
             new EllipseTool(this),
             new PolyOpTool(this),
             new FrameTool(this),
@@ -2030,7 +2029,6 @@ internal partial class LevelEditorForm : FormMod, IMessageFilter
         PolyOpButton.CheckedChanged += PolyOpButtonChanged;
         DrawButton.CheckedChanged += DrawButtonChanged;
         FrameButton.CheckedChanged += FrameButtonChanged;
-        ZoomButton.CheckedChanged += ZoomButtonChanged;
         SelectButton.CheckedChanged += SelectButtonChanged;
         SmoothenButton.CheckedChanged += SmoothenButtonChanged;
         CutConnectButton.CheckedChanged += CutButtonChanged;
@@ -2294,12 +2292,6 @@ internal partial class LevelEditorForm : FormMod, IMessageFilter
     private void ResetViewPort()
     {
         Renderer.ResetViewport(EditorControl.Width, EditorControl.Height);
-    }
-
-    private void ZoomButtonChanged(object? sender, EventArgs e)
-    {
-        if (ZoomButton.Checked)
-            ChangeToolTo(Tools.ZoomTool);
     }
 
     private void ZoomFillToolStripMenuItemClick(object? sender, EventArgs e)

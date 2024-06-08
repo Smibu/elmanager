@@ -199,7 +199,6 @@ namespace Elmanager.LevelEditor
             FrameButton = new RadioButtonMod();
             PolyOpButton = new RadioButtonMod();
             EllipseButton = new RadioButtonMod();
-            ZoomButton = new RadioButtonMod();
             PipeButton = new RadioButtonMod();
             ObjectButton = new RadioButtonMod();
             DrawButton = new RadioButtonMod();
@@ -1505,7 +1504,6 @@ namespace Elmanager.LevelEditor
             ToolPanel.Controls.Add(FrameButton);
             ToolPanel.Controls.Add(PolyOpButton);
             ToolPanel.Controls.Add(EllipseButton);
-            ToolPanel.Controls.Add(ZoomButton);
             ToolPanel.Controls.Add(PipeButton);
             ToolPanel.Controls.Add(ObjectButton);
             ToolPanel.Controls.Add(DrawButton);
@@ -1631,20 +1629,6 @@ namespace Elmanager.LevelEditor
             EllipseButton.Text = "&Ellipse";
             EllipseButton.TextAlign = ContentAlignment.MiddleCenter;
             EllipseButton.UseVisualStyleBackColor = true;
-            // 
-            // ZoomButton
-            // 
-            ZoomButton.Appearance = Appearance.Button;
-            ZoomButton.AutoSize = true;
-            ZoomButton.Dock = DockStyle.Top;
-            ZoomButton.Location = new Point(0, 210);
-            ZoomButton.Margin = new Padding(6);
-            ZoomButton.Name = "ZoomButton";
-            ZoomButton.Size = new Size(168, 42);
-            ZoomButton.TabIndex = 7;
-            ZoomButton.Text = "&Zoom";
-            ZoomButton.TextAlign = ContentAlignment.MiddleCenter;
-            ZoomButton.UseVisualStyleBackColor = true;
             // 
             // PipeButton
             // 
@@ -1789,7 +1773,6 @@ namespace Elmanager.LevelEditor
         internal ToolStripStatusLabel CoordinateLabel;
         internal SaveFileDialog SaveFileDialog1;
         internal ToolStripPanel ToolStripPanel1;
-        internal RadioButtonMod ZoomButton;
         internal ToolStripMenuItem ConfigurationToolStripMenuItem;
         internal RadioButtonMod PolyOpButton;
         internal RadioButtonMod DrawButton;
