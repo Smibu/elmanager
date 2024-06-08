@@ -7,9 +7,9 @@ internal class GeneralSettings
     [JsonPropertyName("CheckForUpdatesOnStartup")]
     public bool CheckForUpdatesOnStartup { get; set; } = true;
     [JsonPropertyName("LevelDirectory")]
-    public string LevelDirectory { get; set; } = string.Empty;
+    public string? LevelDirectory { get; set; }
     [JsonPropertyName("LgrDirectory")]
-    public string LgrDirectory { get; set; } = string.Empty;
+    public string? LgrDirectory { get; set; }
     [JsonPropertyName("ReplayDirectory")]
-    public string ReplayDirectory { get; set; } = string.Empty;
+    public string? ReplayDirectory { get; set; }
 }

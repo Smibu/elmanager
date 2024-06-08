@@ -55,7 +55,6 @@ internal class Level
         "Hang Tight", "Hooked", "Apple Harvest", "More Levels"
     };
 
-    internal bool AllPicturesFound => MissingElements.Count == 0;
     internal string GroundTextureName = "ground";
     private readonly double[] _integrity = new double[4];
 
@@ -66,7 +65,6 @@ internal class Level
     internal readonly LevelTop10 Top10 = new();
     public int Identifier { get; private set; }
     private List<GraphicElementFileItem> _graphicElementFileItems = new();
-    internal HashSet<(ImageType, string)> MissingElements = new();
 
     public string LgrFile = "default";
     private string _title = "New level";
@@ -275,6 +273,7 @@ internal class Level
         {
             GraphicElements.Add(z with { });
         }
+        UpdateGraphicElementFileItems();
     }
 
 
@@ -388,9 +387,9 @@ internal class Level
 
     public double Height => Bounds.YMax - Bounds.YMin;
 
-    public int TextureCount => GraphicElements.Count(texture => texture is GraphicElement.Texture);
+    public int TextureCount => GraphicElements.Count(texture => texture is GraphicElement.Texture or GraphicElement.MissingTexture);
 
-    public int PictureCount => GraphicElements.Count(texture => texture is GraphicElement.Picture);
+    public int PictureCount => GraphicElements.Count(texture => texture is GraphicElement.Picture or GraphicElement.MissingPicture);
 
     internal int PictureTextureCount => GraphicElements.Count;
 
@@ -748,14 +747,9 @@ internal class Level
 
     public Bounds Bounds { get; private set; }
 
-    /// <summary>
-    ///     This method should only be called once (when loading level).
-    /// </summary>
-    /// <param name="lgrImages"></param>
     internal void UpdateImages(Dictionary<string, DrawableImage> lgrImages)
     {
         GraphicElements = new List<GraphicElement>();
-        MissingElements = new HashSet<(ImageType, string)>();
         foreach (var fileItem in _graphicElementFileItems)
         {
             if (fileItem is GraphicElementFileItem.PictureFileItem pItem)
@@ -766,7 +760,7 @@ internal class Level
                 }
                 else
                 {
-                    MissingElements.Add((ImageType.Picture, pItem.PictureName));
+                    GraphicElements.Add(GraphicElement.MissingPic(pItem.PictureName, fileItem.Clipping, fileItem.Distance, fileItem.Position));
                 }
             }
             else if (fileItem is GraphicElementFileItem.TextureFileItem tItem)
@@ -779,12 +773,12 @@ internal class Level
                     }
                     else
                     {
-                        MissingElements.Add((ImageType.Mask, tItem.MaskName));
+                        GraphicElements.Add(GraphicElement.MissingText(tItem.TextureName, tItem.MaskName, fileItem.Clipping, fileItem.Distance, fileItem.Position));
                     }
                 }
                 else
                 {
-                    MissingElements.Add((ImageType.Texture, tItem.TextureName));
+                    GraphicElements.Add(GraphicElement.MissingText(tItem.TextureName, tItem.MaskName, fileItem.Clipping, fileItem.Distance, fileItem.Position));
                 }
             }
         }

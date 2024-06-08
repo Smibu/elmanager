@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
+using System.Linq;
 using System.Reflection;
 using System.Windows.Forms;
 using BrightIdeasSoftware;
@@ -103,5 +104,15 @@ internal static class UiUtils
     {
         return MessageBox.Show(text, "Elmanager", MessageBoxButtons.YesNo,
             MessageBoxIcon.Question) == DialogResult.Yes;
+    }
+
+    public static void SetDropDownWidth(ToolStripComboBox comboBox)
+    {
+        var width = comboBox.Items.Cast<object>()
+            .Select(obj => TextRenderer.MeasureText(obj.ToString(), comboBox.Font).Width)
+            .Prepend(0)
+            .Max();
+        comboBox.DropDownWidth = width;
+        comboBox.Width = width + SystemInformation.VerticalScrollBarWidth;
     }
 }

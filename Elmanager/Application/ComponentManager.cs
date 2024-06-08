@@ -17,7 +17,7 @@ internal static class ComponentManager
 
     internal static void LaunchLevelEditor(string? levPath = null)
     {
-        var le = levPath != null ? new LevelEditorForm(levPath) : new LevelEditorForm();
+        var le = new LevelEditorForm(levPath);
         AppCtx.AddAndShow(le);
     }
 

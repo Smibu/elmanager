@@ -53,14 +53,13 @@ internal partial class LevelEditorForm : FormMod, IMessageFilter
     private bool _pictureFilter = true;
     private bool _textureFilter = true;
     internal IEditorTool CurrentTool = null!;
-    private EditorLev _editorLev = null!;
+    private EditorLev _editorLev = new(new Level(), null);
     internal Level Lev => _editorLev.Lev;
     private ElmaFile? LevFile => _editorLev.File;
     internal ElmaRenderer Renderer = null!;
     internal IEditorTool[] Tools = null!;
     private List<string>? _currLevDirFiles;
     private bool _draggingScreen;
-    private Lgr.Lgr? _editorLgr;
     private List<Vector> _errorPoints = new();
     private int _historyIndex;
     private int _savedIndex;
@@ -77,7 +76,7 @@ internal partial class LevelEditorForm : FormMod, IMessageFilter
     private int _selectedPolygonCount;
     private int _selectedTextureCount;
     private int _selectedVerticeCount;
-    private bool PictureToolAvailable => _editorLgr != null;
+    private bool IsLgrLoaded => EditorLgr != null;
     private bool _draggingGrid;
     private Vector _gridStartOffset;
     private bool _programmaticPropertyChange;
@@ -91,13 +90,18 @@ internal partial class LevelEditorForm : FormMod, IMessageFilter
     private readonly SceneSettings _sceneSettings = new();
     private readonly TaskCompletionSource _tcs = new();
     private readonly FullScreenController _fullScreenController;
+    private LgrManager? _lgrManager;
 
-    internal LevelEditorForm(string levPath)
+    internal LevelEditorForm(string? levPath)
     {
         InitializeComponent();
         InitializeInternalMenu();
         _fullScreenController = CreateFullScreenController();
-        var lev = TryLoadLevel(levPath);
+        var lev = levPath != null
+            ? TryLoadLevel(levPath)
+            : Settings.LastLevel != null
+                ? TryLoadLevel(Settings.LastLevel)
+                : CreateBlankLevel();
         PostInit(lev);
     }
 
@@ -156,15 +160,8 @@ internal partial class LevelEditorForm : FormMod, IMessageFilter
         }
     }
 
-    public LevelEditorForm()
+    public LevelEditorForm(): this(null)
     {
-        InitializeComponent();
-        InitializeInternalMenu();
-        _fullScreenController = CreateFullScreenController();
-        var lev = Settings.LastLevel != null
-            ? TryLoadLevel(Settings.LastLevel)
-            : CreateBlankLevel();
-        PostInit(lev);
     }
 
     private void PostInit(EditorLev lev)
@@ -188,31 +185,31 @@ internal partial class LevelEditorForm : FormMod, IMessageFilter
 
     internal bool EffectiveAppleFilter => _appleFilter &&
                                           (ShowObjectFramesButton.Checked ||
-                                           (ShowObjectsButton.Checked && PictureToolAvailable));
+                                           (ShowObjectsButton.Checked && IsLgrLoaded));
 
     internal bool EffectiveKillerFilter => _killerFilter &&
                                            (ShowObjectFramesButton.Checked ||
-                                            (ShowObjectsButton.Checked && PictureToolAvailable));
+                                            (ShowObjectsButton.Checked && IsLgrLoaded));
 
     internal bool EffectiveFlowerFilter => _flowerFilter &&
                                            (ShowObjectFramesButton.Checked ||
-                                            (ShowObjectsButton.Checked && PictureToolAvailable));
+                                            (ShowObjectsButton.Checked && IsLgrLoaded));
 
     internal bool EffectiveGrassFilter => _grassFilter &&
                                           (ShowGrassEdgesButton.Checked ||
-                                           (showGrassButton.Checked && PictureToolAvailable));
+                                           (showGrassButton.Checked && IsLgrLoaded));
 
     internal bool EffectiveGroundFilter => _groundFilter &&
                                            (ShowGroundEdgesButton.Checked ||
-                                            (ShowGroundButton.Checked && PictureToolAvailable));
+                                            (ShowGroundButton.Checked && IsLgrLoaded));
 
     internal bool EffectiveTextureFilter => _textureFilter &&
                                             (ShowTextureFramesButton.Checked ||
-                                             (ShowTexturesButton.Checked && PictureToolAvailable));
+                                             ShowTexturesButton.Checked);
 
     internal bool EffectivePictureFilter => _pictureFilter &&
                                             (ShowPictureFramesButton.Checked ||
-                                             (ShowPicturesButton.Checked && PictureToolAvailable));
+                                             ShowPicturesButton.Checked);
 
     private int SelectedElementCount => _selectedObjectCount + _selectedPictureCount + _selectedVerticeCount +
                                         _selectedTextureCount;
@@ -233,7 +230,7 @@ internal partial class LevelEditorForm : FormMod, IMessageFilter
     internal SceneSettings SceneSettings => _sceneSettings;
 
     internal PlayController PlayController { get; } = new() { Settings = Global.AppSettings.LevelEditor.PlayingSettings };
-    public Lgr.Lgr? EditorLgr => _editorLgr;
+    public Lgr.Lgr? EditorLgr => Renderer.OpenGlLgr?.CurrentLgr;
 
     internal void TransformMenuItemClick(object? sender = null, EventArgs? e = null)
     {
@@ -332,7 +329,7 @@ internal partial class LevelEditorForm : FormMod, IMessageFilter
                 _selectedObjectCount++;
         foreach (GraphicElement x in Lev.GraphicElements)
             if (x.Position.Mark == VectorMark.Selected)
-                if (x is GraphicElement.Picture)
+                if (x is GraphicElement.Picture or GraphicElement.MissingPicture)
                     _selectedPictureCount++;
                 else
                     _selectedTextureCount++;
@@ -362,8 +359,9 @@ internal partial class LevelEditorForm : FormMod, IMessageFilter
 
     private void AfterSettingsClosed()
     {
-        Renderer.UpdateSettings(Settings.RenderingSettings);
-        UpdateLgrTools();
+        var r = Renderer.UpdateSettings(Lev, Settings.RenderingSettings);
+        UpdateLgrTools(r);
+        UpdateLabels();
         UpdateButtons();
         RedrawScene();
     }
@@ -405,17 +403,6 @@ internal partial class LevelEditorForm : FormMod, IMessageFilter
         CurrentTool.InActivate();
         CurrentTool = Tools[index];
         ActivateCurrentAndRedraw();
-    }
-
-    private void CheckForPictureLoss()
-    {
-        if (!Lev.AllPicturesFound)
-        {
-            var text = "Level has pictures that the LGR is missing: " +
-                       string.Join(", ", Lev.MissingElements.Select(m => $"{m.Item2}")) +
-                       ". These pictures are lost if you save this level.";
-            ShowWarning(text);
-        }
     }
 
     private void ShowWarning(string text)
@@ -487,11 +474,31 @@ internal partial class LevelEditorForm : FormMod, IMessageFilter
                 items.Add("Some polygon edges are too short.");
             }
 
+            var hasErrors = items.Count > 0;
+            var missingNames = Lev.GraphicElements.Select(e => e switch
+            {
+                GraphicElement.MissingPicture missingPicture => missingPicture.Name,
+                GraphicElement.MissingTexture missingTexture => missingTexture.TextureName,
+                _ => null
+            }).Where(name => name != null).Distinct().ToList();
+            var hasWarnings = missingNames.Any();
+            if (hasWarnings)
+            {
+                var text = $"Level has pictures that the LGR is missing: {string.Join(", ", missingNames)}";
+                items.Add(text);
+            }
+
             var c = items.Count;
             if (c == 0)
             {
                 topologyList.Text = "No problems.";
                 ResetTopologyListStyle();
+            }
+            else if (!hasErrors && hasWarnings)
+            {
+                topologyList.Text = "1 warning was found!";
+                topologyList.ForeColor = Color.DarkOrange;
+                topologyList.Font = new Font(topologyList.Font, FontStyle.Bold);
             }
             else
             {
@@ -639,7 +646,7 @@ internal partial class LevelEditorForm : FormMod, IMessageFilter
     {
         _sceneSettings.AdditionalPolys = CurrentTool.GetExtraPolygons();
         var jf = PlayController.Playing && PlayController.FollowDriver ? _zoomCtrl.Cam.FixJitter() : new Vector();
-        Renderer.DrawScene(_zoomCtrl.Cam, _sceneSettings);
+        Renderer.DrawScene(Lev, _zoomCtrl.Cam, _sceneSettings, Settings.RenderingSettings);
 
         var drawAction = GetVertexDrawAction();
 
@@ -647,9 +654,9 @@ internal partial class LevelEditorForm : FormMod, IMessageFilter
         {
             var mouse = GetMouseCoordinates();
             Renderer.DrawDashLine(_zoomCtrl.Cam.XMin, mouse.Y, _zoomCtrl.Cam.XMax,
-                mouse.Y, Settings.CrosshairColor);
+                mouse.Y, Settings.CrosshairColor, Settings.RenderingSettings);
             Renderer.DrawDashLine(mouse.X, _zoomCtrl.Cam.YMin, mouse.X,
-                _zoomCtrl.Cam.YMax, Settings.CrosshairColor);
+                _zoomCtrl.Cam.YMax, Settings.CrosshairColor, Settings.RenderingSettings);
         }
 
         foreach (Polygon x in Lev.Polygons)
@@ -661,7 +668,7 @@ internal partial class LevelEditorForm : FormMod, IMessageFilter
                         if (x.IsGrass)
                         {
                             Renderer.DrawGrassPolygon(x, Settings.HighlightColor,
-                                Settings.RenderingSettings.ShowInactiveGrassEdges);
+                                Settings.RenderingSettings.ShowInactiveGrassEdges, Settings.RenderingSettings);
                         }
                         else
                             Renderer.DrawPolygon(x, Settings.HighlightColor);
@@ -711,12 +718,10 @@ internal partial class LevelEditorForm : FormMod, IMessageFilter
             switch (z.Mark)
             {
                 case VectorMark.Selected:
-                    Renderer.DrawRectangle(z.X, z.Y, z.X + t.Width, z.Y - t.Height,
-                        Settings.SelectionColor);
+                    Renderer.DrawGraphicElementFrame(t, Settings.RenderingSettings, Settings.SelectionColor);
                     break;
                 case VectorMark.Highlight:
-                    Renderer.DrawRectangle(z.X, z.Y, z.X + t.Width, z.Y - t.Height,
-                        Settings.HighlightColor);
+                    Renderer.DrawGraphicElementFrame(t, Settings.RenderingSettings, Settings.HighlightColor);
                     break;
             }
         }
@@ -727,12 +732,12 @@ internal partial class LevelEditorForm : FormMod, IMessageFilter
         {
             if (Settings.RenderingSettings.ShowObjects)
             {
-                Renderer.DrawDummyPlayer(p.X, p.Y, _sceneSettings, new PlayerRenderOpts(Color.Green, false, true, true));
+                Renderer.DrawDummyPlayer(p.X, p.Y, _sceneSettings, new PlayerRenderOpts(Color.Green, false, true, true), Settings.RenderingSettings);
             }
 
             if (Settings.RenderingSettings.ShowObjectFrames)
             {
-                Renderer.DrawDummyPlayer(p.X, p.Y, _sceneSettings, new PlayerRenderOpts(Color.Green, false, false, true));
+                Renderer.DrawDummyPlayer(p.X, p.Y, _sceneSettings, new PlayerRenderOpts(Color.Green, false, false, true), Settings.RenderingSettings);
             }
             GL.Disable(EnableCap.Texture2D);
             GL.Disable(EnableCap.AlphaTest);
@@ -745,11 +750,11 @@ internal partial class LevelEditorForm : FormMod, IMessageFilter
             var driver = PlayController.Driver!;
             if (Settings.RenderingSettings.ShowObjects && Renderer.OpenGlLgr != null)
             {
-                Renderer.DrawPlayer(driver.GetState(), PlayController.RenderOptsLgr, _sceneSettings);
+                Renderer.DrawPlayer(driver.GetState(), PlayController.RenderOptsLgr, _sceneSettings, Settings.RenderingSettings);
             }
             else if (Settings.RenderingSettings.ShowObjectFrames)
             {
-                Renderer.DrawPlayer(driver.GetState(), PlayController.RenderOptsFrame, _sceneSettings);
+                Renderer.DrawPlayer(driver.GetState(), PlayController.RenderOptsFrame, _sceneSettings, Settings.RenderingSettings);
             }
 
             GL.Disable(EnableCap.Blend);
@@ -1017,6 +1022,7 @@ internal partial class LevelEditorForm : FormMod, IMessageFilter
         UpdateButtons();
         Size = Settings.Size;
         Renderer = new ElmaRenderer(EditorControl, Settings.RenderingSettings);
+        UpdateLgrTools(Renderer.UpdateSettings(Lev, Settings.RenderingSettings));
 
         Tools = new IEditorTool[]
         {
@@ -1041,7 +1047,7 @@ internal partial class LevelEditorForm : FormMod, IMessageFilter
         InitializeLevel(lev);
     }
 
-    public async void InitializeLevel(EditorLev lev)
+    private async void InitializeLevel(EditorLev lev)
     {
         _editorLev = lev;
         if (lev.File is not null)
@@ -1050,16 +1056,16 @@ internal partial class LevelEditorForm : FormMod, IMessageFilter
         }
         await PlayController.NotifyLevelChanged();
         PlayTimeLabel.Text = "";
-        _zoomCtrl = new ZoomController(new ElmaCamera(), Lev, Settings.RenderingSettings, () => RedrawScene());
+        _zoomCtrl = new ZoomController(new ElmaCamera(), Lev, () => RedrawScene());
         SetNotModified();
-        Renderer.InitializeLevel(Lev);
-        Renderer.UpdateSettings(Settings.RenderingSettings);
+        var r = Renderer.UpdateSettings(Lev, Settings.RenderingSettings);
+        Renderer.InitializeLevel(Lev, Settings.RenderingSettings);
         Lev.UpdateBounds();
-        _zoomCtrl.ZoomFill();
+        _zoomCtrl.ZoomFill(Settings.RenderingSettings);
         topologyList.Text = string.Empty;
         topologyList.DropDownItems.Clear();
         ResetTopologyListStyle();
-        UpdateLgrTools();
+        UpdateLgrTools(r);
         UpdateLabels();
         ClearHistory();
         UpdatePrevNextButtons();
@@ -1152,7 +1158,7 @@ internal partial class LevelEditorForm : FormMod, IMessageFilter
     {
         if (Renderer.OpenGlLgr is null)
         {
-            UiUtils.ShowError("You need to select LGR file from settings before you can use texturize tool.", "Note",
+            UiUtils.ShowError("You need to set LGR directory from settings before you can use texturize tool.", "Note",
                 MessageBoxIcon.Information);
             return;
         }
@@ -1272,39 +1278,55 @@ internal partial class LevelEditorForm : FormMod, IMessageFilter
     {
         if (!_programmaticPropertyChange)
         {
+            var wasModified = Lev.Title != TitleBox.Text || Lev.LgrFile != SelectedLgrFilename ||
+                              Lev.GroundTextureName != SelectedGround.Name ||
+                              Lev.SkyTextureName != SelectedSky.Name;
             Lev.Title = TitleBox.Text;
-            Lev.LgrFile = LGRBox.Text;
-            if (sender is not null && (sender.Equals(SkyComboBox) || sender.Equals(GroundComboBox)))
+            Lev.LgrFile = SelectedLgrFilename;
+            if (sender is not null)
             {
-                if (sender.Equals(GroundComboBox))
-                    Lev.GroundTextureName = GroundComboBox.SelectedItem.ToString() ?? "ground";
-                if (sender.Equals(SkyComboBox))
-                    Lev.SkyTextureName = SkyComboBox.SelectedItem.ToString() ?? "sky";
-                if (Settings.RenderingSettings.DefaultGroundAndSky)
-                    UiUtils.ShowError("Default ground and sky is enabled, so you won\'t see this change in editor.",
-                        "Warning", MessageBoxIcon.Exclamation);
-                Renderer.OpenGlLgr?.UpdateGroundAndSky(Lev, Settings.RenderingSettings.DefaultGroundAndSky);
-                RedrawScene();
+                if (sender.Equals(SkyComboBox) || sender.Equals(GroundComboBox) || sender.Equals(LGRBox))
+                {
+                    if (sender.Equals(GroundComboBox))
+                        Lev.GroundTextureName = SelectedGround.Name;
+                    if (sender.Equals(SkyComboBox))
+                        Lev.SkyTextureName = SelectedSky.Name;
+                    if (Settings.RenderingSettings.DefaultGroundAndSky)
+                        UiUtils.ShowError("Default ground and sky is enabled, so you won\'t see this change in editor.",
+                            "Warning", MessageBoxIcon.Exclamation);
+                    var r = Renderer.UpdateSettings(Lev, Settings.RenderingSettings);
+                    UpdateLgrTools(r);
+                    UpdateLabels();
+                    RedrawScene();
+                }
             }
 
-            SetModified(LevModification.Decorations);
+            if (wasModified)
+            {
+                SetModified(LevModification.Decorations);
+            }
         }
     }
+
+    private TextureEntry SelectedGround => (GroundComboBox.SelectedItem as TextureEntry)!;
+    private TextureEntry SelectedSky => (SkyComboBox.SelectedItem as TextureEntry)!;
+
+    private string SelectedLgrFilename => LGRBox.SelectedItem is LgrEntry l ? l.Filename : "";
 
     private void LoadFromHistory()
     {
         _editorLev = _editorLev with { Lev = _history[_historyIndex].Clone() };
-        Renderer.Lev = Lev;
         _zoomCtrl.Lev = Lev;
         Lev.UpdateAllPolygons(Settings.RenderingSettings.GrassZoom);
         UpdateUndoRedo();
         topologyList.DropDownItems.Clear();
         topologyList.Text = "";
         _errorPoints.Clear();
-        Renderer.OpenGlLgr?.UpdateGroundAndSky(Lev, Settings.RenderingSettings.DefaultGroundAndSky);
         CurrentTool.InActivate();
-        ActivateCurrentAndRedraw();
+        var r = Renderer.UpdateSettings(Lev, Settings.RenderingSettings);
+        UpdateLgrTools(r);
         UpdateLabels();
+        ActivateCurrentAndRedraw();
         if (_savedIndex != _historyIndex)
         {
             SetModified(LevModification.Ground | LevModification.Objects | LevModification.Decorations, false);
@@ -1364,7 +1386,7 @@ internal partial class LevelEditorForm : FormMod, IMessageFilter
                         CopyMenuItem.Visible = true;
                         DeleteMenuItem.Visible = true;
                         convertToToolStripMenuItem.Visible = true;
-                        picturesConvertItem.Visible = _editorLgr != null;
+                        picturesConvertItem.Visible = IsLgrLoaded;
                     }
 
                     TransformMenuItem.Visible = SelectedElementCount > 1;
@@ -1532,7 +1554,7 @@ internal partial class LevelEditorForm : FormMod, IMessageFilter
         }
         else
         {
-            _zoomCtrl.Zoom(GetMouseCoordinates(), delta > 0, 1 - MouseWheelStep / 100.0);
+            _zoomCtrl.Zoom(GetMouseCoordinates(), delta > 0, 1 - MouseWheelStep / 100.0, Settings.RenderingSettings);
         }
     }
 
@@ -1554,7 +1576,7 @@ internal partial class LevelEditorForm : FormMod, IMessageFilter
             - mouseCoords.Y + GetGridMouseRatio(settings.GridSize, gy, _zoomCtrl.Cam.YMin, mouseCoords.Y) *
             newSize) % newSize;
         settings.GridSize = newSize;
-        Renderer.UpdateSettings(settings);
+        Renderer.UpdateSettings(Lev, settings);
         RedrawScene();
     }
 
@@ -1587,7 +1609,7 @@ internal partial class LevelEditorForm : FormMod, IMessageFilter
         }
     }
 
-    public void OpenLevel(string path)
+    private void OpenLevel(string path)
     {
         if (!PromptToSaveIfModified())
             return;
@@ -1600,7 +1622,7 @@ internal partial class LevelEditorForm : FormMod, IMessageFilter
         var rSettings = new RenderingSettingsForm(Settings.RenderingSettings);
         rSettings.Changed += x =>
         {
-            Renderer.UpdateSettings(x);
+            Renderer.UpdateSettings(Lev, x);
             RedrawScene();
         };
         rSettings.ShowDialog();
@@ -1619,9 +1641,9 @@ internal partial class LevelEditorForm : FormMod, IMessageFilter
     {
         if (PictureButton.Checked)
         {
-            if (!PictureToolAvailable)
+            if (!IsLgrLoaded)
             {
-                UiUtils.ShowError("You need to select LGR file from settings before you can use picture tool.",
+                UiUtils.ShowError("You need to set LGR directory from settings before you can use picture tool.",
                     "Note", MessageBoxIcon.Information);
                 SelectButton.Checked = true;
             }
@@ -1685,7 +1707,7 @@ internal partial class LevelEditorForm : FormMod, IMessageFilter
                 ImageSelection.TextureSelectionMultipleMasks(var txt, _, _) when curr is GraphicElement.Picture
                     =>
                     GraphicElement.Text(clipping, distance, position, Renderer.OpenGlLgr.DrawableImageFromLgrImage(txt),
-                        Renderer.OpenGlLgr.DrawableImageFromLgrImage(_editorLgr!.LgrImages.Values.First(i => i.Type == ImageType.Mask))),
+                        Renderer.OpenGlLgr.DrawableImageFromLgrImage(EditorLgr!.LgrImages.Values.First(i => i.Type == ImageType.Mask))),
                 ImageSelection.TextureSelectionMultipleTextures(var mask, _, _) when
                     curr is GraphicElement.Texture t => GraphicElement.Text(clipping,
                         distance, position, t.TextureInfo, Renderer.OpenGlLgr.DrawableImageFromLgrImage(mask)),
@@ -1779,7 +1801,7 @@ internal partial class LevelEditorForm : FormMod, IMessageFilter
     private void RefreshOnOpen(object sender, EventArgs e)
     {
         ViewerResized();
-        _zoomCtrl.ZoomFill();
+        _zoomCtrl.ZoomFill(Settings.RenderingSettings);
     }
 
     private void SaveAs(object? sender = null, EventArgs? e = null)
@@ -1833,7 +1855,7 @@ internal partial class LevelEditorForm : FormMod, IMessageFilter
         }
     }
 
-    private string GetInitialDir()
+    private string? GetInitialDir()
     {
         return LevFile is not null ? LevFile.FileInfo.DirectoryName! : Global.AppSettings.General.LevelDirectory;
     }
@@ -1849,9 +1871,9 @@ internal partial class LevelEditorForm : FormMod, IMessageFilter
     private void SaveLevel(string path)
     {
         Lev.Title = TitleBox.Text;
-        Lev.LgrFile = LGRBox.Text;
-        Lev.GroundTextureName = GroundComboBox.Text;
-        Lev.SkyTextureName = SkyComboBox.Text;
+        Lev.LgrFile = SelectedLgrFilename;
+        Lev.GroundTextureName = SelectedGround.Name;
+        Lev.SkyTextureName = SelectedSky.Name;
         if (Lev.GroundTextureName == "")
             Lev.GroundTextureName = "ground";
         if (Lev.SkyTextureName == "")
@@ -1994,7 +2016,7 @@ internal partial class LevelEditorForm : FormMod, IMessageFilter
         Settings.SnapToGrid = snapToGridButton.Checked;
         Settings.LockGrid = lockGridButton.Checked;
         Settings.ShowCrossHair = showCrossHairButton.Checked;
-        Renderer.UpdateSettings(settings);
+        Renderer.UpdateSettings(Lev, settings);
         RedrawScene();
     }
 
@@ -2002,7 +2024,7 @@ internal partial class LevelEditorForm : FormMod, IMessageFilter
     {
         Resize += ViewerResized;
         EditorControl.Paint += RedrawScene;
-        ZoomFillButton.Click += (_, _) => _zoomCtrl.ZoomFill();
+        ZoomFillButton.Click += (_, _) => _zoomCtrl.ZoomFill(Settings.RenderingSettings);
         ObjectButton.CheckedChanged += ObjectButtonChanged;
         VertexButton.CheckedChanged += VertexButtonChanged;
         PipeButton.CheckedChanged += PipeButtonChanged;
@@ -2016,7 +2038,7 @@ internal partial class LevelEditorForm : FormMod, IMessageFilter
         CutConnectButton.CheckedChanged += CutButtonChanged;
         AutoGrassButton.CheckedChanged += AutoGrassButtonChanged;
         PictureButton.CheckedChanged += PictureButtonChanged;
-        LGRBox.TextChanged += LevelPropertyModified;
+        LGRBox.SelectedIndexChanged += LevelPropertyModified;
         GroundComboBox.SelectedIndexChanged += LevelPropertyModified;
         SkyComboBox.SelectedIndexChanged += LevelPropertyModified;
         TitleBox.TextChanged += LevelPropertyModified;
@@ -2158,48 +2180,87 @@ internal partial class LevelEditorForm : FormMod, IMessageFilter
 
         _programmaticPropertyChange = true;
         TitleBox.Text = Lev.Title;
-        LGRBox.Text = Lev.LgrFile;
-        if (PictureToolAvailable)
+        LGRBox.Items.Clear();
+        if (_lgrManager?.LgrFolderPath != Global.AppSettings.General.LgrDirectory && Global.AppSettings.General.LgrDirectory != null)
         {
-            if (!GroundComboBox.Items.Contains(Lev.GroundTextureName))
+            _lgrManager = new LgrManager(Global.AppSettings.General.LgrDirectory);
+        }
+        else if (Global.AppSettings.General.LgrDirectory == null)
+        {
+            _lgrManager = null;
+        }
+        if (_lgrManager != null)
+        {
+            var lgrEntries = _lgrManager.GetLgrs().ToArray();
+            LGRBox.Items.AddRange(lgrEntries);
+            var found = lgrEntries.FirstOrDefault(e => e.Filename.ToLower() == Lev.LgrFile);
+            if (found is not null)
             {
-                ShowWarning($"The current LGR does not have level ground texture: {Lev.GroundTextureName}");
+                LGRBox.SelectedItem = found;
             }
-            if (!SkyComboBox.Items.Contains(Lev.SkyTextureName))
+            else
             {
-                ShowWarning($"The current LGR does not have level sky texture: {Lev.SkyTextureName}");
+                LGRBox.Items.Add(new LgrEntry(Lev.LgrFile, null));
+                LGRBox.SelectedIndex = LGRBox.Items.Count - 1;
             }
         }
-        GroundComboBox.Text = Lev.GroundTextureName;
-        SkyComboBox.Text = Lev.SkyTextureName;
+        else
+        {
+            LGRBox.Items.Add(new LgrEntry(Lev.LgrFile, null));
+            LGRBox.SelectedIndex = 0;
+        }
+
+        UiUtils.SetDropDownWidth(LGRBox);
+
+        var foundGround = GroundComboBox.Items.Cast<TextureEntry>()
+            .FirstOrDefault(t => t.Name == Lev.GroundTextureName);
+        if (foundGround is null)
+        {
+            foundGround = new TextureEntry(Lev.GroundTextureName, IsLgrLoaded);
+            GroundComboBox.Items.Add(foundGround);
+        }
+
+        var foundSky = SkyComboBox.Items.Cast<TextureEntry>().FirstOrDefault(t => t.Name == Lev.SkyTextureName);
+        if (foundSky is null)
+        {
+            foundSky = new TextureEntry(Lev.SkyTextureName, IsLgrLoaded);
+            SkyComboBox.Items.Add(foundSky);
+        }
+
+        UiUtils.SetDropDownWidth(GroundComboBox);
+        UiUtils.SetDropDownWidth(SkyComboBox);
+
+        GroundComboBox.SelectedItem = foundGround;
+        SkyComboBox.SelectedItem = foundSky;
         _programmaticPropertyChange = false;
         BestTimeLabel.Text = "Best time: " + Lev.Top10.GetSinglePlayerString(0);
         UpdateSelectionInfo();
     }
 
-    private void UpdateLgrTools()
+    private void UpdateLgrTools(RendererSettingsChangeResult result)
     {
-        if (Renderer.OpenGlLgr != null && _editorLgr?.Path != Renderer.OpenGlLgr.CurrentLgr.Path)
+        if (!result.LgrUpdated)
         {
-            _editorLgr = Renderer.OpenGlLgr.CurrentLgr;
+            return;
+        }
+        if (EditorLgr != null)
+        {
             PicturePropertiesMenuItem.Enabled = true;
             SkyComboBox.Enabled = true;
             GroundComboBox.Enabled = true;
             SkyComboBox.Items.Clear();
             GroundComboBox.Items.Clear();
-            var names = _editorLgr.ListedImagesExcludingSpecial.Where(image =>
-                image.Type == ImageType.Texture).Select(image => image.Name).OrderBy(x => x).ToArray();
+            var names = EditorLgr.ListedImagesExcludingSpecial.Where(image =>
+                image.Type == ImageType.Texture).Select(image => new TextureEntry(image.Name, false)).OrderBy(x => x.Name).ToArray();
             SkyComboBox.Items.AddRange(names);
             GroundComboBox.Items.AddRange(names);
         }
-        else if (!PictureToolAvailable)
+        else
         {
             PicturePropertiesMenuItem.Enabled = false;
             SkyComboBox.Enabled = false;
             GroundComboBox.Enabled = false;
         }
-
-        CheckForPictureLoss();
     }
 
     private void UpdateUndoRedo()
@@ -2245,7 +2306,7 @@ internal partial class LevelEditorForm : FormMod, IMessageFilter
 
     private void ZoomFillToolStripMenuItemClick(object? sender, EventArgs e)
     {
-        _zoomCtrl.ZoomFill();
+        _zoomCtrl.ZoomFill(Settings.RenderingSettings);
     }
 
     private void TitleBoxTextChanged(object? sender, EventArgs e)
@@ -2292,10 +2353,7 @@ internal partial class LevelEditorForm : FormMod, IMessageFilter
                     lev = new Level();
                 }
 
-                if (Renderer.OpenGlLgr != null)
-                {
-                    lev.UpdateImages(Renderer.OpenGlLgr.DrawableImages);
-                }
+                lev.UpdateImages(Renderer.OpenGlLgr?.DrawableImages ?? new Dictionary<string, DrawableImage>());
             }
             else if (file.EndsWith(".svg") || file.EndsWith(".svgz"))
             {
@@ -2337,7 +2395,7 @@ internal partial class LevelEditorForm : FormMod, IMessageFilter
         if (imported > 0)
         {
             SetModified(LevModification.Objects | LevModification.Ground | LevModification.Decorations);
-            _zoomCtrl.ZoomFill();
+            _zoomCtrl.ZoomFill(Settings.RenderingSettings);
         }
     }
 
@@ -2348,7 +2406,7 @@ internal partial class LevelEditorForm : FormMod, IMessageFilter
         {
             if (saveAsPictureDialog.FileName.EndsWith(".png"))
             {
-                Renderer.SaveSnapShot(saveAsPictureDialog.FileName, _zoomCtrl, _sceneSettings);
+                Renderer.SaveSnapShot(Lev, saveAsPictureDialog.FileName, _zoomCtrl, _sceneSettings, Settings.RenderingSettings);
             }
             else if (saveAsPictureDialog.FileName.EndsWith(".svg"))
             {

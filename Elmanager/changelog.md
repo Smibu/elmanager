@@ -1,5 +1,9 @@
 # Elmanager changelog
 
+## Upcoming
+* SLE: Publicly known LGRs are identified and shown in LGR file box from LGR directory.
+* SLE: If LGR is missing pictures or textures, the missing ones are shown as placeholders in editor instead of being deleted.
+
 ## 11.5.2024
 * SLE: Bugfix: Changing properties for multiple pictures/textures with different distances wasn't working.
 * SLE: Bugfix: Mirroring for pictures/textures wasn't working.

@@ -251,6 +251,33 @@ namespace Elmanager.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to [
+        ///  {
+        ///    &quot;hash&quot;: &quot;AEC50C56B2A000A32FA352C9FCE64198C73C6C339C147599F1CF58A1B8233614&quot;,
+        ///    &quot;name&quot;: &quot;4K Fancyboosted&quot;
+        ///  },
+        ///  {
+        ///    &quot;hash&quot;: &quot;E30FDAF0F3839EB683681F1FDC0A40268F37938C9876060F12F84B7A9351B4CF&quot;,
+        ///    &quot;name&quot;: &quot;8-bitV10 Fancyboosted&quot;
+        ///  },
+        ///  {
+        ///    &quot;hash&quot;: &quot;AEFAE8F78865E3262A2A308750BD94DEEF56CD6C6434F36F9ABB87BE2B8EB3B2&quot;,
+        ///    &quot;name&quot;: &quot;AcidTrip Fancyboosted&quot;
+        ///  },
+        ///  {
+        ///    &quot;hash&quot;: &quot;B3A6BDF53584D8FFA542E6FEDDB2F26E623AE898CB2721693B377FF242C33E0C&quot;,
+        ///    &quot;name&quot;: &quot;Across Fancyboosted&quot;
+        ///  },
+        ///  {
+        ///    &quot;hash&quot;: &quot;1 [rest of string was truncated]&quot;;.
+        /// </summary>
+        internal static string Lgrs {
+            get {
+                return ResourceManager.GetString("Lgrs", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to                     GNU GENERAL PUBLIC LICENSE
         ///                       Version 3, 29 June 2007
         ///

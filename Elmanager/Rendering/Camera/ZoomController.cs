@@ -8,7 +8,6 @@ namespace Elmanager.Rendering.Camera;
 
 internal class ZoomController
 {
-    private readonly RenderingSettings _settings;
     private double MaxDimension => Math.Max(ZoomFillxMax - ZoomFillxMin, ZoomFillyMax - ZoomFillyMin);
     private bool _smoothZoomInProgress;
     private readonly Action _redrawRequested;
@@ -16,11 +15,10 @@ internal class ZoomController
     private const double MinimumZoom = 0.000001;
 
 
-    public ZoomController(ElmaCamera camera, Level lev, RenderingSettings settings, Action redrawRequested)
+    public ZoomController(ElmaCamera camera, Level lev, Action redrawRequested)
     {
         Cam = camera;
         Lev = lev;
-        _settings = settings;
         _redrawRequested = redrawRequested;
     }
 
@@ -72,29 +70,29 @@ internal class ZoomController
 
     public Level Lev { get; set; }
 
-    internal void Zoom(Vector p, bool zoomIn, double zoomFactor)
+    internal void Zoom(Vector p, bool zoomIn, double zoomFactor, RenderingSettings settings)
     {
         var i = zoomIn ? zoomFactor : 1 / zoomFactor;
         var x = p.X;
         var y = p.Y;
         x -= (x - (Cam.XMax + Cam.XMin) / 2) * i;
         y -= (y - (Cam.YMax + Cam.YMin) / 2) * i;
-        PerformZoom(ZoomLevel * i, x, y);
+        PerformZoom(ZoomLevel * i, x, y, settings);
     }
 
-    internal void ZoomFill()
+    internal void ZoomFill(RenderingSettings settings)
     {
         var levelAspectRatio = (ZoomFillxMax - ZoomFillxMin) / (ZoomFillyMax - ZoomFillyMin);
         var newZoomLevel = (ZoomFillyMax - ZoomFillyMin) / 2;
         if (levelAspectRatio > Cam.AspectRatio)
             newZoomLevel = (ZoomFillxMax - ZoomFillxMin) / 2 / Cam.AspectRatio;
-        PerformZoom(newZoomLevel, (ZoomFillxMax + ZoomFillxMin) / 2, (ZoomFillyMax + ZoomFillyMin) / 2);
+        PerformZoom(newZoomLevel, (ZoomFillxMax + ZoomFillxMin) / 2, (ZoomFillyMax + ZoomFillyMin) / 2, settings);
     }
 
-    private void PerformZoom(double newZoomLevel, double newCenterX, double newCenterY)
+    private void PerformZoom(double newZoomLevel, double newCenterX, double newCenterY, RenderingSettings settings)
     {
-        if (_settings.SmoothZoomEnabled)
-            SmoothZoom(newZoomLevel, newCenterX, newCenterY);
+        if (settings.SmoothZoomEnabled)
+            SmoothZoom(newZoomLevel, newCenterX, newCenterY, settings);
         else
         {
             ZoomLevel = newZoomLevel;
@@ -109,7 +107,7 @@ internal class ZoomController
         _redrawRequested();
     }
 
-    private async void SmoothZoom(double newZoomLevel, double newCenterX, double newCenterY)
+    private async void SmoothZoom(double newZoomLevel, double newCenterX, double newCenterY, RenderingSettings settings)
     {
         if (_smoothZoomInProgress)
             return;
@@ -120,7 +118,7 @@ internal class ZoomController
         var zoomTimer = new Stopwatch();
         long elapsedTime = 0;
         zoomTimer.Start();
-        var duration = _settings.SmoothZoomDuration;
+        var duration = settings.SmoothZoomDuration;
         while (elapsedTime <= duration)
         {
             ZoomLevel = oldZoomLevel + (newZoomLevel - oldZoomLevel) * elapsedTime / duration;

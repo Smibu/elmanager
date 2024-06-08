@@ -48,7 +48,7 @@ internal class ReplayController : IDisposable
     private bool _playing;
     private bool _requestPlayCancel;
     private List<int> _visiblePlayerIndices = new();
-    public int? HighlightPlayerIndex { get; set; }
+    public int? HighlightPlayerIndex { get; private set; }
     internal Level? Lev;
     private double _playBackSpeed = 1.0;
     private readonly Stopwatch _playTimer = new();
@@ -70,6 +70,7 @@ internal class ReplayController : IDisposable
     private double _fixy;
     private readonly Timer _timer = new(25); // Don't update unnecessarily often to avoid overhead
     private Task? _playTask;
+    private readonly RenderingSettings _settings;
 
     public event ElapsedEventHandler PlayingElapsed
     {
@@ -80,6 +81,7 @@ internal class ReplayController : IDisposable
     public ReplayController(GLControl viewerBox, RenderingSettings replayViewerRenderingSettings)
     {
         Renderer = new ElmaRenderer(viewerBox, replayViewerRenderingSettings);
+        _settings = replayViewerRenderingSettings;
     }
 
     private void DrawPlayers()
@@ -96,7 +98,7 @@ internal class ReplayController : IDisposable
             };
             Renderer.DrawPlayer(PlayListReplays[x].Player.GetInterpolatedState(CurrentTime),
                 opts,
-                SceneSettings);
+                SceneSettings, _settings);
         }
     }
 
@@ -365,13 +367,13 @@ internal class ReplayController : IDisposable
         var lev = replays[0].Obj.GetLevel();
         ZoomCtrl = new ZoomController(new ElmaCamera(),
             lev,
-            Global.AppSettings.ReplayViewer.RenderingSettings,
             RedrawSceneIfNotPlaying)
         { ZoomLevel = 5.0 };
         MaxTime = PlayListReplays.Max(p => p.Player.FrameCount) / 30.0;
         CurrentTime = 0.0;
         Lev = lev;
-        Renderer.InitializeLevel(lev);
+        Renderer.UpdateSettings(lev, _settings);
+        Renderer.InitializeLevel(lev, _settings);
         _activePlayerIndices = new List<int>();
         _visiblePlayerIndices = new List<int>();
         _wrongLevVersion = replays[0].Obj.WrongLevelVersion;
@@ -382,7 +384,7 @@ internal class ReplayController : IDisposable
     public void SetInitialView()
     {
         if (Global.AppSettings.ReplayViewer.DontSelectPlayersByDefault)
-            ZoomCtrl.ZoomFill();
+            ZoomCtrl.ZoomFill(_settings);
         else
         {
             ZoomCtrl.ZoomLevel = Global.AppSettings.ReplayViewer.ZoomLevel;
@@ -425,7 +427,7 @@ internal class ReplayController : IDisposable
 
     private void RedrawScene()
     {
-        Renderer.DrawScene(ZoomCtrl.Cam, SceneSettings);
+        Renderer.DrawScene(Lev!, ZoomCtrl.Cam, SceneSettings, _settings);
 
         GL.Translate(-_fixx, -_fixy, 0);
         DrawPlayers();
@@ -450,9 +452,9 @@ internal class ReplayController : IDisposable
             GL.Disable(EnableCap.DepthTest);
             var p = PlayListReplays[i].Player;
             var s = p.GetInterpolatedState(CurrentTime);
-            Renderer.DrawCircle(s.LeftWheel, ElmaConstants.WheelRadius, Color.Yellow);
-            Renderer.DrawCircle(s.RightWheel, ElmaConstants.WheelRadius, Color.Yellow);
-            Renderer.DrawCircle(s.Head, ElmaConstants.HeadRadius, Color.Yellow);
+            Renderer.DrawCircle(s.LeftWheel, ElmaConstants.WheelRadius, Color.Yellow, _settings.CircleDrawingAccuracy);
+            Renderer.DrawCircle(s.RightWheel, ElmaConstants.WheelRadius, Color.Yellow, _settings.CircleDrawingAccuracy);
+            Renderer.DrawCircle(s.Head, ElmaConstants.HeadRadius, Color.Yellow, _settings.CircleDrawingAccuracy);
         }
 
         Renderer.Swap();

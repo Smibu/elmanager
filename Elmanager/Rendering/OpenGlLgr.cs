@@ -55,14 +55,11 @@ internal class OpenGlLgr : IDisposable
     private readonly Suspension[] _suspensions = new Suspension[2];
     private readonly int _thighPic;
     private readonly int _wheelPic;
-    private List<GrassPic> _grassPics = new();
-    private DrawableImage? _qgrass;
+    private DrawableGrass? _grassData;
     private readonly List<GrassImage> _grassImages = new();
     private readonly LgrImage? _qgrassImage;
     public readonly Lgr.Lgr CurrentLgr;
     private bool _disposed;
-    public DrawableImage GroundTexture { get; private set; } = null!;
-    public DrawableImage SkyTexture { get; private set; } = null!;
     public Dictionary<string, DrawableImage> DrawableImages { get; } = new();
 
     public OpenGlLgr(Level lev, Lgr.Lgr lgr, RenderingSettings newSettings)
@@ -84,19 +81,19 @@ internal class OpenGlLgr : IDisposable
                     _bikePic = LoadTexture(x);
                     break;
                 case "q1body":
-                    _bodyPic = LoadTexture(x, new TextureOptions(RotateFlipType.RotateNoneFlipX));
+                    _bodyPic = LoadTexture(x);
                     break;
                 case "q1thigh":
-                    _thighPic = LoadTexture(x, new TextureOptions(RotateFlipType.RotateNoneFlipX));
+                    _thighPic = LoadTexture(x);
                     break;
                 case "q1leg":
-                    _legPic = LoadTexture(x, new TextureOptions(RotateFlipType.RotateNoneFlipY));
+                    _legPic = LoadTexture(x);
                     break;
                 case "q1forarm":
-                    _handPic = LoadTexture(x, new TextureOptions(RotateFlipType.RotateNoneFlipX));
+                    _handPic = LoadTexture(x);
                     break;
                 case "q1up_arm":
-                    _armPic = LoadTexture(x, new TextureOptions(RotateFlipType.RotateNoneFlipX));
+                    _armPic = LoadTexture(x);
                     break;
                 case "qexit":
                     _flowerPic = LoadTexture(x, firstFrameRect);
@@ -117,12 +114,12 @@ internal class OpenGlLgr : IDisposable
                     _killerPic = LoadTexture(x, firstFrameRect);
                     break;
                 case "q1susp1":
-                    _suspensions[0] = new Suspension(LoadTexture(x, new TextureOptions(RotateFlipType.RotateNoneFlipY)), -0.5, 0.35,
+                    _suspensions[0] = new Suspension(LoadTexture(x), -0.5, 0.35,
                         x.Bmp.Height * Suspension1Factor,
                         x.Bmp.Height * Suspension1Factor / 2.0, 0);
                     break;
                 case "q1susp2":
-                    _suspensions[1] = new Suspension(LoadTexture(x, new TextureOptions(RotateFlipType.Rotate180FlipY)), 0.0, -0.4,
+                    _suspensions[1] = new Suspension(LoadTexture(x), 0.0, -0.4,
                         x.Bmp.Height * Suspension2Factor,
                         x.Bmp.Height * Suspension2Factor / 1.3, 1);
                     break;
@@ -148,33 +145,25 @@ internal class OpenGlLgr : IDisposable
         }
 
         RefreshGrassPics(lev, newSettings);
-        UpdateGroundAndSky(lev, newSettings.DefaultGroundAndSky);
     }
 
-    public void UpdateGroundAndSky(Level lev, bool useDefault)
+    public (DrawableImage ground, DrawableImage sky) GetGroundAndSky(Level lev, bool useDefault)
     {
-        DrawableImage? sky = null;
-        DrawableImage? ground = null;
-        foreach (var x in DrawableImages.Values)
-        {
-            if (useDefault)
-            {
-                if (x.Name == "ground")
-                    ground = x;
-                if (x.Name == "sky")
-                    sky = x;
-            }
-            else
-            {
-                if (x.Name == lev.GroundTextureName)
-                    ground = x;
-                if (x.Name == lev.SkyTextureName)
-                    sky = x;
-            }
-        }
+        DrawableImage? sky;
+        DrawableImage? ground;
 
-        ground ??= DrawableImageFromName("ground", ImageType.Texture);
-        sky ??= DrawableImageFromName("sky", ImageType.Texture);
+        if (useDefault)
+        {
+            ground = DrawableImageFromName("ground", ImageType.Texture);
+            sky = DrawableImageFromName("sky", ImageType.Texture);
+        }
+        else
+        {
+            ground = DrawableImageFromName(lev.GroundTextureName, ImageType.Texture) ??
+                     DrawableImageFromName("ground", ImageType.Texture);
+            sky = DrawableImageFromName(lev.SkyTextureName, ImageType.Texture) ??
+                  DrawableImageFromName("sky", ImageType.Texture);
+        }
 
         if (ground == null)
         {
@@ -200,8 +189,7 @@ internal class OpenGlLgr : IDisposable
             }
         }
 
-        GroundTexture = ground!;
-        SkyTexture = sky!;
+        return (ground!, sky!);
     }
 
     public DrawableImage DrawableImageFromLgrImage(LgrImage img) => DrawableImages[img.Name];
@@ -268,7 +256,7 @@ internal class OpenGlLgr : IDisposable
     }
 
     private void DrawPicture(int pic, double startx, double starty, double endx, double endy, double width,
-        double dist, bool mirror, double offset = 0.0)
+        double dist, bool mirror, TexCoord texCoord, double offset = 0.0)
     {
         var lx = endx - startx;
         var ly = endy - starty;
@@ -278,32 +266,21 @@ internal class OpenGlLgr : IDisposable
         var offsetx = offset * lx / l;
         var offsety = offset * ly / l;
         GL.BindTexture(TextureTarget.Texture2D, pic);
+        var texCoordYEnd = texCoord.Y2;
         if (mirror)
         {
-            GL.Begin(PrimitiveType.Quads);
-            GL.TexCoord2(0, 1);
-            GL.Vertex3(startx + x - offsetx, starty - y - offsety, dist);
-            GL.TexCoord2(1, 1);
-            GL.Vertex3(endx + x + offsetx, endy - y + offsety, dist);
-            GL.TexCoord2(1, 0);
-            GL.Vertex3(endx - x + offsetx, endy + y + offsety, dist);
-            GL.TexCoord2(0, 0);
-            GL.Vertex3(startx - x - offsetx, starty + y - offsety, dist);
-            GL.End();
+            texCoordYEnd *= -1;
         }
-        else
-        {
-            GL.Begin(PrimitiveType.Quads);
-            GL.TexCoord2(0, 0);
-            GL.Vertex3(startx + x - offsetx, starty - y - offsety, dist);
-            GL.TexCoord2(1, 0);
-            GL.Vertex3(endx + x + offsetx, endy - y + offsety, dist);
-            GL.TexCoord2(1, 1);
-            GL.Vertex3(endx - x + offsetx, endy + y + offsety, dist);
-            GL.TexCoord2(0, 1);
-            GL.Vertex3(startx - x - offsetx, starty + y - offsety, dist);
-            GL.End();
-        }
+        GL.Begin(PrimitiveType.Quads);
+        GL.TexCoord2(texCoord.X1, texCoord.Y1);
+        GL.Vertex3(startx + x - offsetx, starty - y - offsety, dist);
+        GL.TexCoord2(texCoord.X2, texCoord.Y1);
+        GL.Vertex3(endx + x + offsetx, endy - y + offsety, dist);
+        GL.TexCoord2(texCoord.X2, texCoordYEnd);
+        GL.Vertex3(endx - x + offsetx, endy + y + offsety, dist);
+        GL.TexCoord2(texCoord.X1, texCoordYEnd);
+        GL.Vertex3(startx - x - offsetx, starty + y - offsety, dist);
+        GL.End();
     }
 
     public void DrawFullScreenTexture(ElmaCamera cam, DrawableImage info, double midX, double midY, double depth, RenderingSettings settings)
@@ -339,7 +316,7 @@ internal class OpenGlLgr : IDisposable
     {
         x -= ObjectRadius;
         y -= ObjectRadius;
-        DrawPicture(picture, x, y, ObjectDiameter, ObjectDiameter, depth, texcoordyEnd: -1);
+        DrawPicture(picture, x, y, ObjectDiameter, ObjectDiameter, depth, new TexCoord(0, 1, 0, -1));
     }
 
     private static void DrawObject(int picture, Vector v, double depth = DefaultDepth) =>
@@ -351,18 +328,17 @@ internal class OpenGlLgr : IDisposable
         double width,
         double height,
         double depth,
-        double texcoordyStart = 0,
-        double texcoordyEnd = 1)
+        TexCoord texCoord)
     {
         GL.BindTexture(TextureTarget.Texture2D, picture);
         GL.Begin(PrimitiveType.Quads);
-        GL.TexCoord2(0, texcoordyStart);
+        GL.TexCoord2(texCoord.X1, texCoord.Y1);
         GL.Vertex3(x, y, depth);
-        GL.TexCoord2(1, texcoordyStart);
+        GL.TexCoord2(texCoord.X2, texCoord.Y1);
         GL.Vertex3(x + width, y, depth);
-        GL.TexCoord2(1, texcoordyEnd);
+        GL.TexCoord2(texCoord.X2, texCoord.Y2);
         GL.Vertex3(x + width, y + height, depth);
-        GL.TexCoord2(0, texcoordyEnd);
+        GL.TexCoord2(texCoord.X1, texCoord.Y2);
         GL.Vertex3(x, y + height, depth);
         GL.End();
     }
@@ -385,7 +361,6 @@ internal class OpenGlLgr : IDisposable
         textureOptions ??= new TextureOptions();
         var textureIdentifier = GL.GenTexture();
         GL.BindTexture(TextureTarget.Texture2D, textureIdentifier);
-        bmp.RotateFlip(textureOptions.Flip);
         var bmpData = bmp.LockBits(new Rectangle(0, 0, bmp.Width, bmp.Height), ImageLockMode.ReadOnly,
             PixelFormat.Format32bppArgb);
         GL.TexParameter(TextureTarget.Texture2D, TextureParameterName.TextureMinFilter,
@@ -461,17 +436,18 @@ internal class OpenGlLgr : IDisposable
             var yDiff = yPos - wheelYpos;
             var angle = Math.Atan2(yDiff, xDiff) * MathUtils.RadToDeg;
             var length = Math.Sqrt(xDiff * xDiff + yDiff * yDiff);
+            var texCoordXEnd = i == 1 ? -1 : 1;
             GL.Translate(wheelXpos, wheelYpos, 0);
             GL.Rotate(angle, 0, 0, 1);
             GL.BindTexture(TextureTarget.Texture2D, suspension.TextureIdentifier);
             GL.Begin(PrimitiveType.Quads);
             GL.TexCoord2(0, 0);
             GL.Vertex3(-suspension.OffsetX, -suspension.Height / 2, distance);
-            GL.TexCoord2(1, 0);
+            GL.TexCoord2(texCoordXEnd, 0);
             GL.Vertex3(length + suspension.Height / 2, -suspension.Height / 2, distance);
-            GL.TexCoord2(1, 1);
+            GL.TexCoord2(texCoordXEnd, -1);
             GL.Vertex3(length + suspension.Height / 2, suspension.Height / 2, distance);
-            GL.TexCoord2(0, 1);
+            GL.TexCoord2(0, -1);
             GL.Vertex3(-suspension.OffsetX, suspension.Height / 2, distance);
             GL.End();
             GL.PopMatrix();
@@ -486,7 +462,7 @@ internal class OpenGlLgr : IDisposable
         GL.Translate(-player.HeadX, -player.HeadY, 0);
         DrawPicture(_headPic, player.HeadX - ElmaConstants.HeadDiameter / 2.0,
             player.HeadY - ElmaConstants.HeadDiameter / 2.0,
-            ElmaConstants.HeadDiameter, ElmaConstants.HeadDiameter, distance);
+            ElmaConstants.HeadDiameter, ElmaConstants.HeadDiameter, distance, TexCoord.Default);
         GL.PopMatrix();
 
         //Bike
@@ -512,7 +488,7 @@ internal class OpenGlLgr : IDisposable
             -BikePicAspectRatio * BikePicSize / 2 + bikePicTranslateX,
             -BikePicSize / 2 + bikePicTranslateY, BikePicSize * BikePicAspectRatio,
             BikePicSize,
-            distance);
+            distance, TexCoord.Default);
         GL.PopMatrix();
 
         //Thigh
@@ -534,12 +510,12 @@ internal class OpenGlLgr : IDisposable
         CalculateMiddle(thighstartx, thighstarty, footx, footy, legMinimumWidth, isright, out var thighendx,
             out var thighendy);
         DrawPicture(_thighPic, thighstartx, thighstarty, thighendx, thighendy, thighHeight, distance,
-            isright,
-            0.05);
+            isright, new TexCoord(0, -1, 0, 1), 0.05);
 
         //Leg
         const double legHeight = 0.4;
-        DrawPicture(_legPic, footx, footy, thighendx, thighendy, legHeight, distance, isright, 0.05);
+        DrawPicture(_legPic, footx, footy, thighendx, thighendy, legHeight, distance, isright,
+            new TexCoord(0, 1, 0, -1), 0.05);
 
         //Body
         const double offsetx = 0.15;
@@ -556,7 +532,7 @@ internal class OpenGlLgr : IDisposable
             GL.Rotate(player.BikeRotation - BodyRotation, 0, 0, 1);
         }
 
-        DrawPicture(_bodyPic, offsetx, offsety, BodyWidth, BodyHeight, distance);
+        DrawPicture(_bodyPic, offsetx, offsety, BodyWidth, BodyHeight, distance, new TexCoord(0, -1, 0, 1));
         GL.PopMatrix();
 
         //Upper arm
@@ -597,11 +573,11 @@ internal class OpenGlLgr : IDisposable
         var handx = armx + dist * angleCos;
         var handy = army + dist * angleSin;
         CalculateMiddle(armx, army, handx, handy, armMinimumWidth, !isright, out var armendx, out var armendy);
-        DrawPicture(_armPic, armx, army, armendx, armendy, upArmHeight, distance, !isright, 0.05);
+        DrawPicture(_armPic, armx, army, armendx, armendy, upArmHeight, distance, !isright, new TexCoord(0, -1, 0, 1), 0.05);
 
         //Lower arm
         const double lowArmHeight = 0.15;
-        DrawPicture(_handPic, armendx, armendy, handx, handy, lowArmHeight, distance, isright, 0.05);
+        DrawPicture(_handPic, armendx, armendy, handx, handy, lowArmHeight, distance, isright, new TexCoord(0, -1, 0, 1), 0.05);
 
         GL.Disable(EnableCap.Blend);
     }
@@ -611,7 +587,7 @@ internal class OpenGlLgr : IDisposable
         GL.PushMatrix();
         GL.Translate(x, y, 0);
         GL.Rotate(rot * 180 / Math.PI, 0, 0, 1);
-        DrawPicture(_wheelPic, -ObjectRadius, -ObjectRadius, ObjectDiameter, ObjectDiameter, distance);
+        DrawPicture(_wheelPic, -ObjectRadius, -ObjectRadius, ObjectDiameter, ObjectDiameter, distance, TexCoord.Default);
         GL.PopMatrix();
     }
 
@@ -648,23 +624,26 @@ internal class OpenGlLgr : IDisposable
             return;
         }
 
-        var oldQgrassId = _qgrass?.TextureId;
-        if (_qgrass != null)
+        var oldQgrassId = _grassData?.Qgrass.TextureId;
+        if (_grassData != null)
         {
-            GL.DeleteTexture(_qgrass.TextureId);
+            if (Math.Abs(_grassData.GrassZoom - settings.GrassZoom) < 0.00001)
+            {
+                return;
+            }
+            GL.DeleteTexture(_grassData.Qgrass.TextureId);
         }
         DeleteGrassPics();
 
-        _qgrass = FromLgrImage(_qgrassImage, new TextureOptions(), 1 / GetGrassFactor(settings.GrassZoom));
-        DrawableImages["qgrass"] = _qgrass;
-        UpdateGroundAndSky(lev, settings.DefaultGroundAndSky);
+        var qgrass = FromLgrImage(_qgrassImage, new TextureOptions(), 1 / GetGrassFactor(settings.GrassZoom));
+        DrawableImages["qgrass"] = qgrass;
 
         // If the lev has qgrass textures, they must be updated too.
         lev.GraphicElements = lev.GraphicElements.Select(element =>
         {
             if (element is GraphicElement.Texture t && t.TextureInfo.TextureId == oldQgrassId)
             {
-                return t with { TextureInfo = _qgrass };
+                return t with { TextureInfo = qgrass };
             }
 
             return element;
@@ -674,17 +653,22 @@ internal class OpenGlLgr : IDisposable
         var imgs = _grassImages.AsParallel().Select(img => img.SetAlphaIgnore(GrassIgnoreAlpha, grassHeightExtension))
             .ToList();
 
-        _grassPics = imgs.Select(img =>
+        var grassPics = imgs.Select(img =>
             new GrassPic(
                 FromLgrImage(img.Image, new TextureOptions { WrapMode = TextureWrapMode.Clamp },
                     1 / GetGrassFactor(settings.GrassZoom)),
                 img.Image.Bmp, img.Delta, grassHeightExtension)).ToList();
+        _grassData = new DrawableGrass(grassPics, qgrass, settings.GrassZoom);
+        foreach (var polygon in lev.Polygons.Where(p => p.IsGrass))
+        {
+            polygon.SlopeInfo = new GrassSlopeInfo(polygon, lev.GroundBounds, settings.GrassZoom);
+        }
     }
 
     public void DrawGrass(Level lev, ElmaCamera cam, double midX, double midY, RenderingSettings settings,
         SceneSettings sceneSettings)
     {
-        if (_grassPics.Count > 0 && _qgrass != null)
+        if (_grassData is { GrassPics.Count: > 0 })
         {
             GL.StencilOp(StencilOp.Keep, StencilOp.Keep, StencilOp.Keep);
             GL.StencilFunc(StencilFunction.Equal, ElmaRenderer.GroundStencil, ElmaRenderer.StencilMask);
@@ -692,32 +676,32 @@ internal class OpenGlLgr : IDisposable
             GL.Disable(EnableCap.Blend);
             for (var i = sceneSettings.AdditionalPolys.Count - 1; i >= 0; i--)
             {
-                DrawPolygonGrass(sceneSettings.AdditionalPolys[i]);
+                DrawPolygonGrass(sceneSettings.AdditionalPolys[i], _grassData);
             }
             for (var i = lev.Polygons.Count - 1; i >= 0; i--)
             {
-                DrawPolygonGrass(lev.Polygons[i]);
+                DrawPolygonGrass(lev.Polygons[i], _grassData);
             }
 
             GL.AlphaFunc(AlphaFunction.Gequal, 0.9f);
             GL.Enable(EnableCap.Blend);
             GL.BlendFunc(BlendingFactor.OneMinusDstAlpha, BlendingFactor.DstAlpha);
-            DrawFullScreenTexture(cam, _qgrass, midX, midY, 0, settings);
+            DrawFullScreenTexture(cam, _grassData.Qgrass, midX, midY, 0, settings);
             GL.BlendFunc(BlendingFactor.One, BlendingFactor.OneMinusDstColor);
         }
     }
 
-    private void DrawPolygonGrass(Polygon p)
+    private void DrawPolygonGrass(Polygon p, DrawableGrass drawableGrass)
     {
         if (p is { IsGrass: true, SlopeInfo: { } })
         {
-            foreach (var pic in p.SlopeInfo.GetGrassPics(_grassPics))
+            foreach (var pic in p.SlopeInfo.GetGrassPics(drawableGrass.GrassPics))
             {
                 var depth = pic.Distance / 1000.0 * (ElmaRenderer.ZFar - ElmaRenderer.ZNear) +
                             ElmaRenderer.ZNear;
                 DrawPicture(pic.PictureInfo.TextureId, pic.Position.X, pic.Position.Y, pic.Width,
                     pic.Height,
-                    depth, 1, 0);
+                    depth, new TexCoord(0, 1, 1, 0));
             }
         }
     }
@@ -754,7 +738,11 @@ internal class OpenGlLgr : IDisposable
 
     private void DeleteGrassPics()
     {
-        foreach (var x in _grassPics)
+        if (_grassData == null)
+        {
+            return;
+        }
+        foreach (var x in _grassData.GrassPics)
         {
             // At least on some machines, deleting grass pic textures causes incorrect grass rendering when changing LGR.
             GL.DeleteTexture(x.Image.TextureId);
@@ -769,7 +757,6 @@ internal class OpenGlLgr : IDisposable
             return;
         }
         DeleteTextures();
-        CurrentLgr.Dispose();
         _disposed = true;
     }
 }
