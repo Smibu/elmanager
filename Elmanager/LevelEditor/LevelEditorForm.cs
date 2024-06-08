@@ -57,7 +57,7 @@ internal partial class LevelEditorForm : FormMod, IMessageFilter
     internal Level Lev => _editorLev.Lev;
     private ElmaFile? LevFile => _editorLev.File;
     internal ElmaRenderer Renderer = null!;
-    internal IEditorTool[] Tools = null!;
+    internal EditorTools Tools = null!;
     private List<string>? _currLevDirFiles;
     private bool _draggingScreen;
     private List<Vector> _errorPoints = new();
@@ -238,13 +238,13 @@ internal partial class LevelEditorForm : FormMod, IMessageFilter
         {
             ChangeToDefaultCursor();
             CurrentTool.InActivate();
-            CurrentTool = Tools[12];
+            CurrentTool = Tools.TransformTool;
             ActivateCurrentAndRedraw();
 
             // if not busy, there's nothing to transform
             if (!CurrentTool.Busy)
             {
-                CurrentTool = Tools[0];
+                CurrentTool = Tools.SelectionTool;
                 ActivateCurrentAndRedraw();
             }
         }
@@ -369,7 +369,7 @@ internal partial class LevelEditorForm : FormMod, IMessageFilter
     private void AutoGrassButtonChanged(object? sender, EventArgs e)
     {
         if (AutoGrassButton.Checked)
-            ChangeToolTo(11);
+            ChangeToolTo(Tools.AutoGrassTool);
     }
 
     private void BringToFrontToolStripMenuItemClick(object sender, EventArgs e)
@@ -398,10 +398,10 @@ internal partial class LevelEditorForm : FormMod, IMessageFilter
         EditorControl.Cursor = Cursors.Default;
     }
 
-    private void ChangeToolTo(int index)
+    private void ChangeToolTo(IEditorTool tool)
     {
         CurrentTool.InActivate();
-        CurrentTool = Tools[index];
+        CurrentTool = tool;
         ActivateCurrentAndRedraw();
     }
 
@@ -791,7 +791,7 @@ internal partial class LevelEditorForm : FormMod, IMessageFilter
     private void CutButtonChanged(object? sender, EventArgs e)
     {
         if (CutConnectButton.Checked)
-            ChangeToolTo(10);
+            ChangeToolTo(Tools.CutConnectTool);
     }
 
     private void DeleteAllGrassToolStripMenuItemClick(object? sender, EventArgs e)
@@ -879,13 +879,13 @@ internal partial class LevelEditorForm : FormMod, IMessageFilter
     private void DrawButtonChanged(object? sender, EventArgs e)
     {
         if (DrawButton.Checked)
-            ChangeToolTo(2);
+            ChangeToolTo(Tools.DrawTool);
     }
 
     private void EllipseButtonChanged(object? sender, EventArgs e)
     {
         if (EllipseButton.Checked)
-            ChangeToolTo(6);
+            ChangeToolTo(Tools.EllipseTool);
     }
 
     private void ExitToolStripMenuItemClick(object? sender, EventArgs e)
@@ -908,7 +908,7 @@ internal partial class LevelEditorForm : FormMod, IMessageFilter
     private void FrameButtonChanged(object? sender, EventArgs e)
     {
         if (FrameButton.Checked)
-            ChangeToolTo(8);
+            ChangeToolTo(Tools.FrameTool);
     }
 
     private Vector GetMouseCoordinates()
@@ -1024,8 +1024,7 @@ internal partial class LevelEditorForm : FormMod, IMessageFilter
         Renderer = new ElmaRenderer(EditorControl, Settings.RenderingSettings);
         UpdateLgrTools(Renderer.UpdateSettings(Lev, Settings.RenderingSettings));
 
-        Tools = new IEditorTool[]
-        {
+        Tools = new EditorTools(
             new SelectionTool(this),
             new VertexTool(this),
             new DrawTool(this),
@@ -1041,8 +1040,8 @@ internal partial class LevelEditorForm : FormMod, IMessageFilter
             new TransformTool(this),
             new PictureTool(this),
             new TextTool(this)
-        };
-        CurrentTool = Tools[0];
+        );
+        CurrentTool = Tools.SelectionTool;
         SetupEventHandlers();
         InitializeLevel(lev);
     }
@@ -1596,7 +1595,7 @@ internal partial class LevelEditorForm : FormMod, IMessageFilter
     private void ObjectButtonChanged(object? sender, EventArgs e)
     {
         if (ObjectButton.Checked)
-            ChangeToolTo(3);
+            ChangeToolTo(Tools.ObjectTool);
     }
 
     private void OpenConfig(object sender, EventArgs e)
@@ -1649,7 +1648,7 @@ internal partial class LevelEditorForm : FormMod, IMessageFilter
             }
             else
             {
-                ChangeToolTo(13);
+                ChangeToolTo(Tools.PictureTool);
             }
         }
     }
@@ -1724,13 +1723,13 @@ internal partial class LevelEditorForm : FormMod, IMessageFilter
     private void PipeButtonChanged(object? sender, EventArgs e)
     {
         if (PipeButton.Checked)
-            ChangeToolTo(4);
+            ChangeToolTo(Tools.PipeTool);
     }
 
     private void PolyOpButtonChanged(object? sender, EventArgs e)
     {
         if (PolyOpButton.Checked)
-            ChangeToolTo(7);
+            ChangeToolTo(Tools.PolyOpTool);
     }
 
     private void PrevNextButtonClick(object? sender, EventArgs e)
@@ -1781,9 +1780,8 @@ internal partial class LevelEditorForm : FormMod, IMessageFilter
 
     private void QuickGrassToolStripMenuItemClick(object sender, EventArgs e)
     {
-        var autoGrassTool = (AutoGrassTool)Tools[11];
         var grassPolys = Lev.Polygons.Where(x => !x.IsGrass)
-            .SelectMany(autoGrassTool.AutoGrass).ToList();
+            .SelectMany(Tools.AutoGrassTool.AutoGrass).ToList();
         Lev.Polygons.AddRange(grassPolys);
         SetModified(grassPolys.Count > 0 ? LevModification.Decorations : LevModification.Nothing);
         RedrawScene();
@@ -1954,7 +1952,7 @@ internal partial class LevelEditorForm : FormMod, IMessageFilter
     private void SelectButtonChanged(object? sender, EventArgs e)
     {
         if (SelectButton.Checked)
-            ChangeToolTo(0);
+            ChangeToolTo(Tools.SelectionTool);
     }
 
     private void SendToBackToolStripMenuItemClick(object? sender, EventArgs e)
@@ -2077,7 +2075,7 @@ internal partial class LevelEditorForm : FormMod, IMessageFilter
     private void SmoothenButtonChanged(object? sender, EventArgs e)
     {
         if (SmoothenButton.Checked)
-            ChangeToolTo(9);
+            ChangeToolTo(Tools.SmoothenTool);
     }
 
     private void StartingDrop(object? sender, DragEventArgs e)
@@ -2274,7 +2272,7 @@ internal partial class LevelEditorForm : FormMod, IMessageFilter
     private void VertexButtonChanged(object? sender, EventArgs e)
     {
         if (VertexButton.Checked)
-            ChangeToolTo(1);
+            ChangeToolTo(Tools.VertexTool);
     }
 
     private void ViewerResized(object? sender = null, EventArgs? e = null)
@@ -2301,7 +2299,7 @@ internal partial class LevelEditorForm : FormMod, IMessageFilter
     private void ZoomButtonChanged(object? sender, EventArgs e)
     {
         if (ZoomButton.Checked)
-            ChangeToolTo(5);
+            ChangeToolTo(Tools.ZoomTool);
     }
 
     private void ZoomFillToolStripMenuItemClick(object? sender, EventArgs e)
@@ -2508,7 +2506,7 @@ internal partial class LevelEditorForm : FormMod, IMessageFilter
     {
         if (TextButton.Checked)
         {
-            ChangeToolTo(14);
+            ChangeToolTo(Tools.TextTool);
         }
     }
 

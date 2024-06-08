@@ -152,7 +152,7 @@ internal class TransformTool : ToolBase, IEditorTool
     {
         EndTransforming();
         LevEditor.SelectButton.Select();
-        LevEditor.CurrentTool = LevEditor.Tools[0];
+        LevEditor.CurrentTool = LevEditor.Tools.SelectionTool;
         LevEditor.CurrentTool.Activate();
     }
 
