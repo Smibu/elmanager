@@ -5,6 +5,7 @@ using System.Windows.Forms;
 using Elmanager.Application;
 using Elmanager.LevelEditor;
 using Elmanager.UI;
+using Elmanager.Updating;
 using SearchOption = System.IO.SearchOption;
 
 namespace Elmanager.Settings;
@@ -252,6 +253,20 @@ internal partial class ConfigForm : FormMod
         if (OpenFileDialog1.ShowDialog() == DialogResult.OK)
         {
             LevelTemplateBox.Text = OpenFileDialog1.FileName;
+        }
+    }
+
+    private async void checkForUpdatesButton_Click(object sender, EventArgs e)
+    {
+        checkForUpdatesButton.Enabled = false;
+        checkForUpdatesButton.Text = "Checking...";
+        updateInfoLabel.Visible = false;
+        var hasUpdates = await UpdateChecker.CheckForUpdates();
+        checkForUpdatesButton.Enabled = true;
+        checkForUpdatesButton.Text = "Check now";
+        if (!hasUpdates)
+        {
+            updateInfoLabel.Visible = true;
         }
     }
 }

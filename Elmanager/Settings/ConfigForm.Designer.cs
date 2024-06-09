@@ -40,6 +40,10 @@ namespace Elmanager.Settings
             OpenFileDialog1 = new OpenFileDialog();
             TabControl1 = new TabControl();
             generalTab = new TabPage();
+            flowLayoutPanel1 = new FlowLayoutPanel();
+            CheckForUpdatesBox = new CheckBox();
+            checkForUpdatesButton = new Button();
+            updateInfoLabel = new Label();
             tableLayoutPanel1 = new TableLayoutPanel();
             Label5 = new Label();
             ElmaDirButton = new Button();
@@ -49,7 +53,6 @@ namespace Elmanager.Settings
             panel1 = new Panel();
             DisableFrameBufferUsageCheckBox = new CheckBox();
             resetButton = new Button();
-            CheckForUpdatesBox = new CheckBox();
             rmTab = new TabPage();
             showTooltipForReplaysCheckBox = new CheckBox();
             DeleteConfirmCheckBox = new CheckBox();
@@ -97,6 +100,7 @@ namespace Elmanager.Settings
             toolTip1 = new ToolTip(components);
             TabControl1.SuspendLayout();
             generalTab.SuspendLayout();
+            flowLayoutPanel1.SuspendLayout();
             tableLayoutPanel1.SuspendLayout();
             groupBox2.SuspendLayout();
             panel1.SuspendLayout();
@@ -196,10 +200,10 @@ namespace Elmanager.Settings
             // generalTab
             // 
             generalTab.BackColor = System.Drawing.Color.White;
+            generalTab.Controls.Add(flowLayoutPanel1);
             generalTab.Controls.Add(tableLayoutPanel1);
             generalTab.Controls.Add(groupBox2);
             generalTab.Controls.Add(resetButton);
-            generalTab.Controls.Add(CheckForUpdatesBox);
             generalTab.Location = new System.Drawing.Point(8, 46);
             generalTab.Margin = new Padding(6);
             generalTab.Name = "generalTab";
@@ -207,6 +211,50 @@ namespace Elmanager.Settings
             generalTab.Size = new System.Drawing.Size(1155, 795);
             generalTab.TabIndex = 0;
             generalTab.Text = "General";
+            // 
+            // flowLayoutPanel1
+            // 
+            flowLayoutPanel1.Anchor = AnchorStyles.Top | AnchorStyles.Left | AnchorStyles.Right;
+            flowLayoutPanel1.Controls.Add(CheckForUpdatesBox);
+            flowLayoutPanel1.Controls.Add(checkForUpdatesButton);
+            flowLayoutPanel1.Controls.Add(updateInfoLabel);
+            flowLayoutPanel1.Location = new System.Drawing.Point(16, 236);
+            flowLayoutPanel1.Name = "flowLayoutPanel1";
+            flowLayoutPanel1.Size = new System.Drawing.Size(1124, 56);
+            flowLayoutPanel1.TabIndex = 58;
+            // 
+            // CheckForUpdatesBox
+            // 
+            CheckForUpdatesBox.AutoSize = true;
+            CheckForUpdatesBox.Location = new System.Drawing.Point(6, 10);
+            CheckForUpdatesBox.Margin = new Padding(6, 10, 6, 6);
+            CheckForUpdatesBox.Name = "CheckForUpdatesBox";
+            CheckForUpdatesBox.Size = new System.Drawing.Size(467, 36);
+            CheckForUpdatesBox.TabIndex = 48;
+            CheckForUpdatesBox.Text = "Check for Elmanager updates at startup";
+            CheckForUpdatesBox.UseVisualStyleBackColor = true;
+            // 
+            // checkForUpdatesButton
+            // 
+            checkForUpdatesButton.AutoSize = true;
+            checkForUpdatesButton.Location = new System.Drawing.Point(482, 3);
+            checkForUpdatesButton.Name = "checkForUpdatesButton";
+            checkForUpdatesButton.Size = new System.Drawing.Size(141, 50);
+            checkForUpdatesButton.TabIndex = 49;
+            checkForUpdatesButton.Text = "Check now";
+            checkForUpdatesButton.UseVisualStyleBackColor = true;
+            checkForUpdatesButton.Click += checkForUpdatesButton_Click;
+            // 
+            // updateInfoLabel
+            // 
+            updateInfoLabel.AutoSize = true;
+            updateInfoLabel.Location = new System.Drawing.Point(629, 13);
+            updateInfoLabel.Margin = new Padding(3, 13, 3, 0);
+            updateInfoLabel.Name = "updateInfoLabel";
+            updateInfoLabel.Size = new System.Drawing.Size(273, 32);
+            updateInfoLabel.TabIndex = 50;
+            updateInfoLabel.Text = "Elmanager is up-to-date";
+            updateInfoLabel.Visible = false;
             // 
             // tableLayoutPanel1
             // 
@@ -325,17 +373,6 @@ namespace Elmanager.Settings
             resetButton.Text = "Reset settings to default";
             resetButton.UseVisualStyleBackColor = true;
             resetButton.Click += ResetButtonClick;
-            // 
-            // CheckForUpdatesBox
-            // 
-            CheckForUpdatesBox.AutoSize = true;
-            CheckForUpdatesBox.Location = new System.Drawing.Point(16, 250);
-            CheckForUpdatesBox.Margin = new Padding(6);
-            CheckForUpdatesBox.Name = "CheckForUpdatesBox";
-            CheckForUpdatesBox.Size = new System.Drawing.Size(467, 36);
-            CheckForUpdatesBox.TabIndex = 48;
-            CheckForUpdatesBox.Text = "Check for Elmanager updates at startup";
-            CheckForUpdatesBox.UseVisualStyleBackColor = true;
             // 
             // rmTab
             // 
@@ -871,7 +908,7 @@ namespace Elmanager.Settings
             AutoScaleMode = AutoScaleMode.Dpi;
             ClientSize = new System.Drawing.Size(1171, 849);
             Controls.Add(TabControl1);
-            Font = new System.Drawing.Font("Segoe UI", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point);
+            Font = new System.Drawing.Font("Segoe UI", 9F);
             FormBorderStyle = FormBorderStyle.FixedSingle;
             Margin = new Padding(6);
             MaximizeBox = false;
@@ -881,6 +918,8 @@ namespace Elmanager.Settings
             TabControl1.ResumeLayout(false);
             generalTab.ResumeLayout(false);
             generalTab.PerformLayout();
+            flowLayoutPanel1.ResumeLayout(false);
+            flowLayoutPanel1.PerformLayout();
             tableLayoutPanel1.ResumeLayout(false);
             tableLayoutPanel1.PerformLayout();
             groupBox2.ResumeLayout(false);
@@ -966,6 +1005,9 @@ namespace Elmanager.Settings
         private TableLayoutPanel tableLayoutPanel2;
         private TableLayoutPanel tableLayoutPanel3;
         internal CheckBox startPositionFeatureCheckBox;
+        private FlowLayoutPanel flowLayoutPanel1;
+        private Button checkForUpdatesButton;
+        private Label updateInfoLabel;
     }
 
 }

@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Net.Http;
 using System.Text.Json;
+using System.Threading.Tasks;
 using Elmanager.Application;
 using Elmanager.Utilities.Json;
 
@@ -11,7 +12,7 @@ internal static class UpdateChecker
     /// <summary>
     ///   Checks if there are new updates for the program.
     /// </summary>
-    internal static async void CheckForUpdates()
+    internal static async Task<bool> CheckForUpdates()
     {
         using var client = new HttpClient();
         client.DefaultRequestHeaders.Add("User-Agent", "Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:78.0) Gecko/20100101 Firefox/78.0");
@@ -22,6 +23,7 @@ internal static class UpdateChecker
             {
                 var newDlg = new NewVersionForm(info);
                 newDlg.ShowDialog();
+                return true;
             }
         }
         catch (HttpRequestException)
@@ -30,6 +32,8 @@ internal static class UpdateChecker
         catch (FormatException)
         {
         }
+
+        return false;
     }
 
     private const string VersionUri = "https://api.github.com/repos/Smibu/elmanager/releases/latest";
