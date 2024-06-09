@@ -42,6 +42,8 @@ namespace Elmanager.LevelEditor
             NewToolStripMenuItem = new ToolStripMenuItem();
             OpenToolStripMenuItem = new ToolStripMenuItem();
             openInternalToolStripMenuItem = new ToolStripMenuItem();
+            openInternalPart1ToolStripMenuItem = new ToolStripMenuItem();
+            openInternalPart2ToolStripMenuItem = new ToolStripMenuItem();
             SaveToolStripMenuItem = new ToolStripMenuItem();
             SaveAsToolStripMenuItem = new ToolStripMenuItem();
             saveAsPictureToolStripMenuItem = new ToolStripMenuItem();
@@ -99,6 +101,7 @@ namespace Elmanager.LevelEditor
             EditorControl = new GLControl();
             OpenFileDialog1 = new OpenFileDialog();
             StatusStrip1 = new StatusStrip();
+            zoomLabel = new ToolStripStatusLabel();
             CoordinateLabel = new ToolStripStatusLabel();
             SelectionLabel = new ToolStripStatusLabel();
             HighlightLabel = new ToolStripStatusLabel();
@@ -204,8 +207,6 @@ namespace Elmanager.LevelEditor
             DrawButton = new RadioButtonMod();
             VertexButton = new RadioButtonMod();
             SelectButton = new RadioButtonMod();
-            openInternalPart1ToolStripMenuItem = new ToolStripMenuItem();
-            openInternalPart2ToolStripMenuItem = new ToolStripMenuItem();
             MenuStrip1.SuspendLayout();
             StatusStrip1.SuspendLayout();
             ToolStripPanel1.SuspendLayout();
@@ -259,6 +260,18 @@ namespace Elmanager.LevelEditor
             openInternalToolStripMenuItem.Name = "openInternalToolStripMenuItem";
             openInternalToolStripMenuItem.Size = new Size(402, 44);
             openInternalToolStripMenuItem.Text = "Open internal";
+            // 
+            // openInternalPart1ToolStripMenuItem
+            // 
+            openInternalPart1ToolStripMenuItem.Name = "openInternalPart1ToolStripMenuItem";
+            openInternalPart1ToolStripMenuItem.Size = new Size(223, 44);
+            openInternalPart1ToolStripMenuItem.Text = "1 - 28";
+            // 
+            // openInternalPart2ToolStripMenuItem
+            // 
+            openInternalPart2ToolStripMenuItem.Name = "openInternalPart2ToolStripMenuItem";
+            openInternalPart2ToolStripMenuItem.Size = new Size(223, 44);
+            openInternalPart2ToolStripMenuItem.Text = "29 - 55";
             // 
             // SaveToolStripMenuItem
             // 
@@ -719,7 +732,7 @@ namespace Elmanager.LevelEditor
             StatusStrip1.AutoSize = false;
             StatusStrip1.GripMargin = new Padding(0);
             StatusStrip1.ImageScalingSize = new Size(32, 32);
-            StatusStrip1.Items.AddRange(new ToolStripItem[] { CoordinateLabel, SelectionLabel, HighlightLabel });
+            StatusStrip1.Items.AddRange(new ToolStripItem[] { zoomLabel, CoordinateLabel, SelectionLabel, HighlightLabel });
             StatusStrip1.Location = new Point(0, 972);
             StatusStrip1.Name = "StatusStrip1";
             StatusStrip1.Padding = new Padding(2, 0, 28, 0);
@@ -728,6 +741,17 @@ namespace Elmanager.LevelEditor
             StatusStrip1.SizingGrip = false;
             StatusStrip1.TabIndex = 4;
             StatusStrip1.Text = "StatusStrip1";
+            // 
+            // zoomLabel
+            // 
+            zoomLabel.AutoSize = false;
+            zoomLabel.BorderSides = ToolStripStatusLabelBorderSides.Left | ToolStripStatusLabelBorderSides.Top | ToolStripStatusLabelBorderSides.Right | ToolStripStatusLabelBorderSides.Bottom;
+            zoomLabel.DisplayStyle = ToolStripItemDisplayStyle.Text;
+            zoomLabel.Name = "zoomLabel";
+            zoomLabel.Size = new Size(190, 36);
+            zoomLabel.Text = "Zoom:";
+            zoomLabel.TextAlign = ContentAlignment.MiddleLeft;
+            zoomLabel.Click += zoomLabel_Click;
             // 
             // CoordinateLabel
             // 
@@ -745,7 +769,7 @@ namespace Elmanager.LevelEditor
             SelectionLabel.BorderSides = ToolStripStatusLabelBorderSides.Left | ToolStripStatusLabelBorderSides.Top | ToolStripStatusLabelBorderSides.Right | ToolStripStatusLabelBorderSides.Bottom;
             SelectionLabel.DisplayStyle = ToolStripItemDisplayStyle.Text;
             SelectionLabel.Name = "SelectionLabel";
-            SelectionLabel.Size = new Size(420, 36);
+            SelectionLabel.Size = new Size(292, 36);
             SelectionLabel.TextAlign = ContentAlignment.MiddleLeft;
             // 
             // HighlightLabel
@@ -754,7 +778,7 @@ namespace Elmanager.LevelEditor
             HighlightLabel.BorderSides = ToolStripStatusLabelBorderSides.Left | ToolStripStatusLabelBorderSides.Top | ToolStripStatusLabelBorderSides.Right | ToolStripStatusLabelBorderSides.Bottom;
             HighlightLabel.DisplayStyle = ToolStripItemDisplayStyle.Text;
             HighlightLabel.Name = "HighlightLabel";
-            HighlightLabel.Size = new Size(1218, 36);
+            HighlightLabel.Size = new Size(1094, 36);
             HighlightLabel.Spring = true;
             HighlightLabel.TextAlign = ContentAlignment.MiddleLeft;
             // 
@@ -788,7 +812,7 @@ namespace Elmanager.LevelEditor
             ToolStrip1.LayoutStyle = ToolStripLayoutStyle.HorizontalStackWithOverflow;
             ToolStrip1.Location = new Point(0, 3);
             ToolStrip1.Name = "ToolStrip1";
-            ToolStrip1.Size = new Size(1600, 42);
+            ToolStrip1.Size = new Size(1681, 42);
             ToolStrip1.TabIndex = 14;
             ToolStrip1.Text = "ToolStrip1";
             // 
@@ -994,7 +1018,7 @@ namespace Elmanager.LevelEditor
             LGRBox.AutoSize = false;
             LGRBox.DropDownStyle = ComboBoxStyle.DropDownList;
             LGRBox.Name = "LGRBox";
-            LGRBox.Size = new Size(200, 39);
+            LGRBox.Size = new Size(200, 40);
             // 
             // ToolStripSeparator5
             // 
@@ -1051,7 +1075,7 @@ namespace Elmanager.LevelEditor
             ToolStrip2.LayoutStyle = ToolStripLayoutStyle.HorizontalStackWithOverflow;
             ToolStrip2.Location = new Point(0, 48);
             ToolStrip2.Name = "ToolStrip2";
-            ToolStrip2.Size = new Size(1326, 42);
+            ToolStrip2.Size = new Size(1372, 42);
             ToolStrip2.TabIndex = 15;
             ToolStrip2.Text = "ToolStrip2";
             // 
@@ -1522,7 +1546,7 @@ namespace Elmanager.LevelEditor
             TextButton.Appearance = Appearance.Button;
             TextButton.AutoSize = true;
             TextButton.Dock = DockStyle.Top;
-            TextButton.Location = new Point(0, 546);
+            TextButton.Location = new Point(0, 504);
             TextButton.Margin = new Padding(6);
             TextButton.Name = "TextButton";
             TextButton.Size = new Size(168, 42);
@@ -1537,7 +1561,7 @@ namespace Elmanager.LevelEditor
             PictureButton.Appearance = Appearance.Button;
             PictureButton.AutoSize = true;
             PictureButton.Dock = DockStyle.Top;
-            PictureButton.Location = new Point(0, 504);
+            PictureButton.Location = new Point(0, 462);
             PictureButton.Margin = new Padding(6);
             PictureButton.Name = "PictureButton";
             PictureButton.Size = new Size(168, 42);
@@ -1551,7 +1575,7 @@ namespace Elmanager.LevelEditor
             AutoGrassButton.Appearance = Appearance.Button;
             AutoGrassButton.AutoSize = true;
             AutoGrassButton.Dock = DockStyle.Top;
-            AutoGrassButton.Location = new Point(0, 462);
+            AutoGrassButton.Location = new Point(0, 420);
             AutoGrassButton.Margin = new Padding(6);
             AutoGrassButton.Name = "AutoGrassButton";
             AutoGrassButton.Size = new Size(168, 42);
@@ -1565,7 +1589,7 @@ namespace Elmanager.LevelEditor
             CutConnectButton.Appearance = Appearance.Button;
             CutConnectButton.AutoSize = true;
             CutConnectButton.Dock = DockStyle.Top;
-            CutConnectButton.Location = new Point(0, 420);
+            CutConnectButton.Location = new Point(0, 378);
             CutConnectButton.Margin = new Padding(6);
             CutConnectButton.Name = "CutConnectButton";
             CutConnectButton.Size = new Size(168, 42);
@@ -1579,7 +1603,7 @@ namespace Elmanager.LevelEditor
             SmoothenButton.Appearance = Appearance.Button;
             SmoothenButton.AutoSize = true;
             SmoothenButton.Dock = DockStyle.Top;
-            SmoothenButton.Location = new Point(0, 378);
+            SmoothenButton.Location = new Point(0, 336);
             SmoothenButton.Margin = new Padding(6);
             SmoothenButton.Name = "SmoothenButton";
             SmoothenButton.Size = new Size(168, 42);
@@ -1593,7 +1617,7 @@ namespace Elmanager.LevelEditor
             FrameButton.Appearance = Appearance.Button;
             FrameButton.AutoSize = true;
             FrameButton.Dock = DockStyle.Top;
-            FrameButton.Location = new Point(0, 336);
+            FrameButton.Location = new Point(0, 294);
             FrameButton.Margin = new Padding(6);
             FrameButton.Name = "FrameButton";
             FrameButton.Size = new Size(168, 42);
@@ -1607,7 +1631,7 @@ namespace Elmanager.LevelEditor
             PolyOpButton.Appearance = Appearance.Button;
             PolyOpButton.AutoSize = true;
             PolyOpButton.Dock = DockStyle.Top;
-            PolyOpButton.Location = new Point(0, 294);
+            PolyOpButton.Location = new Point(0, 252);
             PolyOpButton.Margin = new Padding(6);
             PolyOpButton.Name = "PolyOpButton";
             PolyOpButton.Size = new Size(168, 42);
@@ -1621,7 +1645,7 @@ namespace Elmanager.LevelEditor
             EllipseButton.Appearance = Appearance.Button;
             EllipseButton.AutoSize = true;
             EllipseButton.Dock = DockStyle.Top;
-            EllipseButton.Location = new Point(0, 252);
+            EllipseButton.Location = new Point(0, 210);
             EllipseButton.Margin = new Padding(6);
             EllipseButton.Name = "EllipseButton";
             EllipseButton.Size = new Size(168, 42);
@@ -1702,18 +1726,6 @@ namespace Elmanager.LevelEditor
             SelectButton.TextAlign = ContentAlignment.MiddleCenter;
             SelectButton.UseVisualStyleBackColor = true;
             // 
-            // openInternalPart1ToolStripMenuItem
-            // 
-            openInternalPart1ToolStripMenuItem.Name = "openInternalPart1ToolStripMenuItem";
-            openInternalPart1ToolStripMenuItem.Size = new Size(359, 44);
-            openInternalPart1ToolStripMenuItem.Text = "1 - 28";
-            // 
-            // openInternalPart2ToolStripMenuItem
-            // 
-            openInternalPart2ToolStripMenuItem.Name = "openInternalPart2ToolStripMenuItem";
-            openInternalPart2ToolStripMenuItem.Size = new Size(359, 44);
-            openInternalPart2ToolStripMenuItem.Text = "29 - 55";
-            // 
             // LevelEditorForm
             // 
             AutoScaleDimensions = new SizeF(192F, 192F);
@@ -1724,7 +1736,7 @@ namespace Elmanager.LevelEditor
             Controls.Add(StatusStrip1);
             Controls.Add(ToolStripPanel1);
             Controls.Add(MenuStrip1);
-            Font = new Font("Segoe UI", 9F, FontStyle.Regular, GraphicsUnit.Point);
+            Font = new Font("Segoe UI", 9F);
             MainMenuStrip = MenuStrip1;
             Margin = new Padding(6);
             Name = "LevelEditorForm";
@@ -1922,6 +1934,7 @@ namespace Elmanager.LevelEditor
         private ToolStripMenuItem openInternalToolStripMenuItem;
         private ToolStripMenuItem openInternalPart1ToolStripMenuItem;
         private ToolStripMenuItem openInternalPart2ToolStripMenuItem;
+        internal ToolStripStatusLabel zoomLabel;
     }
 
 }

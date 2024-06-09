@@ -1059,7 +1059,7 @@ internal partial class LevelEditorForm : FormMod, IMessageFilter
         var r = Renderer.UpdateSettings(Lev, Settings.RenderingSettings);
         Renderer.InitializeLevel(Lev, Settings.RenderingSettings);
         Lev.UpdateBounds();
-        _zoomCtrl.ZoomFill(Settings.RenderingSettings);
+        ZoomFill();
         topologyList.Text = string.Empty;
         topologyList.DropDownItems.Clear();
         ResetTopologyListStyle();
@@ -1553,6 +1553,7 @@ internal partial class LevelEditorForm : FormMod, IMessageFilter
         else
         {
             _zoomCtrl.Zoom(GetMouseCoordinates(), delta > 0, 1 - MouseWheelStep / 100.0, Settings.RenderingSettings);
+            UpdateZoomLabel();
         }
     }
 
@@ -1798,7 +1799,7 @@ internal partial class LevelEditorForm : FormMod, IMessageFilter
     private void RefreshOnOpen(object sender, EventArgs e)
     {
         ViewerResized();
-        _zoomCtrl.ZoomFill(Settings.RenderingSettings);
+        ZoomFill();
     }
 
     private void SaveAs(object? sender = null, EventArgs? e = null)
@@ -2021,7 +2022,7 @@ internal partial class LevelEditorForm : FormMod, IMessageFilter
     {
         Resize += ViewerResized;
         EditorControl.Paint += RedrawScene;
-        ZoomFillButton.Click += (_, _) => _zoomCtrl.ZoomFill(Settings.RenderingSettings);
+        ZoomFillButton.Click += (_, _) => ZoomFill();
         ObjectButton.CheckedChanged += ObjectButtonChanged;
         VertexButton.CheckedChanged += VertexButtonChanged;
         PipeButton.CheckedChanged += PipeButtonChanged;
@@ -2296,7 +2297,18 @@ internal partial class LevelEditorForm : FormMod, IMessageFilter
 
     private void ZoomFillToolStripMenuItemClick(object? sender, EventArgs e)
     {
+        ZoomFill();
+    }
+
+    private void ZoomFill()
+    {
         _zoomCtrl.ZoomFill(Settings.RenderingSettings);
+        UpdateZoomLabel();
+    }
+
+    private void UpdateZoomLabel()
+    {
+        zoomLabel.Text = $"Zoom: {_zoomCtrl.ZoomLevel:F3}";
     }
 
     private void TitleBoxTextChanged(object? sender, EventArgs e)
@@ -2385,7 +2397,7 @@ internal partial class LevelEditorForm : FormMod, IMessageFilter
         if (imported > 0)
         {
             SetModified(LevModification.Objects | LevModification.Ground | LevModification.Decorations);
-            _zoomCtrl.ZoomFill(Settings.RenderingSettings);
+            ZoomFill();
         }
     }
 
@@ -2906,4 +2918,14 @@ internal partial class LevelEditorForm : FormMod, IMessageFilter
     private void deselectPicturesToolStripMenuItem_Click(object sender, EventArgs e) => DeselectGraphicElementsWith(ge => ge is GraphicElement.Picture);
 
     private void deselectTexturesToolStripMenuItem_Click(object sender, EventArgs e) => DeselectGraphicElementsWith(ge => ge is GraphicElement.Texture);
+
+    private void zoomLabel_Click(object sender, EventArgs e)
+    {
+        if (ZoomForm.GetValue(_zoomCtrl.ZoomLevel) is { } newZoom)
+        {
+            _zoomCtrl.ZoomLevel = newZoom;
+            UpdateZoomLabel();
+            RedrawScene();
+        }
+    }
 }

@@ -33,7 +33,7 @@ internal class GenericTextBox<T> : TextBox where T : struct
         }
     }
 
-    private bool IsInputValid()
+    public bool IsInputValid()
     {
         try
         {
