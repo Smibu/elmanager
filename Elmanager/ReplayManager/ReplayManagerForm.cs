@@ -37,6 +37,7 @@ internal partial class ReplayManagerForm : FormMod, IManagerGui
     internal ReplayManagerForm()
     {
         InitializeComponent();
+        this.SetTitleWithVersion("Replay manager");
         _manager = new Manager<ReplayItem>(this);
 
         if (Global.AppSettings.ReplayManager.ShowTooltipInList)

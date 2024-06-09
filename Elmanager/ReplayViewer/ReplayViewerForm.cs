@@ -71,9 +71,10 @@ internal partial class ReplayViewerForm : FormMod
         timeBar.Value = 0;
         UpdateControlColor(DrivingLinePanel, _replayController.PlayListReplays[0].DrivingLineColor);
         PlayList.SetObjects(_replayController.PlayListReplays);
-        Text = Level.GetPossiblyInternal(replays[0].Obj.LevelFilename) + " - Replay viewer";
+        var title = Level.GetPossiblyInternal(replays[0].Obj.LevelFilename) + " - Replay viewer";
         if (replays[0].Obj.WrongLevelVersion)
-            Text += " (wrong version)";
+            title += " (wrong version)";
+        this.SetTitleWithVersion(title);
         if (!Global.AppSettings.ReplayViewer.DontSelectPlayersByDefault)
             PlayList.Items[0].Selected = true;
         _typedPlayList.CheckedObjects = _typedPlayList.Objects;

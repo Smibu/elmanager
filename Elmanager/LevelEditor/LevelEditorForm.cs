@@ -2158,7 +2158,7 @@ internal partial class LevelEditorForm : FormMod, IMessageFilter
     {
         if (LevFile is null)
         {
-            Text = "New - " + LevEditorName;
+            this.SetTitleWithVersion("New - " + LevEditorName);
             filenameBox.Text = string.Empty;
             filenameBox.Enabled = false;
             deleteButton.Enabled = false;
@@ -2167,7 +2167,7 @@ internal partial class LevelEditorForm : FormMod, IMessageFilter
         }
         else
         {
-            Text = LevFile.FileNameNoExt + " - " + LevEditorName;
+            this.SetTitleWithVersion(LevFile.FileNameNoExt + " - " + LevEditorName);
             filenameBox.Text = LevFile.FileNameNoExt;
             filenameBox.Enabled = true;
             deleteButton.Enabled = true;

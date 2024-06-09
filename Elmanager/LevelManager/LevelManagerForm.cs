@@ -34,6 +34,7 @@ internal partial class LevelManagerForm : FormMod, IManagerGui
     public LevelManagerForm()
     {
         InitializeComponent();
+        this.SetTitleWithVersion("Level manager");
         _manager = new Manager<LevelItem>(this);
         _singleList = new TypedObjectListView<Top10EntrySingle>(singleTop10List);
         _multiList = new TypedObjectListView<Top10EntryMulti>(multiTop10List);

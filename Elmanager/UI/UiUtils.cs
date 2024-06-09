@@ -5,6 +5,7 @@ using System.Linq;
 using System.Reflection;
 using System.Windows.Forms;
 using BrightIdeasSoftware;
+using Elmanager.Application;
 using Elmanager.IO;
 using Elmanager.Utilities;
 
@@ -114,5 +115,10 @@ internal static class UiUtils
             .Max();
         comboBox.DropDownWidth = width;
         comboBox.Width = width + SystemInformation.VerticalScrollBarWidth;
+    }
+
+    public static void SetTitleWithVersion(this FormMod form, string text)
+    {
+        form.Text = $"{text} [{Global.Version.ToShortDateString()}]";
     }
 }
