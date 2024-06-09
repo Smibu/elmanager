@@ -160,7 +160,7 @@ internal partial class LevelEditorForm : FormMod, IMessageFilter
         }
     }
 
-    public LevelEditorForm(): this(null)
+    public LevelEditorForm() : this(null)
     {
     }
 
