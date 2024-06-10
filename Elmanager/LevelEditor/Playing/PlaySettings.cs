@@ -19,6 +19,8 @@ internal class PlaySettings
     public Keys AloVolt { get; set; } = Keys.Insert;
     [JsonPropertyName("Turn")]
     public Keys Turn { get; set; } = Keys.Space;
+    [JsonPropertyName("EscAlias")]
+    public Keys EscAlias { get; set; } = Keys.Escape;
     [JsonPropertyName("Save")]
     public Keys Save { get; set; } = Keys.LShiftKey;
     [JsonPropertyName("Load")]
@@ -49,6 +51,7 @@ internal class PlaySettings
         RightVolt = other.RightVolt;
         AloVolt = other.AloVolt;
         Turn = other.Turn;
+        EscAlias = other.EscAlias;
         Save = other.Save;
         Load = other.Load;
         DyingBehavior = other.DyingBehavior;

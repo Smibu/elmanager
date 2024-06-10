@@ -67,6 +67,8 @@ namespace Elmanager.LevelEditor.Playing
             label9 = new System.Windows.Forms.Label();
             label10 = new System.Windows.Forms.Label();
             toolTip1 = new System.Windows.Forms.ToolTip(components);
+            label16 = new System.Windows.Forms.Label();
+            escAliasButton = new System.Windows.Forms.Button();
             flowLayoutPanel1.SuspendLayout();
             tableLayoutPanel1.SuspendLayout();
             flowLayoutPanel2.SuspendLayout();
@@ -110,36 +112,39 @@ namespace Elmanager.LevelEditor.Playing
             tableLayoutPanel1.ColumnCount = 2;
             tableLayoutPanel1.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 50F));
             tableLayoutPanel1.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 50F));
-            tableLayoutPanel1.Controls.Add(loadButton, 1, 10);
-            tableLayoutPanel1.Controls.Add(label13, 0, 10);
-            tableLayoutPanel1.Controls.Add(label12, 0, 9);
-            tableLayoutPanel1.Controls.Add(followDriverComboBox, 1, 8);
+            tableLayoutPanel1.Controls.Add(loadButton, 1, 11);
+            tableLayoutPanel1.Controls.Add(label13, 0, 11);
+            tableLayoutPanel1.Controls.Add(label12, 0, 10);
+            tableLayoutPanel1.Controls.Add(followDriverComboBox, 1, 9);
             tableLayoutPanel1.Controls.Add(label1, 0, 0);
             tableLayoutPanel1.Controls.Add(label2, 0, 1);
             tableLayoutPanel1.Controls.Add(label4, 0, 3);
             tableLayoutPanel1.Controls.Add(label5, 0, 4);
             tableLayoutPanel1.Controls.Add(label6, 0, 5);
             tableLayoutPanel1.Controls.Add(label7, 0, 6);
-            tableLayoutPanel1.Controls.Add(label8, 0, 7);
-            tableLayoutPanel1.Controls.Add(label11, 0, 8);
+            tableLayoutPanel1.Controls.Add(label8, 0, 8);
+            tableLayoutPanel1.Controls.Add(label11, 0, 9);
             tableLayoutPanel1.Controls.Add(gasButton, 1, 0);
             tableLayoutPanel1.Controls.Add(brakeButton, 1, 1);
             tableLayoutPanel1.Controls.Add(leftVoltButton, 1, 3);
             tableLayoutPanel1.Controls.Add(rightVoltButton, 1, 4);
             tableLayoutPanel1.Controls.Add(aloVoltButton, 1, 5);
             tableLayoutPanel1.Controls.Add(turnButton, 1, 6);
-            tableLayoutPanel1.Controls.Add(dyingComboBox, 1, 7);
-            tableLayoutPanel1.Controls.Add(saveButton, 1, 9);
-            tableLayoutPanel1.Controls.Add(disableShortcutsCheckBox, 1, 11);
-            tableLayoutPanel1.Controls.Add(label14, 0, 12);
-            tableLayoutPanel1.Controls.Add(flowLayoutPanel2, 1, 12);
+            tableLayoutPanel1.Controls.Add(dyingComboBox, 1, 8);
+            tableLayoutPanel1.Controls.Add(saveButton, 1, 10);
+            tableLayoutPanel1.Controls.Add(disableShortcutsCheckBox, 1, 12);
+            tableLayoutPanel1.Controls.Add(label14, 0, 13);
+            tableLayoutPanel1.Controls.Add(flowLayoutPanel2, 1, 13);
             tableLayoutPanel1.Controls.Add(label15, 0, 2);
             tableLayoutPanel1.Controls.Add(brakeAliasButton, 1, 2);
-            tableLayoutPanel1.Controls.Add(toggleFullscreenCheckBox, 1, 14);
+            tableLayoutPanel1.Controls.Add(toggleFullscreenCheckBox, 1, 15);
+            tableLayoutPanel1.Controls.Add(label16, 0, 7);
+            tableLayoutPanel1.Controls.Add(escAliasButton, 1, 7);
             tableLayoutPanel1.Dock = System.Windows.Forms.DockStyle.Fill;
             tableLayoutPanel1.Location = new System.Drawing.Point(0, 0);
             tableLayoutPanel1.Name = "tableLayoutPanel1";
-            tableLayoutPanel1.RowCount = 15;
+            tableLayoutPanel1.RowCount = 16;
+            tableLayoutPanel1.RowStyles.Add(new System.Windows.Forms.RowStyle());
             tableLayoutPanel1.RowStyles.Add(new System.Windows.Forms.RowStyle());
             tableLayoutPanel1.RowStyles.Add(new System.Windows.Forms.RowStyle());
             tableLayoutPanel1.RowStyles.Add(new System.Windows.Forms.RowStyle());
@@ -162,7 +167,7 @@ namespace Elmanager.LevelEditor.Playing
             // 
             loadButton.AutoSize = true;
             loadButton.AutoSizeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink;
-            loadButton.Location = new System.Drawing.Point(384, 479);
+            loadButton.Location = new System.Drawing.Point(384, 527);
             loadButton.MinimumSize = new System.Drawing.Size(150, 0);
             loadButton.Name = "loadButton";
             loadButton.Size = new System.Drawing.Size(150, 42);
@@ -175,7 +180,7 @@ namespace Elmanager.LevelEditor.Playing
             // 
             label13.Anchor = System.Windows.Forms.AnchorStyles.Right;
             label13.AutoSize = true;
-            label13.Location = new System.Drawing.Point(313, 484);
+            label13.Location = new System.Drawing.Point(313, 532);
             label13.Name = "label13";
             label13.Size = new System.Drawing.Size(65, 32);
             label13.TabIndex = 18;
@@ -185,7 +190,7 @@ namespace Elmanager.LevelEditor.Playing
             // 
             label12.Anchor = System.Windows.Forms.AnchorStyles.Right;
             label12.AutoSize = true;
-            label12.Location = new System.Drawing.Point(314, 436);
+            label12.Location = new System.Drawing.Point(314, 484);
             label12.Name = "label12";
             label12.Size = new System.Drawing.Size(64, 32);
             label12.TabIndex = 17;
@@ -197,7 +202,7 @@ namespace Elmanager.LevelEditor.Playing
             followDriverComboBox.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
             followDriverComboBox.FormattingEnabled = true;
             followDriverComboBox.Items.AddRange(new object[] { "When pressing a playing key", "Never" });
-            followDriverComboBox.Location = new System.Drawing.Point(384, 385);
+            followDriverComboBox.Location = new System.Drawing.Point(384, 433);
             followDriverComboBox.Name = "followDriverComboBox";
             followDriverComboBox.Size = new System.Drawing.Size(375, 40);
             followDriverComboBox.TabIndex = 16;
@@ -266,7 +271,7 @@ namespace Elmanager.LevelEditor.Playing
             // 
             label8.Anchor = System.Windows.Forms.AnchorStyles.Right;
             label8.AutoSize = true;
-            label8.Location = new System.Drawing.Point(234, 343);
+            label8.Location = new System.Drawing.Point(234, 391);
             label8.Name = "label8";
             label8.Size = new System.Drawing.Size(144, 32);
             label8.TabIndex = 7;
@@ -276,7 +281,7 @@ namespace Elmanager.LevelEditor.Playing
             // 
             label11.Anchor = System.Windows.Forms.AnchorStyles.Right;
             label11.AutoSize = true;
-            label11.Location = new System.Drawing.Point(227, 389);
+            label11.Location = new System.Drawing.Point(227, 437);
             label11.Name = "label11";
             label11.Size = new System.Drawing.Size(151, 32);
             label11.TabIndex = 8;
@@ -366,7 +371,7 @@ namespace Elmanager.LevelEditor.Playing
             dyingComboBox.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
             dyingComboBox.FormattingEnabled = true;
             dyingComboBox.Items.AddRange(new object[] { "Stop playing", "Pause playing", "Restart playing", "Be invulnerable" });
-            dyingComboBox.Location = new System.Drawing.Point(384, 339);
+            dyingComboBox.Location = new System.Drawing.Point(384, 387);
             dyingComboBox.Name = "dyingComboBox";
             dyingComboBox.Size = new System.Drawing.Size(375, 40);
             dyingComboBox.TabIndex = 15;
@@ -375,7 +380,7 @@ namespace Elmanager.LevelEditor.Playing
             // 
             saveButton.AutoSize = true;
             saveButton.AutoSizeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink;
-            saveButton.Location = new System.Drawing.Point(384, 431);
+            saveButton.Location = new System.Drawing.Point(384, 479);
             saveButton.MinimumSize = new System.Drawing.Size(150, 0);
             saveButton.Name = "saveButton";
             saveButton.Size = new System.Drawing.Size(150, 42);
@@ -387,7 +392,7 @@ namespace Elmanager.LevelEditor.Playing
             // disableShortcutsCheckBox
             // 
             disableShortcutsCheckBox.AutoSize = true;
-            disableShortcutsCheckBox.Location = new System.Drawing.Point(384, 527);
+            disableShortcutsCheckBox.Location = new System.Drawing.Point(384, 575);
             disableShortcutsCheckBox.Name = "disableShortcutsCheckBox";
             disableShortcutsCheckBox.Size = new System.Drawing.Size(272, 36);
             disableShortcutsCheckBox.TabIndex = 21;
@@ -398,7 +403,7 @@ namespace Elmanager.LevelEditor.Playing
             // 
             label14.Anchor = System.Windows.Forms.AnchorStyles.Right;
             label14.AutoSize = true;
-            label14.Location = new System.Drawing.Point(243, 575);
+            label14.Location = new System.Drawing.Point(243, 623);
             label14.Name = "label14";
             label14.Size = new System.Drawing.Size(135, 32);
             label14.TabIndex = 22;
@@ -409,7 +414,7 @@ namespace Elmanager.LevelEditor.Playing
             flowLayoutPanel2.AutoSize = true;
             flowLayoutPanel2.Controls.Add(fpsTextBox);
             flowLayoutPanel2.Controls.Add(constantFpsCheckBox);
-            flowLayoutPanel2.Location = new System.Drawing.Point(384, 569);
+            flowLayoutPanel2.Location = new System.Drawing.Point(384, 617);
             flowLayoutPanel2.Name = "flowLayoutPanel2";
             flowLayoutPanel2.Size = new System.Drawing.Size(303, 45);
             flowLayoutPanel2.TabIndex = 24;
@@ -462,7 +467,7 @@ namespace Elmanager.LevelEditor.Playing
             // toggleFullscreenCheckBox
             // 
             toggleFullscreenCheckBox.AutoSize = true;
-            toggleFullscreenCheckBox.Location = new System.Drawing.Point(384, 620);
+            toggleFullscreenCheckBox.Location = new System.Drawing.Point(384, 668);
             toggleFullscreenCheckBox.Name = "toggleFullscreenCheckBox";
             toggleFullscreenCheckBox.Size = new System.Drawing.Size(369, 36);
             toggleFullscreenCheckBox.TabIndex = 27;
@@ -501,11 +506,35 @@ namespace Elmanager.LevelEditor.Playing
             toolTip1.InitialDelay = 1;
             toolTip1.ReshowDelay = 2;
             // 
+            // label16
+            // 
+            label16.Anchor = System.Windows.Forms.AnchorStyles.Right;
+            label16.AutoSize = true;
+            label16.Location = new System.Drawing.Point(278, 344);
+            label16.Name = "label16";
+            label16.Size = new System.Drawing.Size(100, 32);
+            label16.TabIndex = 28;
+            label16.Text = "Esc alias";
+            // 
+            // escAliasButton
+            // 
+            escAliasButton.AutoSize = true;
+            escAliasButton.AutoSizeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink;
+            escAliasButton.Location = new System.Drawing.Point(384, 339);
+            escAliasButton.MinimumSize = new System.Drawing.Size(150, 0);
+            escAliasButton.Name = "escAliasButton";
+            escAliasButton.Size = new System.Drawing.Size(150, 42);
+            escAliasButton.TabIndex = 29;
+            escAliasButton.Text = "Esc";
+            escAliasButton.UseVisualStyleBackColor = true;
+            escAliasButton.Click += KeyButtonClick;
+            // 
             // PlaySettingsForm
             // 
             AcceptButton = okButton;
             AutoScaleDimensions = new System.Drawing.SizeF(13F, 32F);
             AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
+            AutoSize = true;
             CancelButton = cancelButton;
             ClientSize = new System.Drawing.Size(762, 859);
             Controls.Add(tableLayoutPanel1);
@@ -560,5 +589,7 @@ namespace Elmanager.LevelEditor.Playing
         private System.Windows.Forms.Label label15;
         private System.Windows.Forms.Button brakeAliasButton;
         private System.Windows.Forms.CheckBox toggleFullscreenCheckBox;
+        private System.Windows.Forms.Label label16;
+        private System.Windows.Forms.Button escAliasButton;
     }
 }

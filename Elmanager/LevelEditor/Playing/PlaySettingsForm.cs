@@ -29,6 +29,7 @@ internal partial class PlaySettingsForm : FormMod
         rightVoltButton.Text = Settings.RightVolt.ToString();
         aloVoltButton.Text = Settings.AloVolt.ToString();
         turnButton.Text = Settings.Turn.ToString();
+        escAliasButton.Text = Settings.EscAlias.ToString();
         saveButton.Text = Settings.Save.ToString();
         loadButton.Text = Settings.Load.ToString();
         disableShortcutsCheckBox.Checked = Settings.DisableShortcuts;
@@ -155,6 +156,10 @@ internal partial class PlaySettingsForm : FormMod
         else if (_currButton == loadButton)
         {
             Settings.Load = key;
+        }
+        else if (_currButton == escAliasButton)
+        {
+            Settings.EscAlias = key;
         }
 
         UpdateGui();

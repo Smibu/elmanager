@@ -165,6 +165,10 @@ internal class PlayController
         {
             _saveLoadRequest = SaveLoadRequest.Load;
         }
+        else if (KeyboardUtils.IsKeyDown(Settings.EscAlias))
+        {
+            PlayingStopRequested = true;
+        }
     }
 
     public void UpdateEngine(Level lev)
