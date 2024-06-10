@@ -769,7 +769,7 @@ namespace Elmanager.LevelEditor
             SelectionLabel.BorderSides = ToolStripStatusLabelBorderSides.Left | ToolStripStatusLabelBorderSides.Top | ToolStripStatusLabelBorderSides.Right | ToolStripStatusLabelBorderSides.Bottom;
             SelectionLabel.DisplayStyle = ToolStripItemDisplayStyle.Text;
             SelectionLabel.Name = "SelectionLabel";
-            SelectionLabel.Size = new Size(292, 36);
+            SelectionLabel.Size = new Size(470, 36);
             SelectionLabel.TextAlign = ContentAlignment.MiddleLeft;
             // 
             // HighlightLabel
@@ -778,7 +778,7 @@ namespace Elmanager.LevelEditor
             HighlightLabel.BorderSides = ToolStripStatusLabelBorderSides.Left | ToolStripStatusLabelBorderSides.Top | ToolStripStatusLabelBorderSides.Right | ToolStripStatusLabelBorderSides.Bottom;
             HighlightLabel.DisplayStyle = ToolStripItemDisplayStyle.Text;
             HighlightLabel.Name = "HighlightLabel";
-            HighlightLabel.Size = new Size(1094, 36);
+            HighlightLabel.Size = new Size(978, 36);
             HighlightLabel.Spring = true;
             HighlightLabel.TextAlign = ContentAlignment.MiddleLeft;
             // 
