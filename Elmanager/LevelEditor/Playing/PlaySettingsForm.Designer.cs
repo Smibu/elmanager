@@ -29,504 +29,497 @@ namespace Elmanager.LevelEditor.Playing
         /// </summary>
         private void InitializeComponent()
         {
-            this.components = new System.ComponentModel.Container();
+            components = new System.ComponentModel.Container();
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(PlaySettingsForm));
-            this.flowLayoutPanel1 = new System.Windows.Forms.FlowLayoutPanel();
-            this.cancelButton = new System.Windows.Forms.Button();
-            this.okButton = new System.Windows.Forms.Button();
-            this.tableLayoutPanel1 = new System.Windows.Forms.TableLayoutPanel();
-            this.loadButton = new System.Windows.Forms.Button();
-            this.label13 = new System.Windows.Forms.Label();
-            this.label12 = new System.Windows.Forms.Label();
-            this.followDriverComboBox = new System.Windows.Forms.ComboBox();
-            this.label1 = new System.Windows.Forms.Label();
-            this.label2 = new System.Windows.Forms.Label();
-            this.label4 = new System.Windows.Forms.Label();
-            this.label5 = new System.Windows.Forms.Label();
-            this.label6 = new System.Windows.Forms.Label();
-            this.label7 = new System.Windows.Forms.Label();
-            this.label8 = new System.Windows.Forms.Label();
-            this.label11 = new System.Windows.Forms.Label();
-            this.gasButton = new System.Windows.Forms.Button();
-            this.brakeButton = new System.Windows.Forms.Button();
-            this.leftVoltButton = new System.Windows.Forms.Button();
-            this.rightVoltButton = new System.Windows.Forms.Button();
-            this.aloVoltButton = new System.Windows.Forms.Button();
-            this.turnButton = new System.Windows.Forms.Button();
-            this.dyingComboBox = new System.Windows.Forms.ComboBox();
-            this.saveButton = new System.Windows.Forms.Button();
-            this.disableShortcutsCheckBox = new System.Windows.Forms.CheckBox();
-            this.label14 = new System.Windows.Forms.Label();
-            this.flowLayoutPanel2 = new System.Windows.Forms.FlowLayoutPanel();
-            this.fpsTextBox = new Elmanager.UI.IntTextBox();
-            this.constantFpsCheckBox = new System.Windows.Forms.CheckBox();
-            this.label15 = new System.Windows.Forms.Label();
-            this.brakeAliasButton = new System.Windows.Forms.Button();
-            this.toggleFullscreenCheckBox = new System.Windows.Forms.CheckBox();
-            this.label3 = new System.Windows.Forms.Label();
-            this.label9 = new System.Windows.Forms.Label();
-            this.label10 = new System.Windows.Forms.Label();
-            this.toolTip1 = new System.Windows.Forms.ToolTip(this.components);
-            this.flowLayoutPanel1.SuspendLayout();
-            this.tableLayoutPanel1.SuspendLayout();
-            this.flowLayoutPanel2.SuspendLayout();
-            this.SuspendLayout();
+            flowLayoutPanel1 = new System.Windows.Forms.FlowLayoutPanel();
+            cancelButton = new System.Windows.Forms.Button();
+            okButton = new System.Windows.Forms.Button();
+            tableLayoutPanel1 = new System.Windows.Forms.TableLayoutPanel();
+            loadButton = new System.Windows.Forms.Button();
+            label13 = new System.Windows.Forms.Label();
+            label12 = new System.Windows.Forms.Label();
+            followDriverComboBox = new System.Windows.Forms.ComboBox();
+            label1 = new System.Windows.Forms.Label();
+            label2 = new System.Windows.Forms.Label();
+            label4 = new System.Windows.Forms.Label();
+            label5 = new System.Windows.Forms.Label();
+            label6 = new System.Windows.Forms.Label();
+            label7 = new System.Windows.Forms.Label();
+            label8 = new System.Windows.Forms.Label();
+            label11 = new System.Windows.Forms.Label();
+            gasButton = new System.Windows.Forms.Button();
+            brakeButton = new System.Windows.Forms.Button();
+            leftVoltButton = new System.Windows.Forms.Button();
+            rightVoltButton = new System.Windows.Forms.Button();
+            aloVoltButton = new System.Windows.Forms.Button();
+            turnButton = new System.Windows.Forms.Button();
+            dyingComboBox = new System.Windows.Forms.ComboBox();
+            saveButton = new System.Windows.Forms.Button();
+            disableShortcutsCheckBox = new System.Windows.Forms.CheckBox();
+            label14 = new System.Windows.Forms.Label();
+            flowLayoutPanel2 = new System.Windows.Forms.FlowLayoutPanel();
+            fpsTextBox = new UI.IntTextBox();
+            constantFpsCheckBox = new System.Windows.Forms.CheckBox();
+            label15 = new System.Windows.Forms.Label();
+            brakeAliasButton = new System.Windows.Forms.Button();
+            toggleFullscreenCheckBox = new System.Windows.Forms.CheckBox();
+            label3 = new System.Windows.Forms.Label();
+            label9 = new System.Windows.Forms.Label();
+            label10 = new System.Windows.Forms.Label();
+            toolTip1 = new System.Windows.Forms.ToolTip(components);
+            flowLayoutPanel1.SuspendLayout();
+            tableLayoutPanel1.SuspendLayout();
+            flowLayoutPanel2.SuspendLayout();
+            SuspendLayout();
             // 
             // flowLayoutPanel1
             // 
-            this.flowLayoutPanel1.Controls.Add(this.cancelButton);
-            this.flowLayoutPanel1.Controls.Add(this.okButton);
-            this.flowLayoutPanel1.Dock = System.Windows.Forms.DockStyle.Bottom;
-            this.flowLayoutPanel1.FlowDirection = System.Windows.Forms.FlowDirection.RightToLeft;
-            this.flowLayoutPanel1.Location = new System.Drawing.Point(0, 806);
-            this.flowLayoutPanel1.Name = "flowLayoutPanel1";
-            this.flowLayoutPanel1.Size = new System.Drawing.Size(762, 53);
-            this.flowLayoutPanel1.TabIndex = 0;
+            flowLayoutPanel1.Controls.Add(cancelButton);
+            flowLayoutPanel1.Controls.Add(okButton);
+            flowLayoutPanel1.Dock = System.Windows.Forms.DockStyle.Bottom;
+            flowLayoutPanel1.FlowDirection = System.Windows.Forms.FlowDirection.RightToLeft;
+            flowLayoutPanel1.Location = new System.Drawing.Point(0, 806);
+            flowLayoutPanel1.Name = "flowLayoutPanel1";
+            flowLayoutPanel1.Size = new System.Drawing.Size(762, 53);
+            flowLayoutPanel1.TabIndex = 0;
             // 
             // cancelButton
             // 
-            this.cancelButton.Location = new System.Drawing.Point(609, 3);
-            this.cancelButton.Name = "cancelButton";
-            this.cancelButton.Size = new System.Drawing.Size(150, 46);
-            this.cancelButton.TabIndex = 0;
-            this.cancelButton.Text = "Cancel";
-            this.cancelButton.UseVisualStyleBackColor = true;
-            this.cancelButton.Click += new System.EventHandler(this.CancelButtonClick);
+            cancelButton.Location = new System.Drawing.Point(609, 3);
+            cancelButton.Name = "cancelButton";
+            cancelButton.Size = new System.Drawing.Size(150, 46);
+            cancelButton.TabIndex = 0;
+            cancelButton.Text = "Cancel";
+            cancelButton.UseVisualStyleBackColor = true;
+            cancelButton.Click += CancelButtonClick;
             // 
             // okButton
             // 
-            this.okButton.Location = new System.Drawing.Point(453, 3);
-            this.okButton.Name = "okButton";
-            this.okButton.Size = new System.Drawing.Size(150, 46);
-            this.okButton.TabIndex = 1;
-            this.okButton.Text = "OK";
-            this.okButton.UseVisualStyleBackColor = true;
-            this.okButton.Click += new System.EventHandler(this.OkButtonClick);
+            okButton.Location = new System.Drawing.Point(453, 3);
+            okButton.Name = "okButton";
+            okButton.Size = new System.Drawing.Size(150, 46);
+            okButton.TabIndex = 1;
+            okButton.Text = "OK";
+            okButton.UseVisualStyleBackColor = true;
+            okButton.Click += OkButtonClick;
             // 
             // tableLayoutPanel1
             // 
-            this.tableLayoutPanel1.AutoScroll = true;
-            this.tableLayoutPanel1.AutoSize = true;
-            this.tableLayoutPanel1.ColumnCount = 2;
-            this.tableLayoutPanel1.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 50F));
-            this.tableLayoutPanel1.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 50F));
-            this.tableLayoutPanel1.Controls.Add(this.loadButton, 1, 10);
-            this.tableLayoutPanel1.Controls.Add(this.label13, 0, 10);
-            this.tableLayoutPanel1.Controls.Add(this.label12, 0, 9);
-            this.tableLayoutPanel1.Controls.Add(this.followDriverComboBox, 1, 8);
-            this.tableLayoutPanel1.Controls.Add(this.label1, 0, 0);
-            this.tableLayoutPanel1.Controls.Add(this.label2, 0, 1);
-            this.tableLayoutPanel1.Controls.Add(this.label4, 0, 3);
-            this.tableLayoutPanel1.Controls.Add(this.label5, 0, 4);
-            this.tableLayoutPanel1.Controls.Add(this.label6, 0, 5);
-            this.tableLayoutPanel1.Controls.Add(this.label7, 0, 6);
-            this.tableLayoutPanel1.Controls.Add(this.label8, 0, 7);
-            this.tableLayoutPanel1.Controls.Add(this.label11, 0, 8);
-            this.tableLayoutPanel1.Controls.Add(this.gasButton, 1, 0);
-            this.tableLayoutPanel1.Controls.Add(this.brakeButton, 1, 1);
-            this.tableLayoutPanel1.Controls.Add(this.leftVoltButton, 1, 3);
-            this.tableLayoutPanel1.Controls.Add(this.rightVoltButton, 1, 4);
-            this.tableLayoutPanel1.Controls.Add(this.aloVoltButton, 1, 5);
-            this.tableLayoutPanel1.Controls.Add(this.turnButton, 1, 6);
-            this.tableLayoutPanel1.Controls.Add(this.dyingComboBox, 1, 7);
-            this.tableLayoutPanel1.Controls.Add(this.saveButton, 1, 9);
-            this.tableLayoutPanel1.Controls.Add(this.disableShortcutsCheckBox, 1, 11);
-            this.tableLayoutPanel1.Controls.Add(this.label14, 0, 12);
-            this.tableLayoutPanel1.Controls.Add(this.flowLayoutPanel2, 1, 12);
-            this.tableLayoutPanel1.Controls.Add(this.label15, 0, 2);
-            this.tableLayoutPanel1.Controls.Add(this.brakeAliasButton, 1, 2);
-            this.tableLayoutPanel1.Controls.Add(this.toggleFullscreenCheckBox, 1, 14);
-            this.tableLayoutPanel1.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.tableLayoutPanel1.Location = new System.Drawing.Point(0, 0);
-            this.tableLayoutPanel1.Name = "tableLayoutPanel1";
-            this.tableLayoutPanel1.RowCount = 15;
-            this.tableLayoutPanel1.RowStyles.Add(new System.Windows.Forms.RowStyle());
-            this.tableLayoutPanel1.RowStyles.Add(new System.Windows.Forms.RowStyle());
-            this.tableLayoutPanel1.RowStyles.Add(new System.Windows.Forms.RowStyle());
-            this.tableLayoutPanel1.RowStyles.Add(new System.Windows.Forms.RowStyle());
-            this.tableLayoutPanel1.RowStyles.Add(new System.Windows.Forms.RowStyle());
-            this.tableLayoutPanel1.RowStyles.Add(new System.Windows.Forms.RowStyle());
-            this.tableLayoutPanel1.RowStyles.Add(new System.Windows.Forms.RowStyle());
-            this.tableLayoutPanel1.RowStyles.Add(new System.Windows.Forms.RowStyle());
-            this.tableLayoutPanel1.RowStyles.Add(new System.Windows.Forms.RowStyle());
-            this.tableLayoutPanel1.RowStyles.Add(new System.Windows.Forms.RowStyle());
-            this.tableLayoutPanel1.RowStyles.Add(new System.Windows.Forms.RowStyle());
-            this.tableLayoutPanel1.RowStyles.Add(new System.Windows.Forms.RowStyle());
-            this.tableLayoutPanel1.RowStyles.Add(new System.Windows.Forms.RowStyle());
-            this.tableLayoutPanel1.RowStyles.Add(new System.Windows.Forms.RowStyle());
-            this.tableLayoutPanel1.RowStyles.Add(new System.Windows.Forms.RowStyle());
-            this.tableLayoutPanel1.Size = new System.Drawing.Size(762, 806);
-            this.tableLayoutPanel1.TabIndex = 1;
+            tableLayoutPanel1.AutoScroll = true;
+            tableLayoutPanel1.AutoSize = true;
+            tableLayoutPanel1.ColumnCount = 2;
+            tableLayoutPanel1.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 50F));
+            tableLayoutPanel1.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 50F));
+            tableLayoutPanel1.Controls.Add(loadButton, 1, 10);
+            tableLayoutPanel1.Controls.Add(label13, 0, 10);
+            tableLayoutPanel1.Controls.Add(label12, 0, 9);
+            tableLayoutPanel1.Controls.Add(followDriverComboBox, 1, 8);
+            tableLayoutPanel1.Controls.Add(label1, 0, 0);
+            tableLayoutPanel1.Controls.Add(label2, 0, 1);
+            tableLayoutPanel1.Controls.Add(label4, 0, 3);
+            tableLayoutPanel1.Controls.Add(label5, 0, 4);
+            tableLayoutPanel1.Controls.Add(label6, 0, 5);
+            tableLayoutPanel1.Controls.Add(label7, 0, 6);
+            tableLayoutPanel1.Controls.Add(label8, 0, 7);
+            tableLayoutPanel1.Controls.Add(label11, 0, 8);
+            tableLayoutPanel1.Controls.Add(gasButton, 1, 0);
+            tableLayoutPanel1.Controls.Add(brakeButton, 1, 1);
+            tableLayoutPanel1.Controls.Add(leftVoltButton, 1, 3);
+            tableLayoutPanel1.Controls.Add(rightVoltButton, 1, 4);
+            tableLayoutPanel1.Controls.Add(aloVoltButton, 1, 5);
+            tableLayoutPanel1.Controls.Add(turnButton, 1, 6);
+            tableLayoutPanel1.Controls.Add(dyingComboBox, 1, 7);
+            tableLayoutPanel1.Controls.Add(saveButton, 1, 9);
+            tableLayoutPanel1.Controls.Add(disableShortcutsCheckBox, 1, 11);
+            tableLayoutPanel1.Controls.Add(label14, 0, 12);
+            tableLayoutPanel1.Controls.Add(flowLayoutPanel2, 1, 12);
+            tableLayoutPanel1.Controls.Add(label15, 0, 2);
+            tableLayoutPanel1.Controls.Add(brakeAliasButton, 1, 2);
+            tableLayoutPanel1.Controls.Add(toggleFullscreenCheckBox, 1, 14);
+            tableLayoutPanel1.Dock = System.Windows.Forms.DockStyle.Fill;
+            tableLayoutPanel1.Location = new System.Drawing.Point(0, 0);
+            tableLayoutPanel1.Name = "tableLayoutPanel1";
+            tableLayoutPanel1.RowCount = 15;
+            tableLayoutPanel1.RowStyles.Add(new System.Windows.Forms.RowStyle());
+            tableLayoutPanel1.RowStyles.Add(new System.Windows.Forms.RowStyle());
+            tableLayoutPanel1.RowStyles.Add(new System.Windows.Forms.RowStyle());
+            tableLayoutPanel1.RowStyles.Add(new System.Windows.Forms.RowStyle());
+            tableLayoutPanel1.RowStyles.Add(new System.Windows.Forms.RowStyle());
+            tableLayoutPanel1.RowStyles.Add(new System.Windows.Forms.RowStyle());
+            tableLayoutPanel1.RowStyles.Add(new System.Windows.Forms.RowStyle());
+            tableLayoutPanel1.RowStyles.Add(new System.Windows.Forms.RowStyle());
+            tableLayoutPanel1.RowStyles.Add(new System.Windows.Forms.RowStyle());
+            tableLayoutPanel1.RowStyles.Add(new System.Windows.Forms.RowStyle());
+            tableLayoutPanel1.RowStyles.Add(new System.Windows.Forms.RowStyle());
+            tableLayoutPanel1.RowStyles.Add(new System.Windows.Forms.RowStyle());
+            tableLayoutPanel1.RowStyles.Add(new System.Windows.Forms.RowStyle());
+            tableLayoutPanel1.RowStyles.Add(new System.Windows.Forms.RowStyle());
+            tableLayoutPanel1.RowStyles.Add(new System.Windows.Forms.RowStyle());
+            tableLayoutPanel1.Size = new System.Drawing.Size(762, 806);
+            tableLayoutPanel1.TabIndex = 1;
             // 
             // loadButton
             // 
-            this.loadButton.AutoSize = true;
-            this.loadButton.AutoSizeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink;
-            this.loadButton.Location = new System.Drawing.Point(384, 479);
-            this.loadButton.MinimumSize = new System.Drawing.Size(150, 0);
-            this.loadButton.Name = "loadButton";
-            this.loadButton.Size = new System.Drawing.Size(150, 42);
-            this.loadButton.TabIndex = 20;
-            this.loadButton.Text = "RShiftKey";
-            this.loadButton.UseVisualStyleBackColor = true;
-            this.loadButton.Click += new System.EventHandler(this.KeyButtonClick);
+            loadButton.AutoSize = true;
+            loadButton.AutoSizeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink;
+            loadButton.Location = new System.Drawing.Point(384, 479);
+            loadButton.MinimumSize = new System.Drawing.Size(150, 0);
+            loadButton.Name = "loadButton";
+            loadButton.Size = new System.Drawing.Size(150, 42);
+            loadButton.TabIndex = 20;
+            loadButton.Text = "RShiftKey";
+            loadButton.UseVisualStyleBackColor = true;
+            loadButton.Click += KeyButtonClick;
             // 
             // label13
             // 
-            this.label13.Anchor = System.Windows.Forms.AnchorStyles.Right;
-            this.label13.AutoSize = true;
-            this.label13.Location = new System.Drawing.Point(313, 484);
-            this.label13.Name = "label13";
-            this.label13.Size = new System.Drawing.Size(65, 32);
-            this.label13.TabIndex = 18;
-            this.label13.Text = "Load";
+            label13.Anchor = System.Windows.Forms.AnchorStyles.Right;
+            label13.AutoSize = true;
+            label13.Location = new System.Drawing.Point(313, 484);
+            label13.Name = "label13";
+            label13.Size = new System.Drawing.Size(65, 32);
+            label13.TabIndex = 18;
+            label13.Text = "Load";
             // 
             // label12
             // 
-            this.label12.Anchor = System.Windows.Forms.AnchorStyles.Right;
-            this.label12.AutoSize = true;
-            this.label12.Location = new System.Drawing.Point(314, 436);
-            this.label12.Name = "label12";
-            this.label12.Size = new System.Drawing.Size(64, 32);
-            this.label12.TabIndex = 17;
-            this.label12.Text = "Save";
+            label12.Anchor = System.Windows.Forms.AnchorStyles.Right;
+            label12.AutoSize = true;
+            label12.Location = new System.Drawing.Point(314, 436);
+            label12.Name = "label12";
+            label12.Size = new System.Drawing.Size(64, 32);
+            label12.TabIndex = 17;
+            label12.Text = "Save";
             // 
             // followDriverComboBox
             // 
-            this.followDriverComboBox.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.followDriverComboBox.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
-            this.followDriverComboBox.FormattingEnabled = true;
-            this.followDriverComboBox.Items.AddRange(new object[] {
-            "When pressing a playing key",
-            "Never"});
-            this.followDriverComboBox.Location = new System.Drawing.Point(384, 385);
-            this.followDriverComboBox.Name = "followDriverComboBox";
-            this.followDriverComboBox.Size = new System.Drawing.Size(375, 40);
-            this.followDriverComboBox.TabIndex = 16;
+            followDriverComboBox.Dock = System.Windows.Forms.DockStyle.Fill;
+            followDriverComboBox.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
+            followDriverComboBox.FormattingEnabled = true;
+            followDriverComboBox.Items.AddRange(new object[] { "When pressing a playing key", "Never" });
+            followDriverComboBox.Location = new System.Drawing.Point(384, 385);
+            followDriverComboBox.Name = "followDriverComboBox";
+            followDriverComboBox.Size = new System.Drawing.Size(375, 40);
+            followDriverComboBox.TabIndex = 16;
             // 
             // label1
             // 
-            this.label1.Anchor = System.Windows.Forms.AnchorStyles.Right;
-            this.label1.AutoSize = true;
-            this.label1.Location = new System.Drawing.Point(326, 8);
-            this.label1.Name = "label1";
-            this.label1.Size = new System.Drawing.Size(52, 32);
-            this.label1.TabIndex = 0;
-            this.label1.Text = "Gas";
+            label1.Anchor = System.Windows.Forms.AnchorStyles.Right;
+            label1.AutoSize = true;
+            label1.Location = new System.Drawing.Point(326, 8);
+            label1.Name = "label1";
+            label1.Size = new System.Drawing.Size(52, 32);
+            label1.TabIndex = 0;
+            label1.Text = "Gas";
             // 
             // label2
             // 
-            this.label2.Anchor = System.Windows.Forms.AnchorStyles.Right;
-            this.label2.AutoSize = true;
-            this.label2.Location = new System.Drawing.Point(305, 56);
-            this.label2.Name = "label2";
-            this.label2.Size = new System.Drawing.Size(73, 32);
-            this.label2.TabIndex = 1;
-            this.label2.Text = "Brake";
+            label2.Anchor = System.Windows.Forms.AnchorStyles.Right;
+            label2.AutoSize = true;
+            label2.Location = new System.Drawing.Point(305, 56);
+            label2.Name = "label2";
+            label2.Size = new System.Drawing.Size(73, 32);
+            label2.TabIndex = 1;
+            label2.Text = "Brake";
             // 
             // label4
             // 
-            this.label4.Anchor = System.Windows.Forms.AnchorStyles.Right;
-            this.label4.AutoSize = true;
-            this.label4.Location = new System.Drawing.Point(277, 152);
-            this.label4.Name = "label4";
-            this.label4.Size = new System.Drawing.Size(101, 32);
-            this.label4.TabIndex = 3;
-            this.label4.Text = "Left volt";
+            label4.Anchor = System.Windows.Forms.AnchorStyles.Right;
+            label4.AutoSize = true;
+            label4.Location = new System.Drawing.Point(277, 152);
+            label4.Name = "label4";
+            label4.Size = new System.Drawing.Size(101, 32);
+            label4.TabIndex = 3;
+            label4.Text = "Left volt";
             // 
             // label5
             // 
-            this.label5.Anchor = System.Windows.Forms.AnchorStyles.Right;
-            this.label5.AutoSize = true;
-            this.label5.Location = new System.Drawing.Point(261, 200);
-            this.label5.Name = "label5";
-            this.label5.Size = new System.Drawing.Size(117, 32);
-            this.label5.TabIndex = 4;
-            this.label5.Text = "Right volt";
+            label5.Anchor = System.Windows.Forms.AnchorStyles.Right;
+            label5.AutoSize = true;
+            label5.Location = new System.Drawing.Point(261, 200);
+            label5.Name = "label5";
+            label5.Size = new System.Drawing.Size(117, 32);
+            label5.TabIndex = 4;
+            label5.Text = "Right volt";
             // 
             // label6
             // 
-            this.label6.Anchor = System.Windows.Forms.AnchorStyles.Right;
-            this.label6.AutoSize = true;
-            this.label6.Location = new System.Drawing.Point(289, 248);
-            this.label6.Name = "label6";
-            this.label6.Size = new System.Drawing.Size(89, 32);
-            this.label6.TabIndex = 5;
-            this.label6.Text = "Alovolt";
+            label6.Anchor = System.Windows.Forms.AnchorStyles.Right;
+            label6.AutoSize = true;
+            label6.Location = new System.Drawing.Point(289, 248);
+            label6.Name = "label6";
+            label6.Size = new System.Drawing.Size(89, 32);
+            label6.TabIndex = 5;
+            label6.Text = "Alovolt";
             // 
             // label7
             // 
-            this.label7.Anchor = System.Windows.Forms.AnchorStyles.Right;
-            this.label7.AutoSize = true;
-            this.label7.Location = new System.Drawing.Point(315, 296);
-            this.label7.Name = "label7";
-            this.label7.Size = new System.Drawing.Size(63, 32);
-            this.label7.TabIndex = 6;
-            this.label7.Text = "Turn";
+            label7.Anchor = System.Windows.Forms.AnchorStyles.Right;
+            label7.AutoSize = true;
+            label7.Location = new System.Drawing.Point(315, 296);
+            label7.Name = "label7";
+            label7.Size = new System.Drawing.Size(63, 32);
+            label7.TabIndex = 6;
+            label7.Text = "Turn";
             // 
             // label8
             // 
-            this.label8.Anchor = System.Windows.Forms.AnchorStyles.Right;
-            this.label8.AutoSize = true;
-            this.label8.Location = new System.Drawing.Point(234, 343);
-            this.label8.Name = "label8";
-            this.label8.Size = new System.Drawing.Size(144, 32);
-            this.label8.TabIndex = 7;
-            this.label8.Text = "When dying";
+            label8.Anchor = System.Windows.Forms.AnchorStyles.Right;
+            label8.AutoSize = true;
+            label8.Location = new System.Drawing.Point(234, 343);
+            label8.Name = "label8";
+            label8.Size = new System.Drawing.Size(144, 32);
+            label8.TabIndex = 7;
+            label8.Text = "When dying";
             // 
             // label11
             // 
-            this.label11.Anchor = System.Windows.Forms.AnchorStyles.Right;
-            this.label11.AutoSize = true;
-            this.label11.Location = new System.Drawing.Point(227, 389);
-            this.label11.Name = "label11";
-            this.label11.Size = new System.Drawing.Size(151, 32);
-            this.label11.TabIndex = 8;
-            this.label11.Text = "Follow driver";
+            label11.Anchor = System.Windows.Forms.AnchorStyles.Right;
+            label11.AutoSize = true;
+            label11.Location = new System.Drawing.Point(227, 389);
+            label11.Name = "label11";
+            label11.Size = new System.Drawing.Size(151, 32);
+            label11.TabIndex = 8;
+            label11.Text = "Follow driver";
             // 
             // gasButton
             // 
-            this.gasButton.AutoSize = true;
-            this.gasButton.AutoSizeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink;
-            this.gasButton.Location = new System.Drawing.Point(384, 3);
-            this.gasButton.MinimumSize = new System.Drawing.Size(150, 0);
-            this.gasButton.Name = "gasButton";
-            this.gasButton.Size = new System.Drawing.Size(150, 42);
-            this.gasButton.TabIndex = 9;
-            this.gasButton.Text = "Up";
-            this.gasButton.UseVisualStyleBackColor = true;
-            this.gasButton.Click += new System.EventHandler(this.KeyButtonClick);
+            gasButton.AutoSize = true;
+            gasButton.AutoSizeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink;
+            gasButton.Location = new System.Drawing.Point(384, 3);
+            gasButton.MinimumSize = new System.Drawing.Size(150, 0);
+            gasButton.Name = "gasButton";
+            gasButton.Size = new System.Drawing.Size(150, 42);
+            gasButton.TabIndex = 9;
+            gasButton.Text = "Up";
+            gasButton.UseVisualStyleBackColor = true;
+            gasButton.Click += KeyButtonClick;
             // 
             // brakeButton
             // 
-            this.brakeButton.AutoSize = true;
-            this.brakeButton.AutoSizeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink;
-            this.brakeButton.Location = new System.Drawing.Point(384, 51);
-            this.brakeButton.MinimumSize = new System.Drawing.Size(150, 0);
-            this.brakeButton.Name = "brakeButton";
-            this.brakeButton.Size = new System.Drawing.Size(150, 42);
-            this.brakeButton.TabIndex = 10;
-            this.brakeButton.Text = "Down";
-            this.brakeButton.UseVisualStyleBackColor = true;
-            this.brakeButton.Click += new System.EventHandler(this.KeyButtonClick);
+            brakeButton.AutoSize = true;
+            brakeButton.AutoSizeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink;
+            brakeButton.Location = new System.Drawing.Point(384, 51);
+            brakeButton.MinimumSize = new System.Drawing.Size(150, 0);
+            brakeButton.Name = "brakeButton";
+            brakeButton.Size = new System.Drawing.Size(150, 42);
+            brakeButton.TabIndex = 10;
+            brakeButton.Text = "Down";
+            brakeButton.UseVisualStyleBackColor = true;
+            brakeButton.Click += KeyButtonClick;
             // 
             // leftVoltButton
             // 
-            this.leftVoltButton.AutoSize = true;
-            this.leftVoltButton.AutoSizeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink;
-            this.leftVoltButton.Location = new System.Drawing.Point(384, 147);
-            this.leftVoltButton.MinimumSize = new System.Drawing.Size(150, 0);
-            this.leftVoltButton.Name = "leftVoltButton";
-            this.leftVoltButton.Size = new System.Drawing.Size(150, 42);
-            this.leftVoltButton.TabIndex = 11;
-            this.leftVoltButton.Text = "Left";
-            this.leftVoltButton.UseVisualStyleBackColor = true;
-            this.leftVoltButton.Click += new System.EventHandler(this.KeyButtonClick);
+            leftVoltButton.AutoSize = true;
+            leftVoltButton.AutoSizeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink;
+            leftVoltButton.Location = new System.Drawing.Point(384, 147);
+            leftVoltButton.MinimumSize = new System.Drawing.Size(150, 0);
+            leftVoltButton.Name = "leftVoltButton";
+            leftVoltButton.Size = new System.Drawing.Size(150, 42);
+            leftVoltButton.TabIndex = 11;
+            leftVoltButton.Text = "Left";
+            leftVoltButton.UseVisualStyleBackColor = true;
+            leftVoltButton.Click += KeyButtonClick;
             // 
             // rightVoltButton
             // 
-            this.rightVoltButton.AutoSize = true;
-            this.rightVoltButton.AutoSizeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink;
-            this.rightVoltButton.Location = new System.Drawing.Point(384, 195);
-            this.rightVoltButton.MinimumSize = new System.Drawing.Size(150, 0);
-            this.rightVoltButton.Name = "rightVoltButton";
-            this.rightVoltButton.Size = new System.Drawing.Size(150, 42);
-            this.rightVoltButton.TabIndex = 12;
-            this.rightVoltButton.Text = "Right";
-            this.rightVoltButton.UseVisualStyleBackColor = true;
-            this.rightVoltButton.Click += new System.EventHandler(this.KeyButtonClick);
+            rightVoltButton.AutoSize = true;
+            rightVoltButton.AutoSizeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink;
+            rightVoltButton.Location = new System.Drawing.Point(384, 195);
+            rightVoltButton.MinimumSize = new System.Drawing.Size(150, 0);
+            rightVoltButton.Name = "rightVoltButton";
+            rightVoltButton.Size = new System.Drawing.Size(150, 42);
+            rightVoltButton.TabIndex = 12;
+            rightVoltButton.Text = "Right";
+            rightVoltButton.UseVisualStyleBackColor = true;
+            rightVoltButton.Click += KeyButtonClick;
             // 
             // aloVoltButton
             // 
-            this.aloVoltButton.AutoSize = true;
-            this.aloVoltButton.AutoSizeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink;
-            this.aloVoltButton.Location = new System.Drawing.Point(384, 243);
-            this.aloVoltButton.MinimumSize = new System.Drawing.Size(150, 0);
-            this.aloVoltButton.Name = "aloVoltButton";
-            this.aloVoltButton.Size = new System.Drawing.Size(150, 42);
-            this.aloVoltButton.TabIndex = 13;
-            this.aloVoltButton.Text = "Insert";
-            this.aloVoltButton.UseVisualStyleBackColor = true;
-            this.aloVoltButton.Click += new System.EventHandler(this.KeyButtonClick);
+            aloVoltButton.AutoSize = true;
+            aloVoltButton.AutoSizeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink;
+            aloVoltButton.Location = new System.Drawing.Point(384, 243);
+            aloVoltButton.MinimumSize = new System.Drawing.Size(150, 0);
+            aloVoltButton.Name = "aloVoltButton";
+            aloVoltButton.Size = new System.Drawing.Size(150, 42);
+            aloVoltButton.TabIndex = 13;
+            aloVoltButton.Text = "Insert";
+            aloVoltButton.UseVisualStyleBackColor = true;
+            aloVoltButton.Click += KeyButtonClick;
             // 
             // turnButton
             // 
-            this.turnButton.AutoSize = true;
-            this.turnButton.AutoSizeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink;
-            this.turnButton.Location = new System.Drawing.Point(384, 291);
-            this.turnButton.MinimumSize = new System.Drawing.Size(150, 0);
-            this.turnButton.Name = "turnButton";
-            this.turnButton.Size = new System.Drawing.Size(150, 42);
-            this.turnButton.TabIndex = 14;
-            this.turnButton.Text = "Space";
-            this.turnButton.UseVisualStyleBackColor = true;
-            this.turnButton.Click += new System.EventHandler(this.KeyButtonClick);
+            turnButton.AutoSize = true;
+            turnButton.AutoSizeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink;
+            turnButton.Location = new System.Drawing.Point(384, 291);
+            turnButton.MinimumSize = new System.Drawing.Size(150, 0);
+            turnButton.Name = "turnButton";
+            turnButton.Size = new System.Drawing.Size(150, 42);
+            turnButton.TabIndex = 14;
+            turnButton.Text = "Space";
+            turnButton.UseVisualStyleBackColor = true;
+            turnButton.Click += KeyButtonClick;
             // 
             // dyingComboBox
             // 
-            this.dyingComboBox.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.dyingComboBox.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
-            this.dyingComboBox.FormattingEnabled = true;
-            this.dyingComboBox.Items.AddRange(new object[] {
-            "Stop playing",
-            "Pause playing",
-            "Restart playing",
-            "Be invulnerable"});
-            this.dyingComboBox.Location = new System.Drawing.Point(384, 339);
-            this.dyingComboBox.Name = "dyingComboBox";
-            this.dyingComboBox.Size = new System.Drawing.Size(375, 40);
-            this.dyingComboBox.TabIndex = 15;
+            dyingComboBox.Dock = System.Windows.Forms.DockStyle.Fill;
+            dyingComboBox.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
+            dyingComboBox.FormattingEnabled = true;
+            dyingComboBox.Items.AddRange(new object[] { "Stop playing", "Pause playing", "Restart playing", "Be invulnerable" });
+            dyingComboBox.Location = new System.Drawing.Point(384, 339);
+            dyingComboBox.Name = "dyingComboBox";
+            dyingComboBox.Size = new System.Drawing.Size(375, 40);
+            dyingComboBox.TabIndex = 15;
             // 
             // saveButton
             // 
-            this.saveButton.AutoSize = true;
-            this.saveButton.AutoSizeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink;
-            this.saveButton.Location = new System.Drawing.Point(384, 431);
-            this.saveButton.MinimumSize = new System.Drawing.Size(150, 0);
-            this.saveButton.Name = "saveButton";
-            this.saveButton.Size = new System.Drawing.Size(150, 42);
-            this.saveButton.TabIndex = 19;
-            this.saveButton.Text = "LShiftKey";
-            this.saveButton.UseVisualStyleBackColor = true;
-            this.saveButton.Click += new System.EventHandler(this.KeyButtonClick);
+            saveButton.AutoSize = true;
+            saveButton.AutoSizeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink;
+            saveButton.Location = new System.Drawing.Point(384, 431);
+            saveButton.MinimumSize = new System.Drawing.Size(150, 0);
+            saveButton.Name = "saveButton";
+            saveButton.Size = new System.Drawing.Size(150, 42);
+            saveButton.TabIndex = 19;
+            saveButton.Text = "LShiftKey";
+            saveButton.UseVisualStyleBackColor = true;
+            saveButton.Click += KeyButtonClick;
             // 
             // disableShortcutsCheckBox
             // 
-            this.disableShortcutsCheckBox.AutoSize = true;
-            this.disableShortcutsCheckBox.Location = new System.Drawing.Point(384, 527);
-            this.disableShortcutsCheckBox.Name = "disableShortcutsCheckBox";
-            this.disableShortcutsCheckBox.Size = new System.Drawing.Size(272, 36);
-            this.disableShortcutsCheckBox.TabIndex = 21;
-            this.disableShortcutsCheckBox.Text = "Disable shortcut keys";
-            this.disableShortcutsCheckBox.UseVisualStyleBackColor = true;
+            disableShortcutsCheckBox.AutoSize = true;
+            disableShortcutsCheckBox.Location = new System.Drawing.Point(384, 527);
+            disableShortcutsCheckBox.Name = "disableShortcutsCheckBox";
+            disableShortcutsCheckBox.Size = new System.Drawing.Size(272, 36);
+            disableShortcutsCheckBox.TabIndex = 21;
+            disableShortcutsCheckBox.Text = "Disable shortcut keys";
+            disableShortcutsCheckBox.UseVisualStyleBackColor = true;
             // 
             // label14
             // 
-            this.label14.Anchor = System.Windows.Forms.AnchorStyles.Right;
-            this.label14.AutoSize = true;
-            this.label14.Location = new System.Drawing.Point(243, 575);
-            this.label14.Name = "label14";
-            this.label14.Size = new System.Drawing.Size(135, 32);
-            this.label14.TabIndex = 22;
-            this.label14.Text = "Physics FPS";
+            label14.Anchor = System.Windows.Forms.AnchorStyles.Right;
+            label14.AutoSize = true;
+            label14.Location = new System.Drawing.Point(243, 575);
+            label14.Name = "label14";
+            label14.Size = new System.Drawing.Size(135, 32);
+            label14.TabIndex = 22;
+            label14.Text = "Physics FPS";
             // 
             // flowLayoutPanel2
             // 
-            this.flowLayoutPanel2.AutoSize = true;
-            this.flowLayoutPanel2.Controls.Add(this.fpsTextBox);
-            this.flowLayoutPanel2.Controls.Add(this.constantFpsCheckBox);
-            this.flowLayoutPanel2.Location = new System.Drawing.Point(384, 569);
-            this.flowLayoutPanel2.Name = "flowLayoutPanel2";
-            this.flowLayoutPanel2.Size = new System.Drawing.Size(303, 45);
-            this.flowLayoutPanel2.TabIndex = 24;
+            flowLayoutPanel2.AutoSize = true;
+            flowLayoutPanel2.Controls.Add(fpsTextBox);
+            flowLayoutPanel2.Controls.Add(constantFpsCheckBox);
+            flowLayoutPanel2.Location = new System.Drawing.Point(384, 569);
+            flowLayoutPanel2.Name = "flowLayoutPanel2";
+            flowLayoutPanel2.Size = new System.Drawing.Size(303, 45);
+            flowLayoutPanel2.TabIndex = 24;
             // 
             // fpsTextBox
             // 
-            this.fpsTextBox.BackColor = System.Drawing.SystemColors.Window;
-            this.fpsTextBox.DefaultValue = 1000;
-            this.fpsTextBox.Location = new System.Drawing.Point(3, 3);
-            this.fpsTextBox.Name = "fpsTextBox";
-            this.fpsTextBox.Size = new System.Drawing.Size(150, 39);
-            this.fpsTextBox.TabIndex = 23;
-            this.fpsTextBox.Text = "1000";
+            fpsTextBox.BackColor = System.Drawing.SystemColors.Window;
+            fpsTextBox.DefaultValue = 1000;
+            fpsTextBox.Location = new System.Drawing.Point(3, 3);
+            fpsTextBox.Name = "fpsTextBox";
+            fpsTextBox.Size = new System.Drawing.Size(150, 39);
+            fpsTextBox.TabIndex = 23;
+            fpsTextBox.Text = "1000";
             // 
             // constantFpsCheckBox
             // 
-            this.constantFpsCheckBox.Anchor = System.Windows.Forms.AnchorStyles.None;
-            this.constantFpsCheckBox.AutoSize = true;
-            this.constantFpsCheckBox.Location = new System.Drawing.Point(159, 4);
-            this.constantFpsCheckBox.Name = "constantFpsCheckBox";
-            this.constantFpsCheckBox.Size = new System.Drawing.Size(141, 36);
-            this.constantFpsCheckBox.TabIndex = 22;
-            this.constantFpsCheckBox.Text = "Constant";
-            this.toolTip1.SetToolTip(this.constantFpsCheckBox, resources.GetString("constantFpsCheckBox.ToolTip"));
-            this.constantFpsCheckBox.UseVisualStyleBackColor = true;
+            constantFpsCheckBox.Anchor = System.Windows.Forms.AnchorStyles.None;
+            constantFpsCheckBox.AutoSize = true;
+            constantFpsCheckBox.Location = new System.Drawing.Point(159, 4);
+            constantFpsCheckBox.Name = "constantFpsCheckBox";
+            constantFpsCheckBox.Size = new System.Drawing.Size(141, 36);
+            constantFpsCheckBox.TabIndex = 22;
+            constantFpsCheckBox.Text = "Constant";
+            toolTip1.SetToolTip(constantFpsCheckBox, resources.GetString("constantFpsCheckBox.ToolTip"));
+            constantFpsCheckBox.UseVisualStyleBackColor = true;
             // 
             // label15
             // 
-            this.label15.Anchor = System.Windows.Forms.AnchorStyles.Right;
-            this.label15.AutoSize = true;
-            this.label15.Location = new System.Drawing.Point(252, 104);
-            this.label15.Name = "label15";
-            this.label15.Size = new System.Drawing.Size(126, 32);
-            this.label15.TabIndex = 25;
-            this.label15.Text = "Brake alias";
+            label15.Anchor = System.Windows.Forms.AnchorStyles.Right;
+            label15.AutoSize = true;
+            label15.Location = new System.Drawing.Point(252, 104);
+            label15.Name = "label15";
+            label15.Size = new System.Drawing.Size(126, 32);
+            label15.TabIndex = 25;
+            label15.Text = "Brake alias";
             // 
             // brakeAliasButton
             // 
-            this.brakeAliasButton.AutoSize = true;
-            this.brakeAliasButton.AutoSizeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink;
-            this.brakeAliasButton.Location = new System.Drawing.Point(384, 99);
-            this.brakeAliasButton.MinimumSize = new System.Drawing.Size(150, 0);
-            this.brakeAliasButton.Name = "brakeAliasButton";
-            this.brakeAliasButton.Size = new System.Drawing.Size(150, 42);
-            this.brakeAliasButton.TabIndex = 26;
-            this.brakeAliasButton.Text = "X";
-            this.brakeAliasButton.UseVisualStyleBackColor = true;
-            this.brakeAliasButton.Click += new System.EventHandler(this.KeyButtonClick);
+            brakeAliasButton.AutoSize = true;
+            brakeAliasButton.AutoSizeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink;
+            brakeAliasButton.Location = new System.Drawing.Point(384, 99);
+            brakeAliasButton.MinimumSize = new System.Drawing.Size(150, 0);
+            brakeAliasButton.Name = "brakeAliasButton";
+            brakeAliasButton.Size = new System.Drawing.Size(150, 42);
+            brakeAliasButton.TabIndex = 26;
+            brakeAliasButton.Text = "X";
+            brakeAliasButton.UseVisualStyleBackColor = true;
+            brakeAliasButton.Click += KeyButtonClick;
             // 
             // toggleFullscreenCheckBox
             // 
-            this.toggleFullscreenCheckBox.AutoSize = true;
-            this.toggleFullscreenCheckBox.Location = new System.Drawing.Point(384, 620);
-            this.toggleFullscreenCheckBox.Name = "toggleFullscreenCheckBox";
-            this.toggleFullscreenCheckBox.Size = new System.Drawing.Size(369, 36);
-            this.toggleFullscreenCheckBox.TabIndex = 27;
-            this.toggleFullscreenCheckBox.Text = "Toggle fullscreen on play/stop";
-            this.toolTip1.SetToolTip(this.toggleFullscreenCheckBox, "Regardless of this option, you can use F11 to toggle fullscreen.");
-            this.toggleFullscreenCheckBox.UseVisualStyleBackColor = true;
+            toggleFullscreenCheckBox.AutoSize = true;
+            toggleFullscreenCheckBox.Location = new System.Drawing.Point(384, 620);
+            toggleFullscreenCheckBox.Name = "toggleFullscreenCheckBox";
+            toggleFullscreenCheckBox.Size = new System.Drawing.Size(369, 36);
+            toggleFullscreenCheckBox.TabIndex = 27;
+            toggleFullscreenCheckBox.Text = "Toggle fullscreen on play/stop";
+            toolTip1.SetToolTip(toggleFullscreenCheckBox, "Regardless of this option, you can use F11 to toggle fullscreen.");
+            toggleFullscreenCheckBox.UseVisualStyleBackColor = true;
             // 
             // label3
             // 
-            this.label3.Location = new System.Drawing.Point(0, 0);
-            this.label3.Name = "label3";
-            this.label3.Size = new System.Drawing.Size(100, 23);
-            this.label3.TabIndex = 0;
-            this.label3.Text = "label3";
+            label3.Location = new System.Drawing.Point(0, 0);
+            label3.Name = "label3";
+            label3.Size = new System.Drawing.Size(100, 23);
+            label3.TabIndex = 0;
+            label3.Text = "label3";
             // 
             // label9
             // 
-            this.label9.Location = new System.Drawing.Point(0, 0);
-            this.label9.Name = "label9";
-            this.label9.Size = new System.Drawing.Size(100, 23);
-            this.label9.TabIndex = 0;
-            this.label9.Text = "label9";
+            label9.Location = new System.Drawing.Point(0, 0);
+            label9.Name = "label9";
+            label9.Size = new System.Drawing.Size(100, 23);
+            label9.TabIndex = 0;
+            label9.Text = "label9";
             // 
             // label10
             // 
-            this.label10.Location = new System.Drawing.Point(0, 0);
-            this.label10.Name = "label10";
-            this.label10.Size = new System.Drawing.Size(100, 23);
-            this.label10.TabIndex = 0;
-            this.label10.Text = "label10";
+            label10.Location = new System.Drawing.Point(0, 0);
+            label10.Name = "label10";
+            label10.Size = new System.Drawing.Size(100, 23);
+            label10.TabIndex = 0;
+            label10.Text = "label10";
             // 
             // toolTip1
             // 
-            this.toolTip1.AutomaticDelay = 10;
-            this.toolTip1.AutoPopDelay = 0;
-            this.toolTip1.InitialDelay = 1;
-            this.toolTip1.ReshowDelay = 2;
+            toolTip1.AutomaticDelay = 10;
+            toolTip1.AutoPopDelay = 0;
+            toolTip1.InitialDelay = 1;
+            toolTip1.ReshowDelay = 2;
             // 
             // PlaySettingsForm
             // 
-            this.AcceptButton = this.okButton;
-            this.AutoScaleDimensions = new System.Drawing.SizeF(13F, 32F);
-            this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.CancelButton = this.cancelButton;
-            this.ClientSize = new System.Drawing.Size(762, 859);
-            this.Controls.Add(this.tableLayoutPanel1);
-            this.Controls.Add(this.flowLayoutPanel1);
-            this.KeyPreview = true;
-            this.Name = "PlaySettingsForm";
-            this.Text = "Playing settings";
-            this.flowLayoutPanel1.ResumeLayout(false);
-            this.tableLayoutPanel1.ResumeLayout(false);
-            this.tableLayoutPanel1.PerformLayout();
-            this.flowLayoutPanel2.ResumeLayout(false);
-            this.flowLayoutPanel2.PerformLayout();
-            this.ResumeLayout(false);
-            this.PerformLayout();
-
+            AcceptButton = okButton;
+            AutoScaleDimensions = new System.Drawing.SizeF(13F, 32F);
+            AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
+            CancelButton = cancelButton;
+            ClientSize = new System.Drawing.Size(762, 859);
+            Controls.Add(tableLayoutPanel1);
+            Controls.Add(flowLayoutPanel1);
+            KeyPreview = true;
+            Name = "PlaySettingsForm";
+            Text = "Playing settings";
+            flowLayoutPanel1.ResumeLayout(false);
+            tableLayoutPanel1.ResumeLayout(false);
+            tableLayoutPanel1.PerformLayout();
+            flowLayoutPanel2.ResumeLayout(false);
+            flowLayoutPanel2.PerformLayout();
+            ResumeLayout(false);
+            PerformLayout();
         }
 
         #endregion
