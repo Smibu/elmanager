@@ -295,7 +295,7 @@ internal class TransformTool : ToolBase, IEditorTool
         }
 
         for (int i = 0; i < _transformState.OriginalTransformTextures.Count; i++)
-            _transformState.OriginalTransformTextures[i] = Lev.GraphicElements[Lev.GraphicElements.Count - 1 - i] with { };
+            _transformState.OriginalTransformTextures[_transformState.OriginalTransformTextures.Count - 1 - i] = Lev.GraphicElements[Lev.GraphicElements.Count - 1 - i] with { };
         _transformState.OriginalRectangle = new Polygon(_transformState.TransformRectangle);
         LevEditor.SetModified(LevModification.Ground);
     }
