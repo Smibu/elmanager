@@ -302,7 +302,7 @@ internal static class GeometryUtils
 
                 if (bestRect == null)
                 {
-                    throw new PolygonException(errorMsg);
+                    continue;
                 }
 
                 if (bestArea / bestRect.Area > minRectCover || rectangle.Equals(lastRect))
