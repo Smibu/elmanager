@@ -4,6 +4,8 @@ namespace Elmanager.Rendering;
 
 internal record DrawableImage(int TextureId, double Width, double Height, ImageMeta Meta)
 {
+    private const double PixelFactor = 1 / 48.0;
+
     internal double WidthMinusMargin => Width - 2 * EmptyPixelXMargin;
 
     internal double HeightMinusMargin => Height - 2 * EmptyPixelYMargin;
@@ -11,19 +13,19 @@ internal record DrawableImage(int TextureId, double Width, double Height, ImageM
     internal double EmptyPixelXMargin =>
         Name switch
         {
-            "maskhor" => 0.029,
-            "masklitt" => 0.015,
-            "maskbig" => 0.092,
-            _ => 0.092
+            "maskhor" => PixelFactor,
+            "masklitt" => PixelFactor,
+            "maskbig" => 4 * PixelFactor,
+            _ => PixelFactor
         };
 
     internal double EmptyPixelYMargin =>
         Name switch
         {
-            "maskhor" => 0.029,
-            "masklitt" => 0.015,
-            "maskbig" => 0.112,
-            _ => 0.112
+            "maskhor" => PixelFactor,
+            "masklitt" => PixelFactor,
+            "maskbig" => 5 * PixelFactor,
+            _ => PixelFactor
         };
 
     public string Name => Meta.Name;
