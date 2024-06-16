@@ -92,6 +92,7 @@ internal class CutConnectTool : ToolBase, IEditorTool
         for (int i = Lev.Polygons.Count - 1; i >= 0; i--)
         {
             Polygon x = Lev.Polygons[i];
+            if (!IsPolygonVisible(x)) continue;
             var cutPolygons = x.Cut(v1, v2, 0.01 * ZoomCtrl.ZoomLevel);
             if (cutPolygons == null) continue;
             anythingCut = true;
@@ -106,17 +107,24 @@ internal class CutConnectTool : ToolBase, IEditorTool
             LevEditor.SetModified(LevModification.Ground);
     }
 
+    private bool IsPolygonVisible(Polygon x) => (x.IsGrass && LevEditor.EffectiveGrassFilter) ||
+                                                (!x.IsGrass && LevEditor.EffectiveGroundFilter);
+
     private bool TryConnect(Vector v1, Vector v2)
     {
         MarkAllAs(VectorMark.None);
         List<Polygon> intersectingPolygons =
             Lev.Polygons.Where(x =>
-                    !x.IsGrass && x.ToIPolygon()
+                    IsPolygonVisible(x) && x.ToIPolygon()
                         .Crosses(new LineSegment(v1, v2).ToGeometry(GeometryFactory.Floating)))
                 .ToList();
         bool anythingConnected = false;
         if (intersectingPolygons.Count == 2)
         {
+            if (intersectingPolygons[0].IsGrass ^ intersectingPolygons[1].IsGrass)
+            {
+                return false;
+            }
             var connected = GeometryUtils.Connect(intersectingPolygons[0], intersectingPolygons[1], _start,
                 CurrentPos, ZoomCtrl.ZoomLevel * 0.01);
             if (connected is { })
