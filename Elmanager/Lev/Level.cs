@@ -629,7 +629,7 @@ internal class Level
         levelFile.AddRange(BitConverter.GetBytes(Polygons.Count + MagicDouble));
         foreach (var x in Polygons)
         {
-            if (!(x.IsCounterClockwise ^ IsSky(x)))
+            if (!x.IsGrass && !(x.IsCounterClockwise ^ IsSky(x)))
                 x.ChangeOrientation();
             levelFile.AddRange(BitConverter.GetBytes(x.IsGrass));
             for (var i = 1; i <= 3; i++)
