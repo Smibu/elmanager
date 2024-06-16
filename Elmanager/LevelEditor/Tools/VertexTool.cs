@@ -28,7 +28,7 @@ internal class VertexTool : ToolBase, IEditorTool
     public void UpdateHelp()
     {
         LevEditor.InfoLabel.Text =
-            "LMouse: create vertex. Click near an edge of a polygon to add vertices to it.";
+            "LMouse: create vertex. Click near an edge of a polygon to add vertices to it. LShift + click: create rectangle.";
         if (_currentPolygon is { })
         {
             var lngth = (_currentPolygon.Vertices[^1] -
