@@ -98,7 +98,7 @@ internal class PolyOpTool : ToolBase, IEditorTool
                             try
                             {
                                 Lev.Polygons.AddRange(
-                                    v.Polygon.PolygonOperationWith(_firstPolygon, _currentOpType));
+                                    v.Polygon.PolygonOperationWith(_firstPolygon, _currentOpType, Lev.GroundBounds, LevEditor.Settings.RenderingSettings.GrassZoom));
                                 Lev.Polygons.RemoveAll(p => p.Vertices.Count < 3);
                                 Lev.Polygons.Remove(_firstPolygon);
                                 Lev.Polygons.Remove(v.Polygon);

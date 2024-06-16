@@ -443,11 +443,16 @@ internal class Polygon
         return unsmoothPoly;
     }
 
-    internal List<Polygon> PolygonOperationWith(Polygon p, PolygonOperationType type)
+    internal List<Polygon> PolygonOperationWith(Polygon p, PolygonOperationType type, Bounds bounds, double grassZoom)
     {
         if (!IsSimple || !p.IsSimple)
         {
             throw new PolygonException("Both polygons must be non-self-intersecting.");
+        }
+
+        if (IsGrass ^ p.IsGrass)
+        {
+            throw new PolygonException("Both polygons must be ground or grass.");
         }
 
         var resultPolys = type switch
@@ -474,7 +479,14 @@ internal class Polygon
         }
 
         foreach (var x in results)
-            x.UpdateDecomposition();
+        {
+            if (IsGrass)
+            {
+                x.IsGrass = true;
+            }
+
+            x.UpdateDecompositionOrGrassSlopeInfo(bounds, grassZoom);
+        }
         return results;
     }
 
