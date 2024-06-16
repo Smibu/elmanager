@@ -44,11 +44,6 @@ internal class SmoothenTool : ToolBase, IEditorTool
                 Renderer.DrawPolygon(x, Color.Red);
     }
 
-    public List<Polygon> GetExtraPolygons()
-    {
-        return new();
-    }
-
     public void InActivate()
     {
         Global.AppSettings.LevelEditor.SmoothSteps = _smoothSteps;

@@ -56,11 +56,6 @@ internal class PolyOpTool : ToolBase, IEditorTool
     {
     }
 
-    public List<Polygon> GetExtraPolygons()
-    {
-        return new();
-    }
-
     public void InActivate()
     {
         if (_firstPolygon is null) return;

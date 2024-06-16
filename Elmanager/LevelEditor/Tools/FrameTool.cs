@@ -49,7 +49,8 @@ internal class FrameTool : ToolBase, IEditorTool
         Renderer.DrawPolygon(_frame.Frames[1], Color.Blue);
     }
 
-    public List<Polygon> GetExtraPolygons() => _frame?.Frames ?? new List<Polygon>();
+    public TransientElements GetTransientElements() =>
+        _frame is not null ? TransientElements.FromPolygons(_frame.Frames) : TransientElements.Empty;
 
     public void InActivate()
     {

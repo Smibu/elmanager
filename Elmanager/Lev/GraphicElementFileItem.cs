@@ -5,8 +5,6 @@ namespace Elmanager.Lev;
 
 internal abstract record GraphicElementFileItem(Vector Position, int Distance, ClippingType Clipping)
 {
-    internal bool IsPicture => this is PictureFileItem;
-
     internal record PictureFileItem
         (string PictureName, Vector Position, int Distance, ClippingType Clipping) : GraphicElementFileItem(Position,
             Distance, Clipping);

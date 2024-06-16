@@ -50,11 +50,6 @@ internal class SelectionTool : ToolBase, IEditorTool
             Renderer.DrawPolygon(_selectionPoly, Color.Blue);
     }
 
-    public List<Polygon> GetExtraPolygons()
-    {
-        return new();
-    }
-
     public void InActivate()
     {
         Moving = false;

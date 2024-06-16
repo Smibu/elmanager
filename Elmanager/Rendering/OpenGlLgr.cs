@@ -674,9 +674,9 @@ internal class OpenGlLgr : IDisposable
             GL.StencilFunc(StencilFunction.Equal, ElmaRenderer.GroundStencil, ElmaRenderer.StencilMask);
             GL.AlphaFunc(AlphaFunction.Notequal, GrassIgnoreAlpha / 255f);
             GL.Disable(EnableCap.Blend);
-            for (var i = sceneSettings.AdditionalPolys.Count - 1; i >= 0; i--)
+            for (var i = sceneSettings.TransientElements.Polygons.Count - 1; i >= 0; i--)
             {
-                DrawPolygonGrass(sceneSettings.AdditionalPolys[i], _grassData);
+                DrawPolygonGrass(sceneSettings.TransientElements.Polygons[i], _grassData);
             }
             for (var i = lev.Polygons.Count - 1; i >= 0; i--)
             {

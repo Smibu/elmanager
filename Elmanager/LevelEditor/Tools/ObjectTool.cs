@@ -1,10 +1,8 @@
 using System;
 using System.Collections.Generic;
 using System.Windows.Forms;
-using Elmanager.Application;
 using Elmanager.Geometry;
 using Elmanager.Lev;
-using Elmanager.Rendering;
 
 namespace Elmanager.LevelEditor.Tools;
 
@@ -26,52 +24,16 @@ internal class ObjectTool : ToolBase, IEditorTool
 
     public void ExtraRendering()
     {
-        if (!_hasFocus)
-            return;
-        var settings = Global.AppSettings.LevelEditor.RenderingSettings;
-        if (settings.ShowObjectFrames)
-        {
-            switch (_currentObjectType)
-            {
-                case ObjectType.Killer:
-                    Renderer.DrawCircle(CurrentPos, OpenGlLgr.ObjectRadius,
-                        settings.KillerColor, settings.CircleDrawingAccuracy);
-                    break;
-                case ObjectType.Apple:
-                    Renderer.DrawCircle(CurrentPos, OpenGlLgr.ObjectRadius,
-                        settings.AppleColor, settings.CircleDrawingAccuracy);
-                    break;
-                case ObjectType.Flower:
-                    Renderer.DrawCircle(CurrentPos, OpenGlLgr.ObjectRadius,
-                        settings.FlowerColor, settings.CircleDrawingAccuracy);
-                    break;
-            }
-        }
-
-        if (!settings.ShowObjects || Renderer.OpenGlLgr == null)
-            return;
-        switch (_currentObjectType)
-        {
-            case ObjectType.Killer:
-                Renderer.OpenGlLgr.DrawKillerSingle(CurrentPos);
-                break;
-            case ObjectType.Apple:
-                Renderer.OpenGlLgr.DrawAppleSingle(CurrentPos, _animNum);
-                break;
-            case ObjectType.Flower:
-                Renderer.OpenGlLgr.DrawFlowerSingle(CurrentPos);
-                break;
-        }
-    }
-
-    public List<Polygon> GetExtraPolygons()
-    {
-        return new();
     }
 
     public void InActivate()
     {
     }
+
+    public TransientElements GetTransientElements() => _hasFocus
+        ? TransientElements.FromObjects(new List<LevObject>
+            { new(CurrentPos, _currentObjectType, AppleType.Normal) })
+        : TransientElements.Empty;
 
     public void KeyDown(KeyEventArgs key)
     {

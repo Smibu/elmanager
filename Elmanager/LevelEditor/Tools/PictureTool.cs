@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using System.Windows.Forms;
 using Elmanager.Application;
 using Elmanager.Geometry;
-using Elmanager.Lev;
 using Elmanager.Rendering;
 
 namespace Elmanager.LevelEditor.Tools;
@@ -21,23 +20,18 @@ internal class PictureTool : ToolBase, IEditorTool
     public void Activate()
     {
         UpdateHelp();
-        if (_currentElem is { })
-            AddCurrent(_currentElem);
     }
 
     public void ExtraRendering()
     {
     }
 
-    public List<Polygon> GetExtraPolygons()
-    {
-        return new();
-    }
+    public TransientElements GetTransientElements() => _currentElem is not null
+        ? TransientElements.FromGraphicElements(new List<GraphicElement> { _currentElem })
+        : TransientElements.Empty;
 
     public void InActivate()
     {
-        if (_currentElem is { })
-            RemoveCurrent(_currentElem);
     }
 
     public void KeyDown(KeyEventArgs key)
@@ -74,8 +68,8 @@ internal class PictureTool : ToolBase, IEditorTool
 
                 if (_currentElem is { })
                 {
-                    _currentElem = _currentElem with { };
                     Lev.GraphicElements.Add(_currentElem);
+                    _currentElem = _currentElem with { };
                     LevEditor.SetModified(LevModification.Decorations);
                 }
                 else
@@ -128,12 +122,6 @@ internal class PictureTool : ToolBase, IEditorTool
             "LMouse: insert new element; RMouse: select element type; 1-5: change placement anchor.";
     }
 
-    private void AddCurrent(GraphicElement currentGraphicElement)
-    {
-        Lev.GraphicElements.Insert(0, currentGraphicElement);
-        Lev.SortPictures();
-    }
-
     private GraphicElement? OpenDialogNow(PictureForm picForm, bool setDefaultsAutomatically)
     {
         if (Renderer.OpenGlLgr == null)
@@ -169,23 +157,12 @@ internal class PictureTool : ToolBase, IEditorTool
         if (_currentElem is null)
         {
             _currentElem = OpenDialogNow(picForm, setDefaultsAutomatically: true);
-            if (_currentElem is { })
-            {
-                AddCurrent(_currentElem);
-            }
         }
         else
         {
-            RemoveCurrent(_currentElem);
             var newElem = OpenDialogNow(picForm, setDefaultsAutomatically: Global.AppSettings.LevelEditor.AlwaysSetDefaultsInPictureTool);
             _currentElem = newElem ?? _currentElem;
-            AddCurrent(_currentElem);
         }
-    }
-
-    private void RemoveCurrent(GraphicElement currentGraphicElement)
-    {
-        Lev.GraphicElements.Remove(currentGraphicElement);
     }
 
     public override bool Busy => false;

@@ -644,7 +644,7 @@ internal partial class LevelEditorForm : FormMod, IMessageFilter
 
     private void DoRedrawScene()
     {
-        _sceneSettings.AdditionalPolys = CurrentTool.GetExtraPolygons();
+        _sceneSettings.TransientElements = CurrentTool.GetTransientElements();
         var jf = PlayController.Playing && PlayController.FollowDriver ? _zoomCtrl.Cam.FixJitter() : new Vector();
         Renderer.DrawScene(Lev, _zoomCtrl.Cam, _sceneSettings, Settings.RenderingSettings);
 

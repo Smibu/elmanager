@@ -143,11 +143,6 @@ internal class TransformTool : ToolBase, IEditorTool
             (transformRectangle.Vertices[3] + transformRectangle.Vertices[0]) / 2, Color.Blue);
     }
 
-    public List<Polygon> GetExtraPolygons()
-    {
-        return new();
-    }
-
     public void InActivate()
     {
         EndTransforming();

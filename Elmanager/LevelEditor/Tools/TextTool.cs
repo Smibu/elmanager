@@ -110,11 +110,6 @@ internal class TextTool : ToolBase, IEditorTool
         }
     }
 
-    public List<Polygon> GetExtraPolygons()
-    {
-        return new();
-    }
-
     public void InActivate()
     {
     }

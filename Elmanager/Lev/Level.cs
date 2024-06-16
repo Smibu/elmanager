@@ -64,7 +64,6 @@ internal class Level
     internal string SkyTextureName = "sky";
     internal readonly LevelTop10 Top10 = new();
     public int Identifier { get; private set; }
-    private List<GraphicElementFileItem> _graphicElementFileItems = new();
 
     public string LgrFile = "default";
     private string _title = "New level";
@@ -208,15 +207,18 @@ internal class Level
                 var distance = lev.ReadInt32();
                 var clipping = (ClippingType)lev.ReadInt32();
                 if (pictureName == "")
-                    _graphicElementFileItems.Add(GraphicElementFileItem.Texture(textureName,
-                        maskName, new Vector(x, y),
+                    GraphicElements.Add(GraphicElement.MissingText(textureName,
+                        maskName,
+                        clipping,
                         distance,
-                        clipping));
+                        new Vector(x, y)
+                    ));
                 else
-                    _graphicElementFileItems.Add(GraphicElementFileItem.Picture(pictureName,
-                        new Vector(x, y),
+                    GraphicElements.Add(GraphicElement.MissingPic(pictureName,
+                        clipping,
                         distance,
-                        clipping));
+                        new Vector(x, y)
+                    ));
             }
         }
 
@@ -273,7 +275,6 @@ internal class Level
         {
             GraphicElements.Add(z with { });
         }
-        UpdateGraphicElementFileItems();
     }
 
 
@@ -412,7 +413,7 @@ internal class Level
 
     private double ObjectSum => Objects.Sum(x => x.Position.X - x.Position.Y + (int)x.Type);
 
-    private double PictureSum => _graphicElementFileItems.Sum(x => x.Position.X - x.Position.Y);
+    private double PictureSum => GraphicElements.Sum(x => x.Position.X - x.Position.Y);
 
     private double PolygonSum => Polygons.Sum(x => x.Vertices.Sum(v => v.X - v.Y));
 
@@ -423,8 +424,6 @@ internal class Level
     private bool IsLeb => LevStartMagic == "@@^!@";
 
     internal bool HasTooFewObjects => Objects.Count < 2;
-
-    public List<GraphicElementFileItem> GraphicElementFileItems => _graphicElementFileItems;
 
     internal static string GetPossiblyInternal(string level)
     {
@@ -478,8 +477,6 @@ internal class Level
         Polygons.AddRange(other.Polygons);
         Objects.AddRange(other.Objects);
         GraphicElements.AddRange(other.GraphicElements);
-
-        UpdateGraphicElementFileItems();
 
         UpdateBounds();
     }
@@ -601,7 +598,6 @@ internal class Level
     internal ElmaFile Save(string savePath, bool saveAsFresh = true)
     {
         var levelFile = new List<byte>();
-        UpdateGraphicElementFileItems();
         if (saveAsFresh)
         {
             Top10.Clear();
@@ -656,19 +652,26 @@ internal class Level
             levelFile.AddRange(BitConverter.GetBytes(x.AnimationNumber - 1));
         }
 
-        levelFile.AddRange(BitConverter.GetBytes(_graphicElementFileItems.Count + MagicDouble2));
-        foreach (var x in _graphicElementFileItems)
+        levelFile.AddRange(BitConverter.GetBytes(GraphicElements.Count + MagicDouble2));
+        foreach (var x in GraphicElements)
         {
             switch (x)
             {
-                case GraphicElementFileItem.PictureFileItem p:
-                    levelFile.AddRange(GetByteArrayFromString(p.PictureName, 10));
-                    for (var i = 1; i <= 20; i++)
-                        levelFile.Add(0);
+                case GraphicElement.Picture p:
+                    levelFile.AddRange(GetByteArrayFromString(p.PictureInfo.Name, 10));
+                    levelFile.AddRange(Enumerable.Repeat<byte>(0, 20));
                     break;
-                case GraphicElementFileItem.TextureFileItem t:
-                    for (var i = 1; i <= 10; i++)
-                        levelFile.Add(0);
+                case GraphicElement.MissingPicture p:
+                    levelFile.AddRange(GetByteArrayFromString(p.Name, 10));
+                    levelFile.AddRange(Enumerable.Repeat<byte>(0, 20));
+                    break;
+                case GraphicElement.Texture t:
+                    levelFile.AddRange(Enumerable.Repeat<byte>(0, 10));
+                    levelFile.AddRange(GetByteArrayFromString(t.TextureInfo.Name, 10));
+                    levelFile.AddRange(GetByteArrayFromString(t.MaskInfo.Name, 10));
+                    break;
+                case GraphicElement.MissingTexture t:
+                    levelFile.AddRange(Enumerable.Repeat<byte>(0, 10));
                     levelFile.AddRange(GetByteArrayFromString(t.TextureName, 10));
                     levelFile.AddRange(GetByteArrayFromString(t.MaskName, 10));
                     break;
@@ -749,8 +752,9 @@ internal class Level
 
     internal void UpdateImages(Dictionary<string, DrawableImage> lgrImages)
     {
+        var oldElements = GraphicElements.Select(p => p.ToFileData()).ToList();
         GraphicElements = new List<GraphicElement>();
-        foreach (var fileItem in _graphicElementFileItems)
+        foreach (var fileItem in oldElements)
         {
             if (fileItem is GraphicElementFileItem.PictureFileItem pItem)
             {
@@ -836,11 +840,6 @@ internal class Level
         {
             levelFile.AddRange(GetByteArrayFromString(i < entries.Count ? entries[i].PlayerB : "", Top10NameSize));
         }
-    }
-
-    private void UpdateGraphicElementFileItems()
-    {
-        _graphicElementFileItems = GraphicElements.Select(p => p.ToFileData()).ToList();
     }
 
     internal static Level FromDimensions(double width, double height)

@@ -246,7 +246,7 @@ internal class ElmaRenderer : IDisposable
         GL.StencilFunc(StencilFunction.Equal, GroundStencil, StencilMask);
         GL.ColorMask(false, false, false, false);
         GL.Begin(PrimitiveType.Triangles);
-        foreach (var k in lev.Polygons.Concat(sceneSettings.AdditionalPolys))
+        foreach (var k in lev.Polygons.Concat(sceneSettings.TransientElements.Polygons))
             if (!k.IsGrass)
                 DrawFilledTrianglesFast(k.Decomposition, ZFar - (ZFar - ZNear) * SkyDepth);
         GL.End();
@@ -327,9 +327,9 @@ internal class ElmaRenderer : IDisposable
         {
             GL.DepthFunc(DepthFunction.Gequal);
             GL.Enable(EnableCap.ScissorTest);
-            for (var i = lev.GraphicElements.Count - 1; i >= 0; --i)
+            foreach (var picture in lev.GraphicElements.Concat(sceneSettings.TransientElements.GraphicElements)
+                         .AsEnumerable().Reverse())
             {
-                var picture = lev.GraphicElements[i];
                 DoPictureScissor(picture, cam);
                 if (picture is GraphicElement.Picture p && settings.ShowPictures)
                 {
@@ -352,7 +352,7 @@ internal class ElmaRenderer : IDisposable
                 }
             }
 
-            foreach (var picture in lev.GraphicElements)
+            foreach (var picture in lev.GraphicElements.Concat(sceneSettings.TransientElements.GraphicElements))
             {
                 DoPictureScissor(picture, cam);
                 if (picture is GraphicElement.Texture t && settings.ShowTextures)
@@ -473,7 +473,7 @@ internal class ElmaRenderer : IDisposable
         }
 
         GL.Color4(settings.TextureFrameColor);
-        foreach (var z in lev.GraphicElements)
+        foreach (var z in lev.GraphicElements.Concat(sceneSettings.TransientElements.GraphicElements))
         {
             DrawGraphicElementFrame(z, settings, null);
         }
@@ -574,7 +574,8 @@ internal class ElmaRenderer : IDisposable
 
     private IEnumerable<(LevObject, int)> GetVisibleObjects(Level lev, SceneSettings sceneSettings)
     {
-        return lev.Objects.Select((t, i) => (t, i)).Where(t => !sceneSettings.HiddenObjectIndices.Contains(t.i));
+        return lev.Objects.Select((t, i) => (t, i)).Where(t => !sceneSettings.HiddenObjectIndices.Contains(t.i))
+            .Concat(sceneSettings.TransientElements.Objects.Select(o => (o, -1)));
     }
 
     private void DoPictureScissor(GraphicElement graphicElement, ElmaCamera cam)

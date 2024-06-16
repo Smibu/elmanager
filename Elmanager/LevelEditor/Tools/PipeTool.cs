@@ -54,14 +54,14 @@ internal class PipeTool : ToolBase, IEditorTool
         }
     }
 
-    public List<Polygon> GetExtraPolygons()
+    public TransientElements GetTransientElements()
     {
         var polys = new List<Polygon>();
         if (_pipeSpec is { })
         {
             polys.Add(_pipeSpec.Pipe);
         }
-        return polys;
+        return TransientElements.FromPolygons(polys);
     }
 
     public void InActivate()

@@ -5,6 +5,7 @@ using System.Windows.Input;
 using Elmanager.Application;
 using Elmanager.Geometry;
 using Elmanager.Lev;
+using Elmanager.Rendering;
 using Elmanager.Utilities;
 using KeyEventArgs = System.Windows.Forms.KeyEventArgs;
 using MouseEventArgs = System.Windows.Forms.MouseEventArgs;
@@ -43,7 +44,7 @@ internal class EllipseTool : ToolBase, IEditorTool
         }
     }
 
-    public List<Polygon> GetExtraPolygons()
+    public TransientElements GetTransientElements()
     {
         var polys = new List<Polygon>();
         if (_ellipse is { })
@@ -51,7 +52,7 @@ internal class EllipseTool : ToolBase, IEditorTool
             polys.Add(_ellipse);
         }
 
-        return polys;
+        return TransientElements.FromPolygons(polys);
     }
 
     public void InActivate()

@@ -6,6 +6,7 @@ using System.Windows.Forms;
 using Elmanager.Application;
 using Elmanager.Geometry;
 using Elmanager.Lev;
+using Elmanager.Rendering;
 using Elmanager.Utilities;
 
 namespace Elmanager.LevelEditor.Tools;
@@ -45,7 +46,9 @@ internal class AutoGrassTool : ToolBase, IEditorTool
         }
     }
 
-    public List<Polygon> GetExtraPolygons() => _currentAutograssPolys ?? new();
+    public TransientElements GetTransientElements() => _currentAutograssPolys != null
+        ? TransientElements.FromPolygons(_currentAutograssPolys)
+        : TransientElements.Empty;
 
     public void InActivate()
     {

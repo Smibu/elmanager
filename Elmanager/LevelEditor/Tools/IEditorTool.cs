@@ -1,7 +1,5 @@
-using System.Collections.Generic;
 using System.Windows.Forms;
 using Elmanager.Geometry;
-using Elmanager.Lev;
 
 namespace Elmanager.LevelEditor.Tools;
 
@@ -13,7 +11,7 @@ internal interface IEditorTool : IEditorToolBase
     void MouseMove(Vector p);
     void MouseOutOfEditor();
     void ExtraRendering();
-    List<Polygon> GetExtraPolygons();
+    TransientElements GetTransientElements() => TransientElements.Empty;
     void InActivate();
     void Activate();
     void UpdateHelp();

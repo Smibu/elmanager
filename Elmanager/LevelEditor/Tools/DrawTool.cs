@@ -39,11 +39,6 @@ internal class DrawTool : ToolBase, IEditorTool
             Renderer.DrawLine(_currentPolygon.GetLastVertex(), _currentPolygon.Vertices[0], Color.Red);
     }
 
-    public List<Polygon> GetExtraPolygons()
-    {
-        return new();
-    }
-
     public void InActivate()
     {
         _currentPolygon = null;

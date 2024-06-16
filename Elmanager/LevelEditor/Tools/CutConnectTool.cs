@@ -29,11 +29,6 @@ internal class CutConnectTool : ToolBase, IEditorTool
             Renderer.DrawLine(_start, CurrentPos, Color.Blue);
     }
 
-    public List<Polygon> GetExtraPolygons()
-    {
-        return new();
-    }
-
     public void InActivate()
     {
         StartSelected = false;

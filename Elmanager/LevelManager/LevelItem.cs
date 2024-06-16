@@ -4,6 +4,8 @@ using System.Linq;
 using Elmanager.ElmaPrimitives;
 using Elmanager.IO;
 using Elmanager.Lev;
+using Elmanager.Rendering;
+using SharpVectors.Converters;
 
 namespace Elmanager.LevelManager;
 
@@ -31,9 +33,9 @@ internal record LevelItem(
     [Description("Grav.")]
     public int GravApples => Lev.Objects.Count(x => x.Type == ObjectType.Apple && x.AppleType != AppleType.Normal);
 
-    [Description("Textures")] public int TextureCount => Lev.GraphicElementFileItems.Count(texture => !texture.IsPicture);
+    [Description("Textures")] public int TextureCount => Lev.GraphicElements.Count(e => e is GraphicElement.Texture or GraphicElement.MissingTexture);
 
-    [Description("Pictures")] public int PictureCount => Lev.GraphicElementFileItems.Count(texture => texture.IsPicture);
+    [Description("Pictures")] public int PictureCount => Lev.GraphicElements.Count(e => e is GraphicElement.Picture or GraphicElement.MissingPicture);
 
     [Description("Apples")] public int AppleObjectCount => Lev.AppleObjectCount;
 
