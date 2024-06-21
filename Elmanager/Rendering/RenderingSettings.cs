@@ -261,7 +261,7 @@ internal class RenderingSettings
     public bool ShowInactiveGrassEdges { get; set; }
 
     [DisplayName("Zoom textures"), JsonPropertyName("ZoomTextures")]
-    public bool ZoomTextures { get; set; }
+    public bool ZoomTextures { get; set; } = true;
 
     [Category("Workarounds"), DisplayName("Disable framebuffer usage"), JsonPropertyName("DisableFrameBuffer")]
     public bool DisableFrameBuffer { get; set; }
