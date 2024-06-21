@@ -91,11 +91,16 @@ internal partial class LevelEditorForm : FormMod, IMessageFilter
     private readonly TaskCompletionSource _tcs = new();
     private readonly FullScreenController _fullScreenController;
     private LgrManager? _lgrManager;
+    private static readonly string[] ImportableExtensions = { DirUtils.LevExtension, DirUtils.LebExtension, ".bmp", ".png", ".gif", ".tiff", ".exif", ".svg", ".svgz" };
+    private ToolBase.NearestVertexInfo? _grassInfo;
+    private TexturizationOptions? _texturizationOpts;
+    private readonly LevFileWatcher _levFileWatcher;
 
     internal LevelEditorForm(string? levPath)
     {
         InitializeComponent();
         InitializeInternalMenu();
+        _levFileWatcher = new LevFileWatcher(this);
         _fullScreenController = CreateFullScreenController();
         var lev = levPath != null
             ? TryLoadLevel(levPath)
@@ -162,6 +167,7 @@ internal partial class LevelEditorForm : FormMod, IMessageFilter
 
     public LevelEditorForm() : this(null)
     {
+        _levFileWatcher = new LevFileWatcher(this);
     }
 
     private void PostInit(EditorLev lev)
@@ -355,6 +361,14 @@ internal partial class LevelEditorForm : FormMod, IMessageFilter
         }
 
         UpdateUndoRedo();
+    }
+
+    public void UpdateLevel(Level lev)
+    {
+        _editorLev = _editorLev with { Lev = lev };
+        SetModified(LevModification.Ground | LevModification.Decorations | LevModification.Objects);
+        _savedIndex = _historyIndex;
+        LoadFromHistory();
     }
 
     private void AfterSettingsClosed()
@@ -1050,7 +1064,13 @@ internal partial class LevelEditorForm : FormMod, IMessageFilter
         _editorLev = lev;
         if (lev.File is not null)
         {
-            SaveStartPositionIfEnabled(new ElmaFileObject<Level>(lev.File, lev.Lev));
+            var elmaFileObject = new ElmaFileObject<Level>(lev.File, lev.Lev);
+            SaveStartPositionIfEnabled(elmaFileObject);
+            _levFileWatcher.StoreLevDiskSnapshot(elmaFileObject);
+        }
+        else
+        {
+            _levFileWatcher.ClearLevDiskSnapshot();
         }
         await PlayController.NotifyLevelChanged();
         PlayTimeLabel.Text = "";
@@ -1890,8 +1910,9 @@ internal partial class LevelEditorForm : FormMod, IMessageFilter
 
             try
             {
-                _editorLev = _editorLev with { File = Lev.Save(path) };
+                _editorLev = _editorLev with { File = _levFileWatcher.WithoutEvents(() => Lev.Save(path)) };
                 _savedIndex = _historyIndex;
+                _levFileWatcher.StoreLevDiskSnapshot(new ElmaFileObject<Level>(_editorLev.File, _editorLev.Lev));
                 if (!Global.GetLevelFiles().Contains(path))
                 {
                     Global.GetLevelFiles().Add(path);
@@ -2835,10 +2856,6 @@ internal partial class LevelEditorForm : FormMod, IMessageFilter
             Settings.PlayingSettings = f.Settings;
         }
     }
-
-    private static readonly string[] ImportableExtensions = { DirUtils.LevExtension, DirUtils.LebExtension, ".bmp", ".png", ".gif", ".tiff", ".exif", ".svg", ".svgz" };
-    private ToolBase.NearestVertexInfo? _grassInfo;
-    private TexturizationOptions? _texturizationOpts;
 
     public bool PreFilterMessage(ref Message m)
     {

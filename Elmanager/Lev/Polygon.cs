@@ -615,4 +615,22 @@ internal class Polygon
 
         return this;
     }
+
+    public bool VerticesEqual(Polygon other)
+    {
+        if (Vertices.Count != other.Vertices.Count)
+        {
+            return false;
+        }
+
+        foreach (var (v1, v2) in Vertices.Zip(other.Vertices))
+        {
+            if (!v1.X.Equals(v2.X) || !v1.Y.Equals(v2.Y))
+            {
+                return false;
+            }
+        }
+
+        return true;
+    }
 }

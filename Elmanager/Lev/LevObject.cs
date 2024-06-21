@@ -49,4 +49,8 @@ internal class LevObject : IPositionable
         get => Position.Mark;
         set => Position = Position with { Mark = value };
     }
+
+    public bool Equals(LevObject other) =>
+        Position.X.Equals(other.Position.X) && Position.Y.Equals(other.Position.Y) && Type == other.Type &&
+        AppleType == other.AppleType && AnimationNumber == other.AnimationNumber;
 }

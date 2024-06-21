@@ -652,7 +652,6 @@ internal class ElmaRenderer : IDisposable
             _ => throw new ArgumentOutOfRangeException()
         }).ToList();
         lev.UpdateAllPolygons(settings.GrassZoom);
-        lev.UpdateImages(OpenGlLgr?.DrawableImages ?? new Dictionary<string, DrawableImage>());
     }
 
     internal void ResetViewport(int width, int height)
@@ -685,6 +684,7 @@ internal class ElmaRenderer : IDisposable
         }
         else if (OpenGlLgr != null)
         {
+            lev.UpdateImages(OpenGlLgr.DrawableImages);
             OpenGlLgr.RefreshGrassPics(lev, newSettings);
         }
 

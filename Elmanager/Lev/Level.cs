@@ -692,9 +692,9 @@ internal class Level
         return new ElmaFile(savePath);
     }
 
-    internal void SortPictures()
+    private List<GraphicElement> SortPictures(List<GraphicElement> elements)
     {
-        GraphicElements = GraphicElements.OrderBy(p => p.Clipping == ClippingType.Unclipped ? 1 : 0).ToList();
+        return elements.OrderBy(p => p.Clipping == ClippingType.Unclipped ? 1 : 0).ToList();
     }
 
     internal void UpdateBounds()
@@ -787,7 +787,7 @@ internal class Level
             }
         }
 
-        SortPictures();
+        GraphicElements = SortPictures(GraphicElements);
     }
 
     private static void CryptTop10(IList<byte> level, int top10Offset)
@@ -851,5 +851,69 @@ internal class Level
                 height / 2),
             new Vector(width * 3 / 4,
                 height / 2));
+    }
+
+    public bool EqualsIgnoringTop10(Level other)
+    {
+        if (Polygons.Count != other.Polygons.Count)
+        {
+            return false;
+        }
+
+        if (Objects.Count != other.Objects.Count)
+        {
+            return false;
+        }
+
+        if (GraphicElements.Count != other.GraphicElements.Count)
+        {
+            return false;
+        }
+
+        if (Title != other.Title)
+        {
+            return false;
+        }
+
+        if (LgrFile != other.LgrFile)
+        {
+            return false;
+        }
+
+        if (GroundTextureName != other.GroundTextureName)
+        {
+            return false;
+        }
+
+        if (SkyTextureName != other.SkyTextureName)
+        {
+            return false;
+        }
+
+        foreach (var (p1, p2) in Polygons.Zip(other.Polygons))
+        {
+            if (!p1.VerticesEqual(p2))
+            {
+                return false;
+            }
+        }
+
+        foreach (var (o1, o2) in Objects.Zip(other.Objects))
+        {
+            if (!o1.Equals(o2))
+            {
+                return false;
+            }
+        }
+
+        foreach (var (o1, o2) in SortPictures(GraphicElements).Zip(SortPictures(other.GraphicElements)))
+        {
+            if (o1.ToFileData() != o2.ToFileData())
+            {
+                return false;
+            }
+        }
+
+        return true;
     }
 }
