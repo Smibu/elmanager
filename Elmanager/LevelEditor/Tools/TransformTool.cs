@@ -245,20 +245,19 @@ internal class TransformTool : ToolBase, IEditorTool
         _transformState.TransformRectangle = originalRectangle.ApplyTransformation(transformMatrix);
         for (int i = 0; i < _transformState.OriginalTransformPolygons.Count; i++)
         {
-            Lev.Polygons[Lev.Polygons.Count - 1 - i] =
-                _transformState.OriginalTransformPolygons[i].ApplyTransformation(transformMatrix, true);
-            Lev.Polygons[Lev.Polygons.Count - 1 - i].UpdateDecompositionOrGrassSlopeInfo(Lev.GroundBounds,
+            Lev.Polygons[^(i + 1)] =
+                _transformState.OriginalTransformPolygons[^(i + 1)].ApplyTransformation(transformMatrix, true);
+            Lev.Polygons[^(i + 1)].UpdateDecompositionOrGrassSlopeInfo(Lev.GroundBounds,
                 LevEditor.Settings.RenderingSettings.GrassZoom);
         }
 
         for (int i = 0; i < _transformState.OriginalTransformObjects.Count; i++)
-            Lev.Objects[Lev.Objects.Count - 1 - i].Position =
-                _transformState.OriginalTransformObjects[_transformState.OriginalTransformObjects.Count - 1 - i].Position * transformMatrix;
+            Lev.Objects[^(i + 1)].Position =
+                _transformState.OriginalTransformObjects[^(i + 1)].Position * transformMatrix;
         for (int i = 0; i < _transformState.OriginalTransformTextures.Count; i++)
         {
-            GraphicElement x = _transformState.OriginalTransformTextures[_transformState.OriginalTransformTextures.Count - 1 - i];
-            Lev.GraphicElements[Lev.GraphicElements.Count - 1 - i].Position =
-                x.Position * transformMatrix;
+            GraphicElement x = _transformState.OriginalTransformTextures[^(i + 1)];
+            Lev.GraphicElements[^(i + 1)].Position = x.Position * transformMatrix;
         }
     }
 
@@ -281,16 +280,16 @@ internal class TransformTool : ToolBase, IEditorTool
         if (_transformState?.TransformPolygonIndex is null) return;
         _transformState.TransformPolygonIndex = null;
         for (int i = 0; i < _transformState.OriginalTransformPolygons.Count; i++)
-            _transformState.OriginalTransformPolygons[i] = new Polygon(Lev.Polygons[Lev.Polygons.Count - 1 - i]);
+            _transformState.OriginalTransformPolygons[^(i + 1)] = new Polygon(Lev.Polygons[^(i + 1)]);
         for (int i = 0; i < _transformState.OriginalTransformObjects.Count; i++)
         {
-            LevObject x = Lev.Objects[Lev.Objects.Count - 1 - i];
-            _transformState.OriginalTransformObjects[_transformState.OriginalTransformObjects.Count - 1 - i] = new LevObject(
+            LevObject x = Lev.Objects[^(i + 1)];
+            _transformState.OriginalTransformObjects[^(i + 1)] = new LevObject(
                 x.Position, x.Type, x.AppleType, x.AnimationNumber);
         }
 
         for (int i = 0; i < _transformState.OriginalTransformTextures.Count; i++)
-            _transformState.OriginalTransformTextures[_transformState.OriginalTransformTextures.Count - 1 - i] = Lev.GraphicElements[Lev.GraphicElements.Count - 1 - i] with { };
+            _transformState.OriginalTransformTextures[^(i + 1)] = Lev.GraphicElements[^(i + 1)] with { };
         _transformState.OriginalRectangle = new Polygon(_transformState.TransformRectangle);
         LevEditor.SetModified(LevModification.Ground);
     }
