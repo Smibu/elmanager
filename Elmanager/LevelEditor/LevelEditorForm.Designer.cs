@@ -207,6 +207,7 @@ namespace Elmanager.LevelEditor
             DrawButton = new RadioButtonMod();
             VertexButton = new RadioButtonMod();
             SelectButton = new RadioButtonMod();
+            StartToolStripMenuItem = new ToolStripMenuItem();
             MenuStrip1.SuspendLayout();
             StatusStrip1.SuspendLayout();
             ToolStripPanel1.SuspendLayout();
@@ -588,9 +589,9 @@ namespace Elmanager.LevelEditor
             // 
             // SelectionFilterToolStripMenuItem
             // 
-            SelectionFilterToolStripMenuItem.DropDownItems.AddRange(new ToolStripItem[] { EnableAllToolStripMenuItem, DisableAllToolStripMenuItem, GroundPolygonsToolStripMenuItem, GrassPolygonsToolStripMenuItem, ApplesToolStripMenuItem, KillersToolStripMenuItem, FlowersToolStripMenuItem, PicturesToolStripMenuItem, TexturesToolStripMenuItem });
+            SelectionFilterToolStripMenuItem.DropDownItems.AddRange(new ToolStripItem[] { EnableAllToolStripMenuItem, DisableAllToolStripMenuItem, GroundPolygonsToolStripMenuItem, GrassPolygonsToolStripMenuItem, ApplesToolStripMenuItem, KillersToolStripMenuItem, FlowersToolStripMenuItem, StartToolStripMenuItem, PicturesToolStripMenuItem, TexturesToolStripMenuItem });
             SelectionFilterToolStripMenuItem.Name = "SelectionFilterToolStripMenuItem";
-            SelectionFilterToolStripMenuItem.Size = new Size(188, 36);
+            SelectionFilterToolStripMenuItem.Size = new Size(188, 38);
             SelectionFilterToolStripMenuItem.Text = "Selection filter";
             // 
             // EnableAllToolStripMenuItem
@@ -1726,6 +1727,16 @@ namespace Elmanager.LevelEditor
             SelectButton.TextAlign = ContentAlignment.MiddleCenter;
             SelectButton.UseVisualStyleBackColor = true;
             // 
+            // StartToolStripMenuItem
+            // 
+            StartToolStripMenuItem.Checked = true;
+            StartToolStripMenuItem.CheckOnClick = true;
+            StartToolStripMenuItem.CheckState = CheckState.Checked;
+            StartToolStripMenuItem.Name = "StartToolStripMenuItem";
+            StartToolStripMenuItem.Size = new Size(359, 44);
+            StartToolStripMenuItem.Text = "Start";
+            StartToolStripMenuItem.CheckedChanged += FilterChanged;
+            // 
             // LevelEditorForm
             // 
             AutoScaleDimensions = new SizeF(192F, 192F);
@@ -1935,6 +1946,7 @@ namespace Elmanager.LevelEditor
         private ToolStripMenuItem openInternalPart1ToolStripMenuItem;
         private ToolStripMenuItem openInternalPart2ToolStripMenuItem;
         internal ToolStripStatusLabel zoomLabel;
+        internal ToolStripMenuItem StartToolStripMenuItem;
     }
 
 }

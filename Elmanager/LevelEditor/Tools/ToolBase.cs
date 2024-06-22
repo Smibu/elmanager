@@ -13,12 +13,11 @@ internal abstract class ToolBase : IEditorToolBase
     protected Vector CurrentPos;
     private readonly Control _editorControl;
     protected readonly LevelEditorForm LevEditor;
-    protected readonly ElmaRenderer Renderer;
+    protected ElmaRenderer Renderer => LevEditor.Renderer;
 
     protected ToolBase(LevelEditorForm editor)
     {
         LevEditor = editor;
-        Renderer = editor.Renderer;
         _editorControl = editor.EditorControl;
     }
 
@@ -33,23 +32,25 @@ internal abstract class ToolBase : IEditorToolBase
     {
         int index = -1;
         double smallest = double.MaxValue;
-        var appleFilter = LevEditor.EffectiveAppleFilter;
-        var killerFilter = LevEditor.EffectiveKillerFilter;
-        var flowerFilter = LevEditor.EffectiveFlowerFilter;
+        var appleFilter = LevEditor.SelectionFilter.EffectiveAppleFilter;
+        var killerFilter = LevEditor.SelectionFilter.EffectiveKillerFilter;
+        var flowerFilter = LevEditor.SelectionFilter.EffectiveFlowerFilter;
+        var startFilter = LevEditor.SelectionFilter.EffectiveStartFilter;
         for (int i = 0; i < Lev.Objects.Count; i++)
         {
             Vector z = Lev.Objects[i].Position;
             ObjectType type = Lev.Objects[i].Type;
             if (((type == ObjectType.Apple && appleFilter) ||
                  (type == ObjectType.Killer && killerFilter) ||
-                 (type == ObjectType.Flower && flowerFilter) || type == ObjectType.Start) &&
+                 (type == ObjectType.Flower && flowerFilter) ||
+                 (type == ObjectType.Start && startFilter)) &&
                 (p - z).LengthSquared < smallest)
             {
                 smallest = (p - z).LengthSquared;
                 index = i;
             }
 
-            if (Lev.Objects[i].Type != ObjectType.Start) continue;
+            if (Lev.Objects[i].Type != ObjectType.Start || !startFilter) continue;
             Vector v1 = p - new Vector(z.X + Level.RightWheelDifferenceFromLeftWheelX, z.Y);
             Vector v2 = p -
                         new Vector(z.X + Level.HeadDifferenceFromLeftWheelX,
@@ -73,8 +74,8 @@ internal abstract class ToolBase : IEditorToolBase
 
     internal int GetNearestPictureIndex(Vector p)
     {
-        var pictureFilter = LevEditor.EffectivePictureFilter;
-        var textureFilter = LevEditor.EffectiveTextureFilter;
+        var pictureFilter = LevEditor.SelectionFilter.EffectivePictureFilter;
+        var textureFilter = LevEditor.SelectionFilter.EffectiveTextureFilter;
         int found = -1;
         if (Global.AppSettings.LevelEditor.CapturePicturesAndTexturesFromBordersOnly)
         {
@@ -151,8 +152,8 @@ internal abstract class ToolBase : IEditorToolBase
         double smallestSelectedDistance = double.MaxValue;
         Polygon? nearestSelectedPolygon = null;
         Polygon? nearestPolygon = null;
-        var grassFilter = LevEditor.EffectiveGrassFilter;
-        var groundFilter = LevEditor.EffectiveGroundFilter;
+        var grassFilter = LevEditor.SelectionFilter.EffectiveGrassFilter;
+        var groundFilter = LevEditor.SelectionFilter.EffectiveGroundFilter;
         foreach (Polygon poly in Lev.Polygons)
         {
             double currentDistance;
@@ -196,8 +197,8 @@ internal abstract class ToolBase : IEditorToolBase
     {
         var smallestDistance = double.MaxValue;
         Polygon? nearestPolygon = null;
-        var grassFilter = LevEditor.EffectiveGrassFilter;
-        var groundFilter = LevEditor.EffectiveGroundFilter;
+        var grassFilter = LevEditor.SelectionFilter.EffectiveGrassFilter;
+        var groundFilter = LevEditor.SelectionFilter.EffectiveGroundFilter;
         foreach (Polygon x in Lev.Polygons)
         {
             double currentDistance;

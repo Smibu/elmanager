@@ -39,25 +39,17 @@ namespace Elmanager.LevelEditor;
 
 internal partial class LevelEditorForm : FormMod, IMessageFilter
 {
-    //TODO Tool interface should be improved
     private const string CoordinateFormat = "F3";
     private const string LevEditorName = "SLE";
     private const int MouseWheelStep = 20;
     private const bool Physics = false;
     private readonly List<Level> _history = new();
-    private bool _appleFilter = true;
-    private bool _flowerFilter = true;
-    private bool _grassFilter = true;
-    private bool _groundFilter = true;
-    private bool _killerFilter = true;
-    private bool _pictureFilter = true;
-    private bool _textureFilter = true;
     internal IEditorTool CurrentTool = null!;
     private EditorLev _editorLev = new(new Level(), null);
     internal Level Lev => _editorLev.Lev;
     private ElmaFile? LevFile => _editorLev.File;
     internal ElmaRenderer Renderer = null!;
-    internal EditorTools Tools = null!;
+    internal readonly EditorTools Tools;
     private List<string>? _currLevDirFiles;
     private bool _draggingScreen;
     private List<Vector> _errorPoints = new();
@@ -95,12 +87,30 @@ internal partial class LevelEditorForm : FormMod, IMessageFilter
     private ToolBase.NearestVertexInfo? _grassInfo;
     private TexturizationOptions? _texturizationOpts;
     private readonly LevFileWatcher _levFileWatcher;
+    public SelectionFilter SelectionFilter { get; }
 
     internal LevelEditorForm(string? levPath)
     {
         InitializeComponent();
         InitializeInternalMenu();
         _levFileWatcher = new LevFileWatcher(this);
+        SelectionFilter = new SelectionFilter(this);
+        Tools = new EditorTools(
+            new SelectionTool(this),
+            new VertexTool(this),
+            new DrawTool(this),
+            new ObjectTool(this),
+            new PipeTool(this),
+            new EllipseTool(this),
+            new PolyOpTool(this),
+            new FrameTool(this),
+            new SmoothenTool(this),
+            new CutConnectTool(this),
+            new AutoGrassTool(this),
+            new TransformTool(this),
+            new PictureTool(this),
+            new TextTool(this)
+        );
         _fullScreenController = CreateFullScreenController();
         var lev = levPath != null
             ? TryLoadLevel(levPath)
@@ -167,6 +177,7 @@ internal partial class LevelEditorForm : FormMod, IMessageFilter
 
     public LevelEditorForm() : this(null)
     {
+        SelectionFilter = new SelectionFilter(this);
         _levFileWatcher = new LevFileWatcher(this);
     }
 
@@ -188,34 +199,6 @@ internal partial class LevelEditorForm : FormMod, IMessageFilter
     }
 
     internal bool Modified => _modified;
-
-    internal bool EffectiveAppleFilter => _appleFilter &&
-                                          (ShowObjectFramesButton.Checked ||
-                                           (ShowObjectsButton.Checked && IsLgrLoaded));
-
-    internal bool EffectiveKillerFilter => _killerFilter &&
-                                           (ShowObjectFramesButton.Checked ||
-                                            (ShowObjectsButton.Checked && IsLgrLoaded));
-
-    internal bool EffectiveFlowerFilter => _flowerFilter &&
-                                           (ShowObjectFramesButton.Checked ||
-                                            (ShowObjectsButton.Checked && IsLgrLoaded));
-
-    internal bool EffectiveGrassFilter => _grassFilter &&
-                                          (ShowGrassEdgesButton.Checked ||
-                                           (showGrassButton.Checked && IsLgrLoaded));
-
-    internal bool EffectiveGroundFilter => _groundFilter &&
-                                           (ShowGroundEdgesButton.Checked ||
-                                            (ShowGroundButton.Checked && IsLgrLoaded));
-
-    internal bool EffectiveTextureFilter => _textureFilter &&
-                                            (ShowTextureFramesButton.Checked ||
-                                             ShowTexturesButton.Checked);
-
-    internal bool EffectivePictureFilter => _pictureFilter &&
-                                            (ShowPictureFramesButton.Checked ||
-                                             ShowPicturesButton.Checked);
 
     private int SelectedElementCount => _selectedObjectCount + _selectedPictureCount + _selectedVerticeCount +
                                         _selectedTextureCount;
@@ -909,13 +892,14 @@ internal partial class LevelEditorForm : FormMod, IMessageFilter
 
     private void FilterChanged(object? sender, EventArgs e)
     {
-        _groundFilter = GroundPolygonsToolStripMenuItem.Checked;
-        _grassFilter = GrassPolygonsToolStripMenuItem.Checked;
-        _appleFilter = ApplesToolStripMenuItem.Checked;
-        _killerFilter = KillersToolStripMenuItem.Checked;
-        _flowerFilter = FlowersToolStripMenuItem.Checked;
-        _pictureFilter = PicturesToolStripMenuItem.Checked;
-        _textureFilter = TexturesToolStripMenuItem.Checked;
+        SelectionFilter.GroundFilter = GroundPolygonsToolStripMenuItem.Checked;
+        SelectionFilter.GrassFilter = GrassPolygonsToolStripMenuItem.Checked;
+        SelectionFilter.AppleFilter = ApplesToolStripMenuItem.Checked;
+        SelectionFilter.KillerFilter = KillersToolStripMenuItem.Checked;
+        SelectionFilter.FlowerFilter = FlowersToolStripMenuItem.Checked;
+        SelectionFilter.StartFilter = StartToolStripMenuItem.Checked;
+        SelectionFilter.PictureFilter = PicturesToolStripMenuItem.Checked;
+        SelectionFilter.TextureFilter = TexturesToolStripMenuItem.Checked;
         SelectionFilterToolStripMenuItem.ShowDropDown();
     }
 
@@ -1037,23 +1021,6 @@ internal partial class LevelEditorForm : FormMod, IMessageFilter
         Size = Settings.Size;
         Renderer = new ElmaRenderer(EditorControl, Settings.RenderingSettings);
         UpdateLgrTools(Renderer.UpdateSettings(Lev, Settings.RenderingSettings));
-
-        Tools = new EditorTools(
-            new SelectionTool(this),
-            new VertexTool(this),
-            new DrawTool(this),
-            new ObjectTool(this),
-            new PipeTool(this),
-            new EllipseTool(this),
-            new PolyOpTool(this),
-            new FrameTool(this),
-            new SmoothenTool(this),
-            new CutConnectTool(this),
-            new AutoGrassTool(this),
-            new TransformTool(this),
-            new PictureTool(this),
-            new TextTool(this)
-        );
         CurrentTool = Tools.SelectionTool;
         SetupEventHandlers();
         InitializeLevel(lev);
@@ -1936,7 +1903,7 @@ internal partial class LevelEditorForm : FormMod, IMessageFilter
     {
         foreach (var polygon in Lev.Polygons)
         {
-            if ((polygon.IsGrass && EffectiveGrassFilter) || (!polygon.IsGrass && EffectiveGroundFilter))
+            if ((polygon.IsGrass && SelectionFilter.EffectiveGrassFilter) || (!polygon.IsGrass && SelectionFilter.EffectiveGroundFilter))
                 polygon.MarkVectorsAs(VectorMark.Selected);
         }
 
@@ -1945,15 +1912,19 @@ internal partial class LevelEditorForm : FormMod, IMessageFilter
             switch (levelObject.Type)
             {
                 case ObjectType.Apple:
-                    if (EffectiveAppleFilter)
+                    if (SelectionFilter.EffectiveAppleFilter)
                         levelObject.Mark = VectorMark.Selected;
                     break;
                 case ObjectType.Killer:
-                    if (EffectiveKillerFilter)
+                    if (SelectionFilter.EffectiveKillerFilter)
                         levelObject.Mark = VectorMark.Selected;
                     break;
                 case ObjectType.Flower:
-                    if (EffectiveFlowerFilter)
+                    if (SelectionFilter.EffectiveFlowerFilter)
+                        levelObject.Mark = VectorMark.Selected;
+                    break;
+                case ObjectType.Start:
+                    if (SelectionFilter.EffectiveStartFilter)
                         levelObject.Mark = VectorMark.Selected;
                     break;
             }
@@ -1961,8 +1932,8 @@ internal partial class LevelEditorForm : FormMod, IMessageFilter
 
         foreach (var ge in Lev.GraphicElements)
         {
-            if ((EffectiveTextureFilter && ge is GraphicElement.Texture) ||
-                (EffectivePictureFilter && ge is GraphicElement.Picture))
+            if ((SelectionFilter.EffectiveTextureFilter && ge is GraphicElement.Texture) ||
+                (SelectionFilter.EffectivePictureFilter && ge is GraphicElement.Picture))
                 ge.Mark = VectorMark.Selected;
         }
 

@@ -107,8 +107,8 @@ internal class CutConnectTool : ToolBase, IEditorTool
             LevEditor.SetModified(LevModification.Ground);
     }
 
-    private bool IsPolygonVisible(Polygon x) => (x.IsGrass && LevEditor.EffectiveGrassFilter) ||
-                                                (!x.IsGrass && LevEditor.EffectiveGroundFilter);
+    private bool IsPolygonVisible(Polygon x) => (x.IsGrass && LevEditor.SelectionFilter.EffectiveGrassFilter) ||
+                                                (!x.IsGrass && LevEditor.SelectionFilter.EffectiveGroundFilter);
 
     private bool TryConnect(Vector v1, Vector v2)
     {

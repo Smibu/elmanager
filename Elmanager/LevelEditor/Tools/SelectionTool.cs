@@ -1,5 +1,4 @@
 using System;
-using System.Collections.Generic;
 using System.Drawing;
 using System.Linq;
 using System.Windows.Forms;
@@ -403,13 +402,14 @@ internal class SelectionTool : ToolBase, IEditorTool
                 selectionyMin = Math.Min(CurrentPos.Y, _selectionStartPoint.Y);
             }
 
-            var grassFilter = LevEditor.EffectiveGrassFilter;
-            var groundFilter = LevEditor.EffectiveGroundFilter;
-            var appleFilter = LevEditor.EffectiveAppleFilter;
-            var killerFilter = LevEditor.EffectiveKillerFilter;
-            var flowerFilter = LevEditor.EffectiveFlowerFilter;
-            var pictureFilter = LevEditor.EffectivePictureFilter;
-            var textureFilter = LevEditor.EffectiveTextureFilter;
+            var grassFilter = LevEditor.SelectionFilter.EffectiveGrassFilter;
+            var groundFilter = LevEditor.SelectionFilter.EffectiveGroundFilter;
+            var appleFilter = LevEditor.SelectionFilter.EffectiveAppleFilter;
+            var killerFilter = LevEditor.SelectionFilter.EffectiveKillerFilter;
+            var flowerFilter = LevEditor.SelectionFilter.EffectiveFlowerFilter;
+            var startFilter = LevEditor.SelectionFilter.EffectiveStartFilter;
+            var pictureFilter = LevEditor.SelectionFilter.EffectivePictureFilter;
+            var textureFilter = LevEditor.SelectionFilter.EffectiveTextureFilter;
             foreach (Polygon x in Lev.Polygons)
             {
                 if ((x.IsGrass && grassFilter) || (!x.IsGrass && groundFilter))
@@ -433,7 +433,8 @@ internal class SelectionTool : ToolBase, IEditorTool
             {
                 var type = t.Type;
                 var x = t;
-                if (type == ObjectType.Start || (type == ObjectType.Apple && appleFilter) ||
+                if ((type == ObjectType.Start && startFilter) ||
+                    (type == ObjectType.Apple && appleFilter) ||
                     (type == ObjectType.Killer && killerFilter) ||
                     (type == ObjectType.Flower && flowerFilter))
                     if (_selectionPoly is null)
