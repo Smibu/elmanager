@@ -1,8 +1,27 @@
 # Elmanager changelog
 
 ## Upcoming
-* SLE: Publicly known LGRs are identified and shown in LGR file box from LGR directory.
-* SLE: If LGR is missing pictures or textures, the missing ones are shown as placeholders in editor instead of being deleted.
+* SLE: LGR file box is a dropdown that lists LGRs in LGR directory. Publicly known LGRs are identified and this info is shown after filename.
+* SLE: Pictures and textures are always loaded losslessly: if LGR is missing pictures or textures,
+  the missing ones are shown as placeholders in editor instead of being deleted.
+* SLE: External changes to lev file are noticed and any possible corruption is fixed automatically.
+* SLE: Current zoom is shown and editable.
+* SLE: Changing z-order ("Bring to front" / "Send to back") is supported for grass polygons.
+* SLE: Added esc alias key to playing settings.
+* SLE: Start object is supported in selection filter.
+* SLE: Improved help text of vertex tool.
+* SLE: Zoom textures is enabled by default because it is less buggy and looks better if grass is shown.
+* SLE: Removed zoom tool for not being useful.
+* SLE: Bugfix: Transform tool swapped pictures/textures randomly.
+* SLE: Bugfix: Transform tool changed z-order of (grass) polygons.
+* SLE: Bugfix: Texturize could crash in some situations.
+* SLE: Bugfix: Texturize is more careful to not leave holes in texturized area.
+* SLE: Bugfix: Picture tool was inconsistent in maintaining z-order of pictures with same distances.
+* SLE: Bugfix: PolyOp tool didn't preserve grassness of polygons.
+* SLE: Bugfix: Grass polygons were sometimes rendered incorrectly after saving lev.
+* SLE: Bugfix: Cut/connect tool didn't respect ground/grass visibility.
+* Added version info in window titles.
+* Added button to check for updates manually.
 
 ## 11.5.2024
 * SLE: Bugfix: Changing properties for multiple pictures/textures with different distances wasn't working.
