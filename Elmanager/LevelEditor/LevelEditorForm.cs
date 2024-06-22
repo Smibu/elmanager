@@ -386,6 +386,11 @@ internal partial class LevelEditorForm : FormMod, IMessageFilter
             Lev.GraphicElements.Insert(0, obj);
             mod = LevModification.Decorations;
         }
+        else if (_grassInfo is not null)
+        {
+            Lev.Polygons.Remove(_grassInfo.Polygon);
+            Lev.Polygons.Insert(0, _grassInfo.Polygon);
+        }
 
         SetModified(mod);
     }
@@ -1427,6 +1432,11 @@ internal partial class LevelEditorForm : FormMod, IMessageFilter
                     {
                         GrassMenuItem.Visible = true;
                         _grassInfo = info;
+                        if (info.Polygon.IsGrass)
+                        {
+                            bringToFrontToolStripMenuItem.Visible = true;
+                            sendToBackToolStripMenuItem.Visible = true;
+                        }
                     }
 
                     _selectedPictureIndex = nearestPictureIndex;
@@ -1963,6 +1973,11 @@ internal partial class LevelEditorForm : FormMod, IMessageFilter
             Lev.GraphicElements.RemoveAt(_selectedPictureIndex);
             Lev.GraphicElements.Add(obj);
             mod |= LevModification.Decorations;
+        }
+        else if (_grassInfo is not null)
+        {
+            Lev.Polygons.Remove(_grassInfo.Polygon);
+            Lev.Polygons.Add(_grassInfo.Polygon);
         }
 
         SetModified(mod);
