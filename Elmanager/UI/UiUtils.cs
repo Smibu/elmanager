@@ -119,6 +119,6 @@ internal static class UiUtils
 
     public static void SetTitleWithVersion(this FormMod form, string text)
     {
-        form.Text = $"{text} [{Global.Version.ToShortDateString()}]";
+        form.Text = $"{text} [{Global.Version:dd.MM.yy}]";
     }
 }
