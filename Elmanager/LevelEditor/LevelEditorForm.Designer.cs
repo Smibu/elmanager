@@ -93,6 +93,7 @@ namespace Elmanager.LevelEditor
             ApplesToolStripMenuItem = new ToolStripMenuItem();
             KillersToolStripMenuItem = new ToolStripMenuItem();
             FlowersToolStripMenuItem = new ToolStripMenuItem();
+            StartToolStripMenuItem = new ToolStripMenuItem();
             PicturesToolStripMenuItem = new ToolStripMenuItem();
             TexturesToolStripMenuItem = new ToolStripMenuItem();
             ConfigurationToolStripMenuItem = new ToolStripMenuItem();
@@ -207,7 +208,6 @@ namespace Elmanager.LevelEditor
             DrawButton = new RadioButtonMod();
             VertexButton = new RadioButtonMod();
             SelectButton = new RadioButtonMod();
-            StartToolStripMenuItem = new ToolStripMenuItem();
             MenuStrip1.SuspendLayout();
             StatusStrip1.SuspendLayout();
             ToolStripPanel1.SuspendLayout();
@@ -234,7 +234,7 @@ namespace Elmanager.LevelEditor
             // 
             FileToolStripMenuItem.DropDownItems.AddRange(new ToolStripItem[] { NewToolStripMenuItem, OpenToolStripMenuItem, openInternalToolStripMenuItem, SaveToolStripMenuItem, SaveAsToolStripMenuItem, saveAsPictureToolStripMenuItem, deleteLevMenuItem, ExitToolStripMenuItem });
             FileToolStripMenuItem.Name = "FileToolStripMenuItem";
-            FileToolStripMenuItem.Size = new Size(71, 36);
+            FileToolStripMenuItem.Size = new Size(71, 38);
             FileToolStripMenuItem.Text = "File";
             // 
             // NewToolStripMenuItem
@@ -320,7 +320,7 @@ namespace Elmanager.LevelEditor
             // 
             ActionsMenuItem.DropDownItems.AddRange(new ToolStripItem[] { QuickGrassToolStripMenuItem, DeleteAllGrassToolStripMenuItem, UndoToolStripMenuItem, RedoToolStripMenuItem, ToolStripSeparator8, ZoomFillToolStripMenuItem, CheckTopologyMenuItem, LevelPropertiesToolStripMenuItem, toolStripSeparator10, previousLevelToolStripMenuItem, nextLevelToolStripMenuItem, toolStripSeparator11, selectAllToolStripMenuItem, importLevelsToolStripMenuItem });
             ActionsMenuItem.Name = "ActionsMenuItem";
-            ActionsMenuItem.Size = new Size(89, 36);
+            ActionsMenuItem.Size = new Size(89, 38);
             ActionsMenuItem.Text = "Tools";
             // 
             // QuickGrassToolStripMenuItem
@@ -437,7 +437,7 @@ namespace Elmanager.LevelEditor
             // 
             selectionToolStripMenuItem.DropDownItems.AddRange(new ToolStripItem[] { toolStripMenuItem1, copyAndSnapToGridMenuItem, MirrorHorizontallyToolStripMenuItem, MirrorVerticallyToolStripMenuItem, DeleteSelectedMenuItem, toolStripSeparator14, unionToolStripMenuItem, differenceToolStripMenuItem, intersectionToolStripMenuItem, symmetricDifferenceToolStripMenuItem, toolStripSeparator17, texturizeMenuItem, toolStripSeparator15, deselectGroundPolygonsToolStripMenuItem, deselectGrassPolygonsToolStripMenuItem, deselectApplesToolStripMenuItem, deselectKillersToolStripMenuItem, deselectFlowersToolStripMenuItem, deselectPicturesToolStripMenuItem, deselectTexturesToolStripMenuItem });
             selectionToolStripMenuItem.Name = "selectionToolStripMenuItem";
-            selectionToolStripMenuItem.Size = new Size(132, 36);
+            selectionToolStripMenuItem.Size = new Size(132, 38);
             selectionToolStripMenuItem.Text = "Selection";
             // 
             // toolStripMenuItem1
@@ -658,6 +658,16 @@ namespace Elmanager.LevelEditor
             FlowersToolStripMenuItem.Text = "Flowers";
             FlowersToolStripMenuItem.CheckedChanged += FilterChanged;
             // 
+            // StartToolStripMenuItem
+            // 
+            StartToolStripMenuItem.Checked = true;
+            StartToolStripMenuItem.CheckOnClick = true;
+            StartToolStripMenuItem.CheckState = CheckState.Checked;
+            StartToolStripMenuItem.Name = "StartToolStripMenuItem";
+            StartToolStripMenuItem.Size = new Size(332, 44);
+            StartToolStripMenuItem.Text = "Start";
+            StartToolStripMenuItem.CheckedChanged += FilterChanged;
+            // 
             // PicturesToolStripMenuItem
             // 
             PicturesToolStripMenuItem.Checked = true;
@@ -682,7 +692,7 @@ namespace Elmanager.LevelEditor
             // 
             ConfigurationToolStripMenuItem.DropDownItems.AddRange(new ToolStripItem[] { MainConfigMenuItem, RenderingSettingsToolStripMenuItem });
             ConfigurationToolStripMenuItem.Name = "ConfigurationToolStripMenuItem";
-            ConfigurationToolStripMenuItem.Size = new Size(181, 36);
+            ConfigurationToolStripMenuItem.Size = new Size(181, 38);
             ConfigurationToolStripMenuItem.Text = "Configuration";
             // 
             // MainConfigMenuItem
@@ -1726,16 +1736,6 @@ namespace Elmanager.LevelEditor
             SelectButton.Text = "&Select";
             SelectButton.TextAlign = ContentAlignment.MiddleCenter;
             SelectButton.UseVisualStyleBackColor = true;
-            // 
-            // StartToolStripMenuItem
-            // 
-            StartToolStripMenuItem.Checked = true;
-            StartToolStripMenuItem.CheckOnClick = true;
-            StartToolStripMenuItem.CheckState = CheckState.Checked;
-            StartToolStripMenuItem.Name = "StartToolStripMenuItem";
-            StartToolStripMenuItem.Size = new Size(359, 44);
-            StartToolStripMenuItem.Text = "Start";
-            StartToolStripMenuItem.CheckedChanged += FilterChanged;
             // 
             // LevelEditorForm
             // 
