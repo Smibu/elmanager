@@ -191,13 +191,13 @@ internal partial class ReplayManagerForm : FormMod, IManagerGui
 
     private void DuplicateFilenameSearch(object sender, EventArgs e)
     {
-        if (!DirUtils.LevRecDirectoriesExist())
+        if (DirUtils.GetRecDir() is not { } recDir)
         {
-            UiUtils.ShowError(DirUtils.LevOrRecDirNotFound);
+            UiUtils.ShowError(DirUtils.RecDirNotFound);
             return;
         }
 
-        var allFiles = Directory.GetFiles(Global.AppSettings.General.ReplayDirectory, "*.rec",
+        var allFiles = Directory.GetFiles(recDir, "*.rec",
             SearchOption.AllDirectories);
         var replayFiles = SearchUtils.FilterByRegex(allFiles, "");
         var dupes = replayFiles.GroupBy(x => Path.GetFileName(x).ToLower()).Where(g => g.Count() > 1)
@@ -208,13 +208,13 @@ internal partial class ReplayManagerForm : FormMod, IManagerGui
 
     private void DuplicateReplaySearch(object sender, EventArgs e)
     {
-        if (!DirUtils.LevRecDirectoriesExist())
+        if (DirUtils.GetRecDir() is not { } recDir)
         {
-            UiUtils.ShowError(DirUtils.LevOrRecDirNotFound);
+            UiUtils.ShowError(DirUtils.RecDirNotFound);
             return;
         }
 
-        var allFiles = Directory.GetFiles(Global.AppSettings.General.ReplayDirectory, "*.rec",
+        var allFiles = Directory.GetFiles(recDir, "*.rec",
             Global.AppSettings.ReplayManager.RecDirSearchOption);
         var replayFiles = SearchUtils.FilterByRegex(allFiles, "");
         var sameLengths = replayFiles.GroupBy(x => FileSystem.GetFileInfo(x).Length).Where(g => g.Count() > 1)
@@ -571,7 +571,7 @@ internal partial class ReplayManagerForm : FormMod, IManagerGui
         var searchOnlyMissingLev = clickedButton.Equals(ReplaysWithoutLevFileButton);
         var searchOnlyWrongLev = clickedButton.Equals(ReplaysIncorrectLevButton);
 
-        if (!DirUtils.RecDirectoryExists())
+        if (DirUtils.GetRecDir() is not { } recDir)
         {
             UiUtils.ShowError(DirUtils.RecDirNotFound);
             return;
@@ -657,7 +657,7 @@ internal partial class ReplayManagerForm : FormMod, IManagerGui
             searchParams.WrongLev = BoolOption.True;
         }
 
-        var allFiles = Directory.GetFiles(Global.AppSettings.General.ReplayDirectory, "*.rec",
+        var allFiles = Directory.GetFiles(recDir, "*.rec",
             Global.AppSettings.ReplayManager.RecDirSearchOption);
         var replayFiles = searchOnlyMissingLev || searchOnlyWrongLev
             ? allFiles.ToList()

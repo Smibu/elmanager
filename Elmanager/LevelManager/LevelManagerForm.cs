@@ -102,9 +102,14 @@ internal partial class LevelManagerForm : FormMod, IManagerGui
             return;
         }
 
-        if (!DirUtils.LevDirectoryExists())
+        if (DirUtils.GetLevDir() is not { } levDir)
         {
             UiUtils.ShowError(DirUtils.LevDirNotFound);
+            return;
+        }
+        if (DirUtils.GetRecDir() is not { } recDir)
+        {
+            UiUtils.ShowError(DirUtils.RecDirNotFound);
             return;
         }
         var res = GetRegexes();
@@ -114,9 +119,9 @@ internal partial class LevelManagerForm : FormMod, IManagerGui
             return;
         }
 
-        var allFiles = Directory.GetFiles(Global.AppSettings.General.LevelDirectory, "*.lev",
+        var allFiles = Directory.GetFiles(levDir, "*.lev",
             Global.AppSettings.LevelManager.LevDirSearchOption);
-        var recFiles = Directory.GetFiles(Global.AppSettings.General.ReplayDirectory, "*.rec",
+        var recFiles = Directory.GetFiles(recDir, "*.rec",
             Global.AppSettings.LevelManager.RecDirSearchOption);
         var levFiles = SearchUtils.FilterByRegex(allFiles, SearchPattern).ToList();
         searchProgressBar.Maximum = recFiles.Length;

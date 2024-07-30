@@ -10,9 +10,9 @@ internal static class DirUtils
 {
     internal static List<string> GetLevelFiles(SearchOption searchSubDirs)
     {
-        if (Directory.Exists(Global.AppSettings.General.LevelDirectory))
+        if (GetLevDir() is { } levDir)
         {
-            string[] files = Directory.GetFiles(Global.AppSettings.General.LevelDirectory, AllLevs,
+            string[] files = Directory.GetFiles(levDir, AllLevs,
                 searchSubDirs);
             Array.Sort(files);
             return files.ToList();
@@ -21,20 +21,15 @@ internal static class DirUtils
         return new List<string>();
     }
 
-    internal static bool LevDirectoryExists()
-    {
-        return Directory.Exists(Global.AppSettings.General.LevelDirectory);
-    }
+    internal static string? GetLevDir() =>
+        Directory.Exists(Global.AppSettings.General.LevelDirectory)
+            ? Global.AppSettings.General.LevelDirectory
+            : null;
 
-    internal static bool LevRecDirectoriesExist()
-    {
-        return RecDirectoryExists() && LevDirectoryExists();
-    }
-
-    internal static bool RecDirectoryExists()
-    {
-        return Directory.Exists(Global.AppSettings.General.ReplayDirectory);
-    }
+    internal static string? GetRecDir() =>
+        Directory.Exists(Global.AppSettings.General.ReplayDirectory)
+            ? Global.AppSettings.General.ReplayDirectory
+            : null;
 
     private const string AllLevs = "*" + LevExtension;
     internal const string LevExtension = ".lev";

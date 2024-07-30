@@ -110,9 +110,9 @@ internal partial class PictureForm
 
     internal bool SetDefaultsAutomatically { get; set; }
 
-    private bool MultiplePicturesSelected => PictureComboBox.SelectedItem.ToString() == MultipleValues;
+    private bool MultiplePicturesSelected => PictureComboBox.SelectedItem!.ToString() == MultipleValues;
 
-    private bool MultipleTexturesSelected => TextureComboBox.SelectedItem.ToString() == MultipleValues;
+    private bool MultipleTexturesSelected => TextureComboBox.SelectedItem!.ToString() == MultipleValues;
 
     private bool MultipleMaskSelected => MaskComboBox.SelectedItem?.ToString() == MultipleValues;
 
