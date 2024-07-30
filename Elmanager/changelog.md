@@ -12,6 +12,8 @@
 * SLE: Improved help text of vertex tool.
 * SLE: Zoom textures is enabled by default because it is less buggy and looks better if grass is shown.
 * SLE: Removed zoom tool for not being useful.
+* SLE: Removed shortcut keys of QuickGrass and Delete all grass. The keys may easily interfere with playing
+  and the operations are relatively rare to not need shortcut keys anyway.
 * SLE: Bugfix: Transform tool swapped pictures/textures randomly.
 * SLE: Bugfix: Transform tool changed z-order of (grass) polygons.
 * SLE: Bugfix: Texturize could crash in some situations.
