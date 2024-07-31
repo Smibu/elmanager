@@ -8,7 +8,7 @@
         <AssemblyName>Elmanager</AssemblyName>
         <RootNamespace>Elmanager</RootNamespace>
         <PublishSingleFile Condition="'$(Configuration)' == 'Release'">true</PublishSingleFile>
-        <SelfContained>true</SelfContained>
+        <SelfContained Condition="'$(Configuration)' == 'Release'">true</SelfContained>
         <PublishReadyToRun>false</PublishReadyToRun>
         <RuntimeIdentifier>win-x64</RuntimeIdentifier>
         <IncludeNativeLibrariesForSelfExtract>true</IncludeNativeLibrariesForSelfExtract>
@@ -17,6 +17,13 @@
         <SatelliteResourceLanguages>en</SatelliteResourceLanguages>
         <Nullable>enable</Nullable>
 		<AllowUnsafeBlocks>true</AllowUnsafeBlocks>
+		<Configurations>Debug;Release;WineRelease</Configurations>
+    </PropertyGroup>
+    <PropertyGroup Condition="'$(Configuration)'=='WineRelease'">
+      <Optimize>True</Optimize>
+    </PropertyGroup>
+    <PropertyGroup Condition="'$(Configuration)'=='WineRelease'">
+      <DefineConstants>$(DefineConstants);WINE</DefineConstants>
     </PropertyGroup>
     <ItemGroup>
         <PackageReference Include="NetTopologySuite">

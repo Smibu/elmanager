@@ -18,6 +18,11 @@
     <GeneratePackageOnBuild>false</GeneratePackageOnBuild>
     <PackageRequireLicenseAcceptance>true</PackageRequireLicenseAcceptance>
     <PackageTags>OpenTK, GLControl</PackageTags>
+    <Configurations>Debug;Release;WineRelease</Configurations>
+  </PropertyGroup>
+
+  <PropertyGroup Condition="'$(Configuration)'=='WineRelease'">
+    <Optimize>True</Optimize>
   </PropertyGroup>
 
   <ItemGroup>

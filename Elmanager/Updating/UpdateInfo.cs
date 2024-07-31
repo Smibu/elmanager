@@ -18,6 +18,13 @@ internal class UpdateInfo
     [JsonPropertyName("assets")]
     public required List<Asset> Assets { get; set; }
 
-    public string Link => Assets[0].BrowserDownloadUrl;
+#if WINE
+    public string Link => Assets.Find(IsWineAsset)!.BrowserDownloadUrl;
+#else
+    public string Link => Assets.Find(a => !IsWineAsset(a))!.BrowserDownloadUrl;
+#endif
+
     public DateTime Date => DateTime.ParseExact(TagName, "d.M.yyyy", null);
+
+    private static bool IsWineAsset(Asset asset) => asset.BrowserDownloadUrl.Contains("Wine");
 }

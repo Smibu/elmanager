@@ -24,6 +24,8 @@ Global
 		Debug|x86 = Debug|x86
 		Release|Any CPU = Release|Any CPU
 		Release|x86 = Release|x86
+		WineRelease|Any CPU = WineRelease|Any CPU
+		WineRelease|x86 = WineRelease|x86
 	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
 		{43DD2B25-6D1D-4ECD-9193-C60535FD75F1}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
@@ -34,6 +36,10 @@ Global
 		{43DD2B25-6D1D-4ECD-9193-C60535FD75F1}.Release|Any CPU.Build.0 = Release|Any CPU
 		{43DD2B25-6D1D-4ECD-9193-C60535FD75F1}.Release|x86.ActiveCfg = Release|x86
 		{43DD2B25-6D1D-4ECD-9193-C60535FD75F1}.Release|x86.Build.0 = Release|x86
+		{43DD2B25-6D1D-4ECD-9193-C60535FD75F1}.WineRelease|Any CPU.ActiveCfg = WineRelease|Any CPU
+		{43DD2B25-6D1D-4ECD-9193-C60535FD75F1}.WineRelease|Any CPU.Build.0 = WineRelease|Any CPU
+		{43DD2B25-6D1D-4ECD-9193-C60535FD75F1}.WineRelease|x86.ActiveCfg = WineRelease|Any CPU
+		{43DD2B25-6D1D-4ECD-9193-C60535FD75F1}.WineRelease|x86.Build.0 = WineRelease|Any CPU
 		{0A1E6F78-33C9-4DFB-AF2F-CEAC94B150C6}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{0A1E6F78-33C9-4DFB-AF2F-CEAC94B150C6}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{0A1E6F78-33C9-4DFB-AF2F-CEAC94B150C6}.Debug|x86.ActiveCfg = Debug|Any CPU
@@ -42,6 +48,10 @@ Global
 		{0A1E6F78-33C9-4DFB-AF2F-CEAC94B150C6}.Release|Any CPU.Build.0 = Release|Any CPU
 		{0A1E6F78-33C9-4DFB-AF2F-CEAC94B150C6}.Release|x86.ActiveCfg = Release|Any CPU
 		{0A1E6F78-33C9-4DFB-AF2F-CEAC94B150C6}.Release|x86.Build.0 = Release|Any CPU
+		{0A1E6F78-33C9-4DFB-AF2F-CEAC94B150C6}.WineRelease|Any CPU.ActiveCfg = WineRelease|Any CPU
+		{0A1E6F78-33C9-4DFB-AF2F-CEAC94B150C6}.WineRelease|Any CPU.Build.0 = WineRelease|Any CPU
+		{0A1E6F78-33C9-4DFB-AF2F-CEAC94B150C6}.WineRelease|x86.ActiveCfg = WineRelease|Any CPU
+		{0A1E6F78-33C9-4DFB-AF2F-CEAC94B150C6}.WineRelease|x86.Build.0 = WineRelease|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
