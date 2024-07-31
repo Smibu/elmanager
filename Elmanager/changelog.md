@@ -1,6 +1,6 @@
 # Elmanager changelog
 
-## Upcoming
+## 31.7.2024
 * SLE: LGR file box is a dropdown that lists LGRs in LGR directory. Publicly known LGRs are identified and this info is shown after filename.
 * SLE: Pictures and textures are always loaded losslessly: if LGR is missing pictures or textures,
   the missing ones are shown as placeholders in editor instead of being deleted.
