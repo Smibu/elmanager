@@ -320,13 +320,14 @@ namespace Elmanager.LevelEditor
             // 
             ActionsMenuItem.DropDownItems.AddRange(new ToolStripItem[] { QuickGrassToolStripMenuItem, DeleteAllGrassToolStripMenuItem, UndoToolStripMenuItem, RedoToolStripMenuItem, ToolStripSeparator8, ZoomFillToolStripMenuItem, CheckTopologyMenuItem, LevelPropertiesToolStripMenuItem, toolStripSeparator10, previousLevelToolStripMenuItem, nextLevelToolStripMenuItem, toolStripSeparator11, selectAllToolStripMenuItem, importLevelsToolStripMenuItem });
             ActionsMenuItem.Name = "ActionsMenuItem";
-            ActionsMenuItem.Size = new Size(89, 36);
+            ActionsMenuItem.Size = new Size(89, 38);
             ActionsMenuItem.Text = "Tools";
             // 
             // QuickGrassToolStripMenuItem
             // 
             QuickGrassToolStripMenuItem.Image = Resources.GrassAll;
             QuickGrassToolStripMenuItem.Name = "QuickGrassToolStripMenuItem";
+            QuickGrassToolStripMenuItem.ShortcutKeys = Keys.Control | Keys.G;
             QuickGrassToolStripMenuItem.Size = new Size(495, 44);
             QuickGrassToolStripMenuItem.Text = "QuickGrass";
             QuickGrassToolStripMenuItem.Click += QuickGrassToolStripMenuItemClick;
@@ -335,6 +336,7 @@ namespace Elmanager.LevelEditor
             // 
             DeleteAllGrassToolStripMenuItem.Image = Resources.GrassDelete;
             DeleteAllGrassToolStripMenuItem.Name = "DeleteAllGrassToolStripMenuItem";
+            DeleteAllGrassToolStripMenuItem.ShortcutKeys = Keys.Control | Keys.D;
             DeleteAllGrassToolStripMenuItem.Size = new Size(495, 44);
             DeleteAllGrassToolStripMenuItem.Text = "Delete all grass";
             DeleteAllGrassToolStripMenuItem.Click += DeleteAllGrassToolStripMenuItemClick;
