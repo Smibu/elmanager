@@ -1089,7 +1089,7 @@ internal partial class LevelEditorForm : FormMod, IMessageFilter
                     CameraUtils.BeginArrowScroll(() => RedrawScene(), _zoomCtrl);
                 }
                 break;
-            case Keys.C:
+            case Keys.Z:
                 if (!_lockMouseX)
                 {
                     _lockMouseX = true;
@@ -1229,7 +1229,7 @@ internal partial class LevelEditorForm : FormMod, IMessageFilter
     {
         switch (e.KeyCode)
         {
-            case Keys.C:
+            case Keys.Z:
                 _lockMouseX = false;
                 break;
             case Keys.X:
