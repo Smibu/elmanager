@@ -161,6 +161,46 @@ internal class PolyOpTool : ToolBase, IEditorTool
     {
     }
 
+    public static bool FixSelfIntersections(List<Polygon> polygons)
+    {
+        var originalPolys = polygons.GetSelectedPolygons().ToList();
+        switch (originalPolys.Count)
+        {
+            case 0:
+                return false;
+            case > 1:
+                UiUtils.ShowError("Only one polygon must be selected.", "Error in fixing self-intersections");
+                return false;
+        }
+
+        var selection = polygons.GetSelectedPolygonsAsMultiPolygon();
+        if (selection.IsValid)
+        {
+            UiUtils.ShowError("The selected polygon has no self-intersections.", "Error in fixing self-intersections");
+            return false;
+        }
+        var fixedPolys = selection.Buffer(0);
+        switch (fixedPolys)
+        {
+            case MultiPolygon multiPolygon:
+                foreach (var geometry in multiPolygon.Geometries.Cast<NetTopologySuite.Geometries.Polygon>()
+                             .Where(p => !p.IsEmpty))
+                {
+                    polygons.AddRange(geometry.ToElmaPolygons().Select(p => p.RemoveDuplicateVertices()));
+                }
+                break;
+            case NetTopologySuite.Geometries.Polygon polygon:
+                polygons.AddRange(polygon.ToElmaPolygons());
+                break;
+            default:
+                UiUtils.ShowError("Failed to fix selection.", "Error in fixing self-intersections");
+                return false;
+        }
+
+        originalPolys.ForEach(p => polygons.Remove(p));
+        return true;
+    }
+
     public static bool PolyOpSelected(PolygonOperationType opType, List<Polygon> polygons)
     {
         var polys = polygons.GetSelectedPolygons().ToList();

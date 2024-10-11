@@ -2931,4 +2931,13 @@ internal partial class LevelEditorForm : FormMod, IMessageFilter
             RedrawScene();
         }
     }
+
+    private void fixSelfIntersectionsMenuItem_Click(object sender, EventArgs e)
+    {
+        if (PolyOpTool.FixSelfIntersections(Lev.Polygons))
+        {
+            SetModified(LevModification.Ground);
+            RedrawScene();
+        }
+    }
 }

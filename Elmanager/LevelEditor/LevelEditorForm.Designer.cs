@@ -75,6 +75,7 @@ namespace Elmanager.LevelEditor
             differenceToolStripMenuItem = new ToolStripMenuItemMod();
             intersectionToolStripMenuItem = new ToolStripMenuItemMod();
             symmetricDifferenceToolStripMenuItem = new ToolStripMenuItemMod();
+            fixSelfIntersectionsMenuItem = new ToolStripMenuItemMod();
             toolStripSeparator17 = new ToolStripSeparator();
             texturizeMenuItem = new ToolStripMenuItemMod();
             toolStripSeparator15 = new ToolStripSeparator();
@@ -435,9 +436,9 @@ namespace Elmanager.LevelEditor
             // 
             // selectionToolStripMenuItem
             // 
-            selectionToolStripMenuItem.DropDownItems.AddRange(new ToolStripItem[] { toolStripMenuItem1, copyAndSnapToGridMenuItem, MirrorHorizontallyToolStripMenuItem, MirrorVerticallyToolStripMenuItem, DeleteSelectedMenuItem, toolStripSeparator14, unionToolStripMenuItem, differenceToolStripMenuItem, intersectionToolStripMenuItem, symmetricDifferenceToolStripMenuItem, toolStripSeparator17, texturizeMenuItem, toolStripSeparator15, deselectGroundPolygonsToolStripMenuItem, deselectGrassPolygonsToolStripMenuItem, deselectApplesToolStripMenuItem, deselectKillersToolStripMenuItem, deselectFlowersToolStripMenuItem, deselectPicturesToolStripMenuItem, deselectTexturesToolStripMenuItem });
+            selectionToolStripMenuItem.DropDownItems.AddRange(new ToolStripItem[] { toolStripMenuItem1, copyAndSnapToGridMenuItem, MirrorHorizontallyToolStripMenuItem, MirrorVerticallyToolStripMenuItem, DeleteSelectedMenuItem, toolStripSeparator14, unionToolStripMenuItem, differenceToolStripMenuItem, intersectionToolStripMenuItem, symmetricDifferenceToolStripMenuItem, fixSelfIntersectionsMenuItem, toolStripSeparator17, texturizeMenuItem, toolStripSeparator15, deselectGroundPolygonsToolStripMenuItem, deselectGrassPolygonsToolStripMenuItem, deselectApplesToolStripMenuItem, deselectKillersToolStripMenuItem, deselectFlowersToolStripMenuItem, deselectPicturesToolStripMenuItem, deselectTexturesToolStripMenuItem });
             selectionToolStripMenuItem.Name = "selectionToolStripMenuItem";
-            selectionToolStripMenuItem.Size = new Size(132, 38);
+            selectionToolStripMenuItem.Size = new Size(132, 36);
             selectionToolStripMenuItem.Text = "Selection";
             // 
             // toolStripMenuItem1
@@ -519,6 +520,15 @@ namespace Elmanager.LevelEditor
             symmetricDifferenceToolStripMenuItem.Size = new Size(531, 44);
             symmetricDifferenceToolStripMenuItem.Text = "Symmetric difference";
             symmetricDifferenceToolStripMenuItem.Click += symmetricDifferenceToolStripMenuItem_Click;
+            // 
+            // fixSelfIntersectionsMenuItem
+            // 
+            fixSelfIntersectionsMenuItem.Name = "fixSelfIntersectionsMenuItem";
+            fixSelfIntersectionsMenuItem.ShortcutKeys = Keys.F9;
+            fixSelfIntersectionsMenuItem.ShortcutText = "";
+            fixSelfIntersectionsMenuItem.Size = new Size(531, 44);
+            fixSelfIntersectionsMenuItem.Text = "Fix self-intersections";
+            fixSelfIntersectionsMenuItem.Click += fixSelfIntersectionsMenuItem_Click;
             // 
             // toolStripSeparator17
             // 
@@ -1947,6 +1957,7 @@ namespace Elmanager.LevelEditor
         private ToolStripMenuItem openInternalPart2ToolStripMenuItem;
         internal ToolStripStatusLabel zoomLabel;
         internal ToolStripMenuItem StartToolStripMenuItem;
+        private ToolStripMenuItemMod fixSelfIntersectionsMenuItem;
     }
 
 }
