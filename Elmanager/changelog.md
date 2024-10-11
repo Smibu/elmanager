@@ -1,8 +1,10 @@
 # Elmanager changelog
 
 ## Upcoming
-* SLE: Bugfix: Changed shortcut of vertical mouse lock from C to Z because C is shortcut for cut/connect tool.
+* SLE: Added a new polygon operation "Fix self-intersections".
 * SLE: Restored shortcuts of QuickGrass and Delete all grass.
+* SLE: Bugfix: Changed shortcut of vertical mouse lock from C to Z because C is shortcut for cut/connect tool.
+* SLE: Bugfix: When opening SLE with a blank level, it crashed after saving.
 
 ## 31.7.2024
 * SLE: LGR file box is a dropdown that lists LGRs in LGR directory. Publicly known LGRs are identified and this info is shown after filename.
