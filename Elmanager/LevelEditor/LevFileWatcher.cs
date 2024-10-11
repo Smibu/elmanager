@@ -113,6 +113,10 @@ internal class LevFileWatcher
 
     public T WithoutEvents<T>(Func<T> func)
     {
+        if (_fileWatcher.Path == "")
+        {
+            return func();
+        }
         _fileWatcher.EnableRaisingEvents = false;
         var r = func();
         _fileWatcher.EnableRaisingEvents = true;
