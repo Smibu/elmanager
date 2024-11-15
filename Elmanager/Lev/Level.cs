@@ -692,11 +692,6 @@ internal class Level
         return new ElmaFile(savePath);
     }
 
-    private List<GraphicElement> SortPictures(List<GraphicElement> elements)
-    {
-        return elements.OrderBy(p => p.Clipping == ClippingType.Unclipped ? 1 : 0).ToList();
-    }
-
     internal void UpdateBounds()
     {
         var b = Polygons.Skip(1).Aggregate(Polygons.First().Bounds, (current, x) => current.Max(x.Bounds));
@@ -786,8 +781,6 @@ internal class Level
                 }
             }
         }
-
-        GraphicElements = SortPictures(GraphicElements);
     }
 
     private static void CryptTop10(IList<byte> level, int top10Offset)
@@ -906,7 +899,7 @@ internal class Level
             }
         }
 
-        foreach (var (o1, o2) in SortPictures(GraphicElements).Zip(SortPictures(other.GraphicElements)))
+        foreach (var (o1, o2) in GraphicElements.Zip(other.GraphicElements))
         {
             if (o1.ToFileData() != o2.ToFileData())
             {

@@ -327,36 +327,16 @@ internal class ElmaRenderer : IDisposable
         {
             GL.DepthFunc(DepthFunction.Gequal);
             GL.Enable(EnableCap.ScissorTest);
-            foreach (var picture in lev.GraphicElements.Concat(sceneSettings.TransientElements.GraphicElements)
-                         .AsEnumerable().Reverse())
-            {
-                DoPictureScissor(picture, cam);
-                if (picture is GraphicElement.Picture p && settings.ShowPictures)
-                {
-                    GL.StencilOp(StencilOp.Keep, StencilOp.Keep, StencilOp.Keep);
-                    switch (picture.Clipping)
-                    {
-                        case ClippingType.Unclipped:
-                            GL.StencilFunc(StencilFunction.Always, 0, StencilMask);
-                            break;
-                        case ClippingType.Sky:
-                            GL.StencilFunc(StencilFunction.Equal, SkyStencil, StencilMask);
-                            break;
-                        case ClippingType.Ground:
-                            GL.StencilFunc(StencilFunction.Equal, GroundStencil, StencilMask);
-                            break;
-                    }
-
-                    OpenGlLgr.DrawPicture(p.PictureInfo.TextureId, picture.Position.X, picture.Position.Y, picture.Width, -picture.Height,
-                        (picture.Distance / 1000.0 * (ZFar - ZNear)) + ZNear, TexCoord.Default);
-                }
-            }
+            var graphicElements = lev.GraphicElements.Concat(sceneSettings.TransientElements.GraphicElements)
+                .AsEnumerable().Reverse();
+            DrawPictures(graphicElements.Where(p => p.Clipping == ClippingType.Unclipped), cam, settings);
+            DrawPictures(graphicElements.Where(p => p.Clipping != ClippingType.Unclipped), cam, settings);
 
             foreach (var picture in lev.GraphicElements.Concat(sceneSettings.TransientElements.GraphicElements))
             {
-                DoPictureScissor(picture, cam);
                 if (picture is GraphicElement.Texture t && settings.ShowTextures)
                 {
+                    DoPictureScissor(picture, cam);
                     GL.StencilOp(StencilOp.Keep, StencilOp.Keep, StencilOp.Invert);
                     switch (picture.Clipping)
                     {
@@ -501,6 +481,34 @@ internal class ElmaRenderer : IDisposable
             }
 
             GL.End();
+        }
+    }
+
+    private void DrawPictures(IEnumerable<GraphicElement> pics, ElmaCamera cam, RenderingSettings settings)
+    {
+        foreach (var picture in pics)
+        {
+            if (picture is GraphicElement.Picture p && settings.ShowPictures)
+            {
+                DoPictureScissor(picture, cam);
+                GL.StencilOp(StencilOp.Keep, StencilOp.Keep, StencilOp.Keep);
+                switch (picture.Clipping)
+                {
+                    case ClippingType.Unclipped:
+                        GL.StencilFunc(StencilFunction.Always, 0, StencilMask);
+                        break;
+                    case ClippingType.Sky:
+                        GL.StencilFunc(StencilFunction.Equal, SkyStencil, StencilMask);
+                        break;
+                    case ClippingType.Ground:
+                        GL.StencilFunc(StencilFunction.Equal, GroundStencil, StencilMask);
+                        break;
+                }
+
+                OpenGlLgr.DrawPicture(p.PictureInfo.TextureId, picture.Position.X, picture.Position.Y, picture.Width,
+                    -picture.Height,
+                    (picture.Distance / 1000.0 * (ZFar - ZNear)) + ZNear, TexCoord.Default);
+            }
         }
     }
 
