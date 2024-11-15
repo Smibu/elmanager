@@ -931,10 +931,22 @@ internal partial class LevelEditorForm : FormMod, IMessageFilter
 
     private void HandleGrassMenu(object sender, EventArgs e)
     {
-        var polys = Lev.Polygons.GetSelectedPolygons(includeGrass: true).ToList();
-        if (!polys.Any() && _grassInfo is not null)
+        var polys = new List<Polygon>();
+        var selectedPolygons = Lev.Polygons.GetSelectedPolygons(includeGrass: true).ToList();
+        if (_grassInfo is not null)
         {
-            polys.Add(_grassInfo.Polygon);
+            if (selectedPolygons.Contains(_grassInfo.Polygon))
+            {
+                polys.AddRange(selectedPolygons);
+            }
+            else
+            {
+                polys.Add(_grassInfo.Polygon);
+            }
+        }
+        else
+        {
+            polys.AddRange(selectedPolygons);
         }
 
         var mod = LevModification.Nothing;
