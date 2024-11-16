@@ -1,10 +1,13 @@
 # Elmanager changelog
 
-## Upcoming
+## 16.11.2024
 * SLE: Added a new polygon operation "Fix self-intersections".
+* SLE: Improved toggle grass logic.
 * SLE: Restored shortcuts of QuickGrass and Delete all grass.
+* SLE: Bugfix: Picture drawing order was sometimes wrong for overlapping pictures with different clipping and same distance.
 * SLE: Bugfix: Changed shortcut of vertical mouse lock from C to Z because C is shortcut for cut/connect tool.
 * SLE: Bugfix: When opening SLE with a blank level, it crashed after saving.
+* Replay viewer: Bugfix: Bike rotation was subtly wrong which caused small twitching after a 360-degree rotation.
 
 ## 31.7.2024
 * SLE: LGR file box is a dropdown that lists LGRs in LGR directory. Publicly known LGRs are identified and this info is shown after filename.
