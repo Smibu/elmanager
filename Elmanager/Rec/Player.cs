@@ -378,9 +378,9 @@ internal class Player
         var bikeRotation1 = _bikeRotation[i1];
         var bikeRotation2 = _bikeRotation[i2];
         if (bikeRotation2 - bikeRotation1 > 5 * Math.PI / 3)
-            bikeRotation2 -= 2 * Math.PI + bikeRotation1;
+            bikeRotation2 -= 2 * Math.PI;
         if (bikeRotation1 - bikeRotation2 > 5 * Math.PI / 3)
-            bikeRotation1 -= 2 * Math.PI + bikeRotation2;
+            bikeRotation1 -= 2 * Math.PI;
         var leftwheel1 = _leftWheel[i1];
         var leftwheel2 = _leftWheel[i2];
         var rightwheel1 = _rightWheel[i1];
