@@ -1,5 +1,8 @@
 # Elmanager changelog
 
+## Upcoming
+* SLE: Line and vertex colors support transparency.
+
 ## 16.11.2024
 * SLE: Added a new polygon operation "Fix self-intersections".
 * SLE: Improved toggle grass logic.
