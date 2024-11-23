@@ -242,6 +242,7 @@ internal class ElmaRenderer : IDisposable
                  ClearBufferMask.ColorBufferBit);
         GL.Enable(EnableCap.StencilTest);
         GL.Disable(EnableCap.Texture2D);
+        GL.Disable(EnableCap.Blend);
         GL.StencilOp(StencilOp.Incr, StencilOp.Keep, StencilOp.Decr);
         GL.StencilFunc(StencilFunction.Equal, GroundStencil, StencilMask);
         GL.ColorMask(false, false, false, false);
@@ -407,9 +408,13 @@ internal class ElmaRenderer : IDisposable
         GL.Disable(EnableCap.StencilTest);
         GL.Disable(EnableCap.DepthTest);
         GL.Disable(EnableCap.AlphaTest);
-        GL.Disable(EnableCap.Blend);
+
+        GL.Enable(EnableCap.Blend);
         if (settings.ShowGrid)
+        {
             DrawGrid(cam, sceneSettings, settings);
+        }
+        
         if (settings.ShowMaxDimensions)
         {
             GL.Enable(EnableCap.LineStipple);
@@ -462,7 +467,7 @@ internal class ElmaRenderer : IDisposable
         {
             var showGrassVertices = settings.ShowGrassEdges || settings.ShowGrass;
             var showGroundVertices = settings.ShowGroundEdges || (settings.ShowGround && OpenGlLgr != null);
-            GL.Color3(settings.VertexColor);
+            GL.Color4(settings.VertexColor);
             if (settings.UseCirclesForVertices)
             {
                 GL.Begin(PrimitiveType.Points);
@@ -599,7 +604,7 @@ internal class ElmaRenderer : IDisposable
     {
         if (o.Type == ObjectType.Apple && o.AppleType != AppleType.Normal)
         {
-            GL.Color3(settings.AppleGravityArrowColor);
+            GL.Color4(settings.AppleGravityArrowColor);
             double arrowRotation = o.AppleType switch
             {
                 AppleType.GravityUp => 0.0,
@@ -635,7 +640,7 @@ internal class ElmaRenderer : IDisposable
 
     internal void DrawEquilateralTriangle(Vector center, double side, Color color)
     {
-        GL.Color3(color);
+        GL.Color4(color);
         GL.Begin(PrimitiveType.Triangles);
         DrawEquilateralTriangleFast(center, side);
         GL.End();
@@ -745,7 +750,7 @@ internal class ElmaRenderer : IDisposable
         var gridSize = settings.GridSize;
         var current = GetFirstGridLine(gridSize, sceneSettings.GridOffset.X, cam.XMin);
         EnableDashLines(LinePattern, settings);
-        GL.Color3(settings.GridColor);
+        GL.Color4(settings.GridColor);
         GL.Begin(PrimitiveType.Lines);
         while (!(current > cam.XMax))
         {
@@ -834,7 +839,9 @@ internal class ElmaRenderer : IDisposable
     {
         if (opts.UseGraphics && OpenGlLgr != null)
         {
+            GL.BlendFunc(BlendingFactor.One, BlendingFactor.OneMinusDstColor);
             OpenGlLgr.DrawLgrPlayer(player, opts, sceneSettings);
+            GL.BlendFunc(BlendingFactor.SrcAlpha, BlendingFactor.OneMinusSrcAlpha);
         }
         else
         {
@@ -907,7 +914,7 @@ internal class ElmaRenderer : IDisposable
         GL.ClearStencil(GroundStencil);
         GL.DepthFunc(DepthFunction.Gequal);
         GL.AlphaFunc(AlphaFunction.Gequal, 0.9f);
-        GL.BlendFunc(BlendingFactor.One, BlendingFactor.OneMinusDstColor);
+        GL.BlendFunc(BlendingFactor.SrcAlpha, BlendingFactor.OneMinusSrcAlpha);
         GL.Hint(HintTarget.PerspectiveCorrectionHint, HintMode.Fastest);
         GL.Hint(HintTarget.TextureCompressionHint, HintMode.Fastest);
         GL.Hint(HintTarget.PolygonSmoothHint, HintMode.Fastest);

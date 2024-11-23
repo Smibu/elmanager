@@ -1,14 +1,11 @@
 using System.Drawing;
 using System.Text.Json.Serialization;
 using System.Windows.Forms;
-using Elmanager.Rendering;
 
 namespace Elmanager.ReplayViewer;
 
 internal class ReplayViewerSettings
 {
-    [JsonPropertyName("ActivePlayerColor")]
-    public Color ActivePlayerColor { get; set; } = Color.Black;
     [JsonPropertyName("DontSelectPlayersByDefault")]
     public bool DontSelectPlayersByDefault { get; set; }
     [JsonPropertyName("DrawOnlyPlayerFrames")]
@@ -21,8 +18,6 @@ internal class ReplayViewerSettings
     public double FrameStep { get; set; } = 0.02;
     [JsonPropertyName("HideStartObject")]
     public bool HideStartObject { get; set; } = true;
-    [JsonPropertyName("InactivePlayerColor")]
-    public Color InactivePlayerColor { get; set; } = Color.Green;
     [JsonPropertyName("LockedCamera")]
     public bool LockedCamera { get; set; }
     [JsonPropertyName("LoopPlaying")]
@@ -36,7 +31,7 @@ internal class ReplayViewerSettings
     [JsonPropertyName("PicturesInBackGround")]
     public bool PicturesInBackGround { get; set; }
     [JsonPropertyName("RenderingSettings")]
-    public RenderingSettings RenderingSettings { get; set; } = new();
+    public ReplayViewerRenderingSettings RenderingSettings { get; set; } = new();
     [JsonPropertyName("ShowBikeCoords")]
     public bool ShowBikeCoords { get; set; } = true;
     [JsonPropertyName("ShowDriverPath")]

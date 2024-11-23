@@ -86,13 +86,6 @@ namespace Elmanager.Settings
             alwaysSetDefaultsInPictureTool = new CheckBox();
             capturePicTextFromBordersCheckBox = new CheckBox();
             RenderingSettingsButton = new Button();
-            GroupBox1 = new GroupBox();
-            crosshairPanel = new Panel();
-            label9 = new Label();
-            SelectionPanel = new Panel();
-            Label15 = new Label();
-            Label17 = new Label();
-            HighlightPanel = new Panel();
             FilenameSuggestionBox = new CheckBox();
             DynamicCheckTopologyBox = new CheckBox();
             CheckTopologyWhenSavingBox = new CheckBox();
@@ -109,7 +102,6 @@ namespace Elmanager.Settings
             sleTab.SuspendLayout();
             tableLayoutPanel3.SuspendLayout();
             tableLayoutPanel2.SuspendLayout();
-            GroupBox1.SuspendLayout();
             SuspendLayout();
             // 
             // RecDirButton
@@ -194,7 +186,7 @@ namespace Elmanager.Settings
             TabControl1.Margin = new Padding(6);
             TabControl1.Name = "TabControl1";
             TabControl1.SelectedIndex = 0;
-            TabControl1.Size = new System.Drawing.Size(1171, 849);
+            TabControl1.Size = new System.Drawing.Size(1171, 777);
             TabControl1.TabIndex = 55;
             // 
             // generalTab
@@ -537,14 +529,13 @@ namespace Elmanager.Settings
             sleTab.Controls.Add(alwaysSetDefaultsInPictureTool);
             sleTab.Controls.Add(capturePicTextFromBordersCheckBox);
             sleTab.Controls.Add(RenderingSettingsButton);
-            sleTab.Controls.Add(GroupBox1);
             sleTab.Controls.Add(FilenameSuggestionBox);
             sleTab.Controls.Add(DynamicCheckTopologyBox);
             sleTab.Controls.Add(CheckTopologyWhenSavingBox);
             sleTab.Location = new System.Drawing.Point(8, 46);
             sleTab.Margin = new Padding(6);
             sleTab.Name = "sleTab";
-            sleTab.Size = new System.Drawing.Size(1155, 795);
+            sleTab.Size = new System.Drawing.Size(1155, 723);
             sleTab.TabIndex = 4;
             sleTab.Text = "SLE";
             sleTab.UseVisualStyleBackColor = true;
@@ -774,7 +765,7 @@ namespace Elmanager.Settings
             // RenderingSettingsButton
             // 
             RenderingSettingsButton.Anchor = AnchorStyles.Bottom | AnchorStyles.Left;
-            RenderingSettingsButton.Location = new System.Drawing.Point(458, 723);
+            RenderingSettingsButton.Location = new System.Drawing.Point(16, 666);
             RenderingSettingsButton.Margin = new Padding(6);
             RenderingSettingsButton.Name = "RenderingSettingsButton";
             RenderingSettingsButton.Size = new System.Drawing.Size(230, 50);
@@ -782,87 +773,6 @@ namespace Elmanager.Settings
             RenderingSettingsButton.Text = "Rendering settings";
             RenderingSettingsButton.UseVisualStyleBackColor = true;
             RenderingSettingsButton.Click += RenderingSettingsButtonClick;
-            // 
-            // GroupBox1
-            // 
-            GroupBox1.Anchor = AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Left;
-            GroupBox1.Controls.Add(crosshairPanel);
-            GroupBox1.Controls.Add(label9);
-            GroupBox1.Controls.Add(SelectionPanel);
-            GroupBox1.Controls.Add(Label15);
-            GroupBox1.Controls.Add(Label17);
-            GroupBox1.Controls.Add(HighlightPanel);
-            GroupBox1.Location = new System.Drawing.Point(16, 617);
-            GroupBox1.Margin = new Padding(6);
-            GroupBox1.Name = "GroupBox1";
-            GroupBox1.Padding = new Padding(6);
-            GroupBox1.Size = new System.Drawing.Size(414, 156);
-            GroupBox1.TabIndex = 26;
-            GroupBox1.TabStop = false;
-            GroupBox1.Text = "Colors";
-            // 
-            // crosshairPanel
-            // 
-            crosshairPanel.BorderStyle = BorderStyle.FixedSingle;
-            crosshairPanel.Cursor = Cursors.Hand;
-            crosshairPanel.Location = new System.Drawing.Point(12, 94);
-            crosshairPanel.Margin = new Padding(6);
-            crosshairPanel.Name = "crosshairPanel";
-            crosshairPanel.Size = new System.Drawing.Size(38, 38);
-            crosshairPanel.TabIndex = 9;
-            crosshairPanel.Click += PanelClick;
-            // 
-            // label9
-            // 
-            label9.AutoSize = true;
-            label9.Location = new System.Drawing.Point(64, 102);
-            label9.Margin = new Padding(6, 0, 6, 0);
-            label9.Name = "label9";
-            label9.Size = new System.Drawing.Size(111, 32);
-            label9.TabIndex = 10;
-            label9.Text = "Crosshair";
-            // 
-            // SelectionPanel
-            // 
-            SelectionPanel.BorderStyle = BorderStyle.FixedSingle;
-            SelectionPanel.Cursor = Cursors.Hand;
-            SelectionPanel.Location = new System.Drawing.Point(12, 44);
-            SelectionPanel.Margin = new Padding(6);
-            SelectionPanel.Name = "SelectionPanel";
-            SelectionPanel.Size = new System.Drawing.Size(38, 38);
-            SelectionPanel.TabIndex = 1;
-            SelectionPanel.Click += PanelClick;
-            // 
-            // Label15
-            // 
-            Label15.AutoSize = true;
-            Label15.Location = new System.Drawing.Point(64, 52);
-            Label15.Margin = new Padding(6, 0, 6, 0);
-            Label15.Name = "Label15";
-            Label15.Size = new System.Drawing.Size(112, 32);
-            Label15.TabIndex = 8;
-            Label15.Text = "Selection";
-            // 
-            // Label17
-            // 
-            Label17.AutoSize = true;
-            Label17.Location = new System.Drawing.Point(284, 52);
-            Label17.Margin = new Padding(6, 0, 6, 0);
-            Label17.Name = "Label17";
-            Label17.Size = new System.Drawing.Size(113, 32);
-            Label17.TabIndex = 10;
-            Label17.Text = "Highlight";
-            // 
-            // HighlightPanel
-            // 
-            HighlightPanel.BorderStyle = BorderStyle.FixedSingle;
-            HighlightPanel.Cursor = Cursors.Hand;
-            HighlightPanel.Location = new System.Drawing.Point(232, 44);
-            HighlightPanel.Margin = new Padding(6);
-            HighlightPanel.Name = "HighlightPanel";
-            HighlightPanel.Size = new System.Drawing.Size(38, 38);
-            HighlightPanel.TabIndex = 2;
-            HighlightPanel.Click += PanelClick;
             // 
             // FilenameSuggestionBox
             // 
@@ -906,7 +816,7 @@ namespace Elmanager.Settings
             // 
             AutoScaleDimensions = new System.Drawing.SizeF(192F, 192F);
             AutoScaleMode = AutoScaleMode.Dpi;
-            ClientSize = new System.Drawing.Size(1171, 849);
+            ClientSize = new System.Drawing.Size(1171, 777);
             Controls.Add(TabControl1);
             Font = new System.Drawing.Font("Segoe UI", 9F);
             FormBorderStyle = FormBorderStyle.FixedSingle;
@@ -935,8 +845,6 @@ namespace Elmanager.Settings
             tableLayoutPanel3.PerformLayout();
             tableLayoutPanel2.ResumeLayout(false);
             tableLayoutPanel2.PerformLayout();
-            GroupBox1.ResumeLayout(false);
-            GroupBox1.PerformLayout();
             ResumeLayout(false);
         }
 
@@ -963,10 +871,6 @@ namespace Elmanager.Settings
         internal System.Windows.Forms.Label Label8;
         internal System.Windows.Forms.CheckBox CheckTopologyWhenSavingBox;
         internal System.Windows.Forms.CheckBox DynamicCheckTopologyBox;
-        internal System.Windows.Forms.Panel HighlightPanel;
-        internal System.Windows.Forms.Label Label17;
-        internal System.Windows.Forms.Label Label15;
-        internal System.Windows.Forms.Panel SelectionPanel;
         internal System.Windows.Forms.CheckBox HighlightBox;
         internal System.Windows.Forms.ColorDialog ColorDialog1;
         internal System.Windows.Forms.TextBox baseFilenameBox;
@@ -977,7 +881,6 @@ namespace Elmanager.Settings
         internal System.Windows.Forms.TextBox DefaultTitleBox;
         internal System.Windows.Forms.Label Label20;
         internal System.Windows.Forms.CheckBox CheckForUpdatesBox;
-        internal System.Windows.Forms.GroupBox GroupBox1;
         internal System.Windows.Forms.Button RenderingSettingsButton;
         internal System.Windows.Forms.Button LGRDirButton;
         internal System.Windows.Forms.TextBox LGRTextBox;
@@ -985,8 +888,6 @@ namespace Elmanager.Settings
         internal System.Windows.Forms.Button ElmaDirButton;
         private Button resetButton;
         private TextBox numberFormatBox;
-        internal Panel crosshairPanel;
-        internal Label label9;
         private Button browseButton;
         private ToolTip toolTip1;
         internal CheckBox capturePicTextFromBordersCheckBox;

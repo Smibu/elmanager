@@ -6,7 +6,6 @@ using System.Text.RegularExpressions;
 using System.Windows.Forms;
 using Elmanager.Lev;
 using Elmanager.LevelEditor.Playing;
-using Elmanager.Rendering;
 using Elmanager.Settings;
 
 namespace Elmanager.LevelEditor;
@@ -31,10 +30,6 @@ internal class LevelEditorSettings
     public int EllipseSteps { get; set; } = 10;
     [JsonPropertyName("FrameRadius")]
     public double FrameRadius { get; set; } = 0.2;
-    [JsonPropertyName("CrosshairColor")]
-    public Color CrosshairColor { get; set; } = Color.Blue;
-    [JsonPropertyName("HighlightColor")]
-    public Color HighlightColor { get; set; } = Color.Yellow;
     [JsonPropertyName("LastLevel")]
     public string? LastLevel { get; set; }
     [JsonPropertyName("MouseClickStep")]
@@ -44,9 +39,7 @@ internal class LevelEditorSettings
     [JsonPropertyName("PipeRadius")]
     public double PipeRadius { get; set; } = 1.0;
     [JsonPropertyName("RenderingSettings")]
-    public RenderingSettings RenderingSettings { get; set; } = new();
-    [JsonPropertyName("SelectionColor")]
-    public Color SelectionColor { get; set; } = Color.Blue;
+    public LevelEditorRenderingSettings RenderingSettings { get; set; } = new();
     [JsonPropertyName("Size")]
     public Size Size { get; set; } = new(800, 600);
     [JsonPropertyName("SnapToGrid")]

@@ -656,9 +656,9 @@ internal partial class LevelEditorForm : FormMod, IMessageFilter
         {
             var mouse = GetMouseCoordinates();
             Renderer.DrawDashLine(_zoomCtrl.Cam.XMin, mouse.Y, _zoomCtrl.Cam.XMax,
-                mouse.Y, Settings.CrosshairColor, Settings.RenderingSettings);
+                mouse.Y, Settings.RenderingSettings.CrosshairColor, Settings.RenderingSettings);
             Renderer.DrawDashLine(mouse.X, _zoomCtrl.Cam.YMin, mouse.X,
-                _zoomCtrl.Cam.YMax, Settings.CrosshairColor, Settings.RenderingSettings);
+                _zoomCtrl.Cam.YMax, Settings.RenderingSettings.CrosshairColor, Settings.RenderingSettings);
         }
 
         foreach (Polygon x in Lev.Polygons)
@@ -669,11 +669,11 @@ internal partial class LevelEditorForm : FormMod, IMessageFilter
                     if (Settings.UseHighlight)
                         if (x.IsGrass)
                         {
-                            Renderer.DrawGrassPolygon(x, Settings.HighlightColor,
+                            Renderer.DrawGrassPolygon(x, Settings.RenderingSettings.HighlightColor,
                                 Settings.RenderingSettings.ShowInactiveGrassEdges, Settings.RenderingSettings);
                         }
                         else
-                            Renderer.DrawPolygon(x, Settings.HighlightColor);
+                            Renderer.DrawPolygon(x, Settings.RenderingSettings.HighlightColor);
 
                     break;
                 case PolygonMark.Selected:
@@ -689,11 +689,11 @@ internal partial class LevelEditorForm : FormMod, IMessageFilter
                 switch (z.Mark)
                 {
                     case VectorMark.Selected:
-                        drawAction(z, Settings.SelectionColor);
+                        drawAction(z, Settings.RenderingSettings.SelectionColor);
                         break;
                     case VectorMark.Highlight:
                         if (Settings.UseHighlight)
-                            drawAction(z, Settings.HighlightColor);
+                            drawAction(z, Settings.RenderingSettings.HighlightColor);
                         break;
                 }
             }
@@ -705,11 +705,11 @@ internal partial class LevelEditorForm : FormMod, IMessageFilter
             switch (z.Mark)
             {
                 case VectorMark.Selected:
-                    drawAction(z, Settings.SelectionColor);
+                    drawAction(z, Settings.RenderingSettings.SelectionColor);
                     break;
                 case VectorMark.Highlight:
                     if (Settings.UseHighlight)
-                        drawAction(z, Settings.HighlightColor);
+                        drawAction(z, Settings.RenderingSettings.HighlightColor);
                     break;
             }
         }
@@ -720,10 +720,10 @@ internal partial class LevelEditorForm : FormMod, IMessageFilter
             switch (z.Mark)
             {
                 case VectorMark.Selected:
-                    Renderer.DrawGraphicElementFrame(t, Settings.RenderingSettings, Settings.SelectionColor);
+                    Renderer.DrawGraphicElementFrame(t, Settings.RenderingSettings, Settings.RenderingSettings.SelectionColor);
                     break;
                 case VectorMark.Highlight:
-                    Renderer.DrawGraphicElementFrame(t, Settings.RenderingSettings, Settings.HighlightColor);
+                    Renderer.DrawGraphicElementFrame(t, Settings.RenderingSettings, Settings.RenderingSettings.HighlightColor);
                     break;
             }
         }
@@ -765,10 +765,10 @@ internal partial class LevelEditorForm : FormMod, IMessageFilter
             switch (PlayController.PlayerSelection)
             {
                 case VectorMark.Selected:
-                    drawAction(driver.Body.Location, Settings.SelectionColor);
+                    drawAction(driver.Body.Location, Settings.RenderingSettings.SelectionColor);
                     break;
                 case VectorMark.Highlight:
-                    drawAction(driver.Body.Location, Settings.HighlightColor);
+                    drawAction(driver.Body.Location, Settings.RenderingSettings.HighlightColor);
                     break;
             }
             GL.Translate(jf.X, jf.Y, 0);

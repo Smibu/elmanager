@@ -59,8 +59,6 @@ internal class ReplayController : IDisposable
     private bool _showDriverPath;
     private bool _followDriver;
     private bool _drawInActiveAsTransparent;
-    private Color _activePlayerColor;
-    private Color _inActivePlayerColor;
     private bool _drawOnlyPlayerFrames;
     private bool _hideStartObject;
     private bool _multiSpy;
@@ -70,7 +68,7 @@ internal class ReplayController : IDisposable
     private double _fixy;
     private readonly Timer _timer = new(25); // Don't update unnecessarily often to avoid overhead
     private Task? _playTask;
-    private readonly RenderingSettings _settings;
+    private readonly ReplayViewerRenderingSettings _settings;
 
     public event ElapsedEventHandler PlayingElapsed
     {
@@ -78,7 +76,7 @@ internal class ReplayController : IDisposable
         remove => _timer.Elapsed -= value;
     }
 
-    public ReplayController(GLControl viewerBox, RenderingSettings replayViewerRenderingSettings)
+    public ReplayController(GLControl viewerBox, ReplayViewerRenderingSettings replayViewerRenderingSettings)
     {
         Renderer = new ElmaRenderer(viewerBox, replayViewerRenderingSettings);
         _settings = replayViewerRenderingSettings;
@@ -91,7 +89,7 @@ internal class ReplayController : IDisposable
             var isSelected = _activePlayerIndices.Contains(x);
             var opts = new PlayerRenderOpts
             {
-                Color = isSelected ? _activePlayerColor : _inActivePlayerColor,
+                Color = isSelected ? _settings.ActivePlayerColor : _settings.InactivePlayerColor,
                 IsActive = isSelected,
                 UseGraphics = !_drawOnlyPlayerFrames,
                 UseTransparency = !isSelected && _drawInActiveAsTransparent
@@ -110,8 +108,6 @@ internal class ReplayController : IDisposable
         _drawInActiveAsTransparent = Global.AppSettings.ReplayViewer.DrawTransparentInactive;
         _frameStep = Global.AppSettings.ReplayViewer.FrameStep;
         _loopPlaying = Global.AppSettings.ReplayViewer.LoopPlaying;
-        _activePlayerColor = Global.AppSettings.ReplayViewer.ActivePlayerColor;
-        _inActivePlayerColor = Global.AppSettings.ReplayViewer.InactivePlayerColor;
         _drawOnlyPlayerFrames = Global.AppSettings.ReplayViewer.DrawOnlyPlayerFrames;
         _hideStartObject = Global.AppSettings.ReplayViewer.HideStartObject;
         _multiSpy = Global.AppSettings.ReplayViewer.MultiSpy;

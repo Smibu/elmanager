@@ -45,9 +45,6 @@ internal partial class ConfigForm : FormMod
         DefaultTitleBox.Text = Global.AppSettings.LevelEditor.DefaultTitle;
         HighlightBox.Checked = Global.AppSettings.LevelEditor.UseHighlight;
         CheckForUpdatesBox.Checked = Global.AppSettings.General.CheckForUpdatesOnStartup;
-        HighlightPanel.BackColor = Global.AppSettings.LevelEditor.HighlightColor;
-        SelectionPanel.BackColor = Global.AppSettings.LevelEditor.SelectionColor;
-        crosshairPanel.BackColor = Global.AppSettings.LevelEditor.CrosshairColor;
         capturePicTextFromBordersCheckBox.Checked =
             Global.AppSettings.LevelEditor.CapturePicturesAndTexturesFromBordersOnly;
         if (Global.AppSettings.LevelEditor.RenderingSettings.DisableFrameBuffer &&
@@ -218,9 +215,6 @@ internal partial class ConfigForm : FormMod
         Global.AppSettings.LevelEditor.NumberFormat = numberFormatBox.Text;
         Global.AppSettings.LevelEditor.DefaultTitle = DefaultTitleBox.Text;
         Global.AppSettings.General.CheckForUpdatesOnStartup = CheckForUpdatesBox.Checked;
-        Global.AppSettings.LevelEditor.HighlightColor = HighlightPanel.BackColor;
-        Global.AppSettings.LevelEditor.SelectionColor = SelectionPanel.BackColor;
-        Global.AppSettings.LevelEditor.CrosshairColor = crosshairPanel.BackColor;
         Global.AppSettings.LevelEditor.CapturePicturesAndTexturesFromBordersOnly =
             capturePicTextFromBordersCheckBox.Checked;
         if (DisableFrameBufferUsageCheckBox.CheckState != CheckState.Indeterminate)

@@ -687,7 +687,7 @@ internal class OpenGlLgr : IDisposable
             GL.Enable(EnableCap.Blend);
             GL.BlendFunc(BlendingFactor.OneMinusDstAlpha, BlendingFactor.DstAlpha);
             DrawFullScreenTexture(cam, _grassData.Qgrass, midX, midY, 0, settings);
-            GL.BlendFunc(BlendingFactor.One, BlendingFactor.OneMinusDstColor);
+            GL.BlendFunc(BlendingFactor.SrcAlpha, BlendingFactor.OneMinusSrcAlpha);
         }
     }
 

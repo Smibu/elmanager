@@ -95,12 +95,8 @@ namespace Elmanager.ReplayViewer
             label1 = new Label();
             optionsPanel3 = new Panel();
             RenderingSettingsButton = new Button();
-            ActivePlayerPanel = new Panel();
-            InActivePlayerPanel = new Panel();
             DrivingLinePanel = new Panel();
             DrivingLineLabel = new Label();
-            ActivePLabel = new Label();
-            InactivePLabel = new Label();
             contextMenuStrip1.SuspendLayout();
             ((ISupportInitialize)playbackSpeedBar).BeginInit();
             TabControl1.SuspendLayout();
@@ -131,7 +127,7 @@ namespace Elmanager.ReplayViewer
             ViewerBox.Flags = OpenTK.Windowing.Common.ContextFlags.Default;
             ViewerBox.IsEventDriven = true;
             ViewerBox.Location = new Point(788, 0);
-            ViewerBox.Margin = new Padding(6, 6, 6, 6);
+            ViewerBox.Margin = new Padding(6);
             ViewerBox.Name = "ViewerBox";
             ViewerBox.Profile = OpenTK.Windowing.Common.ContextProfile.Compatability;
             ViewerBox.Size = new Size(678, 670);
@@ -217,7 +213,7 @@ namespace Elmanager.ReplayViewer
             playbackSpeedBar.BackColor = Color.White;
             playbackSpeedBar.LargeChange = 10;
             playbackSpeedBar.Location = new Point(0, 70);
-            playbackSpeedBar.Margin = new Padding(6, 6, 6, 6);
+            playbackSpeedBar.Margin = new Padding(6);
             playbackSpeedBar.Minimum = -10;
             playbackSpeedBar.Name = "playbackSpeedBar";
             playbackSpeedBar.Size = new Size(332, 90);
@@ -230,7 +226,7 @@ namespace Elmanager.ReplayViewer
             TabControl1.Controls.Add(TabPage2);
             TabControl1.Dock = DockStyle.Left;
             TabControl1.Location = new Point(0, 0);
-            TabControl1.Margin = new Padding(6, 6, 6, 6);
+            TabControl1.Margin = new Padding(6);
             TabControl1.Name = "TabControl1";
             TabControl1.SelectedIndex = 0;
             TabControl1.Size = new Size(788, 670);
@@ -254,9 +250,9 @@ namespace Elmanager.ReplayViewer
             TabPage1.Controls.Add(timeBar);
             TabPage1.Controls.Add(CoordinateLabel);
             TabPage1.Location = new Point(8, 46);
-            TabPage1.Margin = new Padding(6, 6, 6, 6);
+            TabPage1.Margin = new Padding(6);
             TabPage1.Name = "TabPage1";
-            TabPage1.Padding = new Padding(6, 6, 6, 6);
+            TabPage1.Padding = new Padding(6);
             TabPage1.Size = new Size(772, 616);
             TabPage1.TabIndex = 0;
             TabPage1.Text = "Player";
@@ -265,7 +261,7 @@ namespace Elmanager.ReplayViewer
             // button1
             // 
             button1.Location = new Point(346, 128);
-            button1.Margin = new Padding(6, 6, 6, 6);
+            button1.Margin = new Padding(6);
             button1.Name = "button1";
             button1.Size = new Size(416, 82);
             button1.TabIndex = 127;
@@ -286,7 +282,7 @@ namespace Elmanager.ReplayViewer
             PlayList.FullRowSelect = true;
             PlayList.HeaderStyle = ColumnHeaderStyle.Nonclickable;
             PlayList.Location = new Point(0, 384);
-            PlayList.Margin = new Padding(6, 6, 6, 6);
+            PlayList.Margin = new Padding(6);
             PlayList.Name = "PlayList";
             PlayList.ShowGroups = false;
             PlayList.ShowImagesOnSubItems = true;
@@ -314,7 +310,7 @@ namespace Elmanager.ReplayViewer
             // FullScreenButton
             // 
             FullScreenButton.Location = new Point(546, 70);
-            FullScreenButton.Margin = new Padding(6, 6, 6, 6);
+            FullScreenButton.Margin = new Padding(6);
             FullScreenButton.Name = "FullScreenButton";
             FullScreenButton.Size = new Size(216, 50);
             FullScreenButton.TabIndex = 99;
@@ -325,7 +321,7 @@ namespace Elmanager.ReplayViewer
             // SnapShotButton
             // 
             SnapShotButton.Location = new Point(346, 70);
-            SnapShotButton.Margin = new Padding(6, 6, 6, 6);
+            SnapShotButton.Margin = new Padding(6);
             SnapShotButton.Name = "SnapShotButton";
             SnapShotButton.Size = new Size(186, 50);
             SnapShotButton.TabIndex = 98;
@@ -339,9 +335,8 @@ namespace Elmanager.ReplayViewer
             EventListBox.ContextMenuStrip = contextMenuStrip1;
             EventListBox.FormattingEnabled = true;
             EventListBox.IntegralHeight = false;
-            EventListBox.ItemHeight = 32;
             EventListBox.Location = new Point(346, 384);
-            EventListBox.Margin = new Padding(6, 6, 6, 6);
+            EventListBox.Margin = new Padding(6);
             EventListBox.Name = "EventListBox";
             EventListBox.Size = new Size(412, 210);
             EventListBox.TabIndex = 79;
@@ -361,7 +356,7 @@ namespace Elmanager.ReplayViewer
             // PlayButton
             // 
             PlayButton.Location = new Point(188, 14);
-            PlayButton.Margin = new Padding(6, 6, 6, 6);
+            PlayButton.Margin = new Padding(6);
             PlayButton.Name = "PlayButton";
             PlayButton.Size = new Size(150, 50);
             PlayButton.TabIndex = 53;
@@ -371,7 +366,7 @@ namespace Elmanager.ReplayViewer
             // StopButton
             // 
             StopButton.Location = new Point(618, 14);
-            StopButton.Margin = new Padding(6, 6, 6, 6);
+            StopButton.Margin = new Padding(6);
             StopButton.Name = "StopButton";
             StopButton.Size = new Size(144, 50);
             StopButton.TabIndex = 55;
@@ -381,7 +376,7 @@ namespace Elmanager.ReplayViewer
             // ZoomFillButton
             // 
             ZoomFillButton.Location = new Point(0, 14);
-            ZoomFillButton.Margin = new Padding(6, 6, 6, 6);
+            ZoomFillButton.Margin = new Padding(6);
             ZoomFillButton.Name = "ZoomFillButton";
             ZoomFillButton.Size = new Size(168, 50);
             ZoomFillButton.TabIndex = 56;
@@ -391,7 +386,7 @@ namespace Elmanager.ReplayViewer
             // TimeBox
             // 
             TimeBox.Location = new Point(420, 18);
-            TimeBox.Margin = new Padding(6, 6, 6, 6);
+            TimeBox.Margin = new Padding(6);
             TimeBox.Name = "TimeBox";
             TimeBox.Size = new Size(108, 39);
             TimeBox.TabIndex = 60;
@@ -401,7 +396,7 @@ namespace Elmanager.ReplayViewer
             // PrevFrameButton
             // 
             PrevFrameButton.Location = new Point(346, 14);
-            PrevFrameButton.Margin = new Padding(6, 6, 6, 6);
+            PrevFrameButton.Margin = new Padding(6);
             PrevFrameButton.Name = "PrevFrameButton";
             PrevFrameButton.Size = new Size(58, 50);
             PrevFrameButton.TabIndex = 61;
@@ -411,7 +406,7 @@ namespace Elmanager.ReplayViewer
             // NextFrameButton
             // 
             NextFrameButton.Location = new Point(546, 14);
-            NextFrameButton.Margin = new Padding(6, 6, 6, 6);
+            NextFrameButton.Margin = new Padding(6);
             NextFrameButton.Name = "NextFrameButton";
             NextFrameButton.Size = new Size(58, 50);
             NextFrameButton.TabIndex = 62;
@@ -423,7 +418,7 @@ namespace Elmanager.ReplayViewer
             timeBar.BackColor = SystemColors.Window;
             timeBar.LargeChange = 10;
             timeBar.Location = new Point(0, 288);
-            timeBar.Margin = new Padding(6, 6, 6, 6);
+            timeBar.Margin = new Padding(6);
             timeBar.Maximum = 1000;
             timeBar.Name = "timeBar";
             timeBar.Size = new Size(768, 90);
@@ -450,9 +445,9 @@ namespace Elmanager.ReplayViewer
             // 
             TabPage2.Controls.Add(flowLayoutPanel);
             TabPage2.Location = new Point(8, 46);
-            TabPage2.Margin = new Padding(6, 6, 6, 6);
+            TabPage2.Margin = new Padding(6);
             TabPage2.Name = "TabPage2";
-            TabPage2.Padding = new Padding(6, 6, 6, 6);
+            TabPage2.Padding = new Padding(6);
             TabPage2.Size = new Size(772, 616);
             TabPage2.TabIndex = 1;
             TabPage2.Text = "Options";
@@ -467,9 +462,9 @@ namespace Elmanager.ReplayViewer
             flowLayoutPanel.Controls.Add(optionsPanel3);
             flowLayoutPanel.FlowDirection = FlowDirection.TopDown;
             flowLayoutPanel.Location = new Point(0, 0);
-            flowLayoutPanel.Margin = new Padding(6, 6, 6, 6);
+            flowLayoutPanel.Margin = new Padding(6);
             flowLayoutPanel.Name = "flowLayoutPanel";
-            flowLayoutPanel.Size = new Size(644, 521);
+            flowLayoutPanel.Size = new Size(644, 517);
             flowLayoutPanel.TabIndex = 0;
             flowLayoutPanel.WrapContents = false;
             // 
@@ -492,7 +487,7 @@ namespace Elmanager.ReplayViewer
             tableLayoutPanel1.Controls.Add(SelectNoPlayersBox, 1, 3);
             tableLayoutPanel1.Controls.Add(PlayerFramesBox, 0, 4);
             tableLayoutPanel1.Location = new Point(6, 6);
-            tableLayoutPanel1.Margin = new Padding(6, 6, 6, 6);
+            tableLayoutPanel1.Margin = new Padding(6);
             tableLayoutPanel1.Name = "tableLayoutPanel1";
             tableLayoutPanel1.RowCount = 6;
             tableLayoutPanel1.RowStyles.Add(new RowStyle());
@@ -644,7 +639,7 @@ namespace Elmanager.ReplayViewer
             tableLayoutPanel2.Controls.Add(viewerSizeXBox, 1, 2);
             tableLayoutPanel2.Controls.Add(label1, 0, 2);
             tableLayoutPanel2.Location = new Point(6, 234);
-            tableLayoutPanel2.Margin = new Padding(6, 6, 6, 6);
+            tableLayoutPanel2.Margin = new Padding(6);
             tableLayoutPanel2.Name = "tableLayoutPanel2";
             tableLayoutPanel2.RowCount = 4;
             tableLayoutPanel2.RowStyles.Add(new RowStyle());
@@ -670,7 +665,7 @@ namespace Elmanager.ReplayViewer
             MouseWheelZoomBox.BackColor = SystemColors.Window;
             MouseWheelZoomBox.DefaultValue = 0D;
             MouseWheelZoomBox.Location = new Point(299, 6);
-            MouseWheelZoomBox.Margin = new Padding(6, 6, 6, 6);
+            MouseWheelZoomBox.Margin = new Padding(6);
             MouseWheelZoomBox.Name = "MouseWheelZoomBox";
             MouseWheelZoomBox.Size = new Size(94, 39);
             MouseWheelZoomBox.TabIndex = 63;
@@ -682,7 +677,7 @@ namespace Elmanager.ReplayViewer
             viewerSizeYBox.BackColor = SystemColors.Window;
             viewerSizeYBox.DefaultValue = 0D;
             viewerSizeYBox.Location = new Point(442, 108);
-            viewerSizeYBox.Margin = new Padding(6, 6, 6, 6);
+            viewerSizeYBox.Margin = new Padding(6);
             viewerSizeYBox.Name = "viewerSizeYBox";
             viewerSizeYBox.Size = new Size(94, 39);
             viewerSizeYBox.TabIndex = 66;
@@ -716,7 +711,7 @@ namespace Elmanager.ReplayViewer
             MouseClickZoomBox.BackColor = SystemColors.Window;
             MouseClickZoomBox.DefaultValue = 0D;
             MouseClickZoomBox.Location = new Point(299, 57);
-            MouseClickZoomBox.Margin = new Padding(6, 6, 6, 6);
+            MouseClickZoomBox.Margin = new Padding(6);
             MouseClickZoomBox.Name = "MouseClickZoomBox";
             MouseClickZoomBox.Size = new Size(94, 39);
             MouseClickZoomBox.TabIndex = 64;
@@ -728,7 +723,7 @@ namespace Elmanager.ReplayViewer
             viewerSizeXBox.BackColor = SystemColors.Window;
             viewerSizeXBox.DefaultValue = 0D;
             viewerSizeXBox.Location = new Point(299, 108);
-            viewerSizeXBox.Margin = new Padding(6, 6, 6, 6);
+            viewerSizeXBox.Margin = new Padding(6);
             viewerSizeXBox.Name = "viewerSizeXBox";
             viewerSizeXBox.Size = new Size(94, 39);
             viewerSizeXBox.TabIndex = 65;
@@ -751,22 +746,18 @@ namespace Elmanager.ReplayViewer
             optionsPanel3.AutoSize = true;
             optionsPanel3.AutoSizeMode = AutoSizeMode.GrowAndShrink;
             optionsPanel3.Controls.Add(RenderingSettingsButton);
-            optionsPanel3.Controls.Add(ActivePlayerPanel);
-            optionsPanel3.Controls.Add(InActivePlayerPanel);
             optionsPanel3.Controls.Add(DrivingLinePanel);
             optionsPanel3.Controls.Add(DrivingLineLabel);
-            optionsPanel3.Controls.Add(ActivePLabel);
-            optionsPanel3.Controls.Add(InactivePLabel);
             optionsPanel3.Location = new Point(6, 399);
-            optionsPanel3.Margin = new Padding(6, 6, 6, 6);
+            optionsPanel3.Margin = new Padding(6);
             optionsPanel3.Name = "optionsPanel3";
-            optionsPanel3.Size = new Size(607, 116);
+            optionsPanel3.Size = new Size(373, 112);
             optionsPanel3.TabIndex = 149;
             // 
             // RenderingSettingsButton
             // 
-            RenderingSettingsButton.Location = new Point(240, 60);
-            RenderingSettingsButton.Margin = new Padding(6, 6, 6, 6);
+            RenderingSettingsButton.Location = new Point(6, 56);
+            RenderingSettingsButton.Margin = new Padding(6);
             RenderingSettingsButton.Name = "RenderingSettingsButton";
             RenderingSettingsButton.Size = new Size(230, 50);
             RenderingSettingsButton.TabIndex = 71;
@@ -774,34 +765,12 @@ namespace Elmanager.ReplayViewer
             RenderingSettingsButton.UseVisualStyleBackColor = true;
             RenderingSettingsButton.Click += RenderingSettingsButtonClick;
             // 
-            // ActivePlayerPanel
-            // 
-            ActivePlayerPanel.BorderStyle = BorderStyle.FixedSingle;
-            ActivePlayerPanel.Cursor = Cursors.Hand;
-            ActivePlayerPanel.Location = new Point(0, 0);
-            ActivePlayerPanel.Margin = new Padding(6, 6, 6, 6);
-            ActivePlayerPanel.Name = "ActivePlayerPanel";
-            ActivePlayerPanel.Size = new Size(38, 38);
-            ActivePlayerPanel.TabIndex = 132;
-            ActivePlayerPanel.Click += ChangeRectColor;
-            // 
-            // InActivePlayerPanel
-            // 
-            InActivePlayerPanel.BorderStyle = BorderStyle.FixedSingle;
-            InActivePlayerPanel.Cursor = Cursors.Hand;
-            InActivePlayerPanel.Location = new Point(0, 66);
-            InActivePlayerPanel.Margin = new Padding(6, 6, 6, 6);
-            InActivePlayerPanel.Name = "InActivePlayerPanel";
-            InActivePlayerPanel.Size = new Size(38, 38);
-            InActivePlayerPanel.TabIndex = 133;
-            InActivePlayerPanel.Click += ChangeRectColor;
-            // 
             // DrivingLinePanel
             // 
             DrivingLinePanel.BorderStyle = BorderStyle.FixedSingle;
             DrivingLinePanel.Cursor = Cursors.Hand;
-            DrivingLinePanel.Location = new Point(240, 0);
-            DrivingLinePanel.Margin = new Padding(6, 6, 6, 6);
+            DrivingLinePanel.Location = new Point(6, 6);
+            DrivingLinePanel.Margin = new Padding(6);
             DrivingLinePanel.Name = "DrivingLinePanel";
             DrivingLinePanel.Size = new Size(38, 38);
             DrivingLinePanel.TabIndex = 134;
@@ -810,32 +779,12 @@ namespace Elmanager.ReplayViewer
             // DrivingLineLabel
             // 
             DrivingLineLabel.AutoSize = true;
-            DrivingLineLabel.Location = new Point(292, 6);
+            DrivingLineLabel.Location = new Point(58, 12);
             DrivingLineLabel.Margin = new Padding(6, 0, 6, 0);
             DrivingLineLabel.Name = "DrivingLineLabel";
             DrivingLineLabel.Size = new Size(309, 32);
             DrivingLineLabel.TabIndex = 131;
             DrivingLineLabel.Text = "Current player's driving line";
-            // 
-            // ActivePLabel
-            // 
-            ActivePLabel.AutoSize = true;
-            ActivePLabel.Location = new Point(52, 6);
-            ActivePLabel.Margin = new Padding(6, 0, 6, 0);
-            ActivePLabel.Name = "ActivePLabel";
-            ActivePLabel.Size = new Size(151, 32);
-            ActivePLabel.TabIndex = 129;
-            ActivePLabel.Text = "Active player";
-            // 
-            // InactivePLabel
-            // 
-            InactivePLabel.AutoSize = true;
-            InactivePLabel.Location = new Point(52, 72);
-            InactivePLabel.Margin = new Padding(6, 0, 6, 0);
-            InactivePLabel.Name = "InactivePLabel";
-            InactivePLabel.Size = new Size(168, 32);
-            InactivePLabel.TabIndex = 130;
-            InactivePLabel.Text = "Inactive player";
             // 
             // ReplayViewerForm
             // 
@@ -844,9 +793,9 @@ namespace Elmanager.ReplayViewer
             ClientSize = new Size(1466, 670);
             Controls.Add(ViewerBox);
             Controls.Add(TabControl1);
-            Font = new Font("Segoe UI", 9F, FontStyle.Regular, GraphicsUnit.Point);
+            Font = new Font("Segoe UI", 9F);
             KeyPreview = true;
-            Margin = new Padding(6, 6, 6, 6);
+            Margin = new Padding(6);
             MinimumSize = new Size(1472, 671);
             Name = "ReplayViewerForm";
             Text = "Replay viewer";
@@ -900,12 +849,8 @@ namespace Elmanager.ReplayViewer
         internal TrackBarMod playbackSpeedBar;
         internal Label Label5;
         internal Label Label4;
-        internal Panel ActivePlayerPanel;
-        internal Panel InActivePlayerPanel;
         internal Panel DrivingLinePanel;
         internal Label DrivingLineLabel;
-        internal Label ActivePLabel;
-        internal Label InactivePLabel;
         internal Button RenderingSettingsButton;
         internal CheckBox PlayerFramesBox;
         internal NumericTextBox MouseClickZoomBox;

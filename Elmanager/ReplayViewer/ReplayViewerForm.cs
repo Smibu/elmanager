@@ -200,8 +200,6 @@ internal partial class ReplayViewerForm : FormMod
         HideStartObjectBox.Checked = Global.AppSettings.ReplayViewer.HideStartObject;
         multiSpyBox.Checked = Global.AppSettings.ReplayViewer.MultiSpy;
         WindowState = Global.AppSettings.ReplayViewer.WindowState;
-        UpdateControlColor(ActivePlayerPanel, Global.AppSettings.ReplayViewer.ActivePlayerColor);
-        UpdateControlColor(InActivePlayerPanel, Global.AppSettings.ReplayViewer.InactivePlayerColor);
         SetupEventHandlers();
     }
 
@@ -375,8 +373,6 @@ internal partial class ReplayViewerForm : FormMod
         settings.LockedCamera = LockedCamBox.Checked;
         settings.DrawTransparentInactive = TransparentInactiveBox.Checked;
         settings.PicturesInBackGround = PictBackGroundBox.Checked;
-        settings.ActivePlayerColor = ActivePlayerPanel.BackColor;
-        settings.InactivePlayerColor = InActivePlayerPanel.BackColor;
         settings.DrawOnlyPlayerFrames = PlayerFramesBox.Checked;
         settings.DontSelectPlayersByDefault = SelectNoPlayersBox.Checked;
         settings.HideStartObject = HideStartObjectBox.Checked;

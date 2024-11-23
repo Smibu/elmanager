@@ -16,6 +16,7 @@ internal class RenderingSettings
     private int _smoothZoomDuration = 200;
     private double _vertexSize = 0.02;
     private double _grassZoom = 1.0;
+    protected const string TransparencyTip = "For transparency, add 4th value at the start, for example: 80, 255, 255, 255";
 
     public RenderingSettings()
     {
@@ -44,7 +45,7 @@ internal class RenderingSettings
         DisableFrameBuffer = false;
     }
 
-    private RenderingSettings(RenderingSettings s)
+    protected RenderingSettings(RenderingSettings s)
     {
         GroundFillColor = s.GroundFillColor;
         GroundEdgeColor = s.GroundEdgeColor;
@@ -91,51 +92,48 @@ internal class RenderingSettings
         GrassZoom = s.GrassZoom;
     }
 
-    internal RenderingSettings Clone()
-    {
-        return new(this);
-    }
+    internal virtual RenderingSettings Clone() => new(this);
 
     [Category("Colors"), DisplayName("Ground fill"), JsonPropertyName("GroundFillColor")]
     public Color GroundFillColor { get; set; }
 
-    [Category("Colors"), DisplayName("Ground edge"), JsonPropertyName("GroundEdgeColor")]
+    [Category("Colors"), DisplayName("Ground edge"), JsonPropertyName("GroundEdgeColor"), Description(TransparencyTip)]
     public Color GroundEdgeColor { get; set; }
 
-    [Category("Colors"), DisplayName("Grass edge"), JsonPropertyName("GrassEdgeColor")]
+    [Category("Colors"), DisplayName("Grass edge"), JsonPropertyName("GrassEdgeColor"), Description(TransparencyTip)]
     public Color GrassEdgeColor { get; set; }
 
     [Category("Colors"), DisplayName("Sky fill"), JsonPropertyName("SkyFillColor")]
     public Color SkyFillColor { get; set; }
 
-    [Category("Colors"), DisplayName("Apple"), JsonPropertyName("AppleColor")]
+    [Category("Colors"), DisplayName("Apple"), JsonPropertyName("AppleColor"), Description(TransparencyTip)]
     public Color AppleColor { get; set; }
 
-    [Category("Colors"), DisplayName("Flower"), JsonPropertyName("FlowerColor")]
+    [Category("Colors"), DisplayName("Flower"), JsonPropertyName("FlowerColor"), Description(TransparencyTip)]
     public Color FlowerColor { get; set; }
 
-    [Category("Colors"), DisplayName("Start"), JsonPropertyName("StartColor")]
+    [Category("Colors"), DisplayName("Start"), JsonPropertyName("StartColor"), Description(TransparencyTip)]
     public Color StartColor { get; set; }
 
-    [Category("Colors"), DisplayName("Killer"), JsonPropertyName("KillerColor")]
+    [Category("Colors"), DisplayName("Killer"), JsonPropertyName("KillerColor"), Description(TransparencyTip)]
     public Color KillerColor { get; set; }
 
-    [Category("Colors"), DisplayName("Grid"), JsonPropertyName("GridColor")]
+    [Category("Colors"), DisplayName("Grid"), JsonPropertyName("GridColor"), Description(TransparencyTip)]
     public Color GridColor { get; set; }
 
-    [Category("Colors"), DisplayName("Vertex"), JsonPropertyName("VertexColor")]
+    [Category("Colors"), DisplayName("Vertex"), JsonPropertyName("VertexColor"), Description(TransparencyTip)]
     public Color VertexColor { get; set; }
 
-    [Category("Colors"), DisplayName("Picture frame"), JsonPropertyName("PictureFrameColor")]
+    [Category("Colors"), DisplayName("Picture frame"), JsonPropertyName("PictureFrameColor"), Description(TransparencyTip)]
     public Color PictureFrameColor { get; set; }
 
-    [Category("Colors"), DisplayName("Texture frame"), JsonPropertyName("TextureFrameColor")]
+    [Category("Colors"), DisplayName("Texture frame"), JsonPropertyName("TextureFrameColor"), Description(TransparencyTip)]
     public Color TextureFrameColor { get; set; }
 
-    [Category("Colors"), DisplayName("Apple gravity arrow"), JsonPropertyName("AppleGravityArrowColor")]
+    [Category("Colors"), DisplayName("Apple gravity arrow"), JsonPropertyName("AppleGravityArrowColor"), Description(TransparencyTip)]
     public Color AppleGravityArrowColor { get; set; }
 
-    [Category("Colors"), DisplayName("Maximum dimensions"), JsonPropertyName("MaxDimensionColor")]
+    [Category("Colors"), DisplayName("Maximum dimensions"), JsonPropertyName("MaxDimensionColor"), Description(TransparencyTip)]
     public Color MaxDimensionColor { get; set; }
 
     [DisplayName("Smooth zoom duration"), JsonPropertyName("SmoothZoomDuration")]
