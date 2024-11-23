@@ -762,6 +762,7 @@ internal partial class LevelEditorForm : FormMod, IMessageFilter
             GL.Disable(EnableCap.Blend);
             GL.Disable(EnableCap.Texture2D);
             GL.Disable(EnableCap.DepthTest);
+            GL.Disable(EnableCap.AlphaTest);
             switch (PlayController.PlayerSelection)
             {
                 case VectorMark.Selected:
