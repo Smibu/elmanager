@@ -714,8 +714,8 @@ internal class Level
         {
             b.XMin = Math.Min(b.XMin, x.Position.X);
             b.XMax = Math.Max(b.XMax, x.Position.X + x.Width);
-            b.YMax = Math.Max(b.YMax, x.Position.Y + x.Height);
-            b.YMin = Math.Min(b.YMin, x.Position.Y);
+            b.YMax = Math.Max(b.YMax, x.Position.Y);
+            b.YMin = Math.Min(b.YMin, x.Position.Y - x.Height);
         }
 
         Bounds = b;
