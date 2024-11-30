@@ -753,7 +753,7 @@ internal class Level
         {
             if (fileItem is GraphicElementFileItem.PictureFileItem pItem)
             {
-                if (lgrImages.TryGetValue(pItem.PictureName, out var p) && p.Type == ImageType.Picture)
+                if (lgrImages.TryGetValue(pItem.PictureName.ToLower(), out var p) && p.Type == ImageType.Picture)
                 {
                     GraphicElements.Add(GraphicElement.Pic(p, fileItem.Position, fileItem.Distance, fileItem.Clipping));
                 }
@@ -764,9 +764,9 @@ internal class Level
             }
             else if (fileItem is GraphicElementFileItem.TextureFileItem tItem)
             {
-                if (lgrImages.TryGetValue(tItem.TextureName, out var t) && t.Type == ImageType.Texture)
+                if (lgrImages.TryGetValue(tItem.TextureName.ToLower(), out var t) && t.Type == ImageType.Texture)
                 {
-                    if (lgrImages.TryGetValue(tItem.MaskName, out var mask) && mask.Type == ImageType.Mask)
+                    if (lgrImages.TryGetValue(tItem.MaskName.ToLower(), out var mask) && mask.Type == ImageType.Mask)
                     {
                         GraphicElements.Add(GraphicElement.Text(fileItem.Clipping, fileItem.Distance, fileItem.Position, t, mask));
                     }

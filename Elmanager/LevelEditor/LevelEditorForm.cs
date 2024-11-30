@@ -1281,7 +1281,7 @@ internal partial class LevelEditorForm : FormMod, IMessageFilter
     {
         if (!_programmaticPropertyChange)
         {
-            var wasModified = Lev.Title != TitleBox.Text || Lev.LgrFile != SelectedLgrFilename ||
+            var wasModified = Lev.Title != TitleBox.Text || !Lev.LgrFile.EqualsIgnoreCase(SelectedLgrFilename) ||
                               Lev.GroundTextureName != SelectedGround.Name ||
                               Lev.SkyTextureName != SelectedSky.Name;
             Lev.Title = TitleBox.Text;
@@ -2210,7 +2210,7 @@ internal partial class LevelEditorForm : FormMod, IMessageFilter
         {
             var lgrEntries = _lgrManager.GetLgrs().ToArray();
             LGRBox.Items.AddRange(lgrEntries);
-            var found = lgrEntries.FirstOrDefault(e => e.Filename.ToLower() == Lev.LgrFile);
+            var found = lgrEntries.FirstOrDefault(e => e.Filename.EqualsIgnoreCase(Lev.LgrFile));
             if (found is not null)
             {
                 LGRBox.SelectedItem = found;
