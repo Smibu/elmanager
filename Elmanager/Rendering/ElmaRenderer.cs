@@ -374,6 +374,7 @@ internal class ElmaRenderer : IDisposable
         if (settings.ShowObjects && OpenGlLgr != null)
         {
             var depth = sceneSettings.PicturesInBackground ? 0 : 0.5 * (ZFar - ZNear) + ZNear;
+            GL.BlendFunc(BlendingFactor.One, BlendingFactor.OneMinusDstColor);
             foreach (var (x, i) in GetVisibleObjects(lev, sceneSettings))
             {
                 if (sceneSettings.FadedObjectIndices.Contains(i))
@@ -399,9 +400,11 @@ internal class ElmaRenderer : IDisposable
                         DrawDummyPlayer(x.Position.X, x.Position.Y, sceneSettings,
                             new PlayerRenderOpts { IsActive = true, UseTransparency = false, UseGraphics = true },
                             settings);
+                        GL.BlendFunc(BlendingFactor.One, BlendingFactor.OneMinusDstColor);
                         break;
                 }
             }
+            GL.BlendFunc(BlendingFactor.SrcAlpha, BlendingFactor.OneMinusSrcAlpha);
         }
 
         GL.Disable(EnableCap.Texture2D);
