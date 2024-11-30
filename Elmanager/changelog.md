@@ -2,6 +2,8 @@
 
 ## Upcoming
 * SLE: Line and vertex colors support transparency.
+* SLE: Bugfix: Zoom fill was slightly wrong when checking for pictures and textures.
+* SLE: Bugfix: LGR filename, pictures and textures were case sensitive.
 
 ## 16.11.2024
 * SLE: Added a new polygon operation "Fix self-intersections".
