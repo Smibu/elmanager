@@ -1,6 +1,6 @@
 # Elmanager changelog
 
-## Upcoming
+## 30.11.2024
 * SLE: Line and vertex colors support transparency.
 * SLE: Bugfix: Zoom fill was slightly wrong when checking for pictures and textures.
 * SLE: Bugfix: LGR filename, pictures and textures were case sensitive.
