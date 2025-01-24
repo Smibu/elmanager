@@ -218,6 +218,11 @@ internal partial class ShapeGalleryForm : Form
         // Clear existing items
         comboBoxSubfolders.Items.Clear();
 
+        if (!Directory.Exists(_galleryFolderPath))
+        {
+            return;
+        }
+
         // Get all subfolders in the gallery folder
         var subfolders = Directory.GetDirectories(_galleryFolderPath);
 
