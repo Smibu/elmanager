@@ -4,6 +4,9 @@ using System.ComponentModel;
 using System.Drawing;
 using System.IO;
 using System.Linq;
+using System.Runtime;
+using System.Text.Json;
+using System.Text.Json.Serialization;
 using System.Text.RegularExpressions;
 using System.Threading;
 using System.Threading.Tasks;
@@ -14,6 +17,7 @@ using Elmanager.Geometry;
 using Elmanager.IO;
 using Elmanager.Lev;
 using Elmanager.LevelEditor.Playing;
+using Elmanager.LevelEditor.ShapeGallery;
 using Elmanager.LevelEditor.Tools;
 using Elmanager.Lgr;
 using Elmanager.Physics;
@@ -109,7 +113,8 @@ internal partial class LevelEditorForm : FormMod, IMessageFilter
             new AutoGrassTool(this),
             new TransformTool(this),
             new PictureTool(this),
-            new TextTool(this)
+            new TextTool(this),
+            new CustomShapeTool(this)
         );
         _fullScreenController = CreateFullScreenController();
         var lev = levPath != null
@@ -891,6 +896,12 @@ internal partial class LevelEditorForm : FormMod, IMessageFilter
             ChangeToolTo(Tools.EllipseTool);
     }
 
+    private void CustomShapeButtonChanged(object? sender, EventArgs e)
+    {
+        if (CustomShapeButton.Checked)
+            ChangeToolTo(Tools.CustomShapeTool);
+    }
+
     private void ExitToolStripMenuItemClick(object? sender, EventArgs e)
     {
         Close();
@@ -1383,6 +1394,7 @@ internal partial class LevelEditorForm : FormMod, IMessageFilter
                     convertToToolStripMenuItem.Visible = false;
                     saveStartPositionToolStripMenuItem.Visible = false;
                     restoreStartPositionToolStripMenuItem.Visible = false;
+                    createCustomShapeMenuItem.Visible = false;
                     ChangeToDefaultCursor();
                     if (SelectedElementCount > 0)
                     {
@@ -1390,6 +1402,17 @@ internal partial class LevelEditorForm : FormMod, IMessageFilter
                         DeleteMenuItem.Visible = true;
                         convertToToolStripMenuItem.Visible = true;
                         picturesConvertItem.Visible = IsLgrLoaded;
+                        createCustomShapeMenuItem.Visible = true;
+                    }
+
+                    // Hide create custom shape item if only selection is start object
+                    if (SelectedElementCount == 1)
+                    {
+                        var startObject = Lev.Objects.FirstOrDefault(o => o.Type == ObjectType.Start);
+                        if (startObject != null)
+                        {
+                            createCustomShapeMenuItem.Visible = startObject.Mark != VectorMark.Selected;
+                        }
                     }
 
                     TransformMenuItem.Visible = SelectedElementCount > 1;
@@ -2055,6 +2078,7 @@ internal partial class LevelEditorForm : FormMod, IMessageFilter
         CutConnectButton.CheckedChanged += CutButtonChanged;
         AutoGrassButton.CheckedChanged += AutoGrassButtonChanged;
         PictureButton.CheckedChanged += PictureButtonChanged;
+        CustomShapeButton.CheckedChanged += CustomShapeButtonChanged;
         LGRBox.SelectedIndexChanged += LevelPropertyModified;
         GroundComboBox.SelectedIndexChanged += LevelPropertyModified;
         SkyComboBox.SelectedIndexChanged += LevelPropertyModified;
@@ -2952,5 +2976,153 @@ internal partial class LevelEditorForm : FormMod, IMessageFilter
             SetModified(LevModification.Ground);
             RedrawScene();
         }
+    }
+    
+
+    private void createCustomShapeMenuItem_Click(object sender, EventArgs e)
+    {
+        var selectedPolygons = Lev.Polygons.Where(p => p.Vertices.Any(v => v.Mark == VectorMark.Selected)).ToList();
+        var selectedObjects = Lev.Objects.Where(o => o.Position.Mark == VectorMark.Selected && o.Type != ObjectType.Start).ToList();
+        var selectedGraphicElements = Lev.GraphicElements.Where(t => t.Position.Mark == VectorMark.Selected).ToList();
+
+        if (selectedPolygons.Count == 0 && selectedObjects.Count == 0 && selectedGraphicElements.Count == 0)
+        {
+            return;
+        }
+
+        saveAsPictureDialog.FileName = "Untitled";
+        if (saveAsPictureDialog.ShowDialog() != DialogResult.OK || !saveAsPictureDialog.FileName.EndsWith(".png"))
+        {
+            return;
+        }
+
+        ClearSelection();
+
+        // Clone the selected polygons and objects
+        var clonedPolygons = selectedPolygons.Select(p => p.Clone()).ToList();
+        var clonedObjects = selectedObjects.Select(o => o.Clone()).ToList();
+        var clonedGraphicElements = selectedGraphicElements.Select(ge => ge with { Position = ge.Position.Clone() }).ToList();
+
+        var (center, _, _) = GeometryUtils.CalculateBoundingBox(clonedPolygons, clonedObjects, clonedGraphicElements);
+
+        // Normalize positions
+        foreach (var polygon in clonedPolygons)
+        {
+            for (int i = 0; i < polygon.Vertices.Count; i++)
+            {
+                polygon.Vertices[i] = new Vector(polygon.Vertices[i].X - center.X, polygon.Vertices[i].Y - center.Y);
+            }
+        }
+
+        foreach (var obj in clonedObjects)
+        {
+            obj.Position = new Vector(obj.Position.X - center.X, obj.Position.Y - center.Y);
+        }
+
+        foreach (var graphicElement in clonedGraphicElements)
+        {
+            graphicElement.Position = new Vector(graphicElement.Position.X - center.X, graphicElement.Position.Y - center.Y);
+        }
+
+        // Construct a temporary level for the snapshot
+        var tempLevel = new Level();
+        tempLevel.Polygons.AddRange(clonedPolygons);
+        tempLevel.Objects.AddRange(clonedObjects);
+        tempLevel.GraphicElements.AddRange(clonedGraphicElements);
+        tempLevel.UpdateImages(Renderer.OpenGlLgr?.DrawableImages ?? new Dictionary<string, DrawableImage>());
+        if (tempLevel.PolygonCount > 0 && tempLevel.Polygons.Any(p => p.IsGrass == false))
+        {
+            tempLevel.UpdateAllPolygons(Settings.RenderingSettings.GrassZoom);
+            tempLevel.UpdateBounds();
+        }
+        
+        LevelEditorRenderingSettings customRenderingSettings = new LevelEditorRenderingSettings
+        {
+            ShowGrid = false,
+            ShowObjects = false,
+            ShowGrassEdges = true,
+            ShowGround = false,
+            ShowPictures = false,
+            ShowGroundEdges = true,
+            ShowTextures = false,
+            ShowObjectFrames = true,
+            ShowVertices = false,
+            ShowTextureFrames = true,
+            ShowPictureFrames = true,
+            ShowGravityAppleArrows = true,
+            LineWidth = 4,
+            ShowGrass = false
+        };
+
+        SceneSettings customSceneSettings = _sceneSettings;
+        customSceneSettings.PicturesInBackground = true;
+
+        ZoomController customZoomCtrl = new ZoomController(new ElmaCamera(), tempLevel, () => RedrawScene()) { ZoomLevel = 1.0 };
+        Renderer.UpdateSettings(tempLevel, customRenderingSettings);
+        Renderer.InitializeLevel(tempLevel, customRenderingSettings);
+
+        var oldCenterX = _zoomCtrl.CenterX;
+        var oldCenterY = _zoomCtrl.CenterY;
+        var oldZoomLevel = _zoomCtrl.ZoomLevel;
+
+        var oldViewPort = (int[])_zoomCtrl.Cam.Viewport.Clone();
+        
+        Renderer.ResetViewport(512, 512);
+        
+        customZoomCtrl.ZoomToSelection(clonedPolygons, clonedObjects, clonedGraphicElements, Settings.RenderingSettings);
+        Renderer.SaveSnapShotForCustomShape(tempLevel, saveAsPictureDialog.FileName, customZoomCtrl, customSceneSettings, customRenderingSettings);
+        
+        Renderer.UpdateSettings(Lev, Settings.RenderingSettings);
+        
+        Renderer.ResetViewport(oldViewPort[2], oldViewPort[3]);
+
+        _zoomCtrl.CenterX = oldCenterX;
+        _zoomCtrl.CenterY = oldCenterY;
+        _zoomCtrl.ZoomLevel = oldZoomLevel;
+
+        var serializedShapeData = CustomShapeSerializer.SerializeShapeData(clonedPolygons, clonedObjects, clonedGraphicElements);
+
+        // Generate the JSON file name
+        var jsonFileName = Path.ChangeExtension(saveAsPictureDialog.FileName, ".json");
+
+        // Save the JSON string to the file
+        File.WriteAllText(jsonFileName, serializedShapeData);
+
+        // Restore selection
+        foreach (var polygon in selectedPolygons)
+        {
+            polygon.MarkVectorsAs(VectorMark.Selected);
+        }
+
+        foreach (var obj in selectedObjects)
+        {
+            obj.Mark = VectorMark.Selected;
+        }
+
+        foreach (var graphicElement in selectedGraphicElements)
+        {
+            graphicElement.Mark = VectorMark.Selected;
+        }
+        UpdateSelectionInfo();
+    }
+
+    private void ClearSelection()
+    {
+        foreach (var polygon in Lev.Polygons)
+        {
+            polygon.MarkVectorsAs(VectorMark.None);
+        }
+
+        foreach (var levelObject in Lev.Objects)
+        {
+            levelObject.Mark = VectorMark.None;
+        }
+
+        foreach (var graphicElement in Lev.GraphicElements)
+        {
+            graphicElement.Mark = VectorMark.None;
+        }
+
+        UpdateSelectionInfo();
     }
 }
