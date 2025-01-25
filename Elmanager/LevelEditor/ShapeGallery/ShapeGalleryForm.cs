@@ -42,7 +42,7 @@ internal partial class ShapeGalleryForm : Form
         rotationNumericUpDown.Value = (decimal)ClampAngle(RotationAngle, (double)rotationNumericUpDown.Minimum, (double)rotationNumericUpDown.Maximum);
         rotationNumericUpDown.ValueChanged += (sender, e) => RotationAngle = (double)rotationNumericUpDown.Value;
 
-        mirrorComboBox.DataSource = Enum.GetValues(typeof(ShapeMirrorOption));
+        mirrorComboBox.DataSource = Enum.GetValues<ShapeMirrorOption>();
         mirrorComboBox.SelectedIndexChanged += (sender, e) =>
         {
             ShapeMirrorOption = (ShapeMirrorOption)(mirrorComboBox.SelectedValue ?? ShapeMirrorOption.None);
