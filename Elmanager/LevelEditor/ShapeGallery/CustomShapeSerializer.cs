@@ -4,6 +4,7 @@ using Elmanager.Lev;
 using Elmanager.Rendering;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Text.Json;
 using System.Text.Json.Serialization;
 
@@ -38,5 +39,21 @@ internal static class CustomShapeSerializer
         }
 
         return shapeData;
+    }
+
+    public static ShapeDataDto DeserializeShapeDataLev(string filePath)
+    {
+        if (filePath.EndsWith(".lev", StringComparison.OrdinalIgnoreCase))
+        {
+            var level = Level.FromPath(filePath).Obj;
+
+            var polygons = level.Polygons;
+            var objects = level.Objects.Where(o => o.Type != ObjectType.Start).ToList();
+            var graphicElements = level.GraphicElements;
+
+            return new ShapeDataDto(polygons, objects, graphicElements);
+        }
+
+        throw new InvalidOperationException("Failed to deserialize Level.");
     }
 }

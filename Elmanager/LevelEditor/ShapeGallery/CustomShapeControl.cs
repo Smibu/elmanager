@@ -73,10 +73,10 @@ internal partial class CustomShapeControl : UserControl.UserControl
     private void OnComponentClick(object? sender, EventArgs e)
     {
         ShapeClicked?.Invoke(this, e);
-        LoadShapeJson();
+        LoadShape();
     }
 
-    public void LoadShapeJson()
+    public void LoadShape()
     {
         if (ShapeName.Length == 0)
         {
@@ -84,14 +84,22 @@ internal partial class CustomShapeControl : UserControl.UserControl
         }
 
         var jsonFilePath = Path.ChangeExtension(ShapeFullPath, ".json");
+        var levFilePath = Path.ChangeExtension(ShapeFullPath, ".lev");
 
         // Check if the JSON file exists
-        if (!File.Exists(jsonFilePath))
+        if (!File.Exists(levFilePath) && !File.Exists(jsonFilePath))
         {
-            MessageBox.Show($@"JSON file not found: {jsonFilePath}", @"Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+            MessageBox.Show($@"JSON or LEV files not found: {levFilePath}, {jsonFilePath}", @"Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
             return;
         }
 
+        if (File.Exists(levFilePath))
+        {
+            var shapeData = CustomShapeSerializer.DeserializeShapeDataLev(levFilePath);
+            ShapeDataLoaded?.Invoke(this, shapeData);
+            return;
+        }
+        
         // Load and deserialize the JSON file
         try
         {

@@ -2977,7 +2977,11 @@ internal partial class LevelEditorForm : FormMod, IMessageFilter
             RedrawScene();
         }
     }
-    
+
+    private void SaveShape(Level lev, string filePath)
+    {
+        lev.Save(filePath);
+    }
 
     private void createCustomShapeMenuItem_Click(object sender, EventArgs e)
     {
@@ -3080,13 +3084,9 @@ internal partial class LevelEditorForm : FormMod, IMessageFilter
         _zoomCtrl.CenterY = oldCenterY;
         _zoomCtrl.ZoomLevel = oldZoomLevel;
 
-        var serializedShapeData = CustomShapeSerializer.SerializeShapeData(clonedPolygons, clonedObjects, clonedGraphicElements);
+        var shapeFileName = Path.ChangeExtension(saveAsPictureDialog.FileName, ".lev");
 
-        // Generate the JSON file name
-        var jsonFileName = Path.ChangeExtension(saveAsPictureDialog.FileName, ".json");
-
-        // Save the JSON string to the file
-        File.WriteAllText(jsonFileName, serializedShapeData);
+        SaveShape(tempLevel, shapeFileName);
 
         // Restore selection
         foreach (var polygon in selectedPolygons)

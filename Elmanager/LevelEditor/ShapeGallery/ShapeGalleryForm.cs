@@ -189,7 +189,7 @@ internal partial class ShapeGalleryForm : Form
         if (_selectedShapeControl != null)
         {
             // Raise the ShapeDataLoaded event with the selected shape data
-            _selectedShapeControl.LoadShapeJson();
+            _selectedShapeControl.LoadShape();
             SelectedShapeName = _selectedShapeControl.ShapeName;
         }
         this.DialogResult = DialogResult.OK;
