@@ -3086,6 +3086,9 @@ internal partial class LevelEditorForm : FormMod, IMessageFilter
 
         var shapeFileName = Path.ChangeExtension(saveAsPictureDialog.FileName, ".lev");
 
+        // Add start object, as it is needed.
+        tempLevel.Objects.Add(new LevObject(new Vector(0, 0), ObjectType.Start, AppleType.Normal));
+
         SaveShape(tempLevel, shapeFileName);
 
         // Restore selection
