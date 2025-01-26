@@ -35,17 +35,21 @@ internal partial class ShapeGalleryForm : Form
 
         InitializeComponent();
 
-            
         scalingNumericUpDown.Value = (decimal)Double.Clamp(ScalingFactor, (double)scalingNumericUpDown.Minimum, (double)scalingNumericUpDown.Maximum);
         scalingNumericUpDown.ValueChanged += (sender, e) => ScalingFactor = (double)scalingNumericUpDown.Value;
 
         rotationNumericUpDown.Value = (decimal)ClampAngle(RotationAngle, (double)rotationNumericUpDown.Minimum, (double)rotationNumericUpDown.Maximum);
         rotationNumericUpDown.ValueChanged += (sender, e) => RotationAngle = (double)rotationNumericUpDown.Value;
 
-        mirrorComboBox.DataSource = Enum.GetValues<ShapeMirrorOption>();
+        mirrorComboBox.Items.Clear();
+        foreach (ShapeMirrorOption option in Enum.GetValues<ShapeMirrorOption>())
+        {
+            mirrorComboBox.Items.Add(option);
+        }
+
         mirrorComboBox.SelectedIndexChanged += (sender, e) =>
         {
-            ShapeMirrorOption = (ShapeMirrorOption)(mirrorComboBox.SelectedValue ?? ShapeMirrorOption.None);
+            ShapeMirrorOption = (ShapeMirrorOption)(mirrorComboBox.SelectedItem ?? ShapeMirrorOption.None);
         };
         mirrorComboBox.SelectedItem = ShapeMirrorOption;
 
