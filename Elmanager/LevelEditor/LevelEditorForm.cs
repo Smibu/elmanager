@@ -3009,28 +3009,7 @@ internal partial class LevelEditorForm : FormMod, IMessageFilter
         var clonedPolygons = selectedPolygons.Select(p => p.Clone()).ToList();
         var clonedObjects = selectedObjects.Select(o => o.Clone()).ToList();
         var clonedGraphicElements = selectedGraphicElements.Select(ge => ge with { Position = ge.Position.Clone() }).ToList();
-
-        var (center, _, _) = GeometryUtils.CalculateBoundingBox(clonedPolygons, clonedObjects, clonedGraphicElements);
-
-        // Normalize positions
-        foreach (var polygon in clonedPolygons)
-        {
-            for (int i = 0; i < polygon.Vertices.Count; i++)
-            {
-                polygon.Vertices[i] = new Vector(polygon.Vertices[i].X - center.X, polygon.Vertices[i].Y - center.Y);
-            }
-        }
-
-        foreach (var obj in clonedObjects)
-        {
-            obj.Position = new Vector(obj.Position.X - center.X, obj.Position.Y - center.Y);
-        }
-
-        foreach (var graphicElement in clonedGraphicElements)
-        {
-            graphicElement.Position = new Vector(graphicElement.Position.X - center.X, graphicElement.Position.Y - center.Y);
-        }
-
+        
         // Construct a temporary level for the snapshot
         var tempLevel = new Level();
         tempLevel.Polygons.AddRange(clonedPolygons);
