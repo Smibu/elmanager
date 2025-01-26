@@ -1402,17 +1402,6 @@ internal partial class LevelEditorForm : FormMod, IMessageFilter
                         DeleteMenuItem.Visible = true;
                         convertToToolStripMenuItem.Visible = true;
                         picturesConvertItem.Visible = IsLgrLoaded;
-                        createCustomShapeMenuItem.Visible = true;
-                    }
-
-                    // Hide create custom shape item if only selection is start object
-                    if (SelectedElementCount == 1)
-                    {
-                        var startObject = Lev.Objects.FirstOrDefault(o => o.Type == ObjectType.Start);
-                        if (startObject != null)
-                        {
-                            createCustomShapeMenuItem.Visible = startObject.Mark != VectorMark.Selected;
-                        }
                     }
 
                     TransformMenuItem.Visible = SelectedElementCount > 1;
@@ -1481,6 +1470,12 @@ internal partial class LevelEditorForm : FormMod, IMessageFilter
                         PicturePropertiesMenuItem.Visible = true;
                         bringToFrontToolStripMenuItem.Visible = true;
                         sendToBackToolStripMenuItem.Visible = true;
+                    }
+
+                    if (_selectedPolygonCount > 0)
+                    {
+                        bool allGrassSelected = Lev.Polygons.Where(pol => pol.Vertices.Any(v => v.Mark == VectorMark.Selected)).All(pol => pol.IsGrass);
+                        createCustomShapeMenuItem.Visible = !allGrassSelected;
                     }
 
                     if (player != null)
