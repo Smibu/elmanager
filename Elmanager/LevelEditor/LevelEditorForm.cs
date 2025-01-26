@@ -2989,6 +2989,14 @@ internal partial class LevelEditorForm : FormMod, IMessageFilter
             return;
         }
 
+        bool allGrassSelected = selectedPolygons.All(pol => pol.IsGrass);
+        if (allGrassSelected)
+        {
+            MessageBox.Show(@"All selected polygons are grass. Custom shapes require at least 1 ground polygon!",
+                    @"Warning", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+            return;
+        }
+
         saveAsPictureDialog.FileName = "Untitled";
         if (saveAsPictureDialog.ShowDialog() != DialogResult.OK || !saveAsPictureDialog.FileName.EndsWith(".png"))
         {
