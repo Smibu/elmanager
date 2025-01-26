@@ -98,15 +98,15 @@ internal class CustomShapeTool : ToolBase, IEditorTool
     {
         if (_selectedShapeData == null) return;
 
-        _polygons = _selectedShapeData.Polygons.Select(p => p.ToPolygon()).ToList();
+        _polygons = _selectedShapeData.Polygons.Select(p => p.Clone()).ToList();
         _polygons.ForEach(polygon => polygon.UpdateDecompositionOrGrassSlopeInfo(Lev.GroundBounds, Global.AppSettings.LevelEditor.RenderingSettings.GrassZoom));
-        _objects = _selectedShapeData.Objects.Select(o => o.ToLevObject()).ToList();
-        _graphicElements = _selectedShapeData.GraphicElements.Select(o => o.ToGraphicElement()).ToList();
+        _objects = _selectedShapeData.Objects.Select(o => o.Clone()).ToList();
+        _graphicElements = _selectedShapeData.GraphicElements.Select(ge => ge with { Position = new Vector(ge.Position.X, ge.Position.Y) }).ToList();
 
         // Store the original state
-        _originalPolygons = _selectedShapeData.Polygons.Select(p => p.ToPolygon()).ToList();
-        _originalObjects = _selectedShapeData.Objects.Select(o => o.ToLevObject()).ToList();
-        _originalGraphicElements = _selectedShapeData.GraphicElements.Select(o => o.ToGraphicElement()).ToList();
+        _originalPolygons = _selectedShapeData.Polygons.Select(p => p.Clone()).ToList();
+        _originalObjects = _selectedShapeData.Objects.Select(o => o.Clone()).ToList();
+        _originalGraphicElements = _selectedShapeData.GraphicElements.Select(ge => ge with { Position = new Vector(ge.Position.X, ge.Position.Y) }).ToList();
 
         ApplyTransformations(CurrentPos);
     }

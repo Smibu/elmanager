@@ -1,28 +1,17 @@
-﻿using Elmanager.Lev;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Linq;
+using Elmanager.Lev;
 using Elmanager.Rendering;
-using Polygon = Elmanager.Lev.Polygon;
 
 namespace Elmanager.LevelEditor.ShapeGallery;
 
-internal class ShapeDataDto
+internal class ShapeDataDto(Level level)
 {
-    public List<PolygonDto> Polygons { get; set; }
-    public List<LevObjectDto> Objects { get; set; }
-    public List<GraphicElementDto> GraphicElements { get; set; }
+    public Level Level { get; set; } = level;
 
-    public ShapeDataDto()
-    {
-        Polygons = new List<PolygonDto>();
-        Objects = new List<LevObjectDto>();
-        GraphicElements = new List<GraphicElementDto>();
-    }
+    public List<Polygon> Polygons { get; set; } = level.Polygons;
 
-    public ShapeDataDto(List<Polygon> polygons, List<LevObject> objects, List<GraphicElement> graphicElements)
-    {
-        Polygons = polygons.Select(p => new PolygonDto(p)).ToList();
-        Objects = objects.Select(o => new LevObjectDto(o)).ToList();
-        GraphicElements = graphicElements.Select(ge => ge.ToDto()).ToList();
-    }
+    public List<LevObject> Objects { get; set; } = level.Objects.Where(o => o.Type != ObjectType.Start).ToList();
+
+    public List<GraphicElement> GraphicElements { get; set; } = level.GraphicElements;
 }

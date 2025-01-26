@@ -83,13 +83,12 @@ internal partial class CustomShapeControl : UserControl.UserControl
             return;
         }
 
-        var jsonFilePath = Path.ChangeExtension(ShapeFullPath, ".json");
         var levFilePath = Path.ChangeExtension(ShapeFullPath, ".lev");
 
         // Check if the JSON file exists
-        if (!File.Exists(levFilePath) && !File.Exists(jsonFilePath))
+        if (!File.Exists(levFilePath))
         {
-            MessageBox.Show($@"JSON or LEV files not found: {levFilePath}, {jsonFilePath}", @"Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+            MessageBox.Show($@"Corresponding LEV file not found: {levFilePath}", @"Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
             return;
         }
 
@@ -97,21 +96,6 @@ internal partial class CustomShapeControl : UserControl.UserControl
         {
             var shapeData = CustomShapeSerializer.DeserializeShapeDataLev(levFilePath);
             ShapeDataLoaded?.Invoke(this, shapeData);
-            return;
-        }
-        
-        // Load and deserialize the JSON file
-        try
-        {
-            var json = File.ReadAllText(jsonFilePath);
-            var shapeData = CustomShapeSerializer.DeserializeShapeData(json);
-
-            // Raise the ShapeDataLoaded event
-            ShapeDataLoaded?.Invoke(this, shapeData);
-        }
-        catch (Exception ex)
-        {
-            MessageBox.Show($@"Failed to load JSON file: {ex.Message}", @"Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
         }
     }
 
