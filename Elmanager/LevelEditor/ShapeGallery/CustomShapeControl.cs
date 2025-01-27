@@ -6,7 +6,11 @@ using Color = System.Drawing.Color;
 using Pen = System.Drawing.Pen;
 using UserControl = System.Windows.Forms;
 using System.Windows.Shapes;
+using Elmanager.Lev;
+using Elmanager.Rendering;
+using OpenTK.Windowing.Desktop;
 using Path = System.IO.Path;
+using OpenTK.Windowing.Common;
 
 namespace Elmanager.LevelEditor.ShapeGallery;
 
@@ -16,33 +20,38 @@ internal partial class CustomShapeControl : UserControl.UserControl
     private bool _isHighlighted;
     private Color _borderColor = Color.Transparent;
     private bool _isPressed;
+    private LevelControl levelControl;
 
-    public CustomShapeControl()
+    public CustomShapeControl(IGraphicsContext sharedContext, RenderingSettings settings)
     {
         InitializeComponent();
-        
-        picShapeImage.SizeMode = PictureBoxSizeMode.Zoom; // Set the SizeMode to Zoom
+
+        levelControl = new LevelControl(sharedContext, settings)
+        {
+            Dock = DockStyle.Fill
+        };
+        this.Controls.Add(levelControl);
 
         // Attach the same event handler to the Click event of all relevant components
-        picShapeImage.Click += OnComponentClick;
+        levelControl.Click += OnComponentClick;
         lblShapeName.Click += OnComponentClick;
         this.Click += OnComponentClick;
 
         // Attach mouse enter and leave events
-        picShapeImage.MouseEnter += OnMouseEnter;
+        levelControl.MouseEnter += OnMouseEnter;
         lblShapeName.MouseEnter += OnMouseEnter;
         this.MouseEnter += OnMouseEnter;
 
-        picShapeImage.MouseLeave += OnMouseLeave;
+        levelControl.MouseLeave += OnMouseLeave;
         lblShapeName.MouseLeave += OnMouseLeave;
         this.MouseLeave += OnMouseLeave;
 
         // Attach mouse down and up events
-        picShapeImage.MouseDown += OnMouseDown;
+        levelControl.MouseDown += OnMouseDown;
         lblShapeName.MouseDown += OnMouseDown;
         this.MouseDown += OnMouseDown;
 
-        picShapeImage.MouseUp += OnMouseUp;
+        levelControl.MouseUp += OnMouseUp;
         lblShapeName.MouseUp += OnMouseUp;
         this.MouseUp += OnMouseUp;
     }
@@ -60,8 +69,15 @@ internal partial class CustomShapeControl : UserControl.UserControl
     // Property for the image
     public System.Drawing.Image ShapeImage
     {
-        get => picShapeImage.Image;
-        set => picShapeImage.Image = value;
+        get => levelControl.BackgroundImage;
+        set => levelControl.BackgroundImage = value;
+    }
+
+    // Property for the Level object
+    public Level? Level
+    {
+        get => levelControl.Level;
+        set => levelControl.Level = value;
     }
 
     // Event for clicking the shape
@@ -152,9 +168,8 @@ internal partial class CustomShapeControl : UserControl.UserControl
         {
             using (Pen pen = new Pen(_borderColor, 2))
             {
-                e.Graphics.DrawRectangle(pen, 0, 0, this.Width-2, this.Height-3);
+                e.Graphics.DrawRectangle(pen, 0, 0, this.Width - 2, this.Height - 3);
             }
         }
     }
-
 }

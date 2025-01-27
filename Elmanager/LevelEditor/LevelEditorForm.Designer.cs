@@ -5,6 +5,7 @@ using System.Windows.Forms;
 using Elmanager.IO;
 using Elmanager.Properties;
 using Elmanager.UI;
+using OpenTK.Windowing.Common;
 using OpenTK.WinForms;
 
 namespace Elmanager.LevelEditor
@@ -101,7 +102,13 @@ namespace Elmanager.LevelEditor
             ConfigurationToolStripMenuItem = new ToolStripMenuItem();
             MainConfigMenuItem = new ToolStripMenuItem();
             RenderingSettingsToolStripMenuItem = new ToolStripMenuItem();
-            EditorControl = new GLControl();
+            var settings = new GLControlSettings
+            {
+                APIVersion = new Version(3, 3),
+                Profile = ContextProfile.Core,
+                Flags = ContextFlags.ForwardCompatible
+            };
+            EditorControl = new GLControl(settings);
             OpenFileDialog1 = new OpenFileDialog();
             StatusStrip1 = new StatusStrip();
             zoomLabel = new ToolStripStatusLabel();

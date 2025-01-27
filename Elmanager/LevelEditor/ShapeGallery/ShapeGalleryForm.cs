@@ -3,6 +3,9 @@ using System.Drawing;
 using System.IO;
 using System.Linq;
 using System.Windows.Forms;
+using Elmanager.Rendering;
+using OpenTK.Windowing.Common;
+using OpenTK.Windowing.Desktop;
 
 namespace Elmanager.LevelEditor.ShapeGallery;
 
@@ -26,12 +29,17 @@ internal partial class ShapeGalleryForm : Form
         return ((angle - min) % range + range) % range + min;
     }
 
-    public ShapeGalleryForm(string? selectedShapeName = null, double scalingFactor = 0.0, double rotationAngle = 0.0, ShapeMirrorOption mirrorOption = ShapeMirrorOption.None)
+    private RenderingSettings RenderingSettings;
+    private IGraphicsContext SharedContext;
+
+    public ShapeGalleryForm(IGraphicsContext sharedContext, RenderingSettings renderingSettings, string? selectedShapeName = null, double scalingFactor = 0.0, double rotationAngle = 0.0, ShapeMirrorOption mirrorOption = ShapeMirrorOption.None)
     {
         ScalingFactor = scalingFactor;
         RotationAngle = rotationAngle;
         ShapeMirrorOption = mirrorOption;
         SelectedShapeName = selectedShapeName;
+        RenderingSettings = renderingSettings;
+        SharedContext = sharedContext;
 
         InitializeComponent();
 
@@ -56,6 +64,9 @@ internal partial class ShapeGalleryForm : Form
         this.StartPosition = FormStartPosition.Manual;
         SetInitialLocation();
         PopulateSubfolderComboBox();
+
+        // Pass the shared context to the PopulateShapeGallery method
+        PopulateShapeGalleryFromLastSelectedSubfolder(SharedContext);
     }
 
     private void HighlightSelectedShape()
@@ -120,7 +131,7 @@ internal partial class ShapeGalleryForm : Form
     // Event for loading polygons
     public event EventHandler<ShapeDataDto>? ShapeDataLoaded;
 
-    private void PopulateShapeGallery(string folderPath)
+    private void PopulateShapeGallery(string folderPath, IGraphicsContext sharedContext)
     {
         flowLayoutPanelShapes.SuspendLayout();
 
@@ -140,7 +151,7 @@ internal partial class ShapeGalleryForm : Form
 
         foreach (var shape in shapes)
         {
-            var shapeControl = new CustomShapeControl()
+            var shapeControl = new CustomShapeControl(sharedContext, RenderingSettings)
             {
                 ShapeName = shape.Name,
                 ShapeFullPath = shape.ImagePath // Store the full path
@@ -184,7 +195,7 @@ internal partial class ShapeGalleryForm : Form
     private void ShapeGalleryForm_Load(object sender, EventArgs e)
     {
         //InitializeFileSystemWatcher();
-        PopulateShapeGalleryFromLastSelectedSubfolder();
+        PopulateShapeGalleryFromLastSelectedSubfolder(SharedContext);
         HighlightSelectedShape();
     }
 
@@ -264,16 +275,16 @@ internal partial class ShapeGalleryForm : Form
             var selectedFolderPath = Path.Combine(_galleryFolderPath, selectedSubfolder);
 
             // Populate the shape gallery with shapes from the selected subfolder
-            PopulateShapeGallery(selectedFolderPath);
+            PopulateShapeGallery(selectedFolderPath, SharedContext);
         }
     }
 
-    private void PopulateShapeGalleryFromLastSelectedSubfolder()
+    private void PopulateShapeGalleryFromLastSelectedSubfolder(IGraphicsContext sharedContext)
     {
         if (_lastSelectedSubfolder != null && comboBoxSubfolders.Items.Contains(_lastSelectedSubfolder))
         {
             var lastSubfolderPath = Path.Combine(_galleryFolderPath, _lastSelectedSubfolder);
-            PopulateShapeGallery(lastSubfolderPath);
+            PopulateShapeGallery(lastSubfolderPath, sharedContext);
         }
         else if (comboBoxSubfolders.Items.Count > 0)
         {
@@ -281,7 +292,7 @@ internal partial class ShapeGalleryForm : Form
             if (firstSubfolder != null)
             {
                 var firstSubfolderPath = Path.Combine(_galleryFolderPath, firstSubfolder);
-                PopulateShapeGallery(firstSubfolderPath);
+                PopulateShapeGallery(firstSubfolderPath, sharedContext);
             }
         }
     }

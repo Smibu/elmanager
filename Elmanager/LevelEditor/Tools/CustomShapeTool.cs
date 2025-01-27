@@ -8,6 +8,8 @@ using Elmanager.Geometry;
 using Elmanager.Lev;
 using Elmanager.LevelEditor.ShapeGallery;
 using Elmanager.Rendering;
+using OpenTK.Windowing.Common;
+using OpenTK.Windowing.Desktop;
 using Polygon = Elmanager.Lev.Polygon;
 
 namespace Elmanager.LevelEditor.Tools;
@@ -75,7 +77,7 @@ internal class CustomShapeTool : ToolBase, IEditorTool
 
     private void OpenDialog()
     {
-        var shapeGalleryForm = new ShapeGalleryForm(_selectedShapeName, _scalingFactor, _rotationAngle, _selectedMirrorOption);
+        var shapeGalleryForm = new ShapeGalleryForm(SharedContext, LevEditor.Settings.RenderingSettings, _selectedShapeName, _scalingFactor, _rotationAngle, _selectedMirrorOption);
         shapeGalleryForm.ShapeDataLoaded += ShapeGalleryForm_ShapeDataLoaded;
         shapeGalleryForm.ShowDialog();
     }
@@ -305,4 +307,5 @@ internal class CustomShapeTool : ToolBase, IEditorTool
     }
 
     public override bool Busy => false;
+    public IGLFWGraphicsContext SharedContext { get; set; }
 }
