@@ -4,6 +4,7 @@ using System.IO;
 using System.Linq;
 using System.Windows.Forms;
 using Elmanager.Rendering;
+using OpenTK.GLControl;
 using OpenTK.Windowing.Common;
 using OpenTK.Windowing.Desktop;
 
@@ -30,9 +31,9 @@ internal partial class ShapeGalleryForm : Form
     }
 
     private RenderingSettings RenderingSettings;
-    private IGraphicsContext SharedContext;
+    private GLControl SharedContext;
 
-    public ShapeGalleryForm(IGraphicsContext sharedContext, RenderingSettings renderingSettings, string? selectedShapeName = null, double scalingFactor = 0.0, double rotationAngle = 0.0, ShapeMirrorOption mirrorOption = ShapeMirrorOption.None)
+    public ShapeGalleryForm(GLControl sharedContext, RenderingSettings renderingSettings, string? selectedShapeName = null, double scalingFactor = 0.0, double rotationAngle = 0.0, ShapeMirrorOption mirrorOption = ShapeMirrorOption.None)
     {
         ScalingFactor = scalingFactor;
         RotationAngle = rotationAngle;
@@ -131,7 +132,7 @@ internal partial class ShapeGalleryForm : Form
     // Event for loading polygons
     public event EventHandler<ShapeDataDto>? ShapeDataLoaded;
 
-    private void PopulateShapeGallery(string folderPath, IGraphicsContext sharedContext)
+    private void PopulateShapeGallery(string folderPath, GLControl sharedContext)
     {
         flowLayoutPanelShapes.SuspendLayout();
 
@@ -279,7 +280,7 @@ internal partial class ShapeGalleryForm : Form
         }
     }
 
-    private void PopulateShapeGalleryFromLastSelectedSubfolder(IGraphicsContext sharedContext)
+    private void PopulateShapeGalleryFromLastSelectedSubfolder(GLControl sharedContext)
     {
         if (_lastSelectedSubfolder != null && comboBoxSubfolders.Items.Contains(_lastSelectedSubfolder))
         {

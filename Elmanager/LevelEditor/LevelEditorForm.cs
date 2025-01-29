@@ -31,12 +31,14 @@ using Elmanager.Utilities;
 using OpenTK.Graphics.OpenGL;
 using OpenTK.Windowing.Common;
 using OpenTK.Windowing.Desktop;
-using OpenTK.WinForms;
+using OpenTK.GLControl;
+using OpenTK.Graphics;
 using Color = System.Drawing.Color;
 using Control = System.Windows.Forms.Control;
 using Cursor = System.Windows.Forms.Cursor;
 using Cursors = System.Windows.Forms.Cursors;
 using Envelope = NetTopologySuite.Geometries.Envelope;
+using GLControl = OpenTK.GLControl;
 using KeyEventArgs = System.Windows.Forms.KeyEventArgs;
 using MouseEventArgs = System.Windows.Forms.MouseEventArgs;
 using Point = System.Drawing.Point;
@@ -57,7 +59,7 @@ internal partial class LevelEditorForm : FormMod, IMessageFilter
     internal Level Lev => _editorLev.Lev;
     private ElmaFile? LevFile => _editorLev.File;
     internal ElmaRenderer Renderer = null!;
-    private IGLFWGraphicsContext? _sharedContext;
+    private OpenTK.GLControl.GLControl? _sharedContext;
     internal readonly EditorTools Tools;
     private List<string>? _currLevDirFiles;
     private bool _draggingScreen;
@@ -130,20 +132,6 @@ internal partial class LevelEditorForm : FormMod, IMessageFilter
         PostInit(lev);
     }
 
-    private void InitializeSharedContext()
-    {
-        //EditorControl.EnsureCreated();
-        EditorControl.MakeCurrent(); // Make the context current
-        _sharedContext = EditorControl.Context as IGLFWGraphicsContext;
-        if (_sharedContext == null)
-        {
-            throw new InvalidOperationException("Failed to create shared OpenGL context.");
-        }
-
-        Tools.CustomShapeTool.SharedContext = _sharedContext;
-    }
-
-
     private void InitializeInternalMenu()
     {
         for (var i = 0; i < Global.Internals.Count; i++)
@@ -213,7 +201,6 @@ internal partial class LevelEditorForm : FormMod, IMessageFilter
             EditorControl.Context.SwapInterval = 0;
             Initialize(lev);
             _tcs.SetResult();
-            InitializeSharedContext();
         };
         Closed += (_, _) => System.Windows.Forms.Application.RemoveMessageFilter(this);
     }
@@ -3000,6 +2987,12 @@ internal partial class LevelEditorForm : FormMod, IMessageFilter
 
     private void createCustomShapeMenuItem_Click(object sender, EventArgs e)
     {
+        // Pass the EditorControl to the dialog form
+        //using var dialog = new DialogForm(EditorControl);
+        using var dialog = new LevelControlFormTest(EditorControl);
+        dialog.ShowDialog();
+        return;
+
         var selectedPolygons = Lev.Polygons.Where(p => p.Vertices.Any(v => v.Mark == VectorMark.Selected)).ToList();
         var selectedObjects = Lev.Objects.Where(o => o.Position.Mark == VectorMark.Selected && o.Type != ObjectType.Start).ToList();
         var selectedGraphicElements = Lev.GraphicElements.Where(t => t.Position.Mark == VectorMark.Selected).ToList();

@@ -8,6 +8,7 @@ using Elmanager.Geometry;
 using Elmanager.Lev;
 using Elmanager.LevelEditor.ShapeGallery;
 using Elmanager.Rendering;
+using OpenTK.GLControl;
 using OpenTK.Windowing.Common;
 using OpenTK.Windowing.Desktop;
 using Polygon = Elmanager.Lev.Polygon;
@@ -307,5 +308,5 @@ internal class CustomShapeTool : ToolBase, IEditorTool
     }
 
     public override bool Busy => false;
-    public IGLFWGraphicsContext SharedContext { get; set; }
+    public GLControl SharedContext { get; set; }
 }

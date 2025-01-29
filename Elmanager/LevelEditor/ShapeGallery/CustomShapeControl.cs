@@ -8,6 +8,7 @@ using UserControl = System.Windows.Forms;
 using System.Windows.Shapes;
 using Elmanager.Lev;
 using Elmanager.Rendering;
+using OpenTK.GLControl;
 using OpenTK.Windowing.Desktop;
 using Path = System.IO.Path;
 using OpenTK.Windowing.Common;
@@ -22,11 +23,11 @@ internal partial class CustomShapeControl : UserControl.UserControl
     private bool _isPressed;
     private LevelControl levelControl;
 
-    public CustomShapeControl(IGraphicsContext sharedContext, RenderingSettings settings)
+    public CustomShapeControl(GLControl sharedContext, RenderingSettings settings)
     {
         InitializeComponent();
 
-        levelControl = new LevelControl(sharedContext, settings)
+        levelControl = new LevelControl(sharedContext/*, settings*/)
         {
             Dock = DockStyle.Fill
         };
@@ -74,11 +75,11 @@ internal partial class CustomShapeControl : UserControl.UserControl
     }
 
     // Property for the Level object
-    public Level? Level
-    {
-        get => levelControl.Level;
-        set => levelControl.Level = value;
-    }
+    //public Level? Level
+    //{
+    //    get => levelControl.Level;
+    //    set => levelControl.Level = value;
+    //}
 
     // Event for clicking the shape
     public event EventHandler? ShapeClicked;

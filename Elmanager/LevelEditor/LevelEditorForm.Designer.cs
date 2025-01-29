@@ -6,7 +6,7 @@ using Elmanager.IO;
 using Elmanager.Properties;
 using Elmanager.UI;
 using OpenTK.Windowing.Common;
-using OpenTK.WinForms;
+using OpenTK.GLControl;
 
 namespace Elmanager.LevelEditor
 {
@@ -104,7 +104,7 @@ namespace Elmanager.LevelEditor
             RenderingSettingsToolStripMenuItem = new ToolStripMenuItem();
             var settings = new GLControlSettings
             {
-                APIVersion = new Version(3, 3),
+                APIVersion = new Version(4, 0),
                 Profile = ContextProfile.Core,
                 Flags = ContextFlags.ForwardCompatible
             };
