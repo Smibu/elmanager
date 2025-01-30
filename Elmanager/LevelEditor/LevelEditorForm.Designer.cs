@@ -104,7 +104,7 @@ namespace Elmanager.LevelEditor
             RenderingSettingsToolStripMenuItem = new ToolStripMenuItem();
             var settings = new GLControlSettings
             {
-                APIVersion = new Version(4, 0),
+                APIVersion = new Version(3, 3),
                 Profile = ContextProfile.Core,
                 Flags = ContextFlags.ForwardCompatible
             };

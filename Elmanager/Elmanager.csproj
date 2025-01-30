@@ -33,8 +33,9 @@
             <Version>2.9.3</Version>
         </PackageReference>
         <PackageReference Include="OpenTK">
-            <Version>4.8.2</Version>
+            <Version>4.9.3</Version>
         </PackageReference>
+        <PackageReference Include="OpenTK.GLControl" Version="4.0.2" />
         <PackageReference Include="SharpVectors">
             <Version>1.8.4</Version>
         </PackageReference>
