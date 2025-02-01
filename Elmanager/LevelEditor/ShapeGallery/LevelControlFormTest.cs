@@ -62,13 +62,6 @@ namespace Elmanager.LevelEditor.ShapeGallery
             Controls.Add(panel);
 
             panel.Visible = true;
-
-            // Force initial rendering after form load
-            this.Load += (_, _) =>
-            {
-                levelControl1.StartRendering();
-                levelControl2.StartRendering();
-            };
         }
     }
 }

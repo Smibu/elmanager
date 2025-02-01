@@ -8,25 +8,22 @@ using Elmanager.Rendering.Camera;
 using OpenTK.GLControl;
 using OpenTK.Graphics;
 using OpenTK.Graphics.OpenGL;
+using OpenTK.Windowing.Common;
 
 namespace Elmanager.LevelEditor.ShapeGallery
 {
     public class LevelControl : GLControl
     {
-        private Timer _renderTimer;
-
         internal LevelControl(GLControl sharedContext) : 
             base()
         {
+            Profile = ContextProfile.Compatability;
             this.Load += LevelControl_Load;
 
             if (!IsHandleCreated)
             {
                 SharedContext = sharedContext; // Set shared context before initialization
             }
-
-            _renderTimer = new Timer{ Interval = 16 };
-            _renderTimer.Tick += RenderLoop;
         }
         protected override void OnHandleCreated(EventArgs e)
         {
@@ -48,13 +45,9 @@ namespace Elmanager.LevelEditor.ShapeGallery
             GL.ClearColor(Color.Red);
         }
 
-        public void StartRendering()
+        protected override void OnPaint(PaintEventArgs e)
         {
-            _renderTimer.Start(); // Start the DispatcherTimer
-        }
-
-        private void RenderLoop(object? sender, EventArgs e)
-        {
+            base.OnPaint(e);
             Render();
         }
 
