@@ -1,7 +1,9 @@
 using System;
 using System.Drawing;
+using System.Printing;
 using System.Windows.Forms;
 using System.Windows.Threading;
+using BrightIdeasSoftware;
 using Elmanager.Lev;
 using Elmanager.Rendering;
 using Elmanager.Rendering.Camera;
@@ -14,10 +16,26 @@ namespace Elmanager.LevelEditor.ShapeGallery
 {
     public class LevelControl : GLControl
     {
-        internal LevelControl(GLControl sharedContext) : 
+        private ElmaRenderer _renderer;
+        private Level _level;
+        private ElmaCamera _camera;
+        private RenderingSettings _renderingSettings;
+        private SceneSettings _sceneSettings;
+        private ZoomController _zoomController;
+
+        internal LevelControl(GLControl sharedContext, ElmaRenderer renderer, Level level, ElmaCamera camera, SceneSettings sceneSettings, RenderingSettings renderingSettings) :
             base()
         {
             Profile = ContextProfile.Compatability;
+
+            _renderer = renderer;
+            _level = level;
+            _camera = camera;
+            _renderingSettings = new RenderingSettings();
+            _sceneSettings = sceneSettings;
+
+            _zoomController = new ZoomController(_camera, _level, () => Render());
+
             this.Load += LevelControl_Load;
 
             if (!IsHandleCreated)
@@ -25,6 +43,7 @@ namespace Elmanager.LevelEditor.ShapeGallery
                 SharedContext = sharedContext; // Set shared context before initialization
             }
         }
+
         protected override void OnHandleCreated(EventArgs e)
         {
             base.OnHandleCreated(e);
@@ -35,14 +54,20 @@ namespace Elmanager.LevelEditor.ShapeGallery
             }
 
             GL.Viewport(0, 0, Width, Height); // Set viewport to the entire control
-            if (Context != null) 
+            if (Context != null)
                 Context.SwapInterval = 0;
         }
 
         private void LevelControl_Load(object? sender, EventArgs e)
         {
             // Initialization code for OpenGL
-            GL.ClearColor(Color.Red);
+            //GL.ClearColor(Color.Red);
+
+            var r = _renderer.UpdateSettings(_level, _renderingSettings);
+            _renderer.InitializeLevel(_level, _renderingSettings);
+            _level.UpdateBounds();
+            _zoomController.ZoomFill(_renderingSettings);
+
         }
 
         protected override void OnPaint(PaintEventArgs e)
@@ -57,24 +82,20 @@ namespace Elmanager.LevelEditor.ShapeGallery
             {
                 return;
             }
-            
+
             if (!Context.IsCurrent)
             {
                 MakeCurrent();
             }
 
-            MakeCurrent();
+            GL.Viewport(0, 0, Width, Height); // Set viewport to the entire control
 
             GL.Clear(ClearBufferMask.ColorBufferBit | ClearBufferMask.DepthBufferBit);
             CheckGLError("GL.Clear");
 
-            // Simple triangle rendering
-            GL.Begin(PrimitiveType.Triangles);
-            GL.Color3(1.0f, 0.0f, 0.0f); GL.Vertex2(-0.5f, -0.5f);
-            GL.Color3(0.0f, 1.0f, 0.0f); GL.Vertex2(0.5f, -0.5f);
-            GL.Color3(0.0f, 0.0f, 1.0f); GL.Vertex2(0.0f, 0.5f);
-            GL.End();
-            CheckGLError("GL.Begin/GL.End");
+            
+            // Use the ElmaRenderer to render the level
+            _renderer.DrawScene(_level, _camera, _sceneSettings, _renderingSettings);
 
             SwapBuffers();
         }

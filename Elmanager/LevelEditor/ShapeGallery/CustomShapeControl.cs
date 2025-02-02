@@ -27,11 +27,11 @@ internal partial class CustomShapeControl : UserControl.UserControl
     {
         InitializeComponent();
 
-        levelControl = new LevelControl(sharedContext/*, settings*/)
-        {
-            Dock = DockStyle.Fill
-        };
-        this.Controls.Add(levelControl);
+        //levelControl = new LevelControl(sharedContext/*, settings*/)
+        //{
+        //    Dock = DockStyle.Fill
+        //};
+        //this.Controls.Add(levelControl);
 
         // Attach the same event handler to the Click event of all relevant components
         levelControl.Click += OnComponentClick;

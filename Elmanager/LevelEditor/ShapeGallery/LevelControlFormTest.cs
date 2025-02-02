@@ -8,31 +8,35 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Controls;
 using System.Windows.Forms;
+using Elmanager.Lev;
+using Elmanager.Rendering.Camera;
+using Elmanager.Rendering;
 using OpenTK.GLControl;
 using Button = System.Windows.Forms.Button;
 
 namespace Elmanager.LevelEditor.ShapeGallery
 {
-    public partial class LevelControlFormTest : Form
+    internal partial class LevelControlFormTest : Form
     {
         private LevelControl levelControl1;
         private LevelControl levelControl2;
         private Button testButton;
 
-        public LevelControlFormTest(GLControl sharedControl)
+        public LevelControlFormTest(GLControl sharedControl, ElmaRenderer renderer, Level level, ElmaCamera camera, SceneSettings sceneSettings, RenderingSettings renderingSettings)
         {
+
             // Remove InitializeComponent if you're not using the designer
             // InitializeComponent();
 
             // Create LevelControls with shared OpenGL context
-            levelControl1 = new LevelControl(sharedControl)
+            levelControl1 = new LevelControl(sharedControl, renderer, level, camera, sceneSettings, renderingSettings)
             {
                 Width = 200,
                 Height = 200,
                 Dock = DockStyle.Fill
             };
             levelControl1.Visible = true;
-            levelControl2 = new LevelControl(sharedControl)
+            levelControl2 = new LevelControl(sharedControl, renderer, level, camera, sceneSettings, renderingSettings)
             {
                 Width = 200,
                 Height = 200,

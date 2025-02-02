@@ -2989,7 +2989,7 @@ internal partial class LevelEditorForm : FormMod, IMessageFilter
     {
         // Pass the EditorControl to the dialog form
         //using var dialog = new DialogForm(EditorControl);
-        using var dialog = new LevelControlFormTest(EditorControl);
+        using var dialog = new LevelControlFormTest(EditorControl, Renderer, Lev, _zoomCtrl.Cam, _sceneSettings, Settings.RenderingSettings);
         dialog.ShowDialog();
         return;
 
