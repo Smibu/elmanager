@@ -28,13 +28,12 @@ namespace Elmanager.LevelEditor.ShapeGallery
         {
             Profile = ContextProfile.Compatability;
 
-            _renderer = renderer;
-            _level = level;
-            _camera = camera;
             _renderingSettings = new RenderingSettings();
+            _level = level;
+            _camera = new ElmaCamera();
             _sceneSettings = sceneSettings;
 
-            _zoomController = new ZoomController(_camera, _level, () => Render());
+            _zoomController = new ZoomController(_camera, _level, Render);
 
             this.Load += LevelControl_Load;
 
@@ -62,6 +61,8 @@ namespace Elmanager.LevelEditor.ShapeGallery
         {
             // Initialization code for OpenGL
             //GL.ClearColor(Color.Red);
+
+            _renderer = new ElmaRenderer(this, _renderingSettings);
 
             var r = _renderer.UpdateSettings(_level, _renderingSettings);
             _renderer.InitializeLevel(_level, _renderingSettings);
