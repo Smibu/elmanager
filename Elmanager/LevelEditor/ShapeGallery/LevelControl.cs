@@ -68,7 +68,7 @@ namespace Elmanager.LevelEditor.ShapeGallery
         {
             // Initialization code for OpenGL
             _renderer = new ElmaRenderer(this, _renderingSettings);
-            _renderer.OpenGlLgr = _originalElmaRenderer.OpenGlLgr;
+            //_renderer.OpenGlLgr = _originalElmaRenderer.OpenGlLgr;
             var r = _renderer.UpdateSettings(_level, _renderingSettings);
             _renderer.InitializeLevel(_level, _renderingSettings);
             _level.UpdateBounds();
