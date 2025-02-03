@@ -21,38 +21,45 @@ internal partial class CustomShapeControl : UserControl.UserControl
     private bool _isHighlighted;
     private Color _borderColor = Color.Transparent;
     private bool _isPressed;
-    private LevelControl levelControl;
 
-    public CustomShapeControl(GLControl sharedContext, RenderingSettings settings)
+    public CustomShapeControl(GLControl sharedContext, Level level, SceneSettings sceneSettings)
     {
         InitializeComponent();
 
-        //levelControl = new LevelControl(sharedContext/*, settings*/)
-        //{
-        //    Dock = DockStyle.Fill
-        //};
-        //this.Controls.Add(levelControl);
+        shapeLevelControl = new LevelControl(sharedContext, level, sceneSettings);
+        shapeLevelControl.API = OpenTK.Windowing.Common.ContextAPI.OpenGL;
+        shapeLevelControl.APIVersion = new Version(3, 3, 0, 0);
+        shapeLevelControl.Dock = DockStyle.Fill;
+        shapeLevelControl.Flags = OpenTK.Windowing.Common.ContextFlags.Default;
+        shapeLevelControl.Location = new System.Drawing.Point(1, 1);
+        shapeLevelControl.Name = "shapeLevelControl";
+        shapeLevelControl.Size = new System.Drawing.Size(128, 128);
+        shapeLevelControl.Profile = OpenTK.Windowing.Common.ContextProfile.Compatability;
+        shapeLevelControl.TabIndex = 0;
+        shapeLevelControl.TabStop = false;
+
+        this.Controls.Add(shapeLevelControl);
 
         // Attach the same event handler to the Click event of all relevant components
-        levelControl.Click += OnComponentClick;
+        shapeLevelControl.Click += OnComponentClick;
         lblShapeName.Click += OnComponentClick;
         this.Click += OnComponentClick;
 
         // Attach mouse enter and leave events
-        levelControl.MouseEnter += OnMouseEnter;
+        shapeLevelControl.MouseEnter += OnMouseEnter;
         lblShapeName.MouseEnter += OnMouseEnter;
         this.MouseEnter += OnMouseEnter;
 
-        levelControl.MouseLeave += OnMouseLeave;
+        shapeLevelControl.MouseLeave += OnMouseLeave;
         lblShapeName.MouseLeave += OnMouseLeave;
         this.MouseLeave += OnMouseLeave;
 
         // Attach mouse down and up events
-        levelControl.MouseDown += OnMouseDown;
+        shapeLevelControl.MouseDown += OnMouseDown;
         lblShapeName.MouseDown += OnMouseDown;
         this.MouseDown += OnMouseDown;
 
-        levelControl.MouseUp += OnMouseUp;
+        shapeLevelControl.MouseUp += OnMouseUp;
         lblShapeName.MouseUp += OnMouseUp;
         this.MouseUp += OnMouseUp;
     }
@@ -66,20 +73,6 @@ internal partial class CustomShapeControl : UserControl.UserControl
         get => lblShapeName.Text;
         set => lblShapeName.Text = value;
     }
-
-    // Property for the image
-    public System.Drawing.Image ShapeImage
-    {
-        get => levelControl.BackgroundImage;
-        set => levelControl.BackgroundImage = value;
-    }
-
-    // Property for the Level object
-    //public Level? Level
-    //{
-    //    get => levelControl.Level;
-    //    set => levelControl.Level = value;
-    //}
 
     // Event for clicking the shape
     public event EventHandler? ShapeClicked;

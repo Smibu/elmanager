@@ -3,6 +3,7 @@ using System.Drawing;
 using System.IO;
 using System.Linq;
 using System.Windows.Forms;
+using Elmanager.Lev;
 using Elmanager.Rendering;
 using OpenTK.GLControl;
 using OpenTK.Windowing.Common;
@@ -30,17 +31,19 @@ internal partial class ShapeGalleryForm : Form
         return ((angle - min) % range + range) % range + min;
     }
 
-    private RenderingSettings RenderingSettings;
-    private GLControl SharedContext;
+    private readonly SceneSettings _sceneSettings;
+    private RenderingSettings _renderingSettings;
+    private readonly GLControl _sharedContext;
 
-    public ShapeGalleryForm(GLControl sharedContext, RenderingSettings renderingSettings, string? selectedShapeName = null, double scalingFactor = 0.0, double rotationAngle = 0.0, ShapeMirrorOption mirrorOption = ShapeMirrorOption.None)
+    public ShapeGalleryForm(GLControl sharedContext, RenderingSettings renderingSettings, SceneSettings sceneSettings, string? selectedShapeName = null, double scalingFactor = 0.0, double rotationAngle = 0.0, ShapeMirrorOption mirrorOption = ShapeMirrorOption.None)
     {
         ScalingFactor = scalingFactor;
         RotationAngle = rotationAngle;
         ShapeMirrorOption = mirrorOption;
         SelectedShapeName = selectedShapeName;
-        RenderingSettings = renderingSettings;
-        SharedContext = sharedContext;
+        _renderingSettings = renderingSettings;
+        _sharedContext = sharedContext;
+        _sceneSettings = sceneSettings;
 
         InitializeComponent();
 
@@ -67,7 +70,7 @@ internal partial class ShapeGalleryForm : Form
         PopulateSubfolderComboBox();
 
         // Pass the shared context to the PopulateShapeGallery method
-        PopulateShapeGalleryFromLastSelectedSubfolder(SharedContext);
+        PopulateShapeGalleryFromLastSelectedSubfolder(_sharedContext);
     }
 
     private void HighlightSelectedShape()
@@ -146,22 +149,24 @@ internal partial class ShapeGalleryForm : Form
         }
 
         // Load images from the specified folder
-        var shapes = Directory.GetFiles(folderPath, "*.png")
+        var shapes = Directory.GetFiles(folderPath, "*.lev")
             .Select(filePath => (Name: Path.GetFileNameWithoutExtension(filePath), ImagePath: filePath))
             .ToList();
 
         foreach (var shape in shapes)
         {
-            var shapeControl = new CustomShapeControl(sharedContext, RenderingSettings)
+            Level level = Level.FromPath(shape.ImagePath).Obj;
+
+            if (level.IsAcrossLevel)
+            {
+                throw new InvalidOperationException("Cannot load across level shapes.");
+            }
+
+            var shapeControl = new CustomShapeControl(sharedContext, level, _sceneSettings)
             {
                 ShapeName = shape.Name,
                 ShapeFullPath = shape.ImagePath // Store the full path
             };
-
-            using (var s = new FileStream(shapeControl.ShapeFullPath, FileMode.Open))
-            {
-                shapeControl.ShapeImage = Image.FromStream(s);
-            }
 
             // Handle shape click event
             shapeControl.ShapeClicked += ShapeControl_ShapeClicked;
@@ -196,7 +201,7 @@ internal partial class ShapeGalleryForm : Form
     private void ShapeGalleryForm_Load(object sender, EventArgs e)
     {
         //InitializeFileSystemWatcher();
-        PopulateShapeGalleryFromLastSelectedSubfolder(SharedContext);
+        PopulateShapeGalleryFromLastSelectedSubfolder(_sharedContext);
         HighlightSelectedShape();
     }
 
@@ -276,7 +281,7 @@ internal partial class ShapeGalleryForm : Form
             var selectedFolderPath = Path.Combine(_galleryFolderPath, selectedSubfolder);
 
             // Populate the shape gallery with shapes from the selected subfolder
-            PopulateShapeGallery(selectedFolderPath, SharedContext);
+            PopulateShapeGallery(selectedFolderPath, _sharedContext);
         }
     }
 

@@ -2987,12 +2987,6 @@ internal partial class LevelEditorForm : FormMod, IMessageFilter
 
     private void createCustomShapeMenuItem_Click(object sender, EventArgs e)
     {
-        // Pass the EditorControl to the dialog form
-        //using var dialog = new DialogForm(EditorControl);
-        using var dialog = new LevelControlFormTest(EditorControl, Renderer, Lev, _zoomCtrl.Cam, _sceneSettings, Settings.RenderingSettings);
-        dialog.ShowDialog();
-        return;
-
         var selectedPolygons = Lev.Polygons.Where(p => p.Vertices.Any(v => v.Mark == VectorMark.Selected)).ToList();
         var selectedObjects = Lev.Objects.Where(o => o.Position.Mark == VectorMark.Selected && o.Type != ObjectType.Start).ToList();
         var selectedGraphicElements = Lev.GraphicElements.Where(t => t.Position.Mark == VectorMark.Selected).ToList();

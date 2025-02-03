@@ -29,14 +29,14 @@ namespace Elmanager.LevelEditor.ShapeGallery
             // InitializeComponent();
 
             // Create LevelControls with shared OpenGL context
-            levelControl1 = new LevelControl(sharedControl, renderer, level, camera, sceneSettings, renderingSettings)
+            levelControl1 = new LevelControl(sharedControl, level, sceneSettings)
             {
                 Width = 200,
                 Height = 200,
                 Dock = DockStyle.Fill
             };
             levelControl1.Visible = true;
-            levelControl2 = new LevelControl(sharedControl, renderer, level, camera, sceneSettings, renderingSettings)
+            levelControl2 = new LevelControl(sharedControl, level, sceneSettings)
             {
                 Width = 200,
                 Height = 200,

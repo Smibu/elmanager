@@ -78,7 +78,7 @@ internal class CustomShapeTool : ToolBase, IEditorTool
 
     private void OpenDialog()
     {
-        var shapeGalleryForm = new ShapeGalleryForm(SharedContext, LevEditor.Settings.RenderingSettings, _selectedShapeName, _scalingFactor, _rotationAngle, _selectedMirrorOption);
+        var shapeGalleryForm = new ShapeGalleryForm(SharedContext, LevEditor.Settings.RenderingSettings, LevEditor.SceneSettings,_selectedShapeName, _scalingFactor, _rotationAngle, _selectedMirrorOption);
         shapeGalleryForm.ShapeDataLoaded += ShapeGalleryForm_ShapeDataLoaded;
         shapeGalleryForm.ShowDialog();
     }
