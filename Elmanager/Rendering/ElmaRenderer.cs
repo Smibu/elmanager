@@ -51,7 +51,7 @@ internal class ElmaRenderer : IDisposable
         InitializeOpengl(disableFrameBuffer: settings.DisableFrameBuffer);
     }
 
-    public OpenGlLgr? OpenGlLgr { get; private set; }
+    public OpenGlLgr? OpenGlLgr { get; set; }
 
     public void Dispose()
     {

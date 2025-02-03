@@ -22,11 +22,11 @@ internal partial class CustomShapeControl : UserControl.UserControl
     private Color _borderColor = Color.Transparent;
     private bool _isPressed;
 
-    public CustomShapeControl(GLControl sharedContext, Level level, SceneSettings sceneSettings)
+    public CustomShapeControl(GLControl sharedContext, Level level, SceneSettings sceneSettings, RenderingSettings renderingSettings, ElmaRenderer elmaRenderer)
     {
         InitializeComponent();
 
-        shapeLevelControl = new LevelControl(sharedContext, level, sceneSettings);
+        shapeLevelControl = new LevelControl(sharedContext, level, sceneSettings, renderingSettings, elmaRenderer);
         shapeLevelControl.API = OpenTK.Windowing.Common.ContextAPI.OpenGL;
         shapeLevelControl.APIVersion = new Version(3, 3, 0, 0);
         shapeLevelControl.Dock = DockStyle.Fill;

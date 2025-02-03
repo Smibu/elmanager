@@ -3,6 +3,7 @@ using System.Drawing;
 using System.IO;
 using System.Linq;
 using System.Windows.Forms;
+using BrightIdeasSoftware;
 using Elmanager.Lev;
 using Elmanager.Rendering;
 using OpenTK.GLControl;
@@ -22,6 +23,8 @@ internal partial class ShapeGalleryForm : Form
 
     private CustomShapeControl? _selectedShapeControl;
 
+    private ElmaRenderer _renderer;
+
     // Static field to remember the last selected subfolder
     private static string? _lastSelectedSubfolder;
 
@@ -35,7 +38,7 @@ internal partial class ShapeGalleryForm : Form
     private RenderingSettings _renderingSettings;
     private readonly GLControl _sharedContext;
 
-    public ShapeGalleryForm(GLControl sharedContext, RenderingSettings renderingSettings, SceneSettings sceneSettings, string? selectedShapeName = null, double scalingFactor = 0.0, double rotationAngle = 0.0, ShapeMirrorOption mirrorOption = ShapeMirrorOption.None)
+    public ShapeGalleryForm(GLControl sharedContext, ElmaRenderer elmaRenderer, RenderingSettings renderingSettings, SceneSettings sceneSettings, string? selectedShapeName = null, double scalingFactor = 0.0, double rotationAngle = 0.0, ShapeMirrorOption mirrorOption = ShapeMirrorOption.None)
     {
         ScalingFactor = scalingFactor;
         RotationAngle = rotationAngle;
@@ -44,6 +47,8 @@ internal partial class ShapeGalleryForm : Form
         _renderingSettings = renderingSettings;
         _sharedContext = sharedContext;
         _sceneSettings = sceneSettings;
+
+        _renderer = elmaRenderer;
 
         InitializeComponent();
 
@@ -153,6 +158,7 @@ internal partial class ShapeGalleryForm : Form
             .Select(filePath => (Name: Path.GetFileNameWithoutExtension(filePath), ImagePath: filePath))
             .ToList();
 
+
         foreach (var shape in shapes)
         {
             Level level = Level.FromPath(shape.ImagePath).Obj;
@@ -162,7 +168,7 @@ internal partial class ShapeGalleryForm : Form
                 throw new InvalidOperationException("Cannot load across level shapes.");
             }
 
-            var shapeControl = new CustomShapeControl(sharedContext, level, _sceneSettings)
+            var shapeControl = new CustomShapeControl(sharedContext, level, _sceneSettings, _renderingSettings, _renderer)
             {
                 ShapeName = shape.Name,
                 ShapeFullPath = shape.ImagePath // Store the full path
