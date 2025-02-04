@@ -78,7 +78,7 @@ internal class CustomShapeTool : ToolBase, IEditorTool
 
     private void OpenDialog()
     {
-        var shapeGalleryForm = new ShapeGalleryForm(SharedContext, LevEditor.Renderer, LevEditor.Settings.RenderingSettings, LevEditor.SceneSettings,_selectedShapeName, _scalingFactor, _rotationAngle, _selectedMirrorOption);
+        var shapeGalleryForm = new ShapeGalleryForm(LevEditor.EditorControl, LevEditor.Renderer, LevEditor.Settings.RenderingSettings, LevEditor.SceneSettings,_selectedShapeName, _scalingFactor, _rotationAngle, _selectedMirrorOption);
         shapeGalleryForm.ShapeDataLoaded += ShapeGalleryForm_ShapeDataLoaded;
         shapeGalleryForm.ShowDialog();
     }
@@ -308,5 +308,4 @@ internal class CustomShapeTool : ToolBase, IEditorTool
     }
 
     public override bool Busy => false;
-    public GLControl SharedContext { get; set; }
 }

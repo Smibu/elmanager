@@ -1,7 +1,9 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Drawing;
 using System.IO;
 using System.Linq;
+using System.Windows.Documents;
 using System.Windows.Forms;
 using BrightIdeasSoftware;
 using Elmanager.Lev;
@@ -23,7 +25,7 @@ internal partial class ShapeGalleryForm : Form
 
     private CustomShapeControl? _selectedShapeControl;
 
-    private ElmaRenderer _renderer;
+    private ElmaRenderer? _renderer;
 
     // Static field to remember the last selected subfolder
     private static string? _lastSelectedSubfolder;
@@ -48,7 +50,7 @@ internal partial class ShapeGalleryForm : Form
         _sharedContext = sharedContext;
         _sceneSettings = sceneSettings;
 
-        _renderer = elmaRenderer;
+        _renderer = null;
 
         InitializeComponent();
 
@@ -75,7 +77,7 @@ internal partial class ShapeGalleryForm : Form
         PopulateSubfolderComboBox();
 
         // Pass the shared context to the PopulateShapeGallery method
-        PopulateShapeGalleryFromLastSelectedSubfolder(_sharedContext);
+        //PopulateShapeGalleryFromLastSelectedSubfolder(_sharedContext);
     }
 
     private void HighlightSelectedShape()
@@ -158,7 +160,9 @@ internal partial class ShapeGalleryForm : Form
             .Select(filePath => (Name: Path.GetFileNameWithoutExtension(filePath), ImagePath: filePath))
             .ToList();
 
+        _renderer = new ElmaRenderer(sharedContext, _renderingSettings);
 
+        List<CustomShapeControl> shapeControls = new List<CustomShapeControl>(50);
         foreach (var shape in shapes)
         {
             Level level = Level.FromPath(shape.ImagePath).Obj;
@@ -168,7 +172,7 @@ internal partial class ShapeGalleryForm : Form
                 throw new InvalidOperationException("Cannot load across level shapes.");
             }
 
-            var shapeControl = new CustomShapeControl(sharedContext, level, _sceneSettings, _renderingSettings, _renderer)
+            CustomShapeControl shapeControl = new CustomShapeControl(sharedContext, level, _sceneSettings, _renderingSettings, _renderer)
             {
                 ShapeName = shape.Name,
                 ShapeFullPath = shape.ImagePath // Store the full path
@@ -183,6 +187,11 @@ internal partial class ShapeGalleryForm : Form
                 ShapeDataLoaded?.Invoke(this, shapeDataDto);
             };
 
+            shapeControls.Add(shapeControl);
+        }
+
+        foreach (var shapeControl in shapeControls)
+        {
             flowLayoutPanelShapes.Controls.Add(shapeControl);
         }
 
@@ -258,10 +267,7 @@ internal partial class ShapeGalleryForm : Form
         {
             comboBoxSubfolders.Items.Add(Path.GetFileName(subfolder));
         }
-
-        // Handle ComboBox selection change event
-        comboBoxSubfolders.SelectedIndexChanged += ComboBoxSubfolders_SelectedIndexChanged;
-
+        
         // Set the default selected item to the last selected subfolder
         if (_lastSelectedSubfolder != null && comboBoxSubfolders.Items.Contains(_lastSelectedSubfolder))
         {
@@ -271,6 +277,9 @@ internal partial class ShapeGalleryForm : Form
         {
             comboBoxSubfolders.SelectedIndex = 0;
         }
+
+        // Handle ComboBox selection change event
+        comboBoxSubfolders.SelectedIndexChanged += ComboBoxSubfolders_SelectedIndexChanged;
     }
 
     private void ComboBoxSubfolders_SelectedIndexChanged(object? sender, EventArgs e)

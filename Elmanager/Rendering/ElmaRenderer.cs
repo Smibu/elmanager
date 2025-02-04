@@ -43,7 +43,7 @@ internal class ElmaRenderer : IDisposable
     private int _colorRenderBuffer;
     private int _depthStencilRenderBuffer;
     private int _maxRenderbufferSize;
-    private LgrCache _lgrCache = new();
+    public LgrCache _lgrCache = new();
 
     internal ElmaRenderer(GLControl renderingTarget, RenderingSettings settings)
     {

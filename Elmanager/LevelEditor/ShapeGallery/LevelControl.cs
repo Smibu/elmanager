@@ -40,6 +40,8 @@ namespace Elmanager.LevelEditor.ShapeGallery
             _sceneSettings = sceneSettings;
             _originalElmaRenderer = elmaRenderer;
 
+            _renderer = elmaRenderer;
+
             _zoomController = new ZoomController(_camera, _level, Render);
 
             this.Load += LevelControl_Load;
@@ -68,8 +70,9 @@ namespace Elmanager.LevelEditor.ShapeGallery
         {
             // Initialization code for OpenGL
             _renderer = new ElmaRenderer(this, _renderingSettings);
-            //_renderer.OpenGlLgr = _originalElmaRenderer.OpenGlLgr; // Shapes are not rendered correctly with this line
+            _renderer._lgrCache = _originalElmaRenderer._lgrCache; // Shapes are not rendered correctly with this line
             var r = _renderer.UpdateSettings(_level, _renderingSettings);
+            
             _renderer.InitializeLevel(_level, _renderingSettings);
             _level.UpdateBounds();
             _zoomController.ZoomFill(_renderingSettings);
