@@ -29,11 +29,10 @@ internal partial class CustomShapeControl : UserControl.UserControl
         shapeLevelControl = new LevelControl(sharedContext, level, sceneSettings, renderingSettings, elmaRenderer);
         shapeLevelControl.API = OpenTK.Windowing.Common.ContextAPI.OpenGL;
         shapeLevelControl.APIVersion = new Version(3, 3, 0, 0);
-        shapeLevelControl.Dock = DockStyle.Fill;
         shapeLevelControl.Flags = OpenTK.Windowing.Common.ContextFlags.Default;
         shapeLevelControl.Location = new System.Drawing.Point(1, 1);
         shapeLevelControl.Name = "shapeLevelControl";
-        shapeLevelControl.Size = new System.Drawing.Size(128, 128);
+        shapeLevelControl.Size = new Size(128, 128);
         shapeLevelControl.Profile = OpenTK.Windowing.Common.ContextProfile.Compatability;
         shapeLevelControl.TabIndex = 0;
         shapeLevelControl.TabStop = false;
