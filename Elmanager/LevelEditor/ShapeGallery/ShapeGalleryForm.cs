@@ -61,7 +61,7 @@ internal partial class ShapeGalleryForm : Form
             ShowTextureFrames = true,
             ShowPictureFrames = true,
             ShowGravityAppleArrows = true,
-            LineWidth = 2,
+            LineWidth = 1,
             ShowGrass = false
         };
 
