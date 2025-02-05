@@ -1,5 +1,6 @@
 using System;
 using System.Drawing;
+using System.Linq;
 using System.Printing;
 using System.Windows.Forms;
 using System.Windows.Threading;
@@ -35,7 +36,10 @@ namespace Elmanager.LevelEditor.ShapeGallery
             Profile = ContextProfile.Compatability;
 
             _renderingSettings = renderingSettings;
+            
             _level = level;
+            _level.Objects = _level.Objects.Where(o => o.Type != ObjectType.Start).ToList(); // Remove start object
+
             _camera = new ElmaCamera();
             _sceneSettings = sceneSettings;
             _originalElmaRenderer = elmaRenderer;
@@ -70,9 +74,9 @@ namespace Elmanager.LevelEditor.ShapeGallery
         {
             // Initialization code for OpenGL
             _renderer = new ElmaRenderer(this, _renderingSettings);
-            _renderer._lgrCache = _originalElmaRenderer._lgrCache; // Shapes are not rendered correctly with this line
+            _renderer.OpenGlLgr = _originalElmaRenderer.OpenGlLgr; // Slightly faster with these lines. Shapes are sometimes not rendered correctly with this line(?)
+            _renderer._lgrCache = _originalElmaRenderer._lgrCache; // Slightly faster with these lines. Shapes are sometimes not rendered correctly with this line(?)
             var r = _renderer.UpdateSettings(_level, _renderingSettings);
-            
             _renderer.InitializeLevel(_level, _renderingSettings);
             _level.UpdateBounds();
             _zoomController.ZoomFill(_renderingSettings);

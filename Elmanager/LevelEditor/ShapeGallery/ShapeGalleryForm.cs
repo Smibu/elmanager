@@ -25,7 +25,7 @@ internal partial class ShapeGalleryForm : Form
 
     private CustomShapeControl? _selectedShapeControl;
 
-    private ElmaRenderer? _renderer;
+    private ElmaRenderer _renderer;
 
     // Static field to remember the last selected subfolder
     private static string? _lastSelectedSubfolder;
@@ -46,11 +46,29 @@ internal partial class ShapeGalleryForm : Form
         RotationAngle = rotationAngle;
         ShapeMirrorOption = mirrorOption;
         SelectedShapeName = selectedShapeName;
-        _renderingSettings = renderingSettings;
+        
+        _renderingSettings = new LevelEditorRenderingSettings
+        {
+            ShowGrid = false,
+            ShowObjects = false,
+            ShowGrassEdges = true,
+            ShowGround = false,
+            ShowPictures = false,
+            ShowGroundEdges = true,
+            ShowTextures = false,
+            ShowObjectFrames = true,
+            ShowVertices = false,
+            ShowTextureFrames = true,
+            ShowPictureFrames = true,
+            ShowGravityAppleArrows = true,
+            LineWidth = 2,
+            ShowGrass = false
+        };
+
         _sharedContext = sharedContext;
         _sceneSettings = sceneSettings;
 
-        _renderer = null;
+        _renderer = elmaRenderer;
 
         InitializeComponent();
 
@@ -160,7 +178,7 @@ internal partial class ShapeGalleryForm : Form
             .Select(filePath => (Name: Path.GetFileNameWithoutExtension(filePath), ImagePath: filePath))
             .ToList();
 
-        _renderer = new ElmaRenderer(sharedContext, _renderingSettings);
+        //_renderer = new ElmaRenderer(sharedContext, _renderingSettings);
 
         List<CustomShapeControl> shapeControls = new List<CustomShapeControl>(50);
         foreach (var shape in shapes)
