@@ -6,6 +6,7 @@ using System.Windows.Forms;
 using System.Windows.Threading;
 using BrightIdeasSoftware;
 using Elmanager.Lev;
+using Elmanager.LevelEditor.Playing;
 using Elmanager.Rendering;
 using Elmanager.Rendering.Camera;
 using OpenTK.GLControl;
@@ -24,6 +25,7 @@ namespace Elmanager.LevelEditor.ShapeGallery
         private RenderingSettings _renderingSettings;
         private SceneSettings _sceneSettings;
         private ZoomController _zoomController;
+        private bool _isFirstRender = true;
 
         internal LevelControl() : base()
         {
@@ -46,7 +48,7 @@ namespace Elmanager.LevelEditor.ShapeGallery
 
             _renderer = elmaRenderer;
 
-            _zoomController = new ZoomController(_camera, _level, Render);
+            _zoomController = new ZoomController(_camera, _level, () => RedrawScene());
 
             this.Load += LevelControl_Load;
 
@@ -76,11 +78,6 @@ namespace Elmanager.LevelEditor.ShapeGallery
             _renderer = new ElmaRenderer(this, _renderingSettings);
             _renderer.OpenGlLgr = _originalElmaRenderer.OpenGlLgr; // Slightly faster with these lines. Shapes are sometimes not rendered correctly with this line(?)
             _renderer._lgrCache = _originalElmaRenderer._lgrCache; // Slightly faster with these lines. Shapes are sometimes not rendered correctly with this line(?)
-            var r = _renderer.UpdateSettings(_level, _renderingSettings);
-            _renderer.InitializeLevel(_level, _renderingSettings);
-            _level.UpdateBounds();
-            _zoomController.ZoomFill(_renderingSettings);
-
         }
 
         protected override void OnPaint(PaintEventArgs e)
@@ -101,16 +98,28 @@ namespace Elmanager.LevelEditor.ShapeGallery
                 MakeCurrent();
             }
 
-            GL.Viewport(0, 0, Width, Height); // Set viewport to the entire control
-
             GL.Clear(ClearBufferMask.ColorBufferBit | ClearBufferMask.DepthBufferBit);
             CheckGLError("GL.Clear");
 
-            
+            if (_isFirstRender)
+            {
+                GL.Viewport(0, 0, Width, Height); // Set viewport to the entire control
+
+                var r = _renderer.UpdateSettings(_level, _renderingSettings);
+                _renderer.InitializeLevel(_level, _renderingSettings);
+                _level.UpdateBounds();
+                _zoomController.ZoomFill(_renderingSettings);
+                _isFirstRender = false;
+            }
             // Use the ElmaRenderer to render the level
-            _renderer.DrawScene(_level, _camera, _sceneSettings, _renderingSettings);
+            RedrawScene();
 
             SwapBuffers();
+        }
+
+        internal void RedrawScene(object? sender = null, EventArgs? e = null)
+        {
+            _renderer.DrawScene(_level, _camera, _sceneSettings, _renderingSettings);
         }
 
         private void CheckGLError(string location)
