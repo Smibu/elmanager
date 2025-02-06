@@ -33,10 +33,11 @@ namespace Elmanager.LevelEditor.ShapeGallery
         }
 
         internal LevelControl(GLControl sharedContext, Level level, SceneSettings sceneSettings, RenderingSettings renderingSettings, ElmaRenderer elmaRenderer) :
-            base()
+            base(new GLControlSettings {
+                AutoLoadBindings = false,
+                Profile = ContextProfile.Compatability
+            })
         {
-            Profile = ContextProfile.Compatability;
-
             _renderingSettings = renderingSettings;
             
             _level = level;
