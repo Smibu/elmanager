@@ -91,7 +91,7 @@ internal class ElmaRenderer : IDisposable
         return snapShotBmp;
     }
 
-    private Bitmap GetSnapShotForCustomShape(Level lev, ZoomController zoomCtrl, SceneSettings sceneSettings, RenderingSettings settings)
+    public Bitmap GetSnapShotForCustomShape(Level lev, ZoomController zoomCtrl, SceneSettings sceneSettings, RenderingSettings settings)
     {
         var width = zoomCtrl.Cam.ViewPortWidth;
         var height = zoomCtrl.Cam.ViewPortHeight;

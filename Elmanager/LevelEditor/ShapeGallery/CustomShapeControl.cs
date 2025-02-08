@@ -26,7 +26,7 @@ internal partial class CustomShapeControl : UserControl.UserControl
     {
         InitializeComponent();
 
-        shapeLevelControl = new LevelControl(sharedContext, level, sceneSettings, renderingSettings, elmaRenderer);
+        shapeLevelControl = new LevelControl(sharedContext, sceneSettings, renderingSettings, elmaRenderer, level);
         shapeLevelControl.API = OpenTK.Windowing.Common.ContextAPI.OpenGL;
         shapeLevelControl.APIVersion = new Version(3, 3, 0, 0);
         shapeLevelControl.Flags = OpenTK.Windowing.Common.ContextFlags.Default;
@@ -164,5 +164,10 @@ internal partial class CustomShapeControl : UserControl.UserControl
                 e.Graphics.DrawRectangle(pen, 0, 0, this.Width - 2, this.Height - 3);
             }
         }
+    }
+
+    internal void SetLevel(Level? level)
+    {
+        shapeLevelControl.SetLevel(level);
     }
 }

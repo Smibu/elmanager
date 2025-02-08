@@ -181,6 +181,8 @@ internal partial class ShapeGalleryForm : Form
         //_renderer = new ElmaRenderer(sharedContext, _renderingSettings);
 
         List<CustomShapeControl> shapeControls = new List<CustomShapeControl>(50);
+        LevelControl levelControl = new LevelControl(sharedContext);
+
         foreach (var shape in shapes)
         {
             Level level = Level.FromPath(shape.ImagePath).Obj;

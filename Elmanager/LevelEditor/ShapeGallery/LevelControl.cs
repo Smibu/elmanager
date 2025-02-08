@@ -20,7 +20,7 @@ namespace Elmanager.LevelEditor.ShapeGallery
     {
         private ElmaRenderer _renderer;
         private ElmaRenderer _originalElmaRenderer;
-        private Level _level;
+        private Level? _level;
         private ElmaCamera _camera;
         private RenderingSettings _renderingSettings;
         private SceneSettings _sceneSettings;
@@ -32,30 +32,52 @@ namespace Elmanager.LevelEditor.ShapeGallery
             Profile = ContextProfile.Compatability;
         }
 
-        internal LevelControl(GLControl sharedContext, Level level, SceneSettings sceneSettings, RenderingSettings renderingSettings, ElmaRenderer elmaRenderer) :
+        internal LevelControl(GLControl sharedContext, SceneSettings sceneSettings, RenderingSettings renderingSettings, ElmaRenderer elmaRenderer, Level? level=null) :
             base(new GLControlSettings {
                 AutoLoadBindings = false,
                 Profile = ContextProfile.Compatability
             })
         {
             _renderingSettings = renderingSettings;
-            
-            _level = level;
-            _level.Objects = _level.Objects.Where(o => o.Type != ObjectType.Start).ToList(); // Remove start object
 
-            _camera = new ElmaCamera();
+            if (level != null)
+            {
+                _level = level;
+                _level.Objects = _level.Objects.Where(o => o.Type != ObjectType.Start).ToList(); // Remove start object
+                _camera = new ElmaCamera();
+                _zoomController = new ZoomController(_camera, _level, () => RedrawScene());
+            }
+
             _sceneSettings = sceneSettings;
             _originalElmaRenderer = elmaRenderer;
 
             _renderer = elmaRenderer;
-
-            _zoomController = new ZoomController(_camera, _level, () => RedrawScene());
 
             this.Load += LevelControl_Load;
 
             if (!IsHandleCreated)
             {
                 SharedContext = sharedContext; // Set shared context before initialization
+            }
+        }
+
+        /**
+         * Set the level to be displayed in the control
+         * To disable rendering, set level to null
+         */
+        internal void SetLevel(Level? level)
+        {
+            if (level != null)
+            {
+                _level = level;
+                _level.Objects = _level.Objects.Where(o => o.Type != ObjectType.Start).ToList(); // Remove start object
+                _camera = new ElmaCamera();
+                _zoomController = new ZoomController(_camera, _level, () => RedrawScene());
+            }
+            else
+            {
+                // Refactor to something more elegant
+                _level = null;
             }
         }
 
@@ -102,7 +124,7 @@ namespace Elmanager.LevelEditor.ShapeGallery
             GL.Clear(ClearBufferMask.ColorBufferBit | ClearBufferMask.DepthBufferBit);
             CheckGLError("GL.Clear");
 
-            if (_isFirstRender)
+            if (_isFirstRender && _level != null)
             {
                 GL.Viewport(0, 0, Width, Height); // Set viewport to the entire control
 
@@ -120,7 +142,10 @@ namespace Elmanager.LevelEditor.ShapeGallery
 
         internal void RedrawScene(object? sender = null, EventArgs? e = null)
         {
-            _renderer.DrawScene(_level, _camera, _sceneSettings, _renderingSettings);
+            if (_level != null)
+            {
+                _renderer.DrawScene(_level, _camera, _sceneSettings, _renderingSettings);
+            }
         }
 
         private void CheckGLError(string location)
