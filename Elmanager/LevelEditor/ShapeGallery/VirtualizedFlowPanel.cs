@@ -27,8 +27,8 @@ public class VirtualizedFlowPanel : System.Windows.Controls.Panel
         this.columns = columns;
 
         // Enable scrolling
-        this.AutoScroll = true;
-        this.VerticalScroll.SmallChange = ItemHeight;
+        //this.AutoScroll = true;
+        //this.VerticalScroll.SmallChange = ItemHeight;
         this.SetScrollBar();
 
         CreateVirtualControls();
@@ -38,20 +38,20 @@ public class VirtualizedFlowPanel : System.Windows.Controls.Panel
     private void SetScrollBar()
     {
         int virtualHeight = (totalItems / columns) * ItemHeight;
-        this.AutoScrollMinSize = new Size(0, virtualHeight);
+        //this.AutoScrollMinSize = new Size(0, virtualHeight);
     }
 
     private void CreateVirtualControls()
     {
-        virtualizedControls = new List<ImageLabelControl>();
+        //virtualizedControls = new List<ImageLabelControl>();
 
         for (int i = 0; i < rows * columns; i++)
         {
-            var control = new ImageLabelControl();
-            control.Size = new Size(ItemWidth, ItemHeight);
-            control.Location = GetControlPosition(i);
-            virtualizedControls.Add(control);
-            this.Controls.Add(control);
+            //var control = new ImageLabelControl();
+            //control.Size = new Size(ItemWidth, ItemHeight);
+            //control.Location = GetControlPosition(i);
+            //virtualizedControls.Add(control);
+            //this.Controls.Add(control);
         }
     }
 
@@ -64,7 +64,7 @@ public class VirtualizedFlowPanel : System.Windows.Controls.Panel
 
     private void UpdateControls()
     {
-        int firstVisibleIndex = VerticalScroll.Value / ItemHeight * columns;
+        int firstVisibleIndex = /*VerticalScroll.Value / */ItemHeight * columns;
 
         for (int i = 0; i < virtualizedControls.Count; i++)
         {
@@ -73,8 +73,8 @@ public class VirtualizedFlowPanel : System.Windows.Controls.Panel
             {
                 var (image, text) = dataProvider(dataIndex);  // Get data from the provider
                 virtualizedControls[i].Visible = true;
-                virtualizedControls[i].Location = GetControlPosition(dataIndex - firstVisibleIndex);
-                virtualizedControls[i].UpdateContent(image, text);
+                //virtualizedControls[i].Location = GetControlPosition(dataIndex - firstVisibleIndex);
+                //virtualizedControls[i].UpdateContent(image, text);
             }
             else
             {
@@ -83,9 +83,9 @@ public class VirtualizedFlowPanel : System.Windows.Controls.Panel
         }
     }
 
-    protected override void OnScroll(ScrollEventArgs se)
-    {
-        base.OnScroll(se);
-        UpdateControls();
-    }
+    //protected override void OnScroll(ScrollEventArgs se)
+    //{
+    //    base.OnScroll(se);
+    //    UpdateControls();
+    //}
 }

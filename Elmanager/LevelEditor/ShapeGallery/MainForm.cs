@@ -16,7 +16,7 @@ public partial class MainForm : Form
 
     public MainForm()
     {
-        InitializeComponent();
+        //InitializeComponent();
         SetupUI();
         LoadImageFilePaths(@"C:\path\to\your\images");  // Change to your directory
         SetupReusableControls(9);  // Create 9 reusable user controls
@@ -66,9 +66,9 @@ public partial class MainForm : Form
 
         for (int i = 0; i < numControls; i++)
         {
-            var uc = new CustomShapeControl();
-            flowLayoutPanel.Controls.Add(uc);
-            reusableControls.Add(uc);
+            //var uc = new CustomShapeControl();
+            //flowLayoutPanel.Controls.Add(uc);
+            //reusableControls.Add(uc);
         }
     }
 
@@ -96,7 +96,7 @@ public partial class MainForm : Form
             if (dataIndex < imageFilePaths.Count)
             {
                 reusableControls[i].Visible = true;
-                reusableControls[i].UpdateContent(imageFilePaths[dataIndex], $"Item {dataIndex}");
+                //reusableControls[i].UpdateContent(imageFilePaths[dataIndex], $"Item {dataIndex}");
             }
             else
             {

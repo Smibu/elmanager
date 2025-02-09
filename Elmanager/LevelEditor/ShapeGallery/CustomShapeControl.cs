@@ -22,7 +22,7 @@ internal partial class CustomShapeControl : UserControl.UserControl
     private Color _borderColor = Color.Transparent;
     private bool _isPressed;
 
-    public CustomShapeControl(GLControl sharedContext, Level level, SceneSettings sceneSettings, RenderingSettings renderingSettings, ElmaRenderer elmaRenderer)
+    public CustomShapeControl(GLControl sharedContext, SceneSettings sceneSettings, RenderingSettings renderingSettings, ElmaRenderer elmaRenderer, Level? level=null)
     {
         InitializeComponent();
 

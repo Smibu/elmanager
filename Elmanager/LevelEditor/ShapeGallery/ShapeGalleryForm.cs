@@ -5,12 +5,14 @@ using System.IO;
 using System.Linq;
 using System.Windows.Documents;
 using System.Windows.Forms;
+using System.Windows.Shapes;
 using BrightIdeasSoftware;
 using Elmanager.Lev;
 using Elmanager.Rendering;
 using OpenTK.GLControl;
 using OpenTK.Windowing.Common;
 using OpenTK.Windowing.Desktop;
+using Path = System.IO.Path;
 
 namespace Elmanager.LevelEditor.ShapeGallery;
 
@@ -127,7 +129,7 @@ internal partial class ShapeGalleryForm : Form
         this.Location = new Point(mousePosition.X + offsetX, mousePosition.Y + offsetY);
 
         // Get the screen bounds
-        Rectangle screenBounds = Screen.FromPoint(mousePosition).WorkingArea;
+        System.Drawing.Rectangle screenBounds = Screen.FromPoint(mousePosition).WorkingArea;
 
         // Adjust the position to ensure the dialog is fully visible
         if (this.Right > screenBounds.Right)
@@ -165,7 +167,16 @@ internal partial class ShapeGalleryForm : Form
         flowLayoutPanelShapes.SuspendLayout();
 
         // Clear any existing items
-        flowLayoutPanelShapes.Controls.Clear();
+        if (flowLayoutPanelShapes.Controls.Count > 0)
+        {
+            foreach (CustomShapeControl? shapeControl in flowLayoutPanelShapes.Controls.OfType<CustomShapeControl>())
+            {
+                shapeControl.SetLevel(null);
+                shapeControl.ShapeFullPath = "";
+                shapeControl.ShapeName = "Placeholder Name";
+                shapeControl.Visible = false;
+            }
+        }
 
         if (!Directory.Exists(folderPath))
         {
@@ -178,13 +189,29 @@ internal partial class ShapeGalleryForm : Form
             .Select(filePath => (Name: Path.GetFileNameWithoutExtension(filePath), ImagePath: filePath))
             .ToList();
 
-        //_renderer = new ElmaRenderer(sharedContext, _renderingSettings);
-
-        List<CustomShapeControl> shapeControls = new List<CustomShapeControl>(50);
-        LevelControl levelControl = new LevelControl(sharedContext);
-
-        foreach (var shape in shapes)
+        if (shapes.Count > flowLayoutPanelShapes.Controls.Count)
         {
+            var diff = shapes.Count - flowLayoutPanelShapes.Controls.Count;
+            for (var i = 0; i < diff; i++)
+            {
+                CustomShapeControl shapeControl = new CustomShapeControl(sharedContext, _sceneSettings, _renderingSettings, _renderer);
+                // Handle shape click event
+                shapeControl.ShapeClicked += ShapeControl_ShapeClicked;
+
+                // Handle polygons loaded event
+                shapeControl.ShapeDataLoaded += (sender, shapeDataDto) =>
+                {
+                    ShapeDataLoaded?.Invoke(this, shapeDataDto);
+                };
+
+                flowLayoutPanelShapes.Controls.Add(shapeControl);
+            }
+        }
+
+        for (var i = 0; i < shapes.Count; i++)
+        {
+            var shape = shapes[i];
+            CustomShapeControl shapeControl = (CustomShapeControl)flowLayoutPanelShapes.Controls[i];
             Level level = Level.FromPath(shape.ImagePath).Obj;
 
             if (level.IsAcrossLevel)
@@ -192,27 +219,10 @@ internal partial class ShapeGalleryForm : Form
                 throw new InvalidOperationException("Cannot load across level shapes.");
             }
 
-            CustomShapeControl shapeControl = new CustomShapeControl(sharedContext, level, _sceneSettings, _renderingSettings, _renderer)
-            {
-                ShapeName = shape.Name,
-                ShapeFullPath = shape.ImagePath // Store the full path
-            };
-
-            // Handle shape click event
-            shapeControl.ShapeClicked += ShapeControl_ShapeClicked;
-
-            // Handle polygons loaded event
-            shapeControl.ShapeDataLoaded += (sender, shapeDataDto) =>
-            {
-                ShapeDataLoaded?.Invoke(this, shapeDataDto);
-            };
-
-            shapeControls.Add(shapeControl);
-        }
-
-        foreach (var shapeControl in shapeControls)
-        {
-            flowLayoutPanelShapes.Controls.Add(shapeControl);
+            shapeControl.ShapeFullPath = shape.ImagePath;
+            shapeControl.ShapeName = shape.Name;
+            shapeControl.SetLevel(level);
+            shapeControl.Visible = true;
         }
 
         flowLayoutPanelShapes.ResumeLayout();
