@@ -247,6 +247,7 @@ namespace Elmanager.LevelEditor.ShapeGallery
             AutoScaleMode = AutoScaleMode.Font;
             ClientSize = new System.Drawing.Size(580, 646);
             Controls.Add(tableLayoutPanel1);
+            FormBorderStyle = FormBorderStyle.FixedSingle;
             MinimumSize = new System.Drawing.Size(592, 300);
             Name = "ShapeGalleryForm";
             Text = "ShapeGallery";
