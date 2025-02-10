@@ -106,6 +106,8 @@ internal partial class ShapeGalleryForm : Form
         
         SetupReusableControls(sharedContext, columns*rows);
 
+        flowLayoutPanelShapes.MouseWheel += FlowLayoutPanelShapes_MouseWheel;
+
         vScrollBar1.ValueChanged += vScrollBar_ValueChanged;
     }
 
@@ -116,6 +118,27 @@ internal partial class ShapeGalleryForm : Form
         vScrollBar1.Maximum = Math.Max(totalPages - 1, 0);  // Ensure the scrollbar has valid range
         vScrollBar1.LargeChange = 1;
         vScrollBar1.SmallChange = 1;
+    }
+
+    private void FlowLayoutPanelShapes_MouseWheel(object sender, MouseEventArgs e)
+    {
+        // Adjust the scrollbar value based on the mouse wheel scroll direction
+        if (e.Delta > 0)
+        {
+            // Scroll up
+            if (vScrollBar1.Value > vScrollBar1.Minimum)
+            {
+                vScrollBar1.Value -= vScrollBar1.SmallChange;
+            }
+        }
+        else if (e.Delta < 0)
+        {
+            // Scroll down
+            if (vScrollBar1.Value < vScrollBar1.Maximum)
+            {
+                vScrollBar1.Value += vScrollBar1.SmallChange;
+            }
+        }
     }
 
     private void vScrollBar_ValueChanged(object sender, EventArgs e)
