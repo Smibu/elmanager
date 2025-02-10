@@ -32,6 +32,9 @@ internal partial class ShapeGalleryForm : Form
     // Static field to remember the last selected subfolder
     private static string? _lastSelectedSubfolder;
 
+    private int columns = 4;  // 3 rows × 4 columns
+    private int rows = 3;  // 3 rows × 4 columns
+
     private double ClampAngle(double angle, double min, double max)
     {
         double range = max - min;
@@ -41,6 +44,8 @@ internal partial class ShapeGalleryForm : Form
     private readonly SceneSettings _sceneSettings;
     private RenderingSettings _renderingSettings;
     private readonly GLControl _sharedContext;
+    private List<CustomShapeControl> reusableControls;
+    private List<(string Name, string FilePath)> shapes;
 
     public ShapeGalleryForm(GLControl sharedContext, ElmaRenderer elmaRenderer, RenderingSettings renderingSettings, SceneSettings sceneSettings, string? selectedShapeName = null, double scalingFactor = 0.0, double rotationAngle = 0.0, ShapeMirrorOption mirrorOption = ShapeMirrorOption.None)
     {
@@ -98,6 +103,49 @@ internal partial class ShapeGalleryForm : Form
 
         // Pass the shared context to the PopulateShapeGallery method
         //PopulateShapeGalleryFromLastSelectedSubfolder(_sharedContext);
+        
+        SetupReusableControls(sharedContext, columns*rows);
+
+        vScrollBar1.ValueChanged += vScrollBar_ValueChanged;
+    }
+
+    private void SetupScrollBar(int count)
+    {
+        int totalPages = (int)Math.Ceiling(1.0 * count / (columns * rows));
+        vScrollBar1.Minimum = 0;
+        vScrollBar1.Maximum = Math.Max(totalPages - 1, 0);  // Ensure the scrollbar has valid range
+        vScrollBar1.LargeChange = 1;
+        vScrollBar1.SmallChange = 1;
+    }
+
+    private void vScrollBar_ValueChanged(object sender, EventArgs e)
+    {
+        UpdateDisplayedControls(vScrollBar1.Value);
+    }
+
+    private void UpdateDisplayedControls(int startPage)
+    {
+        flowLayoutPanelShapes.SuspendLayout();
+        int startIndex = startPage * columns;
+
+        for (int i = 0; i < reusableControls.Count; i++)
+        {
+            int dataIndex = startIndex + i;
+            if (dataIndex < shapes.Count)
+            {
+                reusableControls[i].UpdateContent(shapes[dataIndex].FilePath, shapes[dataIndex].Name);
+                reusableControls[i].Visible = true;
+            }
+            else
+            {
+                reusableControls[i].Visible = false;
+            }
+
+            reusableControls[i].Invalidate();
+            reusableControls[i].Refresh();
+        }
+
+        flowLayoutPanelShapes.ResumeLayout();
     }
 
     private void HighlightSelectedShape()
@@ -150,6 +198,27 @@ internal partial class ShapeGalleryForm : Form
         }
     }
 
+    private void SetupReusableControls(GLControl sharedContext, int numControls)
+    {
+        reusableControls = new List<CustomShapeControl>();
+
+        for (int i = 0; i < numControls; i++)
+        {
+            CustomShapeControl shapeControl = new CustomShapeControl(sharedContext, _sceneSettings, _renderingSettings, _renderer);
+            // Handle shape click event
+            shapeControl.ShapeClicked += ShapeControl_ShapeClicked;
+
+            // Handle polygons loaded event
+            shapeControl.ShapeDataLoaded += (sender, shapeDataDto) =>
+            {
+                ShapeDataLoaded?.Invoke(this, shapeDataDto);
+            };
+
+            flowLayoutPanelShapes.Controls.Add(shapeControl);
+            reusableControls.Add(shapeControl);
+        }
+    }
+
     protected override void OnFormClosing(FormClosingEventArgs e)
     {
         // Disable the form's painting
@@ -166,18 +235,6 @@ internal partial class ShapeGalleryForm : Form
     {
         flowLayoutPanelShapes.SuspendLayout();
 
-        // Clear any existing items
-        if (flowLayoutPanelShapes.Controls.Count > 0)
-        {
-            foreach (CustomShapeControl? shapeControl in flowLayoutPanelShapes.Controls.OfType<CustomShapeControl>())
-            {
-                shapeControl.SetLevel(null);
-                shapeControl.ShapeFullPath = "";
-                shapeControl.ShapeName = "Placeholder Name";
-                shapeControl.Visible = false;
-            }
-        }
-
         if (!Directory.Exists(folderPath))
         {
             flowLayoutPanelShapes.ResumeLayout();
@@ -185,45 +242,13 @@ internal partial class ShapeGalleryForm : Form
         }
 
         // Load images from the specified folder
-        var shapes = Directory.GetFiles(folderPath, "*.lev")
+        shapes = Directory.GetFiles(folderPath, "*.lev")
             .Select(filePath => (Name: Path.GetFileNameWithoutExtension(filePath), ImagePath: filePath))
             .ToList();
 
-        if (shapes.Count > flowLayoutPanelShapes.Controls.Count)
-        {
-            var diff = shapes.Count - flowLayoutPanelShapes.Controls.Count;
-            for (var i = 0; i < diff; i++)
-            {
-                CustomShapeControl shapeControl = new CustomShapeControl(sharedContext, _sceneSettings, _renderingSettings, _renderer);
-                // Handle shape click event
-                shapeControl.ShapeClicked += ShapeControl_ShapeClicked;
+        SetupScrollBar(shapes.Count);
 
-                // Handle polygons loaded event
-                shapeControl.ShapeDataLoaded += (sender, shapeDataDto) =>
-                {
-                    ShapeDataLoaded?.Invoke(this, shapeDataDto);
-                };
-
-                flowLayoutPanelShapes.Controls.Add(shapeControl);
-            }
-        }
-
-        for (var i = 0; i < shapes.Count; i++)
-        {
-            var shape = shapes[i];
-            CustomShapeControl shapeControl = (CustomShapeControl)flowLayoutPanelShapes.Controls[i];
-            Level level = Level.FromPath(shape.ImagePath).Obj;
-
-            if (level.IsAcrossLevel)
-            {
-                throw new InvalidOperationException("Cannot load across level shapes.");
-            }
-
-            shapeControl.ShapeFullPath = shape.ImagePath;
-            shapeControl.ShapeName = shape.Name;
-            shapeControl.SetLevel(level);
-            shapeControl.Visible = true;
-        }
+        UpdateDisplayedControls(0);
 
         flowLayoutPanelShapes.ResumeLayout();
     }

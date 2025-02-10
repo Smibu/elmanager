@@ -70,7 +70,7 @@ namespace Elmanager.LevelEditor.ShapeGallery
             flowLayoutPanelShapes.Location = new System.Drawing.Point(3, 3);
             flowLayoutPanelShapes.Margin = new Padding(3, 3, 0, 3);
             flowLayoutPanelShapes.Name = "flowLayoutPanelShapes";
-            flowLayoutPanelShapes.Size = new System.Drawing.Size(554, 435);
+            flowLayoutPanelShapes.Size = new System.Drawing.Size(554, 542);
             flowLayoutPanelShapes.TabIndex = 0;
             // 
             // buttonCancel
@@ -109,7 +109,7 @@ namespace Elmanager.LevelEditor.ShapeGallery
             tableLayoutPanel1.RowStyles.Add(new RowStyle(SizeType.Percent, 100F));
             tableLayoutPanel1.RowStyles.Add(new RowStyle(SizeType.Absolute, 56F));
             tableLayoutPanel1.RowStyles.Add(new RowStyle(SizeType.Absolute, 36F));
-            tableLayoutPanel1.Size = new System.Drawing.Size(580, 539);
+            tableLayoutPanel1.Size = new System.Drawing.Size(580, 646);
             tableLayoutPanel1.TabIndex = 3;
             // 
             // panel1
@@ -118,7 +118,7 @@ namespace Elmanager.LevelEditor.ShapeGallery
             panel1.Controls.Add(buttonOk);
             panel1.Controls.Add(buttonCancel);
             panel1.Dock = DockStyle.Fill;
-            panel1.Location = new System.Drawing.Point(3, 506);
+            panel1.Location = new System.Drawing.Point(3, 613);
             panel1.Name = "panel1";
             panel1.Size = new System.Drawing.Size(574, 30);
             panel1.TabIndex = 1;
@@ -143,7 +143,7 @@ namespace Elmanager.LevelEditor.ShapeGallery
             panel2.Controls.Add(rotationLabel);
             panel2.Controls.Add(scalingLabel);
             panel2.Dock = DockStyle.Fill;
-            panel2.Location = new System.Drawing.Point(3, 450);
+            panel2.Location = new System.Drawing.Point(3, 557);
             panel2.Name = "panel2";
             panel2.Size = new System.Drawing.Size(574, 50);
             panel2.TabIndex = 2;
@@ -230,7 +230,7 @@ namespace Elmanager.LevelEditor.ShapeGallery
             tableLayoutPanel2.Name = "tableLayoutPanel2";
             tableLayoutPanel2.RowCount = 1;
             tableLayoutPanel2.RowStyles.Add(new RowStyle(SizeType.Percent, 100F));
-            tableLayoutPanel2.Size = new System.Drawing.Size(574, 441);
+            tableLayoutPanel2.Size = new System.Drawing.Size(574, 548);
             tableLayoutPanel2.TabIndex = 3;
             // 
             // vScrollBar1
@@ -238,14 +238,14 @@ namespace Elmanager.LevelEditor.ShapeGallery
             vScrollBar1.Anchor = AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Right;
             vScrollBar1.Location = new System.Drawing.Point(557, 0);
             vScrollBar1.Name = "vScrollBar1";
-            vScrollBar1.Size = new System.Drawing.Size(17, 441);
+            vScrollBar1.Size = new System.Drawing.Size(17, 548);
             vScrollBar1.TabIndex = 1;
             // 
             // ShapeGalleryForm
             // 
             AutoScaleDimensions = new System.Drawing.SizeF(7F, 15F);
             AutoScaleMode = AutoScaleMode.Font;
-            ClientSize = new System.Drawing.Size(580, 539);
+            ClientSize = new System.Drawing.Size(580, 646);
             Controls.Add(tableLayoutPanel1);
             MinimumSize = new System.Drawing.Size(592, 300);
             Name = "ShapeGalleryForm";

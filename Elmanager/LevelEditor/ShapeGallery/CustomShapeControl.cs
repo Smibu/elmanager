@@ -166,6 +166,14 @@ internal partial class CustomShapeControl : UserControl.UserControl
         }
     }
 
+    internal void UpdateContent(string filepath, string shapeName)
+    {
+        Level level = Level.FromPath(filepath).Obj;
+        ShapeFullPath = filepath;
+        ShapeName = shapeName;
+        SetLevel(level);
+    }
+
     internal void SetLevel(Level? level)
     {
         shapeLevelControl.SetLevel(level);
