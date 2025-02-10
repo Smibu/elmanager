@@ -59,7 +59,6 @@ internal partial class LevelEditorForm : FormMod, IMessageFilter
     internal Level Lev => _editorLev.Lev;
     private ElmaFile? LevFile => _editorLev.File;
     internal ElmaRenderer Renderer = null!;
-    private OpenTK.GLControl.GLControl? _sharedContext;
     internal readonly EditorTools Tools;
     private List<string>? _currLevDirFiles;
     private bool _draggingScreen;

@@ -21,16 +21,11 @@ namespace Elmanager.LevelEditor.ShapeGallery
         private ElmaRenderer _renderer;
         private ElmaRenderer _originalElmaRenderer;
         private Level? _level;
-        private ElmaCamera _camera;
+        private ElmaCamera? _camera;
         private RenderingSettings _renderingSettings;
         private SceneSettings _sceneSettings;
-        private ZoomController _zoomController;
+        private ZoomController? _zoomController;
         private bool _isFirstRender = true;
-
-        internal LevelControl() : base()
-        {
-            Profile = ContextProfile.Compatability;
-        }
 
         internal LevelControl(GLControl sharedContext, SceneSettings sceneSettings, RenderingSettings renderingSettings, ElmaRenderer elmaRenderer, Level? level=null) :
             base(new GLControlSettings {
@@ -132,7 +127,7 @@ namespace Elmanager.LevelEditor.ShapeGallery
                 var r = _renderer.UpdateSettings(_level, _renderingSettings);
                 _renderer.InitializeLevel(_level, _renderingSettings);
                 _level.UpdateBounds();
-                _zoomController.ZoomFill(_renderingSettings);
+                _zoomController?.ZoomFill(_renderingSettings);
                 _isFirstRender = false;
             }
             // Use the ElmaRenderer to render the level
@@ -143,7 +138,7 @@ namespace Elmanager.LevelEditor.ShapeGallery
 
         internal void RedrawScene(object? sender = null, EventArgs? e = null)
         {
-            if (_level != null)
+            if (_level != null && _camera != null)
             {
                 _renderer.DrawScene(_level, _camera, _sceneSettings, _renderingSettings);
             }

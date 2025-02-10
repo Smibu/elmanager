@@ -44,8 +44,8 @@ internal partial class ShapeGalleryForm : Form
     private readonly SceneSettings _sceneSettings;
     private RenderingSettings _renderingSettings;
     private readonly GLControl _sharedContext;
-    private List<CustomShapeControl> reusableControls;
-    private List<(string Name, string FilePath)> shapes;
+    private List<CustomShapeControl> _reusableControls;
+    private List<(string Name, string FilePath)> _shapes;
 
     public ShapeGalleryForm(GLControl sharedContext, ElmaRenderer elmaRenderer, RenderingSettings renderingSettings, SceneSettings sceneSettings, string? selectedShapeName = null, double scalingFactor = 0.0, double rotationAngle = 0.0, ShapeMirrorOption mirrorOption = ShapeMirrorOption.None)
     {
@@ -72,10 +72,14 @@ internal partial class ShapeGalleryForm : Form
             ShowGrass = false
         };
 
+        _shapes = new List<(string Name, string FilePath)>();
+
         _sharedContext = sharedContext;
         _sceneSettings = sceneSettings;
 
         _renderer = elmaRenderer;
+
+        _reusableControls = new List<CustomShapeControl>();
 
         InitializeComponent();
 
@@ -120,7 +124,7 @@ internal partial class ShapeGalleryForm : Form
         vScrollBar1.SmallChange = 1;
     }
 
-    private void FlowLayoutPanelShapes_MouseWheel(object sender, MouseEventArgs e)
+    private void FlowLayoutPanelShapes_MouseWheel(object? sender, MouseEventArgs e)
     {
         // Adjust the scrollbar value based on the mouse wheel scroll direction
         if (e.Delta > 0)
@@ -141,7 +145,7 @@ internal partial class ShapeGalleryForm : Form
         }
     }
 
-    private void vScrollBar_ValueChanged(object sender, EventArgs e)
+    private void vScrollBar_ValueChanged(object? sender, EventArgs e)
     {
         UpdateDisplayedControls(vScrollBar1.Value);
     }
@@ -151,21 +155,21 @@ internal partial class ShapeGalleryForm : Form
         flowLayoutPanelShapes.SuspendLayout();
         int startIndex = startPage * columns;
 
-        for (int i = 0; i < reusableControls.Count; i++)
+        for (int i = 0; i < _reusableControls.Count; i++)
         {
             int dataIndex = startIndex + i;
-            if (dataIndex < shapes.Count)
+            if (dataIndex < _shapes.Count)
             {
-                reusableControls[i].UpdateContent(shapes[dataIndex].FilePath, shapes[dataIndex].Name);
-                reusableControls[i].Visible = true;
+                _reusableControls[i].UpdateContent(_shapes[dataIndex].FilePath, _shapes[dataIndex].Name);
+                _reusableControls[i].Visible = true;
             }
             else
             {
-                reusableControls[i].Visible = false;
+                _reusableControls[i].Visible = false;
             }
 
-            reusableControls[i].Invalidate();
-            reusableControls[i].Refresh();
+            _reusableControls[i].Invalidate();
+            _reusableControls[i].Refresh();
         }
 
         flowLayoutPanelShapes.ResumeLayout();
@@ -223,8 +227,6 @@ internal partial class ShapeGalleryForm : Form
 
     private void SetupReusableControls(GLControl sharedContext, int numControls)
     {
-        reusableControls = new List<CustomShapeControl>();
-
         for (int i = 0; i < numControls; i++)
         {
             CustomShapeControl shapeControl = new CustomShapeControl(sharedContext, _sceneSettings, _renderingSettings, _renderer);
@@ -238,7 +240,7 @@ internal partial class ShapeGalleryForm : Form
             };
 
             flowLayoutPanelShapes.Controls.Add(shapeControl);
-            reusableControls.Add(shapeControl);
+            _reusableControls.Add(shapeControl);
         }
     }
 
@@ -265,11 +267,11 @@ internal partial class ShapeGalleryForm : Form
         }
 
         // Load images from the specified folder
-        shapes = Directory.GetFiles(folderPath, "*.lev")
+        _shapes = Directory.GetFiles(folderPath, "*.lev")
             .Select(filePath => (Name: Path.GetFileNameWithoutExtension(filePath), ImagePath: filePath))
             .ToList();
 
-        SetupScrollBar(shapes.Count);
+        SetupScrollBar(_shapes.Count);
 
         UpdateDisplayedControls(0);
 
