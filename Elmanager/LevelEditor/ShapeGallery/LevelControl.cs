@@ -96,8 +96,8 @@ namespace Elmanager.LevelEditor.ShapeGallery
         {
             // Initialization code for OpenGL
             _renderer = new ElmaRenderer(this, _renderingSettings);
-            _renderer.OpenGlLgr = _originalElmaRenderer.OpenGlLgr; // Slightly faster with these lines. Shapes are sometimes not rendered correctly with this line(?)
-            _renderer._lgrCache = _originalElmaRenderer._lgrCache; // Slightly faster with these lines. Shapes are sometimes not rendered correctly with this line(?)
+            _renderer.OpenGlLgr = _originalElmaRenderer.OpenGlLgr; // Slightly faster with these lines. There is however likely a memory leak here
+            _renderer._lgrCache = _originalElmaRenderer._lgrCache; // Slightly faster with these lines. There is however likely a memory leak here
         }
 
         protected override void OnPaint(PaintEventArgs e)
