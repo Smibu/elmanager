@@ -152,8 +152,12 @@ internal partial class ShapeGalleryForm : Form
 
     private void UpdateDisplayedControls(int startPage)
     {
-        flowLayoutPanelShapes.SuspendLayout();
         int startIndex = startPage * columns;
+
+        for (int i = 0; i < _reusableControls.Count; i++)
+        {
+            _reusableControls[i].DisableLevelRendering(true);
+        }
 
         for (int i = 0; i < _reusableControls.Count; i++)
         {
@@ -167,12 +171,15 @@ internal partial class ShapeGalleryForm : Form
             {
                 _reusableControls[i].Visible = false;
             }
-
-            _reusableControls[i].Invalidate();
-            _reusableControls[i].Refresh();
         }
 
-        flowLayoutPanelShapes.ResumeLayout();
+        for (int i = 0; i < _reusableControls.Count; i++)
+        {
+            _reusableControls[i].DisableLevelRendering(false);
+        }
+
+        flowLayoutPanelShapes.Invalidate();
+        flowLayoutPanelShapes.Refresh();
     }
 
     private void HighlightSelectedShape()
@@ -239,6 +246,8 @@ internal partial class ShapeGalleryForm : Form
                 ShapeDataLoaded?.Invoke(this, shapeDataDto);
             };
 
+            shapeControl.Visible = false;
+            shapeControl.DisableLevelRendering(true);
             flowLayoutPanelShapes.Controls.Add(shapeControl);
             _reusableControls.Add(shapeControl);
         }
@@ -258,11 +267,8 @@ internal partial class ShapeGalleryForm : Form
 
     private void PopulateShapeGallery(string folderPath, GLControl sharedContext)
     {
-        flowLayoutPanelShapes.SuspendLayout();
-
         if (!Directory.Exists(folderPath))
         {
-            flowLayoutPanelShapes.ResumeLayout();
             return;
         }
 
@@ -274,8 +280,6 @@ internal partial class ShapeGalleryForm : Form
         SetupScrollBar(_shapes.Count);
 
         UpdateDisplayedControls(0);
-
-        flowLayoutPanelShapes.ResumeLayout();
     }
 
     private void ShapeControl_ShapeClicked(object? sender, EventArgs e)

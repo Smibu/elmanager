@@ -22,12 +22,6 @@ namespace Elmanager.LevelEditor.ShapeGallery
                 components.Dispose();
             }
 
-            // if (picShapeImage.Image != null)
-            // {
-                // picShapeImage.Image.Dispose();
-                // picShapeImage.Image = null;
-            // }
-
             base.Dispose(disposing);
         }
 

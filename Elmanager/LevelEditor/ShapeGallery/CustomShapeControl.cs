@@ -178,4 +178,9 @@ internal partial class CustomShapeControl : UserControl.UserControl
     {
         shapeLevelControl.SetLevel(level);
     }
+
+    internal void DisableLevelRendering(bool disable)
+    {
+        shapeLevelControl.DisableRendering = disable;
+    }
 }

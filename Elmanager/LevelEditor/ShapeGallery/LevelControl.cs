@@ -26,6 +26,7 @@ namespace Elmanager.LevelEditor.ShapeGallery
         private SceneSettings _sceneSettings;
         private ZoomController? _zoomController;
         private bool _isFirstRender = true;
+        public bool DisableRendering { get; set; } = true;
 
         internal LevelControl(GLControl sharedContext, SceneSettings sceneSettings, RenderingSettings renderingSettings, ElmaRenderer elmaRenderer, Level? level=null) :
             base(new GLControlSettings {
@@ -107,6 +108,11 @@ namespace Elmanager.LevelEditor.ShapeGallery
 
         private void Render()
         {
+            if (DisableRendering)
+            {
+                return;
+            }
+
             if (Context == null)
             {
                 return;
@@ -151,6 +157,16 @@ namespace Elmanager.LevelEditor.ShapeGallery
             {
                 System.Diagnostics.Debug.WriteLine($"OpenGL Error at {location}: {error}");
             }
+        }
+
+        protected override void Dispose(bool disposing)
+        {
+            if (disposing)
+            {
+                // Dispose of any disposable resources here
+                //_renderer.Dispose(); // Crashes.
+            }
+            base.Dispose(disposing);
         }
     }
 }
