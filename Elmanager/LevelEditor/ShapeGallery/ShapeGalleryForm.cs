@@ -69,7 +69,8 @@ internal partial class ShapeGalleryForm : Form
             ShowPictureFrames = true,
             ShowGravityAppleArrows = true,
             LineWidth = 1,
-            ShowGrass = false
+            ShowGrass = false,
+            DisableFrameBuffer = true
         };
 
         _shapes = new List<(string Name, string FilePath)>();
