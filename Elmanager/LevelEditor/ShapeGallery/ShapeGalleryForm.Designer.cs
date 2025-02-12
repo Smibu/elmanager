@@ -70,13 +70,13 @@ namespace Elmanager.LevelEditor.ShapeGallery
             flowLayoutPanelShapes.Location = new System.Drawing.Point(3, 3);
             flowLayoutPanelShapes.Margin = new Padding(3, 3, 0, 3);
             flowLayoutPanelShapes.Name = "flowLayoutPanelShapes";
-            flowLayoutPanelShapes.Size = new System.Drawing.Size(554, 542);
+            flowLayoutPanelShapes.Size = new System.Drawing.Size(568, 542);
             flowLayoutPanelShapes.TabIndex = 0;
             // 
             // buttonCancel
             // 
             buttonCancel.Anchor = AnchorStyles.Bottom | AnchorStyles.Right;
-            buttonCancel.Location = new System.Drawing.Point(496, 4);
+            buttonCancel.Location = new System.Drawing.Point(510, 4);
             buttonCancel.Name = "buttonCancel";
             buttonCancel.Size = new System.Drawing.Size(75, 23);
             buttonCancel.TabIndex = 0;
@@ -87,7 +87,7 @@ namespace Elmanager.LevelEditor.ShapeGallery
             // buttonOk
             // 
             buttonOk.Anchor = AnchorStyles.Bottom | AnchorStyles.Right;
-            buttonOk.Location = new System.Drawing.Point(415, 4);
+            buttonOk.Location = new System.Drawing.Point(429, 4);
             buttonOk.Name = "buttonOk";
             buttonOk.Size = new System.Drawing.Size(75, 23);
             buttonOk.TabIndex = 1;
@@ -109,7 +109,7 @@ namespace Elmanager.LevelEditor.ShapeGallery
             tableLayoutPanel1.RowStyles.Add(new RowStyle(SizeType.Percent, 100F));
             tableLayoutPanel1.RowStyles.Add(new RowStyle(SizeType.Absolute, 56F));
             tableLayoutPanel1.RowStyles.Add(new RowStyle(SizeType.Absolute, 36F));
-            tableLayoutPanel1.Size = new System.Drawing.Size(580, 646);
+            tableLayoutPanel1.Size = new System.Drawing.Size(594, 646);
             tableLayoutPanel1.TabIndex = 3;
             // 
             // panel1
@@ -120,7 +120,7 @@ namespace Elmanager.LevelEditor.ShapeGallery
             panel1.Dock = DockStyle.Fill;
             panel1.Location = new System.Drawing.Point(3, 613);
             panel1.Name = "panel1";
-            panel1.Size = new System.Drawing.Size(574, 30);
+            panel1.Size = new System.Drawing.Size(588, 30);
             panel1.TabIndex = 1;
             // 
             // comboBoxSubfolders
@@ -145,12 +145,11 @@ namespace Elmanager.LevelEditor.ShapeGallery
             panel2.Dock = DockStyle.Fill;
             panel2.Location = new System.Drawing.Point(3, 557);
             panel2.Name = "panel2";
-            panel2.Size = new System.Drawing.Size(574, 50);
+            panel2.Size = new System.Drawing.Size(588, 50);
             panel2.TabIndex = 2;
             // 
             // resetValuesButton
             // 
-            resetValuesButton.AutoSize = true;
             resetValuesButton.Location = new System.Drawing.Point(294, 23);
             resetValuesButton.Name = "resetValuesButton";
             resetValuesButton.Size = new System.Drawing.Size(75, 25);
@@ -230,13 +229,13 @@ namespace Elmanager.LevelEditor.ShapeGallery
             tableLayoutPanel2.Name = "tableLayoutPanel2";
             tableLayoutPanel2.RowCount = 1;
             tableLayoutPanel2.RowStyles.Add(new RowStyle(SizeType.Percent, 100F));
-            tableLayoutPanel2.Size = new System.Drawing.Size(574, 548);
+            tableLayoutPanel2.Size = new System.Drawing.Size(588, 548);
             tableLayoutPanel2.TabIndex = 3;
             // 
             // vScrollBar1
             // 
             vScrollBar1.Anchor = AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Right;
-            vScrollBar1.Location = new System.Drawing.Point(557, 0);
+            vScrollBar1.Location = new System.Drawing.Point(571, 0);
             vScrollBar1.Name = "vScrollBar1";
             vScrollBar1.Size = new System.Drawing.Size(17, 548);
             vScrollBar1.TabIndex = 1;
@@ -245,17 +244,16 @@ namespace Elmanager.LevelEditor.ShapeGallery
             // 
             AutoScaleDimensions = new System.Drawing.SizeF(96F, 96F);
             AutoScaleMode = AutoScaleMode.Dpi;
-            ClientSize = new System.Drawing.Size(580, 646);
+            ClientSize = new System.Drawing.Size(594, 646);
             Controls.Add(tableLayoutPanel1);
             FormBorderStyle = FormBorderStyle.FixedSingle;
-            MinimumSize = new System.Drawing.Size(592, 300);
+            MinimumSize = new System.Drawing.Size(610, 300);
             Name = "ShapeGalleryForm";
             Text = "ShapeGallery";
             Load += ShapeGalleryForm_Load;
             tableLayoutPanel1.ResumeLayout(false);
             panel1.ResumeLayout(false);
             panel2.ResumeLayout(false);
-            panel2.PerformLayout();
             ((System.ComponentModel.ISupportInitialize)scalingNumericUpDown).EndInit();
             ((System.ComponentModel.ISupportInitialize)rotationNumericUpDown).EndInit();
             tableLayoutPanel2.ResumeLayout(false);

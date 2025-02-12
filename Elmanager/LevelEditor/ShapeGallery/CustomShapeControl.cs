@@ -30,14 +30,14 @@ internal partial class CustomShapeControl : UserControl.UserControl
         shapeLevelControl.API = OpenTK.Windowing.Common.ContextAPI.OpenGL;
         shapeLevelControl.APIVersion = new Version(3, 3, 0, 0);
         shapeLevelControl.Flags = OpenTK.Windowing.Common.ContextFlags.Default;
-        shapeLevelControl.Location = new System.Drawing.Point(1, 1);
+        shapeLevelControl.Location = new System.Drawing.Point(0, 0);
         shapeLevelControl.Name = "shapeLevelControl";
-        shapeLevelControl.Size = new Size(128, 128);
+        //shapeLevelControl.Margin = new Padding(3, 3, 3, 3);
+        shapeLevelControl.Dock = DockStyle.Fill;
         shapeLevelControl.Profile = OpenTK.Windowing.Common.ContextProfile.Compatability;
         shapeLevelControl.TabIndex = 0;
         shapeLevelControl.TabStop = false;
-
-        this.Controls.Add(shapeLevelControl);
+        tableLayoutPanel1.Controls.Add(shapeLevelControl, 0, 0);
 
         // Attach the same event handler to the Click event of all relevant components
         shapeLevelControl.Click += OnComponentClick;

@@ -33,53 +33,49 @@ namespace Elmanager.LevelEditor.ShapeGallery
         /// </summary>
         private void InitializeComponent()
         {
-            //shapeLevelControl = new LevelControl();
-            lblShapeName = new System.Windows.Forms.Label();
+            lblShapeName = new Label();
+            tableLayoutPanel1 = new TableLayoutPanel();
+            tableLayoutPanel1.SuspendLayout();
             SuspendLayout();
-            // 
-            // picShapeImage
-            // 
-            // picShapeImage.BackColor = System.Drawing.Color.LightGray;
-            // picShapeImage.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
-            // picShapeImage.Location = new System.Drawing.Point(1, 1);
-            // picShapeImage.Name = "picShapeImage";
-            // picShapeImage.Size = new System.Drawing.Size(128, 128);
-            // picShapeImage.SizeMode = System.Windows.Forms.PictureBoxSizeMode.CenterImage;
-            // picShapeImage.TabIndex = 0;
-            // picShapeImage.TabStop = false;
-
-            // 
-            // shapeLevelControl
-            // 
-            //shapeLevelControl.API = OpenTK.Windowing.Common.ContextAPI.OpenGL;
-            //shapeLevelControl.APIVersion = new Version(3, 3, 0, 0);
-            //shapeLevelControl.Dock = DockStyle.Fill;
-            //shapeLevelControl.Flags = OpenTK.Windowing.Common.ContextFlags.Default;
-            //shapeLevelControl.Location = new System.Drawing.Point(1, 1);
-            //shapeLevelControl.Name = "shapeLevelControl";
-            //shapeLevelControl.Size = new System.Drawing.Size(128, 128);
-            //shapeLevelControl.Profile = OpenTK.Windowing.Common.ContextProfile.Compatability;
-            //shapeLevelControl.TabIndex = 0;
-            //shapeLevelControl.TabStop = false;
             // 
             // lblShapeName
             // 
+            lblShapeName.CausesValidation = false;
+            lblShapeName.Dock = DockStyle.Fill;
             lblShapeName.Font = new System.Drawing.Font("Segoe UI", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, 0);
-            lblShapeName.Location = new System.Drawing.Point(1, 130);
+            lblShapeName.Location = new System.Drawing.Point(0, 134);
+            lblShapeName.Margin = new Padding(0);
             lblShapeName.Name = "lblShapeName";
-            lblShapeName.Size = new System.Drawing.Size(128, 41);
+            lblShapeName.Size = new System.Drawing.Size(134, 40);
             lblShapeName.TabIndex = 1;
             lblShapeName.Text = "Shape Name Goes Here";
             lblShapeName.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
             // 
+            // tableLayoutPanel1
+            // 
+            tableLayoutPanel1.ColumnCount = 1;
+            tableLayoutPanel1.ColumnStyles.Add(new ColumnStyle());
+            tableLayoutPanel1.Controls.Add(lblShapeName, 0, 1);
+            tableLayoutPanel1.Dock = DockStyle.Fill;
+            tableLayoutPanel1.Location = new System.Drawing.Point(0, 0);
+            tableLayoutPanel1.Margin = new Padding(0);
+            tableLayoutPanel1.Name = "tableLayoutPanel1";
+            tableLayoutPanel1.RowCount = 2;
+            tableLayoutPanel1.RowStyles.Add(new RowStyle(SizeType.Absolute, 134F));
+            tableLayoutPanel1.RowStyles.Add(new RowStyle(SizeType.Percent, 100F));
+            tableLayoutPanel1.Size = new System.Drawing.Size(134, 174);
+            tableLayoutPanel1.TabIndex = 2;
+            // 
             // CustomShapeControl
             // 
-            BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
-            Controls.Add(lblShapeName);
-            //Controls.Add(shapeLevelControl);
+            AutoScaleDimensions = new System.Drawing.SizeF(96F, 96F);
+            AutoScaleMode = AutoScaleMode.Dpi;
+            BorderStyle = BorderStyle.FixedSingle;
+            Controls.Add(tableLayoutPanel1);
             Name = "CustomShapeControl";
-            Size = new System.Drawing.Size(132, 174);
+            Size = new System.Drawing.Size(134, 174);
             MouseDown += OnMouseDown;
+            tableLayoutPanel1.ResumeLayout(false);
             ResumeLayout(false);
         }
 
@@ -87,5 +83,6 @@ namespace Elmanager.LevelEditor.ShapeGallery
 
         private System.Windows.Forms.Label lblShapeName;
 		private LevelControl shapeLevelControl;
+        private TableLayoutPanel tableLayoutPanel1;
     }
 }
