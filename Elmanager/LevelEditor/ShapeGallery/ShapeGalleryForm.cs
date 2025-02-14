@@ -32,8 +32,8 @@ internal partial class ShapeGalleryForm : Form
     // Static field to remember the last selected subfolder
     private static string? _lastSelectedSubfolder;
 
-    private int columns = 4;  // 3 rows × 4 columns
-    private int rows = 3;  // 3 rows × 4 columns
+    private const int Columns = 4; // 3 rows × 4 columns
+    private const int Rows = 3; // 3 rows × 4 columns
 
     private readonly SceneSettings _sceneSettings;
     private RenderingSettings _renderingSettings;
@@ -88,7 +88,7 @@ internal partial class ShapeGalleryForm : Form
         // Pass the shared context to the PopulateShapeGallery method
         //PopulateShapeGalleryFromLastSelectedSubfolder(_sharedContext);
         
-        SetupReusableControls(sharedContext, columns*rows);
+        SetupReusableControls(sharedContext, Columns*Rows);
 
         flowLayoutPanelShapes.MouseWheel += FlowLayoutPanelShapes_MouseWheel;
 
@@ -97,7 +97,7 @@ internal partial class ShapeGalleryForm : Form
 
     private void SetupScrollBar(int count)
     {
-        int totalPages = (int)Math.Ceiling(1.0 * count / (columns * rows));
+        int totalPages = (int)Math.Ceiling(1.0 * count / (Columns * Rows));
         vScrollBar1.Minimum = 0;
         vScrollBar1.Maximum = Math.Max(totalPages - 1, 0);  // Ensure the scrollbar has valid range
         vScrollBar1.LargeChange = 1;
@@ -132,7 +132,7 @@ internal partial class ShapeGalleryForm : Form
 
     private void UpdateDisplayedControls(int startPage)
     {
-        int startIndex = startPage * columns;
+        int startIndex = startPage * Columns;
 
         for (int i = 0; i < _reusableControls.Count; i++)
         {
