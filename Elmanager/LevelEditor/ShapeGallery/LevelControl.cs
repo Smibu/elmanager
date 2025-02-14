@@ -39,7 +39,6 @@ namespace Elmanager.LevelEditor.ShapeGallery
             if (level != null)
             {
                 _level = level;
-                _level.Objects = _level.Objects.Where(o => o.Type != ObjectType.Start).ToList(); // Remove start object
                 _camera = new ElmaCamera();
                 _zoomController = new ZoomController(_camera, _level, () => RedrawScene());
             }
@@ -66,7 +65,6 @@ namespace Elmanager.LevelEditor.ShapeGallery
             if (level != null)
             {
                 _level = level;
-                _level.Objects = _level.Objects.Where(o => o.Type != ObjectType.Start).ToList(); // Remove start object
                 _camera = new ElmaCamera();
                 _zoomController = new ZoomController(_camera, _level, () => RedrawScene());
                 _isFirstRender = true;

@@ -2,6 +2,7 @@
 using System.Drawing;
 using System.Windows.Forms;
 using System.IO;
+using System.Linq;
 using Color = System.Drawing.Color;
 using Pen = System.Drawing.Pen;
 using UserControl = System.Windows.Forms;
@@ -25,6 +26,12 @@ internal partial class CustomShapeControl : UserControl.UserControl
     public CustomShapeControl(GLControl sharedContext, SceneSettings sceneSettings, RenderingSettings renderingSettings, ElmaRenderer elmaRenderer, Level? level=null)
     {
         InitializeComponent();
+
+        if (level != null)
+        {
+            // Filter start object from level
+            level.Objects = level.Objects.Where(o => o.Type != ObjectType.Start).ToList();
+        }
 
         shapeLevelControl = new LevelControl(sharedContext, sceneSettings, renderingSettings, elmaRenderer, level);
         shapeLevelControl.API = OpenTK.Windowing.Common.ContextAPI.OpenGL;
@@ -173,6 +180,7 @@ internal partial class CustomShapeControl : UserControl.UserControl
     internal void UpdateContent(string filepath, string shapeName)
     {
         Level level = Level.FromPath(filepath).Obj;
+        level.Objects = level.Objects.Where(o => o.Type != ObjectType.Start).ToList();
         ShapeFullPath = filepath;
         ShapeName = shapeName;
         SetLevel(level);
