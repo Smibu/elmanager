@@ -3027,50 +3027,6 @@ internal partial class LevelEditorForm : FormMod, IMessageFilter
             tempLevel.UpdateAllPolygons(Settings.RenderingSettings.GrassZoom);
             tempLevel.UpdateBounds();
         }
-        
-        LevelEditorRenderingSettings customRenderingSettings = new LevelEditorRenderingSettings
-        {
-            ShowGrid = false,
-            ShowObjects = false,
-            ShowGrassEdges = true,
-            ShowGround = false,
-            ShowPictures = false,
-            ShowGroundEdges = true,
-            ShowTextures = false,
-            ShowObjectFrames = true,
-            ShowVertices = false,
-            ShowTextureFrames = true,
-            ShowPictureFrames = true,
-            ShowGravityAppleArrows = true,
-            LineWidth = 4,
-            ShowGrass = false
-        };
-
-        SceneSettings customSceneSettings = _sceneSettings;
-        customSceneSettings.PicturesInBackground = true;
-
-        ZoomController customZoomCtrl = new ZoomController(new ElmaCamera(), tempLevel, () => RedrawScene()) { ZoomLevel = 1.0 };
-        Renderer.UpdateSettings(tempLevel, customRenderingSettings);
-        Renderer.InitializeLevel(tempLevel, customRenderingSettings);
-
-        var oldCenterX = _zoomCtrl.CenterX;
-        var oldCenterY = _zoomCtrl.CenterY;
-        var oldZoomLevel = _zoomCtrl.ZoomLevel;
-
-        var oldViewPort = (int[])_zoomCtrl.Cam.Viewport.Clone();
-        
-        Renderer.ResetViewport(512, 512);
-        
-        customZoomCtrl.ZoomToSelection(clonedPolygons, clonedObjects, clonedGraphicElements, Settings.RenderingSettings);
-        Renderer.SaveSnapShotForCustomShape(tempLevel, saveAsPictureDialog.FileName, customZoomCtrl, customSceneSettings, customRenderingSettings);
-        
-        Renderer.UpdateSettings(Lev, Settings.RenderingSettings);
-        
-        Renderer.ResetViewport(oldViewPort[2], oldViewPort[3]);
-
-        _zoomCtrl.CenterX = oldCenterX;
-        _zoomCtrl.CenterY = oldCenterY;
-        _zoomCtrl.ZoomLevel = oldZoomLevel;
 
         var shapeFileName = Path.ChangeExtension(saveAsPictureDialog.FileName, ".lev");
 
