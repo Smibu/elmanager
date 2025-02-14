@@ -35,12 +35,6 @@ internal partial class ShapeGalleryForm : Form
     private int columns = 4;  // 3 rows × 4 columns
     private int rows = 3;  // 3 rows × 4 columns
 
-    private double ClampAngle(double angle, double min, double max)
-    {
-        double range = max - min;
-        return ((angle - min) % range + range) % range + min;
-    }
-
     private readonly SceneSettings _sceneSettings;
     private RenderingSettings _renderingSettings;
     private readonly GLControl _sharedContext;
@@ -83,24 +77,6 @@ internal partial class ShapeGalleryForm : Form
         _reusableControls = new List<CustomShapeControl>();
 
         InitializeComponent();
-
-        scalingNumericUpDown.Value = (decimal)Double.Clamp(ScalingFactor, (double)scalingNumericUpDown.Minimum, (double)scalingNumericUpDown.Maximum);
-        scalingNumericUpDown.ValueChanged += (sender, e) => ScalingFactor = (double)scalingNumericUpDown.Value;
-
-        rotationNumericUpDown.Value = (decimal)ClampAngle(RotationAngle, (double)rotationNumericUpDown.Minimum, (double)rotationNumericUpDown.Maximum);
-        rotationNumericUpDown.ValueChanged += (sender, e) => RotationAngle = (double)rotationNumericUpDown.Value;
-
-        mirrorComboBox.Items.Clear();
-        foreach (ShapeMirrorOption option in Enum.GetValues<ShapeMirrorOption>())
-        {
-            mirrorComboBox.Items.Add(option);
-        }
-
-        mirrorComboBox.SelectedIndexChanged += (sender, e) =>
-        {
-            ShapeMirrorOption = (ShapeMirrorOption)(mirrorComboBox.SelectedItem ?? ShapeMirrorOption.None);
-        };
-        mirrorComboBox.SelectedItem = ShapeMirrorOption;
 
         this.StartPosition = FormStartPosition.Manual;
         SetInitialLocation();
@@ -401,16 +377,5 @@ internal partial class ShapeGalleryForm : Form
                 PopulateShapeGallery(firstSubfolderPath, sharedContext);
             }
         }
-    }
-
-    private void resetValuesButton_Click(object sender, EventArgs e)
-    {
-        ScalingFactor = 1.0;
-        RotationAngle = 0.0;
-        ShapeMirrorOption = ShapeMirrorOption.None;
-
-        rotationNumericUpDown.Value = (decimal)RotationAngle;
-        scalingNumericUpDown.Value = (decimal)ScalingFactor;
-        mirrorComboBox.SelectedItem = ShapeMirrorOption;
     }
 }
