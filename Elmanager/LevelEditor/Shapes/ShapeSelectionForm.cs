@@ -35,6 +35,11 @@ internal partial class ShapeSelectionForm : Form
     private const int Columns = 4; // 3 rows × 4 columns
     private const int Rows = 3; // 3 rows × 4 columns
 
+    private const int ControlWidth = 134; // Width of CustomShapeControl
+    private const int ControlHeight = 174; // Height of CustomShapeControl
+    private const int ControlMargin = 10; // Margin between controls
+    private const int BottomMargin = 46; // Margin at the bottom for the buttons and combobox (36+10)
+
     private readonly SceneSettings _sceneSettings;
     private RenderingSettings _renderingSettings;
     private readonly GLControl _sharedContext;
@@ -47,7 +52,7 @@ internal partial class ShapeSelectionForm : Form
         RotationAngle = rotationAngle;
         ShapeMirrorOption = mirrorOption;
         SelectedShapeName = selectedShapeName;
-        
+
         _renderingSettings = new LevelEditorRenderingSettings
         {
             ShowGrid = false,
@@ -87,12 +92,23 @@ internal partial class ShapeSelectionForm : Form
 
         // Pass the shared context to the PopulateShapeGallery method
         //PopulateShapeGalleryFromLastSelectedSubfolder(_sharedContext);
-        
+
         SetupReusableControls(sharedContext, Columns*Rows);
 
         flowLayoutPanelShapes.MouseWheel += FlowLayoutPanelShapes_MouseWheel;
 
         vScrollBar1.ValueChanged += vScrollBar_ValueChanged;
+
+        // Set the size of the form based on the control dimensions and layout
+        SetFormSize();
+    }
+
+    private void SetFormSize()
+    {
+        int formWidth = (ControlWidth + ControlMargin) * Columns + ControlMargin;
+        int formHeight = (ControlHeight + ControlMargin) * Rows + ControlMargin + vScrollBar1.Width + BottomMargin;
+
+        this.Size = new Size(formWidth, formHeight);
     }
 
     private void SetupScrollBar(int count)
@@ -334,7 +350,7 @@ internal partial class ShapeSelectionForm : Form
         {
             comboBoxSubfolders.Items.Add(Path.GetFileName(subfolder));
         }
-        
+
         // Set the default selected item to the last selected subfolder
         if (_lastSelectedSubfolder != null && comboBoxSubfolders.Items.Contains(_lastSelectedSubfolder))
         {
