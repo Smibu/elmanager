@@ -255,9 +255,9 @@ internal partial class ShapeSelectionForm : Form
             return;
         }
 
-        // Load images from the specified folder
+        // Load shapes from the specified folder
         _shapes = Directory.GetFiles(folderPath, "*.lev")
-            .Select(filePath => (Name: Path.GetFileNameWithoutExtension(filePath), ImagePath: filePath))
+            .Select(filePath => (Name: Path.GetFileNameWithoutExtension(filePath), ShapePath: filePath))
             .ToList();
 
         SetupScrollBar(_shapes.Count);

@@ -20,7 +20,7 @@ namespace Elmanager.LevelEditor.Shapes
                 components.Dispose();
             }
 
-            // Dispose of images in the FlowLayoutPanel
+            // Dispose of controls in the FlowLayoutPanel
             foreach (Control control in flowLayoutPanelShapes.Controls)
             {
                 if (control is CustomShapeControl customShapeControl)
