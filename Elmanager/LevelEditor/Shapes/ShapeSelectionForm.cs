@@ -23,7 +23,7 @@ internal partial class ShapeSelectionForm : Form
     public ShapeMirrorOption ShapeMirrorOption { get; private set; }
     public string? SelectedShapeName { get; private set; }
 
-    private const string ShapesFolderPath = "Gallery"; // Path to the folder to monitor
+    private const string ShapesFolderPath = "sle_shapes";
 
     private CustomShapeControl? _selectedShapeControl;
 
