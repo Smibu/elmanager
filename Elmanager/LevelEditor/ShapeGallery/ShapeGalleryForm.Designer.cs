@@ -251,6 +251,7 @@ namespace Elmanager.LevelEditor.ShapeGallery
             MinimizeBox = false;
             MinimumSize = new System.Drawing.Size(610, 300);
             Name = "ShapeGalleryForm";
+            ShowIcon = false;
             Text = "ShapeGallery";
             Load += ShapeGalleryForm_Load;
             tableLayoutPanel1.ResumeLayout(false);
