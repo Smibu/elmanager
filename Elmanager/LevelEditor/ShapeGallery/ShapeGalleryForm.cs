@@ -41,7 +41,7 @@ internal partial class ShapeGalleryForm : Form
     private List<CustomShapeControl> _reusableControls;
     private List<(string Name, string FilePath)> _shapes;
 
-    public ShapeGalleryForm(GLControl sharedContext, ElmaRenderer elmaRenderer, RenderingSettings renderingSettings, SceneSettings sceneSettings, string? selectedShapeName = null, double scalingFactor = 0.0, double rotationAngle = 0.0, ShapeMirrorOption mirrorOption = ShapeMirrorOption.None)
+    public ShapeGalleryForm(GLControl sharedContext, ElmaRenderer elmaRenderer, string? selectedShapeName = null, double scalingFactor = 0.0, double rotationAngle = 0.0, ShapeMirrorOption mirrorOption = ShapeMirrorOption.None)
     {
         ScalingFactor = scalingFactor;
         RotationAngle = rotationAngle;
@@ -70,7 +70,10 @@ internal partial class ShapeGalleryForm : Form
         _shapes = new List<(string Name, string FilePath)>();
 
         _sharedContext = sharedContext;
-        _sceneSettings = sceneSettings;
+        _sceneSettings = new SceneSettings()
+        {
+            PicturesInBackground = true
+        };
 
         _renderer = elmaRenderer;
 
