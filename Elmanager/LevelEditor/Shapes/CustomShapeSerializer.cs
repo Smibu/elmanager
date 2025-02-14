@@ -2,7 +2,7 @@
 using System.Linq;
 using Elmanager.Rendering;
 
-namespace Elmanager.LevelEditor.ShapeGallery;
+namespace Elmanager.LevelEditor.Shapes;
 
 using Elmanager.Geometry;
 using Elmanager.Lev;

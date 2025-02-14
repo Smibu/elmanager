@@ -14,7 +14,7 @@ using OpenTK.Windowing.Desktop;
 using Path = System.IO.Path;
 using OpenTK.Windowing.Common;
 
-namespace Elmanager.LevelEditor.ShapeGallery;
+namespace Elmanager.LevelEditor.Shapes;
 
 internal partial class CustomShapeControl : UserControl.UserControl
 {

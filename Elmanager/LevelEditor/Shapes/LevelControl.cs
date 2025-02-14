@@ -14,7 +14,7 @@ using OpenTK.Graphics;
 using OpenTK.Graphics.OpenGL;
 using OpenTK.Windowing.Common;
 
-namespace Elmanager.LevelEditor.ShapeGallery
+namespace Elmanager.LevelEditor.Shapes
 {
     public class LevelControl : GLControl
     {

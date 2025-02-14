@@ -3,7 +3,7 @@ using System.Linq;
 using Elmanager.Lev;
 using Elmanager.Rendering;
 
-namespace Elmanager.LevelEditor.ShapeGallery;
+namespace Elmanager.LevelEditor.Shapes;
 
 internal class ShapeDataDto(Level level)
 {

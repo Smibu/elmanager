@@ -6,7 +6,7 @@ using System.Windows.Forms;
 using Elmanager.Application;
 using Elmanager.Geometry;
 using Elmanager.Lev;
-using Elmanager.LevelEditor.ShapeGallery;
+using Elmanager.LevelEditor.Shapes;
 using Elmanager.Rendering;
 using OpenTK.GLControl;
 using OpenTK.Windowing.Common;

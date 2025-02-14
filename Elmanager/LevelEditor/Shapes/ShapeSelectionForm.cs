@@ -14,7 +14,7 @@ using OpenTK.Windowing.Common;
 using OpenTK.Windowing.Desktop;
 using Path = System.IO.Path;
 
-namespace Elmanager.LevelEditor.ShapeGallery;
+namespace Elmanager.LevelEditor.Shapes;
 
 internal partial class ShapeGalleryForm : Form
 {

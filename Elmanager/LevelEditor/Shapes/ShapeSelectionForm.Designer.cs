@@ -1,6 +1,6 @@
 ﻿using System.Windows.Forms;
 
-namespace Elmanager.LevelEditor.ShapeGallery
+namespace Elmanager.LevelEditor.Shapes
 {
     partial class ShapeGalleryForm
     {

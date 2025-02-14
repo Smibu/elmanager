@@ -1,4 +1,4 @@
-﻿namespace Elmanager.LevelEditor.ShapeGallery;
+﻿namespace Elmanager.LevelEditor.Shapes;
 
 internal enum ShapeMirrorOption
 {
