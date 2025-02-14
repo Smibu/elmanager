@@ -217,6 +217,9 @@ internal partial class ShapeGalleryForm : Form
             // Handle shape click event
             shapeControl.ShapeClicked += ShapeControl_ShapeClicked;
 
+            // Handle shape double-click event
+            shapeControl.ShapeDoubleClicked += ShapeControl_ShapeDoubleClicked;
+
             // Handle polygons loaded event
             shapeControl.ShapeDataLoaded += (sender, shapeDataDto) =>
             {
@@ -376,6 +379,18 @@ internal partial class ShapeGalleryForm : Form
                 var firstSubfolderPath = Path.Combine(_galleryFolderPath, firstSubfolder);
                 PopulateShapeGallery(firstSubfolderPath, sharedContext);
             }
+        }
+    }
+
+    private void ShapeControl_ShapeDoubleClicked(object? sender, EventArgs e)
+    {
+        if (sender is CustomShapeControl shapeControl)
+        {
+            // Reuse the existing shape click handler
+            ShapeControl_ShapeClicked(shapeControl, e);
+
+            // Reuse the existing OK button click handler to close the dialog
+            ButtonOk_Click(this, e);
         }
     }
 }

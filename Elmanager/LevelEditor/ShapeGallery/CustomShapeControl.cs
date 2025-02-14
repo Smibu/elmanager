@@ -61,6 +61,10 @@ internal partial class CustomShapeControl : UserControl.UserControl
         shapeLevelControl.MouseUp += OnMouseUp;
         lblShapeName.MouseUp += OnMouseUp;
         this.MouseUp += OnMouseUp;
+
+        shapeLevelControl.DoubleClick += CustomShapeControl_DoubleClick;
+        lblShapeName.DoubleClick += CustomShapeControl_DoubleClick;
+        this.DoubleClick += CustomShapeControl_DoubleClick;
     }
 
     // Property for the full path of the shape
@@ -182,5 +186,17 @@ internal partial class CustomShapeControl : UserControl.UserControl
     internal void DisableLevelRendering(bool disable)
     {
         shapeLevelControl.DisableRendering = disable;
+    }
+
+    private void CustomShapeControl_DoubleClick(object? sender, EventArgs e)
+    {
+        OnShapeDoubleClicked(EventArgs.Empty);
+    }
+
+    public event EventHandler? ShapeDoubleClicked;
+
+    protected virtual void OnShapeDoubleClicked(EventArgs e)
+    {
+        ShapeDoubleClicked?.Invoke(this, e);
     }
 }
