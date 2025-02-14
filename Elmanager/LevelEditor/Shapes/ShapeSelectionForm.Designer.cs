@@ -2,7 +2,7 @@
 
 namespace Elmanager.LevelEditor.Shapes
 {
-    partial class ShapeGalleryForm
+    partial class ShapeSelectionForm
     {
         /// <summary>
         /// Required designer variable.
@@ -144,7 +144,7 @@ namespace Elmanager.LevelEditor.Shapes
             vScrollBar1.Size = new System.Drawing.Size(17, 604);
             vScrollBar1.TabIndex = 1;
             // 
-            // ShapeGalleryForm
+            // ShapeSelectionForm
             // 
             AutoScaleDimensions = new System.Drawing.SizeF(96F, 96F);
             AutoScaleMode = AutoScaleMode.Dpi;
@@ -154,9 +154,9 @@ namespace Elmanager.LevelEditor.Shapes
             MaximizeBox = false;
             MinimizeBox = false;
             MinimumSize = new System.Drawing.Size(610, 300);
-            Name = "ShapeGalleryForm";
+            Name = "ShapeSelectionForm";
             ShowIcon = false;
-            Text = "ShapeGallery";
+            Text = "Shape Selection";
             Load += ShapeGalleryForm_Load;
             tableLayoutPanel1.ResumeLayout(false);
             panel1.ResumeLayout(false);

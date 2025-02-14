@@ -16,7 +16,7 @@ using Path = System.IO.Path;
 
 namespace Elmanager.LevelEditor.Shapes;
 
-internal partial class ShapeGalleryForm : Form
+internal partial class ShapeSelectionForm : Form
 {
     public double ScalingFactor { get; private set; }
     public double RotationAngle { get; private set; }
@@ -41,7 +41,7 @@ internal partial class ShapeGalleryForm : Form
     private List<CustomShapeControl> _reusableControls;
     private List<(string Name, string FilePath)> _shapes;
 
-    public ShapeGalleryForm(GLControl sharedContext, ElmaRenderer elmaRenderer, string? selectedShapeName = null, double scalingFactor = 0.0, double rotationAngle = 0.0, ShapeMirrorOption mirrorOption = ShapeMirrorOption.None)
+    public ShapeSelectionForm(GLControl sharedContext, ElmaRenderer elmaRenderer, string? selectedShapeName = null, double scalingFactor = 0.0, double rotationAngle = 0.0, ShapeMirrorOption mirrorOption = ShapeMirrorOption.None)
     {
         ScalingFactor = scalingFactor;
         RotationAngle = rotationAngle;

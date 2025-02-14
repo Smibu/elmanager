@@ -78,20 +78,20 @@ internal class CustomShapeTool : ToolBase, IEditorTool
 
     private void OpenDialog()
     {
-        var shapeGalleryForm = new ShapeGalleryForm(LevEditor.EditorControl, LevEditor.Renderer, _selectedShapeName, _scalingFactor, _rotationAngle, _selectedMirrorOption);
-        shapeGalleryForm.ShapeDataLoaded += ShapeGalleryForm_ShapeDataLoaded;
-        shapeGalleryForm.ShowDialog();
+        var shapeSelectionForm = new ShapeSelectionForm(LevEditor.EditorControl, LevEditor.Renderer, _selectedShapeName, _scalingFactor, _rotationAngle, _selectedMirrorOption);
+        shapeSelectionForm.ShapeDataLoaded += ShapeSelectionForm_ShapeDataLoaded;
+        shapeSelectionForm.ShowDialog();
     }
 
-    private void ShapeGalleryForm_ShapeDataLoaded(object? sender, ShapeDataDto shapeDataDto)
+    private void ShapeSelectionForm_ShapeDataLoaded(object? sender, ShapeDataDto shapeDataDto)
     {
-        if (sender is ShapeGalleryForm shapeGalleryForm)
+        if (sender is ShapeSelectionForm shapeSelectionForm)
         {
             _selectedShapeData = shapeDataDto;
-            _scalingFactor = shapeGalleryForm.ScalingFactor;
-            _rotationAngle = shapeGalleryForm.RotationAngle;
-            _selectedMirrorOption = shapeGalleryForm.ShapeMirrorOption;
-            _selectedShapeName = shapeGalleryForm.SelectedShapeName;
+            _scalingFactor = shapeSelectionForm.ScalingFactor;
+            _rotationAngle = shapeSelectionForm.RotationAngle;
+            _selectedMirrorOption = shapeSelectionForm.ShapeMirrorOption;
+            _selectedShapeName = shapeSelectionForm.SelectedShapeName;
             LoadShapeData();
             ApplyTransformations(CurrentPos);
         }
