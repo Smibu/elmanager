@@ -20,8 +20,8 @@ namespace Elmanager.LevelEditor.Shapes
                 components.Dispose();
             }
 
-            // Dispose of controls in the FlowLayoutPanel
-            foreach (Control control in flowLayoutPanelShapes.Controls)
+            // Dispose of controls in the grid
+            foreach (Control control in tableLayoutPanelShapes.Controls)
             {
                 if (control is CustomShapeControl customShapeControl)
                 {
@@ -40,7 +40,6 @@ namespace Elmanager.LevelEditor.Shapes
         /// </summary>
         private void InitializeComponent()
         {
-            flowLayoutPanelShapes = new FlowLayoutPanel();
             buttonCancel = new Button();
             buttonOk = new Button();
             tableLayoutPanel1 = new TableLayoutPanel();
@@ -48,19 +47,11 @@ namespace Elmanager.LevelEditor.Shapes
             comboBoxSubfolders = new ComboBox();
             tableLayoutPanel2 = new TableLayoutPanel();
             vScrollBar1 = new VScrollBar();
+            tableLayoutPanelShapes = new TableLayoutPanel();
             tableLayoutPanel1.SuspendLayout();
             panel1.SuspendLayout();
             tableLayoutPanel2.SuspendLayout();
             SuspendLayout();
-            // 
-            // flowLayoutPanelShapes
-            // 
-            flowLayoutPanelShapes.Dock = DockStyle.Fill;
-            flowLayoutPanelShapes.Location = new System.Drawing.Point(3, 3);
-            flowLayoutPanelShapes.Margin = new Padding(3, 3, 0, 3);
-            flowLayoutPanelShapes.Name = "flowLayoutPanelShapes";
-            flowLayoutPanelShapes.Size = new System.Drawing.Size(568, 598);
-            flowLayoutPanelShapes.TabIndex = 0;
             // 
             // buttonCancel
             // 
@@ -126,8 +117,8 @@ namespace Elmanager.LevelEditor.Shapes
             tableLayoutPanel2.ColumnCount = 2;
             tableLayoutPanel2.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 100F));
             tableLayoutPanel2.ColumnStyles.Add(new ColumnStyle(SizeType.Absolute, 17F));
-            tableLayoutPanel2.Controls.Add(flowLayoutPanelShapes, 0, 0);
             tableLayoutPanel2.Controls.Add(vScrollBar1, 1, 0);
+            tableLayoutPanel2.Controls.Add(tableLayoutPanelShapes, 0, 0);
             tableLayoutPanel2.Dock = DockStyle.Fill;
             tableLayoutPanel2.Location = new System.Drawing.Point(3, 3);
             tableLayoutPanel2.Name = "tableLayoutPanel2";
@@ -143,6 +134,23 @@ namespace Elmanager.LevelEditor.Shapes
             vScrollBar1.Name = "vScrollBar1";
             vScrollBar1.Size = new System.Drawing.Size(17, 604);
             vScrollBar1.TabIndex = 1;
+            // 
+            // tableLayoutPanelShapes
+            // 
+            tableLayoutPanelShapes.ColumnCount = 4;
+            tableLayoutPanelShapes.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 25F));
+            tableLayoutPanelShapes.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 25F));
+            tableLayoutPanelShapes.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 25F));
+            tableLayoutPanelShapes.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 25F));
+            tableLayoutPanelShapes.Dock = DockStyle.Fill;
+            tableLayoutPanelShapes.Location = new System.Drawing.Point(3, 3);
+            tableLayoutPanelShapes.Name = "tableLayoutPanelShapes";
+            tableLayoutPanelShapes.RowCount = 3;
+            tableLayoutPanelShapes.RowStyles.Add(new RowStyle(SizeType.Percent, 33.3333321F));
+            tableLayoutPanelShapes.RowStyles.Add(new RowStyle(SizeType.Percent, 33.3333321F));
+            tableLayoutPanelShapes.RowStyles.Add(new RowStyle(SizeType.Percent, 33.3333321F));
+            tableLayoutPanelShapes.Size = new System.Drawing.Size(565, 598);
+            tableLayoutPanelShapes.TabIndex = 2;
             // 
             // ShapeSelectionForm
             // 
@@ -165,8 +173,6 @@ namespace Elmanager.LevelEditor.Shapes
         }
 
         #endregion
-
-        private System.Windows.Forms.FlowLayoutPanel flowLayoutPanelShapes;
         private Button buttonCancel;
         private Button buttonOk;
         private TableLayoutPanel tableLayoutPanel1;
@@ -174,5 +180,6 @@ namespace Elmanager.LevelEditor.Shapes
         private ComboBox comboBoxSubfolders;
         private TableLayoutPanel tableLayoutPanel2;
         private VScrollBar vScrollBar1;
+        private TableLayoutPanel tableLayoutPanelShapes;
     }
 }

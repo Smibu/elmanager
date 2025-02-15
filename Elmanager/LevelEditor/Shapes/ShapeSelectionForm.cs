@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Drawing;
 using System.IO;
 using System.Linq;
+using System.Windows.Controls;
 using System.Windows.Documents;
 using System.Windows.Forms;
 using System.Windows.Shapes;
@@ -12,6 +13,7 @@ using Elmanager.Rendering;
 using OpenTK.GLControl;
 using OpenTK.Windowing.Common;
 using OpenTK.Windowing.Desktop;
+using Control = System.Windows.Controls.Control;
 using Path = System.IO.Path;
 
 namespace Elmanager.LevelEditor.Shapes;
@@ -92,7 +94,7 @@ internal partial class ShapeSelectionForm : Form
 
         SetupReusableControls(sharedContext, Columns*Rows);
 
-        flowLayoutPanelShapes.MouseWheel += FlowLayoutPanelShapes_MouseWheel;
+        tableLayoutPanelShapes.MouseWheel += FlowLayoutPanelShapes_MouseWheel;
 
         vScrollBar1.ValueChanged += vScrollBar_ValueChanged;
 
@@ -172,8 +174,8 @@ internal partial class ShapeSelectionForm : Form
             _reusableControls[i].DisableLevelRendering(false);
         }
 
-        flowLayoutPanelShapes.Invalidate();
-        flowLayoutPanelShapes.Refresh();
+        tableLayoutPanelShapes.Invalidate();
+        tableLayoutPanelShapes.Refresh();
     }
 
     private void HighlightSelectedShape()
@@ -183,7 +185,7 @@ internal partial class ShapeSelectionForm : Form
             return;
         }
 
-        foreach (Control control in flowLayoutPanelShapes.Controls)
+        foreach (System.Windows.Forms.Control control in tableLayoutPanelShapes.Controls)
         {
             if (control is CustomShapeControl shapeControl && shapeControl.ShapeName == SelectedShapeName)
             {
@@ -245,7 +247,8 @@ internal partial class ShapeSelectionForm : Form
 
             shapeControl.Visible = false;
             shapeControl.DisableLevelRendering(true);
-            flowLayoutPanelShapes.Controls.Add(shapeControl);
+            shapeControl.Dock = DockStyle.Fill;
+            tableLayoutPanelShapes.Controls.Add(shapeControl, i % 4, i / 4); // (column, row)
             _reusableControls.Add(shapeControl);
         }
     }
