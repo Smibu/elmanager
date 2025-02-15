@@ -164,7 +164,7 @@ namespace Elmanager.LevelEditor.Shapes
             Name = "ShapeSelectionForm";
             ShowIcon = false;
             Text = "Shape Selection";
-            Load += ShapeGalleryForm_Load;
+            Load += ShapeSelectionForm_Load;
             tableLayoutPanel1.ResumeLayout(false);
             panel1.ResumeLayout(false);
             tableLayoutPanel2.ResumeLayout(false);

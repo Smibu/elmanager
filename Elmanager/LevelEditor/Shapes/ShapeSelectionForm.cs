@@ -265,7 +265,7 @@ internal partial class ShapeSelectionForm : Form
     // Event for loading polygons
     public event EventHandler<ShapeDataDto>? ShapeDataLoaded;
 
-    private void PopulateShapeGallery(string folderPath, GLControl sharedContext)
+    private void PopulateShapes(string folderPath, GLControl sharedContext)
     {
         if (!Directory.Exists(folderPath))
         {
@@ -297,10 +297,10 @@ internal partial class ShapeSelectionForm : Form
         }
     }
 
-    private void ShapeGalleryForm_Load(object sender, EventArgs e)
+    private void ShapeSelectionForm_Load(object sender, EventArgs e)
     {
         //InitializeFileSystemWatcher();
-        PopulateShapeGalleryFromLastSelectedSubfolder(_sharedContext);
+        PopulateShapeSelectionFromLastSelectedSubfolder(_sharedContext);
         HighlightSelectedShape();
     }
 
@@ -343,7 +343,7 @@ internal partial class ShapeSelectionForm : Form
             return;
         }
 
-        // Get all subfolders in the gallery folder
+        // Get all subfolders in the shapes folder
         var subfolders = Directory.GetDirectories(ShapesFolderPath);
 
         // Add subfolders to the ComboBox
@@ -379,17 +379,17 @@ internal partial class ShapeSelectionForm : Form
         {
             var selectedFolderPath = Path.Combine(ShapesFolderPath, selectedSubfolder);
 
-            // Populate the shape gallery with shapes from the selected subfolder
-            PopulateShapeGallery(selectedFolderPath, _sharedContext);
+            // Populate with shapes from the selected subfolder
+            PopulateShapes(selectedFolderPath, _sharedContext);
         }
     }
 
-    private void PopulateShapeGalleryFromLastSelectedSubfolder(GLControl sharedContext)
+    private void PopulateShapeSelectionFromLastSelectedSubfolder(GLControl sharedContext)
     {
         if (_lastSelectedSubfolder != null && comboBoxSubfolders.Items.Contains(_lastSelectedSubfolder))
         {
             var lastSubfolderPath = Path.Combine(ShapesFolderPath, _lastSelectedSubfolder);
-            PopulateShapeGallery(lastSubfolderPath, sharedContext);
+            PopulateShapes(lastSubfolderPath, sharedContext);
         }
         else if (comboBoxSubfolders.Items.Count > 0)
         {
@@ -397,7 +397,7 @@ internal partial class ShapeSelectionForm : Form
             if (firstSubfolder != null)
             {
                 var firstSubfolderPath = Path.Combine(ShapesFolderPath, firstSubfolder);
-                PopulateShapeGallery(firstSubfolderPath, sharedContext);
+                PopulateShapes(firstSubfolderPath, sharedContext);
             }
         }
     }
