@@ -113,12 +113,12 @@ namespace Elmanager.LevelEditor.Shapes
             // 
             // comboBoxSubfolders
             // 
-            comboBoxSubfolders.Anchor = AnchorStyles.Bottom | AnchorStyles.Left;
+            comboBoxSubfolders.Anchor = AnchorStyles.Bottom | AnchorStyles.Left | AnchorStyles.Right;
             comboBoxSubfolders.DropDownStyle = ComboBoxStyle.DropDownList;
             comboBoxSubfolders.FormattingEnabled = true;
             comboBoxSubfolders.Location = new System.Drawing.Point(3, 4);
             comboBoxSubfolders.Name = "comboBoxSubfolders";
-            comboBoxSubfolders.Size = new System.Drawing.Size(366, 23);
+            comboBoxSubfolders.Size = new System.Drawing.Size(420, 23);
             comboBoxSubfolders.TabIndex = 2;
             // 
             // tableLayoutPanel2
@@ -153,7 +153,7 @@ namespace Elmanager.LevelEditor.Shapes
             FormBorderStyle = FormBorderStyle.FixedSingle;
             MaximizeBox = false;
             MinimizeBox = false;
-            MinimumSize = new System.Drawing.Size(610, 300);
+            MinimumSize = new System.Drawing.Size(200, 100);
             Name = "ShapeSelectionForm";
             ShowIcon = false;
             Text = "Shape Selection";

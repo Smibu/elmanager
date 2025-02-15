@@ -35,10 +35,10 @@ internal partial class ShapeSelectionForm : Form
     private const int Columns = 4; // 3 rows × 4 columns
     private const int Rows = 3; // 3 rows × 4 columns
 
-    private const int ControlWidth = 134; // Width of CustomShapeControl
-    private const int ControlHeight = 174; // Height of CustomShapeControl
+    private const int ControlWidth = 110; // Width of CustomShapeControl
+    private const int ControlHeight = 160; // Height of CustomShapeControl
     private const int ControlMargin = 10; // Margin between controls
-    private const int BottomMargin = 46; // Margin at the bottom for the buttons and combobox (36+10)
+    private const int BottomMargin = 70; // Margin at the bottom for the buttons and combobox
 
     private readonly SceneSettings _sceneSettings;
     private RenderingSettings _renderingSettings;
@@ -105,8 +105,8 @@ internal partial class ShapeSelectionForm : Form
 
     private void SetFormSize()
     {
-        int formWidth = (ControlWidth + ControlMargin) * Columns + ControlMargin;
-        int formHeight = (ControlHeight + ControlMargin) * Rows + ControlMargin + vScrollBar1.Width + BottomMargin;
+        int formWidth = (ControlWidth + ControlMargin) * Columns + ControlMargin + vScrollBar1.Width;
+        int formHeight = (ControlHeight + ControlMargin) * Rows + ControlMargin + BottomMargin;
 
         this.Size = new Size(formWidth, formHeight);
     }

@@ -42,13 +42,13 @@ namespace Elmanager.LevelEditor.Shapes
             // 
             lblShapeName.CausesValidation = false;
             lblShapeName.Dock = DockStyle.Fill;
-            lblShapeName.Font = new System.Drawing.Font("Segoe UI", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, 0);
-            lblShapeName.Location = new System.Drawing.Point(0, 134);
+            lblShapeName.Font = new System.Drawing.Font("Segoe UI", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, 0);
+            lblShapeName.Location = new System.Drawing.Point(0, 110);
             lblShapeName.Margin = new Padding(0);
             lblShapeName.Name = "lblShapeName";
-            lblShapeName.Size = new System.Drawing.Size(134, 40);
+            lblShapeName.Size = new System.Drawing.Size(110, 50);
             lblShapeName.TabIndex = 1;
-            lblShapeName.Text = "Shape Name Goes Here";
+            lblShapeName.Text = "Some Long Shape Name Goes Here";
             lblShapeName.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
             // 
             // tableLayoutPanel1
@@ -61,9 +61,9 @@ namespace Elmanager.LevelEditor.Shapes
             tableLayoutPanel1.Margin = new Padding(0);
             tableLayoutPanel1.Name = "tableLayoutPanel1";
             tableLayoutPanel1.RowCount = 2;
-            tableLayoutPanel1.RowStyles.Add(new RowStyle(SizeType.Absolute, 134F));
-            tableLayoutPanel1.RowStyles.Add(new RowStyle(SizeType.Percent, 100F));
-            tableLayoutPanel1.Size = new System.Drawing.Size(134, 174);
+            tableLayoutPanel1.RowStyles.Add(new RowStyle(SizeType.Absolute, 110F));
+            tableLayoutPanel1.RowStyles.Add(new RowStyle());
+            tableLayoutPanel1.Size = new System.Drawing.Size(110, 160);
             tableLayoutPanel1.TabIndex = 2;
             // 
             // CustomShapeControl
@@ -73,7 +73,7 @@ namespace Elmanager.LevelEditor.Shapes
             BorderStyle = BorderStyle.FixedSingle;
             Controls.Add(tableLayoutPanel1);
             Name = "CustomShapeControl";
-            Size = new System.Drawing.Size(134, 174);
+            Size = new System.Drawing.Size(110, 160);
             MouseDown += OnMouseDown;
             tableLayoutPanel1.ResumeLayout(false);
             ResumeLayout(false);
