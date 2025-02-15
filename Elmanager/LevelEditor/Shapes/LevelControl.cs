@@ -28,6 +28,9 @@ namespace Elmanager.LevelEditor.Shapes
         private bool _isFirstRender = true;
         public bool DisableRendering { get; set; } = true;
 
+        private DispatcherTimer _resizeTimer;
+        private const int DebounceInterval = 6; // Debounce interval in milliseconds
+
         internal LevelControl(GLControl sharedContext, SceneSettings sceneSettings, RenderingSettings renderingSettings, ElmaRenderer elmaRenderer, Level? level=null) :
             base(new GLControlSettings {
                 AutoLoadBindings = false,
@@ -54,6 +57,13 @@ namespace Elmanager.LevelEditor.Shapes
             {
                 SharedContext = sharedContext; // Set shared context before initialization
             }
+
+            // Initialize the resize timer
+            _resizeTimer = new DispatcherTimer
+            {
+                Interval = TimeSpan.FromMilliseconds(DebounceInterval)
+            };
+            _resizeTimer.Tick += ResizeTimer_Tick;
         }
 
         /**
@@ -101,10 +111,10 @@ namespace Elmanager.LevelEditor.Shapes
         protected override void OnPaint(PaintEventArgs e)
         {
             base.OnPaint(e);
-            Render();
+            Render(false);
         }
 
-        private void Render()
+        private void Render(bool resetViewport)
         {
             if (DisableRendering)
             {
@@ -134,6 +144,12 @@ namespace Elmanager.LevelEditor.Shapes
                 _zoomController?.ZoomFill(_renderingSettings);
                 _isFirstRender = false;
             }
+
+            if (resetViewport)
+            {
+                GL.Viewport(0, 0, Width, Height); // Set viewport to the entire control
+            }
+
             // Use the ElmaRenderer to render the level
             RedrawScene();
 
@@ -170,19 +186,18 @@ namespace Elmanager.LevelEditor.Shapes
         protected override void OnResize(EventArgs e)
         {
             base.OnResize(e);
+            
+            // Restart the debounce timer
+            _resizeTimer.Stop();
+            _resizeTimer.Start();
+        }
 
-            if (Context == null)
-            {
-                return;
-            }
+        private void ResizeTimer_Tick(object? sender, EventArgs e)
+        {
+            // Stop the timer
+            _resizeTimer.Stop();
 
-            if (!Context.IsCurrent)
-            {
-                MakeCurrent();
-            }
-
-            GL.Viewport(0, 0, Width, Height); // Set viewport to the entire control
-            Render();
+            Render(true);
         }
     }
 }
