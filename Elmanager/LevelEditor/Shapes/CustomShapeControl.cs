@@ -39,7 +39,6 @@ internal partial class CustomShapeControl : UserControl.UserControl
         shapeLevelControl.Flags = OpenTK.Windowing.Common.ContextFlags.Default;
         shapeLevelControl.Location = new System.Drawing.Point(0, 0);
         shapeLevelControl.Name = "shapeLevelControl";
-        //shapeLevelControl.Margin = new Padding(3, 3, 3, 3);
         shapeLevelControl.Dock = DockStyle.Fill;
         shapeLevelControl.Profile = OpenTK.Windowing.Common.ContextProfile.Compatability;
         shapeLevelControl.TabIndex = 0;

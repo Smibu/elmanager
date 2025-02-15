@@ -90,9 +90,6 @@ internal partial class ShapeSelectionForm : Form
         SetInitialLocation();
         PopulateSubfolderComboBox();
 
-        // Pass the shared context to the PopulateShapeGallery method
-        //PopulateShapeGalleryFromLastSelectedSubfolder(_sharedContext);
-
         SetupReusableControls(sharedContext, Columns*Rows);
 
         flowLayoutPanelShapes.MouseWheel += FlowLayoutPanelShapes_MouseWheel;
