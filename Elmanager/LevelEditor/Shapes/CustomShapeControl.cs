@@ -43,7 +43,7 @@ internal partial class CustomShapeControl : UserControl.UserControl
         shapeLevelControl.Margin = new Padding(3, 3, 3, 3);
         shapeLevelControl.Padding = new Padding(1, 1, 1, 1);
         shapeLevelControl.Name = "shapeLevelControl";
-        shapeLevelControl.Dock = DockStyle.None;
+        shapeLevelControl.Dock = DockStyle.Fill;
         shapeLevelControl.Profile = OpenTK.Windowing.Common.ContextProfile.Compatability;
         shapeLevelControl.TabIndex = 0;
         shapeLevelControl.TabStop = false;
@@ -209,5 +209,18 @@ internal partial class CustomShapeControl : UserControl.UserControl
     protected virtual void OnShapeDoubleClicked(EventArgs e)
     {
         ShapeDoubleClicked?.Invoke(this, e);
+    }
+
+    // Ensure square image when resized
+    protected override void OnResize(EventArgs e)
+    {
+        base.OnResize(e);
+        int size = Math.Min(Width, Height - 40); // Ensure square size
+
+        if (shapeLevelControl != null)
+        {
+            shapeLevelControl.Width = size;
+            shapeLevelControl.Height = size;
+        }
     }
 }

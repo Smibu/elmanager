@@ -166,5 +166,23 @@ namespace Elmanager.LevelEditor.Shapes
             }
             base.Dispose(disposing);
         }
+
+        protected override void OnResize(EventArgs e)
+        {
+            base.OnResize(e);
+
+            if (Context == null)
+            {
+                return;
+            }
+
+            if (!Context.IsCurrent)
+            {
+                MakeCurrent();
+            }
+
+            GL.Viewport(0, 0, Width, Height); // Set viewport to the entire control
+            Render();
+        }
     }
 }

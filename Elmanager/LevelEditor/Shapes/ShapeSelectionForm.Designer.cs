@@ -158,7 +158,6 @@ namespace Elmanager.LevelEditor.Shapes
             AutoScaleMode = AutoScaleMode.Dpi;
             ClientSize = new System.Drawing.Size(594, 646);
             Controls.Add(tableLayoutPanel1);
-            FormBorderStyle = FormBorderStyle.FixedSingle;
             MaximizeBox = false;
             MinimizeBox = false;
             MinimumSize = new System.Drawing.Size(200, 100);
