@@ -36,7 +36,7 @@ internal partial class ShapeSelectionForm : Form
     private const int Rows = 3; // 3 rows × 4 columns
 
     private const int ControlWidth = 110; // Width of CustomShapeControl
-    private const int ControlHeight = 160; // Height of CustomShapeControl
+    private const int ControlHeight = 150; // Height of CustomShapeControl
     private const int ControlMargin = 10; // Margin between controls
     private const int BottomMargin = 70; // Margin at the bottom for the buttons and combobox
 

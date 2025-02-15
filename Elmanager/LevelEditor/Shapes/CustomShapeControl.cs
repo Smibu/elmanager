@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Drawing;
+using System.Drawing.Printing;
 using System.Windows.Forms;
 using System.IO;
 using System.Linq;
@@ -38,8 +39,11 @@ internal partial class CustomShapeControl : UserControl.UserControl
         shapeLevelControl.APIVersion = new Version(3, 3, 0, 0);
         shapeLevelControl.Flags = OpenTK.Windowing.Common.ContextFlags.Default;
         shapeLevelControl.Location = new System.Drawing.Point(0, 0);
+        shapeLevelControl.Size = new Size(102, 102);
+        shapeLevelControl.Margin = new Padding(3, 3, 3, 3);
+        shapeLevelControl.Padding = new Padding(1, 1, 1, 1);
         shapeLevelControl.Name = "shapeLevelControl";
-        shapeLevelControl.Dock = DockStyle.Fill;
+        shapeLevelControl.Dock = DockStyle.None;
         shapeLevelControl.Profile = OpenTK.Windowing.Common.ContextProfile.Compatability;
         shapeLevelControl.TabIndex = 0;
         shapeLevelControl.TabStop = false;
