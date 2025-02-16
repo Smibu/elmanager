@@ -56,7 +56,7 @@ namespace Elmanager.LevelEditor.Shapes
             // buttonCancel
             // 
             buttonCancel.Anchor = AnchorStyles.Bottom | AnchorStyles.Right;
-            buttonCancel.Location = new System.Drawing.Point(510, 4);
+            buttonCancel.Location = new System.Drawing.Point(463, 4);
             buttonCancel.Name = "buttonCancel";
             buttonCancel.Size = new System.Drawing.Size(75, 23);
             buttonCancel.TabIndex = 0;
@@ -67,7 +67,7 @@ namespace Elmanager.LevelEditor.Shapes
             // buttonOk
             // 
             buttonOk.Anchor = AnchorStyles.Bottom | AnchorStyles.Right;
-            buttonOk.Location = new System.Drawing.Point(429, 4);
+            buttonOk.Location = new System.Drawing.Point(382, 4);
             buttonOk.Name = "buttonOk";
             buttonOk.Size = new System.Drawing.Size(75, 23);
             buttonOk.TabIndex = 1;
@@ -88,7 +88,7 @@ namespace Elmanager.LevelEditor.Shapes
             tableLayoutPanel1.RowStyles.Add(new RowStyle(SizeType.Percent, 100F));
             tableLayoutPanel1.RowStyles.Add(new RowStyle(SizeType.Absolute, 36F));
             tableLayoutPanel1.RowStyles.Add(new RowStyle(SizeType.Absolute, 20F));
-            tableLayoutPanel1.Size = new System.Drawing.Size(594, 646);
+            tableLayoutPanel1.Size = new System.Drawing.Size(547, 579);
             tableLayoutPanel1.TabIndex = 3;
             // 
             // panel1
@@ -97,9 +97,9 @@ namespace Elmanager.LevelEditor.Shapes
             panel1.Controls.Add(buttonOk);
             panel1.Controls.Add(buttonCancel);
             panel1.Dock = DockStyle.Fill;
-            panel1.Location = new System.Drawing.Point(3, 613);
+            panel1.Location = new System.Drawing.Point(3, 546);
             panel1.Name = "panel1";
-            panel1.Size = new System.Drawing.Size(588, 30);
+            panel1.Size = new System.Drawing.Size(541, 30);
             panel1.TabIndex = 1;
             // 
             // comboBoxSubfolders
@@ -109,7 +109,7 @@ namespace Elmanager.LevelEditor.Shapes
             comboBoxSubfolders.FormattingEnabled = true;
             comboBoxSubfolders.Location = new System.Drawing.Point(3, 4);
             comboBoxSubfolders.Name = "comboBoxSubfolders";
-            comboBoxSubfolders.Size = new System.Drawing.Size(420, 23);
+            comboBoxSubfolders.Size = new System.Drawing.Size(373, 23);
             comboBoxSubfolders.TabIndex = 2;
             // 
             // tableLayoutPanel2
@@ -124,15 +124,15 @@ namespace Elmanager.LevelEditor.Shapes
             tableLayoutPanel2.Name = "tableLayoutPanel2";
             tableLayoutPanel2.RowCount = 1;
             tableLayoutPanel2.RowStyles.Add(new RowStyle(SizeType.Percent, 100F));
-            tableLayoutPanel2.Size = new System.Drawing.Size(588, 604);
+            tableLayoutPanel2.Size = new System.Drawing.Size(541, 537);
             tableLayoutPanel2.TabIndex = 3;
             // 
             // vScrollBar1
             // 
             vScrollBar1.Anchor = AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Right;
-            vScrollBar1.Location = new System.Drawing.Point(571, 0);
+            vScrollBar1.Location = new System.Drawing.Point(524, 0);
             vScrollBar1.Name = "vScrollBar1";
-            vScrollBar1.Size = new System.Drawing.Size(17, 604);
+            vScrollBar1.Size = new System.Drawing.Size(17, 537);
             vScrollBar1.TabIndex = 1;
             // 
             // tableLayoutPanelShapes
@@ -149,14 +149,14 @@ namespace Elmanager.LevelEditor.Shapes
             tableLayoutPanelShapes.RowStyles.Add(new RowStyle(SizeType.Percent, 33.3333321F));
             tableLayoutPanelShapes.RowStyles.Add(new RowStyle(SizeType.Percent, 33.3333321F));
             tableLayoutPanelShapes.RowStyles.Add(new RowStyle(SizeType.Percent, 33.3333321F));
-            tableLayoutPanelShapes.Size = new System.Drawing.Size(565, 598);
+            tableLayoutPanelShapes.Size = new System.Drawing.Size(518, 531);
             tableLayoutPanelShapes.TabIndex = 2;
             // 
             // ShapeSelectionForm
             // 
             AutoScaleDimensions = new System.Drawing.SizeF(96F, 96F);
             AutoScaleMode = AutoScaleMode.Dpi;
-            ClientSize = new System.Drawing.Size(594, 646);
+            ClientSize = new System.Drawing.Size(547, 579);
             Controls.Add(tableLayoutPanel1);
             MaximizeBox = false;
             MinimizeBox = false;
