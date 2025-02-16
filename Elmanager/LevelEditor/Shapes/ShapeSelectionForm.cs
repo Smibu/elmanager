@@ -37,11 +37,6 @@ internal partial class ShapeSelectionForm : Form
     private const int Columns = 4; // 3 rows × 4 columns
     private const int Rows = 3; // 3 rows × 4 columns
 
-    private const int ControlWidth = 110; // Width of CustomShapeControl
-    private const int ControlHeight = 150; // Height of CustomShapeControl
-    private const int ControlMargin = 10; // Margin between controls
-    private const int BottomMargin = 70; // Margin at the bottom for the buttons and combobox
-
     private readonly SceneSettings _sceneSettings;
     private RenderingSettings _renderingSettings;
     private readonly GLControl _sharedContext;
@@ -97,17 +92,6 @@ internal partial class ShapeSelectionForm : Form
         tableLayoutPanelShapes.MouseWheel += FlowLayoutPanelShapes_MouseWheel;
 
         vScrollBar1.ValueChanged += vScrollBar_ValueChanged;
-
-        // Set the size of the form based on the control dimensions and layout
-        SetFormSize();
-    }
-
-    private void SetFormSize()
-    {
-        int formWidth = (ControlWidth + ControlMargin) * Columns + ControlMargin + vScrollBar1.Width;
-        int formHeight = (ControlHeight + ControlMargin) * Rows + ControlMargin + BottomMargin;
-
-        this.Size = new Size(formWidth, formHeight);
     }
 
     private void SetupScrollBar(int count)
