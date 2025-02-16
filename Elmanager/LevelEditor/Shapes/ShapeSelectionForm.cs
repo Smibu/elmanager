@@ -199,17 +199,18 @@ internal partial class ShapeSelectionForm : Form
         Point mousePosition = Cursor.Position;
         this.Location = new Point(mousePosition.X + offsetX, mousePosition.Y + offsetY);
 
-        // Get the screen bounds
-        System.Drawing.Rectangle screenBounds = Screen.FromPoint(mousePosition).WorkingArea;
+        // Get the screen bounds and taskbar height
+        System.Drawing.Rectangle screenBounds = Screen.FromPoint(mousePosition).Bounds;
+        int taskbarHeight = GetTaskbarHeight(mousePosition);
 
         // Adjust the position to ensure the dialog is fully visible
         if (this.Right > screenBounds.Right)
         {
             this.Left = screenBounds.Right - this.Width;
         }
-        if (this.Bottom > screenBounds.Bottom)
+        if (this.Bottom > screenBounds.Bottom - taskbarHeight)
         {
-            this.Top = screenBounds.Bottom - this.Height;
+            this.Top = screenBounds.Bottom - taskbarHeight - this.Height;
         }
         if (this.Left < screenBounds.Left)
         {
@@ -219,6 +220,18 @@ internal partial class ShapeSelectionForm : Form
         {
             this.Top = screenBounds.Top;
         }
+    }
+
+    private int GetTaskbarHeight(Point mousePosition)
+    {
+        // Get the screen bounds and working area
+        System.Drawing.Rectangle screenBounds = Screen.FromPoint(mousePosition).Bounds;
+        System.Drawing.Rectangle workingArea = Screen.FromPoint(mousePosition).WorkingArea;
+
+        // Calculate the height of the taskbar
+        int taskbarHeight = screenBounds.Height - workingArea.Height;
+
+        return taskbarHeight;
     }
 
     private void SetupReusableControls(GLControl sharedContext, int numControls)
