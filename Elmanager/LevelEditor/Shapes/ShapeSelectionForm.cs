@@ -87,7 +87,7 @@ internal partial class ShapeSelectionForm : Form
         SetInitialLocation();
         PopulateSubfolderComboBox();
 
-        SetupReusableControls(sharedContext, Columns*Rows);
+        SetupReusableControls(sharedContext, Columns * Rows);
 
         tableLayoutPanelShapes.MouseWheel += FlowLayoutPanelShapes_MouseWheel;
 
