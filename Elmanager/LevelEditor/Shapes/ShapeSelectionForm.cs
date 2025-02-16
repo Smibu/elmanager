@@ -43,6 +43,9 @@ internal partial class ShapeSelectionForm : Form
     private List<CustomShapeControl> _reusableControls;
     private List<(string Name, string FilePath)> _shapes;
 
+    // Static fields to remember the size of the form
+    private static Size? _lastSize;
+
     public ShapeSelectionForm(GLControl sharedContext, ElmaRenderer elmaRenderer, string? selectedShapeName = null, double scalingFactor = 0.0, double rotationAngle = 0.0, ShapeMirrorOption mirrorOption = ShapeMirrorOption.None)
     {
         ScalingFactor = scalingFactor;
@@ -92,6 +95,12 @@ internal partial class ShapeSelectionForm : Form
         tableLayoutPanelShapes.MouseWheel += FlowLayoutPanelShapes_MouseWheel;
 
         vScrollBar1.ValueChanged += vScrollBar_ValueChanged;
+
+        // Restore the last size if available
+        if (_lastSize.HasValue)
+        {
+            this.Size = _lastSize.Value;
+        }
     }
 
     private void SetupScrollBar(int count)
@@ -239,6 +248,9 @@ internal partial class ShapeSelectionForm : Form
 
     protected override void OnFormClosing(FormClosingEventArgs e)
     {
+        // Save the current size
+        _lastSize = this.Size;
+
         // Disable the form's painting
         this.Visible = false;
         this.SuspendLayout();
