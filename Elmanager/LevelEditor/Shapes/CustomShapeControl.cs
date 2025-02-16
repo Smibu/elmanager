@@ -41,8 +41,8 @@ internal partial class CustomShapeControl : UserControl.UserControl
         shapeLevelControl.Flags = OpenTK.Windowing.Common.ContextFlags.Default;
         shapeLevelControl.Location = new System.Drawing.Point(0, 0);
         shapeLevelControl.Size = new Size(102, 102);
-        shapeLevelControl.Margin = new Padding(3, 3, 3, 3);
-        shapeLevelControl.Padding = new Padding(1, 1, 1, 1);
+        shapeLevelControl.Margin = new Padding(0);
+        shapeLevelControl.Padding = new Padding(0);
         shapeLevelControl.Name = "shapeLevelControl";
         shapeLevelControl.Dock = DockStyle.None;
         shapeLevelControl.Profile = OpenTK.Windowing.Common.ContextProfile.Compatability;
@@ -219,8 +219,9 @@ internal partial class CustomShapeControl : UserControl.UserControl
 
         if (shapeLevelControl != null)
         {
-            var marginLeft = Margin.Left;
-            var marginRight = Margin.Right;
+            // Margins / Padding / Location doesn't scale consistently with DPI scaling, so we draw level control based on the size of the parent control without any margins
+            var marginLeft = 0; //Margin.Left;
+            var marginRight = 0; //Margin.Right;
 
             shapeLevelControl.Size = new Size(Width - (marginLeft + marginRight + shapeLevelControl.Padding.Left + shapeLevelControl.Padding.Right), Height - lblShapeName.Height);
             shapeLevelControl.PerformLayout();
