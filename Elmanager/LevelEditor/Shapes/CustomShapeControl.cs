@@ -14,6 +14,7 @@ using OpenTK.GLControl;
 using OpenTK.Windowing.Desktop;
 using Path = System.IO.Path;
 using OpenTK.Windowing.Common;
+using System.Windows.Controls;
 
 namespace Elmanager.LevelEditor.Shapes;
 
@@ -43,7 +44,7 @@ internal partial class CustomShapeControl : UserControl.UserControl
         shapeLevelControl.Margin = new Padding(3, 3, 3, 3);
         shapeLevelControl.Padding = new Padding(1, 1, 1, 1);
         shapeLevelControl.Name = "shapeLevelControl";
-        shapeLevelControl.Dock = DockStyle.Fill;
+        shapeLevelControl.Dock = DockStyle.None;
         shapeLevelControl.Profile = OpenTK.Windowing.Common.ContextProfile.Compatability;
         shapeLevelControl.TabIndex = 0;
         shapeLevelControl.TabStop = false;
@@ -211,16 +212,23 @@ internal partial class CustomShapeControl : UserControl.UserControl
         ShapeDoubleClicked?.Invoke(this, e);
     }
 
-    // Ensure square image when resized
+    // Manually resize the shape level control and label
     protected override void OnResize(EventArgs e)
     {
         base.OnResize(e);
-        int size = Math.Min(Width, Height - 40); // Ensure square size
 
         if (shapeLevelControl != null)
         {
-            shapeLevelControl.Width = size;
-            shapeLevelControl.Height = size;
+            var marginLeft = Margin.Left;
+            var marginRight = Margin.Right;
+
+            shapeLevelControl.Size = new Size(Width - (marginLeft + marginRight + shapeLevelControl.Padding.Left + shapeLevelControl.Padding.Right), Height - lblShapeName.Height);
+            shapeLevelControl.PerformLayout();
+        }
+
+        if (lblShapeName != null)
+        {
+            lblShapeName.Size = new Size(Width, lblShapeName.Height);
         }
     }
 }

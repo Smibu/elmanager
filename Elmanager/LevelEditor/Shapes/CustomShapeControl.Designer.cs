@@ -40,7 +40,7 @@ namespace Elmanager.LevelEditor.Shapes
             // 
             // lblShapeName
             // 
-            lblShapeName.Anchor = AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Left | AnchorStyles.Right;
+            lblShapeName.AutoSize = false;
             lblShapeName.CausesValidation = false;
             lblShapeName.Font = new System.Drawing.Font("Segoe UI", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, 0);
             lblShapeName.Location = new System.Drawing.Point(0, 110);
