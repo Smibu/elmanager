@@ -86,6 +86,10 @@ internal partial class ShapeSelectionForm : Form
 
         InitializeComponent();
 
+        // Hack to get the DPI scaling factor
+        float dpiScalingFactorX = buttonCancel.Width / 75.0f; // 75 is the default width of the Cancel button
+        vScrollBar1.Width = (int) (vScrollBar1.Width * dpiScalingFactorX);
+
         this.StartPosition = FormStartPosition.Manual;
         SetInitialLocation();
         PopulateSubfolderComboBox();
