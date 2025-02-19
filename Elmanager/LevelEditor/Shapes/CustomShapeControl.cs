@@ -116,11 +116,8 @@ internal partial class CustomShapeControl : UserControl.UserControl
             return;
         }
 
-        if (File.Exists(levFilePath))
-        {
-            var shapeData = CustomShapeSerializer.DeserializeShapeDataLev(levFilePath);
-            ShapeDataLoaded?.Invoke(this, shapeData);
-        }
+        var shapeData = CustomShapeSerializer.DeserializeShapeDataLev(levFilePath);
+        ShapeDataLoaded?.Invoke(this, shapeData);
     }
 
     public void Highlight(bool isSelected)
