@@ -15,12 +15,7 @@ internal static class CustomShapeSerializer
         if (filePath.EndsWith(".lev", StringComparison.OrdinalIgnoreCase))
         {
             Level level = Level.FromPath(filePath).Obj;
-
-            if (level.IsAcrossLevel)
-            {
-                throw new InvalidOperationException("Cannot load across level shapes.");
-            }
-
+            
             level.Objects = level.Objects.Where(o => o.Type != ObjectType.Start).ToList(); // Remove start object
             level.UpdateBounds();
 
