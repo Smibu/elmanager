@@ -97,7 +97,6 @@ internal partial class CustomShapeControl : UserControl.UserControl
     private void OnComponentClick(object? sender, EventArgs e)
     {
         ShapeClicked?.Invoke(this, e);
-        LoadShape();
     }
 
     public void LoadShape()
