@@ -109,7 +109,7 @@ internal partial class CustomShapeControl : UserControl.UserControl
 
         var levFilePath = ShapeFullPath;
 
-        // Check if the JSON file exists
+        // Check if the LEV file exists
         if (!File.Exists(levFilePath))
         {
             MessageBox.Show($@"Corresponding LEV file not found: {levFilePath}", @"Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
