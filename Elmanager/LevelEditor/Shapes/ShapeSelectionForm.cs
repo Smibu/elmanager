@@ -157,6 +157,7 @@ internal partial class ShapeSelectionForm : Form
             int dataIndex = startIndex + i;
             if (dataIndex < _shapes.Count)
             {
+                _reusableControls[i].Highlight(false);
                 _reusableControls[i].UpdateContent(_shapes[dataIndex].FilePath, _shapes[dataIndex].Name);
                 _reusableControls[i].Visible = true;
             }
@@ -171,6 +172,8 @@ internal partial class ShapeSelectionForm : Form
             _reusableControls[i].DisableLevelRendering(false);
         }
 
+        HighlightSelectedShape();
+
         tableLayoutPanelShapes.Invalidate();
         tableLayoutPanelShapes.Refresh();
     }
@@ -184,7 +187,7 @@ internal partial class ShapeSelectionForm : Form
 
         foreach (System.Windows.Forms.Control control in tableLayoutPanelShapes.Controls)
         {
-            if (control is CustomShapeControl shapeControl && shapeControl.ShapeName == SelectedShapeName)
+            if (control is CustomShapeControl shapeControl && shapeControl.ShapeFullPath == SelectedShapeName)
             {
                 shapeControl.Highlight(true);
                 _selectedShapeControl = shapeControl;
@@ -306,7 +309,7 @@ internal partial class ShapeSelectionForm : Form
         if (_selectedShapeControl != null)
         {
             _selectedShapeControl.Highlight(true);
-            SelectedShapeName = _selectedShapeControl.ShapeName;
+            SelectedShapeName = _selectedShapeControl.ShapeFullPath;
         }
     }
 
@@ -323,7 +326,7 @@ internal partial class ShapeSelectionForm : Form
         {
             // Raise the ShapeDataLoaded event with the selected shape data
             _selectedShapeControl.LoadShape();
-            SelectedShapeName = _selectedShapeControl.ShapeName;
+            SelectedShapeName = _selectedShapeControl.ShapeFullPath;
         }
         this.DialogResult = DialogResult.OK;
         this.Close();
