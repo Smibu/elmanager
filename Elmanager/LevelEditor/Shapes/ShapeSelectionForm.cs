@@ -147,9 +147,9 @@ internal partial class ShapeSelectionForm : Form
     {
         int startIndex = startPage * Columns;
 
-        for (int i = 0; i < _reusableControls.Count; i++)
+        foreach (var customShapeControl in _reusableControls)
         {
-            _reusableControls[i].DisableLevelRendering(true);
+            customShapeControl.DisableLevelRendering(true);
         }
 
         for (int i = 0; i < _reusableControls.Count; i++)
@@ -167,9 +167,9 @@ internal partial class ShapeSelectionForm : Form
             }
         }
 
-        for (int i = 0; i < _reusableControls.Count; i++)
+        foreach (var customShapeControl in _reusableControls)
         {
-            _reusableControls[i].DisableLevelRendering(false);
+            customShapeControl.DisableLevelRendering(false);
         }
 
         HighlightSelectedShape();
