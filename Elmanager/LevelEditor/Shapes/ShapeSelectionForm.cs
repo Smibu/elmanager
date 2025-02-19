@@ -251,7 +251,7 @@ internal partial class ShapeSelectionForm : Form
             shapeControl.ShapeDoubleClicked += ShapeControl_ShapeDoubleClicked;
 
             // Handle polygons loaded event
-            shapeControl.ShapeDataLoaded += (sender, shapeDataDto) =>
+            shapeControl.ShapeDataLoaded += (_, shapeDataDto) =>
             {
                 ShapeDataLoaded?.Invoke(this, shapeDataDto);
             };
