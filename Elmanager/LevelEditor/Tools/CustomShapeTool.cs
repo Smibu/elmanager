@@ -24,13 +24,8 @@ internal class CustomShapeTool : ToolBase, IEditorTool
     private double _scalingFactor = 1.0;
     private double _rotationAngle = 0.0;
 
-    private List<Polygon> _polygons = new();
-    private List<LevObject> _objects = new();
-    private List<GraphicElement> _graphicElements = new();
-
-    private List<Polygon> _originalPolygons = new();
-    private List<LevObject> _originalObjects = new();
-    private List<GraphicElement> _originalGraphicElements = new();
+    private Level? _level;
+    private Level? _originalLevel;
 
     private PlacementAnchor _anchor = PlacementAnchor.Center;
 
@@ -43,13 +38,13 @@ internal class CustomShapeTool : ToolBase, IEditorTool
 
     public void ExtraRendering()
     {
-        if (_selectedShapeData == null)
+        if (_selectedShapeData == null || _level == null)
         {
             return;
         }
 
         var settings = Global.AppSettings.LevelEditor.RenderingSettings;
-        foreach (var polygon in _polygons)
+        foreach (var polygon in _level.Polygons)
         {
             if (polygon.IsGrass)
             {
@@ -71,8 +66,8 @@ internal class CustomShapeTool : ToolBase, IEditorTool
 
     public TransientElements GetTransientElements()
     {
-        return _hasFocus
-            ? new TransientElements(new List<Polygon>(_polygons), new List<LevObject>(_objects), new List<GraphicElement>(_graphicElements))
+        return _hasFocus && _level != null
+            ? new TransientElements(new List<Polygon>(_level.Polygons), new List<LevObject>(_level.Objects), new List<GraphicElement>(_level.GraphicElements))
             : TransientElements.Empty;
     }
 
@@ -99,23 +94,30 @@ internal class CustomShapeTool : ToolBase, IEditorTool
 
     private void LoadShapeData()
     {
-        if (_selectedShapeData == null) return;
+        if (_selectedShapeData == null)
+        {
+            _level = null;
+            _originalLevel = null;
+            return;
+        }
 
-        _polygons = _selectedShapeData.Polygons.Select(p => p.Clone()).ToList();
-        _polygons.ForEach(polygon => polygon.UpdateDecompositionOrGrassSlopeInfo(Lev.GroundBounds, Global.AppSettings.LevelEditor.RenderingSettings.GrassZoom));
-        _objects = _selectedShapeData.Objects.Select(o => o.Clone()).ToList();
-        _graphicElements = _selectedShapeData.GraphicElements.Select(ge => ge with { Position = new Vector(ge.Position.X, ge.Position.Y) }).ToList();
+        _level = _selectedShapeData.Level.Clone();
+        _level.UpdateAllPolygons(Global.AppSettings.LevelEditor.RenderingSettings.GrassZoom);
+        _level.UpdateBounds();
 
         // Store the original state
-        _originalPolygons = _selectedShapeData.Polygons.Select(p => p.Clone()).ToList();
-        _originalObjects = _selectedShapeData.Objects.Select(o => o.Clone()).ToList();
-        _originalGraphicElements = _selectedShapeData.GraphicElements.Select(ge => ge with { Position = new Vector(ge.Position.X, ge.Position.Y) }).ToList();
+        _originalLevel = _selectedShapeData.Level.Clone();
 
         ApplyTransformations(CurrentPos);
     }
 
     private void ApplyTransformations(Vector mousePosition)
     {
+        if (_level == null || _originalLevel == null)
+        {
+            return;
+        }
+
         var scalingMatrix = Matrix.CreateScaling(_scalingFactor, _scalingFactor);
         var rotationMatrix = Matrix.Identity;
         rotationMatrix.Rotate(_rotationAngle);
@@ -129,22 +131,25 @@ internal class CustomShapeTool : ToolBase, IEditorTool
         var transformationMatrix = scalingMatrix * rotationMatrix * mirrorMatrix;
 
         // Center shape around mouse position
-        var (center, min, max) = GeometryUtils.CalculateBoundingBox(_originalPolygons, _originalObjects, _originalGraphicElements);
+        Vector center = new Vector((_level.Bounds.XMin + _level.Bounds.XMax) / 2, (_level.Bounds.YMin + _level.Bounds.YMax) / 2);
+        var min = new Vector(_level.Bounds.XMin, _level.Bounds.YMin);
+        var max = new Vector(_level.Bounds.XMax, _level.Bounds.YMax);
+
         Vector anchorOffset = GetAnchorOffset(min, max);
         var translationMatrix = Matrix.CreateTranslation(mousePosition.X - center.X + anchorOffset.X, mousePosition.Y - center.Y + anchorOffset.Y);
         transformationMatrix = transformationMatrix * translationMatrix;
 
-        _polygons = _originalPolygons.Select(p => p.ApplyTransformation(transformationMatrix)).ToList();
-        _polygons.ForEach(polygon => polygon.UpdateDecomposition());
+        _level.Polygons = _originalLevel.Polygons.Select(p => p.ApplyTransformation(transformationMatrix)).ToList();
+        _level.Polygons.ForEach(polygon => polygon.UpdateDecomposition());
 
-        _objects = _originalObjects.Select(o =>
+        _level.Objects = _originalLevel.Objects.Select(o =>
         {
             var newObj = o.Clone();
             newObj.Position = newObj.Position.Transform(transformationMatrix);
             return newObj;
         }).ToList();
 
-        _graphicElements = _originalGraphicElements.Select(ge =>
+        _level.GraphicElements = _originalLevel.GraphicElements.Select(ge =>
         {
             var newGe = ge with { Position = new Vector(ge.X, ge.Y) };
             newGe.Position = newGe.Position.Transform(transformationMatrix);
@@ -276,20 +281,25 @@ internal class CustomShapeTool : ToolBase, IEditorTool
 
     private void TranslateShape(Vector translation)
     {
-        _polygons.ForEach(polygon => polygon.Move(translation));
-        _objects.ForEach(obj => obj.Position += translation);
-        _graphicElements.ForEach(graphicElement => graphicElement.Position += translation);
+        if (_level == null)
+        {
+            return;
+        }
+
+        _level.Polygons.ForEach(polygon => polygon.Move(translation));
+        _level.Objects.ForEach(obj => obj.Position += translation);
+        _level.GraphicElements.ForEach(graphicElement => graphicElement.Position += translation);
     }
 
     private void InsertShapeIntoLevel(Vector position)
     {
-        if (_selectedShapeData == null) return;
+        if (_selectedShapeData == null || _level == null) return;
 
         TranslateShape(position);
-
-        Lev.Polygons.AddRange(_polygons);
-        Lev.Objects.AddRange(_objects);
-        Lev.GraphicElements.AddRange(_graphicElements);
+        
+        Lev.Polygons.AddRange(_level.Polygons);
+        Lev.Objects.AddRange(_level.Objects);
+        Lev.GraphicElements.AddRange(_level.GraphicElements);
         Lev.UpdateAllPolygons(Global.AppSettings.LevelEditor.RenderingSettings.GrassZoom);
         LevEditor.SetModified(LevModification.Ground | LevModification.Decorations | LevModification.Objects);
     }

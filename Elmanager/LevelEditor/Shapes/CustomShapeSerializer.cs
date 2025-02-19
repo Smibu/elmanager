@@ -44,7 +44,8 @@ internal static class CustomShapeSerializer
             {
                 graphicElement.Position = new Vector(graphicElement.Position.X - centerByBounds.X, graphicElement.Position.Y - centerByBounds.Y);
             }
-
+            
+            level.UpdateBounds();
 
             return new ShapeDataDto(level);
         }
