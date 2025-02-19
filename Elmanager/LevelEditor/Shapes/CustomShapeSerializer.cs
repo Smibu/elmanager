@@ -19,10 +19,9 @@ internal static class CustomShapeSerializer
             level.Objects = level.Objects.Where(o => o.Type != ObjectType.Start).ToList(); // Remove start object
             level.UpdateBounds();
 
-            //// Cannot use Bounds since it relies on the Start Object, and we are default start position to (0, 0) in shapes
             Vector centerByBounds = new Vector((level.Bounds.XMin + level.Bounds.XMax) / 2, (level.Bounds.YMin + level.Bounds.YMax) / 2);
 
-            // Normalize positions on
+            // Normalize positions
             List<Polygon> levelPolygons = level.Polygons;
             List<LevObject> levObjects = level.Objects; // No need to filter start object since it is already removed
             List<GraphicElement> levelGraphicElements = level.GraphicElements;
