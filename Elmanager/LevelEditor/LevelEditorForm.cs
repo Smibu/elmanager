@@ -2993,8 +2993,16 @@ internal partial class LevelEditorForm : FormMod, IMessageFilter
             return;
         }
 
-        saveAsPictureDialog.FileName = "Untitled";
-        if (saveAsPictureDialog.ShowDialog() != DialogResult.OK || !saveAsPictureDialog.FileName.EndsWith(".png"))
+        var oldInitialDirectory = SaveFileDialog1.InitialDirectory;
+        
+        SaveFileDialog1.FileName = "Untitled";
+        SaveFileDialog1.InitialDirectory = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "sle_shapes");
+        
+        var result = SaveFileDialog1.ShowDialog();
+        
+        SaveFileDialog1.InitialDirectory = oldInitialDirectory;
+        
+        if (result != DialogResult.OK)
         {
             return;
         }
@@ -3018,12 +3026,10 @@ internal partial class LevelEditorForm : FormMod, IMessageFilter
             tempLevel.UpdateBounds();
         }
 
-        var shapeFileName = Path.ChangeExtension(saveAsPictureDialog.FileName, ".lev");
-
         // Add start object, as it is needed.
         tempLevel.Objects.Add(new LevObject(new Vector(0, 0), ObjectType.Start, AppleType.Normal));
 
-        SaveShape(tempLevel, shapeFileName);
+        SaveShape(tempLevel, SaveFileDialog1.FileName);
 
         // Restore selection
         foreach (var polygon in selectedPolygons)
