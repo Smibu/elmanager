@@ -107,7 +107,7 @@ internal partial class CustomShapeControl : UserControl.UserControl
             return;
         }
 
-        var levFilePath = Path.ChangeExtension(ShapeFullPath, ".lev");
+        var levFilePath = ShapeFullPath;
 
         // Check if the JSON file exists
         if (!File.Exists(levFilePath))
