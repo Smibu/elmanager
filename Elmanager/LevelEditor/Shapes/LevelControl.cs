@@ -148,6 +148,7 @@ namespace Elmanager.LevelEditor.Shapes
             if (resetViewport)
             {
                 GL.Viewport(0, 0, Width, Height); // Set viewport to the entire control
+                _zoomController?.ZoomFill(_renderingSettings);
             }
 
             // Use the ElmaRenderer to render the level
