@@ -2993,10 +2993,25 @@ internal partial class LevelEditorForm : FormMod, IMessageFilter
             return;
         }
 
+        string shapesDirectory = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "sle_shapes");
+
+        if (!Directory.Exists(shapesDirectory))
+        {
+            try
+            {
+                Directory.CreateDirectory(shapesDirectory);
+            }
+            catch (Exception ex)
+            {
+                UiUtils.ShowError("Error creating directory: " + shapesDirectory + "\n\n" +ex.Message, "Error", MessageBoxIcon.Error);
+                return;
+            }
+        }
+
         var oldInitialDirectory = SaveFileDialog1.InitialDirectory;
         
         SaveFileDialog1.FileName = "Type Shape Title Here";
-        SaveFileDialog1.InitialDirectory = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "sle_shapes");
+        SaveFileDialog1.InitialDirectory = shapesDirectory;
         
         var result = SaveFileDialog1.ShowDialog();
         
