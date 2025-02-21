@@ -465,7 +465,7 @@ namespace Elmanager.LevelEditor
             // 
             createCustomShapeToolStripMenuItem.Name = "createCustomShapeToolStripMenuItem";
             createCustomShapeToolStripMenuItem.Size = new Size(265, 22);
-            createCustomShapeToolStripMenuItem.Text = "Create Custom Shape";
+            createCustomShapeToolStripMenuItem.Text = "Save as shape...";
             createCustomShapeToolStripMenuItem.Click += createCustomShapeMenuItem_Click;
             // 
             // MirrorHorizontallyToolStripMenuItem
@@ -1542,7 +1542,7 @@ namespace Elmanager.LevelEditor
             // 
             createCustomShapeMenuItem.Name = "createCustomShapeMenuItem";
             createCustomShapeMenuItem.Size = new Size(188, 22);
-            createCustomShapeMenuItem.Text = "Create Custom Shape";
+            createCustomShapeMenuItem.Text = "Save as shape...";
             createCustomShapeMenuItem.Click += createCustomShapeMenuItem_Click;
             // 
             // saveAsPictureDialog
