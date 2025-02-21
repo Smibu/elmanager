@@ -1,16 +1,20 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Drawing;
+using System.IO;
 using System.Linq;
 using System.Windows.Forms;
+using System.Windows.Shapes;
 using Elmanager.Application;
 using Elmanager.Geometry;
 using Elmanager.Lev;
 using Elmanager.LevelEditor.Shapes;
 using Elmanager.Rendering;
+using Elmanager.UI;
 using OpenTK.GLControl;
 using OpenTK.Windowing.Common;
 using OpenTK.Windowing.Desktop;
+using Path = System.IO.Path;
 using Polygon = Elmanager.Lev.Polygon;
 
 namespace Elmanager.LevelEditor.Tools;
@@ -73,6 +77,36 @@ internal class CustomShapeTool : ToolBase, IEditorTool
 
     private void OpenDialog()
     {
+        // Validate that Shapes exist
+        string shapesDirectory = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "sle_shapes");
+        if (!Directory.Exists(shapesDirectory))
+        {
+            UiUtils.ShowError("The 'sle_shapes' folder does not exist.\nSelect + right-click in editor to save selection as a new shape.", 
+                "Shapes directory not found", MessageBoxIcon.Exclamation);
+            return;
+        }
+
+        // Check each subdirectory for .lev files
+        var subdirectories = Directory.GetDirectories(shapesDirectory);
+        bool hasLevFiles = false;
+
+        foreach (var subdirectory in subdirectories)
+        {
+            if (Directory.GetFiles(subdirectory, "*.lev", SearchOption.TopDirectoryOnly).Length > 0)
+            {
+                hasLevFiles = true;
+                break;
+            }
+        }
+
+        if (!hasLevFiles)
+        {
+            UiUtils.ShowError("No .lev files found in any subdirectory of 'sle_shapes'.\nSelect + right-click in editor to save selection as a new shape.",
+                "No shapes found", MessageBoxIcon.Exclamation);
+            return;
+        }
+
+        // Open Shape Selection Form
         var shapeSelectionForm = new ShapeSelectionForm(LevEditor.EditorControl, LevEditor.Renderer, _selectedShapeName, _scalingFactor, _rotationAngle, _selectedMirrorOption);
         shapeSelectionForm.ShapeDataLoaded += ShapeSelectionForm_ShapeDataLoaded;
         shapeSelectionForm.ShowDialog();
