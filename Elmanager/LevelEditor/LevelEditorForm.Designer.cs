@@ -1781,7 +1781,7 @@ namespace Elmanager.LevelEditor
             CustomShapeButton.Name = "CustomShapeButton";
             CustomShapeButton.Size = new Size(84, 25);
             CustomShapeButton.TabIndex = 17;
-            CustomShapeButton.Text = "Shape";
+            CustomShapeButton.Text = "S&hape";
             CustomShapeButton.TextAlign = ContentAlignment.MiddleCenter;
             CustomShapeButton.UseVisualStyleBackColor = true;
             // 
