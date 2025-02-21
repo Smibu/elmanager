@@ -3008,6 +3008,21 @@ internal partial class LevelEditorForm : FormMod, IMessageFilter
             }
         }
 
+        if (Directory.GetDirectories(shapesDirectory).Length == 0)
+        {
+            string uncategorizedDirName = Path.Combine(shapesDirectory, "Uncategorized");
+
+            try
+            {
+                Directory.CreateDirectory(uncategorizedDirName);
+            }
+            catch (Exception ex)
+            {
+                UiUtils.ShowError("Error creating directory: " + uncategorizedDirName  + "\n\n" + ex.Message, "Error", MessageBoxIcon.Error);
+                return;
+            }
+        }
+
         var oldInitialDirectory = SaveFileDialog1.InitialDirectory;
         
         SaveFileDialog1.FileName = "Type Shape Title Here";
