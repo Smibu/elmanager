@@ -556,8 +556,23 @@ internal partial class ShapeSelectionForm : Form
             _comparison = comparison;
         }
 
-        public int Compare(T x, T y)
+        public int Compare(T? x, T? y)
         {
+            if (x == null && y == null)
+            {
+                return 0;
+            }
+
+            if (x == null)
+            {
+                return -1;
+            }
+
+            if (y == null)
+            {
+                return 1;
+            }
+
             return _comparison(x, y);
         }
     }
