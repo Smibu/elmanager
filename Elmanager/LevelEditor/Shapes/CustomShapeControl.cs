@@ -215,11 +215,10 @@ internal partial class CustomShapeControl : UserControl.UserControl
 
         if (shapeLevelControl != null)
         {
-            // Margins / Padding / Location doesn't scale consistently with DPI scaling, so we draw level control based on the size of the parent control without any margins
-            var marginLeft = 0; //Margin.Left;
-            var marginRight = 0; //Margin.Right;
+            // Margins / Padding / Location doesn't scale consistently with DPI scaling
+            // so we draw level control based on the size of the parent control without any margins
 
-            shapeLevelControl.Size = new Size(Width - (marginLeft + marginRight + shapeLevelControl.Padding.Left + shapeLevelControl.Padding.Right), Height - lblShapeName.Height);
+            shapeLevelControl.Size = new Size(Width, Height - lblShapeName.Height);
             shapeLevelControl.PerformLayout();
         }
 
