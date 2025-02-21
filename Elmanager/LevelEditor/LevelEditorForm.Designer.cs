@@ -102,13 +102,7 @@ namespace Elmanager.LevelEditor
             ConfigurationToolStripMenuItem = new ToolStripMenuItem();
             MainConfigMenuItem = new ToolStripMenuItem();
             RenderingSettingsToolStripMenuItem = new ToolStripMenuItem();
-            var settings = new GLControlSettings
-            {
-                APIVersion = new Version(3, 3),
-                Profile = ContextProfile.Core,
-                Flags = ContextFlags.ForwardCompatible
-            };
-            EditorControl = new GLControl(settings);
+            EditorControl = new GLControl();
             OpenFileDialog1 = new OpenFileDialog();
             StatusStrip1 = new StatusStrip();
             zoomLabel = new ToolStripStatusLabel();
