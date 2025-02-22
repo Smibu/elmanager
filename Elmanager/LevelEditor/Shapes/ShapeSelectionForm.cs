@@ -451,14 +451,14 @@ internal partial class ShapeSelectionForm : Form
             if (_lastSelectedSubfolder == AllShapesOption)
             {
                 PopulateShapesFromAllSubfolders();
-                ScrollToSelectedShape();
             }
             else
             {
                 var lastSubfolderPath = Path.Combine(ShapesFolderPath, _lastSelectedSubfolder);
                 PopulateShapes(lastSubfolderPath);
-                ScrollToSelectedShape();
             }
+
+            ScrollToSelectedShape();
         }
         else if (comboBoxSubfolders.Items.Count > 0)
         {
