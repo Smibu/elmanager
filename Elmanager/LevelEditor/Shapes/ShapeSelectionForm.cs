@@ -298,6 +298,24 @@ internal partial class ShapeSelectionForm : Form
         UpdateDisplayedControls(0);
     }
 
+    private void ScrollToSelectedShape()
+    {
+        if (SelectedShapeName == null)
+        {
+            return;
+        }
+
+        int selectedIndex = _shapes.FindIndex(shape => shape.FilePath == SelectedShapeName);
+        if (selectedIndex == -1)
+        {
+            return;
+        }
+
+        int selectedRow = selectedIndex / Columns;
+        vScrollBar1.Value = Math.Min(selectedRow, vScrollBar1.Maximum);
+    }
+
+
     private void ShapeControl_ShapeClicked(object? sender, EventArgs e)
     {
         if (_selectedShapeControl != null)
@@ -406,6 +424,7 @@ internal partial class ShapeSelectionForm : Form
         {
             var lastSubfolderPath = Path.Combine(ShapesFolderPath, _lastSelectedSubfolder);
             PopulateShapes(lastSubfolderPath);
+            ScrollToSelectedShape();
         }
         else if (comboBoxSubfolders.Items.Count > 0)
         {
@@ -414,6 +433,7 @@ internal partial class ShapeSelectionForm : Form
             {
                 var firstSubfolderPath = Path.Combine(ShapesFolderPath, firstSubfolder);
                 PopulateShapes(firstSubfolderPath);
+                ScrollToSelectedShape();
             }
         }
     }
