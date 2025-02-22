@@ -318,11 +318,13 @@ internal partial class ShapeSelectionForm : Form
 
     private void ShapeControl_ShapeClicked(object? sender, EventArgs e)
     {
+        // Deselect the previously selected shape
         if (_selectedShapeControl != null)
         {
             _selectedShapeControl.Highlight(false);
         }
 
+        // Select the new shape
         _selectedShapeControl = sender as CustomShapeControl;
         if (_selectedShapeControl != null)
         {
