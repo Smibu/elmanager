@@ -3043,8 +3043,8 @@ internal partial class LevelEditorForm : FormMod, IMessageFilter
         string fullShapesDirectory = Path.GetFullPath(shapesDirectory);
         string fullFilePath = Path.GetFullPath(SaveFileDialog1.FileName);
 
-        if ((!fullFilePath.StartsWith(fullShapesDirectory, StringComparison.OrdinalIgnoreCase) ||
-             Path.GetDirectoryName(fullFilePath)!.Equals(fullShapesDirectory, StringComparison.OrdinalIgnoreCase)))
+        if (!fullFilePath.StartsWith(fullShapesDirectory, StringComparison.OrdinalIgnoreCase) ||
+            Path.GetDirectoryName(fullFilePath)!.Equals(fullShapesDirectory, StringComparison.OrdinalIgnoreCase))
         {
             UiUtils.ShowError("Shapes must be saved within a subfolder of the 'sle_shapes' directory.", "Error", MessageBoxIcon.Error);
             return;
