@@ -4,16 +4,12 @@ using System.Drawing;
 using System.IO;
 using System.Linq;
 using System.Windows.Forms;
-using System.Windows.Shapes;
 using Elmanager.Application;
 using Elmanager.Geometry;
 using Elmanager.Lev;
 using Elmanager.LevelEditor.Shapes;
 using Elmanager.Rendering;
 using Elmanager.UI;
-using OpenTK.GLControl;
-using OpenTK.Windowing.Common;
-using OpenTK.Windowing.Desktop;
 using Path = System.IO.Path;
 using Polygon = Elmanager.Lev.Polygon;
 
