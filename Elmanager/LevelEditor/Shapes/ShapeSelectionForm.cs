@@ -196,8 +196,8 @@ internal partial class ShapeSelectionForm : Form
     private void SetInitialLocation()
     {
         // Define an offset value
-        int offsetX = 5;
-        int offsetY = 5;
+        const int offsetX = 5;
+        const int offsetY = 5;
 
         // Set the form's location to the current mouse position with an offset
         Point mousePosition = Cursor.Position;
@@ -226,7 +226,7 @@ internal partial class ShapeSelectionForm : Form
         }
     }
 
-    private int GetTaskbarHeight(Point mousePosition)
+    private static int GetTaskbarHeight(Point mousePosition)
     {
         // Get the screen bounds and working area
         System.Drawing.Rectangle screenBounds = Screen.FromPoint(mousePosition).Bounds;
