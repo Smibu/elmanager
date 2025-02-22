@@ -108,12 +108,12 @@ internal partial class ShapeSelectionForm : Form
 
     private void SetupScrollBar(int count)
     {
-        int totalPages = (int)Math.Ceiling(1.0 * count / (Columns * Rows));
+        int totalRows = (int)Math.Ceiling(1.0 * count / Columns);
         vScrollBar1.Minimum = 0;
-        vScrollBar1.Maximum = Math.Max(totalPages - 1, 0);  // Ensure the scrollbar has valid range
+        vScrollBar1.Maximum = Math.Max(totalRows - Rows, 0);  // Ensure the scrollbar has valid range
         vScrollBar1.LargeChange = 1;
         vScrollBar1.SmallChange = 1;
-        vScrollBar1.Enabled = totalPages > 1;
+        vScrollBar1.Enabled = totalRows > Rows;
     }
 
     private void FlowLayoutPanelShapes_MouseWheel(object? sender, MouseEventArgs e)
