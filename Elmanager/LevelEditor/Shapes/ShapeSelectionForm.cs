@@ -147,6 +147,8 @@ internal partial class ShapeSelectionForm : Form
 
     private void UpdateDisplayedControls(int startPage)
     {
+        tableLayoutPanelShapes.SuspendLayout();
+
         int startIndex = startPage * Columns;
 
         foreach (var customShapeControl in _reusableControls)
@@ -176,6 +178,7 @@ internal partial class ShapeSelectionForm : Form
 
         HighlightSelectedShape();
 
+        tableLayoutPanelShapes.ResumeLayout();
         tableLayoutPanelShapes.Invalidate();
         tableLayoutPanelShapes.Refresh();
     }
