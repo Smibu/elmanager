@@ -19,7 +19,6 @@ internal static class CustomShapeSerializer
         Level level = Level.FromPath(filePath).Obj;
             
         level.Objects = level.Objects.Where(o => o.Type != ObjectType.Start).ToList(); // Remove start object
-        level.UpdateBounds();
 
         Vector centerByBounds = new Vector((level.Bounds.XMin + level.Bounds.XMax) / 2, (level.Bounds.YMin + level.Bounds.YMax) / 2);
 
