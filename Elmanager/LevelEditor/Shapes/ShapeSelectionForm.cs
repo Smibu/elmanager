@@ -26,7 +26,7 @@ internal partial class ShapeSelectionForm : Form
     public ShapeMirrorOption ShapeMirrorOption { get; private set; }
     public string? SelectedShapeName { get; private set; }
 
-    private const string ShapesFolderPath = "sle_shapes";
+    private static readonly string ShapesFolderPath = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "sle_shapes");
 
     // The asterisk (*) is used to ensure the "All Shapes" option does not conflict with any actual folder names.
     private const string AllShapesOption = "* All Shapes *";
