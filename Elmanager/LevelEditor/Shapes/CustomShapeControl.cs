@@ -140,10 +140,8 @@ internal partial class CustomShapeControl : UserControl.UserControl
 
         if (_isSelected || _isHighlighted || _isPressed)
         {
-            using (Pen pen = new Pen(_borderColor, 2))
-            {
-                e.Graphics.DrawRectangle(pen, 0, 0, this.Width - 2, this.Height - 3);
-            }
+            using Pen pen = new Pen(_borderColor, 2);
+            e.Graphics.DrawRectangle(pen, 0, 0, this.Width - 2, this.Height - 3);
         }
     }
 
