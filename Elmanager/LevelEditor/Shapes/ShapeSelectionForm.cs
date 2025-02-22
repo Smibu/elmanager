@@ -28,6 +28,9 @@ internal partial class ShapeSelectionForm : Form
 
     private const string ShapesFolderPath = "sle_shapes";
 
+    // The asterisk (*) is used to ensure the "All Shapes" option does not conflict with any actual folder names.
+    private const string AllShapesOption = "* All Shapes *";
+
     private CustomShapeControl? _selectedShapeControl;
 
     private ElmaRenderer _renderer;
@@ -385,6 +388,9 @@ internal partial class ShapeSelectionForm : Form
             comboBoxSubfolders.Items.Add(Path.GetFileName(subfolder));
         }
 
+        // Add an "All shapes" item last so users can view all shapes in one view
+        comboBoxSubfolders.Items.Add(AllShapesOption);
+
         // Set the default selected item to the last selected subfolder
         if (_lastSelectedSubfolder != null && comboBoxSubfolders.Items.Contains(_lastSelectedSubfolder))
         {
@@ -410,10 +416,18 @@ internal partial class ShapeSelectionForm : Form
         // Construct the full path to the selected subfolder
         if (selectedSubfolder != null)
         {
-            var selectedFolderPath = Path.Combine(ShapesFolderPath, selectedSubfolder);
+            if (selectedSubfolder == AllShapesOption)
+            {
+                // Populate with shapes from all subfolders
+                PopulateShapesFromAllSubfolders();
+            }
+            else
+            {
+                var selectedFolderPath = Path.Combine(ShapesFolderPath, selectedSubfolder);
 
-            // Populate with shapes from the selected subfolder
-            PopulateShapes(selectedFolderPath);
+                // Populate with shapes from the selected subfolder
+                PopulateShapes(selectedFolderPath);
+            }
         }
     }
 
@@ -421,9 +435,17 @@ internal partial class ShapeSelectionForm : Form
     {
         if (_lastSelectedSubfolder != null && comboBoxSubfolders.Items.Contains(_lastSelectedSubfolder))
         {
-            var lastSubfolderPath = Path.Combine(ShapesFolderPath, _lastSelectedSubfolder);
-            PopulateShapes(lastSubfolderPath);
-            ScrollToSelectedShape();
+            if (_lastSelectedSubfolder == AllShapesOption)
+            {
+                PopulateShapesFromAllSubfolders();
+                ScrollToSelectedShape();
+            }
+            else
+            {
+                var lastSubfolderPath = Path.Combine(ShapesFolderPath, _lastSelectedSubfolder);
+                PopulateShapes(lastSubfolderPath);
+                ScrollToSelectedShape();
+            }
         }
         else if (comboBoxSubfolders.Items.Count > 0)
         {
@@ -435,6 +457,27 @@ internal partial class ShapeSelectionForm : Form
                 ScrollToSelectedShape();
             }
         }
+    }
+
+    private void PopulateShapesFromAllSubfolders()
+    {
+        if (!Directory.Exists(ShapesFolderPath))
+        {
+            return;
+        }
+
+        // Get all shapes from all subfolders, grouped by subfolder
+        _shapes = Directory.GetDirectories(ShapesFolderPath)
+            .SelectMany(subfolder => Directory.GetFiles(subfolder, "*.lev")
+                .Select(filePath => (Name: Path.GetFileNameWithoutExtension(filePath), ShapePath: filePath, Subfolder: Path.GetFileName(subfolder))))
+            .OrderBy(shape => shape.Subfolder)
+            .ThenBy(shape => shape.Name, new CustomComparer<string>(CompareNatural))
+            .Select(shape => (shape.Name, shape.ShapePath))
+            .ToList();
+
+        SetupScrollBar(_shapes.Count);
+
+        UpdateDisplayedControls(0);
     }
 
     private void ShapeControl_ShapeDoubleClicked(object? sender, EventArgs e)
