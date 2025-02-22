@@ -3024,16 +3024,26 @@ internal partial class LevelEditorForm : FormMod, IMessageFilter
         }
 
         var oldInitialDirectory = SaveFileDialog1.InitialDirectory;
-        
+
         SaveFileDialog1.FileName = "Type Shape Title Here";
         SaveFileDialog1.InitialDirectory = shapesDirectory;
-        
+
         var result = SaveFileDialog1.ShowDialog();
-        
+
         SaveFileDialog1.InitialDirectory = oldInitialDirectory;
-        
+
         if (result != DialogResult.OK)
         {
+            return;
+        }
+
+        string fullShapesDirectory = Path.GetFullPath(shapesDirectory);
+        string fullFilePath = Path.GetFullPath(SaveFileDialog1.FileName);
+
+        if ((!fullFilePath.StartsWith(fullShapesDirectory, StringComparison.OrdinalIgnoreCase) ||
+             Path.GetDirectoryName(fullFilePath)!.Equals(fullShapesDirectory, StringComparison.OrdinalIgnoreCase)))
+        {
+            UiUtils.ShowError("Shapes must be saved within a subfolder of the 'sle_shapes' directory.", "Error", MessageBoxIcon.Error);
             return;
         }
 
@@ -3043,7 +3053,7 @@ internal partial class LevelEditorForm : FormMod, IMessageFilter
         var clonedPolygons = selectedPolygons.Select(p => p.Clone()).ToList();
         var clonedObjects = selectedObjects.Select(o => o.Clone()).ToList();
         var clonedGraphicElements = selectedGraphicElements.Select(ge => ge with { Position = ge.Position.Clone() }).ToList();
-        
+
         // Construct a temporary level for the snapshot
         var tempLevel = new Level();
         tempLevel.Polygons.AddRange(clonedPolygons);
