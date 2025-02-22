@@ -1,12 +1,12 @@
-using System;
-using System.Windows.Forms;
-using System.Windows.Threading;
 using Elmanager.Lev;
 using Elmanager.Rendering;
 using Elmanager.Rendering.Camera;
 using OpenTK.GLControl;
 using OpenTK.Graphics.OpenGL;
 using OpenTK.Windowing.Common;
+using System;
+using System.Windows.Forms;
+using System.Windows.Threading;
 
 namespace Elmanager.LevelEditor.Shapes;
 

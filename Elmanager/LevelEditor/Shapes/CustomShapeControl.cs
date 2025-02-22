@@ -1,13 +1,13 @@
-﻿using System;
+﻿using Elmanager.Lev;
+using Elmanager.Rendering;
+using OpenTK.GLControl;
+using System;
 using System.Drawing;
-using System.Windows.Forms;
 using System.Linq;
+using System.Windows.Forms;
 using Color = System.Drawing.Color;
 using Pen = System.Drawing.Pen;
 using UserControl = System.Windows.Forms;
-using Elmanager.Lev;
-using Elmanager.Rendering;
-using OpenTK.GLControl;
 
 namespace Elmanager.LevelEditor.Shapes;
 

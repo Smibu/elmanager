@@ -1,12 +1,12 @@
-﻿using System;
+﻿using Elmanager.Rendering;
+using OpenTK.GLControl;
+using System;
 using System.Collections.Generic;
 using System.Drawing;
 using System.Globalization;
 using System.IO;
 using System.Linq;
 using System.Windows.Forms;
-using Elmanager.Rendering;
-using OpenTK.GLControl;
 using Path = System.IO.Path;
 
 namespace Elmanager.LevelEditor.Shapes;
