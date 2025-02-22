@@ -22,7 +22,7 @@ public class LevelControl : GLControl
     private bool _isFirstRender = true;
     public bool DisableRendering { get; set; } = true;
 
-    private readonly DispatcherTimer _resizeTimer;
+    private DispatcherTimer? _resizeTimer;
     private const int DebounceInterval = 6; // Debounce interval in milliseconds
 
     internal LevelControl(GLControl sharedContext, SceneSettings sceneSettings, RenderingSettings renderingSettings, ElmaRenderer elmaRenderer, Level? level=null) :
@@ -66,17 +66,22 @@ public class LevelControl : GLControl
      */
     internal void SetLevel(Level? level)
     {
-        if (level != null)
+        if (_level == level)
         {
-            _level = level;
-            _camera = new ElmaCamera();
-            _zoomController = new ZoomController(_camera, _level, () => RedrawScene());
-            _isFirstRender = true;
+            // Prevent redundant reassignments
+            return;
         }
-        else
+
+        _level = level;
+
+        if (_level != null)
         {
-            // Refactor to something more elegant
-            _level = null;
+            _camera ??= new ElmaCamera();
+            _zoomController ??= new ZoomController(_camera, _level, () => RedrawScene());
+            
+            _zoomController.Lev = _level;
+
+            _isFirstRender = true;
         }
     }
 
@@ -114,7 +119,7 @@ public class LevelControl : GLControl
         {
             return;
         }
-
+        
         if (Context == null)
         {
             return;
@@ -128,26 +133,23 @@ public class LevelControl : GLControl
         GL.Clear(ClearBufferMask.ColorBufferBit | ClearBufferMask.DepthBufferBit);
         CheckGLError("GL.Clear");
 
+        bool viewportChanged = _isFirstRender || resetViewport;
+
         if (_isFirstRender && _level != null)
         {
-            GL.Viewport(0, 0, Width, Height); // Set viewport to the entire control
-
             _renderer.UpdateSettings(_level, _renderingSettings);
             _renderer.InitializeLevel(_level, _renderingSettings);
             _level.UpdateBounds();
-            _zoomController?.ZoomFill(_renderingSettings);
             _isFirstRender = false;
         }
 
-        if (resetViewport)
+        if (viewportChanged)
         {
-            GL.Viewport(0, 0, Width, Height); // Set viewport to the entire control
+            GL.Viewport(0, 0, Width, Height);
             _zoomController?.ZoomFill(_renderingSettings);
         }
 
-        // Use the ElmaRenderer to render the level
         RedrawScene();
-
         SwapBuffers();
     }
 
@@ -172,8 +174,14 @@ public class LevelControl : GLControl
     {
         if (disposing)
         {
-            // Dispose of any disposable resources here
-            //_renderer.Dispose(); // Crashes.
+            _resizeTimer?.Stop();
+            if (_resizeTimer != null)
+            {
+                _resizeTimer.Tick -= ResizeTimer_Tick;
+            }
+            _resizeTimer = null;
+
+            _renderer.Dispose();
         }
         base.Dispose(disposing);
     }
@@ -183,14 +191,14 @@ public class LevelControl : GLControl
         base.OnResize(e);
             
         // Restart the debounce timer
-        _resizeTimer.Stop();
-        _resizeTimer.Start();
+        _resizeTimer?.Stop();
+        _resizeTimer?.Start();
     }
 
     private void ResizeTimer_Tick(object? sender, EventArgs e)
     {
         // Stop the timer
-        _resizeTimer.Stop();
+        _resizeTimer?.Stop();
 
         Render(true);
     }
