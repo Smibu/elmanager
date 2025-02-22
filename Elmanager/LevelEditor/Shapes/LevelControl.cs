@@ -1,16 +1,10 @@
 using System;
-using System.Drawing;
-using System.Linq;
-using System.Printing;
 using System.Windows.Forms;
 using System.Windows.Threading;
-using BrightIdeasSoftware;
 using Elmanager.Lev;
-using Elmanager.LevelEditor.Playing;
 using Elmanager.Rendering;
 using Elmanager.Rendering.Camera;
 using OpenTK.GLControl;
-using OpenTK.Graphics;
 using OpenTK.Graphics.OpenGL;
 using OpenTK.Windowing.Common;
 
