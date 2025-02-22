@@ -3003,7 +3003,7 @@ internal partial class LevelEditorForm : FormMod, IMessageFilter
             }
             catch (Exception ex)
             {
-                UiUtils.ShowError("Error creating directory: " + shapesDirectory + "\n\n" +ex.Message, "Error", MessageBoxIcon.Error);
+                UiUtils.ShowError("Error creating directory: " + shapesDirectory + "\n\n" + ex.Message, "Error", MessageBoxIcon.Error);
                 return;
             }
         }
@@ -3018,7 +3018,7 @@ internal partial class LevelEditorForm : FormMod, IMessageFilter
             }
             catch (Exception ex)
             {
-                UiUtils.ShowError("Error creating directory: " + uncategorizedDirName  + "\n\n" + ex.Message, "Error", MessageBoxIcon.Error);
+                UiUtils.ShowError("Error creating directory: " + uncategorizedDirName + "\n\n" + ex.Message, "Error", MessageBoxIcon.Error);
                 return;
             }
         }
