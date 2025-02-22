@@ -25,7 +25,7 @@ internal partial class ShapeSelectionForm : Form
 
     private CustomShapeControl? _selectedShapeControl;
 
-    private ElmaRenderer _renderer;
+    private readonly ElmaRenderer _renderer;
 
     // Static field to remember the last selected subfolder
     private static string? _lastSelectedSubfolder;
@@ -34,8 +34,8 @@ internal partial class ShapeSelectionForm : Form
     private const int Rows = 3; // 3 rows × 4 columns
 
     private readonly SceneSettings _sceneSettings;
-    private RenderingSettings _renderingSettings;
-    private List<CustomShapeControl> _reusableControls;
+    private readonly RenderingSettings _renderingSettings;
+    private readonly List<CustomShapeControl> _reusableControls;
     private List<(string Name, string FilePath)> _shapes;
 
     // Static fields to remember the size of the form
