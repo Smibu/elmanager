@@ -1,20 +1,13 @@
 ﻿using System;
 using System.Drawing;
-using System.Drawing.Printing;
 using System.Windows.Forms;
-using System.IO;
 using System.Linq;
 using Color = System.Drawing.Color;
 using Pen = System.Drawing.Pen;
 using UserControl = System.Windows.Forms;
-using System.Windows.Shapes;
 using Elmanager.Lev;
 using Elmanager.Rendering;
 using OpenTK.GLControl;
-using OpenTK.Windowing.Desktop;
-using Path = System.IO.Path;
-using OpenTK.Windowing.Common;
-using System.Windows.Controls;
 
 namespace Elmanager.LevelEditor.Shapes;
 
@@ -91,34 +84,11 @@ internal partial class CustomShapeControl : UserControl.UserControl
     // Event for clicking the shape
     public event EventHandler? ShapeClicked;
 
-    // Event for loading shape data
-    public event EventHandler<ShapeDataDto>? ShapeDataLoaded;
-
     private void OnComponentClick(object? sender, EventArgs e)
     {
         ShapeClicked?.Invoke(this, e);
     }
-
-    public void LoadShape()
-    {
-        if (ShapeName.Length == 0)
-        {
-            return;
-        }
-
-        var levFilePath = ShapeFullPath;
-
-        // Check if the LEV file exists
-        if (!File.Exists(levFilePath))
-        {
-            MessageBox.Show($@"Corresponding LEV file not found: {levFilePath}", @"Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
-            return;
-        }
-
-        var shapeData = CustomShapeSerializer.DeserializeShapeDataLev(levFilePath);
-        ShapeDataLoaded?.Invoke(this, shapeData);
-    }
-
+    
     public void Highlight(bool isSelected)
     {
         this._isSelected = isSelected;
