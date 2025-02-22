@@ -132,7 +132,7 @@ namespace Elmanager.LevelEditor.Shapes
             {
                 GL.Viewport(0, 0, Width, Height); // Set viewport to the entire control
 
-                var r = _renderer.UpdateSettings(_level, _renderingSettings);
+                _renderer.UpdateSettings(_level, _renderingSettings);
                 _renderer.InitializeLevel(_level, _renderingSettings);
                 _level.UpdateBounds();
                 _zoomController?.ZoomFill(_renderingSettings);
