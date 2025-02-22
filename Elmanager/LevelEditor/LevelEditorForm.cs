@@ -87,6 +87,7 @@ internal partial class LevelEditorForm : FormMod, IMessageFilter
     private ToolBase.NearestVertexInfo? _grassInfo;
     private TexturizationOptions? _texturizationOpts;
     private readonly LevFileWatcher _levFileWatcher;
+    private string? _lastUsedShapeFolder;
     public SelectionFilter SelectionFilter { get; }
 
     internal LevelEditorForm(string? levPath)
@@ -3021,12 +3022,14 @@ internal partial class LevelEditorForm : FormMod, IMessageFilter
                 UiUtils.ShowError("Error creating directory: " + uncategorizedDirName + "\n\n" + ex.Message, "Error", MessageBoxIcon.Error);
                 return;
             }
+
+            _lastUsedShapeFolder = uncategorizedDirName;
         }
 
         var oldInitialDirectory = SaveFileDialog1.InitialDirectory;
 
         SaveFileDialog1.FileName = "Type Shape Title Here";
-        SaveFileDialog1.InitialDirectory = shapesDirectory;
+        SaveFileDialog1.InitialDirectory = _lastUsedShapeFolder ?? shapesDirectory;
 
         var result = SaveFileDialog1.ShowDialog();
 
@@ -3046,6 +3049,8 @@ internal partial class LevelEditorForm : FormMod, IMessageFilter
             UiUtils.ShowError("Shapes must be saved within a subfolder of the 'sle_shapes' directory.", "Error", MessageBoxIcon.Error);
             return;
         }
+
+        _lastUsedShapeFolder = Path.GetDirectoryName(fullFilePath);
 
         ClearSelection();
 
