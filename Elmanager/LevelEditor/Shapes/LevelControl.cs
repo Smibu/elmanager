@@ -186,7 +186,8 @@ public class LevelControl : GLControl
             }
             _resizeTimer = null;
 
-            _renderer.Dispose();
+            // Causes a crash.
+            //_renderer.Dispose();
         }
         base.Dispose(disposing);
     }
