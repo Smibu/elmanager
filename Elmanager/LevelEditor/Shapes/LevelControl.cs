@@ -159,7 +159,7 @@ namespace Elmanager.LevelEditor.Shapes
             }
         }
 
-        private void CheckGLError(string location)
+        private static void CheckGLError(string location)
         {
             ErrorCode error = GL.GetError();
             if (error != ErrorCode.NoError)
