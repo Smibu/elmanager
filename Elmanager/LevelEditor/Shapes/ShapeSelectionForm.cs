@@ -616,7 +616,7 @@ internal partial class ShapeSelectionForm : Form
 
     public class CustomComparer<T> : IComparer<T>
     {
-        private Comparison<T> _comparison;
+        private readonly Comparison<T> _comparison;
 
         public CustomComparer(Comparison<T> comparison)
         {
