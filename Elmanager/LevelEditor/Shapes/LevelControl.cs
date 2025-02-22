@@ -13,16 +13,16 @@ namespace Elmanager.LevelEditor.Shapes
     public class LevelControl : GLControl
     {
         private ElmaRenderer _renderer;
-        private ElmaRenderer _originalElmaRenderer;
+        private readonly ElmaRenderer _originalElmaRenderer;
         private Level? _level;
         private ElmaCamera? _camera;
-        private RenderingSettings _renderingSettings;
-        private SceneSettings _sceneSettings;
+        private readonly RenderingSettings _renderingSettings;
+        private readonly SceneSettings _sceneSettings;
         private ZoomController? _zoomController;
         private bool _isFirstRender = true;
         public bool DisableRendering { get; set; } = true;
 
-        private DispatcherTimer _resizeTimer;
+        private readonly DispatcherTimer _resizeTimer;
         private const int DebounceInterval = 6; // Debounce interval in milliseconds
 
         internal LevelControl(GLControl sharedContext, SceneSettings sceneSettings, RenderingSettings renderingSettings, ElmaRenderer elmaRenderer, Level? level=null) :
