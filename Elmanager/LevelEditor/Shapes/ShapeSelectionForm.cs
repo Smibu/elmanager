@@ -4,17 +4,9 @@ using System.Drawing;
 using System.Globalization;
 using System.IO;
 using System.Linq;
-using System.Windows.Controls;
-using System.Windows.Documents;
 using System.Windows.Forms;
-using System.Windows.Shapes;
-using BrightIdeasSoftware;
-using Elmanager.Lev;
 using Elmanager.Rendering;
 using OpenTK.GLControl;
-using OpenTK.Windowing.Common;
-using OpenTK.Windowing.Desktop;
-using Control = System.Windows.Controls.Control;
 using Path = System.IO.Path;
 
 namespace Elmanager.LevelEditor.Shapes;
