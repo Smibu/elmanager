@@ -85,7 +85,7 @@ internal partial class ShapeSelectionForm : Form
         vScrollBar1.Width = (int) (vScrollBar1.Width * dpiScalingFactorX);
 
         this.StartPosition = FormStartPosition.Manual;
-        SetInitialLocation();
+
         PopulateSubfolderComboBox();
 
         SetupReusableControls(sharedContext, Columns * Rows);
@@ -99,6 +99,8 @@ internal partial class ShapeSelectionForm : Form
         {
             this.Size = _lastSize.Value;
         }
+
+        SetInitialLocation();
     }
 
     private void SetupScrollBar(int count)
