@@ -345,11 +345,25 @@ internal partial class ShapeSelectionForm : Form
 
     private void ButtonOk_Click(object sender, EventArgs e)
     {
-        if (_selectedShapeControl != null)
+        if (SelectedShapeName != null)
         {
             // Raise the ShapeDataLoaded event with the selected shape data
-            _selectedShapeControl.LoadShape();
-            SelectedShapeName = _selectedShapeControl.ShapeFullPath;
+            if (SelectedShapeName.Length == 0)
+            {
+                return;
+            }
+
+            var levFilePath = SelectedShapeName;
+
+            // Check if the LEV file exists
+            if (!File.Exists(levFilePath))
+            {
+                MessageBox.Show($@"Corresponding LEV file not found: {levFilePath}", @"Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                return;
+            }
+
+            var shapeData = CustomShapeSerializer.DeserializeShapeDataLev(levFilePath);
+            ShapeDataLoaded?.Invoke(this, shapeData);
         }
         this.DialogResult = DialogResult.OK;
         this.Close();
