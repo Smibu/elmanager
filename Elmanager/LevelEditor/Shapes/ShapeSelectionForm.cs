@@ -333,7 +333,6 @@ internal partial class ShapeSelectionForm : Form
 
     private void ShapeSelectionForm_Load(object sender, EventArgs e)
     {
-        //InitializeFileSystemWatcher();
         PopulateShapeSelectionFromLastSelectedSubfolder();
         HighlightSelectedShape();
     }
