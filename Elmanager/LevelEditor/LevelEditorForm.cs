@@ -3026,6 +3026,11 @@ internal partial class LevelEditorForm : FormMod, IMessageFilter
             _lastUsedShapeFolder = uncategorizedDirName;
         }
 
+        if (_lastUsedShapeFolder != null && !Directory.Exists(_lastUsedShapeFolder))
+        {
+            _lastUsedShapeFolder = null;
+        }
+
         var oldInitialDirectory = SaveFileDialog1.InitialDirectory;
 
         SaveFileDialog1.FileName = "Type Shape Title Here";
