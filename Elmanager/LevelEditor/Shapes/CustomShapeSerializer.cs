@@ -13,12 +13,21 @@ internal static class CustomShapeSerializer
     {
         if (!filePath.EndsWith(".lev", StringComparison.OrdinalIgnoreCase))
         {
-            throw new InvalidOperationException("Failed to deserialize Level.");
+            throw new ArgumentException($@"Invalid file format: {filePath}. Expected a .lev file.", nameof(filePath));
         }
 
-        Level level = Level.FromPath(filePath).Obj;
-            
-        level.Objects = level.Objects.Where(o => o.Type != ObjectType.Start).ToList(); // Remove start object
+        Level level;
+        try
+        {
+            level = Level.FromPath(filePath).Obj;
+        }
+        catch (Exception ex)
+        {
+            throw new InvalidOperationException($@"Failed to load level from {filePath}.", ex);
+        }
+
+        // Remove start object
+        level.Objects = level.Objects.Where(o => o.Type != ObjectType.Start).ToList();
 
         Vector centerByBounds = new Vector((level.Bounds.XMin + level.Bounds.XMax) / 2, (level.Bounds.YMin + level.Bounds.YMax) / 2);
 
@@ -27,7 +36,6 @@ internal static class CustomShapeSerializer
         List<LevObject> levObjects = level.Objects; // No need to filter start object since it is already removed
         List<GraphicElement> levelGraphicElements = level.GraphicElements;
 
-        // Normalize positions
         foreach (var polygon in levelPolygons)
         {
             for (int i = 0; i < polygon.Vertices.Count; i++)
@@ -45,7 +53,7 @@ internal static class CustomShapeSerializer
         {
             graphicElement.Position = new Vector(graphicElement.Position.X - centerByBounds.X, graphicElement.Position.Y - centerByBounds.Y);
         }
-            
+
         level.UpdateBounds();
 
         return new ShapeDataDto(level);
