@@ -13,10 +13,11 @@ namespace Elmanager.LevelEditor.Shapes;
 
 internal partial class CustomShapeControl : UserControl.UserControl
 {
-    private bool _isSelected;
     private bool _isHighlighted;
-    private Color _borderColor = Color.Transparent;
     private bool _isPressed;
+    private bool _isSelected;
+
+    private Color _borderColor = Color.Transparent;
 
     public CustomShapeControl(GLControl sharedContext, SceneSettings sceneSettings, RenderingSettings renderingSettings, ElmaRenderer elmaRenderer, Level? level=null)
     {
