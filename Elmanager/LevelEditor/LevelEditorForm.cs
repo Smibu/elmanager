@@ -3031,14 +3031,10 @@ internal partial class LevelEditorForm : FormMod, IMessageFilter
             _lastUsedShapeFolder = null;
         }
 
-        var oldInitialDirectory = SaveFileDialog1.InitialDirectory;
+        SaveShapeDialog.FileName = "Type Shape Title Here";
+        SaveShapeDialog.InitialDirectory = _lastUsedShapeFolder ?? shapesDirectory;
 
-        SaveFileDialog1.FileName = "Type Shape Title Here";
-        SaveFileDialog1.InitialDirectory = _lastUsedShapeFolder ?? shapesDirectory;
-
-        var result = SaveFileDialog1.ShowDialog();
-
-        SaveFileDialog1.InitialDirectory = oldInitialDirectory;
+        var result = SaveShapeDialog.ShowDialog();
 
         if (result != DialogResult.OK)
         {
@@ -3046,7 +3042,7 @@ internal partial class LevelEditorForm : FormMod, IMessageFilter
         }
 
         string fullShapesDirectory = Path.GetFullPath(shapesDirectory);
-        string fullFilePath = Path.GetFullPath(SaveFileDialog1.FileName);
+        string fullFilePath = Path.GetFullPath(SaveShapeDialog.FileName);
 
         if (!fullFilePath.StartsWith(fullShapesDirectory, StringComparison.OrdinalIgnoreCase) ||
             Path.GetDirectoryName(fullFilePath)!.Equals(fullShapesDirectory, StringComparison.OrdinalIgnoreCase))
@@ -3079,7 +3075,7 @@ internal partial class LevelEditorForm : FormMod, IMessageFilter
         // Add start object, as it is needed.
         tempLevel.Objects.Add(new LevObject(new Vector(0, 0), ObjectType.Start, AppleType.Normal));
 
-        SaveShape(tempLevel, SaveFileDialog1.FileName);
+        SaveShape(tempLevel, SaveShapeDialog.FileName);
 
         // Restore selection
         foreach (var polygon in selectedPolygons)

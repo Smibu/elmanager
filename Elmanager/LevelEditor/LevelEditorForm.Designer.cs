@@ -196,6 +196,7 @@ namespace Elmanager.LevelEditor
             restoreStartPositionToolStripMenuItem = new ToolStripMenuItem();
             moveStartHereToolStripMenuItem = new ToolStripMenuItem();
             createCustomShapeMenuItem = new ToolStripMenuItem();
+            SaveShapeDialog = new SaveFileDialog();
             saveAsPictureDialog = new SaveFileDialog();
             importFileDialog = new OpenFileDialog();
             ToolPanel = new PanelMod();
@@ -1779,6 +1780,12 @@ namespace Elmanager.LevelEditor
             CustomShapeButton.TextAlign = ContentAlignment.MiddleCenter;
             CustomShapeButton.UseVisualStyleBackColor = true;
             // 
+            // SaveShapeDialog
+            // 
+            SaveShapeDialog.DefaultExt = "lev";
+            SaveShapeDialog.FileName = "Type Shape Title Here";
+            SaveShapeDialog.Filter = "Elasto Mania level (*.lev)|*.lev";
+            // 
             // LevelEditorForm
             // 
             AutoScaleDimensions = new SizeF(192F, 192F);
@@ -1993,6 +2000,7 @@ namespace Elmanager.LevelEditor
         private ToolStripMenuItem createCustomShapeToolStripMenuItem;
         private ToolStripMenuItem createCustomShapeMenuItem;
         internal RadioButtonMod CustomShapeButton;
+        internal SaveFileDialog SaveShapeDialog;
     }
 
 }
