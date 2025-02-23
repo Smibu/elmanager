@@ -15,7 +15,7 @@ using Elmanager.UI;
 using Elmanager.Utilities;
 using OpenTK.Graphics.OpenGL;
 using OpenTK.Windowing.Common;
-using OpenTK.WinForms;
+using OpenTK.GLControl;
 using Color = System.Drawing.Color;
 using PixelFormat = System.Drawing.Imaging.PixelFormat;
 
@@ -42,7 +42,7 @@ internal class ElmaRenderer : IDisposable
     private int _colorRenderBuffer;
     private int _depthStencilRenderBuffer;
     private int _maxRenderbufferSize;
-    private LgrCache _lgrCache = new();
+    public LgrCache _lgrCache = new();
 
     internal ElmaRenderer(GLControl renderingTarget, RenderingSettings settings)
     {
@@ -50,7 +50,7 @@ internal class ElmaRenderer : IDisposable
         InitializeOpengl(disableFrameBuffer: settings.DisableFrameBuffer);
     }
 
-    public OpenGlLgr? OpenGlLgr { get; private set; }
+    public OpenGlLgr? OpenGlLgr { get; set; }
 
     public void Dispose()
     {
@@ -87,26 +87,6 @@ internal class ElmaRenderer : IDisposable
             snapShotBmp = GetSnapShotOfCurrent(zoomCtrl);
         }
 
-        return snapShotBmp;
-    }
-
-    private Bitmap GetSnapShotForCustomShape(Level lev, ZoomController zoomCtrl, SceneSettings sceneSettings, RenderingSettings settings)
-    {
-        var width = zoomCtrl.Cam.ViewPortWidth;
-        var height = zoomCtrl.Cam.ViewPortHeight;
-        GL.BindFramebuffer(FramebufferTarget.ReadFramebuffer, _frameBuffer);
-        GL.BindFramebuffer(FramebufferTarget.DrawFramebuffer, _frameBuffer);
-        DrawScene(lev, zoomCtrl.Cam, sceneSettings, settings);
-        var snapShotBmp = new Bitmap(width, height);
-        var bmpData = snapShotBmp.LockBits(new Rectangle(0, 0, width, height), ImageLockMode.WriteOnly,
-            PixelFormat.Format24bppRgb);
-        GL.ReadBuffer(ReadBufferMode.Front);
-        GL.ReadPixels(0, 0, width, height, OpenTK.Graphics.OpenGL.PixelFormat.Bgr, PixelType.UnsignedByte,
-            bmpData.Scan0);
-        snapShotBmp.UnlockBits(bmpData);
-        snapShotBmp.RotateFlip(RotateFlipType.RotateNoneFlipY);
-        GL.BindFramebuffer(FramebufferTarget.ReadFramebuffer, 0);
-        GL.BindFramebuffer(FramebufferTarget.DrawFramebuffer, 0);
         return snapShotBmp;
     }
 
@@ -996,47 +976,6 @@ internal class ElmaRenderer : IDisposable
     {
         using var bmp = GetSnapShot(lev, zoomCtrl, sceneSettings, settings);
         bmp.Save(fileName, ImageFormat.Png);
-    }
-
-    public void SaveSnapShotOfSelection(string fileName, ZoomController zoomCtrl)
-    {
-      using var bmp = GetSnapShotOfCurrent(zoomCtrl);
-      bmp.Save(fileName, ImageFormat.Png);
-    }
-
-    public void SaveSnapShotForCustomShape(Level lev, string fileName, ZoomController zoomCtrl, SceneSettings sceneSettings, RenderingSettings settings)
-    {
-        using var snapShotBmp = GetSnapShotForCustomShape(lev, zoomCtrl, sceneSettings, settings);
-
-        // Calculate the new dimensions while preserving the aspect ratio
-        int width = snapShotBmp.Width;
-        int height = snapShotBmp.Height;
-        int maxWidth = 256;
-        int maxHeight = 256;
-
-        double aspectRatio = (double)width / height;
-        int newWidth, newHeight;
-        if (width > height)
-        {
-          newWidth = maxWidth;
-          newHeight = (int)(maxWidth / aspectRatio);
-        }
-        else
-        {
-          newHeight = maxHeight;
-          newWidth = (int)(maxHeight * aspectRatio);
-        }
-
-        // Resize the bitmap to the new dimensions
-        using var resized = new Bitmap(newWidth, newHeight);
-        using (var graphics = Graphics.FromImage(resized))
-        {
-          graphics.CompositingQuality = System.Drawing.Drawing2D.CompositingQuality.HighQuality;
-          graphics.InterpolationMode = System.Drawing.Drawing2D.InterpolationMode.HighQualityBicubic;
-          graphics.SmoothingMode = System.Drawing.Drawing2D.SmoothingMode.HighQuality;
-          graphics.DrawImage(snapShotBmp, 0, 0, newWidth, newHeight);
-        }
-        resized.Save(fileName, ImageFormat.Png);
     }
 
     internal static double GetFirstGridLine(double size, double offset, double min)

@@ -5,7 +5,8 @@ using System.Windows.Forms;
 using Elmanager.IO;
 using Elmanager.Properties;
 using Elmanager.UI;
-using OpenTK.WinForms;
+using OpenTK.Windowing.Common;
+using OpenTK.GLControl;
 
 namespace Elmanager.LevelEditor
 {
@@ -195,6 +196,7 @@ namespace Elmanager.LevelEditor
             restoreStartPositionToolStripMenuItem = new ToolStripMenuItem();
             moveStartHereToolStripMenuItem = new ToolStripMenuItem();
             createCustomShapeMenuItem = new ToolStripMenuItem();
+            SaveShapeDialog = new SaveFileDialog();
             saveAsPictureDialog = new SaveFileDialog();
             importFileDialog = new OpenFileDialog();
             ToolPanel = new PanelMod();
@@ -464,7 +466,7 @@ namespace Elmanager.LevelEditor
             // 
             createCustomShapeToolStripMenuItem.Name = "createCustomShapeToolStripMenuItem";
             createCustomShapeToolStripMenuItem.Size = new Size(265, 22);
-            createCustomShapeToolStripMenuItem.Text = "Create Custom Shape";
+            createCustomShapeToolStripMenuItem.Text = "Save as shape...";
             createCustomShapeToolStripMenuItem.Click += createCustomShapeMenuItem_Click;
             // 
             // MirrorHorizontallyToolStripMenuItem
@@ -1541,7 +1543,7 @@ namespace Elmanager.LevelEditor
             // 
             createCustomShapeMenuItem.Name = "createCustomShapeMenuItem";
             createCustomShapeMenuItem.Size = new Size(188, 22);
-            createCustomShapeMenuItem.Text = "Create Custom Shape";
+            createCustomShapeMenuItem.Text = "Save as shape...";
             createCustomShapeMenuItem.Click += createCustomShapeMenuItem_Click;
             // 
             // saveAsPictureDialog
@@ -1774,9 +1776,15 @@ namespace Elmanager.LevelEditor
             CustomShapeButton.Name = "CustomShapeButton";
             CustomShapeButton.Size = new Size(84, 25);
             CustomShapeButton.TabIndex = 17;
-            CustomShapeButton.Text = "Shape";
+            CustomShapeButton.Text = "S&hape";
             CustomShapeButton.TextAlign = ContentAlignment.MiddleCenter;
             CustomShapeButton.UseVisualStyleBackColor = true;
+            // 
+            // SaveShapeDialog
+            // 
+            SaveShapeDialog.DefaultExt = "lev";
+            SaveShapeDialog.FileName = "Type Shape Title Here";
+            SaveShapeDialog.Filter = "Elasto Mania level (*.lev)|*.lev";
             // 
             // LevelEditorForm
             // 
@@ -1992,6 +2000,7 @@ namespace Elmanager.LevelEditor
         private ToolStripMenuItem createCustomShapeToolStripMenuItem;
         private ToolStripMenuItem createCustomShapeMenuItem;
         internal RadioButtonMod CustomShapeButton;
+        internal SaveFileDialog SaveShapeDialog;
     }
 
 }

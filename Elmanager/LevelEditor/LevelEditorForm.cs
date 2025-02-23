@@ -4,9 +4,6 @@ using System.ComponentModel;
 using System.Drawing;
 using System.IO;
 using System.Linq;
-using System.Runtime;
-using System.Text.Json;
-using System.Text.Json.Serialization;
 using System.Text.RegularExpressions;
 using System.Threading;
 using System.Threading.Tasks;
@@ -17,7 +14,6 @@ using Elmanager.Geometry;
 using Elmanager.IO;
 using Elmanager.Lev;
 using Elmanager.LevelEditor.Playing;
-using Elmanager.LevelEditor.ShapeGallery;
 using Elmanager.LevelEditor.Tools;
 using Elmanager.Lgr;
 using Elmanager.Physics;
@@ -91,6 +87,7 @@ internal partial class LevelEditorForm : FormMod, IMessageFilter
     private ToolBase.NearestVertexInfo? _grassInfo;
     private TexturizationOptions? _texturizationOpts;
     private readonly LevFileWatcher _levFileWatcher;
+    private string? _lastUsedShapeFolder;
     public SelectionFilter SelectionFilter { get; }
 
     internal LevelEditorForm(string? levPath)
@@ -2997,11 +2994,64 @@ internal partial class LevelEditorForm : FormMod, IMessageFilter
             return;
         }
 
-        saveAsPictureDialog.FileName = "Untitled";
-        if (saveAsPictureDialog.ShowDialog() != DialogResult.OK || !saveAsPictureDialog.FileName.EndsWith(".png"))
+        string shapesDirectory = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "sle_shapes");
+
+        if (!Directory.Exists(shapesDirectory))
+        {
+            try
+            {
+                Directory.CreateDirectory(shapesDirectory);
+            }
+            catch (Exception ex)
+            {
+                UiUtils.ShowError("Error creating directory: " + shapesDirectory + "\n\n" + ex.Message, "Error", MessageBoxIcon.Error);
+                return;
+            }
+        }
+
+        if (Directory.GetDirectories(shapesDirectory).Length == 0)
+        {
+            string uncategorizedDirName = Path.Combine(shapesDirectory, "Uncategorized");
+
+            try
+            {
+                Directory.CreateDirectory(uncategorizedDirName);
+            }
+            catch (Exception ex)
+            {
+                UiUtils.ShowError("Error creating directory: " + uncategorizedDirName + "\n\n" + ex.Message, "Error", MessageBoxIcon.Error);
+                return;
+            }
+
+            _lastUsedShapeFolder = uncategorizedDirName;
+        }
+
+        if (_lastUsedShapeFolder != null && !Directory.Exists(_lastUsedShapeFolder))
+        {
+            _lastUsedShapeFolder = null;
+        }
+
+        SaveShapeDialog.FileName = "Type Shape Title Here";
+        SaveShapeDialog.InitialDirectory = _lastUsedShapeFolder ?? shapesDirectory;
+
+        var result = SaveShapeDialog.ShowDialog();
+
+        if (result != DialogResult.OK)
         {
             return;
         }
+
+        string fullShapesDirectory = Path.GetFullPath(shapesDirectory);
+        string fullFilePath = Path.GetFullPath(SaveShapeDialog.FileName);
+
+        if (!fullFilePath.StartsWith(fullShapesDirectory, StringComparison.OrdinalIgnoreCase) ||
+            Path.GetDirectoryName(fullFilePath)!.Equals(fullShapesDirectory, StringComparison.OrdinalIgnoreCase))
+        {
+            UiUtils.ShowError("Shapes must be saved within a subfolder of the 'sle_shapes' directory.", "Error", MessageBoxIcon.Error);
+            return;
+        }
+
+        _lastUsedShapeFolder = Path.GetDirectoryName(fullFilePath);
 
         ClearSelection();
 
@@ -3009,7 +3059,7 @@ internal partial class LevelEditorForm : FormMod, IMessageFilter
         var clonedPolygons = selectedPolygons.Select(p => p.Clone()).ToList();
         var clonedObjects = selectedObjects.Select(o => o.Clone()).ToList();
         var clonedGraphicElements = selectedGraphicElements.Select(ge => ge with { Position = ge.Position.Clone() }).ToList();
-        
+
         // Construct a temporary level for the snapshot
         var tempLevel = new Level();
         tempLevel.Polygons.AddRange(clonedPolygons);
@@ -3021,57 +3071,11 @@ internal partial class LevelEditorForm : FormMod, IMessageFilter
             tempLevel.UpdateAllPolygons(Settings.RenderingSettings.GrassZoom);
             tempLevel.UpdateBounds();
         }
-        
-        LevelEditorRenderingSettings customRenderingSettings = new LevelEditorRenderingSettings
-        {
-            ShowGrid = false,
-            ShowObjects = false,
-            ShowGrassEdges = true,
-            ShowGround = false,
-            ShowPictures = false,
-            ShowGroundEdges = true,
-            ShowTextures = false,
-            ShowObjectFrames = true,
-            ShowVertices = false,
-            ShowTextureFrames = true,
-            ShowPictureFrames = true,
-            ShowGravityAppleArrows = true,
-            LineWidth = 4,
-            ShowGrass = false
-        };
-
-        SceneSettings customSceneSettings = _sceneSettings;
-        customSceneSettings.PicturesInBackground = true;
-
-        ZoomController customZoomCtrl = new ZoomController(new ElmaCamera(), tempLevel, () => RedrawScene()) { ZoomLevel = 1.0 };
-        Renderer.UpdateSettings(tempLevel, customRenderingSettings);
-        Renderer.InitializeLevel(tempLevel, customRenderingSettings);
-
-        var oldCenterX = _zoomCtrl.CenterX;
-        var oldCenterY = _zoomCtrl.CenterY;
-        var oldZoomLevel = _zoomCtrl.ZoomLevel;
-
-        var oldViewPort = (int[])_zoomCtrl.Cam.Viewport.Clone();
-        
-        Renderer.ResetViewport(512, 512);
-        
-        customZoomCtrl.ZoomToSelection(clonedPolygons, clonedObjects, clonedGraphicElements, Settings.RenderingSettings);
-        Renderer.SaveSnapShotForCustomShape(tempLevel, saveAsPictureDialog.FileName, customZoomCtrl, customSceneSettings, customRenderingSettings);
-        
-        Renderer.UpdateSettings(Lev, Settings.RenderingSettings);
-        
-        Renderer.ResetViewport(oldViewPort[2], oldViewPort[3]);
-
-        _zoomCtrl.CenterX = oldCenterX;
-        _zoomCtrl.CenterY = oldCenterY;
-        _zoomCtrl.ZoomLevel = oldZoomLevel;
-
-        var shapeFileName = Path.ChangeExtension(saveAsPictureDialog.FileName, ".lev");
 
         // Add start object, as it is needed.
         tempLevel.Objects.Add(new LevObject(new Vector(0, 0), ObjectType.Start, AppleType.Normal));
 
-        SaveShape(tempLevel, shapeFileName);
+        SaveShape(tempLevel, SaveShapeDialog.FileName);
 
         // Restore selection
         foreach (var polygon in selectedPolygons)

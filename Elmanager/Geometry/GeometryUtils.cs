@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
 using Elmanager.Lev;
-using Elmanager.Rendering;
 using Elmanager.Utilities;
 using NetTopologySuite.Geometries;
 using NetTopologySuite.Geometries.Utilities;
@@ -323,43 +322,6 @@ internal static class GeometryUtils
 
             token.ThrowIfCancellationRequested();
         }
-    }
-
-    internal static (Vector center, Vector min, Vector max) CalculateBoundingBox(List<Polygon> polygons, List<LevObject> objects,
-        List<GraphicElement> graphicElements)
-    {
-        double minX = double.MaxValue, minY = double.MaxValue;
-        double maxX = double.MinValue, maxY = double.MinValue;
-
-        foreach (var polygon in polygons)
-        {
-            foreach (var vertex in polygon.Vertices)
-            {
-                if (vertex.X < minX) minX = vertex.X;
-                if (vertex.Y < minY) minY = vertex.Y;
-                if (vertex.X > maxX) maxX = vertex.X;
-                if (vertex.Y > maxY) maxY = vertex.Y;
-            }
-        }
-
-        foreach (var obj in objects)
-        {
-            if (obj.Position.X < minX) minX = obj.Position.X;
-            if (obj.Position.Y < minY) minY = obj.Position.Y;
-            if (obj.Position.X > maxX) maxX = obj.Position.X;
-            if (obj.Position.Y > maxY) maxY = obj.Position.Y;
-        }
-
-        foreach (var graphicElement in graphicElements)
-        {
-            if (graphicElement.Position.X < minX) minX = graphicElement.Position.X;
-            if (graphicElement.Position.Y < minY) minY = graphicElement.Position.Y;
-            if (graphicElement.Position.X > maxX) maxX = graphicElement.Position.X;
-            if (graphicElement.Position.Y > maxY) maxY = graphicElement.Position.Y;
-        }
-
-        var center = new Vector((minX + maxX) / 2, (minY + maxY) / 2);
-        return (center, new Vector(minX, minY), new Vector(maxX, maxY));
     }
 
     public static Vector ToVector(this Coordinate coord) => new(coord.X, coord.Y);
