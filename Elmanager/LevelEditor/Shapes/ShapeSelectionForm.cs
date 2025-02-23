@@ -13,33 +13,36 @@ namespace Elmanager.LevelEditor.Shapes;
 
 internal partial class ShapeSelectionForm : Form
 {
+    // Shape Transformation properties
     public double ScalingFactor { get; private set; }
     public double RotationAngle { get; private set; }
     public ShapeMirrorOption ShapeMirrorOption { get; private set; }
-    public string? SelectedShapeFilePath { get; private set; }
 
-    private static readonly string ShapesFolderPath = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "sle_shapes");
+    // Selected control
+    public string? SelectedShapeFilePath { get; private set; }
+    private CustomShapeControl? _selectedShapeControl;
 
     // The asterisk (*) is used to ensure the "All Shapes" option does not conflict with any actual folder names.
     private const string AllShapesOption = "* All Shapes *";
 
-    private CustomShapeControl? _selectedShapeControl;
-
-    private readonly ElmaRenderer _renderer;
-
-    // Static field to remember the last selected subfolder
+    // Static fields
     private static string? _lastSelectedSubfolder;
+    private static readonly string ShapesFolderPath = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "sle_shapes");
+    private static Size? _lastSize; // Last size of the form
 
+    // Constants
     private const int Columns = 4; // 3 rows × 4 columns
     private const int Rows = 3; // 3 rows × 4 columns
 
+    // Rendering
+    private readonly ElmaRenderer _renderer;
     private readonly SceneSettings _sceneSettings;
     private readonly RenderingSettings _renderingSettings;
-    private readonly List<CustomShapeControl> _reusableControls;
-    private List<(string Name, string FilePath)> _shapes;
 
-    // Static fields to remember the size of the form
-    private static Size? _lastSize;
+    private readonly List<CustomShapeControl> _reusableControls;
+
+    // List of currently active shapes
+    private List<(string Name, string FilePath)> _shapes;
 
     public ShapeSelectionForm(GLControl sharedContext, ElmaRenderer elmaRenderer, string? selectedShapeFilePath = null, double scalingFactor = 0.0, double rotationAngle = 0.0, ShapeMirrorOption mirrorOption = ShapeMirrorOption.None)
     {
