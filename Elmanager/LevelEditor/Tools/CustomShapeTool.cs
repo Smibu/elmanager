@@ -18,7 +18,7 @@ namespace Elmanager.LevelEditor.Tools;
 internal class CustomShapeTool : ToolBase, IEditorTool
 {
     private ShapeDataDto? _selectedShapeData;
-    private string? _selectedShapeName = null;
+    private string? _selectedShapeFilePath = null;
     private Vector _initialMousePosition = new();
     private bool _hasFocus;
     private double _scalingFactor = 1.0;
@@ -103,7 +103,7 @@ internal class CustomShapeTool : ToolBase, IEditorTool
         }
 
         // Open Shape Selection Form
-        var shapeSelectionForm = new ShapeSelectionForm(LevEditor.EditorControl, LevEditor.Renderer, _selectedShapeName, _scalingFactor, _rotationAngle, _selectedMirrorOption);
+        var shapeSelectionForm = new ShapeSelectionForm(LevEditor.EditorControl, LevEditor.Renderer, _selectedShapeFilePath, _scalingFactor, _rotationAngle, _selectedMirrorOption);
         shapeSelectionForm.ShapeDataLoaded += ShapeSelectionForm_ShapeDataLoaded;
         shapeSelectionForm.ShowDialog();
     }
@@ -116,7 +116,7 @@ internal class CustomShapeTool : ToolBase, IEditorTool
             _scalingFactor = shapeSelectionForm.ScalingFactor;
             _rotationAngle = shapeSelectionForm.RotationAngle;
             _selectedMirrorOption = shapeSelectionForm.ShapeMirrorOption;
-            _selectedShapeName = shapeSelectionForm.SelectedShapeName;
+            _selectedShapeFilePath = shapeSelectionForm.SelectedShapeFilePath;
             LoadShapeData();
             ApplyTransformations(CurrentPos);
         }

@@ -16,7 +16,7 @@ internal partial class ShapeSelectionForm : Form
     public double ScalingFactor { get; private set; }
     public double RotationAngle { get; private set; }
     public ShapeMirrorOption ShapeMirrorOption { get; private set; }
-    public string? SelectedShapeName { get; private set; }
+    public string? SelectedShapeFilePath { get; private set; }
 
     private static readonly string ShapesFolderPath = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "sle_shapes");
 
@@ -41,12 +41,12 @@ internal partial class ShapeSelectionForm : Form
     // Static fields to remember the size of the form
     private static Size? _lastSize;
 
-    public ShapeSelectionForm(GLControl sharedContext, ElmaRenderer elmaRenderer, string? selectedShapeName = null, double scalingFactor = 0.0, double rotationAngle = 0.0, ShapeMirrorOption mirrorOption = ShapeMirrorOption.None)
+    public ShapeSelectionForm(GLControl sharedContext, ElmaRenderer elmaRenderer, string? selectedShapeFilePath = null, double scalingFactor = 0.0, double rotationAngle = 0.0, ShapeMirrorOption mirrorOption = ShapeMirrorOption.None)
     {
         ScalingFactor = scalingFactor;
         RotationAngle = rotationAngle;
         ShapeMirrorOption = mirrorOption;
-        SelectedShapeName = selectedShapeName;
+        SelectedShapeFilePath = selectedShapeFilePath;
 
         _renderingSettings = new LevelEditorRenderingSettings
         {
@@ -179,14 +179,14 @@ internal partial class ShapeSelectionForm : Form
 
     private void HighlightSelectedShape()
     {
-        if (SelectedShapeName == null)
+        if (SelectedShapeFilePath == null)
         {
             return;
         }
 
         foreach (System.Windows.Forms.Control control in tableLayoutPanelShapes.Controls)
         {
-            if (control is CustomShapeControl shapeControl && shapeControl.ShapeFullPath == SelectedShapeName)
+            if (control is CustomShapeControl shapeControl && shapeControl.ShapeFullPath == SelectedShapeFilePath)
             {
                 shapeControl.Highlight(true);
                 _selectedShapeControl = shapeControl;
@@ -294,12 +294,12 @@ internal partial class ShapeSelectionForm : Form
 
     private void ScrollToSelectedShape()
     {
-        if (SelectedShapeName == null)
+        if (SelectedShapeFilePath == null)
         {
             return;
         }
 
-        int selectedIndex = _shapes.FindIndex(shape => shape.FilePath == SelectedShapeName);
+        int selectedIndex = _shapes.FindIndex(shape => shape.FilePath == SelectedShapeFilePath);
         if (selectedIndex == -1)
         {
             return;
@@ -323,7 +323,7 @@ internal partial class ShapeSelectionForm : Form
         if (_selectedShapeControl != null)
         {
             _selectedShapeControl.Highlight(true);
-            SelectedShapeName = _selectedShapeControl.ShapeFullPath;
+            SelectedShapeFilePath = _selectedShapeControl.ShapeFullPath;
         }
     }
 
@@ -335,15 +335,15 @@ internal partial class ShapeSelectionForm : Form
 
     private void ButtonOk_Click(object sender, EventArgs e)
     {
-        if (SelectedShapeName != null)
+        if (SelectedShapeFilePath != null)
         {
             // Raise the ShapeDataLoaded event with the selected shape data
-            if (SelectedShapeName.Length == 0)
+            if (SelectedShapeFilePath.Length == 0)
             {
                 return;
             }
 
-            var levFilePath = SelectedShapeName;
+            var levFilePath = SelectedShapeFilePath;
 
             // Check if the LEV file exists
             if (!File.Exists(levFilePath))
