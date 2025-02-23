@@ -165,7 +165,11 @@ internal class CustomShapeTool : ToolBase, IEditorTool
         var min = new Vector(_level.Bounds.XMin, _level.Bounds.YMin);
         var max = new Vector(_level.Bounds.XMax, _level.Bounds.YMax);
 
+        // Scale min / max before calculating anchor offset
+        min *= scalingMatrix;
+        max *= scalingMatrix;
         Vector anchorOffset = GetAnchorOffset(min, max);
+
         var translationMatrix = Matrix.CreateTranslation(mousePosition.X - center.X + anchorOffset.X, mousePosition.Y - center.Y + anchorOffset.Y);
         transformationMatrix = transformationMatrix * translationMatrix;
 
