@@ -15,7 +15,7 @@ using Elmanager.Rec;
 using Elmanager.Rendering;
 using Elmanager.Rendering.Camera;
 using OpenTK.Graphics.OpenGL;
-using OpenTK.WinForms;
+using OpenTK.GLControl;
 using Timer = System.Timers.Timer;
 
 namespace Elmanager.ReplayViewer;

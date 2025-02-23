@@ -15,7 +15,7 @@ using Elmanager.UI;
 using Elmanager.Utilities;
 using OpenTK.Graphics.OpenGL;
 using OpenTK.Windowing.Common;
-using OpenTK.WinForms;
+using OpenTK.GLControl;
 using Color = System.Drawing.Color;
 using PixelFormat = System.Drawing.Imaging.PixelFormat;
 
@@ -42,7 +42,7 @@ internal class ElmaRenderer : IDisposable
     private int _colorRenderBuffer;
     private int _depthStencilRenderBuffer;
     private int _maxRenderbufferSize;
-    private LgrCache _lgrCache = new();
+    public LgrCache _lgrCache = new();
 
     internal ElmaRenderer(GLControl renderingTarget, RenderingSettings settings)
     {
@@ -50,7 +50,7 @@ internal class ElmaRenderer : IDisposable
         InitializeOpengl(disableFrameBuffer: settings.DisableFrameBuffer);
     }
 
-    public OpenGlLgr? OpenGlLgr { get; private set; }
+    public OpenGlLgr? OpenGlLgr { get; set; }
 
     public void Dispose()
     {

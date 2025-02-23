@@ -6,7 +6,7 @@ using System.Windows.Forms;
 using BrightIdeasSoftware;
 using Elmanager.Rec;
 using Elmanager.UI;
-using OpenTK.WinForms;
+using OpenTK.GLControl;
 
 namespace Elmanager.ReplayViewer
 {

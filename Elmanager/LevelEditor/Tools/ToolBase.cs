@@ -11,7 +11,7 @@ namespace Elmanager.LevelEditor.Tools;
 internal abstract class ToolBase : IEditorToolBase
 {
     protected Vector CurrentPos;
-    private readonly Control _editorControl;
+    protected readonly Control _editorControl;
     protected readonly LevelEditorForm LevEditor;
     protected ElmaRenderer Renderer => LevEditor.Renderer;
 
