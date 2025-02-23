@@ -17,20 +17,23 @@ namespace Elmanager.LevelEditor.Tools;
 
 internal class CustomShapeTool : ToolBase, IEditorTool
 {
+    // Shape Data
     private ShapeDataDto? _selectedShapeData;
     private string? _selectedShapeFilePath = null;
+
+    // Mouse Interaction
     private Vector _initialMousePosition = new();
     private bool _hasFocus;
+
+    // Transformation Properties
     private double _scalingFactor = 1.0;
     private double _rotationAngle = 0.0;
-
-    private Level? _level;
-    private Level? _originalLevel;
-
+    private ShapeMirrorOption _selectedMirrorOption = ShapeMirrorOption.None;
     private PlacementAnchor _anchor = PlacementAnchor.Center;
 
-    // Add a property to store the selected mirroring option
-    private ShapeMirrorOption _selectedMirrorOption = ShapeMirrorOption.None;
+    // Level
+    private Level? _level;
+    private Level? _originalLevel;
 
     internal CustomShapeTool(LevelEditorForm editorForm) : base(editorForm)
     {
