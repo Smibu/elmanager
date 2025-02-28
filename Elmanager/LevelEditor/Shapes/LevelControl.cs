@@ -21,8 +21,7 @@ public class LevelControl : GLControl
     private readonly RenderingSettings _renderingSettings;
     private readonly SceneSettings _sceneSettings;
     private readonly ZoomController _zoomController;
-
-    private bool _isFirstRender = true;
+    
     public bool DisableRendering { get; set; } = true;
 
     internal LevelControl(GLControl sharedContext, SceneSettings sceneSettings, RenderingSettings renderingSettings, ElmaRenderer elmaRenderer, Level level) :
@@ -55,6 +54,15 @@ public class LevelControl : GLControl
         }
     }
 
+    private void UpdateRenderingContext()
+    {
+        _renderer.UpdateSettings(_level, _renderingSettings);
+        _renderer.InitializeLevel(_level, _renderingSettings);
+        _level.UpdateBounds();
+        _zoomController.ZoomFill(_renderingSettings);
+        Render(true);
+    }
+
     /**
      * Set the level to be displayed in the control
      * To disable rendering, set level to null
@@ -69,7 +77,8 @@ public class LevelControl : GLControl
         _level = level;
 
         _zoomController.Lev = _level;
-        _isFirstRender = true;
+
+        UpdateRenderingContext();
     }
 
     protected override void OnHandleCreated(EventArgs e)
@@ -81,7 +90,8 @@ public class LevelControl : GLControl
             MakeCurrent();
         }
 
-        GL.Viewport(0, 0, Width, Height); // Set viewport to the entire control
+        GL.Viewport(0, 0, Width, Height);
+
         if (Context != null)
             Context.SwapInterval = 0;
     }
@@ -90,6 +100,8 @@ public class LevelControl : GLControl
     {
         // Initialization code for OpenGL
         _renderer = new ElmaRenderer(this, _renderingSettings, _originalElmaRenderer);
+
+        UpdateRenderingContext();
     }
 
     protected override void OnPaint(PaintEventArgs e)
@@ -118,20 +130,10 @@ public class LevelControl : GLControl
         GL.Clear(ClearBufferMask.ColorBufferBit | ClearBufferMask.DepthBufferBit);
         CheckGLError("GL.Clear");
 
-        bool viewportChanged = _isFirstRender || resetViewport;
-
-        if (_isFirstRender)
-        {
-            _renderer.UpdateSettings(_level, _renderingSettings);
-            _renderer.InitializeLevel(_level, _renderingSettings);
-            _level.UpdateBounds();
-            _isFirstRender = false;
-        }
-
-        if (viewportChanged)
+        if (resetViewport)
         {
             GL.Viewport(0, 0, Width, Height);
-            _zoomController?.ZoomFill(_renderingSettings);
+            _zoomController.ZoomFill(_renderingSettings);
         }
 
         RedrawScene();
