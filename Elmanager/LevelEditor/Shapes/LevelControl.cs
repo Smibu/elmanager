@@ -14,18 +14,21 @@ public class LevelControl : GLControl
 {
     private ElmaRenderer _renderer;
     private readonly ElmaRenderer _originalElmaRenderer;
-    private Level? _level;
-    private ElmaCamera? _camera;
+    
+    private Level _level;
+    
+    private readonly ElmaCamera _camera;
     private readonly RenderingSettings _renderingSettings;
     private readonly SceneSettings _sceneSettings;
-    private ZoomController? _zoomController;
+    private readonly ZoomController _zoomController;
+
     private bool _isFirstRender = true;
     public bool DisableRendering { get; set; } = true;
 
-    private DispatcherTimer? _resizeTimer;
+    private readonly DispatcherTimer _resizeTimer;
     private const int DebounceInterval = 6; // Debounce interval in milliseconds
 
-    internal LevelControl(GLControl sharedContext, SceneSettings sceneSettings, RenderingSettings renderingSettings, ElmaRenderer elmaRenderer, Level? level=null) :
+    internal LevelControl(GLControl sharedContext, SceneSettings sceneSettings, RenderingSettings renderingSettings, ElmaRenderer elmaRenderer, Level level) :
         base(new GLControlSettings {
             AutoLoadBindings = false,
             Profile = ContextProfile.Compatability
@@ -33,12 +36,9 @@ public class LevelControl : GLControl
     {
         _renderingSettings = renderingSettings;
 
-        if (level != null)
-        {
-            _level = level;
-            _camera = new ElmaCamera();
-            _zoomController = new ZoomController(_camera, _level, () => RedrawScene());
-        }
+        _level = level;
+        _camera = new ElmaCamera();
+        _zoomController = new ZoomController(_camera, _level, () => RedrawScene());
 
         _sceneSettings = sceneSettings;
         _originalElmaRenderer = elmaRenderer;
@@ -69,25 +69,17 @@ public class LevelControl : GLControl
      * Set the level to be displayed in the control
      * To disable rendering, set level to null
      */
-    internal void SetLevel(Level? level)
+    internal void SetLevel(Level level)
     {
         if (_level == level)
         {
-            // Prevent redundant reassignments
             return;
         }
 
         _level = level;
 
-        if (_level != null)
-        {
-            _camera ??= new ElmaCamera();
-            _zoomController ??= new ZoomController(_camera, _level, () => RedrawScene());
-            
-            _zoomController.Lev = _level;
-
-            _isFirstRender = true;
-        }
+        _zoomController.Lev = _level;
+        _isFirstRender = true;
     }
 
     protected override void OnHandleCreated(EventArgs e)
@@ -140,7 +132,7 @@ public class LevelControl : GLControl
 
         bool viewportChanged = _isFirstRender || resetViewport;
 
-        if (_isFirstRender && _level != null)
+        if (_isFirstRender)
         {
             _renderer.UpdateSettings(_level, _renderingSettings);
             _renderer.InitializeLevel(_level, _renderingSettings);
@@ -160,10 +152,7 @@ public class LevelControl : GLControl
 
     internal void RedrawScene(object? sender = null, EventArgs? e = null)
     {
-        if (_level != null && _camera != null)
-        {
-            _renderer.DrawScene(_level, _camera, _sceneSettings, _renderingSettings);
-        }
+        _renderer.DrawScene(_level, _camera, _sceneSettings, _renderingSettings);
     }
 
     private static void CheckGLError(string location)
@@ -179,12 +168,8 @@ public class LevelControl : GLControl
     {
         if (disposing)
         {
-            _resizeTimer?.Stop();
-            if (_resizeTimer != null)
-            {
-                _resizeTimer.Tick -= ResizeTimer_Tick;
-            }
-            _resizeTimer = null;
+            _resizeTimer.Stop();
+            _resizeTimer.Tick -= ResizeTimer_Tick;
 
             // Causes a crash.
             //_renderer.Dispose();
@@ -195,16 +180,16 @@ public class LevelControl : GLControl
     protected override void OnResize(EventArgs e)
     {
         base.OnResize(e);
-            
+        
         // Restart the debounce timer
-        _resizeTimer?.Stop();
-        _resizeTimer?.Start();
+        _resizeTimer.Stop();
+        _resizeTimer.Start();
     }
 
     private void ResizeTimer_Tick(object? sender, EventArgs e)
     {
         // Stop the timer
-        _resizeTimer?.Stop();
+        _resizeTimer.Stop();
 
         Render(true);
     }
