@@ -13,11 +13,6 @@ namespace Elmanager.LevelEditor.Shapes;
 
 internal partial class ShapeSelectionForm : Form
 {
-    // Shape Transformation properties
-    public double ScalingFactor { get; private set; }
-    public double RotationAngle { get; private set; }
-    public ShapeMirrorOption ShapeMirrorOption { get; private set; }
-
     // Selected control
     public string? SelectedShapeFilePath { get; private set; }
     private CustomShapeControl? _selectedShapeControl;
@@ -44,11 +39,8 @@ internal partial class ShapeSelectionForm : Form
     // List of currently active shapes
     private List<(string Name, string FilePath)> _shapes;
 
-    public ShapeSelectionForm(GLControl sharedContext, ElmaRenderer elmaRenderer, string? selectedShapeFilePath = null, double scalingFactor = 0.0, double rotationAngle = 0.0, ShapeMirrorOption mirrorOption = ShapeMirrorOption.None)
+    public ShapeSelectionForm(GLControl sharedContext, ElmaRenderer elmaRenderer, string? selectedShapeFilePath = null)
     {
-        ScalingFactor = scalingFactor;
-        RotationAngle = rotationAngle;
-        ShapeMirrorOption = mirrorOption;
         SelectedShapeFilePath = selectedShapeFilePath;
 
         _renderingSettings = new LevelEditorRenderingSettings

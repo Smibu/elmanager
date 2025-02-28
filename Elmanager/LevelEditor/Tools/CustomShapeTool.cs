@@ -106,7 +106,7 @@ internal class CustomShapeTool : ToolBase, IEditorTool
         }
 
         // Open Shape Selection Form
-        var shapeSelectionForm = new ShapeSelectionForm(LevEditor.EditorControl, LevEditor.Renderer, _selectedShapeFilePath, _scalingFactor, _rotationAngle, _selectedMirrorOption);
+        var shapeSelectionForm = new ShapeSelectionForm(LevEditor.EditorControl, LevEditor.Renderer, _selectedShapeFilePath);
         shapeSelectionForm.ShapeDataLoaded += ShapeSelectionForm_ShapeDataLoaded;
         shapeSelectionForm.ShowDialog();
     }
@@ -116,9 +116,6 @@ internal class CustomShapeTool : ToolBase, IEditorTool
         if (sender is ShapeSelectionForm shapeSelectionForm)
         {
             _selectedShapeData = shapeDataDto;
-            _scalingFactor = shapeSelectionForm.ScalingFactor;
-            _rotationAngle = shapeSelectionForm.RotationAngle;
-            _selectedMirrorOption = shapeSelectionForm.ShapeMirrorOption;
             _selectedShapeFilePath = shapeSelectionForm.SelectedShapeFilePath;
             LoadShapeData();
             ApplyTransformations(CurrentPos);
