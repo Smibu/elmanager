@@ -25,9 +25,6 @@ public class LevelControl : GLControl
     private bool _isFirstRender = true;
     public bool DisableRendering { get; set; } = true;
 
-    private readonly DispatcherTimer _resizeTimer;
-    private const int DebounceInterval = 6; // Debounce interval in milliseconds
-
     internal LevelControl(GLControl sharedContext, SceneSettings sceneSettings, RenderingSettings renderingSettings, ElmaRenderer elmaRenderer, Level level) :
         base(new GLControlSettings {
             AutoLoadBindings = false,
@@ -56,13 +53,6 @@ public class LevelControl : GLControl
         {
             System.Diagnostics.Debug.WriteLine("Warning: SharedContext was not properly initialized.");
         }
-
-        // Initialize the resize timer
-        _resizeTimer = new DispatcherTimer
-        {
-            Interval = TimeSpan.FromMilliseconds(DebounceInterval)
-        };
-        _resizeTimer.Tick += ResizeTimer_Tick;
     }
 
     /**
@@ -168,9 +158,6 @@ public class LevelControl : GLControl
     {
         if (disposing)
         {
-            _resizeTimer.Stop();
-            _resizeTimer.Tick -= ResizeTimer_Tick;
-
             // Causes a crash.
             //_renderer.Dispose();
         }
@@ -180,16 +167,6 @@ public class LevelControl : GLControl
     protected override void OnResize(EventArgs e)
     {
         base.OnResize(e);
-        
-        // Restart the debounce timer
-        _resizeTimer.Stop();
-        _resizeTimer.Start();
-    }
-
-    private void ResizeTimer_Tick(object? sender, EventArgs e)
-    {
-        // Stop the timer
-        _resizeTimer.Stop();
 
         Render(true);
     }
