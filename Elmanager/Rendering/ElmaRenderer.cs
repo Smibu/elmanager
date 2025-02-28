@@ -42,15 +42,24 @@ internal class ElmaRenderer : IDisposable
     private int _colorRenderBuffer;
     private int _depthStencilRenderBuffer;
     private int _maxRenderbufferSize;
-    public LgrCache _lgrCache = new();
+    private LgrCache _lgrCache = new();
 
     internal ElmaRenderer(GLControl renderingTarget, RenderingSettings settings)
     {
         _gfxContext = renderingTarget.Context;
         InitializeOpengl(disableFrameBuffer: settings.DisableFrameBuffer);
     }
+    internal ElmaRenderer(GLControl renderingTarget, RenderingSettings settings, ElmaRenderer otherElmaRenderer)
+    {
+        _gfxContext = renderingTarget.Context;
+        InitializeOpengl(disableFrameBuffer: settings.DisableFrameBuffer);
 
-    public OpenGlLgr? OpenGlLgr { get; set; }
+        // Might cause an issue during memory cleanup!
+        _lgrCache = otherElmaRenderer._lgrCache;
+        OpenGlLgr = otherElmaRenderer.OpenGlLgr;
+    }
+
+    public OpenGlLgr? OpenGlLgr { get; private set; }
 
     public void Dispose()
     {

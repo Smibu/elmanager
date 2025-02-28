@@ -89,9 +89,7 @@ public class LevelControl : GLControl
     private void LevelControl_Load(object? sender, EventArgs e)
     {
         // Initialization code for OpenGL
-        _renderer = new ElmaRenderer(this, _renderingSettings);
-        _renderer.OpenGlLgr = _originalElmaRenderer.OpenGlLgr; // Slightly faster with these lines. There is however likely a memory leak here
-        _renderer._lgrCache = _originalElmaRenderer._lgrCache; // Slightly faster with these lines. There is however likely a memory leak here
+        _renderer = new ElmaRenderer(this, _renderingSettings, _originalElmaRenderer);
     }
 
     protected override void OnPaint(PaintEventArgs e)
