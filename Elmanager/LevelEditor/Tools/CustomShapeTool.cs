@@ -10,6 +10,7 @@ using System.Drawing;
 using System.IO;
 using System.Linq;
 using System.Windows.Forms;
+using Elmanager.IO;
 using Path = System.IO.Path;
 using Polygon = Elmanager.Lev.Polygon;
 
@@ -18,7 +19,7 @@ namespace Elmanager.LevelEditor.Tools;
 internal class CustomShapeTool : ToolBase, IEditorTool
 {
     // Shape Data
-    private ShapeDataDto? _selectedShapeData;
+    private ElmaFileObject<SleShape>? _selectedShapeData;
     private string? _selectedShapeFilePath = null;
 
     // Mouse Interaction
@@ -111,11 +112,11 @@ internal class CustomShapeTool : ToolBase, IEditorTool
         shapeSelectionForm.ShowDialog();
     }
 
-    private void ShapeSelectionForm_ShapeDataLoaded(object? sender, ShapeDataDto shapeDataDto)
+    private void ShapeSelectionForm_ShapeDataLoaded(object? sender, ElmaFileObject<SleShape> sleShape)
     {
         if (sender is ShapeSelectionForm shapeSelectionForm)
         {
-            _selectedShapeData = shapeDataDto;
+            _selectedShapeData = sleShape;
             _selectedShapeFilePath = shapeSelectionForm.SelectedShapeFilePath;
             LoadShapeData();
             ApplyTransformations(CurrentPos);
@@ -131,12 +132,12 @@ internal class CustomShapeTool : ToolBase, IEditorTool
             return;
         }
 
-        _level = _selectedShapeData.Level.Clone();
+        _level = _selectedShapeData.Obj.Level.Clone();
         _level.UpdateAllPolygons(Global.AppSettings.LevelEditor.RenderingSettings.GrassZoom);
         _level.UpdateBounds();
 
         // Store the original state
-        _originalLevel = _selectedShapeData.Level.Clone();
+        _originalLevel = _selectedShapeData.Obj.Level.Clone();
 
         ApplyTransformations(CurrentPos);
     }

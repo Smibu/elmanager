@@ -1,15 +1,18 @@
-﻿using Elmanager.Geometry;
-using Elmanager.Lev;
+﻿using Elmanager.Lev;
 using Elmanager.Rendering;
-using System;
 using System.Collections.Generic;
 using System.Linq;
+using System;
+using Elmanager.Geometry;
+using Elmanager.IO;
 
 namespace Elmanager.LevelEditor.Shapes;
 
-internal static class CustomShapeSerializer
+internal class SleShape(Level level)
 {
-    public static ShapeDataDto DeserializeShapeDataLev(string filePath)
+    public Level Level { get; set; } = level;
+
+    public static ElmaFileObject<SleShape> LoadFromPath(string filePath)
     {
         if (!filePath.EndsWith(".lev", StringComparison.OrdinalIgnoreCase))
         {
@@ -56,7 +59,9 @@ internal static class CustomShapeSerializer
 
         level.UpdateBounds();
 
-        return new ShapeDataDto(level);
+        var sleShape = new SleShape(level);
+        var elmaFile = new ElmaFile(filePath);
 
+        return new ElmaFileObject<SleShape>(elmaFile, sleShape);
     }
 }

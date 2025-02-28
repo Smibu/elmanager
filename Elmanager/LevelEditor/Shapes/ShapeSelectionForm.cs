@@ -7,6 +7,7 @@ using System.Globalization;
 using System.IO;
 using System.Linq;
 using System.Windows.Forms;
+using Elmanager.IO;
 using Elmanager.Lev;
 using Path = System.IO.Path;
 
@@ -268,7 +269,7 @@ internal partial class ShapeSelectionForm : Form
     }
 
     // Event for loading polygons
-    public event EventHandler<ShapeDataDto>? ShapeDataLoaded;
+    public event EventHandler<ElmaFileObject<SleShape>>? ShapeDataLoaded;
 
     private void PopulateShapes(string folderPath)
     {
@@ -348,7 +349,7 @@ internal partial class ShapeSelectionForm : Form
                 return;
             }
 
-            var shapeData = CustomShapeSerializer.DeserializeShapeDataLev(levFilePath);
+            var shapeData = SleShape.LoadFromPath(levFilePath);
             ShapeDataLoaded?.Invoke(this, shapeData);
         }
         this.DialogResult = DialogResult.OK;
