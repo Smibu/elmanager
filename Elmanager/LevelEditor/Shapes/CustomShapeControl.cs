@@ -19,15 +19,12 @@ internal partial class CustomShapeControl : UserControl.UserControl
 
     private Color _borderColor = Color.Transparent;
 
-    public CustomShapeControl(GLControl sharedContext, SceneSettings sceneSettings, RenderingSettings renderingSettings, ElmaRenderer elmaRenderer, Level? level=null)
+    public CustomShapeControl(GLControl sharedContext, SceneSettings sceneSettings, RenderingSettings renderingSettings, ElmaRenderer elmaRenderer, Level level)
     {
         InitializeComponent();
 
-        if (level != null)
-        {
-            // Filter start object from level
-            level.Objects = level.Objects.Where(o => o.Type != ObjectType.Start).ToList();
-        }
+        // Filter start object from level
+        level.Objects = level.Objects.Where(o => o.Type != ObjectType.Start).ToList();
 
         shapeLevelControl = new LevelControl(sharedContext, sceneSettings, renderingSettings, elmaRenderer, level);
         shapeLevelControl.API = OpenTK.Windowing.Common.ContextAPI.OpenGL;
@@ -155,7 +152,7 @@ internal partial class CustomShapeControl : UserControl.UserControl
         SetLevel(level);
     }
 
-    internal void SetLevel(Level? level)
+    internal void SetLevel(Level level)
     {
         shapeLevelControl.SetLevel(level);
     }

@@ -7,6 +7,7 @@ using System.Globalization;
 using System.IO;
 using System.Linq;
 using System.Windows.Forms;
+using Elmanager.Lev;
 using Path = System.IO.Path;
 
 namespace Elmanager.LevelEditor.Shapes;
@@ -239,7 +240,7 @@ internal partial class ShapeSelectionForm : Form
     {
         for (int i = 0; i < numControls; i++)
         {
-            CustomShapeControl shapeControl = new CustomShapeControl(sharedContext, _sceneSettings, _renderingSettings, _renderer);
+            CustomShapeControl shapeControl = new CustomShapeControl(sharedContext, _sceneSettings, _renderingSettings, _renderer, new Level());
             // Handle shape click event
             shapeControl.ShapeClicked += ShapeControl_ShapeClicked;
 
