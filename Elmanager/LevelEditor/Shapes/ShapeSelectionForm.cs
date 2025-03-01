@@ -306,23 +306,6 @@ internal partial class ShapeSelectionForm : Form
         this.Close();
     }
 
-    private void ButtonCancel_Click(object sender, EventArgs e)
-    {
-        this.DialogResult = DialogResult.Cancel;
-        this.Close();
-    }
-
-    protected override bool ProcessCmdKey(ref Message msg, Keys keyData)
-    {
-        if (keyData == Keys.Escape)
-        {
-            this.DialogResult = DialogResult.Cancel;
-            this.Close();
-            return true;
-        }
-        return base.ProcessCmdKey(ref msg, keyData);
-    }
-
     private void PopulateSubfolderComboBox()
     {
         // Clear existing items

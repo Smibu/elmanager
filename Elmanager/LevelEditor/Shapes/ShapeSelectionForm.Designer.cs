@@ -62,7 +62,6 @@ namespace Elmanager.LevelEditor.Shapes
             buttonCancel.TabIndex = 0;
             buttonCancel.Text = "Cancel";
             buttonCancel.UseVisualStyleBackColor = true;
-            buttonCancel.Click += ButtonCancel_Click;
             // 
             // buttonOk
             // 
@@ -156,6 +155,7 @@ namespace Elmanager.LevelEditor.Shapes
             // 
             AutoScaleDimensions = new System.Drawing.SizeF(96F, 96F);
             AutoScaleMode = AutoScaleMode.Dpi;
+            CancelButton = buttonCancel;
             ClientSize = new System.Drawing.Size(547, 579);
             Controls.Add(tableLayoutPanel1);
             MaximizeBox = false;
