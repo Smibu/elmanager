@@ -7,11 +7,10 @@ using System.Linq;
 using System.Windows.Forms;
 using Color = System.Drawing.Color;
 using Pen = System.Drawing.Pen;
-using UserControl = System.Windows.Forms;
 
 namespace Elmanager.LevelEditor.Shapes;
 
-internal partial class CustomShapeControl : UserControl.UserControl
+internal partial class CustomShapeControl : UserControl
 {
     private bool _isHighlighted;
     private bool _isPressed;
