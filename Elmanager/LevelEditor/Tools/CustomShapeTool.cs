@@ -34,16 +34,18 @@ internal class CustomShapeTool : ToolBase, IEditorTool
     private PlacementAnchor _anchor = PlacementAnchor.Center;
 
     // Level
-    private Level? _level;
-    private Level? _originalLevel;
+    private Level _level;
+    private Level _originalLevel;
 
     internal CustomShapeTool(LevelEditorForm editorForm) : base(editorForm)
     {
+        _level = new Level();
+        _originalLevel = new Level();
     }
 
     public void ExtraRendering()
     {
-        if (_selectedShapeData == null || _level == null)
+        if (_selectedShapeData == null)
         {
             return;
         }
@@ -71,7 +73,7 @@ internal class CustomShapeTool : ToolBase, IEditorTool
 
     public TransientElements GetTransientElements()
     {
-        return _hasFocus && _level != null
+        return _hasFocus
             ? new TransientElements(new List<Polygon>(_level.Polygons), new List<LevObject>(_level.Objects), new List<GraphicElement>(_level.GraphicElements))
             : TransientElements.Empty;
     }
@@ -128,8 +130,8 @@ internal class CustomShapeTool : ToolBase, IEditorTool
     {
         if (_selectedShapeData == null)
         {
-            _level = null;
-            _originalLevel = null;
+            _level = new Level();
+            _originalLevel = new Level();
             return;
         }
 
@@ -145,11 +147,6 @@ internal class CustomShapeTool : ToolBase, IEditorTool
 
     private void ApplyTransformations(Vector mousePosition)
     {
-        if (_level == null || _originalLevel == null)
-        {
-            return;
-        }
-
         var scalingMatrix = Matrix.CreateScaling(_scalingFactor, _scalingFactor);
         var rotationMatrix = Matrix.Identity;
         rotationMatrix.Rotate(_rotationAngle);
@@ -317,11 +314,6 @@ internal class CustomShapeTool : ToolBase, IEditorTool
 
     private void TranslateShape(Vector translation)
     {
-        if (_level == null)
-        {
-            return;
-        }
-
         _level.Polygons.ForEach(polygon => polygon.Move(translation));
         _level.Objects.ForEach(obj => obj.Position += translation);
         _level.GraphicElements.ForEach(graphicElement => graphicElement.Position += translation);
@@ -329,7 +321,10 @@ internal class CustomShapeTool : ToolBase, IEditorTool
 
     private void InsertShapeIntoLevel(Vector position)
     {
-        if (_selectedShapeData == null || _level == null) return;
+        if (_selectedShapeData == null)
+        {
+            return;
+        }
 
         TranslateShape(position);
         
