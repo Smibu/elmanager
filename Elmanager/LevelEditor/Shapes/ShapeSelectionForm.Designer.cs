@@ -163,6 +163,7 @@ namespace Elmanager.LevelEditor.Shapes
             MinimumSize = new System.Drawing.Size(200, 100);
             Name = "ShapeSelectionForm";
             ShowIcon = false;
+            StartPosition = FormStartPosition.CenterParent;
             Text = "Shape Selection";
             Load += ShapeSelectionForm_Load;
             tableLayoutPanel1.ResumeLayout(false);

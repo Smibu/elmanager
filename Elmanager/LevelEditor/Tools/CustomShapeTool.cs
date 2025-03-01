@@ -109,7 +109,7 @@ internal class CustomShapeTool : ToolBase, IEditorTool
         // Open Shape Selection Form
         var shapeSelectionForm = new ShapeSelectionForm(LevEditor.EditorControl, LevEditor.Renderer, _selectedShapeFilePath);
         shapeSelectionForm.ShapeDataLoaded += ShapeSelectionForm_ShapeDataLoaded;
-        shapeSelectionForm.ShowDialog();
+        shapeSelectionForm.ShowDialog(LevEditor);
     }
 
     private void ShapeSelectionForm_ShapeDataLoaded(object? sender, ElmaFileObject<SleShape> sleShape)
