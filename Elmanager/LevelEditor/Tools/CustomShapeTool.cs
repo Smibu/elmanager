@@ -21,6 +21,7 @@ internal class CustomShapeTool : ToolBase, IEditorTool
     // Shape Data
     private ElmaFileObject<SleShape>? _selectedShapeData;
     private string? _selectedShapeFilePath = null;
+    private string? _lastUsedShapeFolder;
 
     // Mouse Interaction
     private Vector _initialMousePosition = new();
@@ -337,6 +338,131 @@ internal class CustomShapeTool : ToolBase, IEditorTool
         Lev.GraphicElements.AddRange(_level.GraphicElements);
         Lev.UpdateAllPolygons(Global.AppSettings.LevelEditor.RenderingSettings.GrassZoom);
         LevEditor.SetModified(LevModification.Ground | LevModification.Decorations | LevModification.Objects);
+    }
+
+    private void SaveShape(Level lev, string filePath)
+    {
+        lev.Save(filePath);
+    }
+
+    public void CreateCustomShapeMenuItem_Click(object sender, EventArgs e)
+    {
+        var selectedPolygons = LevEditor.Lev.Polygons.Where(p => p.Vertices.Any(v => v.Mark == VectorMark.Selected)).ToList();
+        var selectedObjects = LevEditor.Lev.Objects.Where(o => o.Position.Mark == VectorMark.Selected && o.Type != ObjectType.Start).ToList();
+        var selectedGraphicElements = LevEditor.Lev.GraphicElements.Where(t => t.Position.Mark == VectorMark.Selected).ToList();
+
+        if (selectedPolygons.Count == 0 && selectedObjects.Count == 0 && selectedGraphicElements.Count == 0)
+        {
+            return;
+        }
+
+        bool allGrassSelected = selectedPolygons.All(pol => pol.IsGrass);
+        if (allGrassSelected)
+        {
+            MessageBox.Show(@"All selected polygons are grass. Custom shapes require at least 1 ground polygon!",
+                    @"Warning", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+            return;
+        }
+
+        string shapesDirectory = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "sle_shapes");
+
+        if (!Directory.Exists(shapesDirectory))
+        {
+            try
+            {
+                Directory.CreateDirectory(shapesDirectory);
+            }
+            catch (Exception ex)
+            {
+                UiUtils.ShowError("Error creating directory: " + shapesDirectory + "\n\n" + ex.Message, "Error", MessageBoxIcon.Error);
+                return;
+            }
+        }
+
+        if (Directory.GetDirectories(shapesDirectory).Length == 0)
+        {
+            string uncategorizedDirName = Path.Combine(shapesDirectory, "Uncategorized");
+
+            try
+            {
+                Directory.CreateDirectory(uncategorizedDirName);
+            }
+            catch (Exception ex)
+            {
+                UiUtils.ShowError("Error creating directory: " + uncategorizedDirName + "\n\n" + ex.Message, "Error", MessageBoxIcon.Error);
+                return;
+            }
+
+            _lastUsedShapeFolder = uncategorizedDirName;
+        }
+
+        if (_lastUsedShapeFolder != null && !Directory.Exists(_lastUsedShapeFolder))
+        {
+            _lastUsedShapeFolder = null;
+        }
+
+        LevEditor.SaveShapeDialog.FileName = "Type Shape Title Here";
+        LevEditor.SaveShapeDialog.InitialDirectory = _lastUsedShapeFolder ?? shapesDirectory;
+
+        var result = LevEditor.SaveShapeDialog.ShowDialog();
+
+        if (result != DialogResult.OK)
+        {
+            return;
+        }
+
+        string fullShapesDirectory = Path.GetFullPath(shapesDirectory);
+        string fullFilePath = Path.GetFullPath(LevEditor.SaveShapeDialog.FileName);
+
+        if (!fullFilePath.StartsWith(fullShapesDirectory, StringComparison.OrdinalIgnoreCase) ||
+            Path.GetDirectoryName(fullFilePath)!.Equals(fullShapesDirectory, StringComparison.OrdinalIgnoreCase))
+        {
+            UiUtils.ShowError("Shapes must be saved within a subfolder of the 'sle_shapes' directory.", "Error", MessageBoxIcon.Error);
+            return;
+        }
+
+        _lastUsedShapeFolder = Path.GetDirectoryName(fullFilePath);
+
+        LevEditor.ClearSelection();
+
+        // Clone the selected polygons and objects
+        var clonedPolygons = selectedPolygons.Select(p => p.Clone()).ToList();
+        var clonedObjects = selectedObjects.Select(o => o.Clone()).ToList();
+        var clonedGraphicElements = selectedGraphicElements.Select(ge => ge with { Position = ge.Position.Clone() }).ToList();
+
+        // Construct a temporary level for the snapshot
+        var tempLevel = new Level();
+        tempLevel.Polygons.AddRange(clonedPolygons);
+        tempLevel.Objects.AddRange(clonedObjects);
+        tempLevel.GraphicElements.AddRange(clonedGraphicElements);
+        tempLevel.UpdateImages(LevEditor.Renderer.OpenGlLgr?.DrawableImages ?? new Dictionary<string, DrawableImage>());
+        if (tempLevel.PolygonCount > 0 && tempLevel.Polygons.Any(p => p.IsGrass == false))
+        {
+            tempLevel.UpdateAllPolygons(LevEditor.Settings.RenderingSettings.GrassZoom);
+            tempLevel.UpdateBounds();
+        }
+
+        // Add start object, as it is needed.
+        tempLevel.Objects.Add(new LevObject(new Vector(0, 0), ObjectType.Start, AppleType.Normal));
+
+        SaveShape(tempLevel, LevEditor.SaveShapeDialog.FileName);
+
+        // Restore selection
+        foreach (var polygon in selectedPolygons)
+        {
+            polygon.MarkVectorsAs(VectorMark.Selected);
+        }
+
+        foreach (var obj in selectedObjects)
+        {
+            obj.Mark = VectorMark.Selected;
+        }
+
+        foreach (var graphicElement in selectedGraphicElements)
+        {
+            graphicElement.Mark = VectorMark.Selected;
+        }
+        LevEditor.UpdateSelectionInfo();
     }
 
     public void UpdateHelp()
