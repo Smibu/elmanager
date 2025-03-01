@@ -214,7 +214,6 @@ internal partial class ShapeSelectionForm : Form
         base.OnFormClosing(e);
     }
 
-    // Event for loading polygons
     public event EventHandler<ElmaFileObject<SleShape>>? ShapeDataLoaded;
 
     private void PopulateShapes(string folderPath)
@@ -255,13 +254,11 @@ internal partial class ShapeSelectionForm : Form
 
     private void ShapeControl_ShapeClicked(object? sender, EventArgs e)
     {
-        // Deselect the previously selected shape
         if (_selectedShapeControl != null)
         {
             _selectedShapeControl.Highlight(false);
         }
 
-        // Select the new shape
         _selectedShapeControl = sender as CustomShapeControl;
         if (_selectedShapeControl != null)
         {
@@ -302,7 +299,6 @@ internal partial class ShapeSelectionForm : Form
 
     private void PopulateSubfolderComboBox()
     {
-        // Clear existing items
         comboBoxSubfolders.Items.Clear();
 
         if (!Directory.Exists(ShapesFolderPath))
@@ -339,7 +335,6 @@ internal partial class ShapeSelectionForm : Form
 
         _lastSelectedSubfolder = selectedSubfolder;
 
-        // Construct the full path to the selected subfolder
         if (selectedSubfolder != null)
         {
             if (selectedSubfolder == AllShapesOption)
@@ -408,10 +403,8 @@ internal partial class ShapeSelectionForm : Form
     {
         if (sender is CustomShapeControl shapeControl)
         {
-            // Reuse the existing shape click handler
             ShapeControl_ShapeClicked(shapeControl, e);
 
-            // Reuse the existing OK button click handler to close the dialog
             ButtonOk_Click(this, e);
         }
     }

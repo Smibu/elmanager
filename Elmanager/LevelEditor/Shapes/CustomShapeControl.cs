@@ -40,7 +40,6 @@ internal partial class CustomShapeControl : UserControl
         shapeLevelControl.TabStop = false;
         tableLayoutPanel1.Controls.Add(shapeLevelControl, 0, 0);
 
-        // Attach the same event handler to the Click event of all relevant components
         shapeLevelControl.Click += OnComponentClick;
         lblShapeName.Click += OnComponentClick;
         this.Click += OnComponentClick;
@@ -86,7 +85,7 @@ internal partial class CustomShapeControl : UserControl
         this._isSelected = isSelected;
         this.BackColor = isSelected ? Color.FromArgb(204, 228, 247) : Color.Transparent;
         _borderColor = isSelected ? Color.FromArgb(0, 84, 153) : Color.Transparent; // Darker blue for selection
-        this.Invalidate(); // Trigger a repaint to update the border
+        this.Invalidate();
     }
 
     private void OnMouseEnter(object? sender, EventArgs e)
