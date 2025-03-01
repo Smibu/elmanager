@@ -45,7 +45,6 @@ internal partial class CustomShapeControl : UserControl
         lblShapeName.Click += OnComponentClick;
         this.Click += OnComponentClick;
 
-        // Attach mouse enter and leave events
         shapeLevelControl.MouseEnter += OnMouseEnter;
         lblShapeName.MouseEnter += OnMouseEnter;
         this.MouseEnter += OnMouseEnter;
@@ -54,7 +53,6 @@ internal partial class CustomShapeControl : UserControl
         lblShapeName.MouseLeave += OnMouseLeave;
         this.MouseLeave += OnMouseLeave;
 
-        // Attach mouse down and up events
         shapeLevelControl.MouseDown += OnMouseDown;
         lblShapeName.MouseDown += OnMouseDown;
         this.MouseDown += OnMouseDown;
@@ -68,17 +66,14 @@ internal partial class CustomShapeControl : UserControl
         this.DoubleClick += CustomShapeControl_DoubleClick;
     }
 
-    // Property for the full path of the shape
     public string ShapeFullPath { get; set; } = String.Empty;
 
-    // Property for the shape name
     public string ShapeName
     {
         get => lblShapeName.Text;
         set => lblShapeName.Text = value;
     }
 
-    // Event for clicking the shape
     public event EventHandler? ShapeClicked;
 
     private void OnComponentClick(object? sender, EventArgs e)
@@ -101,7 +96,7 @@ internal partial class CustomShapeControl : UserControl
             this.BackColor = Color.FromArgb(229, 241, 251);
             _borderColor = Color.FromArgb(0, 120, 215); // Darker blue for highlight
             _isHighlighted = true;
-            this.Invalidate(); // Trigger a repaint to update the border
+            this.Invalidate();
         }
     }
 
@@ -112,7 +107,7 @@ internal partial class CustomShapeControl : UserControl
             this.BackColor = Color.Transparent;
             _borderColor = Color.Transparent;
             _isHighlighted = false;
-            this.Invalidate(); // Trigger a repaint to update the border
+            this.Invalidate();
         }
     }
     private void OnMouseDown(object? sender, MouseEventArgs e)
@@ -120,7 +115,7 @@ internal partial class CustomShapeControl : UserControl
         _isPressed = true;
         this.BackColor = Color.FromArgb(153, 204, 255); // Lighter blue for pressed state
         _borderColor = Color.FromArgb(0, 84, 153); // Darker blue for pressed state
-        this.Invalidate(); // Trigger a repaint to update the border
+        this.Invalidate();
         OnComponentClick(sender, e);
     }
     private void OnMouseUp(object? sender, MouseEventArgs e)
@@ -128,7 +123,7 @@ internal partial class CustomShapeControl : UserControl
         _isPressed = false;
         this.BackColor = _isSelected ? Color.FromArgb(204, 228, 247) : (_isHighlighted ? Color.FromArgb(229, 241, 251) : Color.Transparent);
         _borderColor = _isSelected ? Color.FromArgb(0, 84, 153) : (_isHighlighted ? Color.FromArgb(0, 120, 215) : Color.Transparent);
-        this.Invalidate(); // Trigger a repaint to update the border
+        this.Invalidate();
     }
 
     protected override void OnPaint(PaintEventArgs e)

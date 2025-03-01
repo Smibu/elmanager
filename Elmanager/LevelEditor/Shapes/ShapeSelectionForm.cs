@@ -3,7 +3,6 @@ using OpenTK.GLControl;
 using System;
 using System.Collections.Generic;
 using System.Drawing;
-using System.Globalization;
 using System.IO;
 using System.Linq;
 using System.Windows.Forms;
@@ -193,10 +192,8 @@ internal partial class ShapeSelectionForm : Form
         for (int i = 0; i < numControls; i++)
         {
             CustomShapeControl shapeControl = new CustomShapeControl(sharedContext, _sceneSettings, _renderingSettings, _renderer, new Level());
-            // Handle shape click event
+            
             shapeControl.ShapeClicked += ShapeControl_ShapeClicked;
-
-            // Handle shape double-click event
             shapeControl.ShapeDoubleClicked += ShapeControl_ShapeDoubleClicked;
 
             shapeControl.Visible = false;
@@ -209,10 +206,8 @@ internal partial class ShapeSelectionForm : Form
 
     protected override void OnFormClosing(FormClosingEventArgs e)
     {
-        // Save the current size
         _lastSize = this.Size;
 
-        // Disable the form's painting
         this.Visible = false;
         this.SuspendLayout();
 
@@ -285,7 +280,6 @@ internal partial class ShapeSelectionForm : Form
     {
         if (SelectedShapeFilePath != null)
         {
-            // Raise the ShapeDataLoaded event with the selected shape data
             if (SelectedShapeFilePath.Length == 0)
             {
                 return;
@@ -293,7 +287,6 @@ internal partial class ShapeSelectionForm : Form
 
             var levFilePath = SelectedShapeFilePath;
 
-            // Check if the LEV file exists
             if (!File.Exists(levFilePath))
             {
                 MessageBox.Show($@"Corresponding LEV file not found: {levFilePath}", @"Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
@@ -317,10 +310,8 @@ internal partial class ShapeSelectionForm : Form
             return;
         }
 
-        // Get all subfolders in the shapes folder
         var subfolders = Directory.GetDirectories(ShapesFolderPath);
 
-        // Add subfolders to the ComboBox
         foreach (var subfolder in subfolders)
         {
             comboBoxSubfolders.Items.Add(Path.GetFileName(subfolder));
@@ -339,16 +330,13 @@ internal partial class ShapeSelectionForm : Form
             comboBoxSubfolders.SelectedIndex = 0;
         }
 
-        // Handle ComboBox selection change event
         comboBoxSubfolders.SelectedIndexChanged += ComboBoxSubfolders_SelectedIndexChanged;
     }
 
     private void ComboBoxSubfolders_SelectedIndexChanged(object? sender, EventArgs e)
     {
-        // Get the selected subfolder
         var selectedSubfolder = comboBoxSubfolders.SelectedItem?.ToString();
 
-        // Update the last selected subfolder
         _lastSelectedSubfolder = selectedSubfolder;
 
         // Construct the full path to the selected subfolder
@@ -356,14 +344,12 @@ internal partial class ShapeSelectionForm : Form
         {
             if (selectedSubfolder == AllShapesOption)
             {
-                // Populate with shapes from all subfolders
                 PopulateShapesFromAllSubfolders();
             }
             else
             {
                 var selectedFolderPath = Path.Combine(ShapesFolderPath, selectedSubfolder);
 
-                // Populate with shapes from the selected subfolder
                 PopulateShapes(selectedFolderPath);
             }
         }
