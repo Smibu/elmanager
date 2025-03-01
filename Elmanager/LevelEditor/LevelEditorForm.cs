@@ -2973,24 +2973,4 @@ internal partial class LevelEditorForm : FormMod, IMessageFilter
     {
         Tools.CustomShapeTool.CreateCustomShapeMenuItem_Click(sender, e);
     }
-
-    public void ClearSelection()
-    {
-        foreach (var polygon in Lev.Polygons)
-        {
-            polygon.MarkVectorsAs(VectorMark.None);
-        }
-
-        foreach (var levelObject in Lev.Objects)
-        {
-            levelObject.Mark = VectorMark.None;
-        }
-
-        foreach (var graphicElement in Lev.GraphicElements)
-        {
-            graphicElement.Mark = VectorMark.None;
-        }
-
-        UpdateSelectionInfo();
-    }
 }

@@ -423,8 +423,6 @@ internal class CustomShapeTool : ToolBase, IEditorTool
 
         _lastUsedShapeFolder = Path.GetDirectoryName(fullFilePath);
 
-        LevEditor.ClearSelection();
-
         // Clone the selected polygons and objects
         var clonedPolygons = selectedPolygons.Select(p => p.Clone()).ToList();
         var clonedObjects = selectedObjects.Select(o => o.Clone()).ToList();
@@ -446,23 +444,6 @@ internal class CustomShapeTool : ToolBase, IEditorTool
         tempLevel.Objects.Add(new LevObject(new Vector(0, 0), ObjectType.Start, AppleType.Normal));
 
         SaveShape(tempLevel, LevEditor.SaveShapeDialog.FileName);
-
-        // Restore selection
-        foreach (var polygon in selectedPolygons)
-        {
-            polygon.MarkVectorsAs(VectorMark.Selected);
-        }
-
-        foreach (var obj in selectedObjects)
-        {
-            obj.Mark = VectorMark.Selected;
-        }
-
-        foreach (var graphicElement in selectedGraphicElements)
-        {
-            graphicElement.Mark = VectorMark.Selected;
-        }
-        LevEditor.UpdateSelectionInfo();
     }
 
     public void UpdateHelp()
