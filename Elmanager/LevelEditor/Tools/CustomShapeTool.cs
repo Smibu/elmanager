@@ -109,7 +109,6 @@ internal class CustomShapeTool : ToolBase, IEditorTool
             return;
         }
 
-        // Open Shape Selection Form
         var shapeSelectionForm = new ShapeSelectionForm(LevEditor.EditorControl, LevEditor.Renderer, _selectedShapeFilePath);
         shapeSelectionForm.ShapeDataLoaded += ShapeSelectionForm_ShapeDataLoaded;
         shapeSelectionForm.ShowDialog(LevEditor);
