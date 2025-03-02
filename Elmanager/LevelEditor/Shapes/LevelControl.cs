@@ -90,7 +90,6 @@ public class LevelControl : GLControl
 
     private void LevelControl_Load(object? sender, EventArgs e)
     {
-        // Initialization code for OpenGL
         _renderer = new ElmaRenderer(this, _renderingSettings, _originalElmaRenderer);
 
         UpdateRenderingContext();
