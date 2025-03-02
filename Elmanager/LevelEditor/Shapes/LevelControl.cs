@@ -58,7 +58,8 @@ public class LevelControl : GLControl
         _renderer.InitializeLevel(_level, _renderingSettings);
         _level.UpdateBounds();
         _zoomController.ZoomFill(_renderingSettings);
-        Render(true);
+        ResetViewport();
+        Render();
     }
 
     internal void SetLevel(Level level)
@@ -93,10 +94,10 @@ public class LevelControl : GLControl
     protected override void OnPaint(PaintEventArgs e)
     {
         base.OnPaint(e);
-        Render(false);
+        Render();
     }
 
-    private void Render(bool resetViewport)
+    private void Render()
     {
         if (DisableRendering)
         {
@@ -113,14 +114,24 @@ public class LevelControl : GLControl
             MakeCurrent();
         }
 
-        if (resetViewport)
-        {
-            GL.Viewport(0, 0, Width, Height);
-            _zoomController.ZoomFill(_renderingSettings);
-        }
-
         RedrawScene();
         SwapBuffers();
+    }
+
+    private void ResetViewport()
+    {
+        if (Context == null)
+        {
+            return;
+        }
+
+        if (!Context.IsCurrent)
+        {
+            MakeCurrent();
+        }
+
+        GL.Viewport(0, 0, Width, Height);
+        _zoomController.ZoomFill(_renderingSettings);
     }
 
     internal void RedrawScene(object? sender = null, EventArgs? e = null)
@@ -142,6 +153,7 @@ public class LevelControl : GLControl
     {
         base.OnResize(e);
 
-        Render(true);
+        ResetViewport();
+        Render();
     }
 }
