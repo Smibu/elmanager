@@ -48,10 +48,6 @@ public class LevelControl : GLControl
             SharedContext = sharedContext; // Set shared context before initialization
         }
 
-        if (SharedContext == null)
-        {
-            System.Diagnostics.Debug.WriteLine("Warning: SharedContext was not properly initialized.");
-        }
     }
 
     private void UpdateRenderingContext()
