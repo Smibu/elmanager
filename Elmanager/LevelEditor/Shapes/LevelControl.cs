@@ -139,16 +139,6 @@ public class LevelControl : GLControl
         _renderer.DrawScene(_level, _camera, _sceneSettings, _renderingSettings);
     }
 
-    protected override void Dispose(bool disposing)
-    {
-        if (disposing)
-        {
-            // Causes a crash.
-            //_renderer.Dispose();
-        }
-        base.Dispose(disposing);
-    }
-
     protected override void OnResize(EventArgs e)
     {
         base.OnResize(e);
