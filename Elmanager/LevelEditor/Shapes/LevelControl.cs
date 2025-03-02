@@ -13,7 +13,6 @@ namespace Elmanager.LevelEditor.Shapes;
 public class LevelControl : GLControl
 {
     private ElmaRenderer _renderer;
-    private readonly ElmaRenderer _originalElmaRenderer;
     
     private Level _level;
     
@@ -37,11 +36,14 @@ public class LevelControl : GLControl
         _zoomController = new ZoomController(_camera, _level, () => RedrawScene());
 
         _sceneSettings = sceneSettings;
-        _originalElmaRenderer = elmaRenderer;
 
         _renderer = elmaRenderer;
 
-        this.Load += LevelControl_Load;
+        Load += (sender, e) =>
+        {
+            _renderer = new ElmaRenderer(this, _renderingSettings, elmaRenderer);
+            UpdateRenderingContext();
+        };
 
         if (!IsHandleCreated)
         {
@@ -86,13 +88,6 @@ public class LevelControl : GLControl
 
         if (Context != null)
             Context.SwapInterval = 0;
-    }
-
-    private void LevelControl_Load(object? sender, EventArgs e)
-    {
-        _renderer = new ElmaRenderer(this, _renderingSettings, _originalElmaRenderer);
-
-        UpdateRenderingContext();
     }
 
     protected override void OnPaint(PaintEventArgs e)
