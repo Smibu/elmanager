@@ -89,9 +89,9 @@ internal partial class ShapeSelectionForm : Form
 
         vScrollBar1.ValueChanged += vScrollBar_ValueChanged;
 
-        if (_lastSize.HasValue)
+        if (_lastSize is { } size)
         {
-            this.Size = _lastSize.Value;
+            Size = size;
         }
     }
 
