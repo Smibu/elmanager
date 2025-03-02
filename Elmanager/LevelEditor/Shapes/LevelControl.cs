@@ -119,9 +119,6 @@ public class LevelControl : GLControl
             MakeCurrent();
         }
 
-        GL.Clear(ClearBufferMask.ColorBufferBit | ClearBufferMask.DepthBufferBit);
-        CheckGLError("GL.Clear");
-
         if (resetViewport)
         {
             GL.Viewport(0, 0, Width, Height);
