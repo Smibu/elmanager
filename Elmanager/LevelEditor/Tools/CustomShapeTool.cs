@@ -446,11 +446,11 @@ internal class CustomShapeTool : ToolBase, IEditorTool
             "LMouse: insert new shape; RMouse: select new shape; " +
             "1-5: change placement anchor; " +
             "+/-: adjust scaling factor; " +
-            "0 : reset all transformations; " +
-            "6 : toggle mirroring (None, Horizontal, Vertical, Both); " +
-            "7 : rotate left; " +
-            "8 : reset rotation; " +
-            "9 : rotate right";
+            "0: reset all transformations; " +
+            "6: toggle mirroring (None, Horizontal, Vertical, Both); " +
+            "7: rotate left; " +
+            "8: reset rotation; " +
+            "9: rotate right";
     }
 
     public override bool Busy => false;
