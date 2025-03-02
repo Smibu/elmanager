@@ -105,7 +105,7 @@ internal class CustomShapeTool : ToolBase, IEditorTool
         if (!hasLevFiles)
         {
             UiUtils.ShowError("No .lev files found in any subdirectory of 'sle_shapes'.\nSelect + right-click in editor to save selection as a new shape.",
-                "No shapes found", MessageBoxIcon.Exclamation);
+                "No shapes found", MessageBoxIcon.Information);
             return;
         }
 
