@@ -417,7 +417,6 @@ internal class CustomShapeTool : ToolBase, IEditorTool
 
         _lastUsedShapeFolder = Path.GetDirectoryName(fullFilePath);
 
-        // Clone the selected polygons and objects
         var clonedPolygons = selectedPolygons.Select(p => p.Clone()).ToList();
         var clonedObjects = selectedObjects.Select(o => o.Clone()).ToList();
         var clonedGraphicElements = selectedGraphicElements.Select(ge => ge with { Position = ge.Position.Clone() }).ToList();
