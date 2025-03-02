@@ -134,7 +134,7 @@ public class LevelControl : GLControl
         _zoomController.ZoomFill(_renderingSettings);
     }
 
-    internal void RedrawScene(object? sender = null, EventArgs? e = null)
+    private void RedrawScene()
     {
         _renderer.DrawScene(_level, _camera, _sceneSettings, _renderingSettings);
     }
