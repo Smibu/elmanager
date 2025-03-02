@@ -39,7 +39,7 @@ public class LevelControl : GLControl
 
         _renderer = elmaRenderer;
 
-        Load += (sender, e) =>
+        Load += (_, _) =>
         {
             _renderer = new ElmaRenderer(this, _renderingSettings, elmaRenderer);
             UpdateRenderingContext();
