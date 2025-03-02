@@ -63,10 +63,6 @@ public class LevelControl : GLControl
         Render(true);
     }
 
-    /**
-     * Set the level to be displayed in the control
-     * To disable rendering, set level to null
-     */
     internal void SetLevel(Level level)
     {
         if (_level == level)
