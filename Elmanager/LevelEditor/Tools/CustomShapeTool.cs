@@ -421,7 +421,6 @@ internal class CustomShapeTool : ToolBase, IEditorTool
         var clonedObjects = selectedObjects.Select(o => o.Clone()).ToList();
         var clonedGraphicElements = selectedGraphicElements.Select(ge => ge with { Position = ge.Position.Clone() }).ToList();
 
-        // Construct a temporary level for the shape
         var tempLevel = new Level();
         tempLevel.Polygons.AddRange(clonedPolygons);
         tempLevel.Objects.AddRange(clonedObjects);
