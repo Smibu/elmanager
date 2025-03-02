@@ -134,15 +134,6 @@ public class LevelControl : GLControl
         _renderer.DrawScene(_level, _camera, _sceneSettings, _renderingSettings);
     }
 
-    private static void CheckGLError(string location)
-    {
-        ErrorCode error = GL.GetError();
-        if (error != ErrorCode.NoError)
-        {
-            System.Diagnostics.Debug.WriteLine($"OpenGL Error at {location}: {error}");
-        }
-    }
-
     protected override void Dispose(bool disposing)
     {
         if (disposing)
