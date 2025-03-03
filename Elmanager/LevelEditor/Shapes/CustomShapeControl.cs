@@ -1,9 +1,8 @@
-﻿using Elmanager.Lev;
+﻿using Elmanager.IO;
 using Elmanager.Rendering;
 using OpenTK.GLControl;
 using System;
 using System.Drawing;
-using System.Linq;
 using System.Windows.Forms;
 using Color = System.Drawing.Color;
 using Pen = System.Drawing.Pen;
@@ -18,14 +17,11 @@ internal partial class CustomShapeControl : UserControl
 
     private Color _borderColor = Color.Transparent;
 
-    public CustomShapeControl(GLControl sharedContext, SceneSettings sceneSettings, RenderingSettings renderingSettings, ElmaRenderer elmaRenderer, Level level)
+    public CustomShapeControl(GLControl sharedContext, SceneSettings sceneSettings, RenderingSettings renderingSettings, ElmaRenderer elmaRenderer, SleShape shape)
     {
         InitializeComponent();
 
-        // Filter start object from level
-        level.Objects = level.Objects.Where(o => o.Type != ObjectType.Start).ToList();
-
-        shapeLevelControl = new LevelControl(sharedContext, sceneSettings, renderingSettings, elmaRenderer, level);
+        shapeLevelControl = new LevelControl(sharedContext, sceneSettings, renderingSettings, elmaRenderer, shape.Level);
         shapeLevelControl.API = OpenTK.Windowing.Common.ContextAPI.OpenGL;
         shapeLevelControl.APIVersion = new Version(3, 3, 0, 0);
         shapeLevelControl.Flags = OpenTK.Windowing.Common.ContextFlags.Default;
@@ -138,16 +134,16 @@ internal partial class CustomShapeControl : UserControl
 
     internal void UpdateContent(string filepath, string shapeName)
     {
-        Level level = Level.FromPath(filepath).Obj;
-        level.Objects = level.Objects.Where(o => o.Type != ObjectType.Start).ToList();
         ShapeFullPath = filepath;
         ShapeName = shapeName;
-        SetLevel(level);
+        
+        ElmaFileObject<SleShape> shape = SleShape.LoadFromPath(filepath);
+        SetShape(shape.Obj);
     }
 
-    internal void SetLevel(Level level)
+    internal void SetShape(SleShape shape)
     {
-        shapeLevelControl.SetLevel(level);
+        shapeLevelControl.SetLevel(shape.Level);
     }
 
     internal void DisableLevelRendering(bool disable)

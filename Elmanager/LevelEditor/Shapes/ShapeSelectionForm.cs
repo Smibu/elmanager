@@ -203,7 +203,7 @@ internal partial class ShapeSelectionForm : Form
     {
         for (int i = 0; i < numControls; i++)
         {
-            CustomShapeControl shapeControl = new CustomShapeControl(sharedContext, _sceneSettings, _renderingSettings, _renderer, new Level());
+            CustomShapeControl shapeControl = new CustomShapeControl(sharedContext, _sceneSettings, _renderingSettings, _renderer, new SleShape(new Level()));
             
             shapeControl.ShapeClicked += ShapeControl_ShapeClicked;
             shapeControl.ShapeDoubleClicked += ShapeControl_ShapeDoubleClicked;
