@@ -226,8 +226,6 @@ internal partial class ShapeSelectionForm : Form
         base.OnFormClosing(e);
     }
 
-    public event EventHandler<ElmaFileObject<SleShape>>? ShapeDataLoaded;
-
     private void PopulateShapes(string folderPath)
     {
         if (!Directory.Exists(folderPath))
@@ -287,26 +285,8 @@ internal partial class ShapeSelectionForm : Form
 
     private void ButtonOk_Click(object sender, EventArgs e)
     {
-        if (SelectedShapeFilePath != null)
-        {
-            if (SelectedShapeFilePath.Length == 0)
-            {
-                return;
-            }
-
-            var levFilePath = SelectedShapeFilePath;
-
-            if (!File.Exists(levFilePath))
-            {
-                MessageBox.Show($@"Corresponding LEV file not found: {levFilePath}", @"Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
-                return;
-            }
-
-            var shapeData = SleShape.LoadFromPath(levFilePath);
-            ShapeDataLoaded?.Invoke(this, shapeData);
-        }
-        this.DialogResult = DialogResult.OK;
-        this.Close();
+        DialogResult = DialogResult.OK;
+        Close();
     }
 
     private void PopulateSubfolderComboBox()
