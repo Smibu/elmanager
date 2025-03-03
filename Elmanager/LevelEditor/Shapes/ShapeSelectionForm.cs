@@ -95,6 +95,18 @@ internal partial class ShapeSelectionForm : Form
         }
     }
 
+    public static ElmaFileObject<SleShape>? ShowForm(GLControl sharedContext, ElmaRenderer elmaRenderer, string? selectedShapeFilePath = null)
+    {
+        var form = new ShapeSelectionForm(sharedContext, elmaRenderer, selectedShapeFilePath);
+        
+        if (form.ShowDialog() == DialogResult.OK && form.SelectedShapeFilePath != null)
+        {
+            return SleShape.LoadFromPath(form.SelectedShapeFilePath);
+        }
+
+        return null;
+    }
+
     private void SetupScrollBar(int count)
     {
         int totalRows = (int)Math.Ceiling(1.0 * count / Columns);

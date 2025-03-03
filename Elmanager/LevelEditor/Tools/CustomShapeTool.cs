@@ -109,23 +109,11 @@ internal class CustomShapeTool : ToolBase, IEditorTool
             return;
         }
 
-        var shapeSelectionForm = new ShapeSelectionForm(LevEditor.EditorControl, LevEditor.Renderer, _selectedShapeFilePath);
-        shapeSelectionForm.ShapeDataLoaded += ShapeSelectionForm_ShapeDataLoaded;
-        shapeSelectionForm.ShowDialog(LevEditor);
+        _selectedShapeData = ShapeSelectionForm.ShowForm(LevEditor.EditorControl, LevEditor.Renderer, _selectedShapeFilePath);
+        InitializeSelectedShape();
     }
 
-    private void ShapeSelectionForm_ShapeDataLoaded(object? sender, ElmaFileObject<SleShape> sleShape)
-    {
-        if (sender is ShapeSelectionForm shapeSelectionForm)
-        {
-            _selectedShapeData = sleShape;
-            _selectedShapeFilePath = shapeSelectionForm.SelectedShapeFilePath;
-            LoadShapeData();
-            ApplyTransformations(CurrentPos);
-        }
-    }
-
-    private void LoadShapeData()
+    private void InitializeSelectedShape()
     {
         if (_selectedShapeData == null)
         {
@@ -215,7 +203,7 @@ internal class CustomShapeTool : ToolBase, IEditorTool
             _initialMousePosition = CurrentPos;
             InsertShapeIntoLevel(CurrentPos - _initialMousePosition);
             _hasFocus = false;
-            LoadShapeData();
+            InitializeSelectedShape();
             ApplyTransformations(CurrentPos);
             _hasFocus = true;
         }
