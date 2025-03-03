@@ -324,12 +324,7 @@ internal class CustomShapeTool : ToolBase, IEditorTool
         LevEditor.SetModified(LevModification.Ground | LevModification.Decorations | LevModification.Objects);
     }
 
-    private void SaveShape(Level lev, string filePath)
-    {
-        lev.Save(filePath);
-    }
-
-    public void CreateCustomShapeMenuItem_Click(object sender, EventArgs e)
+    public void SaveShape()
     {
         var selectedPolygons = LevEditor.Lev.Polygons.Where(p => p.Vertices.Any(v => v.Mark == VectorMark.Selected)).ToList();
         var selectedObjects = LevEditor.Lev.Objects.Where(o => o.Position.Mark == VectorMark.Selected && o.Type != ObjectType.Start).ToList();
@@ -425,7 +420,7 @@ internal class CustomShapeTool : ToolBase, IEditorTool
         // Add start object, as it is needed.
         tempLevel.Objects.Add(new LevObject(new Vector(0, 0), ObjectType.Start, AppleType.Normal));
 
-        SaveShape(tempLevel, LevEditor.SaveShapeDialog.FileName);
+        tempLevel.Save(LevEditor.SaveShapeDialog.FileName);
     }
 
     public void UpdateHelp()

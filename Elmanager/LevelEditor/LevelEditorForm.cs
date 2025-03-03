@@ -2971,6 +2971,6 @@ internal partial class LevelEditorForm : FormMod, IMessageFilter
 
     private void createCustomShapeMenuItem_Click(object sender, EventArgs e)
     {
-        Tools.CustomShapeTool.CreateCustomShapeMenuItem_Click(sender, e);
+        Tools.CustomShapeTool.SaveShape();
     }
 }
