@@ -65,7 +65,7 @@ internal partial class CustomShapeControl : UserControl
         this.DoubleClick += CustomShapeControl_DoubleClick;
     }
 
-    public string ShapeFullPath { get; set; } = String.Empty;
+    public string? ShapeFullPath { get; set; }
 
     public string ShapeName
     {
