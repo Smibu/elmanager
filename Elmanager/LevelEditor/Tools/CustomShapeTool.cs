@@ -18,9 +18,7 @@ namespace Elmanager.LevelEditor.Tools;
 
 internal class CustomShapeTool : ToolBase, IEditorTool
 {
-    // Shape Data
-    private ElmaFileObject<SleShape>? _selectedShapeData;
-    private string? _selectedShapeFilePath = null;
+    private ShapeSelection? _shapeSelection;
     private string? _lastUsedShapeFolder;
 
     // Mouse Interaction
@@ -33,25 +31,20 @@ internal class CustomShapeTool : ToolBase, IEditorTool
     private ShapeMirrorOption _selectedMirrorOption = ShapeMirrorOption.None;
     private PlacementAnchor _anchor = PlacementAnchor.Center;
 
-    // Level
-    private Level _level;
-    private Level _originalLevel;
-
     internal CustomShapeTool(LevelEditorForm editorForm) : base(editorForm)
     {
-        _level = new Level();
-        _originalLevel = new Level();
+        _shapeSelection = null;
     }
 
     public void ExtraRendering()
     {
-        if (_selectedShapeData == null)
+        if (_shapeSelection == null)
         {
             return;
         }
 
         var settings = Global.AppSettings.LevelEditor.RenderingSettings;
-        foreach (var polygon in _level.Polygons)
+        foreach (var polygon in _shapeSelection.Shape.Obj.Level.Polygons)
         {
             if (polygon.IsGrass)
             {
@@ -73,9 +66,14 @@ internal class CustomShapeTool : ToolBase, IEditorTool
 
     public TransientElements GetTransientElements()
     {
-        return _hasFocus
-            ? new TransientElements(new List<Polygon>(_level.Polygons), new List<LevObject>(_level.Objects), new List<GraphicElement>(_level.GraphicElements))
-            : TransientElements.Empty;
+        if (!_hasFocus || _shapeSelection == null)
+        {
+            return TransientElements.Empty;
+        }
+
+        Level level = _shapeSelection.Shape.Obj.Level;
+        return new TransientElements(new List<Polygon>(level.Polygons), new List<LevObject>(level.Objects),
+            new List<GraphicElement>(level.GraphicElements));
     }
 
     private void OpenDialog()
@@ -109,31 +107,25 @@ internal class CustomShapeTool : ToolBase, IEditorTool
             return;
         }
 
-        _selectedShapeData = ShapeSelectionForm.ShowForm(LevEditor.EditorControl, LevEditor.Renderer, _selectedShapeFilePath);
-        InitializeSelectedShape();
-    }
-
-    private void InitializeSelectedShape()
-    {
-        if (_selectedShapeData == null)
+        ElmaFileObject<SleShape>? shape = ShapeSelectionForm.ShowForm(LevEditor.EditorControl, LevEditor.Renderer, _shapeSelection?.Shape.File.Path);
+        if (shape != null)
         {
-            _level = new Level();
-            _originalLevel = new Level();
-            return;
+            _shapeSelection = new ShapeSelection(shape, new SleShape(shape.Obj.Level.Clone()));
+            ApplyTransformations(CurrentPos);
         }
-
-        _level = _selectedShapeData.Obj.Level.Clone();
-        _level.UpdateAllPolygons(Global.AppSettings.LevelEditor.RenderingSettings.GrassZoom);
-        _level.UpdateBounds();
-
-        // Store the original state
-        _originalLevel = _selectedShapeData.Obj.Level.Clone();
-
-        ApplyTransformations(CurrentPos);
+        else
+        {
+            _shapeSelection = null;
+        }
     }
 
     private void ApplyTransformations(Vector mousePosition)
     {
+        if (_shapeSelection == null)
+        {
+            return;
+        }
+
         var scalingMatrix = Matrix.CreateScaling(_scalingFactor, _scalingFactor);
         var rotationMatrix = Matrix.Identity;
         rotationMatrix.Rotate(_rotationAngle);
@@ -146,10 +138,13 @@ internal class CustomShapeTool : ToolBase, IEditorTool
         };
         var transformationMatrix = scalingMatrix * rotationMatrix * mirrorMatrix;
 
+        Level level = _shapeSelection.Shape.Obj.Level;
+        Level originalLevel = _shapeSelection.Original.Level;
+
         // Center shape around mouse position
-        Vector center = new Vector((_level.Bounds.XMin + _level.Bounds.XMax) / 2, (_level.Bounds.YMin + _level.Bounds.YMax) / 2);
-        var min = new Vector(_level.Bounds.XMin, _level.Bounds.YMin);
-        var max = new Vector(_level.Bounds.XMax, _level.Bounds.YMax);
+        Vector center = new Vector((level.Bounds.XMin + level.Bounds.XMax) / 2, (level.Bounds.YMin + level.Bounds.YMax) / 2);
+        var min = new Vector(level.Bounds.XMin, level.Bounds.YMin);
+        var max = new Vector(level.Bounds.XMax, level.Bounds.YMax);
 
         // Scale min / max before calculating anchor offset
         min *= scalingMatrix;
@@ -159,17 +154,17 @@ internal class CustomShapeTool : ToolBase, IEditorTool
         var translationMatrix = Matrix.CreateTranslation(mousePosition.X - center.X + anchorOffset.X, mousePosition.Y - center.Y + anchorOffset.Y);
         transformationMatrix = transformationMatrix * translationMatrix;
 
-        _level.Polygons = _originalLevel.Polygons.Select(p => p.ApplyTransformation(transformationMatrix)).ToList();
-        _level.Polygons.ForEach(polygon => polygon.UpdateDecomposition());
+        level.Polygons = originalLevel.Polygons.Select(p => p.ApplyTransformation(transformationMatrix)).ToList();
+        level.Polygons.ForEach(polygon => polygon.UpdateDecomposition());
 
-        _level.Objects = _originalLevel.Objects.Select(o =>
+        level.Objects = originalLevel.Objects.Select(o =>
         {
             var newObj = o.Clone();
             newObj.Position = newObj.Position.Transform(transformationMatrix);
             return newObj;
         }).ToList();
 
-        _level.GraphicElements = _originalLevel.GraphicElements.Select(ge =>
+        level.GraphicElements = originalLevel.GraphicElements.Select(ge =>
         {
             var newGe = ge with { Position = new Vector(ge.X, ge.Y) };
             newGe.Position = newGe.Position.Transform(transformationMatrix);
@@ -198,12 +193,11 @@ internal class CustomShapeTool : ToolBase, IEditorTool
 
     private void HandleLeftMouseDown()
     {
-        if (_selectedShapeData != null)
+        if (_shapeSelection != null)
         {
             _initialMousePosition = CurrentPos;
             InsertShapeIntoLevel(CurrentPos - _initialMousePosition);
             _hasFocus = false;
-            InitializeSelectedShape();
             ApplyTransformations(CurrentPos);
             _hasFocus = true;
         }
@@ -219,7 +213,7 @@ internal class CustomShapeTool : ToolBase, IEditorTool
         _hasFocus = true;
         CurrentPos = p;
         AdjustForGrid(ref CurrentPos);
-        if (_selectedShapeData != null)
+        if (_shapeSelection != null)
         {
             ApplyTransformations(CurrentPos);
             _initialMousePosition = CurrentPos;
@@ -301,23 +295,31 @@ internal class CustomShapeTool : ToolBase, IEditorTool
 
     private void TranslateShape(Vector translation)
     {
-        _level.Polygons.ForEach(polygon => polygon.Move(translation));
-        _level.Objects.ForEach(obj => obj.Position += translation);
-        _level.GraphicElements.ForEach(graphicElement => graphicElement.Position += translation);
+        if (_shapeSelection == null)
+        {
+            return;
+        }
+
+        Level level = _shapeSelection.Shape.Obj.Level;
+        level.Polygons.ForEach(polygon => polygon.Move(translation));
+        level.Objects.ForEach(obj => obj.Position += translation);
+        level.GraphicElements.ForEach(graphicElement => graphicElement.Position += translation);
     }
 
     private void InsertShapeIntoLevel(Vector position)
     {
-        if (_selectedShapeData == null)
+        if (_shapeSelection == null)
         {
             return;
         }
 
         TranslateShape(position);
-        
-        Lev.Polygons.AddRange(_level.Polygons);
-        Lev.Objects.AddRange(_level.Objects);
-        Lev.GraphicElements.AddRange(_level.GraphicElements);
+
+        Level level = _shapeSelection.Shape.Obj.Level;
+
+        Lev.Polygons.AddRange(level.Polygons);
+        Lev.Objects.AddRange(level.Objects);
+        Lev.GraphicElements.AddRange(level.GraphicElements);
         Lev.UpdateAllPolygons(Global.AppSettings.LevelEditor.RenderingSettings.GrassZoom);
         LevEditor.SetModified(LevModification.Ground | LevModification.Decorations | LevModification.Objects);
     }
