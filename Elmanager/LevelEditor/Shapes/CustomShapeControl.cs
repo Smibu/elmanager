@@ -17,6 +17,13 @@ internal partial class CustomShapeControl : UserControl
 
     private Color _borderColor = Color.Transparent;
 
+    private static readonly Color SelectedBackColor = Color.FromArgb(204, 228, 247);
+    private static readonly Color SelectedBorderColor = Color.FromArgb(0, 84, 153);
+    private static readonly Color HighlightedBackColor = Color.FromArgb(229, 241, 251);
+    private static readonly Color HighlightedBorderColor = Color.FromArgb(0, 120, 215);
+    private static readonly Color PressedBackColor = Color.FromArgb(153, 204, 255);
+    private static readonly Color TransparentColor = Color.Transparent;
+
     public CustomShapeControl(GLControl sharedContext, SceneSettings sceneSettings, RenderingSettings renderingSettings, ElmaRenderer elmaRenderer, SleShape shape)
     {
         InitializeComponent();
@@ -75,12 +82,12 @@ internal partial class CustomShapeControl : UserControl
     {
         ShapeClicked?.Invoke(this, e);
     }
-    
+
     public void Highlight(bool isSelected)
     {
         _isSelected = isSelected;
-        BackColor = isSelected ? Color.FromArgb(204, 228, 247) : Color.Transparent;
-        _borderColor = isSelected ? Color.FromArgb(0, 84, 153) : Color.Transparent; // Darker blue for selection
+        BackColor = isSelected ? SelectedBackColor : TransparentColor;
+        _borderColor = isSelected ? SelectedBorderColor : TransparentColor;
         Invalidate();
     }
 
@@ -88,8 +95,8 @@ internal partial class CustomShapeControl : UserControl
     {
         if (!_isSelected)
         {
-            BackColor = Color.FromArgb(229, 241, 251);
-            _borderColor = Color.FromArgb(0, 120, 215); // Darker blue for highlight
+            BackColor = HighlightedBackColor;
+            _borderColor = HighlightedBorderColor;
             _isHighlighted = true;
             Invalidate();
         }
@@ -99,25 +106,27 @@ internal partial class CustomShapeControl : UserControl
     {
         if (!_isSelected)
         {
-            BackColor = Color.Transparent;
-            _borderColor = Color.Transparent;
+            BackColor = TransparentColor;
+            _borderColor = TransparentColor;
             _isHighlighted = false;
             Invalidate();
         }
     }
+
     private void OnMouseDown(object? sender, MouseEventArgs e)
     {
         _isPressed = true;
-        BackColor = Color.FromArgb(153, 204, 255); // Lighter blue for pressed state
-        _borderColor = Color.FromArgb(0, 84, 153); // Darker blue for pressed state
+        BackColor = PressedBackColor;
+        _borderColor = SelectedBorderColor;
         Invalidate();
         OnComponentClick(sender, e);
     }
+
     private void OnMouseUp(object? sender, MouseEventArgs e)
     {
         _isPressed = false;
-        BackColor = _isSelected ? Color.FromArgb(204, 228, 247) : (_isHighlighted ? Color.FromArgb(229, 241, 251) : Color.Transparent);
-        _borderColor = _isSelected ? Color.FromArgb(0, 84, 153) : (_isHighlighted ? Color.FromArgb(0, 120, 215) : Color.Transparent);
+        BackColor = _isSelected ? SelectedBackColor : (_isHighlighted ? HighlightedBackColor : TransparentColor);
+        _borderColor = _isSelected ? SelectedBorderColor : (_isHighlighted ? HighlightedBorderColor : TransparentColor);
         Invalidate();
     }
 
