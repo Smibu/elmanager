@@ -28,7 +28,7 @@ internal partial class ShapeSelectionForm : Form
     private static Size? _lastSize; // Last size of the form
 
     // Constants
-    private const int DefaultColumns = 3;
+    private const int DefaultColumns = 4;
     private const int DefaultRows = 3;
 
     // Rendering
