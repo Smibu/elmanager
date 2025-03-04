@@ -28,8 +28,8 @@ internal partial class ShapeSelectionForm : Form
     private static Size? _lastSize; // Last size of the form
 
     // Constants
-    private const int Columns = 4; // 3 rows × 4 columns
-    private const int Rows = 3; // 3 rows × 4 columns
+    private const int DefaultColumns = 3;
+    private const int DefaultRows = 3;
 
     // Rendering
     private readonly ElmaRenderer _renderer;
@@ -79,11 +79,12 @@ internal partial class ShapeSelectionForm : Form
 
         // Hack to get the DPI scaling factor
         float dpiScalingFactorX = buttonCancel.Width / 75.0f; // 75 is the default width of the Cancel button
-        vScrollBar1.Width = (int) (vScrollBar1.Width * dpiScalingFactorX);
+        vScrollBar1.Width = (int)(vScrollBar1.Width * dpiScalingFactorX);
 
         PopulateSubfolderComboBox();
 
-        SetupReusableControls(sharedContext, Columns * Rows);
+        SetupTableLayoutPanelShapes(DefaultColumns, DefaultRows);
+        SetupReusableControls(sharedContext, DefaultColumns * DefaultRows);
 
         tableLayoutPanelShapes.MouseWheel += FlowLayoutPanelShapes_MouseWheel;
 
@@ -98,7 +99,7 @@ internal partial class ShapeSelectionForm : Form
     public static ElmaFileObject<SleShape>? ShowForm(GLControl sharedContext, ElmaRenderer elmaRenderer, string? selectedShapeFilePath = null)
     {
         var form = new ShapeSelectionForm(sharedContext, elmaRenderer, selectedShapeFilePath);
-        
+
         if (form.ShowDialog() == DialogResult.OK && form.SelectedShapeFilePath != null)
         {
             return SleShape.LoadFromPath(form.SelectedShapeFilePath);
@@ -109,12 +110,12 @@ internal partial class ShapeSelectionForm : Form
 
     private void SetupScrollBar(int count)
     {
-        int totalRows = (int)Math.Ceiling(1.0 * count / Columns);
+        int totalRows = (int)Math.Ceiling(1.0 * count / DefaultColumns);
         vScrollBar1.Minimum = 0;
-        vScrollBar1.Maximum = Math.Max(totalRows - Rows, 0);  // Ensure the scrollbar has valid range
+        vScrollBar1.Maximum = Math.Max(totalRows - DefaultRows, 0);  // Ensure the scrollbar has valid range
         vScrollBar1.LargeChange = 1;
         vScrollBar1.SmallChange = 1;
-        vScrollBar1.Enabled = totalRows > Rows;
+        vScrollBar1.Enabled = totalRows > DefaultRows;
     }
 
     private void FlowLayoutPanelShapes_MouseWheel(object? sender, MouseEventArgs e)
@@ -147,7 +148,7 @@ internal partial class ShapeSelectionForm : Form
     {
         tableLayoutPanelShapes.SuspendLayout();
 
-        int startIndex = startPage * Columns;
+        int startIndex = startPage * DefaultColumns;
 
         foreach (var customShapeControl in _reusableControls)
         {
@@ -199,19 +200,38 @@ internal partial class ShapeSelectionForm : Form
         }
     }
 
+    private void SetupTableLayoutPanelShapes(int columns, int rows)
+    {
+        tableLayoutPanelShapes.ColumnCount = columns;
+        tableLayoutPanelShapes.RowCount = rows;
+
+        tableLayoutPanelShapes.ColumnStyles.Clear();
+        tableLayoutPanelShapes.RowStyles.Clear();
+
+        for (int i = 0; i < columns; i++)
+        {
+            tableLayoutPanelShapes.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 100F / columns));
+        }
+
+        for (int i = 0; i < rows; i++)
+        {
+            tableLayoutPanelShapes.RowStyles.Add(new RowStyle(SizeType.Percent, 100F / rows));
+        }
+    }
+
     private void SetupReusableControls(GLControl sharedContext, int numControls)
     {
         for (int i = 0; i < numControls; i++)
         {
             CustomShapeControl shapeControl = new CustomShapeControl(sharedContext, _sceneSettings, _renderingSettings, _renderer, new SleShape(new Level()));
-            
+
             shapeControl.ShapeClicked += ShapeControl_ShapeClicked;
             shapeControl.ShapeDoubleClicked += ShapeControl_ShapeDoubleClicked;
 
             shapeControl.Visible = false;
             shapeControl.DisableLevelRendering(true);
             shapeControl.Dock = DockStyle.Fill;
-            tableLayoutPanelShapes.Controls.Add(shapeControl, i % 4, i / 4); // (column, row)
+            tableLayoutPanelShapes.Controls.Add(shapeControl, i % DefaultColumns, i / DefaultColumns); // (column, row)
             _reusableControls.Add(shapeControl);
         }
     }
@@ -257,10 +277,9 @@ internal partial class ShapeSelectionForm : Form
             return;
         }
 
-        int selectedRow = selectedIndex / Columns;
+        int selectedRow = selectedIndex / DefaultColumns;
         vScrollBar1.Value = Math.Min(selectedRow, vScrollBar1.Maximum);
     }
-
 
     private void ShapeControl_ShapeClicked(object? sender, EventArgs e)
     {
