@@ -38,27 +38,27 @@ internal partial class CustomShapeControl : UserControl
 
         shapeLevelControl.Click += OnComponentClick;
         lblShapeName.Click += OnComponentClick;
-        this.Click += OnComponentClick;
+        Click += OnComponentClick;
 
         shapeLevelControl.MouseEnter += OnMouseEnter;
         lblShapeName.MouseEnter += OnMouseEnter;
-        this.MouseEnter += OnMouseEnter;
+        MouseEnter += OnMouseEnter;
 
         shapeLevelControl.MouseLeave += OnMouseLeave;
         lblShapeName.MouseLeave += OnMouseLeave;
-        this.MouseLeave += OnMouseLeave;
+        MouseLeave += OnMouseLeave;
 
         shapeLevelControl.MouseDown += OnMouseDown;
         lblShapeName.MouseDown += OnMouseDown;
-        this.MouseDown += OnMouseDown;
+        MouseDown += OnMouseDown;
 
         shapeLevelControl.MouseUp += OnMouseUp;
         lblShapeName.MouseUp += OnMouseUp;
-        this.MouseUp += OnMouseUp;
+        MouseUp += OnMouseUp;
 
         shapeLevelControl.DoubleClick += CustomShapeControl_DoubleClick;
         lblShapeName.DoubleClick += CustomShapeControl_DoubleClick;
-        this.DoubleClick += CustomShapeControl_DoubleClick;
+        DoubleClick += CustomShapeControl_DoubleClick;
     }
 
     public string? ShapeFullPath { get; set; }
@@ -78,20 +78,20 @@ internal partial class CustomShapeControl : UserControl
     
     public void Highlight(bool isSelected)
     {
-        this._isSelected = isSelected;
-        this.BackColor = isSelected ? Color.FromArgb(204, 228, 247) : Color.Transparent;
+        _isSelected = isSelected;
+        BackColor = isSelected ? Color.FromArgb(204, 228, 247) : Color.Transparent;
         _borderColor = isSelected ? Color.FromArgb(0, 84, 153) : Color.Transparent; // Darker blue for selection
-        this.Invalidate();
+        Invalidate();
     }
 
     private void OnMouseEnter(object? sender, EventArgs e)
     {
         if (!_isSelected)
         {
-            this.BackColor = Color.FromArgb(229, 241, 251);
+            BackColor = Color.FromArgb(229, 241, 251);
             _borderColor = Color.FromArgb(0, 120, 215); // Darker blue for highlight
             _isHighlighted = true;
-            this.Invalidate();
+            Invalidate();
         }
     }
 
@@ -99,26 +99,26 @@ internal partial class CustomShapeControl : UserControl
     {
         if (!_isSelected)
         {
-            this.BackColor = Color.Transparent;
+            BackColor = Color.Transparent;
             _borderColor = Color.Transparent;
             _isHighlighted = false;
-            this.Invalidate();
+            Invalidate();
         }
     }
     private void OnMouseDown(object? sender, MouseEventArgs e)
     {
         _isPressed = true;
-        this.BackColor = Color.FromArgb(153, 204, 255); // Lighter blue for pressed state
+        BackColor = Color.FromArgb(153, 204, 255); // Lighter blue for pressed state
         _borderColor = Color.FromArgb(0, 84, 153); // Darker blue for pressed state
-        this.Invalidate();
+        Invalidate();
         OnComponentClick(sender, e);
     }
     private void OnMouseUp(object? sender, MouseEventArgs e)
     {
         _isPressed = false;
-        this.BackColor = _isSelected ? Color.FromArgb(204, 228, 247) : (_isHighlighted ? Color.FromArgb(229, 241, 251) : Color.Transparent);
+        BackColor = _isSelected ? Color.FromArgb(204, 228, 247) : (_isHighlighted ? Color.FromArgb(229, 241, 251) : Color.Transparent);
         _borderColor = _isSelected ? Color.FromArgb(0, 84, 153) : (_isHighlighted ? Color.FromArgb(0, 120, 215) : Color.Transparent);
-        this.Invalidate();
+        Invalidate();
     }
 
     protected override void OnPaint(PaintEventArgs e)
@@ -128,7 +128,7 @@ internal partial class CustomShapeControl : UserControl
         if (_isSelected || _isHighlighted || _isPressed)
         {
             using Pen pen = new Pen(_borderColor, 2);
-            e.Graphics.DrawRectangle(pen, 0, 0, this.Width - 2, this.Height - 3);
+            e.Graphics.DrawRectangle(pen, 0, 0, Width - 2, Height - 3);
         }
     }
 
