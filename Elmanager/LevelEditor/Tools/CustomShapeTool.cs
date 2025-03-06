@@ -104,10 +104,6 @@ internal class CustomShapeTool : ToolBase, IEditorTool
             _shapeSelection = new ShapeSelection(shape, new SleShape(shape.Obj.Level.Clone()));
             ApplyTransformations(CurrentPos);
         }
-        else
-        {
-            _shapeSelection = null;
-        }
     }
 
     private void ApplyTransformations(Vector mousePosition)
