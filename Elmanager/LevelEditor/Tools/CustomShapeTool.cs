@@ -47,8 +47,7 @@ internal class CustomShapeTool : ToolBase, IEditorTool
         }
 
         Level level = _shapeSelection.Shape.Obj.Level;
-        return new TransientElements(new List<Polygon>(level.Polygons), new List<LevObject>(level.Objects),
-            new List<GraphicElement>(level.GraphicElements));
+        return new TransientElements(level.Polygons, level.Objects,level.GraphicElements);
     }
 
     private void OpenDialog()
