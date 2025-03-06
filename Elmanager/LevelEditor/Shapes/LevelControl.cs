@@ -45,10 +45,7 @@ public class LevelControl : GLControl
             UpdateRenderingContext();
         };
 
-        if (!IsHandleCreated)
-        {
-            SharedContext = sharedContext; // Set shared context before initialization
-        }
+        SharedContext = sharedContext; // Set shared context before initialization
 
     }
 
