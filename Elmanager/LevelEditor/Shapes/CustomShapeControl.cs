@@ -145,7 +145,7 @@ internal partial class CustomShapeControl : UserControl
     {
         ShapeFullPath = filepath;
         ShapeName = shapeName;
-        
+
         ElmaFileObject<SleShape> shape = SleShape.LoadFromPath(filepath);
         SetShape(shape.Obj);
     }
