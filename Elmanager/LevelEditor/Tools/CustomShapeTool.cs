@@ -33,7 +33,6 @@ internal class CustomShapeTool : ToolBase, IEditorTool
 
     internal CustomShapeTool(LevelEditorForm editorForm) : base(editorForm)
     {
-        _shapeSelection = null;
     }
 
     public void ExtraRendering()
