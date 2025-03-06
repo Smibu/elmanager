@@ -141,7 +141,7 @@ internal class CustomShapeTool : ToolBase, IEditorTool
         transformationMatrix = transformationMatrix * translationMatrix;
 
         level.Polygons = originalLevel.Polygons.Select(p => p.ApplyTransformation(transformationMatrix)).ToList();
-        level.Polygons.ForEach(polygon => polygon.UpdateDecomposition());
+        level.Polygons.ForEach(polygon => polygon.UpdateDecompositionOrGrassSlopeInfo(level.GroundBounds, LevEditor.Settings.RenderingSettings.GrassZoom));
 
         level.Objects = originalLevel.Objects.Select(o =>
         {
