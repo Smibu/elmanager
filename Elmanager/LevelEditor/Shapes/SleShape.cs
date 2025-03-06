@@ -1,11 +1,11 @@
-﻿using Elmanager.Lev;
-using Elmanager.Rendering;
-using System.Collections.Generic;
-using System.Linq;
-using System;
-using System.IO;
-using Elmanager.Geometry;
+﻿using Elmanager.Geometry;
 using Elmanager.IO;
+using Elmanager.Lev;
+using Elmanager.Rendering;
+using System;
+using System.Collections.Generic;
+using System.IO;
+using System.Linq;
 
 namespace Elmanager.LevelEditor.Shapes;
 

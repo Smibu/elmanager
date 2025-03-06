@@ -1,4 +1,7 @@
-﻿using Elmanager.Rendering;
+﻿using Elmanager.IO;
+using Elmanager.Lev;
+using Elmanager.Rendering;
+using NaturalSort.Extension;
 using OpenTK.GLControl;
 using System;
 using System.Collections.Generic;
@@ -6,10 +9,7 @@ using System.Drawing;
 using System.IO;
 using System.Linq;
 using System.Windows.Forms;
-using Elmanager.IO;
-using Elmanager.Lev;
 using Path = System.IO.Path;
-using NaturalSort.Extension;
 
 namespace Elmanager.LevelEditor.Shapes;
 
