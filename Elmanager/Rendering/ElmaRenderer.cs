@@ -49,11 +49,8 @@ internal class ElmaRenderer : IDisposable
         _gfxContext = renderingTarget.Context;
         InitializeOpengl(disableFrameBuffer: settings.DisableFrameBuffer);
     }
-    internal ElmaRenderer(GLControl renderingTarget, RenderingSettings settings, ElmaRenderer otherElmaRenderer)
+    internal ElmaRenderer(GLControl renderingTarget, RenderingSettings settings, ElmaRenderer otherElmaRenderer) : this(renderingTarget, settings)
     {
-        _gfxContext = renderingTarget.Context;
-        InitializeOpengl(disableFrameBuffer: settings.DisableFrameBuffer);
-
         // Might cause an issue during memory cleanup!
         _lgrCache = otherElmaRenderer._lgrCache;
         OpenGlLgr = otherElmaRenderer.OpenGlLgr;
