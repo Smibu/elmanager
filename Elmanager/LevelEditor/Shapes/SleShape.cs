@@ -42,7 +42,7 @@ internal class SleShape(Level level)
 
         // Normalize positions
         List<Polygon> levelPolygons = level.Polygons;
-        List<LevObject> levObjects = level.Objects; // No need to filter start object since it is already removed
+        List<LevObject> levObjects = level.Objects;
         List<GraphicElement> levelGraphicElements = level.GraphicElements;
 
         foreach (var polygon in levelPolygons)
