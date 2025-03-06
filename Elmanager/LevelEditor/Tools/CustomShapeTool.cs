@@ -53,13 +53,6 @@ internal class CustomShapeTool : ToolBase, IEditorTool
                     Renderer.DrawGrassPolygon(polygon, color, settings.ShowInactiveGrassEdges, settings);
                 }
             }
-            else
-            {
-                if (settings.ShowGroundEdges)
-                {
-                    Renderer.DrawPolygon(polygon, settings.GroundEdgeColor);
-                }
-            }
         }
     }
 
