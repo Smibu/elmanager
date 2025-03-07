@@ -141,17 +141,19 @@ internal partial class CustomShapeControl : UserControl
         }
     }
 
-    internal void UpdateContent(string filepath, string shapeName)
+    internal void UpdateContent(string filepath, string shapeName, string lgr)
     {
         ShapeFullPath = filepath;
         ShapeName = shapeName;
 
         ElmaFileObject<SleShape> shape = SleShape.LoadFromPath(filepath);
-        SetShape(shape.Obj);
+        SetShape(shape.Obj, lgr);
     }
 
-    internal void SetShape(SleShape shape)
+    internal void SetShape(SleShape shape, string lgr)
     {
+        // Make sure LGR of the loaded shape matches that of the global elma renderer
+        shape.Level.LgrFile = lgr;
         shapeLevelControl.SetLevel(shape.Level);
     }
 

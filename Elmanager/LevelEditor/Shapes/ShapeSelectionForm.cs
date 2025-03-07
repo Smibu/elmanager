@@ -36,6 +36,8 @@ internal partial class ShapeSelectionForm : Form
     private readonly SceneSettings _sceneSettings;
     private readonly RenderingSettings _renderingSettings;
 
+    private readonly string _currentLgr;
+
     private readonly List<CustomShapeControl> _reusableControls;
 
     // List of currently active shapes
@@ -72,6 +74,8 @@ internal partial class ShapeSelectionForm : Form
         };
 
         _renderer = elmaRenderer;
+
+        _currentLgr = _renderer.OpenGlLgr?.CurrentLgr.Path != null ? System.IO.Path.GetFileNameWithoutExtension(_renderer.OpenGlLgr.CurrentLgr.Path) : "default";
 
         _reusableControls = new List<CustomShapeControl>();
 
@@ -161,7 +165,7 @@ internal partial class ShapeSelectionForm : Form
             if (dataIndex < _shapes.Count)
             {
                 _reusableControls[i].Highlight(false);
-                _reusableControls[i].UpdateContent(_shapes[dataIndex].FilePath, _shapes[dataIndex].Name);
+                _reusableControls[i].UpdateContent(_shapes[dataIndex].FilePath, _shapes[dataIndex].Name, _currentLgr);
                 _reusableControls[i].Visible = true;
             }
             else
