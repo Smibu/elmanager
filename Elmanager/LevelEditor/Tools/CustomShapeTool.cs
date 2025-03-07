@@ -100,6 +100,7 @@ internal class CustomShapeTool : ToolBase, IEditorTool
         ElmaFileObject<SleShape>? shape = ShapeSelectionForm.ShowForm(LevEditor.EditorControl, LevEditor.Renderer, _shapeSelection?.Shape.File.Path);
         if (shape != null)
         {
+            shape.Obj.Level.UpdateImages(LevEditor.Renderer.OpenGlLgr?.DrawableImages ?? new Dictionary<string, DrawableImage>());
             _shapeSelection = new ShapeSelection(shape, new SleShape(shape.Obj.Level.Clone()));
             ApplyTransformations(CurrentPos);
         }
@@ -307,6 +308,7 @@ internal class CustomShapeTool : ToolBase, IEditorTool
         Lev.Objects.AddRange(level.Objects);
         Lev.GraphicElements.AddRange(level.GraphicElements);
         Lev.UpdateAllPolygons(Global.AppSettings.LevelEditor.RenderingSettings.GrassZoom);
+        Lev.UpdateImages(LevEditor.Renderer.OpenGlLgr?.DrawableImages ?? new Dictionary<string, DrawableImage>());
         LevEditor.SetModified(LevModification.Ground | LevModification.Decorations | LevModification.Objects);
     }
 
