@@ -202,6 +202,7 @@ internal class CustomShapeTool : ToolBase, IEditorTool
                 _scalingFactor = 1.0;
                 _rotationAngle = 0.0;
                 _selectedMirrorOption = ShapeMirrorOption.None;
+                _anchor = PlacementAnchor.Center;
                 break;
             case Keys.D1:
                 _anchor = PlacementAnchor.Center;
