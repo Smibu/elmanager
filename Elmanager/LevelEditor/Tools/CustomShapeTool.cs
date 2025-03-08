@@ -36,23 +36,6 @@ internal class CustomShapeTool : ToolBase, IEditorTool
 
     public void ExtraRendering()
     {
-        if (_shapeSelection == null)
-        {
-            return;
-        }
-
-        var settings = Global.AppSettings.LevelEditor.RenderingSettings;
-        foreach (var polygon in _shapeSelection.Shape.Obj.Level.Polygons)
-        {
-            if (polygon.IsGrass)
-            {
-                if (settings.ShowGrassEdges)
-                {
-                    var color = polygon.SlopeInfo?.HasError ?? false ? Color.Red : settings.GrassEdgeColor;
-                    Renderer.DrawGrassPolygon(polygon, color, settings.ShowInactiveGrassEdges, settings);
-                }
-            }
-        }
     }
 
     public TransientElements GetTransientElements()

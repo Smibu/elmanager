@@ -452,7 +452,7 @@ internal class ElmaRenderer : IDisposable
             }
         }
 
-        foreach (var x in lev.Polygons)
+        foreach (var x in lev.Polygons.Concat(sceneSettings.TransientElements.Polygons))
         {
             if (x.IsGrass)
             {
