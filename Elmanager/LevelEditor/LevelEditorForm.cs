@@ -109,7 +109,8 @@ internal partial class LevelEditorForm : FormMod, IMessageFilter
             new AutoGrassTool(this),
             new TransformTool(this),
             new PictureTool(this),
-            new TextTool(this)
+            new TextTool(this),
+            new CustomShapeTool(this)
         );
         _fullScreenController = CreateFullScreenController();
         var lev = levPath != null
@@ -891,6 +892,12 @@ internal partial class LevelEditorForm : FormMod, IMessageFilter
             ChangeToolTo(Tools.EllipseTool);
     }
 
+    private void CustomShapeButtonChanged(object? sender, EventArgs e)
+    {
+        if (CustomShapeButton.Checked)
+            ChangeToolTo(Tools.CustomShapeTool);
+    }
+
     private void ExitToolStripMenuItemClick(object? sender, EventArgs e)
     {
         Close();
@@ -1383,6 +1390,7 @@ internal partial class LevelEditorForm : FormMod, IMessageFilter
                     convertToToolStripMenuItem.Visible = false;
                     saveStartPositionToolStripMenuItem.Visible = false;
                     restoreStartPositionToolStripMenuItem.Visible = false;
+                    createCustomShapeMenuItem.Visible = false;
                     ChangeToDefaultCursor();
                     if (SelectedElementCount > 0)
                     {
@@ -1458,6 +1466,12 @@ internal partial class LevelEditorForm : FormMod, IMessageFilter
                         PicturePropertiesMenuItem.Visible = true;
                         bringToFrontToolStripMenuItem.Visible = true;
                         sendToBackToolStripMenuItem.Visible = true;
+                    }
+
+                    if (_selectedPolygonCount > 0)
+                    {
+                        bool allGrassSelected = Lev.Polygons.Where(pol => pol.Vertices.Any(v => v.Mark == VectorMark.Selected)).All(pol => pol.IsGrass);
+                        createCustomShapeMenuItem.Visible = !allGrassSelected;
                     }
 
                     if (player != null)
@@ -2055,6 +2069,7 @@ internal partial class LevelEditorForm : FormMod, IMessageFilter
         CutConnectButton.CheckedChanged += CutButtonChanged;
         AutoGrassButton.CheckedChanged += AutoGrassButtonChanged;
         PictureButton.CheckedChanged += PictureButtonChanged;
+        CustomShapeButton.CheckedChanged += CustomShapeButtonChanged;
         LGRBox.SelectedIndexChanged += LevelPropertyModified;
         GroundComboBox.SelectedIndexChanged += LevelPropertyModified;
         SkyComboBox.SelectedIndexChanged += LevelPropertyModified;
@@ -2952,5 +2967,10 @@ internal partial class LevelEditorForm : FormMod, IMessageFilter
             SetModified(LevModification.Ground);
             RedrawScene();
         }
+    }
+
+    private void createCustomShapeMenuItem_Click(object sender, EventArgs e)
+    {
+        Tools.CustomShapeTool.SaveShape();
     }
 }

@@ -5,7 +5,8 @@ using System.Windows.Forms;
 using Elmanager.IO;
 using Elmanager.Properties;
 using Elmanager.UI;
-using OpenTK.WinForms;
+using OpenTK.Windowing.Common;
+using OpenTK.GLControl;
 
 namespace Elmanager.LevelEditor
 {
@@ -67,6 +68,7 @@ namespace Elmanager.LevelEditor
             selectionToolStripMenuItem = new ToolStripMenuItem();
             toolStripMenuItem1 = new ToolStripMenuItem();
             copyAndSnapToGridMenuItem = new ToolStripMenuItem();
+            createCustomShapeToolStripMenuItem = new ToolStripMenuItem();
             MirrorHorizontallyToolStripMenuItem = new ToolStripMenuItem();
             MirrorVerticallyToolStripMenuItem = new ToolStripMenuItem();
             DeleteSelectedMenuItem = new ToolStripMenuItemMod();
@@ -193,9 +195,12 @@ namespace Elmanager.LevelEditor
             saveStartPositionToolStripMenuItem = new ToolStripMenuItem();
             restoreStartPositionToolStripMenuItem = new ToolStripMenuItem();
             moveStartHereToolStripMenuItem = new ToolStripMenuItem();
+            createCustomShapeMenuItem = new ToolStripMenuItem();
+            SaveShapeDialog = new SaveFileDialog();
             saveAsPictureDialog = new SaveFileDialog();
             importFileDialog = new OpenFileDialog();
             ToolPanel = new PanelMod();
+            CustomShapeButton = new RadioButtonMod();
             TextButton = new RadioButtonMod();
             PictureButton = new RadioButtonMod();
             AutoGrassButton = new RadioButtonMod();
@@ -436,7 +441,7 @@ namespace Elmanager.LevelEditor
             // 
             // selectionToolStripMenuItem
             // 
-            selectionToolStripMenuItem.DropDownItems.AddRange(new ToolStripItem[] { toolStripMenuItem1, copyAndSnapToGridMenuItem, MirrorHorizontallyToolStripMenuItem, MirrorVerticallyToolStripMenuItem, DeleteSelectedMenuItem, toolStripSeparator14, unionToolStripMenuItem, differenceToolStripMenuItem, intersectionToolStripMenuItem, symmetricDifferenceToolStripMenuItem, fixSelfIntersectionsMenuItem, toolStripSeparator17, texturizeMenuItem, toolStripSeparator15, deselectGroundPolygonsToolStripMenuItem, deselectGrassPolygonsToolStripMenuItem, deselectApplesToolStripMenuItem, deselectKillersToolStripMenuItem, deselectFlowersToolStripMenuItem, deselectPicturesToolStripMenuItem, deselectTexturesToolStripMenuItem });
+            selectionToolStripMenuItem.DropDownItems.AddRange(new ToolStripItem[] { toolStripMenuItem1, copyAndSnapToGridMenuItem, createCustomShapeToolStripMenuItem, MirrorHorizontallyToolStripMenuItem, MirrorVerticallyToolStripMenuItem, DeleteSelectedMenuItem, toolStripSeparator14, unionToolStripMenuItem, differenceToolStripMenuItem, intersectionToolStripMenuItem, symmetricDifferenceToolStripMenuItem, fixSelfIntersectionsMenuItem, toolStripSeparator17, texturizeMenuItem, toolStripSeparator15, deselectGroundPolygonsToolStripMenuItem, deselectGrassPolygonsToolStripMenuItem, deselectApplesToolStripMenuItem, deselectKillersToolStripMenuItem, deselectFlowersToolStripMenuItem, deselectPicturesToolStripMenuItem, deselectTexturesToolStripMenuItem });
             selectionToolStripMenuItem.Name = "selectionToolStripMenuItem";
             selectionToolStripMenuItem.Size = new Size(132, 36);
             selectionToolStripMenuItem.Text = "Selection";
@@ -456,6 +461,13 @@ namespace Elmanager.LevelEditor
             copyAndSnapToGridMenuItem.Size = new Size(531, 44);
             copyAndSnapToGridMenuItem.Text = "Copy and snap to grid";
             copyAndSnapToGridMenuItem.Click += CopyMenuItemClick;
+            // 
+            // createCustomShapeToolStripMenuItem
+            // 
+            createCustomShapeToolStripMenuItem.Name = "createCustomShapeToolStripMenuItem";
+            createCustomShapeToolStripMenuItem.Size = new Size(265, 22);
+            createCustomShapeToolStripMenuItem.Text = "Save as shape...";
+            createCustomShapeToolStripMenuItem.Click += createCustomShapeMenuItem_Click;
             // 
             // MirrorHorizontallyToolStripMenuItem
             // 
@@ -1375,7 +1387,7 @@ namespace Elmanager.LevelEditor
             // EditorMenuStrip
             // 
             EditorMenuStrip.ImageScalingSize = new Size(15, 15);
-            EditorMenuStrip.Items.AddRange(new ToolStripItem[] { CopyMenuItem, TransformMenuItem, DeleteMenuItem, GrassMenuItem, GravityNoneMenuItem, GravityUpMenuItem, GravityDownMenuItem, GravityLeftMenuItem, GravityRightMenuItem, PicturePropertiesMenuItem, bringToFrontToolStripMenuItem, sendToBackToolStripMenuItem, convertToToolStripMenuItem, saveStartPositionToolStripMenuItem, restoreStartPositionToolStripMenuItem, moveStartHereToolStripMenuItem });
+            EditorMenuStrip.Items.AddRange(new ToolStripItem[] { CopyMenuItem, TransformMenuItem, DeleteMenuItem, GrassMenuItem, GravityNoneMenuItem, GravityUpMenuItem, GravityDownMenuItem, GravityLeftMenuItem, GravityRightMenuItem, PicturePropertiesMenuItem, bringToFrontToolStripMenuItem, sendToBackToolStripMenuItem, convertToToolStripMenuItem, saveStartPositionToolStripMenuItem, restoreStartPositionToolStripMenuItem, moveStartHereToolStripMenuItem, createCustomShapeMenuItem });
             EditorMenuStrip.Name = "SelectedMenuStrip";
             EditorMenuStrip.Size = new Size(314, 644);
             EditorMenuStrip.Opening += EditorMenuStrip_Opening;
@@ -1527,6 +1539,13 @@ namespace Elmanager.LevelEditor
             moveStartHereToolStripMenuItem.Text = "Move start here";
             moveStartHereToolStripMenuItem.Click += MoveStartHereToolStripMenuItem_Click;
             // 
+            // createCustomShapeMenuItem
+            // 
+            createCustomShapeMenuItem.Name = "createCustomShapeMenuItem";
+            createCustomShapeMenuItem.Size = new Size(188, 22);
+            createCustomShapeMenuItem.Text = "Save as shape...";
+            createCustomShapeMenuItem.Click += createCustomShapeMenuItem_Click;
+            // 
             // saveAsPictureDialog
             // 
             saveAsPictureDialog.DefaultExt = "png";
@@ -1541,6 +1560,7 @@ namespace Elmanager.LevelEditor
             // ToolPanel
             // 
             ToolPanel.AutoScroll = true;
+            ToolPanel.Controls.Add(CustomShapeButton);
             ToolPanel.Controls.Add(TextButton);
             ToolPanel.Controls.Add(PictureButton);
             ToolPanel.Controls.Add(AutoGrassButton);
@@ -1746,6 +1766,25 @@ namespace Elmanager.LevelEditor
             SelectButton.Text = "&Select";
             SelectButton.TextAlign = ContentAlignment.MiddleCenter;
             SelectButton.UseVisualStyleBackColor = true;
+            // 
+            // CustomShapeButton
+            // 
+            CustomShapeButton.Appearance = Appearance.Button;
+            CustomShapeButton.AutoSize = true;
+            CustomShapeButton.Dock = DockStyle.Top;
+            CustomShapeButton.Location = new Point(0, 325);
+            CustomShapeButton.Name = "CustomShapeButton";
+            CustomShapeButton.Size = new Size(84, 25);
+            CustomShapeButton.TabIndex = 17;
+            CustomShapeButton.Text = "S&hape";
+            CustomShapeButton.TextAlign = ContentAlignment.MiddleCenter;
+            CustomShapeButton.UseVisualStyleBackColor = true;
+            // 
+            // SaveShapeDialog
+            // 
+            SaveShapeDialog.DefaultExt = "lev";
+            SaveShapeDialog.FileName = "Type Shape Title Here";
+            SaveShapeDialog.Filter = "Elasto Mania level (*.lev)|*.lev";
             // 
             // LevelEditorForm
             // 
@@ -1958,6 +1997,10 @@ namespace Elmanager.LevelEditor
         internal ToolStripStatusLabel zoomLabel;
         internal ToolStripMenuItem StartToolStripMenuItem;
         private ToolStripMenuItemMod fixSelfIntersectionsMenuItem;
+        private ToolStripMenuItem createCustomShapeToolStripMenuItem;
+        private ToolStripMenuItem createCustomShapeMenuItem;
+        internal RadioButtonMod CustomShapeButton;
+        internal SaveFileDialog SaveShapeDialog;
     }
 
 }

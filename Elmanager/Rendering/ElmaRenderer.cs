@@ -15,7 +15,7 @@ using Elmanager.UI;
 using Elmanager.Utilities;
 using OpenTK.Graphics.OpenGL;
 using OpenTK.Windowing.Common;
-using OpenTK.WinForms;
+using OpenTK.GLControl;
 using Color = System.Drawing.Color;
 using PixelFormat = System.Drawing.Imaging.PixelFormat;
 
@@ -48,6 +48,12 @@ internal class ElmaRenderer : IDisposable
     {
         _gfxContext = renderingTarget.Context;
         InitializeOpengl(disableFrameBuffer: settings.DisableFrameBuffer);
+    }
+    internal ElmaRenderer(GLControl renderingTarget, RenderingSettings settings, ElmaRenderer otherElmaRenderer) : this(renderingTarget, settings)
+    {
+        // Might cause an issue during memory cleanup!
+        _lgrCache = otherElmaRenderer._lgrCache;
+        OpenGlLgr = otherElmaRenderer.OpenGlLgr;
     }
 
     public OpenGlLgr? OpenGlLgr { get; private set; }
@@ -446,7 +452,7 @@ internal class ElmaRenderer : IDisposable
             }
         }
 
-        foreach (var x in lev.Polygons)
+        foreach (var x in lev.Polygons.Concat(sceneSettings.TransientElements.Polygons))
         {
             if (x.IsGrass)
             {
