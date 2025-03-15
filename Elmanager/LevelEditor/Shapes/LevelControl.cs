@@ -44,7 +44,7 @@ public class LevelControl : GLControl
             UpdateRenderingContext();
         };
 
-        SharedContext = sharedContext; // Set shared context before initialization
+        SharedContext = sharedContext;
 
     }
 
