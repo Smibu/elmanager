@@ -1,5 +1,8 @@
 # Elmanager changelog
 
+## Upcoming
+* SLE: Added Shape tool for creating custom shapes. (@SjurdurS)
+
 ## 30.11.2024
 * SLE: Line and vertex colors support transparency.
 * SLE: Bugfix: Zoom fill was slightly wrong when checking for pictures and textures.
