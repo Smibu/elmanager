@@ -18,11 +18,6 @@ internal class ReplaySearchParameters : SearchParameters
     internal Range<double> Time = new(0, 7200);
     internal BoolOption WrongLev = BoolOption.Dontcare;
 
-    /// <summary>
-    ///   Determines whether the search parameters match the given replay.
-    /// </summary>
-    /// <param name = "o">Replay to check.</param>
-    /// <returns>True if the search parameters match this replay.</returns>
     internal bool Matches(ElmaFileObject<Replay> o)
     {
         var r = o.Obj;

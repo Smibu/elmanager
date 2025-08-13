@@ -31,9 +31,6 @@ internal static class Global
         _levelFiles = null;
     }
 
-    /// <summary>
-    ///   The entry point of the application.
-    /// </summary>
     [STAThread]
     static void Main(string[] args)
     {
@@ -47,9 +44,6 @@ internal static class Global
         Startup(args);
     }
 
-    /// <summary>
-    ///   Loads internal levels to memory.
-    /// </summary>
     private static void LoadInternals()
     {
         Internals.Clear();

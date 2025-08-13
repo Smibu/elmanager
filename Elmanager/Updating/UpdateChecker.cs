@@ -9,9 +9,6 @@ namespace Elmanager.Updating;
 
 internal static class UpdateChecker
 {
-    /// <summary>
-    ///   Checks if there are new updates for the program.
-    /// </summary>
     internal static async Task<bool> CheckForUpdates()
     {
         using var client = new HttpClient();

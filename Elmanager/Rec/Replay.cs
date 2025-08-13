@@ -10,22 +10,22 @@ namespace Elmanager.Rec;
 
 internal class Replay
 {
-    public readonly bool Finished; //Is replay finished
+    public readonly bool Finished;
 
-    public readonly bool IsMulti; //Is it single or multi replay
+    public readonly bool IsMulti;
 
-    public bool LevelExists => LevelPath is not null || IsInternal; //Does the replay's level exist
+    public bool LevelExists => LevelPath is not null || IsInternal;
 
-    public readonly string LevelFilename; //Filename of the level of the replay
+    public readonly string LevelFilename;
 
-    public readonly double Time; //Time of the replay
+    public readonly double Time;
 
-    public readonly bool WrongLevelVersion; //Is the version of the level wrong
-    internal readonly bool AcrossLevel; //Is the level across level
+    public readonly bool WrongLevelVersion;
+    internal readonly bool AcrossLevel;
     private readonly int _internalIndex;
-    internal readonly bool IsInternal; //Is it internal or external replay
+    internal readonly bool IsInternal;
 
-    internal readonly string? LevelPath; //Path of the level file if it is found
+    internal readonly string? LevelPath;
     internal Player Player1 => Players[0];
     internal Player Player2 => Players[1];
     internal readonly List<Player> Players = new(2);

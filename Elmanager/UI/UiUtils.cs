@@ -13,13 +13,6 @@ namespace Elmanager.UI;
 
 internal static class UiUtils
 {
-    /// <summary>
-    ///   Display a message box to indicate that an error occurred.
-    /// </summary>
-    /// <param name = "text">The text to display in the message box.</param>
-    /// <param name = "caption">The title of the message box.</param>
-    /// <param name = "icon">The icon to display in the message box.</param>
-    /// <returns></returns>
     internal static void ShowError(string text, string caption = "Error", MessageBoxIcon icon = MessageBoxIcon.Hand)
     {
         MessageBox.Show(text, caption, MessageBoxButtons.OK, icon, MessageBoxDefaultButton.Button1, 0, false);
