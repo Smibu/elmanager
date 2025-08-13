@@ -2,7 +2,6 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.IO.Compression;
-using System.Net;
 using System.Threading.Tasks;
 using Elmanager.IO;
 using Elmanager.Lev;
@@ -34,13 +33,6 @@ internal static class Global
     [STAThread]
     static void Main(string[] args)
     {
-        try
-        {
-            ServicePointManager.SecurityProtocol = SecurityProtocolType.Tls12; // use TLS 1.2; required for GitLab https downloads to work
-        }
-        catch (NotSupportedException)
-        {
-        }
         Startup(args);
     }
 
