@@ -155,10 +155,6 @@ internal class Replay
 
         if (IsInternal)
         {
-            while (Global.Internals == null)
-            {
-            }
-
             return Global.Internals[_internalIndex - 1];
         }
 
