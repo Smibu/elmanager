@@ -9,7 +9,7 @@ using System.Windows.Forms;
 
 namespace Elmanager.LevelEditor.Shapes;
 
-public class LevelControl : GLControl
+internal class LevelControl : GLControl
 {
     private ElmaRenderer _renderer;
     
