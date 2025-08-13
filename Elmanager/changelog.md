@@ -1,7 +1,8 @@
 # Elmanager changelog
 
-## Upcoming
+## 13.8.2025
 * SLE: Added Shape tool for creating custom shapes. (@SjurdurS)
+* Improved error message for Steam Elma LGRs (they are not supported).
 
 ## 30.11.2024
 * SLE: Line and vertex colors support transparency.
