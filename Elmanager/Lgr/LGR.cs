@@ -51,8 +51,19 @@ internal class Lgr : IDisposable
         using var stream = File.OpenRead(lgrFile);
         Path = lgrFile;
         var lgr = new BinaryReader(stream, Encoding.ASCII);
-        if (lgr.ReadString(5) != "LGR12")
-            throw new Exception($"The LGR file {lgrFile} is not valid (magic start string not found)");
+        var lgrId = lgr.ReadString(5);
+        if (lgrId != "LGR12")
+        {
+            if (lgrId == "LGR13")
+            {
+                throw new Exception("Steam Elma LGRs are not supported.");
+            }
+            else
+            {
+                throw new Exception($"Expected LGR version string 'LGR12', found '${lgrId}'.");
+            }
+                
+        }
         int numberOfPcXs = lgr.ReadInt32();
         lgr.ReadInt32(); // pictures.lst version, not needed
         int numberOfOptPcXs = lgr.ReadInt32();
