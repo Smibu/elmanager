@@ -243,6 +243,11 @@ internal class Level
             throw new BadFileException($"Wrong end of data marker: {endOfData:X}");
         }
 
+        if (lev.PeekChar() == -1)
+        {
+            return;
+        }
+
         try
         {
             var top10data = lev.ReadBytes(688);
@@ -252,8 +257,7 @@ internal class Level
         }
         catch (Exception)
         {
-            throw new BadFileException(
-                "Top 10 list is corrupted. The list will be cleared if you save the level.");
+            // just ignore corrupted top10 for now
         }
     }
 
