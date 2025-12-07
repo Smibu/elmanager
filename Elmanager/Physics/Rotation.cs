@@ -2,8 +2,6 @@
 
 namespace Elmanager.Physics;
 
-#pragma warning disable
-
 internal struct Rotation
 {
     public RotationKind Kind;

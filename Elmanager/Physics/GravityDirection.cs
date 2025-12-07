@@ -2,6 +2,7 @@
 
 internal enum GravityDirection
 {
+    None,
     Up,
     Down,
     Left,

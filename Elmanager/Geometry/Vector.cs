@@ -134,6 +134,21 @@ internal struct Vector : IPositionable
         return Math.Sqrt(xd * xd + yd * yd);
     }
 
+    public Vector Ortho()
+    {
+        return new(-Y, X);
+    }
+
+    public double Dotp(Vector v)
+    {
+        return X * v.X + Y * v.Y;
+    }
+
+    public static Vector FromRadians(double r)
+    {
+        return new(Math.Cos(r), Math.Sin(r));
+    }
+
     public override string ToString()
     {
         return $"({X:F3}, {Y:F3})";

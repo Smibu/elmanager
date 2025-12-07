@@ -173,7 +173,7 @@ internal class PlayController
 
     public void UpdateEngine(Level lev)
     {
-        _engine?.InitPolysAndObjects(lev.Polygons, lev.Objects);
+        _engine?.InitPolysAndObjects(lev.Polygons, lev.Objects, new ElmaEdgeTree());
         if (Paused)
         {
             ShouldRestartAfterResuming = false;
@@ -217,9 +217,9 @@ internal class PlayController
     private async Task BeginLoopImpl(Level lev, SceneSettings sceneSettings, ElmaRenderer renderer,
         ZoomController zoomCtrl, Action render)
     {
-        _engine = new Engine(lev.Polygons, lev.Objects);
+        _engine = new Engine(lev.Polygons, lev.Objects, new ElmaEdgeTree());
         SetInvulnerability();
-        Driver = _engine.init_driver();
+        Driver = _engine.InitDriver();
         var maxPhysStep = new ElmaTime(0.0055);
         var rec = new RideRecorder();
         _timer.Reset();
@@ -253,7 +253,7 @@ internal class PlayController
 
                     try
                     {
-                        _engine.next_frame(Driver, _keys, rec, step);
+                        _engine.NextFrame(Driver, _keys, rec, step);
                     }
                     catch (IndexOutOfRangeException)
                     {
@@ -288,7 +288,7 @@ internal class PlayController
 
                 void RestartPlaying()
                 {
-                    Driver = _engine.init_driver();
+                    Driver = _engine.InitDriver();
                     sceneSettings.FadedObjectIndices = Driver.TakenApples;
                     physElapsed = 0.0;
                     _timer.Restart();

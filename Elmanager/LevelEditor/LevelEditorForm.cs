@@ -42,7 +42,7 @@ internal partial class LevelEditorForm : FormMod, IMessageFilter
     private const string CoordinateFormat = "F3";
     private const string LevEditorName = "SLE";
     private const int MouseWheelStep = 20;
-    private const bool Physics = false;
+    private const bool Physics = true;
     private readonly List<Level> _history = new();
     internal IEditorTool CurrentTool = null!;
     private EditorLev _editorLev = new(new Level(), null);
