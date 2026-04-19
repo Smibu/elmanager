@@ -66,12 +66,8 @@ internal class Pcx
                 {
                     var count = data & 0x3F;
                     data = pb.ReadByte();
-                    for (var k = 1; k <= count; k++)
-                    {
-                        uncompressedData[total] = data;
-                        total++;
-                    }
-
+                    Array.Fill(uncompressedData, data, total, count);
+                    total += count;
                     subTotal += count;
                 }
                 else
