@@ -30,7 +30,6 @@ internal class EllipseTool : ToolBase, IEditorTool
     public void Activate()
     {
         _ellipseSteps = Math.Max(Global.AppSettings.LevelEditor.EllipseSteps, 3);
-        UpdateHelp();
     }
 
     public void ExtraRendering()
@@ -44,7 +43,7 @@ internal class EllipseTool : ToolBase, IEditorTool
         }
     }
 
-    public TransientElements GetTransientElements()
+    public TransientElements GetTransientElements(bool hasFocus)
     {
         var polys = new List<Polygon>();
         if (_ellipse is { })
@@ -55,17 +54,21 @@ internal class EllipseTool : ToolBase, IEditorTool
         return TransientElements.FromPolygons(polys);
     }
 
-    public void InActivate()
+    public LevVisualChange InActivate()
     {
         Global.AppSettings.LevelEditor.EllipseSteps = _ellipseSteps;
-        if (!CreatingEllipse) return;
-        _ellipseCenter = null;
-        _ellipse = null;
+        if (CreatingEllipse)
+        {
+            _ellipseCenter = null;
+            _ellipse = null;
+            return LevVisualChange.Ground;
+        }
+        return LevVisualChange.Nothing;
     }
 
-    public void KeyDown(KeyEventArgs key)
+    public LevVisualChange KeyDown(KeyEventArgs key)
     {
-        if (!CreatingEllipse) return;
+        if (!CreatingEllipse) return LevVisualChange.Nothing;
         switch (key.KeyCode)
         {
             case KeyUtils.Increase:
@@ -82,10 +85,10 @@ internal class EllipseTool : ToolBase, IEditorTool
                 break;
         }
 
-        UpdateHelp();
+        return LevVisualChange.Ground;
     }
 
-    public void MouseDown(MouseEventArgs mouseData)
+    public LevVisualChange MouseDown(MouseEventArgs mouseData)
     {
         switch (mouseData.Button)
         {
@@ -106,37 +109,36 @@ internal class EllipseTool : ToolBase, IEditorTool
             case MouseButtons.Right:
                 if (CreatingEllipse)
                 {
-                    InActivate();
+                    return InActivate();
                 }
 
                 break;
         }
 
-        UpdateHelp();
+        return LevVisualChange.Nothing;
     }
 
-    public void MouseMove(Vector p)
+    public LevVisualChange MouseMove(Vector p)
     {
         CurrentPos = p;
         AdjustForGrid(ref CurrentPos);
         UpdateEllipse();
+        return _ellipse is not null ? LevVisualChange.Ground : LevVisualChange.Nothing;
     }
 
-    public void MouseOutOfEditor()
+    public LevVisualChange MouseOutOfEditor()
     {
+        return LevVisualChange.Nothing;
     }
 
     public void MouseUp()
     {
     }
 
-    public void UpdateHelp()
-    {
-        if (CreatingEllipse)
-            LevEditor.InfoLabel.Text = $"+/-: adjust number of sides ({_ellipseSteps}); RMouse: cancel.";
-        else
-            LevEditor.InfoLabel.Text = "LMouse: select center point of the ellipse.";
-    }
+    public string GetHelp() =>
+        CreatingEllipse
+            ? $"+/-: adjust number of sides ({_ellipseSteps}); RMouse: cancel."
+            : "LMouse: select center point of the ellipse.";
 
     private void UpdateEllipse()
     {

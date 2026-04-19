@@ -6,9 +6,4 @@ internal static class BoolUtils
     {
         return (bool)x ? "Yes" : "No";
     }
-
-    internal static int BoolToInteger(bool b)
-    {
-        return b ? 1 : 0;
-    }
 }

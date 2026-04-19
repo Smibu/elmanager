@@ -1,5 +1,4 @@
 using System;
-using System.Text;
 
 namespace Elmanager.Utilities;
 
@@ -18,34 +17,19 @@ internal static class StringUtils
 
     internal static string ToTimeString(this double time, int digits = 3)
     {
+        if (digits is < 1 or > 3)
+            throw new ArgumentOutOfRangeException(nameof(digits), "Invalid number of digits!");
+
         double T = Math.Abs(time);
-        StringBuilder timeStr = new StringBuilder(9);
-        int minutes = (int)Math.Floor(T / 60);
-        int hours = (int)Math.Floor(T / 3600);
-        if (hours > 0)
-        {
-            timeStr.Append(hours);
-            timeStr.Append(":");
-            minutes -= 60 * hours;
-        }
+        int hours = (int)(T / 3600);
+        int minutes = (int)(T / 60) % 60;
+        double seconds = T - (60 * minutes + 3600 * hours);
 
-        double timeVar = T - (60 * minutes + 3600 * hours);
-        timeStr.Append(minutes.ToString("D2"));
-        timeStr.Append(":");
-        switch (digits)
-        {
-            case 3:
-                timeStr.Append($"{timeVar:00.000}");
-                break;
-            case 2:
-                timeStr.Append($"{timeVar:00.00}");
-                break;
-            default:
-                throw new Exception("Invalid number of digits!");
-        }
+        var secondsFormat = "00." + new string('0', digits);
+        var result = hours > 0
+            ? $"{hours}:{minutes:D2}:{seconds.ToString(secondsFormat)}"
+            : $"{minutes:D2}:{seconds.ToString(secondsFormat)}";
 
-        if (time < 0)
-            timeStr.Insert(0, '-');
-        return timeStr.ToString();
+        return time < 0 ? "-" + result : result;
     }
 }

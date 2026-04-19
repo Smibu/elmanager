@@ -27,15 +27,15 @@ internal class AutoGrassTool : ToolBase, IEditorTool
 
     public void Activate()
     {
-        UpdateHelp();
     }
 
-    private void CancelAutoGrass()
+    private LevVisualChange CancelAutoGrass()
     {
-        if (!AutoGrassPolygonSelected) return;
+        if (!AutoGrassPolygonSelected) return LevVisualChange.Nothing;
         _currentPolygon = null;
         _currentAutograssPolys = null;
         ResetPolygonMarks();
+        return LevVisualChange.Grass;
     }
 
     public void ExtraRendering()
@@ -46,16 +46,13 @@ internal class AutoGrassTool : ToolBase, IEditorTool
         }
     }
 
-    public TransientElements GetTransientElements() => _currentAutograssPolys != null
+    public TransientElements GetTransientElements(bool hasFocus) => _currentAutograssPolys != null
         ? TransientElements.FromPolygons(_currentAutograssPolys)
         : TransientElements.Empty;
 
-    public void InActivate()
-    {
-        CancelAutoGrass();
-    }
+    public LevVisualChange InActivate() => CancelAutoGrass();
 
-    public void KeyDown(KeyEventArgs key)
+    public LevVisualChange KeyDown(KeyEventArgs key)
     {
         if (_currentPolygon is { })
         {
@@ -77,12 +74,14 @@ internal class AutoGrassTool : ToolBase, IEditorTool
             if (changed)
             {
                 _currentAutograssPolys = AutoGrass(_currentPolygon);
-                UpdateHelp();
+                return LevVisualChange.Grass;
             }
         }
+
+        return LevVisualChange.Nothing;
     }
 
-    public void MouseDown(MouseEventArgs mouseData)
+    public LevVisualChange MouseDown(MouseEventArgs mouseData)
     {
         switch (mouseData.Button)
         {
@@ -93,6 +92,7 @@ internal class AutoGrassTool : ToolBase, IEditorTool
                     {
                         _currentPolygon = v.Polygon;
                         _currentAutograssPolys = AutoGrass(_currentPolygon);
+                        return LevVisualChange.Grass;
                     }
                 }
                 else
@@ -100,19 +100,18 @@ internal class AutoGrassTool : ToolBase, IEditorTool
                     Lev.Polygons.AddRange(_currentAutograssPolys!);
                     _currentPolygon = null;
                     _currentAutograssPolys = null;
-                    LevEditor.SetModified(LevModification.Decorations);
+                    LevEditor.SetModified(LevModification.Grass);
                 }
 
                 break;
             case MouseButtons.Right:
-                CancelAutoGrass();
-                break;
+                return CancelAutoGrass();
         }
 
-        UpdateHelp();
+        return LevVisualChange.Nothing;
     }
 
-    public void MouseMove(Vector p)
+    public LevVisualChange MouseMove(Vector p)
     {
         CurrentPos = p;
         if (!AutoGrassPolygonSelected)
@@ -121,36 +120,39 @@ internal class AutoGrassTool : ToolBase, IEditorTool
             if (GetNearestVertexInfo(p) is { } v)
             {
                 ChangeCursorToHand();
-                v.Polygon.Mark = PolygonMark.Highlight;
+                LevEditor.CurrentHighlight = new HighlightTarget.PolygonTarget(v.Polygon);
             }
             else
                 ChangeToDefaultCursorIfHand();
         }
         else
             ChangeToDefaultCursorIfHand();
+
+        return LevVisualChange.Nothing;
     }
 
-    public void MouseOutOfEditor()
+    public LevVisualChange MouseOutOfEditor()
     {
-        if (AutoGrassPolygonSelected) return;
-        ResetHighlight();
+        if (!AutoGrassPolygonSelected)
+        {
+            ResetHighlight();
+        }
+        return LevVisualChange.Nothing;
     }
 
     public void MouseUp()
     {
     }
 
-    public void UpdateHelp()
-    {
-        LevEditor.InfoLabel.Text = AutoGrassPolygonSelected
+    public string GetHelp() =>
+        AutoGrassPolygonSelected
             ? $"LMouse: apply AutoGrass; +/-: adjust thickness ({Global.AppSettings.LevelEditor.AutoGrassThickness:F3}); RMouse: cancel."
             : "LMouse: select ground polygon to create grass polygon for.";
-    }
 
     internal List<Polygon> AutoGrass(Polygon poly)
     {
         var polygons = CreateGrassPolygons(poly);
-        polygons.ForEach(p => p.UpdateDecompositionOrGrassSlopeInfo(Lev.GroundBounds,
+        polygons.ForEach(p => p.UpdateGrassSlopeInfo(Lev.GroundBounds,
             LevEditor.Settings.RenderingSettings.GrassZoom));
         return polygons;
     }

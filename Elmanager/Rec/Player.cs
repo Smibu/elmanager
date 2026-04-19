@@ -23,11 +23,9 @@ internal class Player
     private double? _trip;
     internal readonly int Turns;
     private List<PlayerEvent<LogicalEventType>>? _voltEvents;
-    private const double ArmForwardTime = 0.2;
-    public const double ArmRotationDelay = 0.916;
-    private const double HeadDiff = 0.0915;
-    private const double HeightConst = 0.632;
-    private const double MaxArmRotation = 95;
+    private List<PlayerEvent<LogicalEventType>>? _turnEvents;
+    private const double HeadDiff = 0.09;
+    private const double HeightConst = 0.63;
     private const double WheelRotationFactor = 1 / 250.0;
 
     private readonly Vector[] _globalBody;
@@ -90,16 +88,6 @@ internal class Player
             var dirData = rec.ReadByte();
             gas.Add(dirData % 2 == 1);
             _direction.Add(dirData % 4 < 2 ? Direction.Left : Direction.Right);
-        }
-
-        // Compute final head position
-        for (var i = 0; i < frameCount; i++)
-        {
-            var dirf = 2 * (int)_direction[i] - 1; // 0 -> -1, 1 -> 1
-            _head[i].X += Math.Cos(_bikeRotation[i] + Math.PI / 2) * HeightConst +
-                          Math.Cos(_bikeRotation[i]) * HeadDiff * dirf;
-            _head[i].Y += Math.Sin(_bikeRotation[i] + Math.PI / 2) * HeightConst +
-                          Math.Sin(_bikeRotation[i]) * HeadDiff * dirf;
         }
 
         // Skip rotation speed and collision data - they're not needed for replay playing except for sounds.
@@ -301,61 +289,103 @@ internal class Player
     internal bool FakeFinish => Events.Count > 0 && Events.Last().Type == LogicalEventType.FlowerTouch;
     internal bool IsLastEventApple => Events.Count > 0 && Events.Last().Type == LogicalEventType.AppleTake;
 
-    private double GetArmRotation(double currentTime)
+    private static double GetArmRotation(IReadOnlyList<PlayerEvent<LogicalEventType>> voltEvents, double time, Direction dir)
     {
-        _voltEvents ??= GetEvents(LogicalEventType.LeftVolt, LogicalEventType.RightVolt, LogicalEventType.SuperVolt);
-
-        var upperIndex = _voltEvents.Count;
-        var lowerIndex = 0;
-        var lastIndex = -1;
-        while (lowerIndex != upperIndex)
+        int index = -1;
+        int low = 0;
+        int high = voltEvents.Count - 1;
+        while (low <= high)
         {
-            var currIndex = (lowerIndex + upperIndex) / 2;
-            var currTime = _voltEvents[currIndex].Time;
-            var difference = currentTime - currTime;
-            if (difference > 0 && difference < ArmRotationDelay)
+            int mid = low + (high - low) / 2;
+            if (voltEvents[mid].Time <= time)
             {
-                return GetArmRotationFromLastVolt(difference, _voltEvents[currIndex].Type == LogicalEventType.RightVolt);
-            }
-
-            if (currTime < currentTime)
-            {
-                lowerIndex = currIndex;
+                index = mid;
+                low = mid + 1;
             }
             else
             {
-                upperIndex = currIndex;
+                high = mid - 1;
             }
-
-            if (lastIndex == currIndex)
-                lowerIndex++;
-            lastIndex = currIndex;
         }
 
-        return 0.0;
+        if (index < 0)
+        {
+            return 0.0;
+        }
+
+        var evt = voltEvents[index];
+        return GetArmRotForEvent(evt, time, dir);
     }
 
-    public static double GetArmRotationFromLastVolt(double difference, bool isRightVolt)
+    public static double GetArmRotForEvent(PlayerEvent<LogicalEventType> evt, double time, Direction dir)
     {
-        if (difference < ArmForwardTime)
+        var diff = time - evt.Time;
+        var max = 0.917;
+
+        bool isLeftVolt = evt.Type == LogicalEventType.LeftVolt || evt.Type == LogicalEventType.SuperVolt;
+        bool isDownwards = isLeftVolt ^ (dir == Direction.Left);
+        double raiseTime = isDownwards ? 0.19 : 0.23;
+
+        double amount;
+        if (diff < raiseTime)
         {
-            if (isRightVolt)
-                return MaxArmRotation * difference / ArmForwardTime;
-            return -MaxArmRotation * difference / ArmForwardTime;
+            amount = diff / raiseTime;
+        }
+        else if (diff < max)
+        {
+            amount = 1.0 - (diff - raiseTime) / (max - raiseTime);
+        }
+        else
+        {
+            amount = 0.0;
         }
 
-        if (isRightVolt)
-            return (MaxArmRotation -
-                    MaxArmRotation * (difference - ArmForwardTime) /
-                    (ArmRotationDelay - ArmForwardTime));
-        return
-            -(MaxArmRotation -
-              MaxArmRotation * (difference - ArmForwardTime) /
-              (ArmRotationDelay - ArmForwardTime));
+        return isDownwards ? -amount : amount;
+    }
+
+    private static (Direction Dir, double Progress) GetTurnProgress(IReadOnlyList<PlayerEvent<LogicalEventType>> turnEvents, double time)
+    {
+        int index = -1;
+        int low = 0;
+        int high = turnEvents.Count - 1;
+        while (low <= high)
+        {
+            int mid = low + (high - low) / 2;
+            if (turnEvents[mid].Time <= time)
+            {
+                index = mid;
+                low = mid + 1;
+            }
+            else
+            {
+                high = mid - 1;
+            }
+        }
+
+        if (index < 0)
+        {
+            return (Direction.Left, -1.0);
+        }
+
+        var evt = turnEvents[index];
+        var dir = index % 2 == 1 ? Direction.Left : Direction.Right;
+
+        return GetTurnProgressForEvent(time, evt.Time, dir);
+    }
+
+    public static (Direction Dir, double Progress) GetTurnProgressForEvent(double time, double evt, Direction dir)
+    {
+        var diff = time - evt;
+        var max = 0.83;
+        var dirF = dir == Direction.Left ? -1.0 : 1.0;
+        return (dir, (-1.0 + Math.Min(diff / max, 1.0) * 2.0) * dirF);
     }
 
     internal PlayerState GetInterpolatedState(double time)
     {
+        _voltEvents ??= GetEvents(LogicalEventType.LeftVolt, LogicalEventType.RightVolt, LogicalEventType.SuperVolt);
+        _turnEvents ??= GetEvents(LogicalEventType.Turn);
+
         var currIndex = (int)Math.Floor(time * 30);
         var step = time * 30 - currIndex;
         var maxFrameIndex = FrameCount - 1;
@@ -387,14 +417,23 @@ internal class Player
         var rightwheel2 = _rightWheel[i2];
         var global1 = _globalBody[i1];
         var global2 = _globalBody[i2];
+        var prog = GetTurnProgress(_turnEvents, time);
+        var dirf = 2 * (int)prog.Dir - 1;
+        var bikeRotation = Interpolate(bikeRotation1, bikeRotation2, step);
+        var headX = Interpolate(head1.X, head2.X, step) +
+                    Math.Cos(bikeRotation + Math.PI / 2) * HeightConst +
+                    Math.Cos(bikeRotation) * HeadDiff * dirf;
+        var headY = Interpolate(head1.Y, head2.Y, step) +
+                    Math.Sin(bikeRotation + Math.PI / 2) * HeightConst +
+                    Math.Sin(bikeRotation) * HeadDiff * dirf;
         return new PlayerState(
-            Interpolate(global1.X, global2.X, step), Interpolate(global1.Y, global2.Y, step),
-            Interpolate(leftwheel1.X, leftwheel2.X, step), Interpolate(leftwheel1.Y, leftwheel2.Y, step),
-            Interpolate(rightwheel1.X, rightwheel2.X, step), Interpolate(rightwheel1.Y, rightwheel2.Y, step),
+            new Vector(Interpolate(global1.X, global2.X, step), Interpolate(global1.Y, global2.Y, step)),
+            new Vector(Interpolate(leftwheel1.X, leftwheel2.X, step), Interpolate(leftwheel1.Y, leftwheel2.Y, step)),
+            new Vector(Interpolate(rightwheel1.X, rightwheel2.X, step), Interpolate(rightwheel1.Y, rightwheel2.Y, step)),
             Interpolate(lWheelRotate1, lWheelRotate2, step), Interpolate(rWheelRotate1, rWheelRotate2, step),
-            Interpolate(head1.X, head2.X, step), Interpolate(head1.Y, head2.Y, step),
-            Interpolate(bikeRotation1, bikeRotation2, step) / (2 * Math.PI) * 360, _direction[i1],
-            GetArmRotation(time));
+            new Vector(headX, headY),
+            bikeRotation / (2 * Math.PI) * 360, prog.Dir,
+            GetArmRotation(_voltEvents, time, prog.Dir), prog.Progress);
     }
 
     internal double TopSpeed

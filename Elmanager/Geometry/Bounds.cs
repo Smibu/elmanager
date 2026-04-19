@@ -9,6 +9,9 @@ internal struct Bounds
     public required double YMin;
     public required double YMax;
 
+    public double XSize => XMax - XMin;
+    public double YSize => YMax - YMin;
+
     public Bounds Max(Bounds o) =>
         new()
         {

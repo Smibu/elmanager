@@ -5,16 +5,23 @@ using Elmanager.Lgr;
 
 namespace Elmanager.Rendering;
 
-internal record GrassImage(LgrImage Image, int Delta)
+internal class GrassImage
 {
-    public GrassImage SetAlphaIgnore(int alphaValue, int heightExtension)
-    {
-        var bmp = new Bitmap(Image.Bmp.Width, Image.Bmp.Height + heightExtension, PixelFormat.Format32bppArgb);
-        using (var g = Graphics.FromImage(bmp))
-        {
-            g.DrawImage(Image.Bmp, 0, heightExtension);
-        }
+    private const int GrassIgnoreAlpha = 0x7F;
 
+    public GrassImage(LgrImage image, int delta)
+    {
+        Image = image;
+        Delta = delta;
+        SetAlphaIgnore(GrassIgnoreAlpha);
+    }
+
+    public LgrImage Image { get; }
+    public int Delta { get; }
+
+    private void SetAlphaIgnore(int alphaValue)
+    {
+        var bmp = Image.Bmp;
         var bmpData = bmp.LockBits(
             new Rectangle(0, 0, bmp.Width, bmp.Height),
             ImageLockMode.ReadWrite,
@@ -36,13 +43,12 @@ internal record GrassImage(LgrImage Image, int Delta)
                 }
 
                 // When rendering, we'll discard the bottom pixels with a magic alpha value.
-                // This way it's easy to render qgrass at the top part using a suitable blend function.
+                // This way it's easy to render qgrass at the top part in the shader.
                 data[y * perRow + x] = alphaValue << 24;
             }
         }
 
         Marshal.Copy(data, 0, bmpData.Scan0, data.Length);
         bmp.UnlockBits(bmpData);
-        return this with { Image = Image with { Bmp = bmp } };
     }
 }

@@ -19,22 +19,19 @@ internal class PictureTool : ToolBase, IEditorTool
 
     public void Activate()
     {
-        UpdateHelp();
     }
 
     public void ExtraRendering()
     {
     }
 
-    public TransientElements GetTransientElements() => _currentElem is not null
+    public TransientElements GetTransientElements(bool hasFocus) => _currentElem is not null && hasFocus
         ? TransientElements.FromGraphicElements(new List<GraphicElement> { _currentElem })
         : TransientElements.Empty;
 
-    public void InActivate()
-    {
-    }
+    public LevVisualChange InActivate() => LevVisualChange.GraphicElements;
 
-    public void KeyDown(KeyEventArgs key)
+    public LevVisualChange KeyDown(KeyEventArgs key)
     {
         switch (key.KeyCode)
         {
@@ -58,9 +55,10 @@ internal class PictureTool : ToolBase, IEditorTool
                 break;
         }
         UpdateCurrentElementPosition();
+        return LevVisualChange.GraphicElements;
     }
 
-    public void MouseDown(MouseEventArgs mouseData)
+    public LevVisualChange MouseDown(MouseEventArgs mouseData)
     {
         switch (mouseData.Button)
         {
@@ -70,7 +68,7 @@ internal class PictureTool : ToolBase, IEditorTool
                 {
                     Lev.GraphicElements.Add(_currentElem);
                     _currentElem = _currentElem with { };
-                    LevEditor.SetModified(LevModification.Decorations);
+                    LevEditor.SetModified(_currentElem is GraphicElement.Picture ? LevModification.Pictures : LevModification.Textures);
                 }
                 else
                     OpenDialog();
@@ -80,6 +78,7 @@ internal class PictureTool : ToolBase, IEditorTool
                 OpenDialog();
                 break;
         }
+        return LevVisualChange.Nothing;
     }
 
     private Vector GetAnchorOffset(GraphicElement elem) =>
@@ -93,11 +92,12 @@ internal class PictureTool : ToolBase, IEditorTool
             _ => throw new ArgumentOutOfRangeException()
         };
 
-    public void MouseMove(Vector p)
+    public LevVisualChange MouseMove(Vector p)
     {
         CurrentPos = p;
         AdjustForGrid(ref CurrentPos);
         UpdateCurrentElementPosition();
+        return _currentElem is not null ? LevVisualChange.GraphicElements : LevVisualChange.Nothing;
     }
 
     private void UpdateCurrentElementPosition()
@@ -108,19 +108,14 @@ internal class PictureTool : ToolBase, IEditorTool
         }
     }
 
-    public void MouseOutOfEditor()
-    {
-    }
+    public LevVisualChange MouseOutOfEditor() => LevVisualChange.GraphicElements;
 
     public void MouseUp()
     {
     }
 
-    public void UpdateHelp()
-    {
-        LevEditor.InfoLabel.Text =
-            "LMouse: insert new element; RMouse: select element type; 1-5: change placement anchor.";
-    }
+    public string GetHelp() =>
+        "LMouse: insert new element; RMouse: select element type; 1-5: change placement anchor.";
 
     private GraphicElement? OpenDialogNow(PictureForm picForm, bool setDefaultsAutomatically)
     {

@@ -11,7 +11,7 @@ namespace Elmanager.LevelEditor.Shapes;
 
 internal class LevelControl : GLControl
 {
-    private ElmaRenderer _renderer;
+    private ElmaRenderer? _renderer;
     
     private Level _level;
     
@@ -25,7 +25,7 @@ internal class LevelControl : GLControl
     internal LevelControl(GLControl sharedContext, SceneSettings sceneSettings, RenderingSettings renderingSettings, ElmaRenderer elmaRenderer, Level level) :
         base(new GLControlSettings {
             AutoLoadBindings = false,
-            Profile = ContextProfile.Compatability
+            Profile = ContextProfile.Core
         })
     {
         _renderingSettings = renderingSettings;
@@ -35,8 +35,6 @@ internal class LevelControl : GLControl
         _zoomController = new ZoomController(_camera, _level, () => RedrawScene());
 
         _sceneSettings = sceneSettings;
-
-        _renderer = elmaRenderer;
 
         Load += (_, _) =>
         {
@@ -50,10 +48,13 @@ internal class LevelControl : GLControl
 
     private void UpdateRenderingContext()
     {
+        if (_renderer == null)
+        {
+            return;
+        }
         _renderer.UpdateSettings(_level, _renderingSettings);
-        _renderer.InitializeLevel(_level, _renderingSettings);
         _level.UpdateBounds();
-        _zoomController.ZoomFill(_renderingSettings);
+        _zoomController.ZoomFill(_renderingSettings, Width / (double)Height);
         ResetViewport();
         Render();
     }
@@ -127,12 +128,12 @@ internal class LevelControl : GLControl
         }
 
         GL.Viewport(0, 0, Width, Height);
-        _zoomController.ZoomFill(_renderingSettings);
+        _zoomController.ZoomFill(_renderingSettings, Width / (double)Height);
     }
 
     private void RedrawScene()
     {
-        _renderer.DrawScene(_level, _camera, _sceneSettings, _renderingSettings);
+        _renderer?.DrawScene(_camera, 0, _sceneSettings);
     }
 
     protected override void OnResize(EventArgs e)

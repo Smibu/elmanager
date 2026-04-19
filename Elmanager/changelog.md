@@ -1,5 +1,9 @@
 # Elmanager changelog
 
+## Upcoming
+* SLE / Replay viewer: Rewrote renderer using modern OpenGL. Performance is much better in big levels.
+* SLE / Replay viewer: Turn animation is shown.
+
 ## 13.8.2025
 * SLE: Added Shape tool for creating custom shapes. (@SjurdurS)
 * Improved error message for Steam Elma LGRs (they are not supported).

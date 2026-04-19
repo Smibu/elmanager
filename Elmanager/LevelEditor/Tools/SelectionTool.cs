@@ -38,7 +38,6 @@ internal class SelectionTool : ToolBase, IEditorTool
 
     public void Activate()
     {
-        UpdateHelp();
     }
 
     public void ExtraRendering()
@@ -49,13 +48,14 @@ internal class SelectionTool : ToolBase, IEditorTool
             Renderer.DrawPolygon(_selectionPoly, Color.Blue);
     }
 
-    public void InActivate()
+    public LevVisualChange InActivate()
     {
         Moving = false;
         RectSelecting = false;
+        return LevVisualChange.Nothing;
     }
 
-    public void KeyDown(KeyEventArgs key)
+    public LevVisualChange KeyDown(KeyEventArgs key)
     {
         switch (key.KeyCode)
         {
@@ -90,6 +90,8 @@ internal class SelectionTool : ToolBase, IEditorTool
                 UpdateAnimNumbers(9);
                 break;
         }
+
+        return LevVisualChange.Apples;
     }
 
     private void UpdateAnimNumbers(int animNum)
@@ -100,13 +102,13 @@ internal class SelectionTool : ToolBase, IEditorTool
         selected.ForEach(obj => obj.AnimationNumber = animNum);
         if (updated)
         {
-            LevEditor.SetModified(LevModification.Objects);
+            LevEditor.SetModified(LevModification.Apples);
         }
 
         ShowObjectInfo(GetNearestObjectIndex(CurrentPos));
     }
 
-    public void MouseDown(MouseEventArgs mouseData)
+    public LevVisualChange MouseDown(MouseEventArgs mouseData)
     {
         Vector p = CurrentPos;
         _currLevModification = LevModification.Nothing;
@@ -172,7 +174,7 @@ internal class SelectionTool : ToolBase, IEditorTool
                         MarkAllAs(VectorMark.None);
                         p.Mark = VectorMark.Selected;
                         ei.Polygon.Insert(nearestSegmentIndex + 1, p);
-                        LevEditor.SetModified(ei.Polygon.IsGrass ? LevModification.Decorations : LevModification.Ground);
+                        LevEditor.SetModified(ei.Polygon.IsGrass ? LevModification.Grass : LevModification.Ground);
                     }
                     else
                     {
@@ -244,9 +246,10 @@ internal class SelectionTool : ToolBase, IEditorTool
             case MouseButtons.Middle:
                 break;
         }
+        return LevVisualChange.Nothing;
     }
 
-    public void MouseMove(Vector p)
+    public LevVisualChange MouseMove(Vector p)
     {
         CurrentPos = p;
         if (Moving)
@@ -262,7 +265,7 @@ internal class SelectionTool : ToolBase, IEditorTool
             }
             if (Equals(p, _moveStartPosition))
             {
-                return;
+                return LevVisualChange.Nothing;
             }
             Vector delta = p - _moveStartPosition;
             Vector.MarkDefault = VectorMark.Selected;
@@ -279,25 +282,32 @@ internal class SelectionTool : ToolBase, IEditorTool
 
                 if (polygonMoved)
                 {
-                    x.UpdateDecompositionOrGrassSlopeInfo(Lev.GroundBounds, LevEditor.Settings.RenderingSettings.GrassZoom);
-                    anythingMoved |= x.IsGrass ? LevModification.Decorations : LevModification.Ground;
+                    x.UpdateGrassSlopeInfo(Lev.GroundBounds, LevEditor.Settings.RenderingSettings.GrassZoom);
+                    anythingMoved |= x.IsGrass ? LevModification.Grass : LevModification.Ground;
                 }
             }
 
             foreach (LevObject x in Lev.Objects.Where(x => x.Position.Mark == VectorMark.Selected))
             {
                 x.Position += delta;
-                anythingMoved |= LevModification.Objects;
+                anythingMoved |= x.Type switch
+                {
+                    ObjectType.Apple => LevModification.Apples,
+                    ObjectType.Killer => LevModification.Killers,
+                    ObjectType.Flower => LevModification.Flowers,
+                    ObjectType.Start => LevModification.Start,
+                    _ => LevModification.Nothing
+                };
             }
 
             foreach (GraphicElement z in Lev.GraphicElements.Where(z => z.Position.Mark == VectorMark.Selected))
             {
                 z.Position += delta;
-                anythingMoved |= LevModification.Decorations;
+                anythingMoved |= z is GraphicElement.Picture or GraphicElement.MissingPicture ? LevModification.Pictures : LevModification.Textures;
             }
 
             _currLevModification = anythingMoved;
-            if (anythingMoved.HasFlag(LevModification.Ground) || anythingMoved.HasFlag(LevModification.Objects))
+            if (anythingMoved.HasFlag(LevModification.Ground) || anythingMoved.HasFlag(LevModification.Apples) || anythingMoved.HasFlag(LevModification.Killers) || anythingMoved.HasFlag(LevModification.Flowers))
             {
                 LevEditor.PlayController.UpdateEngine(Lev);
             }
@@ -310,6 +320,7 @@ internal class SelectionTool : ToolBase, IEditorTool
 
             Vector.MarkDefault = VectorMark.None;
             _moveStartPosition = p;
+            return (LevVisualChange)anythingMoved;
         }
         else if (_selectionPoly is { })
         {
@@ -333,18 +344,16 @@ internal class SelectionTool : ToolBase, IEditorTool
             if (nearestVertex is NearestVertexInfo.EdgeInfo ei)
             {
                 ChangeCursorToHand();
-                ei.Polygon.Mark = PolygonMark.Highlight;
+                LevEditor.CurrentHighlight = new HighlightTarget.PolygonTarget(ei.Polygon);
                 LevEditor.HighlightLabel.Text = ei.Polygon.IsGrass ? "Grass" : "Ground";
                 LevEditor.HighlightLabel.Text += " polygon, " + ei.Polygon.Vertices.Count + " vertices";
             }
             else if (nearestVertex is NearestVertexInfo.VertexInfo vi)
             {
                 ChangeCursorToHand();
-                Vector b = vi.Polygon.Vertices[vi.Index];
-                if (b.Mark == VectorMark.None)
+                if (vi.Polygon.Vertices[vi.Index].Mark == VectorMark.None)
                 {
-                    b.Mark = VectorMark.Highlight;
-                    vi.Polygon.Vertices[vi.Index] = b;
+                    LevEditor.CurrentHighlight = new HighlightTarget.VertexTarget(vi.Polygon, vi.Index);
                 }
                 LevEditor.HighlightLabel.Text = vi.Polygon.IsGrass ? "Grass" : "Ground";
                 LevEditor.HighlightLabel.Text += " polygon, vertex " + (vi.Index + 1) + " of " +
@@ -354,14 +363,14 @@ internal class SelectionTool : ToolBase, IEditorTool
             {
                 ChangeCursorToHand();
                 if (Lev.Objects[nearestObject].Mark == VectorMark.None)
-                    Lev.Objects[nearestObject].Mark = VectorMark.Highlight;
+                    LevEditor.CurrentHighlight = new HighlightTarget.ObjectTarget(nearestObject);
                 ShowObjectInfo(nearestObject);
             }
             else if (nearestTextureIndex >= 0)
             {
                 ChangeCursorToHand();
                 if (Lev.GraphicElements[nearestTextureIndex].Mark == VectorMark.None)
-                    Lev.GraphicElements[nearestTextureIndex].Mark = VectorMark.Highlight;
+                    LevEditor.CurrentHighlight = new HighlightTarget.GraphicElementTarget(nearestTextureIndex);
                 ShowTextureInfo(nearestTextureIndex);
             }
             else if (nearestBodyPart is { })
@@ -370,7 +379,7 @@ internal class SelectionTool : ToolBase, IEditorTool
                 LevEditor.HighlightLabel.Text = "Player";
                 if (LevEditor.PlayController.PlayerSelection == VectorMark.None)
                 {
-                    LevEditor.PlayController.PlayerSelection = VectorMark.Highlight;
+                    LevEditor.CurrentHighlight = new HighlightTarget.PlayerTarget();
                 }
             }
             else
@@ -379,11 +388,14 @@ internal class SelectionTool : ToolBase, IEditorTool
                 LevEditor.HighlightLabel.Text = "";
             }
         }
+
+        return LevVisualChange.Nothing;
     }
 
-    public void MouseOutOfEditor()
+    public LevVisualChange MouseOutOfEditor()
     {
         ResetHighlight();
+        return LevVisualChange.Nothing;
     }
 
     public void MouseUp()
@@ -505,10 +517,8 @@ internal class SelectionTool : ToolBase, IEditorTool
             z.Mark = VectorMark.None;
     }
 
-    public void UpdateHelp()
-    {
-        LevEditor.InfoLabel.Text = "LMouse: select level elements; LShift: bend edge; LShift + click: lock edge angle; LAlt + click: select all inside.";
-    }
+    public string GetHelp() =>
+        "LMouse: select level elements; LShift: bend edge; LShift + click: lock edge angle; LAlt + click: select all inside.";
 
     private static void MarkSelectedInArea<T>(ref T z, double selectionxMin, double selectionxMax,
         double selectionyMin, double selectionyMax) where

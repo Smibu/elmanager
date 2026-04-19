@@ -1,43 +1,45 @@
 using Elmanager.Geometry;
 using Elmanager.Rec;
+using Elmanager.Utilities;
 
 namespace Elmanager.ElmaPrimitives;
 
 internal readonly struct PlayerState
 {
-    public PlayerState(double globalBodyX, double globalBodyY, double leftWheelX, double leftWheelY, double rightWheelX, double rightWheelY, double leftWheelRotation, double rightWheelRotation, double headX, double headY, double bikeRotation, Direction direction, double armRotation)
+    public PlayerState(Vector globalBody, Vector leftWheel, Vector rightWheel,
+        double leftWheelRotation, double rightWheelRotation, Vector head,
+        double bikeRotation, Direction direction, double armRotation, double turnProgress)
     {
-        GlobalBodyX = globalBodyX;
-        GlobalBodyY = globalBodyY;
-        LeftWheelX = leftWheelX;
-        LeftWheelY = leftWheelY;
-        RightWheelX = rightWheelX;
-        RightWheelY = rightWheelY;
+        GlobalBody = globalBody;
+        LeftWheel = leftWheel;
+        RightWheel = rightWheel;
         LeftWheelRotation = leftWheelRotation;
         RightWheelRotation = rightWheelRotation;
-        HeadX = headX;
-        HeadY = headY;
+        Head = head;
         BikeRotation = bikeRotation;
         Direction = direction;
         ArmRotation = armRotation;
+        TurnProgress = turnProgress;
     }
 
-    public readonly double GlobalBodyX;
-    public readonly double GlobalBodyY;
-    public readonly double LeftWheelX;
-    public readonly double LeftWheelY;
-    public readonly double RightWheelX;
-    public readonly double RightWheelY;
+    public readonly Vector GlobalBody;
+    public readonly Vector LeftWheel;
+    public readonly Vector RightWheel;
     public readonly double LeftWheelRotation;
     public readonly double RightWheelRotation;
-    public readonly double HeadX;
-    public readonly double HeadY;
+    public readonly Vector Head;
     public readonly double BikeRotation;
     public readonly Direction Direction;
     public readonly double ArmRotation;
-    public bool IsRight => Direction == Direction.Right;
+    public readonly double TurnProgress;
 
-    public Vector LeftWheel => new(LeftWheelX, LeftWheelY);
-    public Vector RightWheel => new(RightWheelX, RightWheelY);
-    public Vector Head => new(HeadX, HeadY);
+    public Vector HeadCenter
+    {
+        get
+        {
+            var rotDir = Vector.FromRadians(BikeRotation * MathUtils.DegToRad);
+            var dirSign = Direction == Direction.Right ? -1.0 : 1.0;
+            return Head + rotDir * (dirSign * 0.09);
+        }
+    }
 }

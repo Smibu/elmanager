@@ -4,6 +4,7 @@ using System.Windows.Forms;
 using Elmanager.Application;
 using Elmanager.Geometry;
 using Elmanager.Lev;
+using Elmanager.Rendering;
 using Elmanager.Utilities;
 
 namespace Elmanager.LevelEditor.Tools;
@@ -24,14 +25,10 @@ internal class DrawTool : ToolBase, IEditorTool
 
     public void Activate()
     {
-        UpdateHelp();
     }
 
-    public void UpdateHelp()
-    {
-        LevEditor.InfoLabel.Text =
-            $"Hold LMouse to create vertex; +/-: adjust threshold ({Global.AppSettings.LevelEditor.DrawStep:F2})";
-    }
+    public string GetHelp() =>
+        $"Hold LMouse to create vertex; +/-: adjust threshold ({Global.AppSettings.LevelEditor.DrawStep:F2})";
 
     public void ExtraRendering()
     {
@@ -39,12 +36,13 @@ internal class DrawTool : ToolBase, IEditorTool
             Renderer.DrawLine(_currentPolygon.GetLastVertex(), _currentPolygon.Vertices[0], Color.Red);
     }
 
-    public void InActivate()
+    public LevVisualChange InActivate()
     {
         _currentPolygon = null;
+        return LevVisualChange.Nothing;
     }
 
-    public void KeyDown(KeyEventArgs key)
+    public LevVisualChange KeyDown(KeyEventArgs key)
     {
         switch (key.KeyCode)
         {
@@ -60,10 +58,10 @@ internal class DrawTool : ToolBase, IEditorTool
                 break;
         }
 
-        UpdateHelp();
+        return LevVisualChange.Nothing;
     }
 
-    public void MouseDown(MouseEventArgs mouseData)
+    public LevVisualChange MouseDown(MouseEventArgs mouseData)
     {
         switch (mouseData.Button)
         {
@@ -76,12 +74,13 @@ internal class DrawTool : ToolBase, IEditorTool
             case MouseButtons.Right:
                 break;
         }
+        return LevVisualChange.Nothing;
     }
 
-    public void MouseMove(Vector p)
+    public LevVisualChange MouseMove(Vector p)
     {
         CurrentPos = p;
-        if (_currentPolygon is null) return;
+        if (_currentPolygon is null) return LevVisualChange.Nothing;
         _mouseTrip += (p - _lastMousePosition).Length;
         _lastMousePosition = p;
         var scaledStep = Global.AppSettings.LevelEditor.DrawStep * ZoomCtrl.ZoomLevel * 0.1;
@@ -92,13 +91,14 @@ internal class DrawTool : ToolBase, IEditorTool
             _currentPolygon.Add(p);
             if (_currentPolygon.Vertices.Count == 3)
                 Lev.Polygons.Add(_currentPolygon);
-            if (_currentPolygon.Vertices.Count > 2)
-                _currentPolygon.UpdateDecomposition();
+            return LevVisualChange.Ground;
         }
+        return LevVisualChange.Nothing;
     }
 
-    public void MouseOutOfEditor()
+    public LevVisualChange MouseOutOfEditor()
     {
+        return LevVisualChange.Nothing;
     }
 
     public void MouseUp()
@@ -106,7 +106,6 @@ internal class DrawTool : ToolBase, IEditorTool
         if (_currentPolygon is null) return;
         if (_currentPolygon.Vertices.Count > 2)
         {
-            _currentPolygon.UpdateDecomposition();
             LevEditor.SetModified(LevModification.Ground);
         }
 

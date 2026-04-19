@@ -4,6 +4,7 @@ using System.Windows.Input;
 using Elmanager.Application;
 using Elmanager.Geometry;
 using Elmanager.Lev;
+using Elmanager.Rendering;
 using KeyEventArgs = System.Windows.Forms.KeyEventArgs;
 using MouseEventArgs = System.Windows.Forms.MouseEventArgs;
 
@@ -22,19 +23,18 @@ internal class VertexTool : ToolBase, IEditorTool
 
     public void Activate()
     {
-        UpdateHelp();
     }
 
-    public void UpdateHelp()
+    public string GetHelp()
     {
-        LevEditor.InfoLabel.Text =
-            "LMouse: create vertex. Click near an edge of a polygon to add vertices to it. LShift + click: create rectangle.";
+        var text = "LMouse: create vertex. Click near an edge of a polygon to add vertices to it. LShift + click: create rectangle.";
         if (_currentPolygon is { })
         {
             var lngth = (_currentPolygon.Vertices[^1] -
                          _currentPolygon.Vertices[^2]).Length;
-            LevEditor.InfoLabel.Text += $" Edge length: {lngth:F3}";
+            text += $" Edge length: {lngth:F3}";
         }
+        return text;
     }
 
     public void ExtraRendering()
@@ -56,21 +56,26 @@ internal class VertexTool : ToolBase, IEditorTool
         }
     }
 
-    public void InActivate()
+    public LevVisualChange InActivate()
     {
         FinishVertexCreation();
+        return LevVisualChange.Nothing;
     }
 
-    public void KeyDown(KeyEventArgs key)
+    public LevVisualChange KeyDown(KeyEventArgs key)
     {
-        if (key.KeyCode != Keys.Space || _currentPolygon is null) return;
-        _currentPolygon.RemoveLastVertex();
-        _currentPolygon.ChangeOrientation();
-        _currentPolygon.Add(CurrentPos);
-        _currentPolygon.UpdateDecompositionOrGrassSlopeInfo(Lev.GroundBounds, LevEditor.Settings.RenderingSettings.GrassZoom);
+        if (key.KeyCode == Keys.Space && _currentPolygon is not null)
+        {
+            _currentPolygon.RemoveLastVertex();
+            _currentPolygon.ChangeOrientation();
+            _currentPolygon.Add(CurrentPos);
+            _currentPolygon.UpdateGrassSlopeInfo(Lev.GroundBounds, LevEditor.Settings.RenderingSettings.GrassZoom);
+        }
+
+        return LevVisualChange.Nothing;
     }
 
-    public void MouseDown(MouseEventArgs mouseData)
+    public LevVisualChange MouseDown(MouseEventArgs mouseData)
     {
         switch (mouseData.Button)
         {
@@ -81,10 +86,10 @@ internal class VertexTool : ToolBase, IEditorTool
                 {
                     var rect = Polygon.Rectangle(r, CurrentPos);
                     Lev.Polygons.Add(rect);
-                    rect.UpdateDecompositionOrGrassSlopeInfo(Lev.GroundBounds, LevEditor.Settings.RenderingSettings.GrassZoom);
+                    rect.UpdateGrassSlopeInfo(Lev.GroundBounds, LevEditor.Settings.RenderingSettings.GrassZoom);
                     LevEditor.SetModified(LevModification.Ground);
                     _rectangleStart = null;
-                    return;
+                    return LevVisualChange.Nothing;
                 }
 
                 if (_currentPolygon is null)
@@ -113,7 +118,7 @@ internal class VertexTool : ToolBase, IEditorTool
                     if (_currentPolygon.Vertices.Count == 3)
                     {
                         Lev.Polygons.Add(_currentPolygon);
-                        _currentPolygon.UpdateDecompositionOrGrassSlopeInfo(Lev.GroundBounds, LevEditor.Settings.RenderingSettings.GrassZoom);
+                        _currentPolygon.UpdateGrassSlopeInfo(Lev.GroundBounds, LevEditor.Settings.RenderingSettings.GrassZoom);
                     }
                 }
 
@@ -122,9 +127,10 @@ internal class VertexTool : ToolBase, IEditorTool
                 FinishVertexCreation();
                 break;
         }
+        return LevVisualChange.Nothing;
     }
 
-    public void MouseMove(Vector p)
+    public LevVisualChange MouseMove(Vector p)
     {
         CurrentPos = p;
         if (_currentPolygon is { })
@@ -132,8 +138,10 @@ internal class VertexTool : ToolBase, IEditorTool
             AdjustForGrid(ref CurrentPos);
             _currentPolygon.Vertices[^1] = CurrentPos;
             if (_currentPolygon.Vertices.Count > 2)
-                _currentPolygon.UpdateDecompositionOrGrassSlopeInfo(Lev.GroundBounds, LevEditor.Settings.RenderingSettings.GrassZoom);
-            UpdateHelp();
+            {
+                _currentPolygon.UpdateGrassSlopeInfo(Lev.GroundBounds, LevEditor.Settings.RenderingSettings.GrassZoom);
+                return _currentPolygon.IsGrass ? LevVisualChange.Grass : LevVisualChange.Ground;
+            }
         }
         else if (_rectangleStart is null)
         {
@@ -149,11 +157,14 @@ internal class VertexTool : ToolBase, IEditorTool
                 ChangeToDefaultCursorIfHand();
             }
         }
+
+        return LevVisualChange.Nothing;
     }
 
-    public void MouseOutOfEditor()
+    public LevVisualChange MouseOutOfEditor()
     {
         ResetHighlight();
+        return LevVisualChange.Nothing;
     }
 
     public void MouseUp()
@@ -167,14 +178,13 @@ internal class VertexTool : ToolBase, IEditorTool
             _currentPolygon.RemoveLastVertex();
             if (_currentPolygon.Vertices.Count > 2)
             {
-                _currentPolygon.UpdateDecompositionOrGrassSlopeInfo(Lev.GroundBounds, LevEditor.Settings.RenderingSettings.GrassZoom);
-                LevEditor.SetModified(_currentPolygon.IsGrass ? LevModification.Decorations : LevModification.Ground);
+                _currentPolygon.UpdateGrassSlopeInfo(Lev.GroundBounds, LevEditor.Settings.RenderingSettings.GrassZoom);
+                LevEditor.SetModified(_currentPolygon.IsGrass ? LevModification.Grass : LevModification.Ground);
             }
             else
                 Lev.Polygons.Remove(_currentPolygon);
 
             _currentPolygon = null;
-            UpdateHelp();
         }
         else if (_rectangleStart is { })
         {

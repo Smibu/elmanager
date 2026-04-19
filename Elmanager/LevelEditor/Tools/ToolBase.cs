@@ -227,30 +227,7 @@ internal abstract class ToolBase : IEditorToolBase
 
     protected void ResetHighlight()
     {
-        if (!Global.AppSettings.LevelEditor.UseHighlight)
-            return;
-        if (LevEditor.PlayController.PlayerSelection == VectorMark.Highlight)
-        {
-            LevEditor.PlayController.PlayerSelection = VectorMark.None;
-        }
-        foreach (Polygon x in Lev.Polygons)
-        {
-            if (x.Mark == PolygonMark.Highlight)
-                x.Mark = PolygonMark.None;
-            for (var index = 0; index < x.Vertices.Count; index++)
-            {
-                Vector z = x.Vertices[index];
-                if (z.Mark != VectorMark.Selected)
-                    x.Vertices[index] = new Vector(z.X, z.Y, VectorMark.None);
-            }
-        }
-
-        foreach (LevObject x in Lev.Objects)
-            if (x.Mark == VectorMark.Highlight)
-                x.Mark = VectorMark.None;
-        foreach (GraphicElement z in Lev.GraphicElements)
-            if (z.Mark == VectorMark.Highlight)
-                z.Mark = VectorMark.None;
+        LevEditor.CurrentHighlight = null;
     }
 
     protected void ResetPolygonMarks()

@@ -32,15 +32,12 @@ internal class RenderingSettings
         TextureFrameColor = Color.Red;
         VertexColor = Color.Red;
         SkyFillColor = Color.LightGray;
-        MaxDimensionColor = Color.Blue;
         AppleGravityArrowColor = Color.White;
         ShowGroundEdges = true;
         ShowPictureFrames = false;
         ShowTextureFrames = false;
         ShowObjectFrames = true;
         ShowGravityAppleArrows = true;
-        UseCirclesForVertices = false;
-        ShowMaxDimensions = false;
         ShowInactiveGrassEdges = false;
         DisableFrameBuffer = false;
     }
@@ -60,7 +57,6 @@ internal class RenderingSettings
         PictureFrameColor = s.PictureFrameColor;
         TextureFrameColor = s.TextureFrameColor;
         AppleGravityArrowColor = s.AppleGravityArrowColor;
-        MaxDimensionColor = s.MaxDimensionColor;
         SmoothZoomDuration = s.SmoothZoomDuration;
         GridSize = s.GridSize;
         LineWidth = s.LineWidth;
@@ -85,11 +81,11 @@ internal class RenderingSettings
         CircleDrawingAccuracy = s.CircleDrawingAccuracy;
         ShowObjectCenters = s.ShowObjectCenters;
         ShowGravityAppleArrows = s.ShowGravityAppleArrows;
-        UseCirclesForVertices = s.UseCirclesForVertices;
-        ShowMaxDimensions = s.ShowMaxDimensions;
         ShowInactiveGrassEdges = s.ShowInactiveGrassEdges;
         DisableFrameBuffer = s.DisableFrameBuffer;
         GrassZoom = s.GrassZoom;
+        LgrDisabled = s.LgrDisabled;
+        PicturesInBackground = s.PicturesInBackground;
     }
 
     internal virtual RenderingSettings Clone() => new(this);
@@ -133,8 +129,8 @@ internal class RenderingSettings
     [Category("Colors"), DisplayName("Apple gravity arrow"), JsonPropertyName("AppleGravityArrowColor"), Description(TransparencyTip)]
     public Color AppleGravityArrowColor { get; set; }
 
-    [Category("Colors"), DisplayName("Maximum dimensions"), JsonPropertyName("MaxDimensionColor"), Description(TransparencyTip)]
-    public Color MaxDimensionColor { get; set; }
+    [JsonPropertyName("PicturesInBackground"), DisplayName("Pictures in background")]
+    public bool PicturesInBackground { get; set; } = true;
 
     [DisplayName("Smooth zoom duration"), JsonPropertyName("SmoothZoomDuration")]
     public int SmoothZoomDuration
@@ -195,9 +191,6 @@ internal class RenderingSettings
         set => _vertexSize = value > 0 ? value : 0.02;
     }
 
-    [DisplayName("Use circles for vertices"), JsonPropertyName("UseCirclesForVertices")]
-    public bool UseCirclesForVertices { get; set; }
-
     [DisplayName("Smooth zoom enabled"), JsonPropertyName("SmoothZoomEnabled")]
     public bool SmoothZoomEnabled { get; set; }
 
@@ -252,9 +245,6 @@ internal class RenderingSettings
     [Category("Visibility"), DisplayName("Gravity apple arrows"), JsonPropertyName("ShowGravityAppleArrows")]
     public bool ShowGravityAppleArrows { get; set; }
 
-    [Category("Visibility"), DisplayName("Maximum dimensions"), JsonPropertyName("ShowMaxDimensions")]
-    public bool ShowMaxDimensions { get; set; }
-
     [Category("Visibility"), DisplayName("Inactive grass edges"), JsonPropertyName("ShowInactiveGrassEdges")]
     public bool ShowInactiveGrassEdges { get; set; }
 
@@ -263,6 +253,9 @@ internal class RenderingSettings
 
     [Category("Workarounds"), DisplayName("Disable framebuffer usage"), JsonPropertyName("DisableFrameBuffer")]
     public bool DisableFrameBuffer { get; set; }
+
+    [Browsable(false)]
+    public bool LgrDisabled { get; set; }
 
     [Browsable(false)]
     public bool ShowObjectsOrFrames => ShowObjects || ShowObjectFrames;
@@ -285,6 +278,11 @@ internal class RenderingSettings
 
     public string? ResolveLgr(Level lev)
     {
+        if (LgrDisabled)
+        {
+            return null;
+        }
+
         var lgrDir = Global.AppSettings.General.LgrDirectory;
         if (!Directory.Exists(lgrDir))
         {

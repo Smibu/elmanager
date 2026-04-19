@@ -13,14 +13,15 @@ internal class ObjectTree
 
     public ObjectTree(List<LevObject> objects)
     {
-        for (var i = 0; i < objects.Count; i++)
+        var sortedObjects = objects.OrderBy(x => LevObject.ObjSortOrder(x.Type));
+        foreach (var (i, obj) in sortedObjects.Select((obj, i) => (i, obj)))
         {
-            if (objects[i].Type == ObjectType.Start)
+            if (obj.Type == ObjectType.Start)
             {
                 continue;
             }
-            _tree.Insert(EdgeTree.EnvelopeFromCircle(objects[i].Position, OpenGlLgr.ObjectRadius),
-                new IndexedObject(i, objects[i]));
+            _tree.Insert(EdgeTree.EnvelopeFromCircle(obj.Position, OpenGlLgr.ObjectRadius),
+                new IndexedObject(i, obj));
         }
     }
 

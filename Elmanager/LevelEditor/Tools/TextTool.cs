@@ -8,6 +8,7 @@ using System.Windows.Markup;
 using System.Windows.Media;
 using Elmanager.Geometry;
 using Elmanager.Lev;
+using Elmanager.Rendering;
 using NetTopologySuite.Geometries;
 using Brushes = System.Windows.Media.Brushes;
 using Color = System.Drawing.Color;
@@ -38,7 +39,7 @@ internal class TextTool : ToolBase, IEditorTool
     {
     }
 
-    public void MouseDown(MouseEventArgs mouseData)
+    public LevVisualChange MouseDown(MouseEventArgs mouseData)
     {
         switch (mouseData.Button)
         {
@@ -77,6 +78,7 @@ internal class TextTool : ToolBase, IEditorTool
             default:
                 throw new ArgumentOutOfRangeException();
         }
+        return LevVisualChange.Nothing;
     }
 
     private void HandleChange(TextToolOptions obj)
@@ -89,17 +91,20 @@ internal class TextTool : ToolBase, IEditorTool
     {
     }
 
-    public void KeyDown(KeyEventArgs key)
+    public LevVisualChange KeyDown(KeyEventArgs key)
     {
+        return LevVisualChange.Nothing;
     }
 
-    public void MouseMove(Vector p)
+    public LevVisualChange MouseMove(Vector p)
     {
         CurrentPos = p;
+        return LevVisualChange.Nothing;
     }
 
-    public void MouseOutOfEditor()
+    public LevVisualChange MouseOutOfEditor()
     {
+        return LevVisualChange.Nothing;
     }
 
     public void ExtraRendering()
@@ -110,13 +115,13 @@ internal class TextTool : ToolBase, IEditorTool
         }
     }
 
-    public void InActivate()
+    public LevVisualChange InActivate()
     {
+        return LevVisualChange.Nothing;
     }
 
     public void Activate()
     {
-        UpdateHelp();
     }
 
     private List<Polygon> RenderString(TextToolOptions options, Vector offset)
@@ -177,35 +182,28 @@ internal class TextTool : ToolBase, IEditorTool
     {
         polys.ForEach(p => p.RemoveDuplicateVertices());
         polys.RemoveAll(p => p.Vertices.Count < 3);
-        try
+        var isects = GeometryUtils.GetIntersectionPoints(polys);
+        if (isects.Count > 0)
         {
-            var isects = GeometryUtils.GetIntersectionPoints(polys);
-            if (isects.Count > 0)
+            var f = GeometryFactory.Floating;
+            var iarray = polys.Select(p => p.ToIPolygon()).ToArray();
+
+            NetTopologySuite.Geometries.Geometry union = f.CreateMultiPolygon(iarray);
+            union = isects.Aggregate(union,
+                (current, vector) => current.Union(f.CreatePoint(vector).Buffer(0.0001, 1)));
+            polys.Clear();
+            switch (union)
             {
-                var f = GeometryFactory.Floating;
-                var iarray = polys.Select(p => p.ToIPolygon()).ToArray();
-
-                NetTopologySuite.Geometries.Geometry union = f.CreateMultiPolygon(iarray);
-                union = isects.Aggregate(union,
-                    (current, vector) => current.Union(f.CreatePoint(vector).Buffer(0.0001, 1)));
-                polys.Clear();
-                switch (union)
-                {
-                    case NetTopologySuite.Geometries.Polygon polygon:
-                        polys.AddRange(polygon.ToElmaPolygons());
-                        break;
-                    case MultiPolygon multiPolygon:
-                        polys.AddRange(multiPolygon.Geometries.Select(geometry => geometry as NetTopologySuite.Geometries.Polygon)
-                            .SelectMany(poly => poly!.ToElmaPolygons()));
-                        break;
-                }
-
-                polys.ForEach(p => p.MarkVectorsAs(VectorMark.Selected));
+                case NetTopologySuite.Geometries.Polygon polygon:
+                    polys.AddRange(polygon.ToElmaPolygons());
+                    break;
+                case MultiPolygon multiPolygon:
+                    polys.AddRange(multiPolygon.Geometries.Select(geometry => geometry as NetTopologySuite.Geometries.Polygon)
+                        .SelectMany(poly => poly!.ToElmaPolygons()));
+                    break;
             }
-        }
-        finally
-        {
-            polys.ForEach(p => p.UpdateDecomposition());
+
+            polys.ForEach(p => p.MarkVectorsAs(VectorMark.Selected));
         }
     }
 
@@ -377,10 +375,7 @@ internal class TextTool : ToolBase, IEditorTool
         }
     }
 
-    public void UpdateHelp()
-    {
-        LevEditor.InfoLabel.Text = "LMouse: open text input dialog.";
-    }
+    public string GetHelp() => "LMouse: open text input dialog.";
 
     public override bool Busy => false; // dialog is modal
 }

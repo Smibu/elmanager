@@ -1,8 +1,9 @@
 using Elmanager.Lgr;
+using Elmanager.Rendering.OpenGL;
 
 namespace Elmanager.Rendering;
 
-internal record DrawableImage(int TextureId, double Width, double Height, ImageMeta Meta)
+internal record DrawableImage(Texture Texture, double Width, double Height, ImageMeta Meta)
 {
     private const double PixelFactor = 1 / 48.0;
 
@@ -31,10 +32,4 @@ internal record DrawableImage(int TextureId, double Width, double Height, ImageM
     public string Name => Meta.Name;
 
     public ImageType Type => Meta.Type;
-
-    public ClippingType ClippingType => Meta.ClippingType;
-
-    public int Distance => Meta.Distance;
-
-    internal double AspectRatio => Width / Height;
 }

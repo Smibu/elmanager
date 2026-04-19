@@ -16,8 +16,6 @@ internal class ReplayViewerSettings
     public bool FollowDriver { get; set; } = true;
     [JsonPropertyName("FrameStep")]
     public double FrameStep { get; set; } = 0.02;
-    [JsonPropertyName("HideStartObject")]
-    public bool HideStartObject { get; set; } = true;
     [JsonPropertyName("LockedCamera")]
     public bool LockedCamera { get; set; }
     [JsonPropertyName("LoopPlaying")]
@@ -28,8 +26,6 @@ internal class ReplayViewerSettings
     public int MouseWheelStep { get; set; } = 20;
     [JsonPropertyName("MultiSpy")]
     public bool MultiSpy { get; set; }
-    [JsonPropertyName("PicturesInBackGround")]
-    public bool PicturesInBackGround { get; set; }
     [JsonPropertyName("RenderingSettings")]
     public ReplayViewerRenderingSettings RenderingSettings { get; set; } = new();
     [JsonPropertyName("ShowBikeCoords")]

@@ -445,12 +445,12 @@ internal class Level
 
     internal Level Clone() => new(this);
 
-    internal void UpdateAllPolygons(double grassZoom)
+    internal void UpdateGrass(double grassZoom)
     {
         var groundBounds = GetGroundBounds();
         foreach (var x in Polygons)
         {
-            x.UpdateDecompositionOrGrassSlopeInfo(groundBounds, grassZoom);
+            x.UpdateGrassSlopeInfo(groundBounds, grassZoom);
         }
     }
 

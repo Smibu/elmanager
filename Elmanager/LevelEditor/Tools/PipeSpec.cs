@@ -69,7 +69,6 @@ internal class PipeSpec
             p.Add(point);
         }
 
-        p.UpdateDecomposition();
         List<LevObject> apples;
         switch (pipeMode)
         {

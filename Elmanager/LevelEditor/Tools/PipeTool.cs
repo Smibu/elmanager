@@ -32,7 +32,6 @@ internal class PipeTool : ToolBase, IEditorTool
     public void Activate()
     {
         _pipeRadius = Global.AppSettings.LevelEditor.PipeRadius;
-        UpdateHelp();
     }
 
     public void ExtraRendering()
@@ -40,37 +39,27 @@ internal class PipeTool : ToolBase, IEditorTool
         if (_pipeSpec is { })
         {
             Renderer.DrawLineStrip(_pipeSpec.Pipeline, Color.Blue);
-            var settings = Global.AppSettings.LevelEditor.RenderingSettings;
-            if (settings.ShowGroundEdges)
-                Renderer.DrawPolygon(_pipeSpec.Pipe, settings.GroundEdgeColor);
-            foreach (LevObject x in _pipeSpec.Apples)
-            {
-                if (settings.ShowObjectFrames)
-                    Renderer.DrawCircle(x.Position, OpenGlLgr.ObjectRadius,
-                        settings.AppleColor, settings.CircleDrawingAccuracy);
-                if (Renderer.OpenGlLgr != null && settings.ShowObjects)
-                    Renderer.OpenGlLgr.DrawAppleSingle(x.Position);
-            }
         }
     }
 
-    public TransientElements GetTransientElements()
+    public TransientElements GetTransientElements(bool hasFocus)
     {
-        var polys = new List<Polygon>();
         if (_pipeSpec is { })
         {
-            polys.Add(_pipeSpec.Pipe);
+            return new TransientElements([_pipeSpec.Pipe], _pipeSpec.Apples, []);
         }
-        return TransientElements.FromPolygons(polys);
+
+        return TransientElements.Empty;
     }
 
-    public void InActivate()
+    public LevVisualChange InActivate()
     {
         _pipeSpec = null;
         Global.AppSettings.LevelEditor.PipeRadius = _pipeRadius;
+        return LevVisualChange.Ground | LevVisualChange.Apples;
     }
 
-    public void KeyDown(KeyEventArgs key)
+    public LevVisualChange KeyDown(KeyEventArgs key)
     {
         double radiusStep = PipeStep;
         switch (key.KeyCode)
@@ -134,7 +123,7 @@ internal class PipeTool : ToolBase, IEditorTool
 
         UpdatePipeSpec();
 
-        UpdateHelp();
+        return LevVisualChange.Ground | LevVisualChange.Apples;
     }
 
     private void UpdatePipeSpec()
@@ -143,7 +132,7 @@ internal class PipeTool : ToolBase, IEditorTool
             _pipeSpec = new PipeSpec(_pipeSpec.Pipeline, _pipeRadius, _pipeMode, _appleDistance, _appleAmount);
     }
 
-    public void MouseDown(MouseEventArgs mouseData)
+    public LevVisualChange MouseDown(MouseEventArgs mouseData)
     {
         switch (mouseData.Button)
         {
@@ -168,10 +157,14 @@ internal class PipeTool : ToolBase, IEditorTool
                     {
                         Lev.Polygons.Add(_pipeSpec.Pipe);
                         Lev.Objects.AddRange(_pipeSpec.Apples);
-                        LevEditor.SetModified(LevModification.Ground);
+                        _pipeSpec = null;
+                        LevEditor.SetModified(LevModification.Ground | LevModification.Apples);
                     }
-
-                    _pipeSpec = null;
+                    else
+                    {
+                        _pipeSpec = null;
+                        return LevVisualChange.Ground | LevVisualChange.Apples;
+                    }
                 }
 
                 break;
@@ -179,10 +172,10 @@ internal class PipeTool : ToolBase, IEditorTool
 
         UpdatePipeSpec();
 
-        UpdateHelp();
+        return LevVisualChange.Nothing;
     }
 
-    public void MouseMove(Vector p)
+    public LevVisualChange MouseMove(Vector p)
     {
         CurrentPos = p;
         AdjustForGrid(ref CurrentPos);
@@ -190,35 +183,36 @@ internal class PipeTool : ToolBase, IEditorTool
         {
             _pipeSpec.Pipeline.Vertices[^1] = CurrentPos;
             UpdatePipeSpec();
+            return LevVisualChange.Ground | LevVisualChange.Apples;
         }
+
+        return LevVisualChange.Nothing;
     }
 
-    public void MouseOutOfEditor()
-    {
-    }
+    public LevVisualChange MouseOutOfEditor() => LevVisualChange.Nothing;
 
     public void MouseUp()
     {
     }
 
-    public void UpdateHelp()
+    public string GetHelp()
     {
-        LevEditor.InfoLabel.Text = "LMouse: create pipe; Space: change mode (";
+        var text = "LMouse: create pipe; Space: change mode (";
         switch (_pipeMode)
         {
             case PipeMode.NoApples:
-                LevEditor.InfoLabel.Text += "no apples)";
+                text += "no apples)";
                 break;
             case PipeMode.ApplesDistance:
-                LevEditor.InfoLabel.Text += $"variable distance); Ctrl + +/-: adjust distance ({_appleDistance:F2})";
+                text += $"variable distance); Ctrl + +/-: adjust distance ({_appleDistance:F2})";
                 break;
             case PipeMode.ApplesAmount:
-                LevEditor.InfoLabel.Text += $"variable apples); Ctrl + +/-: adjust amount ({_appleAmount})";
+                text += $"variable apples); Ctrl + +/-: adjust amount ({_appleAmount})";
                 break;
         }
 
-        LevEditor.InfoLabel.Text += $"; +/- or Pg Up/Down: adjust pipe radius ({_pipeRadius:F2})";
-
+        text += $"; +/- or Pg Up/Down: adjust pipe radius ({_pipeRadius:F2})";
+        return text;
     }
 
     public override bool Busy => CreatingPipe;

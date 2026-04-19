@@ -1,18 +1,20 @@
 using System.Windows.Forms;
 using Elmanager.Geometry;
+using Elmanager.Rendering;
 
 namespace Elmanager.LevelEditor.Tools;
 
 internal interface IEditorTool : IEditorToolBase
 {
-    void MouseDown(MouseEventArgs mouseData);
+    LevVisualChange MouseDown(MouseEventArgs mouseData);
     void MouseUp();
-    void KeyDown(KeyEventArgs key);
-    void MouseMove(Vector p);
-    void MouseOutOfEditor();
+    LevVisualChange KeyDown(KeyEventArgs key);
+    LevVisualChange MouseMove(Vector p);
+    LevVisualChange MouseOutOfEditor();
+
     void ExtraRendering();
-    TransientElements GetTransientElements() => TransientElements.Empty;
-    void InActivate();
+    TransientElements GetTransientElements(bool hasFocus) => TransientElements.Empty;
+    LevVisualChange InActivate();
     void Activate();
-    void UpdateHelp();
+    string GetHelp();
 }

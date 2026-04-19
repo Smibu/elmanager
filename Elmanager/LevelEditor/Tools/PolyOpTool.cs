@@ -4,6 +4,7 @@ using System.Linq;
 using System.Windows.Forms;
 using Elmanager.Geometry;
 using Elmanager.Lev;
+using Elmanager.Rendering;
 using Elmanager.UI;
 using NetTopologySuite.Geometries;
 using NetTopologySuite.Operation.Buffer;
@@ -28,61 +29,66 @@ internal class PolyOpTool : ToolBase, IEditorTool
 
     public void Activate()
     {
-        UpdateHelp();
     }
 
-    public void UpdateHelp()
+    public string GetHelp()
     {
         char polyChar = FirstSelected ? 'B' : 'A';
-        LevEditor.InfoLabel.Text = _currentOpType switch
+        var text = _currentOpType switch
         {
             PolygonOperationType.Union => $"LMouse: select polygon {polyChar} (operation = A+B)",
             PolygonOperationType.Difference => $"LMouse: select polygon {polyChar} (operation = A-B)",
             PolygonOperationType.Intersection => "(This mode is not yet implemented.)",
-            _ => LevEditor.InfoLabel.Text
+            _ => ""
         };
 
         if (FirstSelected)
         {
-            LevEditor.InfoLabel.Text += "; RMouse: cancel.";
+            text += "; RMouse: cancel.";
         }
         else
         {
-            LevEditor.InfoLabel.Text += "; Space: change mode.";
+            text += "; Space: change mode.";
         }
+        return text;
     }
 
     public void ExtraRendering()
     {
     }
 
-    public void InActivate()
+    public LevVisualChange InActivate()
     {
-        if (_firstPolygon is null) return;
-        _firstPolygon.Mark = PolygonMark.None;
-        _firstPolygon = null;
-    }
-
-    public void KeyDown(KeyEventArgs key)
-    {
-        if (key.KeyCode != Keys.Space || FirstSelected) return;
-        switch (_currentOpType)
+        if (_firstPolygon is not null)
         {
-            case PolygonOperationType.Union:
-                _currentOpType = PolygonOperationType.Difference;
-                break;
-            case PolygonOperationType.Intersection:
-                break;
-
-            case PolygonOperationType.Difference:
-                _currentOpType = PolygonOperationType.Union;
-                break;
+            _firstPolygon.Mark = PolygonMark.None;
+            _firstPolygon = null;
         }
 
-        UpdateHelp();
+        return LevVisualChange.Nothing;
     }
 
-    public void MouseDown(MouseEventArgs mouseData)
+    public LevVisualChange KeyDown(KeyEventArgs key)
+    {
+        if (key.KeyCode == Keys.Space && !FirstSelected)
+        {
+            switch (_currentOpType)
+            {
+                case PolygonOperationType.Union:
+                    _currentOpType = PolygonOperationType.Difference;
+                    break;
+                case PolygonOperationType.Intersection:
+                    break;
+
+                case PolygonOperationType.Difference:
+                    _currentOpType = PolygonOperationType.Union;
+                    break;
+            }
+        }
+        return LevVisualChange.Nothing;
+    }
+
+    public LevVisualChange MouseDown(MouseEventArgs mouseData)
     {
         switch (mouseData.Button)
         {
@@ -111,7 +117,6 @@ internal class PolyOpTool : ToolBase, IEditorTool
 
                             _firstPolygon = null;
                             ResetPolygonMarks();
-                            UpdateHelp();
                         }
                     }
                 }
@@ -121,7 +126,6 @@ internal class PolyOpTool : ToolBase, IEditorTool
                     {
                         _firstPolygon = v.Polygon;
                         _firstPolygon.Mark = PolygonMark.Selected;
-                        UpdateHelp();
                     }
                 }
 
@@ -131,14 +135,14 @@ internal class PolyOpTool : ToolBase, IEditorTool
                 {
                     _firstPolygon = null;
                     ResetPolygonMarks();
-                    UpdateHelp();
                 }
 
                 break;
         }
+        return LevVisualChange.Nothing;
     }
 
-    public void MouseMove(Vector p)
+    public LevVisualChange MouseMove(Vector p)
     {
         CurrentPos = p;
         ResetHighlight();
@@ -146,15 +150,18 @@ internal class PolyOpTool : ToolBase, IEditorTool
         {
             ChangeCursorToHand();
             if (v.Polygon.Mark != PolygonMark.Selected)
-                v.Polygon.Mark = PolygonMark.Highlight;
+                LevEditor.CurrentHighlight = new HighlightTarget.PolygonTarget(v.Polygon);
         }
         else
             ChangeToDefaultCursorIfHand();
+
+        return LevVisualChange.Nothing;
     }
 
-    public void MouseOutOfEditor()
+    public LevVisualChange MouseOutOfEditor()
     {
         ResetHighlight();
+        return LevVisualChange.Nothing;
     }
 
     public void MouseUp()

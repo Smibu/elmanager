@@ -150,14 +150,15 @@ internal partial class ReplayViewerForm : FormMod
     {
         var mousePosNoTr = ViewerBox.PointToClient(MousePosition);
         var z = _replayController.ZoomCtrl;
+        var bounds = z.Cam.GetBounds(ViewerBox.Width / (double)ViewerBox.Height);
         var mousePos = new Vector
         {
             X =
-                z.Cam.XMin +
-                mousePosNoTr.X * (z.Cam.XMax - z.Cam.XMin) / ViewerBox.Width,
+                bounds.XMin +
+                mousePosNoTr.X * bounds.XSize / ViewerBox.Width,
             Y =
-                z.Cam.YMax -
-                mousePosNoTr.Y * (z.Cam.YMax - z.Cam.YMin) / ViewerBox.Height
+                bounds.YMax -
+                mousePosNoTr.Y * bounds.YSize / ViewerBox.Height
         };
         return mousePos;
     }
@@ -194,10 +195,8 @@ internal partial class ReplayViewerForm : FormMod
         MouseWheelZoomBox.Text = Global.AppSettings.ReplayViewer.MouseWheelStep.ToString();
         LockedCamBox.Checked = Global.AppSettings.ReplayViewer.LockedCamera;
         TransparentInactiveBox.Checked = Global.AppSettings.ReplayViewer.DrawTransparentInactive;
-        PictBackGroundBox.Checked = Global.AppSettings.ReplayViewer.PicturesInBackGround;
         PlayerFramesBox.Checked = Global.AppSettings.ReplayViewer.DrawOnlyPlayerFrames;
         SelectNoPlayersBox.Checked = Global.AppSettings.ReplayViewer.DontSelectPlayersByDefault;
-        HideStartObjectBox.Checked = Global.AppSettings.ReplayViewer.HideStartObject;
         multiSpyBox.Checked = Global.AppSettings.ReplayViewer.MultiSpy;
         WindowState = Global.AppSettings.ReplayViewer.WindowState;
         SetupEventHandlers();
@@ -262,7 +261,7 @@ internal partial class ReplayViewerForm : FormMod
                 ToggleFullScreen(null, null);
                 break;
             case Keys.F5:
-                _replayController.ZoomCtrl.ZoomFill(RenderingSettings);
+                _replayController.ZoomCtrl.ZoomFill(RenderingSettings, _replayController.Renderer.AspectRatio);
                 break;
             case Keys.Enter:
                 TextBoxKeyPress(e);
@@ -372,10 +371,8 @@ internal partial class ReplayViewerForm : FormMod
         settings.ShowDriverPath = ShowDriverPathBox.Checked;
         settings.LockedCamera = LockedCamBox.Checked;
         settings.DrawTransparentInactive = TransparentInactiveBox.Checked;
-        settings.PicturesInBackGround = PictBackGroundBox.Checked;
         settings.DrawOnlyPlayerFrames = PlayerFramesBox.Checked;
         settings.DontSelectPlayersByDefault = SelectNoPlayersBox.Checked;
-        settings.HideStartObject = HideStartObjectBox.Checked;
         settings.WindowState = WindowState;
         settings.MultiSpy = multiSpyBox.Checked;
     }
@@ -389,7 +386,7 @@ internal partial class ReplayViewerForm : FormMod
             Invoke(ope);
         };
 
-        ZoomFillButton.MouseDown += (_, _) => _replayController.ZoomCtrl.ZoomFill(RenderingSettings);
+        ZoomFillButton.MouseDown += (_, _) => _replayController.ZoomCtrl.ZoomFill(RenderingSettings, _replayController.Renderer.AspectRatio);
         PlayButton.MouseDown += (_, _) => _replayController.TogglePlay();
         StopButton.MouseDown += async (_, _) =>
         {
@@ -411,10 +408,8 @@ internal partial class ReplayViewerForm : FormMod
         LoopPlayingBox.CheckedChanged += RenderingOptionsChanged;
         FollowDriverBox.CheckedChanged += RenderingOptionsChanged;
         followAlsoWhenZooming.CheckedChanged += RenderingOptionsChanged;
-        PictBackGroundBox.CheckedChanged += RenderingOptionsChanged;
         TransparentInactiveBox.CheckedChanged += RenderingOptionsChanged;
         PlayerFramesBox.CheckedChanged += RenderingOptionsChanged;
-        HideStartObjectBox.CheckedChanged += RenderingOptionsChanged;
         playbackSpeedBar.ValueChanged += RenderingOptionsChanged;
         multiSpyBox.CheckedChanged += RenderingOptionsChanged;
         playbackSpeedBar.MouseWheel += TrackBarScrolled;
@@ -458,7 +453,7 @@ internal partial class ReplayViewerForm : FormMod
         }
         if (SaveFileDialog1.ShowDialog() == DialogResult.OK)
         {
-            using var bmp = ElmaRenderer.GetSnapShotOfCurrent(_replayController.ZoomCtrl);
+            using var bmp = _replayController.Renderer.GetSnapShotOfCurrent();
             bmp.Save(SaveFileDialog1.FileName, ImageFormat.Png);
         }
     }
@@ -564,8 +559,8 @@ internal partial class ReplayViewerForm : FormMod
         var zoomCtrl = _replayController.ZoomCtrl;
         if (_draggingScreen)
         {
-            zoomCtrl.CenterX = _moveStartPosition.X + (zoomCtrl.Cam.XMax + zoomCtrl.Cam.XMin) / 2 - mouse.X;
-            zoomCtrl.CenterY = _moveStartPosition.Y + (zoomCtrl.Cam.YMax + zoomCtrl.Cam.YMin) / 2 - mouse.Y;
+            zoomCtrl.CenterX = _moveStartPosition.X + zoomCtrl.CenterX - mouse.X;
+            zoomCtrl.CenterY = _moveStartPosition.Y + zoomCtrl.CenterY - mouse.Y;
         }
         else
         {
@@ -580,7 +575,7 @@ internal partial class ReplayViewerForm : FormMod
         _draggingScreen = false;
     }
 
-    private async void ViewerResized(object? sender = null, EventArgs? e = null)
+    private void ViewerResized(object? sender = null, EventArgs? e = null)
     {
         if (sender != null)
         {
@@ -590,7 +585,7 @@ internal partial class ReplayViewerForm : FormMod
 
         if (_replayController != null)
         {
-            await _replayController.ResetViewport(ViewerBox.Width, ViewerBox.Height);
+            _replayController.ResetViewport(ViewerBox.Width, ViewerBox.Height);
             if (_replayController.Lev != null)
             {
                 RedrawSceneIfNotPlaying();

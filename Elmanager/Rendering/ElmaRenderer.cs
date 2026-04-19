@@ -3,67 +3,199 @@ using System.Collections.Generic;
 using System.Drawing;
 using System.Drawing.Imaging;
 using System.IO;
-using System.Linq;
-using Elmanager.Application;
 using Elmanager.ElmaPrimitives;
 using Elmanager.Geometry;
 using Elmanager.Lev;
 using Elmanager.Lgr;
 using Elmanager.Rec;
 using Elmanager.Rendering.Camera;
+using Elmanager.Rendering.OpenGL;
+using Elmanager.Rendering.Scene;
 using Elmanager.UI;
 using Elmanager.Utilities;
-using OpenTK.Graphics.OpenGL;
-using OpenTK.Windowing.Common;
 using OpenTK.GLControl;
-using Color = System.Drawing.Color;
+using OpenTK.Graphics.OpenGL;
+using OpenTK.Mathematics;
+using OpenTK.Windowing.Common;
+using Buffer = Elmanager.Rendering.OpenGL.Buffer;
 using PixelFormat = System.Drawing.Imaging.PixelFormat;
 
 namespace Elmanager.Rendering;
 
 internal class ElmaRenderer : IDisposable
 {
-    private const double GroundDepth = 0;
-    public const int GroundStencil = 2;
-    private const double SkyDepth = 0;
-    private const int SkyStencil = 1;
-    public const int StencilMask = 255;
-    public const double TextureCoordConst = TextureVertexConst * 2;
-    public const double TextureVertexConst = 1000;
-    public const double TextureZoomConst = 10000.0;
-    public const double ZFar = 1;
-    public const double ZNear = -1;
-    private const int LinePattern = 0b0101010101010101;
+    private const double GroundDepth = 1000.0;
+    private const int GroundStencil = 0;
+    private const float MinDistance = 0.0f;
+    private const float MaxDistance = 999.0f;
 
-    private bool _disposed;
+    private readonly Vertices _quad;
+    private LevelGraphics? _graphics;
 
     private readonly IGraphicsContext _gfxContext;
+    private readonly Vertices _lineLoop;
     private int _frameBuffer;
     private int _colorRenderBuffer;
     private int _depthStencilRenderBuffer;
     private int _maxRenderbufferSize;
-    private LgrCache _lgrCache = new();
+    private readonly LgrCache _lgrCache = new();
+    private int _viewportWidth = 1;
+    private int _viewportHeight = 1;
+    internal double AspectRatio => _viewportWidth / (double)_viewportHeight;
+    internal int ViewportWidth => _viewportWidth;
+    internal int ViewportHeight => _viewportHeight;
 
-    internal ElmaRenderer(GLControl renderingTarget, RenderingSettings settings)
+    private UniformBuffer CameraUniforms { get; }
+    private UniformBuffer ColorUniforms { get; }
+    private Pipelines Pipelines { get; }
+    private readonly bool _ownsPipelines;
+
+    internal ElmaRenderer(GLControl renderingTarget, RenderingSettings settings, Pipelines? pipelines = null)
     {
-        _gfxContext = renderingTarget.Context;
+        _gfxContext = renderingTarget.Context!;
         InitializeOpengl(disableFrameBuffer: settings.DisableFrameBuffer);
+        _gfxContext.MakeCurrent();
+
+        Pipelines = pipelines ?? new Pipelines();
+        _ownsPipelines = pipelines == null;
+
+        _quad = CreateQuad();
+        _lineLoop = CreateLineLoop();
+
+        CameraUniforms = new UniformBuffer(0);
+        ColorUniforms = new UniformBuffer(1);
+        ColorUniforms.BindBufferBase();
+        CameraUniforms.BindBufferBase();
     }
-    internal ElmaRenderer(GLControl renderingTarget, RenderingSettings settings, ElmaRenderer otherElmaRenderer) : this(renderingTarget, settings)
+
+    internal ElmaRenderer(GLControl renderingTarget, RenderingSettings settings, ElmaRenderer otherElmaRenderer) : this(renderingTarget, settings, otherElmaRenderer.Pipelines)
     {
-        // Might cause an issue during memory cleanup!
-        _lgrCache = otherElmaRenderer._lgrCache;
-        OpenGlLgr = otherElmaRenderer.OpenGlLgr;
     }
 
-    public OpenGlLgr? OpenGlLgr { get; private set; }
+    public OpenGlLgr? OpenGlLgr => _graphics?.LgrGraphics?.Lgr;
+    private float _grassZoom = 1.0f;
+    private bool _zoomTextures = true;
 
-    public void Dispose()
+    private void InitializeBuffers(Level lev, OpenGlLgr? lgr, RenderingSettings settings)
     {
-        Dispose(true);
+        _graphics?.Dispose();
+        _grassZoom = (float)settings.GrassZoom;
+        _zoomTextures = settings.ZoomTextures;
+        GL.LineWidth(settings.LineWidth);
+        var state = new LevEditState(lev, TransientElements.Empty);
+        _graphics = new LevelGraphics(
+            GroundSky: GroundSky.Create(state, lgr, settings, Pipelines.White1X1Texture),
+            Objects: Objects.Create(state, settings, _quad),
+            ObjectFrames: ObjectFrames.Create(settings),
+            PolygonFrames: PolygonFrames.Create(state, settings),
+            GraphicElementFrames: GraphicElementFrames.Create(state, settings, _lineLoop),
+            Lines: Lines.Create(settings), Selection: Selection.Create(), LgrGraphics: lgr != null ? new LgrGraphics(
+                Lgr: lgr,
+                Pictures: Pictures.Create(state, lgr, settings, _quad),
+                Textures: Textures.Create(state, lgr, settings, _quad),
+                Grass: Grass.Create(state, lgr, settings, _quad),
+                Players: Players.Create(lgr, _quad)
+            ) : null);
     }
 
-    private Bitmap GetSnapShot(Level lev, ZoomController zoomCtrl, SceneSettings sceneSettings, RenderingSettings settings)
+    public void UpdateBuffers(LevEditState state, LevVisualChange mod)
+    {
+        if (_graphics == null)
+        {
+            return;
+        }
+        MakeCurrent();
+
+        if (mod.HasFlag(LevVisualChange.Ground))
+        {
+            _graphics.GroundSky.Update(state);
+        }
+
+        if (_graphics.LgrGraphics?.Lgr != null)
+        {
+            var lgr = _graphics.LgrGraphics.Lgr;
+            if (mod.HasFlag(LevVisualChange.Grass))
+            {
+                _graphics.LgrGraphics.Grass.Update(state, lgr);
+            }
+
+            if (mod.HasFlag(LevVisualChange.Pictures))
+            {
+                _graphics.LgrGraphics.Pictures.Update(state, lgr);
+            }
+
+            if (mod.HasFlag(LevVisualChange.Textures))
+            {
+                _graphics.LgrGraphics.Textures.Update(state, lgr);
+            }
+        }
+
+        if (mod.HasFlag(LevVisualChange.Grass))
+        {
+            _graphics.PolygonFrames.Update(state);
+        }
+
+        if (mod.HasFlag(LevVisualChange.Apples) || mod.HasFlag(LevVisualChange.Killers) || mod.HasFlag(LevVisualChange.Flowers))
+        {
+            _graphics.Objects.Update(state, mod);
+        }
+
+        if (mod.HasFlag(LevVisualChange.Pictures) || mod.HasFlag(LevVisualChange.Textures))
+        {
+            _graphics.GraphicElementFrames.Update(state);
+        }
+    }
+
+    public void AddSelectionPoint(Vector p)
+    {
+        _graphics?.Selection.AddPoint(p);
+    }
+
+    public void AddSelectionLineLoop(IEnumerable<Vector> points)
+    {
+        _graphics?.Selection.AddLineLoop(points);
+    }
+
+    public void DrawSelection(Color color)
+    {
+        _graphics?.Selection.Draw(color, ColorUniforms, Pipelines.Lines);
+    }
+
+    private static readonly float[] QuadVertices =
+    [
+        0.0f, 0.0f,
+        1.0f, 0.0f,
+        1.0f, 1.0f,
+        0.0f, 1.0f
+    ];
+
+    private static Vertices CreateQuad()
+    {
+        var vertInfo = new VertexInfo().Attr(0, VertexFormat.Float32x2);
+        var quadVbo = VertexArray.Create(vertInfo, QuadVertices);
+        var quadIbo = Buffer.CreateIndex([0, 1, 2, 0, 2, 3]);
+        return new Vertices(quadVbo, quadIbo, PrimitiveType.Triangles);
+    }
+
+    private static Vertices CreateLineLoop()
+    {
+        var vertInfo = new VertexInfo().Attr(0, VertexFormat.Float32x2);
+        var quadVbo = VertexArray.Create(vertInfo, QuadVertices);
+        var quadIbo = Buffer.CreateIndex([0, 1, 2, 3]);
+        return new Vertices(quadVbo, quadIbo, PrimitiveType.LineLoop);
+    }
+
+    public void UpdateFadedObjects(Level lev, HashSet<int> driverTakenApples)
+    {
+        _graphics?.Objects.SetVisibleObjects(lev, null, driverTakenApples);
+    }
+
+    public void SetHiddenObjects(Level lev, HashSet<int>? hiddenObjectIndices)
+    {
+        _graphics?.Objects.SetVisibleObjects(lev, hiddenObjectIndices, null);
+    }
+
+    private Bitmap GetSnapShot(ZoomController zoomCtrl, SceneSettings sceneSettings, RenderingSettings settings)
     {
         Bitmap snapShotBmp;
         if (_maxRenderbufferSize > 0)
@@ -72,10 +204,11 @@ internal class ElmaRenderer : IDisposable
             var height = _maxRenderbufferSize;
             GL.BindFramebuffer(FramebufferTarget.ReadFramebuffer, _frameBuffer);
             GL.BindFramebuffer(FramebufferTarget.DrawFramebuffer, _frameBuffer);
-            var oldViewPort = (int[])zoomCtrl.Cam.Viewport.Clone();
+            var oldViewportWidth = _viewportWidth;
+            var oldViewportHeight = _viewportHeight;
             ResetViewport(width, height);
-            zoomCtrl.ZoomFill(settings);
-            DrawScene(lev, zoomCtrl.Cam, sceneSettings, settings);
+            zoomCtrl.ZoomFill(settings, AspectRatio);
+            DrawScene(zoomCtrl.Cam, 0, sceneSettings);
             snapShotBmp = new Bitmap(width, height);
             var bmpData = snapShotBmp.LockBits(new Rectangle(0, 0, width, height), ImageLockMode.WriteOnly,
                 PixelFormat.Format24bppRgb);
@@ -86,20 +219,20 @@ internal class ElmaRenderer : IDisposable
             snapShotBmp.RotateFlip(RotateFlipType.RotateNoneFlipY);
             GL.BindFramebuffer(FramebufferTarget.ReadFramebuffer, 0);
             GL.BindFramebuffer(FramebufferTarget.DrawFramebuffer, 0);
-            ResetViewport(oldViewPort[2], oldViewPort[3]);
+            ResetViewport(oldViewportWidth, oldViewportHeight);
         }
         else
         {
-            snapShotBmp = GetSnapShotOfCurrent(zoomCtrl);
+            snapShotBmp = GetSnapShotOfCurrent();
         }
 
         return snapShotBmp;
     }
 
-    internal static Bitmap GetSnapShotOfCurrent(ZoomController zoomCtrl)
+    internal Bitmap GetSnapShotOfCurrent()
     {
-        var width = zoomCtrl.Cam.ViewPortWidth;
-        var height = zoomCtrl.Cam.ViewPortHeight;
+        var width = _viewportWidth;
+        var height = _viewportHeight;
         var snapShotBmp = new Bitmap(width, height);
         var bmpData = snapShotBmp.LockBits(new Rectangle(0, 0, width, height), ImageLockMode.WriteOnly,
             PixelFormat.Format24bppRgb);
@@ -111,118 +244,52 @@ internal class ElmaRenderer : IDisposable
         return snapShotBmp;
     }
 
-    private void DrawCircle(double x, double y, double radius, Color circleColor, int accuracy)
-    {
-        GL.Color4(circleColor);
-        GL.Begin(PrimitiveType.LineLoop);
-        for (var i = 0; i <= accuracy; i++)
-            GL.Vertex2(x + Math.Cos(i * 360 / (double)accuracy * Math.PI / 180) * radius,
-                y + Math.Sin(i * 360 / (double)accuracy * Math.PI / 180) * radius);
-        GL.End();
-    }
-
     internal void DrawCircle(Vector v, double radius, Color circleColor, int accuracy)
     {
-        DrawCircle(v.X, v.Y, radius, circleColor, accuracy);
+        _graphics?.Lines.DrawCircle(v, radius, circleColor, accuracy, ColorUniforms, Pipelines.Lines);
     }
 
-    internal void DrawDummyPlayer(double leftWheelx, double leftWheely, SceneSettings sceneSettings, PlayerRenderOpts opts, RenderingSettings settings)
+    internal void DrawDummyPlayer(double leftWheelx, double leftWheely, PlayerRenderOpts opts, RenderingSettings settings)
     {
-        DrawPlayer(new PlayerState(leftWheelx + Level.GlobalBodyDifferenceFromLeftWheelX,
-            leftWheely + Level.GlobalBodyDifferenceFromLeftWheelY, leftWheelx, leftWheely,
-            leftWheelx + Level.RightWheelDifferenceFromLeftWheelX, leftWheely, 0, 0,
-            leftWheelx + Level.HeadDifferenceFromLeftWheelX, leftWheely + Level.HeadDifferenceFromLeftWheelY,
-            0, Direction.Left, 0), opts, sceneSettings, settings);
+        var player = new PlayerState(
+            new Vector(leftWheelx + Level.GlobalBodyDifferenceFromLeftWheelX, leftWheely + Level.GlobalBodyDifferenceFromLeftWheelY),
+            new Vector(leftWheelx, leftWheely),
+            new Vector(leftWheelx + Level.RightWheelDifferenceFromLeftWheelX, leftWheely),
+            0, 0,
+            new Vector(leftWheelx + Level.HeadDifferenceFromLeftWheelX, leftWheely + Level.HeadDifferenceFromLeftWheelY),
+            0, Direction.Left, 0, -1);
+
+        DrawPlayer(player, opts, settings);
     }
 
-    internal void DrawLine(Vector v1, Vector v2, Color color, double depth = 0)
+    internal void DrawLine(Vector v1, Vector v2, Color color)
     {
-        GL.Color4(color);
-        GL.Begin(PrimitiveType.Lines);
-        GL.Vertex3(v1.X, v1.Y, depth);
-        GL.Vertex3(v2.X, v2.Y, depth);
-        GL.End();
+        _graphics?.Lines.DrawLine(v1, v2, color, ColorUniforms, Pipelines.Lines);
     }
 
-    private void DrawLine(double x1, double y1, double x2, double y2, Color color, double depth = 0)
+    internal void DrawLineStrip(Polygon polygon, Color color)
     {
-        GL.Color4(color);
-        GL.Begin(PrimitiveType.Lines);
-        GL.Vertex3(x1, y1, depth);
-        GL.Vertex3(x2, y2, depth);
-        GL.End();
+        _graphics?.Lines.DrawLineStrip(polygon.Vertices, color, ColorUniforms, Pipelines.Lines);
     }
 
-    private void DrawLineFast(double x1, double y1, double x2, double y2, double depth = 0)
+    internal void DrawLineStrip(IEnumerable<Vector> points, Color color)
     {
-        GL.Vertex3(x1, y1, depth);
-        GL.Vertex3(x2, y2, depth);
+        _graphics?.Lines.DrawLineStrip(points, color, ColorUniforms, Pipelines.Lines);
     }
 
-    internal void DrawLineStrip(Polygon polygon, Color color, double depth = 0)
+    internal void DrawPoint(Vector v, Color color)
     {
-        GL.Color4(color);
-        GL.Begin(PrimitiveType.LineStrip);
-        foreach (var x in polygon.Vertices)
-            GL.Vertex3(x.X, x.Y, depth);
-        GL.End();
+        _graphics?.Lines.DrawPoint(v, color, ColorUniforms, Pipelines.Lines);
     }
 
-    internal void DrawPoint(Vector v, Color color, double depth = 0)
+    internal void DrawPolygon(Polygon polygon, Color color)
     {
-        GL.Color4(color);
-        GL.Begin(PrimitiveType.Points);
-        GL.Vertex3(v.X, v.Y, depth);
-        GL.End();
-    }
-
-    private void DrawPoint(double x, double y, Color color, double depth = 0)
-    {
-        GL.Color4(color);
-        GL.Begin(PrimitiveType.Points);
-        GL.Vertex3(x, y, depth);
-        GL.End();
-    }
-
-    internal void DrawPolygon(Polygon polygon, Color color, double depth = 0)
-    {
-        GL.Color4(color);
-        GL.Begin(PrimitiveType.LineLoop);
-        foreach (var x in polygon.Vertices)
-            GL.Vertex3(x.X, x.Y, depth);
-        GL.End();
-    }
-
-    internal void DrawRectangle(double x1, double y1, double x2, double y2, Color rectColor)
-    {
-        GL.Color4(rectColor);
-        GL.Begin(PrimitiveType.LineLoop);
-        GL.Vertex2(x1, y1);
-        GL.Vertex2(x2, y1);
-        GL.Vertex2(x2, y2);
-        GL.Vertex2(x1, y2);
-        GL.End();
-    }
-
-    private void DrawRectangle(double x1, double y1, double x2, double y2)
-    {
-        GL.Begin(PrimitiveType.LineLoop);
-        GL.Vertex2(x1, y1);
-        GL.Vertex2(x2, y1);
-        GL.Vertex2(x2, y2);
-        GL.Vertex2(x1, y2);
-        GL.End();
+        _graphics?.Lines.DrawLineLoop(polygon.Vertices, color, ColorUniforms, Pipelines.Lines);
     }
 
     internal void DrawRectangle(Vector v1, Vector v2, Color rectColor)
     {
-        GL.Color4(rectColor);
-        GL.Begin(PrimitiveType.LineLoop);
-        GL.Vertex2(v1.X, v1.Y);
-        GL.Vertex2(v2.X, v1.Y);
-        GL.Vertex2(v2.X, v2.Y);
-        GL.Vertex2(v1.X, v2.Y);
-        GL.End();
+        _graphics?.Lines.DrawRectangle(v1, v2, rectColor, ColorUniforms, Pipelines.Lines);
     }
 
     internal void MakeCurrent()
@@ -230,362 +297,113 @@ internal class ElmaRenderer : IDisposable
         _gfxContext.MakeCurrent();
     }
 
-    internal void MakeNoneCurrent()
+    internal void DrawScene(ElmaCamera camera, double time, SceneSettings sceneSettings)
     {
-        _gfxContext.MakeNoneCurrent();
-    }
-
-    internal void DrawScene(Level lev, ElmaCamera cam, SceneSettings sceneSettings, RenderingSettings settings)
-    {
+        if (_graphics == null) return;
         MakeCurrent();
-        var aspectRatio = cam.AspectRatio;
-        var centerX = cam.CenterX;
-        var centerY = cam.CenterY;
-        GL.LoadIdentity();
-        GL.Ortho(cam.XMin, cam.XMax, cam.YMin, cam.YMax, ZNear, ZFar);
+        GL.Clear(ClearBufferMask.DepthBufferBit | ClearBufferMask.StencilBufferBit);
 
-        GL.Clear(ClearBufferMask.DepthBufferBit | ClearBufferMask.StencilBufferBit |
-                 ClearBufferMask.ColorBufferBit);
-        GL.Enable(EnableCap.StencilTest);
-        GL.Disable(EnableCap.Texture2D);
-        GL.Disable(EnableCap.Blend);
-        GL.StencilOp(StencilOp.Incr, StencilOp.Keep, StencilOp.Decr);
-        GL.StencilFunc(StencilFunction.Equal, GroundStencil, StencilMask);
-        GL.ColorMask(false, false, false, false);
-        GL.Begin(PrimitiveType.Triangles);
-        foreach (var k in lev.Polygons.Concat(sceneSettings.TransientElements.Polygons))
-            if (!k.IsGrass)
-                DrawFilledTrianglesFast(k.Decomposition, ZFar - (ZFar - ZNear) * SkyDepth);
-        GL.End();
-        GL.ColorMask(true, true, true, true);
-        GL.Enable(EnableCap.Texture2D);
-        GL.Enable(EnableCap.DepthTest);
-        GL.StencilFunc(StencilFunction.Equal, GroundStencil, StencilMask);
-        GL.StencilOp(StencilOp.Keep, StencilOp.Keep, StencilOp.Replace);
-        var midX = (lev.Bounds.XMin + lev.Bounds.XMax) / 2;
-        var midY = (lev.Bounds.YMin + lev.Bounds.YMax) / 2;
-        var groundSky = OpenGlLgr?.GetGroundAndSky(lev, settings.DefaultGroundAndSky);
-        if (settings.ShowGround)
+        var (projection, bounds) = SetCamera(camera);
+
+        float[] groundVerts =
+        [
+            (float)bounds.XMin, (float)bounds.YMax,
+            (float)bounds.XMin, (float)bounds.YMin,
+            (float)bounds.XMax, (float)bounds.YMin,
+            (float)bounds.XMax, (float)bounds.YMax
+        ];
+        _graphics.GroundSky.GroundVertices.VertexArray.SetData(groundVerts, BufferUsageHint.StreamDraw);
+        _graphics.GroundSky.DrawSky(ColorUniforms, Pipelines.GroundSky);
+        SetCameraUniforms(projection, 0, 0, camera.ZoomLevel);
+        _graphics.GroundSky.DrawGround(ColorUniforms, Pipelines.GroundSky);
+        if (_graphics.LgrGraphics != null)
         {
-            const double depth = ZFar - (ZFar - ZNear) * GroundDepth;
-            if (settings.GroundTextureEnabled && OpenGlLgr != null && groundSky is var (ground, _))
-            {
-                OpenGlLgr.DrawFullScreenTexture(cam, ground, midX, midY, depth, settings);
-            }
-            else
-            {
-                GL.Disable(EnableCap.Texture2D);
-                GL.Color4(settings.GroundFillColor);
-                GL.Begin(PrimitiveType.Quads);
-                GL.Vertex3(midX - TextureVertexConst, midY - TextureVertexConst, depth);
-                GL.Vertex3(midX + TextureVertexConst, midY - TextureVertexConst, depth);
-                GL.Vertex3(midX + TextureVertexConst, midY + TextureVertexConst, depth);
-                GL.Vertex3(midX - TextureVertexConst, midY + TextureVertexConst, depth);
-                GL.End();
-                GL.Enable(EnableCap.Texture2D);
-            }
+            _graphics.Objects.Draw(_graphics.LgrGraphics.Lgr, time, false, Pipelines.Objects);
+            _graphics.LgrGraphics.Grass.Draw(Pipelines.Grass);
+            _graphics.LgrGraphics.Textures.Draw(Pipelines.TextureUnclipped, Pipelines.TextureGround, Pipelines.TextureSky);
+            _graphics.LgrGraphics.Pictures.Draw(Pipelines.PictureUnclipped, Pipelines.PictureGround, Pipelines.PictureSky);
         }
-
-        GL.StencilFunc(StencilFunction.Equal, SkyStencil, StencilMask);
-        if (settings.SkyTextureEnabled && OpenGlLgr != null && groundSky is var (_, sky))
-        {
-            const double depth = ZFar - (ZFar - ZNear) * SkyDepth;
-            GL.BindTexture(TextureTarget.Texture2D, sky.TextureId);
-            if (settings.ZoomTextures)
-            {
-                GL.Begin(PrimitiveType.Quads);
-                GL.TexCoord2(0, TextureCoordConst / sky.Width * sky.Width / sky.Height);
-                GL.Vertex3(centerX / 2 - TextureVertexConst, centerY - TextureVertexConst, depth);
-                GL.TexCoord2(TextureCoordConst / sky.Width,
-                    TextureCoordConst / sky.Width * sky.Width / sky.Height);
-                GL.Vertex3(centerX / 2 + TextureVertexConst, centerY - TextureVertexConst, depth);
-                GL.TexCoord2(TextureCoordConst / sky.Width, 0);
-                GL.Vertex3(centerX / 2 + TextureVertexConst, centerY + TextureVertexConst, depth);
-                GL.TexCoord2(0, 0);
-                GL.Vertex3(centerX / 2 - TextureVertexConst, centerY + TextureVertexConst, depth);
-                GL.End();
-            }
-            else
-            {
-                var xdelta = centerX / sky.Width;
-                var skyAspectRatio = sky.AspectRatio;
-                const int xRepeat = 3;
-                GL.PushMatrix();
-                GL.LoadIdentity();
-                GL.Ortho(0, 1, 0, 1, ZNear, ZFar);
-                GL.Begin(PrimitiveType.Quads);
-                GL.TexCoord2(xdelta, 0);
-                GL.Vertex3(0, 1, depth);
-                GL.TexCoord2(xRepeat + xdelta, 0);
-                GL.Vertex3(1, 1, depth);
-                GL.TexCoord2(xRepeat + xdelta,
-                    xRepeat * skyAspectRatio / aspectRatio);
-                GL.Vertex3(1, 0, depth);
-                GL.TexCoord2(xdelta,
-                    xRepeat * skyAspectRatio / aspectRatio);
-                GL.Vertex3(0, 0, depth);
-                GL.End();
-                GL.PopMatrix();
-            }
-        }
-
-        GL.Enable(EnableCap.AlphaTest);
-        if (OpenGlLgr != null)
-        {
-            GL.DepthFunc(DepthFunction.Gequal);
-            GL.Enable(EnableCap.ScissorTest);
-            var graphicElements = lev.GraphicElements.Concat(sceneSettings.TransientElements.GraphicElements)
-                .AsEnumerable().Reverse();
-            DrawPictures(graphicElements.Where(p => p.Clipping == ClippingType.Unclipped), cam, settings);
-            DrawPictures(graphicElements.Where(p => p.Clipping != ClippingType.Unclipped), cam, settings);
-
-            foreach (var picture in lev.GraphicElements.Concat(sceneSettings.TransientElements.GraphicElements))
-            {
-                if (picture is GraphicElement.Texture t && settings.ShowTextures)
-                {
-                    DoPictureScissor(picture, cam);
-                    GL.StencilOp(StencilOp.Keep, StencilOp.Keep, StencilOp.Invert);
-                    switch (picture.Clipping)
-                    {
-                        case ClippingType.Ground:
-                            GL.StencilFunc(StencilFunction.Equal, GroundStencil, StencilMask);
-                            break;
-                        case ClippingType.Sky:
-                            GL.StencilFunc(StencilFunction.Equal, SkyStencil, StencilMask);
-                            break;
-                        case ClippingType.Unclipped:
-                            GL.StencilFunc(StencilFunction.Gequal, 5, StencilMask);
-                            break;
-                    }
-
-                    var depth = (picture.Distance / 1000.0 * (ZFar - ZNear)) + ZNear;
-                    OpenGlLgr.DrawPicture(t.MaskInfo.TextureId, picture.Position.X, picture.Position.Y, picture.Width, -picture.Height,
-                        depth + 0.001, TexCoord.Default);
-
-                    var info = t.TextureInfo;
-                    GL.StencilFunc(StencilFunction.Lequal, 5, StencilMask);
-                    OpenGlLgr.DrawFullScreenTexture(cam, info, midX, midY, depth, settings);
-                }
-            }
-
-            GL.Disable(EnableCap.ScissorTest);
-            GL.DepthFunc(DepthFunction.Gequal);
-            if (settings.ShowGrass)
-            {
-                OpenGlLgr.DrawGrass(lev, cam, midX, midY, settings, sceneSettings);
-            }
-        }
-
-        GL.Disable(EnableCap.StencilTest);
-        if (settings.ShowObjects && OpenGlLgr != null)
-        {
-            var depth = sceneSettings.PicturesInBackground ? 0 : 0.5 * (ZFar - ZNear) + ZNear;
-            GL.BlendFunc(BlendingFactor.One, BlendingFactor.OneMinusDstColor);
-            foreach (var (x, i) in GetVisibleObjects(lev, sceneSettings))
-            {
-                if (sceneSettings.FadedObjectIndices.Contains(i))
-                {
-                    GL.Enable(EnableCap.Blend);
-                }
-                else
-                {
-                    GL.Disable(EnableCap.Blend);
-                }
-                switch (x.Type)
-                {
-                    case ObjectType.Flower:
-                        OpenGlLgr.DrawFlower(x.Position, depth);
-                        break;
-                    case ObjectType.Killer:
-                        OpenGlLgr.DrawKiller(x.Position, depth);
-                        break;
-                    case ObjectType.Apple:
-                        OpenGlLgr.DrawApple(x.Position, x.AnimationNumber, depth);
-                        break;
-                    case ObjectType.Start:
-                        DrawDummyPlayer(x.Position.X, x.Position.Y, sceneSettings,
-                            new PlayerRenderOpts { IsActive = true, UseTransparency = false, UseGraphics = true },
-                            settings);
-                        GL.BlendFunc(BlendingFactor.One, BlendingFactor.OneMinusDstColor);
-                        break;
-                }
-            }
-            GL.BlendFunc(BlendingFactor.SrcAlpha, BlendingFactor.OneMinusSrcAlpha);
-        }
-
-        GL.Disable(EnableCap.Texture2D);
-        GL.Disable(EnableCap.StencilTest);
-        GL.Disable(EnableCap.DepthTest);
-        GL.Disable(EnableCap.AlphaTest);
-
-        GL.Enable(EnableCap.Blend);
-        if (settings.ShowGrid)
-        {
-            DrawGrid(cam, sceneSettings, settings);
-        }
-        
-        if (settings.ShowMaxDimensions)
-        {
-            GL.Enable(EnableCap.LineStipple);
-            GL.LineStipple((int)settings.LineWidth * 2, LinePattern);
-            var levCenterX = (lev.Bounds.XMin + lev.Bounds.XMax) / 2;
-            var levCenterY = (lev.Bounds.YMin + lev.Bounds.YMax) / 2;
-            DrawRectangle(levCenterX - Level.MaximumSize / 2,
-                levCenterY - Level.MaximumSize / 2,
-                levCenterX + Level.MaximumSize / 2,
-                levCenterY + Level.MaximumSize / 2,
-                settings.MaxDimensionColor);
-            GL.Disable(EnableCap.LineStipple);
-            GL.LineWidth(settings.LineWidth);
-        }
-
-        if (settings.ShowObjectFrames)
-            DrawObjectFrames(lev, sceneSettings, settings);
-        if (settings.ShowObjectCenters)
-            DrawObjectCenters(lev, sceneSettings, settings);
-        if (settings.ShowGravityAppleArrows &&
-            (settings.ShowObjectFrames || (OpenGlLgr != null && settings.ShowObjects)))
-        {
-            foreach (var (o, _) in GetVisibleObjects(lev, sceneSettings))
-            {
-                DrawGravityArrowMaybe(o, settings);
-            }
-        }
-
-        foreach (var x in lev.Polygons.Concat(sceneSettings.TransientElements.Polygons))
-        {
-            if (x.IsGrass)
-            {
-                if (settings.ShowGrassEdges)
-                {
-                    var color = x.SlopeInfo?.HasError ?? false ? Color.Red : settings.GrassEdgeColor;
-                    DrawGrassPolygon(x, color, settings.ShowInactiveGrassEdges, settings);
-                }
-            }
-            else if (settings.ShowGroundEdges)
-                DrawPolygon(x, settings.GroundEdgeColor);
-        }
-
-        GL.Color4(settings.TextureFrameColor);
-        foreach (var z in lev.GraphicElements.Concat(sceneSettings.TransientElements.GraphicElements))
-        {
-            DrawGraphicElementFrame(z, settings, null);
-        }
-
-        if (settings.ShowVertices)
-        {
-            var showGrassVertices = settings.ShowGrassEdges || settings.ShowGrass;
-            var showGroundVertices = settings.ShowGroundEdges || (settings.ShowGround && OpenGlLgr != null);
-            GL.Color4(settings.VertexColor);
-            if (settings.UseCirclesForVertices)
-            {
-                GL.Begin(PrimitiveType.Points);
-                foreach (var x in lev.Polygons)
-                    if ((showGrassVertices && x.IsGrass) || (showGroundVertices && !x.IsGrass))
-                        foreach (var z in x.Vertices)
-                            GL.Vertex3(z.X, z.Y, 0);
-            }
-            else
-            {
-                GL.Begin(PrimitiveType.Triangles);
-                foreach (var x in lev.Polygons)
-                    if ((showGrassVertices && x.IsGrass) || (showGroundVertices && !x.IsGrass))
-                        foreach (var z in x.Vertices)
-                            DrawEquilateralTriangleFast(z, cam.ZoomLevel * settings.VertexSize);
-            }
-
-            GL.End();
-        }
+        _graphics.GraphicElementFrames.DrawPictureFrames(ColorUniforms, Pipelines.GraphicElementFrames);
+        _graphics.GraphicElementFrames.DrawTextureFrames(ColorUniforms, Pipelines.GraphicElementFrames);
+        _graphics.GraphicElementFrames.DrawMissingPictureFrames(ColorUniforms, Pipelines.GraphicElementFramesDashed);
+        _graphics.GraphicElementFrames.DrawMissingTextureFrames(ColorUniforms, Pipelines.GraphicElementFramesDashed);
+        _graphics.PolygonFrames.Draw(ColorUniforms, _graphics.GroundSky.SkyVertices, Pipelines.Lines, Pipelines.LinesDashed);
+        _graphics.ObjectFrames.Draw(_graphics.Objects, ColorUniforms, Pipelines.ObjectFrames);
+        _graphics.Lines.DrawGrid(
+            bounds.XMin, bounds.XMax,
+            bounds.YMin, bounds.YMax,
+            sceneSettings.GridOffset,
+            ColorUniforms,
+            Pipelines.LinesDashed);
     }
 
-    private void DrawPictures(IEnumerable<GraphicElement> pics, ElmaCamera cam, RenderingSettings settings)
+    public (Matrix4 Projection, Bounds Bounds) SetCamera(ElmaCamera camera)
     {
-        foreach (var picture in pics)
-        {
-            if (picture is GraphicElement.Picture p && settings.ShowPictures)
-            {
-                DoPictureScissor(picture, cam);
-                GL.StencilOp(StencilOp.Keep, StencilOp.Keep, StencilOp.Keep);
-                switch (picture.Clipping)
-                {
-                    case ClippingType.Unclipped:
-                        GL.StencilFunc(StencilFunction.Always, 0, StencilMask);
-                        break;
-                    case ClippingType.Sky:
-                        GL.StencilFunc(StencilFunction.Equal, SkyStencil, StencilMask);
-                        break;
-                    case ClippingType.Ground:
-                        GL.StencilFunc(StencilFunction.Equal, GroundStencil, StencilMask);
-                        break;
-                }
-
-                OpenGlLgr.DrawPicture(p.PictureInfo.TextureId, picture.Position.X, picture.Position.Y, picture.Width,
-                    -picture.Height,
-                    (picture.Distance / 1000.0 * (ZFar - ZNear)) + ZNear, TexCoord.Default);
-            }
-        }
+        var bounds = camera.GetBounds(AspectRatio);
+        var projection = GetProjectionMatrix(bounds);
+        SetCameraUniforms(projection, camera.CenterX, camera.CenterY, camera.ZoomLevel);
+        return (projection, bounds);
     }
 
-    public void DrawGraphicElementFrame(GraphicElement e, RenderingSettings settings, Color? overrideColor)
+    private void SetCameraUniforms(Matrix4 projection, double centerX, double centerY, double zoomLevel)
     {
-        var forceShow = overrideColor is not null;
+        var zoom = _zoomTextures ? 1.0f : (float)zoomLevel * 0.15f;
+        CameraUniforms.SetData(new CameraUniforms(
+            projection,
+            new Vector2((float)centerX, (float)centerY),
+            _grassZoom,
+            zoom
+        ));
+    }
+
+    private static Matrix4 GetProjectionMatrix(Bounds bounds) =>
+        Matrix4.CreateOrthographicOffCenter(
+            (float)bounds.XMin, (float)bounds.XMax,
+            (float)bounds.YMin, (float)bounds.YMax,
+            -(MinDistance - 1.0f), -(MaxDistance + 1.0f));
+
+    public void DrawGraphicElementFrame(GraphicElement e, RenderingSettings settings, Color color)
+    {
+        bool dashed;
         switch (e)
         {
-            case GraphicElement.Picture:
-                if (!settings.ShowPictureFrames && !forceShow)
-                {
-                    return;
-                }
-                GL.Color4(overrideColor ?? settings.PictureFrameColor);
+            case GraphicElement.Picture when settings.ShowPictureFrames || settings.ShowPictures:
+            case GraphicElement.Texture when settings.ShowTextureFrames || settings.ShowTextures:
+                dashed = false;
                 break;
-            case GraphicElement.Texture:
-                if (!settings.ShowTextureFrames && !forceShow)
-                {
-                    return;
-                }
-                GL.Color4(overrideColor ?? settings.TextureFrameColor);
-                break;
-            case GraphicElement.MissingPicture when settings.ShowPictureFrames || settings.ShowPictures || forceShow:
-                DrawLine(e.Position.X, e.Position.Y, e.Position.X + e.Width, e.Position.Y - e.Height,
-                    overrideColor ?? settings.PictureFrameColor);
-                DrawLine(e.Position.X + e.Width, e.Position.Y, e.Position.X, e.Position.Y - e.Height,
-                    overrideColor ?? settings.PictureFrameColor);
-                break;
-            case GraphicElement.MissingTexture when settings.ShowTextureFrames || settings.ShowTextures || forceShow:
-                DrawLine(e.Position.X, e.Position.Y, e.Position.X + e.Width, e.Position.Y - e.Height,
-                    overrideColor ?? settings.TextureFrameColor);
-                DrawLine(e.Position.X + e.Width, e.Position.Y, e.Position.X, e.Position.Y - e.Height,
-                    overrideColor ?? settings.TextureFrameColor);
+            case GraphicElement.MissingPicture when settings.ShowPictureFrames || settings.ShowPictures:
+            case GraphicElement.MissingTexture when settings.ShowTextureFrames || settings.ShowTextures:
+                dashed = true;
                 break;
             default:
                 return;
         }
 
-        DrawRectangle(e.Position.X, e.Position.Y, e.Position.X + e.Width, e.Position.Y - e.Height);
+        _graphics?.Lines.DrawRectangle(
+            new Vector(e.Position.X, e.Position.Y),
+            new Vector(e.Position.X + e.Width, e.Position.Y - e.Height),
+            color, ColorUniforms, dashed ? Pipelines.LinesDashed : Pipelines.Lines);
     }
 
-    public void DrawGrassPolygon(Polygon polygon, Color color, bool drawInactiveGrassEdge, RenderingSettings settings)
+    public void DrawGrassPolygon(Polygon polygon, Color color, RenderingSettings settings)
     {
-        GL.Color4(color);
-        GL.Begin(PrimitiveType.LineStrip);
-        for (var index = polygon.GrassStart; index < polygon.Vertices.Count; index++)
+        var pts = new List<Vector>();
+        int grassStart = polygon.SlopeInfo!.GrassStart;
+        for (var index = grassStart; index < polygon.Vertices.Count; index++)
         {
-            var z = polygon.Vertices[index];
-            GL.Vertex3(z.X, z.Y, 0);
+            pts.Add(polygon.Vertices[index]);
         }
-
-        for (var index = 0; index < polygon.GrassStart; index++)
+        for (var index = 0; index < grassStart; index++)
         {
-            var z = polygon.Vertices[index];
-            GL.Vertex3(z.X, z.Y, 0);
+            pts.Add(polygon.Vertices[index]);
         }
+        _graphics?.Lines.DrawLineStrip(pts, color, ColorUniforms, Pipelines.Lines);
 
-        GL.End();
-        if (drawInactiveGrassEdge)
+        if (settings.ShowInactiveGrassEdges)
         {
-            DrawDashLine(polygon.Vertices[polygon.GrassStart == 0 ? ^1 : polygon.GrassStart - 1],
-                polygon.Vertices[polygon.GrassStart],
-                color, settings);
+            var p1 = polygon.Vertices[grassStart == 0 ? ^1 : grassStart - 1];
+            var p2 = polygon.Vertices[grassStart];
+            _graphics?.Lines.DrawDashLine(p1.X, p1.Y, p2.X, p2.Y, color, ColorUniforms, Pipelines.LinesDashed);
         }
     }
 
@@ -594,91 +412,19 @@ internal class ElmaRenderer : IDisposable
         _gfxContext.SwapBuffers();
     }
 
-    private IEnumerable<(LevObject, int)> GetVisibleObjects(Level lev, SceneSettings sceneSettings)
+    internal void DrawSquare(Vector vector, double camZoomLevel, Color color)
     {
-        return lev.Objects.Select((t, i) => (t, i)).Where(t => !sceneSettings.HiddenObjectIndices.Contains(t.i))
-            .Concat(sceneSettings.TransientElements.Objects.Select(o => (o, -1)));
-    }
-
-    private void DoPictureScissor(GraphicElement graphicElement, ElmaCamera cam)
-    {
-        var x = (int)((graphicElement.Position.X - cam.XMin) / (cam.XMax - cam.XMin) * cam.ViewPortWidth);
-        var y = (int)(((graphicElement.Position.Y - graphicElement.Height) - cam.YMin) / (cam.YMax - cam.YMin) * cam.ViewPortHeight);
-        var w = (int)((graphicElement.Position.X + graphicElement.Width - cam.XMin) / (cam.XMax - cam.XMin) * cam.ViewPortWidth) - x;
-        var h = (int)((graphicElement.Position.Y - cam.YMin) / (cam.YMax - cam.YMin) * cam.ViewPortHeight) - y;
-        GL.Scissor(x, y, w, h);
-    }
-
-    private void DrawGravityArrowMaybe(LevObject o, RenderingSettings settings)
-    {
-        if (o.Type == ObjectType.Apple && o.AppleType != AppleType.Normal)
-        {
-            GL.Color4(settings.AppleGravityArrowColor);
-            double arrowRotation = o.AppleType switch
-            {
-                AppleType.GravityUp => 0.0,
-                AppleType.GravityDown => 180.0,
-                AppleType.GravityLeft => 90.0,
-                AppleType.GravityRight => 270.0,
-                _ => throw new ArgumentOutOfRangeException()
-            };
-
-            const double arrowThickness = 0.4;
-            GL.PushMatrix();
-            GL.Translate(o.Position.X, o.Position.Y, 0.0);
-            GL.Scale(0.5, 0.5, 1.0);
-            GL.Rotate(arrowRotation, 0.0, 0.0, 1.0);
-            GL.Translate(-0.5, -0.5, 0.0);
-            GL.Begin(PrimitiveType.LineLoop);
-            GL.Vertex2((1 - arrowThickness) / 2.0, 0.0);
-            GL.Vertex2((1 - arrowThickness) / 2.0, 0.5);
-            GL.Vertex2(0.0, 0.5);
-            GL.Vertex2(0.5, 1.0);
-            GL.Vertex2(1.0, 0.5);
-            GL.Vertex2(1.0 - (1 - arrowThickness) / 2.0, 0.5);
-            GL.Vertex2(1.0 - (1 - arrowThickness) / 2.0, 0.0);
-            GL.End();
-            GL.PopMatrix();
-        }
-    }
-
-    internal void DrawSquare(Vector v, double side, Color color)
-    {
-        DrawRectangle(v.X - side, v.Y - side, v.X + side, v.Y + side, color);
-    }
-
-    internal void DrawEquilateralTriangle(Vector center, double side, Color color)
-    {
-        GL.Color4(color);
-        GL.Begin(PrimitiveType.Triangles);
-        DrawEquilateralTriangleFast(center, side);
-        GL.End();
-    }
-
-    private void DrawEquilateralTriangleFast(Vector center, double side)
-    {
-        const double factor = 1 / (1.7320508075688772935274463415059 * 2);
-        GL.Vertex3(center.X + side / 2, center.Y - side * factor, 0);
-        GL.Vertex3(center.X, center.Y + side / Math.Sqrt(3), 0);
-        GL.Vertex3(center.X - side / 2, center.Y - side * factor, 0);
-    }
-
-    internal void InitializeLevel(Level lev, RenderingSettings settings)
-    {
-        lev.Objects = lev.Objects.OrderBy(o => o.Type switch
-        {
-            ObjectType.Flower => 3,
-            ObjectType.Apple => 2,
-            ObjectType.Killer => 1,
-            ObjectType.Start => 4,
-            _ => throw new ArgumentOutOfRangeException()
-        }).ToList();
-        lev.UpdateAllPolygons(settings.GrassZoom);
+        _graphics?.Lines.DrawRectangle(
+            new Vector(vector.X - camZoomLevel, vector.Y - camZoomLevel),
+            new Vector(vector.X + camZoomLevel, vector.Y + camZoomLevel),
+            color, ColorUniforms, Pipelines.Lines);
     }
 
     internal void ResetViewport(int width, int height)
     {
         GL.Viewport(0, 0, width, height);
+        _viewportWidth = width;
+        _viewportHeight = height;
     }
 
     internal RendererSettingsChangeResult UpdateSettings(Level lev, RenderingSettings newSettings)
@@ -686,15 +432,17 @@ internal class ElmaRenderer : IDisposable
         var currentLgr = OpenGlLgr?.CurrentLgr.Path;
         var newLgr = newSettings.ResolveLgr(lev);
         var lgrUpdated = false;
+        var lgr = OpenGlLgr;
         if (!currentLgr.EqualsIgnoreCase(newLgr))
         {
             if (File.Exists(newLgr))
             {
-                var old = OpenGlLgr;
+                var old = lgr;
                 try
                 {
-                    OpenGlLgr = new OpenGlLgr(lev, _lgrCache.GetOrLoadLgr(newLgr), newSettings);
-                    lev.UpdateImages(OpenGlLgr.DrawableImages);
+                    lgr = new OpenGlLgr(_lgrCache.GetOrLoadLgr(newLgr));
+                    lev.UpdateImages(lgr.DrawableImages);
+                    lev.UpdateGrass(newSettings.GrassZoom);
                     old?.Dispose();
                     lgrUpdated = true;
                 }
@@ -704,232 +452,163 @@ internal class ElmaRenderer : IDisposable
                 }
             }
         }
-        else if (OpenGlLgr != null)
+        else if (lgr != null)
         {
-            lev.UpdateImages(OpenGlLgr.DrawableImages);
-            OpenGlLgr.RefreshGrassPics(lev, newSettings);
+            lev.UpdateImages(lgr.DrawableImages);
+            lev.UpdateGrass(newSettings.GrassZoom);
         }
-
         GL.ClearColor(newSettings.SkyFillColor);
         GL.LineWidth(newSettings.LineWidth);
         GL.PointSize((float)(newSettings.VertexSize * 300));
+        InitializeBuffers(lev, lgr, newSettings);
         return new RendererSettingsChangeResult(lgrUpdated);
     }
 
-    private void Dispose(bool disposing)
+    public void Dispose()
     {
-        // Check to see if Dispose has already been called.
-        if (!_disposed)
-        {
-            // If disposing equals true, dispose all managed
-            // and unmanaged resources.
-            if (disposing)
-            {
-                // Dispose managed resources.
-            }
+        _graphics?.Dispose();
+        _quad.Dispose();
+        _lineLoop.Dispose();
+        CameraUniforms.Dispose();
+        ColorUniforms.Dispose();
 
-            // Release unmanaged resources. If disposing is false,
-            // only the following code is executed.
-            if (_frameBuffer != 0)
-            {
-                GL.DeleteFramebuffer(_frameBuffer);
-            }
-            if (_colorRenderBuffer != 0)
-            {
-                GL.DeleteRenderbuffer(_colorRenderBuffer);
-            }
-            if (_depthStencilRenderBuffer != 0)
-            {
-                GL.DeleteRenderbuffer(_depthStencilRenderBuffer);
-            }
+        if (_ownsPipelines)
+        {
+            Pipelines.Dispose();
         }
 
-        _disposed = true;
-    }
-
-    private static void DrawFilledTrianglesFast(IEnumerable<Vector[]> triangles, double depth = 0.0)
-    {
-        foreach (var triangle in triangles)
-            foreach (var x in triangle)
-                GL.Vertex3(x.X, x.Y, depth);
-    }
-
-    private void DrawGrid(ElmaCamera cam, SceneSettings sceneSettings, RenderingSettings settings)
-    {
-        var gridSize = settings.GridSize;
-        var current = GetFirstGridLine(gridSize, sceneSettings.GridOffset.X, cam.XMin);
-        EnableDashLines(LinePattern, settings);
-        GL.Color4(settings.GridColor);
-        GL.Begin(PrimitiveType.Lines);
-        while (!(current > cam.XMax))
+        if (_frameBuffer != 0)
         {
-            DrawLineFast(current, cam.YMin, current, cam.YMax);
-            current += gridSize;
+            GL.DeleteFramebuffer(_frameBuffer);
         }
-
-        current = GetFirstGridLine(gridSize, sceneSettings.GridOffset.Y, cam.YMin);
-        while (!(current > cam.YMax))
+        if (_colorRenderBuffer != 0)
         {
-            DrawLineFast(cam.XMin, current, cam.XMax, current);
-            current += gridSize;
+            GL.DeleteRenderbuffer(_colorRenderBuffer);
         }
-
-        GL.End();
-        GL.Disable(EnableCap.LineStipple);
-        GL.LineWidth(settings.LineWidth);
-    }
-
-    private void EnableDashLines(short pattern, RenderingSettings settings)
-    {
-        GL.Enable(EnableCap.LineStipple);
-        GL.LineStipple((int)settings.LineWidth, pattern);
-    }
-
-    private void DrawObjectCenters(Level lev, SceneSettings sceneSettings, RenderingSettings settings)
-    {
-        foreach (var (x, _) in GetVisibleObjects(lev, sceneSettings))
+        if (_depthStencilRenderBuffer != 0)
         {
-            switch (x.Type)
-            {
-                case ObjectType.Flower:
-                    DrawPoint(x.Position, settings.FlowerColor);
-                    break;
-                case ObjectType.Killer:
-                    DrawPoint(x.Position, settings.KillerColor);
-                    break;
-                case ObjectType.Apple:
-                    DrawPoint(x.Position, settings.AppleColor);
-                    break;
-                case ObjectType.Start:
-                    DrawPoint(x.Position, settings.StartColor);
-                    DrawPoint(x.Position.X + Level.RightWheelDifferenceFromLeftWheelX, x.Position.Y,
-                        Global.AppSettings.LevelEditor.RenderingSettings.StartColor);
-                    DrawPoint(x.Position.X + Level.HeadDifferenceFromLeftWheelX,
-                        x.Position.Y + Level.HeadDifferenceFromLeftWheelY,
-                        Global.AppSettings.LevelEditor.RenderingSettings.StartColor);
-                    break;
-            }
+            GL.DeleteRenderbuffer(_depthStencilRenderBuffer);
         }
     }
 
-    private void DrawObjectFrames(Level lev, SceneSettings sceneSettings, RenderingSettings settings)
+    internal void DrawPlayer(PlayerState player, PlayerRenderOpts opts, RenderingSettings settings)
     {
-        foreach (var (x, i) in GetVisibleObjects(lev, sceneSettings))
-        {
-            if (sceneSettings.FadedObjectIndices.Contains(i))
-            {
-                EnableDashLines(0b0110011001100110, settings);
-            }
-            else
-            {
-                GL.Disable(EnableCap.LineStipple);
-            }
-            switch (x.Type)
-            {
-                case ObjectType.Flower:
-                    DrawCircle(x.Position, OpenGlLgr.ObjectRadius, settings.FlowerColor, settings.CircleDrawingAccuracy);
-                    break;
-                case ObjectType.Killer:
-                    DrawCircle(x.Position, OpenGlLgr.ObjectRadius, settings.KillerColor, settings.CircleDrawingAccuracy);
-                    break;
-                case ObjectType.Apple:
-                    DrawCircle(x.Position, OpenGlLgr.ObjectRadius, settings.AppleColor, settings.CircleDrawingAccuracy);
-                    break;
-                case ObjectType.Start:
-                    DrawDummyPlayer(x.Position.X, x.Position.Y, sceneSettings,
-                        new PlayerRenderOpts(settings.StartColor, true, false, false), settings);
-                    break;
-            }
-        }
-        GL.Disable(EnableCap.LineStipple);
-    }
+        if (_graphics == null) return;
 
-    internal void DrawPlayer(PlayerState player, PlayerRenderOpts opts, SceneSettings sceneSettings, RenderingSettings settings)
-    {
-        if (opts.UseGraphics && OpenGlLgr != null)
+        if (opts.UseGraphics && _graphics.LgrGraphics != null)
         {
-            GL.BlendFunc(BlendingFactor.One, BlendingFactor.OneMinusDstColor);
-            OpenGlLgr.DrawLgrPlayer(player, opts, sceneSettings);
-            GL.BlendFunc(BlendingFactor.SrcAlpha, BlendingFactor.OneMinusSrcAlpha);
+            var visual = ToVisualPlayer(player, settings, opts.IsActive, opts.UseTransparency);
+
+            _graphics.LgrGraphics.Players.UpdateBuffers([visual]);
+            _graphics.LgrGraphics.Players.Draw(Pipelines.Players);
         }
         else
         {
-            GL.Disable(EnableCap.Texture2D);
-            GL.Disable(EnableCap.DepthTest);
-            if (!opts.IsActive)
-            {
-                GL.Enable(EnableCap.LineStipple);
-                GL.LineStipple((int)settings.LineWidth, LinePattern);
-            }
-
-            DrawPlayerFrames(player, opts.Color, settings);
-            if (!opts.IsActive)
-            {
-                GL.Disable(EnableCap.LineStipple);
-            }
+            DrawPlayerFrames(player, opts.Color, settings.CircleDrawingAccuracy, opts.UseTransparency);
         }
     }
 
-    private void DrawPlayerFrames(PlayerState player, Color playerColor, RenderingSettings settings)
+    internal void DrawPlayers(IReadOnlyList<(PlayerState State, PlayerRenderOpts Opts)> players, RenderingSettings settings)
     {
-        var headCos = Math.Cos(player.BikeRotation * MathUtils.DegToRad);
-        var headSin = Math.Sin(player.BikeRotation * MathUtils.DegToRad);
-        var f = player.IsRight ? 1 : -1;
-        var headLineEndPointX = player.HeadX + f * headCos * ElmaConstants.HeadDiameter / 2;
-        var headLineEndPointY = player.HeadY + f * headSin * ElmaConstants.HeadDiameter / 2;
-        DrawCircle(player.LeftWheelX, player.LeftWheelY, OpenGlLgr.ObjectRadius, playerColor, settings.CircleDrawingAccuracy);
-        DrawCircle(player.RightWheelX, player.RightWheelY, OpenGlLgr.ObjectRadius, playerColor, settings.CircleDrawingAccuracy);
-        GL.Begin(PrimitiveType.Lines);
-        for (var k = 0; k < 2; k++)
-        {
-            for (var j = 0; j < 4; j++)
-            {
-                double wheelx;
-                double wheely;
-                double wheelrot;
-                if (k == 0)
-                {
-                    wheelx = player.LeftWheelX;
-                    wheely = player.LeftWheelY;
-                    wheelrot = player.LeftWheelRotation;
-                }
-                else
-                {
-                    wheelx = player.RightWheelX;
-                    wheely = player.RightWheelY;
-                    wheelrot = player.RightWheelRotation;
-                }
+        if (_graphics == null) return;
 
-                GL.Vertex2(wheelx, wheely);
-                GL.Vertex2(wheelx + OpenGlLgr.ObjectRadius * Math.Cos(wheelrot + j * Math.PI / 2),
-                    wheely + OpenGlLgr.ObjectRadius * Math.Sin(wheelrot + j * Math.PI / 2));
+        var visuals = new List<VisualPlayer>();
+        foreach (var (state, opts) in players)
+        {
+            if (opts.UseGraphics && _graphics.LgrGraphics != null)
+            {
+                visuals.Add(ToVisualPlayer(state, settings, opts.IsActive, opts.UseTransparency));
+            }
+            else
+            {
+                DrawPlayerFrames(state, opts.Color, settings.CircleDrawingAccuracy, opts.UseTransparency);
             }
         }
 
-        GL.End();
-        DrawCircle(player.HeadX, player.HeadY, ElmaConstants.HeadDiameter / 2, playerColor, settings.CircleDrawingAccuracy);
-        GL.Begin(PrimitiveType.Lines);
-        GL.Vertex2(player.HeadX, player.HeadY);
-        GL.Vertex2(headLineEndPointX, headLineEndPointY);
-        GL.End();
+        if (visuals.Count > 0 && _graphics.LgrGraphics != null)
+        {
+            _graphics.LgrGraphics.Players.UpdateBuffers(visuals);
+            _graphics.LgrGraphics.Players.Draw(Pipelines.Players);
+        }
+    }
+
+    private static VisualPlayer ToVisualPlayer(PlayerState state, RenderingSettings sceneSettings, bool isActive, bool useTransparency)
+    {
+        return new VisualPlayer
+        {
+            Body = new VisualBikePart
+            {
+                Center = new Vector2((float)state.GlobalBody.X, (float)state.GlobalBody.Y),
+                Rotation = (float)(state.BikeRotation * MathUtils.DegToRad)
+            },
+            HeadNoTurn = new VisualBikePart
+            {
+                Center = new Vector2((float)state.HeadCenter.X, (float)state.HeadCenter.Y),
+                Rotation = (float)(state.BikeRotation * MathUtils.DegToRad)
+            },
+            LeftWheel = new VisualBikePart
+            {
+                Center = new Vector2((float)state.LeftWheel.X, (float)state.LeftWheel.Y),
+                Rotation = (float)state.LeftWheelRotation
+            },
+            RightWheel = new VisualBikePart
+            {
+                Center = new Vector2((float)state.RightWheel.X, (float)state.RightWheel.Y),
+                Rotation = (float)state.RightWheelRotation
+            },
+            Direction = state.Direction,
+            ArmProgress = (float)state.ArmRotation,
+            TurnProgress = (float)state.TurnProgress,
+            BaseDistance = (sceneSettings.PicturesInBackground ? 0.0f : 499.0f) +
+                           (isActive ? 0.0f : 0.5f),
+            Opacity = useTransparency ? 0.5f : 1.0f
+        };
+    }
+
+    private void DrawPlayerFrames(PlayerState player, Color playerColor, int circleAccuracy, bool dashed)
+    {
+        if (_graphics == null) return;
+
+        var pipeline = dashed ? Pipelines.LinesDashed : Pipelines.Lines;
+        const double wheelRadius = OpenGlLgr.ObjectRadius;
+        const double headRadius = ElmaConstants.HeadDiameter / 2;
+
+        _graphics.Lines.DrawCircle(player.LeftWheel, wheelRadius, playerColor, circleAccuracy, ColorUniforms, pipeline);
+        _graphics.Lines.DrawCircle(player.RightWheel, wheelRadius, playerColor, circleAccuracy, ColorUniforms, pipeline);
+
+        for (var k = 0; k < 2; k++)
+        {
+            var w = k == 0 ? player.LeftWheel : player.RightWheel;
+            var wrot = k == 0 ? player.LeftWheelRotation : player.RightWheelRotation;
+            for (var j = 0; j < 4; j++)
+            {
+                _graphics.Lines.DrawLine(
+                    w,
+                    new Vector(
+                        w.X + wheelRadius * Math.Cos(wrot + j * Math.PI / 2),
+                        w.Y + wheelRadius * Math.Sin(wrot + j * Math.PI / 2)),
+                    playerColor, ColorUniforms, pipeline);
+            }
+        }
+
+        _graphics.Lines.DrawCircle(player.Head, headRadius, playerColor, circleAccuracy, ColorUniforms, pipeline);
+
+        var headCos = Math.Cos(player.BikeRotation * MathUtils.DegToRad);
+        var headSin = Math.Sin(player.BikeRotation * MathUtils.DegToRad);
+        var f = player.Direction == Direction.Right ? 1.0 : -1.0;
+        _graphics.Lines.DrawLine(
+            player.Head,
+            new Vector(player.Head.X + f * headCos * headRadius, player.Head.Y + f * headSin * headRadius),
+            playerColor, ColorUniforms, pipeline);
     }
 
     private void InitializeOpengl(bool disableFrameBuffer)
     {
-        _gfxContext.MakeCurrent();
-        GL.MatrixMode(MatrixMode.Projection);
         GL.ClearDepth(GroundDepth);
-        GL.StencilMask(255);
         GL.ClearStencil(GroundStencil);
-        GL.DepthFunc(DepthFunction.Gequal);
-        GL.AlphaFunc(AlphaFunction.Gequal, 0.9f);
-        GL.BlendFunc(BlendingFactor.SrcAlpha, BlendingFactor.OneMinusSrcAlpha);
-        GL.Hint(HintTarget.PerspectiveCorrectionHint, HintMode.Fastest);
         GL.Hint(HintTarget.TextureCompressionHint, HintMode.Fastest);
         GL.Hint(HintTarget.PolygonSmoothHint, HintMode.Fastest);
         GL.Hint(HintTarget.LineSmoothHint, HintMode.Fastest);
-        GL.Enable(EnableCap.PointSmooth);
-        GL.TexEnv(TextureEnvTarget.TextureEnv, TextureEnvParameter.TextureEnvMode, (float)TextureEnvMode.Replace);
 
         _maxRenderbufferSize = Math.Min(GL.GetInteger(GetPName.MaxRenderbufferSize), 4096);
 
@@ -964,23 +643,14 @@ internal class ElmaRenderer : IDisposable
         }
     }
 
-    private void DrawDashLine(Vector v1, Vector v2, Color color, RenderingSettings settings)
+    public void DrawDashLine(double x1, double y1, double x2, double y2, Color color)
     {
-        DrawDashLine(v1.X, v1.Y, v2.X, v2.Y, color, settings);
+        _graphics?.Lines.DrawDashLine(x1, y1, x2, y2, color, ColorUniforms, Pipelines.LinesDashed);
     }
 
-    public void DrawDashLine(double x1, double y1, double x2, double y2, Color color, RenderingSettings settings)
+    public void SaveSnapShot(string fileName, ZoomController zoomCtrl, SceneSettings sceneSettings, RenderingSettings settings)
     {
-        GL.Enable(EnableCap.LineStipple);
-        GL.LineStipple((int)settings.LineWidth, LinePattern);
-        DrawLine(x1, y1, x2, y2, color);
-        GL.Disable(EnableCap.LineStipple);
-        GL.LineWidth(settings.LineWidth);
-    }
-
-    public void SaveSnapShot(Level lev, string fileName, ZoomController zoomCtrl, SceneSettings sceneSettings, RenderingSettings settings)
-    {
-        using var bmp = GetSnapShot(lev, zoomCtrl, sceneSettings, settings);
+        using var bmp = GetSnapShot(zoomCtrl, sceneSettings, settings);
         bmp.Save(fileName, ImageFormat.Png);
     }
 

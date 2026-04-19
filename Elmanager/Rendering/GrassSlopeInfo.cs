@@ -8,6 +8,7 @@ namespace Elmanager.Rendering;
 
 internal class GrassSlopeInfo
 {
+    public int GrassStart { get; }
     private readonly Dictionary<int, int> _info = new();
     private int _polygonXMin = -1;
     private readonly double _zoom;
@@ -16,15 +17,16 @@ internal class GrassSlopeInfo
 
     private double Factor => 48.0 * _zoom;
 
-    public GrassSlopeInfo(Polygon polygon, Bounds groundBounds, double grassZoom)
+    public GrassSlopeInfo(int grassStart, Polygon polygon, Bounds groundBounds, double grassZoom)
     {
+        GrassStart = grassStart;
         _zoom = grassZoom;
         _bounds = groundBounds with
         {
             XMin = RoundToPixelMiddle(groundBounds.XMin - 10000.0 / Factor, Factor),
             YMin = RoundToPixelMiddle(groundBounds.YMin - 1000.0 / Factor, Factor)
         };
-        var maxEdgeEndIndex = polygon.GrassStart;
+        var maxEdgeEndIndex = grassStart;
         var maxEdgeBeginIndex = maxEdgeEndIndex - 1;
         if (maxEdgeBeginIndex < 0)
         {
@@ -134,8 +136,8 @@ internal class GrassSlopeInfo
 
             if (bestPic is not { } best)
                 throw new Exception("Did not find any grass pic?");
-            var finalY = best.Delta >= 0 ? currY - 20 : currY + 21 - best.HeightWithoutExtension;
-            _placed.Add(new GraphicElement.Picture(ClippingType.Ground, 601,
+            var finalY = (best.Delta >= 0 ? currY - 20 : currY + 21 - best.Height) + best.Height;
+            _placed.Add(new GraphicElement.Picture(ClippingType.Ground, 600,
                 new Vector(_bounds.XMin + currX / Factor, _bounds.YMin + finalY / Factor), best.Image));
             currX += best.Width;
             currY += best.Delta;

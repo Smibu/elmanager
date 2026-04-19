@@ -78,10 +78,8 @@ namespace Elmanager.ReplayViewer
             LockedCamBox = new CheckBox();
             FollowDriverBox = new CheckBox();
             LoopPlayingBox = new CheckBox();
-            HideStartObjectBox = new CheckBox();
             multiSpyBox = new CheckBox();
             TransparentInactiveBox = new CheckBox();
-            PictBackGroundBox = new CheckBox();
             SelectNoPlayersBox = new CheckBox();
             PlayerFramesBox = new CheckBox();
             tableLayoutPanel2 = new TableLayoutPanel();
@@ -129,7 +127,7 @@ namespace Elmanager.ReplayViewer
             ViewerBox.Location = new Point(788, 0);
             ViewerBox.Margin = new Padding(6);
             ViewerBox.Name = "ViewerBox";
-            ViewerBox.Profile = OpenTK.Windowing.Common.ContextProfile.Compatability;
+            ViewerBox.Profile = OpenTK.Windowing.Common.ContextProfile.Core;
             ViewerBox.Size = new Size(678, 670);
             ViewerBox.TabIndex = 100;
             ViewerBox.MouseDown += ViewerMouseDown;
@@ -464,7 +462,7 @@ namespace Elmanager.ReplayViewer
             flowLayoutPanel.Location = new Point(0, 0);
             flowLayoutPanel.Margin = new Padding(6);
             flowLayoutPanel.Name = "flowLayoutPanel";
-            flowLayoutPanel.Size = new Size(644, 517);
+            flowLayoutPanel.Size = new Size(623, 481);
             flowLayoutPanel.TabIndex = 0;
             flowLayoutPanel.WrapContents = false;
             // 
@@ -480,12 +478,10 @@ namespace Elmanager.ReplayViewer
             tableLayoutPanel1.Controls.Add(LockedCamBox, 1, 0);
             tableLayoutPanel1.Controls.Add(FollowDriverBox, 0, 1);
             tableLayoutPanel1.Controls.Add(LoopPlayingBox, 1, 1);
-            tableLayoutPanel1.Controls.Add(HideStartObjectBox, 0, 5);
-            tableLayoutPanel1.Controls.Add(multiSpyBox, 1, 4);
             tableLayoutPanel1.Controls.Add(TransparentInactiveBox, 1, 2);
-            tableLayoutPanel1.Controls.Add(PictBackGroundBox, 0, 3);
             tableLayoutPanel1.Controls.Add(SelectNoPlayersBox, 1, 3);
-            tableLayoutPanel1.Controls.Add(PlayerFramesBox, 0, 4);
+            tableLayoutPanel1.Controls.Add(PlayerFramesBox, 0, 3);
+            tableLayoutPanel1.Controls.Add(multiSpyBox, 0, 4);
             tableLayoutPanel1.Location = new Point(6, 6);
             tableLayoutPanel1.Margin = new Padding(6);
             tableLayoutPanel1.Name = "tableLayoutPanel1";
@@ -496,7 +492,7 @@ namespace Elmanager.ReplayViewer
             tableLayoutPanel1.RowStyles.Add(new RowStyle());
             tableLayoutPanel1.RowStyles.Add(new RowStyle());
             tableLayoutPanel1.RowStyles.Add(new RowStyle());
-            tableLayoutPanel1.Size = new Size(632, 216);
+            tableLayoutPanel1.Size = new Size(611, 180);
             tableLayoutPanel1.TabIndex = 147;
             // 
             // ShowDriverPathBox
@@ -524,7 +520,7 @@ namespace Elmanager.ReplayViewer
             // LockedCamBox
             // 
             LockedCamBox.AutoSize = true;
-            LockedCamBox.Location = new Point(290, 0);
+            LockedCamBox.Location = new Point(269, 0);
             LockedCamBox.Margin = new Padding(0);
             LockedCamBox.Name = "LockedCamBox";
             LockedCamBox.Size = new Size(205, 36);
@@ -546,7 +542,7 @@ namespace Elmanager.ReplayViewer
             // LoopPlayingBox
             // 
             LoopPlayingBox.AutoSize = true;
-            LoopPlayingBox.Location = new Point(290, 36);
+            LoopPlayingBox.Location = new Point(269, 36);
             LoopPlayingBox.Margin = new Padding(0);
             LoopPlayingBox.Name = "LoopPlayingBox";
             LoopPlayingBox.Size = new Size(184, 36);
@@ -554,21 +550,10 @@ namespace Elmanager.ReplayViewer
             LoopPlayingBox.Text = "Loop playing";
             LoopPlayingBox.UseVisualStyleBackColor = true;
             // 
-            // HideStartObjectBox
-            // 
-            HideStartObjectBox.AutoSize = true;
-            HideStartObjectBox.Location = new Point(0, 180);
-            HideStartObjectBox.Margin = new Padding(0);
-            HideStartObjectBox.Name = "HideStartObjectBox";
-            HideStartObjectBox.Size = new Size(222, 36);
-            HideStartObjectBox.TabIndex = 62;
-            HideStartObjectBox.Text = "Hide start object";
-            HideStartObjectBox.UseVisualStyleBackColor = true;
-            // 
             // multiSpyBox
             // 
             multiSpyBox.AutoSize = true;
-            multiSpyBox.Location = new Point(290, 144);
+            multiSpyBox.Location = new Point(0, 144);
             multiSpyBox.Margin = new Padding(0);
             multiSpyBox.Name = "multiSpyBox";
             multiSpyBox.Size = new Size(145, 36);
@@ -579,7 +564,7 @@ namespace Elmanager.ReplayViewer
             // TransparentInactiveBox
             // 
             TransparentInactiveBox.AutoSize = true;
-            TransparentInactiveBox.Location = new Point(290, 72);
+            TransparentInactiveBox.Location = new Point(269, 72);
             TransparentInactiveBox.Margin = new Padding(0);
             TransparentInactiveBox.Name = "TransparentInactiveBox";
             TransparentInactiveBox.Size = new Size(341, 36);
@@ -587,21 +572,10 @@ namespace Elmanager.ReplayViewer
             TransparentInactiveBox.Text = "Transparent inactive players";
             TransparentInactiveBox.UseVisualStyleBackColor = true;
             // 
-            // PictBackGroundBox
-            // 
-            PictBackGroundBox.AutoSize = true;
-            PictBackGroundBox.Location = new Point(0, 108);
-            PictBackGroundBox.Margin = new Padding(0);
-            PictBackGroundBox.Name = "PictBackGroundBox";
-            PictBackGroundBox.Size = new Size(290, 36);
-            PictBackGroundBox.TabIndex = 58;
-            PictBackGroundBox.Text = "Pictures in background";
-            PictBackGroundBox.UseVisualStyleBackColor = true;
-            // 
             // SelectNoPlayersBox
             // 
             SelectNoPlayersBox.AutoSize = true;
-            SelectNoPlayersBox.Location = new Point(290, 108);
+            SelectNoPlayersBox.Location = new Point(269, 108);
             SelectNoPlayersBox.Margin = new Padding(0);
             SelectNoPlayersBox.Name = "SelectNoPlayersBox";
             SelectNoPlayersBox.Size = new Size(342, 36);
@@ -612,7 +586,7 @@ namespace Elmanager.ReplayViewer
             // PlayerFramesBox
             // 
             PlayerFramesBox.AutoSize = true;
-            PlayerFramesBox.Location = new Point(0, 144);
+            PlayerFramesBox.Location = new Point(0, 108);
             PlayerFramesBox.Margin = new Padding(0);
             PlayerFramesBox.Name = "PlayerFramesBox";
             PlayerFramesBox.Size = new Size(242, 36);
@@ -638,7 +612,7 @@ namespace Elmanager.ReplayViewer
             tableLayoutPanel2.Controls.Add(MouseClickZoomBox, 1, 1);
             tableLayoutPanel2.Controls.Add(viewerSizeXBox, 1, 2);
             tableLayoutPanel2.Controls.Add(label1, 0, 2);
-            tableLayoutPanel2.Location = new Point(6, 234);
+            tableLayoutPanel2.Location = new Point(6, 198);
             tableLayoutPanel2.Margin = new Padding(6);
             tableLayoutPanel2.Name = "tableLayoutPanel2";
             tableLayoutPanel2.RowCount = 4;
@@ -748,7 +722,7 @@ namespace Elmanager.ReplayViewer
             optionsPanel3.Controls.Add(RenderingSettingsButton);
             optionsPanel3.Controls.Add(DrivingLinePanel);
             optionsPanel3.Controls.Add(DrivingLineLabel);
-            optionsPanel3.Location = new Point(6, 399);
+            optionsPanel3.Location = new Point(6, 363);
             optionsPanel3.Margin = new Padding(6);
             optionsPanel3.Name = "optionsPanel3";
             optionsPanel3.Size = new Size(373, 112);
@@ -844,7 +818,6 @@ namespace Elmanager.ReplayViewer
         internal Button FullScreenButton;
         internal CheckBox LockedCamBox;
         internal CheckBox TransparentInactiveBox;
-        internal CheckBox PictBackGroundBox;
         internal GLControl ViewerBox;
         internal TrackBarMod playbackSpeedBar;
         internal Label Label5;
@@ -858,7 +831,6 @@ namespace Elmanager.ReplayViewer
         internal CheckBox SelectNoPlayersBox;
         internal OLVColumn OlvColumn1;
         internal OLVColumn OlvColumn2;
-        internal CheckBox HideStartObjectBox;
         private ContextMenuStrip contextMenuStrip1;
         private ToolStripMenuItem applesToolStripMenuItem;
         private ToolStripMenuItem leftVoltsToolStripMenuItem;

@@ -23,7 +23,6 @@ using Elmanager.Rendering.Camera;
 using Elmanager.Settings;
 using Elmanager.UI;
 using Elmanager.Utilities;
-using OpenTK.Graphics.OpenGL;
 using Color = System.Drawing.Color;
 using Control = System.Windows.Forms.Control;
 using Cursor = System.Windows.Forms.Cursor;
@@ -44,12 +43,12 @@ internal partial class LevelEditorForm : FormMod, IMessageFilter
     private const int MouseWheelStep = 20;
     private const bool Physics = true;
     private readonly List<Level> _history = new();
-    internal IEditorTool CurrentTool = null!;
+    private IEditorTool CurrentTool = null!;
     private EditorLev _editorLev = new(new Level(), null);
     internal Level Lev => _editorLev.Lev;
     private ElmaFile? LevFile => _editorLev.File;
     internal ElmaRenderer Renderer = null!;
-    internal readonly EditorTools Tools;
+    private readonly EditorTools Tools;
     private List<string>? _currLevDirFiles;
     private bool _draggingScreen;
     private List<Vector> _errorPoints = new();
@@ -87,7 +86,9 @@ internal partial class LevelEditorForm : FormMod, IMessageFilter
     private ToolBase.NearestVertexInfo? _grassInfo;
     private TexturizationOptions? _texturizationOpts;
     private readonly LevFileWatcher _levFileWatcher;
+    private bool _hasFocus;
     public SelectionFilter SelectionFilter { get; }
+    internal HighlightTarget? CurrentHighlight { get; set; }
 
     internal LevelEditorForm(string? levPath)
     {
@@ -227,15 +228,12 @@ internal partial class LevelEditorForm : FormMod, IMessageFilter
         if (!CurrentTool.Busy)
         {
             ChangeToDefaultCursor();
-            CurrentTool.InActivate();
-            CurrentTool = Tools.TransformTool;
-            ActivateCurrentAndRedraw();
+            ChangeToolTo(Tools.TransformTool);
 
             // if not busy, there's nothing to transform
             if (!CurrentTool.Busy)
             {
-                CurrentTool = Tools.SelectionTool;
-                ActivateCurrentAndRedraw();
+                ChangeToolTo(Tools.SelectionTool);
             }
         }
     }
@@ -250,28 +248,14 @@ internal partial class LevelEditorForm : FormMod, IMessageFilter
         DoRedrawScene();
     }
 
-    private void ActivateCurrentAndRedraw()
-    {
-        CurrentTool.Activate();
-        RedrawScene();
-    }
-
-    private void InactivateCurrentAndRedraw()
-    {
-        CurrentTool.InActivate();
-        RedrawScene();
-    }
-
     internal void SetModified(LevModification value, bool updateHistory = true)
     {
         var wasModified = value != LevModification.Nothing;
         _modified = wasModified || _modified;
         if (wasModified)
         {
+            UpdateRendererBuffers((LevVisualChange)value);
             EnableSaveButtons(true);
-        }
-        if (wasModified)
-        {
             Lev.UpdateBounds();
             if (updateHistory)
                 AddToHistory();
@@ -279,7 +263,7 @@ internal partial class LevelEditorForm : FormMod, IMessageFilter
                 CheckTopology();
         }
 
-        if (value.HasFlag(LevModification.Ground) || value.HasFlag(LevModification.Objects))
+        if (value.HasFlag(LevModification.Ground) || value.HasFlag(LevModification.Apples) || value.HasFlag(LevModification.Killers) || value.HasFlag(LevModification.Flowers))
         {
             PlayController.UpdateEngine(Lev);
         }
@@ -350,7 +334,7 @@ internal partial class LevelEditorForm : FormMod, IMessageFilter
     public void UpdateLevel(Level lev)
     {
         _editorLev = _editorLev with { Lev = lev };
-        SetModified(LevModification.Ground | LevModification.Decorations | LevModification.Objects);
+        SetModified(LevModification.All);
         _savedIndex = _historyIndex;
         LoadFromHistory();
     }
@@ -378,14 +362,20 @@ internal partial class LevelEditorForm : FormMod, IMessageFilter
             var obj = Lev.Objects[_selectedObjectIndex];
             Lev.Objects.RemoveAt(_selectedObjectIndex);
             Lev.Objects.Add(obj);
-            mod = LevModification.Objects;
+            mod = obj.Type switch
+            {
+                ObjectType.Apple => LevModification.Apples,
+                ObjectType.Killer => LevModification.Killers,
+                ObjectType.Flower => LevModification.Flowers,
+                _ => LevModification.Nothing
+            };
         }
         else if (_selectedPictureIndex >= 0)
         {
             var obj = Lev.GraphicElements[_selectedPictureIndex];
             Lev.GraphicElements.RemoveAt(_selectedPictureIndex);
             Lev.GraphicElements.Insert(0, obj);
-            mod = LevModification.Decorations;
+            mod = obj is GraphicElement.Picture or GraphicElement.MissingPicture ? LevModification.Pictures : LevModification.Textures;
         }
         else if (_grassInfo is not null)
         {
@@ -403,9 +393,17 @@ internal partial class LevelEditorForm : FormMod, IMessageFilter
 
     private void ChangeToolTo(IEditorTool tool)
     {
-        CurrentTool.InActivate();
+        var mod = CurrentTool.InActivate();
+        Renderer.UpdateBuffers(new LevEditState(Lev, TransientElements.Empty), mod);
         CurrentTool = tool;
-        ActivateCurrentAndRedraw();
+        CurrentTool.Activate();
+        UpdateToolHelp();
+        RedrawScene();
+    }
+
+    public void ChangeToSelectionTool()
+    {
+        ChangeToolTo(Tools.SelectionTool);
     }
 
     private void ShowWarning(string text)
@@ -547,10 +545,6 @@ internal partial class LevelEditorForm : FormMod, IMessageFilter
     {
         if (!PromptToSaveIfModified())
             e.Cancel = true;
-        else
-        {
-            InactivateCurrentAndRedraw();
-        }
 
         if (WindowState == FormWindowState.Normal)
         {
@@ -594,7 +588,7 @@ internal partial class LevelEditorForm : FormMod, IMessageFilter
             {
                 copiedPolygons.Add(copy);
                 copy.IsGrass = x.IsGrass;
-                copy.UpdateDecompositionOrGrassSlopeInfo(Lev.GroundBounds, Settings.RenderingSettings.GrassZoom);
+                copy.UpdateGrassSlopeInfo(Lev.GroundBounds, Settings.RenderingSettings.GrassZoom);
             }
         }
 
@@ -627,17 +621,23 @@ internal partial class LevelEditorForm : FormMod, IMessageFilter
         Lev.Objects.AddRange(copiedObjects);
         Lev.GraphicElements.AddRange(copiedTextures);
         var mod = LevModification.Nothing;
-        if (copiedObjects.Count > 0)
+        foreach (var obj in copiedObjects)
         {
-            mod |= LevModification.Objects;
+            mod |= obj.Type switch
+            {
+                ObjectType.Apple => LevModification.Apples,
+                ObjectType.Killer => LevModification.Killers,
+                ObjectType.Flower => LevModification.Flowers,
+                _ => LevModification.Nothing
+            };
         }
         if (copiedPolygons.Count > 0)
         {
             mod |= LevModification.Ground;
         }
-        if (copiedTextures.Count > 0)
+        foreach (var tex in copiedTextures)
         {
-            mod |= LevModification.Decorations;
+            mod |= tex is GraphicElement.Picture or GraphicElement.MissingPicture ? LevModification.Pictures : LevModification.Textures;
         }
         SetModified(mod);
         RedrawScene();
@@ -647,36 +647,25 @@ internal partial class LevelEditorForm : FormMod, IMessageFilter
 
     private void DoRedrawScene()
     {
-        _sceneSettings.TransientElements = CurrentTool.GetTransientElements();
-        var jf = PlayController.Playing && PlayController.FollowDriver ? _zoomCtrl.Cam.FixJitter() : new Vector();
-        Renderer.DrawScene(Lev, _zoomCtrl.Cam, _sceneSettings, Settings.RenderingSettings);
-
-        var drawAction = GetVertexDrawAction();
+        var jf = PlayController.Playing && PlayController.FollowDriver
+            ? _zoomCtrl.Cam.FixJitter(EditorControl.Width, EditorControl.Height)
+            : new Vector();
+        Renderer.DrawScene(_zoomCtrl.Cam, 0, _sceneSettings);
 
         if (Settings.ShowCrossHair)
         {
+            var bounds = _zoomCtrl.Cam.GetBounds(Renderer.AspectRatio);
             var mouse = GetMouseCoordinates();
-            Renderer.DrawDashLine(_zoomCtrl.Cam.XMin, mouse.Y, _zoomCtrl.Cam.XMax,
-                mouse.Y, Settings.RenderingSettings.CrosshairColor, Settings.RenderingSettings);
-            Renderer.DrawDashLine(mouse.X, _zoomCtrl.Cam.YMin, mouse.X,
-                _zoomCtrl.Cam.YMax, Settings.RenderingSettings.CrosshairColor, Settings.RenderingSettings);
+            Renderer.DrawDashLine(bounds.XMin, mouse.Y, bounds.XMax,
+                mouse.Y, Settings.RenderingSettings.CrosshairColor);
+            Renderer.DrawDashLine(mouse.X, bounds.YMin, mouse.X,
+                bounds.YMax, Settings.RenderingSettings.CrosshairColor);
         }
 
         foreach (Polygon x in Lev.Polygons)
         {
             switch (x.Mark)
             {
-                case PolygonMark.Highlight:
-                    if (Settings.UseHighlight)
-                        if (x.IsGrass)
-                        {
-                            Renderer.DrawGrassPolygon(x, Settings.RenderingSettings.HighlightColor,
-                                Settings.RenderingSettings.ShowInactiveGrassEdges, Settings.RenderingSettings);
-                        }
-                        else
-                            Renderer.DrawPolygon(x, Settings.RenderingSettings.HighlightColor);
-
-                    break;
                 case PolygonMark.Selected:
                     Renderer.DrawPolygon(x, Color.Red);
                     break;
@@ -687,45 +676,31 @@ internal partial class LevelEditorForm : FormMod, IMessageFilter
 
             foreach (Vector z in x.Vertices)
             {
-                switch (z.Mark)
-                {
-                    case VectorMark.Selected:
-                        drawAction(z, Settings.RenderingSettings.SelectionColor);
-                        break;
-                    case VectorMark.Highlight:
-                        if (Settings.UseHighlight)
-                            drawAction(z, Settings.RenderingSettings.HighlightColor);
-                        break;
-                }
+                if (z.Mark == VectorMark.Selected)
+                    Renderer.AddSelectionPoint(z);
             }
         }
 
         foreach (LevObject t in Lev.Objects)
         {
-            Vector z = t.Position;
-            switch (z.Mark)
+            if (t.Position.Mark == VectorMark.Selected)
+                Renderer.AddSelectionPoint(t.Position);
+
+            if (t.Type == ObjectType.Start)
             {
-                case VectorMark.Selected:
-                    drawAction(z, Settings.RenderingSettings.SelectionColor);
-                    break;
-                case VectorMark.Highlight:
-                    if (Settings.UseHighlight)
-                        drawAction(z, Settings.RenderingSettings.HighlightColor);
-                    break;
+                Renderer.DrawDummyPlayer(t.X, t.Y, new PlayerRenderOpts(Color.Green, false, Settings.RenderingSettings.ShowObjects, false), Settings.RenderingSettings);
             }
         }
 
         foreach (GraphicElement t in Lev.GraphicElements)
         {
-            Vector z = t.Position;
-            switch (z.Mark)
+            if (t.Position.Mark == VectorMark.Selected)
             {
-                case VectorMark.Selected:
-                    Renderer.DrawGraphicElementFrame(t, Settings.RenderingSettings, Settings.RenderingSettings.SelectionColor);
-                    break;
-                case VectorMark.Highlight:
-                    Renderer.DrawGraphicElementFrame(t, Settings.RenderingSettings, Settings.RenderingSettings.HighlightColor);
-                    break;
+                var p1 = new Vector(t.Position.X, t.Position.Y);
+                var p2 = new Vector(t.Position.X + t.Width, t.Position.Y);
+                var p3 = new Vector(t.Position.X + t.Width, t.Position.Y - t.Height);
+                var p4 = new Vector(t.Position.X, t.Position.Y - t.Height);
+                Renderer.AddSelectionLineLoop([p1, p2, p3, p4]);
             }
         }
 
@@ -735,62 +710,67 @@ internal partial class LevelEditorForm : FormMod, IMessageFilter
         {
             if (Settings.RenderingSettings.ShowObjects)
             {
-                Renderer.DrawDummyPlayer(p.X, p.Y, _sceneSettings, new PlayerRenderOpts(Color.Green, false, true, true), Settings.RenderingSettings);
+                Renderer.DrawDummyPlayer(p.X, p.Y, new PlayerRenderOpts(Color.Green, false, true, true), Settings.RenderingSettings);
             }
 
             if (Settings.RenderingSettings.ShowObjectFrames)
             {
-                Renderer.DrawDummyPlayer(p.X, p.Y, _sceneSettings, new PlayerRenderOpts(Color.Green, false, false, true), Settings.RenderingSettings);
+                Renderer.DrawDummyPlayer(p.X, p.Y, new PlayerRenderOpts(Color.Green, false, false, true), Settings.RenderingSettings);
             }
-            GL.Disable(EnableCap.Texture2D);
-            GL.Disable(EnableCap.AlphaTest);
-            GL.Disable(EnableCap.DepthTest);
         }
 
         if (PlayController.PlayingOrPaused)
         {
-            GL.Translate(-jf.X, -jf.Y, 0);
+            _zoomCtrl.Cam.CenterX += jf.X;
+            _zoomCtrl.Cam.CenterY += jf.Y;
+            Renderer.SetCamera(_zoomCtrl.Cam);
             var driver = PlayController.Driver!;
             if (Settings.RenderingSettings.ShowObjects && Renderer.OpenGlLgr != null)
             {
-                Renderer.DrawPlayer(driver.GetState(), PlayController.RenderOptsLgr, _sceneSettings, Settings.RenderingSettings);
+                Renderer.DrawPlayer(driver.GetState(), PlayController.RenderOptsLgr, Settings.RenderingSettings);
             }
             else if (Settings.RenderingSettings.ShowObjectFrames)
             {
-                Renderer.DrawPlayer(driver.GetState(), PlayController.RenderOptsFrame, _sceneSettings, Settings.RenderingSettings);
+                Renderer.DrawPlayer(driver.GetState(), PlayController.RenderOptsFrame, Settings.RenderingSettings);
             }
 
-            GL.Disable(EnableCap.Blend);
-            GL.Disable(EnableCap.Texture2D);
-            GL.Disable(EnableCap.DepthTest);
-            GL.Disable(EnableCap.AlphaTest);
-            switch (PlayController.PlayerSelection)
+            if (PlayController.PlayerSelection == VectorMark.Selected)
+                Renderer.AddSelectionPoint(driver.Body.Location);
+        }
+
+        if (Settings.UseHighlight && CurrentHighlight is { } hl)
+        {
+            switch (hl)
             {
-                case VectorMark.Selected:
-                    drawAction(driver.Body.Location, Settings.RenderingSettings.SelectionColor);
+                case HighlightTarget.PolygonTarget pt:
+                    if (pt.Polygon.IsGrass)
+                        Renderer.DrawGrassPolygon(pt.Polygon, Settings.RenderingSettings.HighlightColor, Settings.RenderingSettings);
+                    else
+                        Renderer.DrawPolygon(pt.Polygon, Settings.RenderingSettings.HighlightColor);
                     break;
-                case VectorMark.Highlight:
-                    drawAction(driver.Body.Location, Settings.RenderingSettings.HighlightColor);
+                case HighlightTarget.VertexTarget vt:
+                    Renderer.DrawPoint(vt.Polygon.Vertices[vt.VertexIndex], Settings.RenderingSettings.HighlightColor);
+                    break;
+                case HighlightTarget.ObjectTarget ot:
+                    Renderer.DrawPoint(Lev.Objects[ot.ObjectIndex].Position, Settings.RenderingSettings.HighlightColor);
+                    break;
+                case HighlightTarget.GraphicElementTarget gt:
+                    Renderer.DrawGraphicElementFrame(Lev.GraphicElements[gt.GraphicElementIndex], Settings.RenderingSettings, Settings.RenderingSettings.HighlightColor);
+                    break;
+                case HighlightTarget.PlayerTarget when PlayController.PlayingOrPaused:
+                    Renderer.DrawPoint(PlayController.Driver!.Body.Location, Settings.RenderingSettings.HighlightColor);
                     break;
             }
-            GL.Translate(jf.X, jf.Y, 0);
         }
 
         CurrentTool.ExtraRendering();
+
+        Renderer.DrawSelection(Settings.RenderingSettings.SelectionColor);
 
         Renderer.Swap();
     }
 
     internal LevelEditorSettings Settings => Global.AppSettings.LevelEditor;
-
-    private Action<Vector, Color> GetVertexDrawAction()
-    {
-        var drawAction = Settings.RenderingSettings.UseCirclesForVertices
-            ? (Action<Vector, Color>)((pt, color) => Renderer.DrawPoint(pt, color))
-            : ((pt, color) => Renderer.DrawEquilateralTriangle(pt,
-                _zoomCtrl.Cam.ZoomLevel * Settings.RenderingSettings.VertexSize, color));
-        return drawAction;
-    }
 
     private void CutButtonChanged(object? sender, EventArgs e)
     {
@@ -806,7 +786,7 @@ internal partial class LevelEditorForm : FormMod, IMessageFilter
             Polygon x = Lev.Polygons[i];
             if (x.IsGrass)
             {
-                mod = LevModification.Decorations;
+                mod = LevModification.Grass;
                 Lev.Polygons.Remove(x);
             }
         }
@@ -832,7 +812,7 @@ internal partial class LevelEditorForm : FormMod, IMessageFilter
                         x.Vertices.RemoveAt(i);
                         if (x.IsGrass)
                         {
-                            mod |= LevModification.Decorations;
+                            mod |= LevModification.Grass;
                         }
                         else
                         {
@@ -845,7 +825,7 @@ internal partial class LevelEditorForm : FormMod, IMessageFilter
                 if (x.Vertices.Count < 3)
                     Lev.Polygons.Remove(x);
                 else if (polyModified)
-                    x.UpdateDecompositionOrGrassSlopeInfo(Lev.GroundBounds, Settings.RenderingSettings.GrassZoom);
+                    x.UpdateGrassSlopeInfo(Lev.GroundBounds, Settings.RenderingSettings.GrassZoom);
             }
 
             var deletedApples = new HashSet<int>();
@@ -855,7 +835,13 @@ internal partial class LevelEditorForm : FormMod, IMessageFilter
                 {
                     if (Lev.Objects[i].Type == ObjectType.Start)
                         continue;
-                    mod |= LevModification.Objects;
+                    mod |= Lev.Objects[i].Type switch
+                    {
+                        ObjectType.Apple => LevModification.Apples,
+                        ObjectType.Killer => LevModification.Killers,
+                        ObjectType.Flower => LevModification.Flowers,
+                        _ => LevModification.Nothing
+                    };
                     if (Lev.Objects[i].Type == ObjectType.Apple)
                     {
                         deletedApples.Add(i);
@@ -870,7 +856,7 @@ internal partial class LevelEditorForm : FormMod, IMessageFilter
                 if (x.Position.Mark == VectorMark.Selected)
                 {
                     Lev.GraphicElements.Remove(x);
-                    mod |= LevModification.Decorations;
+                    mod |= x is GraphicElement.Picture or GraphicElement.MissingPicture ? LevModification.Pictures : LevModification.Textures;
                 }
             }
 
@@ -925,14 +911,15 @@ internal partial class LevelEditorForm : FormMod, IMessageFilter
     private Vector GetMouseCoordinates()
     {
         var mousePosNoTr = Invoke(() => EditorControl.PointToClient(MousePosition));
+        var bounds = _zoomCtrl.Cam.GetBounds(Renderer.AspectRatio);
         var mousePos = new Vector
         {
             X =
-                _zoomCtrl.Cam.XMin +
-                mousePosNoTr.X * (_zoomCtrl.Cam.XMax - _zoomCtrl.Cam.XMin) / EditorControl.Width,
+                bounds.XMin +
+                mousePosNoTr.X * bounds.XSize / EditorControl.Width,
             Y =
-                _zoomCtrl.Cam.YMax -
-                mousePosNoTr.Y * (_zoomCtrl.Cam.YMax - _zoomCtrl.Cam.YMin) / EditorControl.Height
+                bounds.YMax -
+                mousePosNoTr.Y * bounds.YSize / EditorControl.Height
         };
         return mousePos;
     }
@@ -967,9 +954,9 @@ internal partial class LevelEditorForm : FormMod, IMessageFilter
             }
             else
             {
-                mod |= LevModification.Decorations;
+                mod |= LevModification.Grass;
             }
-            p.UpdateDecompositionOrGrassSlopeInfo(Lev.GroundBounds, Settings.RenderingSettings.GrassZoom);
+            p.UpdateGrassSlopeInfo(Lev.GroundBounds, Settings.RenderingSettings.GrassZoom);
         });
         SetModified(mod);
         RedrawScene();
@@ -1003,7 +990,7 @@ internal partial class LevelEditorForm : FormMod, IMessageFilter
             {
                 currApple.AppleType = chosenAppleType;
             }
-            SetModified(LevModification.Objects);
+            SetModified(LevModification.Apples);
         }
         else
         {
@@ -1045,7 +1032,6 @@ internal partial class LevelEditorForm : FormMod, IMessageFilter
         UpdateButtons();
         Size = Settings.Size;
         Renderer = new ElmaRenderer(EditorControl, Settings.RenderingSettings);
-        UpdateLgrTools(Renderer.UpdateSettings(Lev, Settings.RenderingSettings));
         CurrentTool = Tools.SelectionTool;
         SetupEventHandlers();
         InitializeLevel(lev);
@@ -1069,7 +1055,6 @@ internal partial class LevelEditorForm : FormMod, IMessageFilter
         _zoomCtrl = new ZoomController(new ElmaCamera(), Lev, () => RedrawScene());
         SetNotModified();
         var r = Renderer.UpdateSettings(Lev, Settings.RenderingSettings);
-        Renderer.InitializeLevel(Lev, Settings.RenderingSettings);
         Lev.UpdateBounds();
         ZoomFill();
         topologyList.Text = string.Empty;
@@ -1079,8 +1064,7 @@ internal partial class LevelEditorForm : FormMod, IMessageFilter
         UpdateLabels();
         ClearHistory();
         UpdatePrevNextButtons();
-        CurrentTool.InActivate();
-        ActivateCurrentAndRedraw();
+        ChangeToolTo(CurrentTool);
         _errorPoints.Clear();
     }
 
@@ -1093,7 +1077,9 @@ internal partial class LevelEditorForm : FormMod, IMessageFilter
             _ => e
         };
 
-        CurrentTool.KeyDown(e);
+        var mod = CurrentTool.KeyDown(e);
+        UpdateRendererBuffers(mod);
+        UpdateToolHelp();
         var wasModified = false;
         switch (e.KeyCode)
         {
@@ -1162,6 +1148,11 @@ internal partial class LevelEditorForm : FormMod, IMessageFilter
         }
 
         RedrawScene();
+    }
+
+    private void UpdateToolHelp()
+    {
+        InfoLabel.Text = CurrentTool.GetHelp();
     }
 
     private async void TexturizeSelection()
@@ -1236,7 +1227,7 @@ internal partial class LevelEditorForm : FormMod, IMessageFilter
                 GraphicElement.Text(sel.Clipping!.Value, sel.Distance!.Value,
                     new Vector(c.MinX - m.EmptyPixelXMargin, c.MaxY + m.EmptyPixelYMargin), texture, m));
         Lev.GraphicElements.AddRange(pics);
-        SetModified(LevModification.Decorations);
+        SetModified(LevModification.Textures);
     }
 
     private void SetModifiedAndRender(LevModification value)
@@ -1313,7 +1304,7 @@ internal partial class LevelEditorForm : FormMod, IMessageFilter
 
             if (wasModified)
             {
-                SetModified(LevModification.Decorations);
+                SetModified(LevModification.Start);
             }
         }
     }
@@ -1327,19 +1318,18 @@ internal partial class LevelEditorForm : FormMod, IMessageFilter
     {
         _editorLev = _editorLev with { Lev = _history[_historyIndex].Clone() };
         _zoomCtrl.Lev = Lev;
-        Lev.UpdateAllPolygons(Settings.RenderingSettings.GrassZoom);
+        Lev.UpdateGrass(Settings.RenderingSettings.GrassZoom);
         UpdateUndoRedo();
         topologyList.DropDownItems.Clear();
         topologyList.Text = "";
         _errorPoints.Clear();
-        CurrentTool.InActivate();
         var r = Renderer.UpdateSettings(Lev, Settings.RenderingSettings);
         UpdateLgrTools(r);
         UpdateLabels();
-        ActivateCurrentAndRedraw();
+        ChangeToolTo(CurrentTool);
         if (_savedIndex != _historyIndex)
         {
-            SetModified(LevModification.Ground | LevModification.Objects | LevModification.Decorations, false);
+            SetModified(LevModification.All, false);
         }
         else
         {
@@ -1356,8 +1346,8 @@ internal partial class LevelEditorForm : FormMod, IMessageFilter
     private void MirrorHorizontallyToolStripMenuItem_Click(object sender, EventArgs e)
     {
         Lev.MirrorSelected(MirrorOption.Horizontal);
-        Lev.UpdateAllPolygons(Settings.RenderingSettings.GrassZoom);
-        SetModified(LevModification.Objects | LevModification.Ground | LevModification.Decorations);
+        Lev.UpdateGrass(Settings.RenderingSettings.GrassZoom);
+        SetModified(LevModification.All);
         RedrawScene();
     }
 
@@ -1519,18 +1509,29 @@ internal partial class LevelEditorForm : FormMod, IMessageFilter
                 break;
         }
 
-        CurrentTool.MouseDown(e);
+        var mod = CurrentTool.MouseDown(e);
+        UpdateRendererBuffers(mod);
+        UpdateToolHelp();
         RedrawScene();
     }
 
     private void MouseLeaveEvent(object sender, EventArgs e)
     {
-        CurrentTool.MouseOutOfEditor();
+        _hasFocus = false;
+        var mod = CurrentTool.MouseOutOfEditor();
+        UpdateRendererBuffers(mod);
+        UpdateToolHelp();
         RedrawScene();
+    }
+
+    private void UpdateRendererBuffers(LevVisualChange mod)
+    {
+        Renderer.UpdateBuffers(new LevEditState(Lev, CurrentTool.GetTransientElements(_hasFocus)), mod);
     }
 
     private void MouseMoveEvent(object sender, MouseEventArgs e)
     {
+        _hasFocus = true;
         if (_lockMouseX)
             Cursor.Position = new Point(_lockCoord, MousePosition.Y);
         else if (_lockMouseY)
@@ -1545,12 +1546,14 @@ internal partial class LevelEditorForm : FormMod, IMessageFilter
             }
             else
             {
-                _zoomCtrl.CenterX = (_zoomCtrl.Cam.XMax + _zoomCtrl.Cam.XMin) / 2 - (z.X - _moveStartPosition.X);
-                _zoomCtrl.CenterY = (_zoomCtrl.Cam.YMax + _zoomCtrl.Cam.YMin) / 2 - (z.Y - _moveStartPosition.Y);
+                _zoomCtrl.CenterX = _zoomCtrl.CenterX - (z.X - _moveStartPosition.X);
+                _zoomCtrl.CenterY = _zoomCtrl.CenterY - (z.Y - _moveStartPosition.Y);
             }
         }
 
-        CurrentTool.MouseMove(GetMouseCoordinates());
+        var mod = CurrentTool.MouseMove(GetMouseCoordinates());
+        UpdateRendererBuffers(mod);
+        UpdateToolHelp();
         RedrawScene();
         StatusStrip1.Refresh();
     }
@@ -1558,6 +1561,7 @@ internal partial class LevelEditorForm : FormMod, IMessageFilter
     private void MouseUpEvent(object sender, MouseEventArgs e)
     {
         CurrentTool.MouseUp();
+        UpdateToolHelp();
         _draggingScreen = false;
         _draggingGrid = false;
         RedrawScene();
@@ -1590,13 +1594,14 @@ internal partial class LevelEditorForm : FormMod, IMessageFilter
     private void SetGridSizeWithMouse(double newSize, Vector mouseCoords)
     {
         var settings = Settings.RenderingSettings;
+        var bounds = _zoomCtrl.Cam.GetBounds(Renderer.AspectRatio);
         var gx = _sceneSettings.GridOffset.X;
-        _sceneSettings.GridOffset.X = (gx + ElmaRenderer.GetFirstGridLine(newSize, gx, _zoomCtrl.Cam.XMin)
-            - mouseCoords.X + GetGridMouseRatio(settings.GridSize, gx, _zoomCtrl.Cam.XMin, mouseCoords.X) *
+        _sceneSettings.GridOffset.X = (gx + ElmaRenderer.GetFirstGridLine(newSize, gx, bounds.XMin)
+            - mouseCoords.X + GetGridMouseRatio(settings.GridSize, gx, bounds.XMin, mouseCoords.X) *
             newSize) % newSize;
         var gy = _sceneSettings.GridOffset.Y;
-        _sceneSettings.GridOffset.Y = (gy + ElmaRenderer.GetFirstGridLine(newSize, gy, _zoomCtrl.Cam.YMin)
-            - mouseCoords.Y + GetGridMouseRatio(settings.GridSize, gy, _zoomCtrl.Cam.YMin, mouseCoords.Y) *
+        _sceneSettings.GridOffset.Y = (gy + ElmaRenderer.GetFirstGridLine(newSize, gy, bounds.YMin)
+            - mouseCoords.Y + GetGridMouseRatio(settings.GridSize, gy, bounds.YMin, mouseCoords.Y) *
             newSize) % newSize;
         settings.GridSize = newSize;
         Renderer.UpdateSettings(Lev, settings);
@@ -1740,7 +1745,7 @@ internal partial class LevelEditorForm : FormMod, IMessageFilter
             };
         }).ToList();
 
-        SetModified(LevModification.Decorations);
+        SetModified(LevModification.Pictures | LevModification.Textures);
         RedrawScene();
     }
 
@@ -1807,7 +1812,7 @@ internal partial class LevelEditorForm : FormMod, IMessageFilter
         var grassPolys = Lev.Polygons.Where(x => !x.IsGrass)
             .SelectMany(Tools.AutoGrassTool.AutoGrass).ToList();
         Lev.Polygons.AddRange(grassPolys);
-        SetModified(grassPolys.Count > 0 ? LevModification.Decorations : LevModification.Nothing);
+        SetModified(grassPolys.Count > 0 ? LevModification.Grass : LevModification.Nothing);
         RedrawScene();
     }
 
@@ -1900,7 +1905,6 @@ internal partial class LevelEditorForm : FormMod, IMessageFilter
             Lev.GroundTextureName = "ground";
         if (Lev.SkyTextureName == "")
             Lev.SkyTextureName = "sky";
-        CurrentTool.InActivate();
         if (Lev.Top10.IsEmpty ||
             MessageBox.Show("This level has times in top 10. Do you still want to save the level?", "Warning",
                 MessageBoxButtons.YesNo, MessageBoxIcon.Warning) == DialogResult.Yes)
@@ -1932,8 +1936,6 @@ internal partial class LevelEditorForm : FormMod, IMessageFilter
                 UiUtils.ShowError("Error when saving level: " + ex.Message);
             }
         }
-
-        ActivateCurrentAndRedraw();
     }
 
     private void SelectAllToolStripMenuItemClick(object sender, EventArgs e)
@@ -1992,14 +1994,20 @@ internal partial class LevelEditorForm : FormMod, IMessageFilter
             var obj = Lev.Objects[_selectedObjectIndex];
             Lev.Objects.RemoveAt(_selectedObjectIndex);
             Lev.Objects.Insert(0, obj);
-            mod |= LevModification.Objects;
+            mod |= obj.Type switch
+            {
+                ObjectType.Apple => LevModification.Apples,
+                ObjectType.Killer => LevModification.Killers,
+                ObjectType.Flower => LevModification.Flowers,
+                _ => LevModification.Nothing
+            };
         }
         else if (_selectedPictureIndex >= 0)
         {
             var obj = Lev.GraphicElements[_selectedPictureIndex];
             Lev.GraphicElements.RemoveAt(_selectedPictureIndex);
             Lev.GraphicElements.Add(obj);
-            mod |= LevModification.Decorations;
+            mod |= obj is GraphicElement.Picture or GraphicElement.MissingPicture ? LevModification.Pictures : LevModification.Textures;
         }
         else if (_grassInfo is not null)
         {
@@ -2337,7 +2345,7 @@ internal partial class LevelEditorForm : FormMod, IMessageFilter
 
     private void ZoomFill()
     {
-        _zoomCtrl.ZoomFill(Settings.RenderingSettings);
+        _zoomCtrl.ZoomFill(Settings.RenderingSettings, Renderer.AspectRatio);
         UpdateZoomLabel();
     }
 
@@ -2427,11 +2435,11 @@ internal partial class LevelEditorForm : FormMod, IMessageFilter
 
             imported++;
             Lev.Import(lev);
-            Lev.UpdateAllPolygons(Settings.RenderingSettings.GrassZoom);
+            Lev.UpdateGrass(Settings.RenderingSettings.GrassZoom);
         });
         if (imported > 0)
         {
-            SetModified(LevModification.Objects | LevModification.Ground | LevModification.Decorations);
+            SetModified(LevModification.All);
             ZoomFill();
         }
     }
@@ -2443,7 +2451,7 @@ internal partial class LevelEditorForm : FormMod, IMessageFilter
         {
             if (saveAsPictureDialog.FileName.EndsWith(".png"))
             {
-                Renderer.SaveSnapShot(Lev, saveAsPictureDialog.FileName, _zoomCtrl, _sceneSettings, Settings.RenderingSettings);
+                Renderer.SaveSnapShot(saveAsPictureDialog.FileName, _zoomCtrl, _sceneSettings, Settings.RenderingSettings);
             }
             else if (saveAsPictureDialog.FileName.EndsWith(".svg"))
             {
@@ -2526,7 +2534,7 @@ internal partial class LevelEditorForm : FormMod, IMessageFilter
                 }
             }
 
-            SetModified(LevModification.Decorations);
+            SetModified(LevModification.Pictures | LevModification.Textures);
             return;
         }
 
@@ -2538,7 +2546,7 @@ internal partial class LevelEditorForm : FormMod, IMessageFilter
             Lev.Objects.Add(obj);
         }
 
-        SetModified(LevModification.Decorations | LevModification.Ground | LevModification.Objects);
+        SetModified(LevModification.All);
     }
 
     private void TextButton_CheckedChanged(object sender, EventArgs e)
@@ -2734,8 +2742,8 @@ internal partial class LevelEditorForm : FormMod, IMessageFilter
     private void MirrorVerticallyToolStripMenuItem_Click(object sender, EventArgs e)
     {
         Lev.MirrorSelected(MirrorOption.Vertical);
-        Lev.UpdateAllPolygons(Settings.RenderingSettings.GrassZoom);
-        SetModified(LevModification.Decorations | LevModification.Ground | LevModification.Objects);
+        Lev.UpdateGrass(Settings.RenderingSettings.GrassZoom);
+        SetModified(LevModification.All);
         RedrawScene();
     }
 
@@ -2745,7 +2753,7 @@ internal partial class LevelEditorForm : FormMod, IMessageFilter
         if (s != null && _contextMenuClickPosition is { } p)
         {
             s.Position = p;
-            SetModified(LevModification.Objects);
+            SetModified(LevModification.Start);
         }
     }
 
@@ -2756,7 +2764,7 @@ internal partial class LevelEditorForm : FormMod, IMessageFilter
 
     private void EditorControl_DragLeave(object sender, EventArgs e)
     {
-        CurrentTool.UpdateHelp();
+        UpdateToolHelp();
     }
 
     private bool ShouldOpenOnDrop()
@@ -2793,10 +2801,10 @@ internal partial class LevelEditorForm : FormMod, IMessageFilter
             _fullScreenController.FullScreen();
         }
         SetToPlaying();
-        var t = new Timer(25);
+        var t = new Timer(100);
         var updateTime = new Action(() =>
         {
-            PlayTimeLabel.Text = PlayController.Driver!.CurrentTime.ToSeconds().ToTimeString();
+            PlayTimeLabel.Text = PlayController.Driver!.CurrentTime.ToSeconds().ToTimeString(1);
         });
         t.Elapsed += (_, _) =>
         {

@@ -7,6 +7,7 @@ using System.Windows.Input;
 using Elmanager.Application;
 using Elmanager.Geometry;
 using Elmanager.Lev;
+using Elmanager.Rendering;
 using Elmanager.Utilities;
 using KeyEventArgs = System.Windows.Forms.KeyEventArgs;
 using MouseEventArgs = System.Windows.Forms.MouseEventArgs;
@@ -34,7 +35,6 @@ internal class SmoothenTool : ToolBase, IEditorTool
         _smoothVertexOffset = Math.Max(Global.AppSettings.LevelEditor.SmoothVertexOffset, 50);
         _unsmoothAngle = Math.Max(Global.AppSettings.LevelEditor.UnsmoothAngle, 1);
         _unsmoothLength = Math.Max(Global.AppSettings.LevelEditor.UnsmoothLength, 0.1);
-        UpdateHelp();
     }
 
     public void ExtraRendering()
@@ -44,16 +44,17 @@ internal class SmoothenTool : ToolBase, IEditorTool
                 Renderer.DrawPolygon(x, Color.Red);
     }
 
-    public void InActivate()
+    public LevVisualChange InActivate()
     {
         Global.AppSettings.LevelEditor.SmoothSteps = _smoothSteps;
         Global.AppSettings.LevelEditor.SmoothVertexOffset = _smoothVertexOffset;
         Global.AppSettings.LevelEditor.UnsmoothAngle = _unsmoothAngle;
         Global.AppSettings.LevelEditor.UnsmoothLength = _unsmoothLength;
         CancelSmoothing();
+        return LevVisualChange.Nothing;
     }
 
-    public void KeyDown(KeyEventArgs key)
+    public LevVisualChange KeyDown(KeyEventArgs key)
     {
         if (Smoothing is { })
         {
@@ -118,7 +119,6 @@ internal class SmoothenTool : ToolBase, IEditorTool
                     break;
             }
 
-            UpdateHelp();
             UpdatePolygonSmooth();
         }
         else
@@ -130,16 +130,17 @@ internal class SmoothenTool : ToolBase, IEditorTool
                     {
                         Smoothing = SmoothState.All;
                         _unsmooth = Keyboard.IsKeyDown(Key.LeftCtrl);
-                        UpdateHelp();
                         UpdatePolygonSmooth();
                     }
 
                     break;
             }
         }
+
+        return LevVisualChange.Nothing;
     }
 
-    public void MouseDown(MouseEventArgs mouseData)
+    public LevVisualChange MouseDown(MouseEventArgs mouseData)
     {
         var info = GetNearestVertexInfo(CurrentPos);
         switch (mouseData.Button)
@@ -162,14 +163,13 @@ internal class SmoothenTool : ToolBase, IEditorTool
                     LevEditor.SetModified(LevModification.Ground);
                     LevEditor.UpdateSelectionInfo();
                     foreach (Polygon x in _smoothPolys)
-                        x.UpdateDecompositionOrGrassSlopeInfo(Lev.GroundBounds, LevEditor.Settings.RenderingSettings.GrassZoom);
+                        x.UpdateGrassSlopeInfo(Lev.GroundBounds, LevEditor.Settings.RenderingSettings.GrassZoom);
                 }
                 else if (info is { } v)
                 {
                     Smoothing = SmoothState.Polygon(v.Polygon);
                     ResetHighlight();
                     _unsmooth = Keyboard.IsKeyDown(Key.LeftCtrl);
-                    UpdateHelp();
                     UpdatePolygonSmooth();
                 }
 
@@ -179,10 +179,10 @@ internal class SmoothenTool : ToolBase, IEditorTool
                 break;
         }
 
-        UpdateHelp();
+        return LevVisualChange.Nothing;
     }
 
-    public void MouseMove(Vector p)
+    public LevVisualChange MouseMove(Vector p)
     {
         CurrentPos = p;
         if (Smoothing is null)
@@ -190,7 +190,7 @@ internal class SmoothenTool : ToolBase, IEditorTool
             ResetHighlight();
             if (GetNearestVertexInfo(p) is { } v)
             {
-                v.Polygon.Mark = PolygonMark.Highlight;
+                LevEditor.CurrentHighlight = new HighlightTarget.PolygonTarget(v.Polygon);
                 ChangeCursorToHand();
             }
             else
@@ -198,34 +198,38 @@ internal class SmoothenTool : ToolBase, IEditorTool
         }
         else
             ChangeToDefaultCursorIfHand();
+
+        return LevVisualChange.Nothing;
     }
 
-    public void MouseOutOfEditor()
+    public LevVisualChange MouseOutOfEditor()
     {
         ResetHighlight();
+        return LevVisualChange.Nothing;
     }
 
     public void MouseUp()
     {
     }
 
-    public void UpdateHelp()
+    public string GetHelp()
     {
         if (Smoothing is { })
         {
-            LevEditor.InfoLabel.Text = "LMouse: apply; (Ctrl) + +/-: adjust parameters";
+            var text = "LMouse: apply; (Ctrl) + +/-: adjust parameters";
             if (!_unsmooth)
-                LevEditor.InfoLabel.Text += " (" + _smoothSteps + ", " +
+                text += " (" + _smoothSteps + ", " +
                                             (_smoothVertexOffset / 100.0).ToString("F2") +
                                             ")";
             else
-                LevEditor.InfoLabel.Text += " (" + _unsmoothLength.ToString("F2") + ", " +
+                text += " (" + _unsmoothLength.ToString("F2") + ", " +
                                             _unsmoothAngle.ToString("F2") + ")";
 
-            LevEditor.InfoLabel.Text += "; RMouse: cancel.";
+            text += "; RMouse: cancel.";
+            return text;
         }
         else
-            LevEditor.InfoLabel.Text = "LMouse: smooth a polygon; Space: smooth selected. Hold Ctrl to unsmooth.";
+            return "LMouse: smooth a polygon; Space: smooth selected. Hold Ctrl to unsmooth.";
     }
 
     private static bool IsSmoothable(Polygon p)

@@ -38,7 +38,6 @@ internal partial class CustomShapeControl : UserControl
         shapeLevelControl.Padding = new Padding(0);
         shapeLevelControl.Name = "shapeLevelControl";
         shapeLevelControl.Dock = DockStyle.None;
-        shapeLevelControl.Profile = OpenTK.Windowing.Common.ContextProfile.Compatability;
         shapeLevelControl.TabIndex = 0;
         shapeLevelControl.TabStop = false;
         tableLayoutPanel1.Controls.Add(shapeLevelControl, 0, 0);
@@ -141,19 +140,17 @@ internal partial class CustomShapeControl : UserControl
         }
     }
 
-    internal void UpdateContent(string filepath, string shapeName, string lgr)
+    internal void UpdateContent(string filepath, string shapeName)
     {
         ShapeFullPath = filepath;
         ShapeName = shapeName;
 
         ElmaFileObject<SleShape> shape = SleShape.LoadFromPath(filepath);
-        SetShape(shape.Obj, lgr);
+        SetShape(shape.Obj);
     }
 
-    internal void SetShape(SleShape shape, string lgr)
+    private void SetShape(SleShape shape)
     {
-        // Make sure LGR of the loaded shape matches that of the global elma renderer
-        shape.Level.LgrFile = lgr;
         shapeLevelControl.SetLevel(shape.Level);
     }
 

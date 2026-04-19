@@ -3,6 +3,7 @@ using System.Drawing;
 using System.Linq;
 using System.Windows.Forms;
 using Elmanager.Geometry;
+using Elmanager.Rendering;
 using NetTopologySuite.Geometries;
 using Polygon = Elmanager.Lev.Polygon;
 
@@ -20,7 +21,6 @@ internal class CutConnectTool : ToolBase, IEditorTool
 
     public void Activate()
     {
-        UpdateHelp();
     }
 
     public void ExtraRendering()
@@ -29,16 +29,18 @@ internal class CutConnectTool : ToolBase, IEditorTool
             Renderer.DrawLine(_start, CurrentPos, Color.Blue);
     }
 
-    public void InActivate()
+    public LevVisualChange InActivate()
     {
         StartSelected = false;
+        return LevVisualChange.Nothing;
     }
 
-    public void KeyDown(KeyEventArgs key)
+    public LevVisualChange KeyDown(KeyEventArgs key)
     {
+        return LevVisualChange.Nothing;
     }
 
-    public void MouseDown(MouseEventArgs mouseData)
+    public LevVisualChange MouseDown(MouseEventArgs mouseData)
     {
         switch (mouseData.Button)
         {
@@ -61,29 +63,29 @@ internal class CutConnectTool : ToolBase, IEditorTool
                 break;
         }
 
-        UpdateHelp();
+        return LevVisualChange.Nothing;
     }
 
-    public void MouseMove(Vector p)
+    public LevVisualChange MouseMove(Vector p)
     {
         CurrentPos = p;
         AdjustForGrid(ref CurrentPos);
+        return LevVisualChange.Nothing;
     }
 
-    public void MouseOutOfEditor()
+    public LevVisualChange MouseOutOfEditor()
     {
+        return LevVisualChange.Nothing;
     }
 
     public void MouseUp()
     {
     }
 
-    public void UpdateHelp()
-    {
-        LevEditor.InfoLabel.Text = StartSelected
+    public string GetHelp() =>
+        StartSelected
             ? "LMouse: set second vertex of the cut/connection edge; RMouse: cancel."
             : "LMouse: set first vertex of the cut/connection edge.";
-    }
 
     private void Cut(Vector v1, Vector v2)
     {
@@ -98,8 +100,6 @@ internal class CutConnectTool : ToolBase, IEditorTool
             anythingCut = true;
             Lev.Polygons.Remove(x);
             Lev.Polygons.AddRange(cutPolygons);
-            foreach (Polygon z in cutPolygons)
-                z.UpdateDecomposition();
         }
 
         StartSelected = false;

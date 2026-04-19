@@ -744,7 +744,7 @@ namespace Elmanager.LevelEditor
             EditorControl.Location = new Point(168, 175);
             EditorControl.Margin = new Padding(6);
             EditorControl.Name = "EditorControl";
-            EditorControl.Profile = OpenTK.Windowing.Common.ContextProfile.Compatability;
+            EditorControl.Profile = OpenTK.Windowing.Common.ContextProfile.Core;
             EditorControl.Size = new Size(1690, 797);
             EditorControl.TabIndex = 2;
             EditorControl.DragDrop += ItemsDropped;

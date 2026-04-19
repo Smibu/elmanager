@@ -17,12 +17,10 @@ internal static class GeometryUtils
     internal static IEnumerable<Polygon> ToElmaPolygons(this NetTopologySuite.Geometries.Polygon poly)
     {
         var p = new Polygon(poly.Shell);
-        p.UpdateDecomposition();
         yield return p;
         foreach (var linearRing in poly.Holes)
         {
             p = new Polygon(linearRing);
-            p.UpdateDecomposition();
             yield return p;
         }
     }
@@ -155,7 +153,6 @@ internal static class GeometryUtils
             }
         }
 
-        result.UpdateDecomposition();
         return result;
     }
 
@@ -170,34 +167,6 @@ internal static class GeometryUtils
 
     internal static Vector OrthogonalProjection(Vector a, Vector b, Vector p) =>
         new LineSegment(a, b).Project(p).ToVector();
-
-    private static void Decompose(List<Polygon> polygons)
-    {
-        for (int i = 0; i < polygons.Count; i++)
-        {
-            var poly = polygons[i];
-            if (poly.Vertices.Count <= 3)
-                continue;
-            const int firstDiagonal = 0;
-            const int secondDiagonal = 2;
-            var newPoly = new Polygon();
-            for (int j = firstDiagonal; j <= secondDiagonal; j++)
-                newPoly.Add(poly.Vertices[j]);
-            poly.RemoveRange(firstDiagonal + 1, secondDiagonal - firstDiagonal - 1);
-            polygons.Add(newPoly);
-            i -= 1;
-        }
-    }
-
-    internal static Vector[][] Decompose(Polygon polygon)
-    {
-        var triangulatedPoly = new List<Polygon> { new(polygon) };
-        Decompose(triangulatedPoly);
-        var triangulatedPolyArray = new Vector[triangulatedPoly.Count][];
-        for (int i = 0; i < triangulatedPoly.Count; i++)
-            triangulatedPolyArray[i] = triangulatedPoly[i].Vertices.ToArray();
-        return triangulatedPolyArray;
-    }
 
     internal static List<Vector> GetIntersectionPoints(List<Polygon> polygons)
     {

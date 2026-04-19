@@ -114,6 +114,7 @@ internal class Engine
         {
             driver.Direction = driver.Direction == Direction.Left ? Direction.Right : Direction.Left;
             driver.UpdateHeadLocation();
+            driver.LastTurnTime = time;
             rec.SaveEvent(new Event(time.Value, new EventTypeTurn()));
         }
 

@@ -36,8 +36,6 @@ internal partial class ShapeSelectionForm : Form
     private readonly SceneSettings _sceneSettings;
     private readonly RenderingSettings _renderingSettings;
 
-    private readonly string _currentLgr;
-
     private readonly List<CustomShapeControl> _reusableControls;
 
     // List of currently active shapes
@@ -63,19 +61,15 @@ internal partial class ShapeSelectionForm : Form
             ShowGravityAppleArrows = true,
             LineWidth = 1,
             ShowGrass = false,
-            DisableFrameBuffer = true
+            DisableFrameBuffer = true,
+            LgrDisabled = true
         };
 
         _shapes = new List<(string Name, string FilePath)>();
 
-        _sceneSettings = new SceneSettings()
-        {
-            PicturesInBackground = true
-        };
+        _sceneSettings = new SceneSettings();
 
         _renderer = elmaRenderer;
-
-        _currentLgr = _renderer.OpenGlLgr?.CurrentLgr.Path != null ? System.IO.Path.GetFileNameWithoutExtension(_renderer.OpenGlLgr.CurrentLgr.Path) : "default";
 
         _reusableControls = new List<CustomShapeControl>();
 
@@ -165,7 +159,7 @@ internal partial class ShapeSelectionForm : Form
             if (dataIndex < _shapes.Count)
             {
                 _reusableControls[i].Highlight(false);
-                _reusableControls[i].UpdateContent(_shapes[dataIndex].FilePath, _shapes[dataIndex].Name, _currentLgr);
+                _reusableControls[i].UpdateContent(_shapes[dataIndex].FilePath, _shapes[dataIndex].Name);
                 _reusableControls[i].Visible = true;
             }
             else

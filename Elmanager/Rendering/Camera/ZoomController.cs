@@ -25,27 +25,13 @@ internal class ZoomController
     internal double CenterX
     {
         get => Cam.CenterX;
-        set
-        {
-            if (value < ZoomFillxMin - Cam.XSize)
-                value = ZoomFillxMin - Cam.XSize;
-            if (value > ZoomFillxMax + Cam.XSize)
-                value = ZoomFillxMax + Cam.XSize;
-            Cam.CenterX = value;
-        }
+        set => Cam.CenterX = value;
     }
 
     internal double CenterY
     {
         get => Cam.CenterY;
-        set
-        {
-            if (value < ZoomFillyMin - Cam.YSize)
-                value = ZoomFillyMin - Cam.YSize;
-            if (value > ZoomFillyMax + Cam.YSize)
-                value = ZoomFillyMax + Cam.YSize;
-            Cam.CenterY = value;
-        }
+        set => Cam.CenterY = value;
     }
 
     internal double ZoomLevel
@@ -75,17 +61,17 @@ internal class ZoomController
         var i = zoomIn ? zoomFactor : 1 / zoomFactor;
         var x = p.X;
         var y = p.Y;
-        x -= (x - (Cam.XMax + Cam.XMin) / 2) * i;
-        y -= (y - (Cam.YMax + Cam.YMin) / 2) * i;
+        x -= (x - Cam.CenterX) * i;
+        y -= (y - Cam.CenterY) * i;
         PerformZoom(ZoomLevel * i, x, y, settings);
     }
 
-    internal void ZoomFill(RenderingSettings settings)
+    internal void ZoomFill(RenderingSettings settings, double aspectRatio)
     {
         var levelAspectRatio = (ZoomFillxMax - ZoomFillxMin) / (ZoomFillyMax - ZoomFillyMin);
         var newZoomLevel = (ZoomFillyMax - ZoomFillyMin) / 2;
-        if (levelAspectRatio > Cam.AspectRatio)
-            newZoomLevel = (ZoomFillxMax - ZoomFillxMin) / 2 / Cam.AspectRatio;
+        if (levelAspectRatio > aspectRatio)
+            newZoomLevel = (ZoomFillxMax - ZoomFillxMin) / 2 / aspectRatio;
         PerformZoom(newZoomLevel, (ZoomFillxMax + ZoomFillxMin) / 2, (ZoomFillyMax + ZoomFillyMin) / 2, settings);
     }
 
@@ -113,8 +99,8 @@ internal class ZoomController
             return;
         _smoothZoomInProgress = true;
         var oldZoomLevel = ZoomLevel;
-        var oldCenterX = (Cam.XMax + Cam.XMin) / 2;
-        var oldCenterY = (Cam.YMax + Cam.YMin) / 2;
+        var oldCenterX = Cam.CenterX;
+        var oldCenterY = Cam.CenterY;
         var zoomTimer = new Stopwatch();
         long elapsedTime = 0;
         zoomTimer.Start();

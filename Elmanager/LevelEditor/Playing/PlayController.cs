@@ -11,7 +11,7 @@ using Elmanager.Lev;
 using Elmanager.Physics;
 using Elmanager.Rendering;
 using Elmanager.Rendering.Camera;
-using OpenTK.Graphics.OpenGL;
+using Elmanager.UI;
 
 namespace Elmanager.LevelEditor.Playing;
 
@@ -190,7 +190,7 @@ internal class PlayController
     public async Task BeginLoop(Level lev, SceneSettings sceneSettings, ElmaRenderer renderer,
         ZoomController zoomCtrl, Action render)
     {
-        _playTask = BeginLoopImpl(lev, sceneSettings, renderer, zoomCtrl, render);
+        _playTask = BeginLoopImpl(lev, renderer, zoomCtrl, render);
         await WaitUntilStop();
     }
 
@@ -214,7 +214,7 @@ internal class PlayController
         _savedDriverState = null;
     }
 
-    private async Task BeginLoopImpl(Level lev, SceneSettings sceneSettings, ElmaRenderer renderer,
+    private async Task BeginLoopImpl(Level lev, ElmaRenderer renderer,
         ZoomController zoomCtrl, Action render)
     {
         _engine = new Engine(lev.Polygons, lev.Objects, new ElmaEdgeTree());
@@ -226,139 +226,162 @@ internal class PlayController
         PlayState = PlayState.Playing;
         PlayingStopRequested = false;
         ShouldRestartAfterResuming = false;
-        renderer.MakeNoneCurrent();
         FollowDriver = Settings.FollowDriverOption == FollowDriverOption.WhenPressingKey;
-        sceneSettings.FadedObjectIndices = Driver.TakenApples;
         PlayerSelection = VectorMark.None;
         var rnd = new Random();
         var maxFpsVariation = Settings.PhysicsFps / 10;
-        await Task.Run(() =>
+        var tcs = new TaskCompletionSource();
+        var physElapsed = 0.0;
+        int lastTakenApplesCount = -1;
+
+        void RestartPlaying()
         {
-            renderer.MakeCurrent();
+            Driver = _engine.InitDriver();
+            renderer.UpdateFadedObjects(lev, Driver.TakenApples);
+            physElapsed = 0.0;
             _timer.Restart();
-            var physElapsed = 0.0;
-            while (!PlayingStopRequested)
+        }
+
+        void StopLoop()
+        {
+            System.Windows.Forms.Application.Idle -= OnIdle;
+            tcs.TrySetResult();
+        }
+
+        void ProcessFrame()
+        {
+            var elapsed = _timer.ElapsedMilliseconds;
+            while (physElapsed < elapsed)
             {
-                var elapsed = _timer.ElapsedMilliseconds;
-                while (physElapsed < elapsed)
+                var fps = Settings.ConstantFps
+                    ? Settings.PhysicsFps
+                    : Math.Min(Settings.PhysicsFps + rnd.NextInt64(-maxFpsVariation, maxFpsVariation), 1000);
+                var step = ElmaTime.FromMilliSeconds(1000.0 / fps);
+                if (step > maxPhysStep)
                 {
-                    var fps = Settings.ConstantFps
-                        ? Settings.PhysicsFps
-                        : Math.Min(Settings.PhysicsFps + rnd.NextInt64(-maxFpsVariation, maxFpsVariation), 1000);
-                    var step = ElmaTime.FromMilliSeconds(1000.0 / fps);
-                    if (step > maxPhysStep)
-                    {
-                        step = maxPhysStep;
-                    }
-
-                    try
-                    {
-                        _engine.NextFrame(Driver, _keys, rec, step);
-                    }
-                    catch (IndexOutOfRangeException)
-                    {
-                        Driver.OutOfBounds = true;
-                        break;
-                    }
-
-                    physElapsed += step.ToMilliSeconds();
-                }
-
-                if (ResetViewPortRequested is var (w, h))
-                {
-                    renderer.ResetViewport(w, h);
-                    ResetViewPortRequested = null;
-                }
-
-                if (FollowDriver)
-                {
-                    zoomCtrl.CenterX = Driver.Body.Location.X;
-                    zoomCtrl.CenterY = Driver.Body.Location.Y;
-                }
-
-                if (CurrentBodyPart != null)
-                {
-                    Driver.SetPosition(CurrentBodyPart, Paused);
-                }
-
-                if (Driver.Condition == DriverCondition.Finished)
-                {
-                    PlayingStopRequested = true;
-                }
-
-                void RestartPlaying()
-                {
-                    Driver = _engine.InitDriver();
-                    sceneSettings.FadedObjectIndices = Driver.TakenApples;
-                    physElapsed = 0.0;
-                    _timer.Restart();
-                }
-
-                if (PlayingRestartRequested)
-                {
-                    PlayingRestartRequested = false;
-                    RestartPlaying();
-                }
-
-                if (Driver.Bugged || Driver.Condition == DriverCondition.Dead)
-                {
-                    if (_savedDriverState is null)
-                    {
-                        switch (Settings.DyingBehavior)
-                        {
-                            case DyingBehavior.PausePlaying when !Driver.Bugged:
-                                if (!Paused)
-                                {
-                                    ShouldRestartAfterResuming = true;
-                                    PlayState = PlayState.Paused;
-                                    PlayingPaused?.Invoke();
-                                }
-
-                                break;
-                            case DyingBehavior.RestartPlaying:
-                                RestartPlaying();
-                                break;
-                            case DyingBehavior.BeInvulnerable when !Driver.Bugged:
-                                // Should be unreachable.
-                                break;
-                            default:
-                                PlayingStopRequested = true;
-                                break;
-                        }
-                    }
-                    else
-                    {
-                        _saveLoadRequest = SaveLoadRequest.Load;
-                    }
+                    step = maxPhysStep;
                 }
 
                 try
                 {
-                    render();
+                    _engine.NextFrame(Driver, _keys, rec, step);
                 }
-                catch (InvalidOperationException)
+                catch (IndexOutOfRangeException)
                 {
-                    GL.End();
+                    Driver.OutOfBounds = true;
+                    break;
                 }
 
-                switch (_saveLoadRequest)
+                physElapsed += step.ToMilliSeconds();
+            }
+
+            if (ResetViewPortRequested is var (w, h))
+            {
+                renderer.ResetViewport(w, h);
+                ResetViewPortRequested = null;
+            }
+
+            if (FollowDriver)
+            {
+                zoomCtrl.CenterX = Driver.Body.Location.X;
+                zoomCtrl.CenterY = Driver.Body.Location.Y;
+            }
+
+            if (CurrentBodyPart != null)
+            {
+                Driver.SetPosition(CurrentBodyPart, Paused);
+            }
+
+            if (Driver.Condition == DriverCondition.Finished)
+            {
+                PlayingStopRequested = true;
+            }
+
+            if (PlayingRestartRequested)
+            {
+                PlayingRestartRequested = false;
+                RestartPlaying();
+            }
+
+            if (Driver.Bugged || Driver.Condition == DriverCondition.Dead)
+            {
+                if (_savedDriverState is null)
                 {
-                    case SaveLoadRequest.Save:
-                        _savedDriverState = Driver.Clone();
-                        _saveLoadRequest = SaveLoadRequest.None;
-                        break;
-                    case SaveLoadRequest.Load when _savedDriverState is not null:
-                        Driver = _savedDriverState.Clone();
-                        sceneSettings.FadedObjectIndices = Driver.TakenApples;
-                        _saveLoadRequest = SaveLoadRequest.None;
-                        break;
+                    switch (Settings.DyingBehavior)
+                    {
+                        case DyingBehavior.PausePlaying when !Driver.Bugged:
+                            if (!Paused)
+                            {
+                                ShouldRestartAfterResuming = true;
+                                PlayState = PlayState.Paused;
+                                PlayingPaused?.Invoke();
+                            }
+
+                            break;
+                        case DyingBehavior.RestartPlaying:
+                            RestartPlaying();
+                            break;
+                        case DyingBehavior.BeInvulnerable when !Driver.Bugged:
+                            // Should be unreachable.
+                            break;
+                        default:
+                            PlayingStopRequested = true;
+                            break;
+                    }
+                }
+                else
+                {
+                    _saveLoadRequest = SaveLoadRequest.Load;
                 }
             }
 
-            renderer.MakeNoneCurrent();
-        });
-        renderer.MakeCurrent();
-        sceneSettings.FadedObjectIndices.Clear();
+            if (Driver.TakenApples.Count != lastTakenApplesCount)
+            {
+                renderer.UpdateFadedObjects(lev, Driver.TakenApples);
+                lastTakenApplesCount = Driver.TakenApples.Count;
+            }
+
+            render();
+
+            switch (_saveLoadRequest)
+            {
+                case SaveLoadRequest.Save:
+                    _savedDriverState = Driver.Clone();
+                    _saveLoadRequest = SaveLoadRequest.None;
+                    break;
+                case SaveLoadRequest.Load when _savedDriverState is not null:
+                    Driver = _savedDriverState.Clone();
+                    renderer.UpdateFadedObjects(lev, Driver.TakenApples);
+                    _saveLoadRequest = SaveLoadRequest.None;
+                    break;
+            }
+        }
+
+        void OnIdle(object? sender, EventArgs e)
+        {
+            while (NativeUtils.IsApplicationIdle())
+            {
+                if (PlayingStopRequested)
+                {
+                    StopLoop();
+                    return;
+                }
+
+                ProcessFrame();
+
+                if (PlayingStopRequested)
+                {
+                    StopLoop();
+                    return;
+                }
+            }
+        }
+
+        _timer.Restart();
+        System.Windows.Forms.Application.Idle += OnIdle;
+        await tcs.Task;
+
+        renderer.UpdateFadedObjects(lev, []);
         PlayState = PlayState.Stopped;
         _engine = null;
         PlayingStopRequested = false;

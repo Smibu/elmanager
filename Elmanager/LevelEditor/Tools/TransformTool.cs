@@ -121,11 +121,9 @@ internal class TransformTool : ToolBase, IEditorTool
                 Lev.GraphicElements.Remove(x);
                 Lev.GraphicElements.Add(x);
             }
-
-            UpdateHelp();
         }
         else
-            InActivate();
+            LevEditor.ChangeToSelectionTool();
     }
 
     public void ExtraRendering()
@@ -143,29 +141,28 @@ internal class TransformTool : ToolBase, IEditorTool
             (transformRectangle.Vertices[3] + transformRectangle.Vertices[0]) / 2, Color.Blue);
     }
 
-    public void InActivate()
+    public LevVisualChange InActivate()
     {
         EndTransforming();
-        LevEditor.SelectButton.Select();
-        LevEditor.CurrentTool = LevEditor.Tools.SelectionTool;
-        LevEditor.CurrentTool.Activate();
+        return LevVisualChange.Nothing;
     }
 
-    public void KeyDown(KeyEventArgs key)
+    public LevVisualChange KeyDown(KeyEventArgs key)
     {
         if (key.KeyCode == Keys.Space)
         {
-            InActivate();
+            LevEditor.ChangeToSelectionTool();
         }
+        return LevVisualChange.Nothing;
     }
 
-    public void MouseDown(MouseEventArgs mouseData)
+    public LevVisualChange MouseDown(MouseEventArgs mouseData)
     {
         if (mouseData.Button != MouseButtons.Left
             || Transforming
             || _transformState is null)
         {
-            return;
+            return LevVisualChange.Nothing;
         }
 
         var transformRectangle = _transformState.TransformRectangle;
@@ -191,12 +188,13 @@ internal class TransformTool : ToolBase, IEditorTool
         {
             _transformState.TransformPolygonIndex = 8;
         }
+        return LevVisualChange.Nothing;
     }
 
-    public void MouseMove(Vector p)
+    public LevVisualChange MouseMove(Vector p)
     {
         CurrentPos = p;
-        if (_transformState?.TransformPolygonIndex is not { } pi) return;
+        if (_transformState?.TransformPolygonIndex is not { } pi) return LevVisualChange.Nothing;
         var originalRectangle = _transformState.OriginalRectangle;
         Vector center = (originalRectangle.Vertices[0] + originalRectangle.Vertices[2]) / 2;
         Matrix transformMatrix = Matrix.Identity;
@@ -243,26 +241,37 @@ internal class TransformTool : ToolBase, IEditorTool
 
         transformMatrix.Translate(center.X, center.Y);
         _transformState.TransformRectangle = originalRectangle.ApplyTransformation(transformMatrix);
+
+        var modification = LevVisualChange.Nothing;
+
         for (int i = 0; i < _transformState.OriginalTransformPolygons.Count; i++)
         {
             Lev.Polygons[^(i + 1)] =
                 _transformState.OriginalTransformPolygons[^(i + 1)].ApplyTransformation(transformMatrix, true);
-            Lev.Polygons[^(i + 1)].UpdateDecompositionOrGrassSlopeInfo(Lev.GroundBounds,
+            Lev.Polygons[^(i + 1)].UpdateGrassSlopeInfo(Lev.GroundBounds,
                 LevEditor.Settings.RenderingSettings.GrassZoom);
+            modification |= Lev.Polygons[^(i + 1)].IsGrass ? LevVisualChange.Grass : LevVisualChange.Ground;
         }
 
         for (int i = 0; i < _transformState.OriginalTransformObjects.Count; i++)
+        {
             Lev.Objects[^(i + 1)].Position =
                 _transformState.OriginalTransformObjects[^(i + 1)].Position * transformMatrix;
+            modification |= LevVisualChange.Objects;
+        }
         for (int i = 0; i < _transformState.OriginalTransformTextures.Count; i++)
         {
             GraphicElement x = _transformState.OriginalTransformTextures[^(i + 1)];
             Lev.GraphicElements[^(i + 1)].Position = x.Position * transformMatrix;
+            modification |= LevVisualChange.GraphicElements;
         }
+
+        return modification;
     }
 
-    public void MouseOutOfEditor()
+    public LevVisualChange MouseOutOfEditor()
     {
+        return LevVisualChange.Nothing;
     }
 
     public void MouseUp()
@@ -270,10 +279,8 @@ internal class TransformTool : ToolBase, IEditorTool
         EndTransforming();
     }
 
-    public void UpdateHelp()
-    {
-        LevEditor.InfoLabel.Text = "Space: done; Left Ctrl: rotate only; Left Shift: resize only";
-    }
+    public string GetHelp() =>
+        "Space: done; Left Ctrl: rotate only; Left Shift: resize only";
 
     private void EndTransforming()
     {

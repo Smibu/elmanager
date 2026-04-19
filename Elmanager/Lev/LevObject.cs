@@ -53,4 +53,13 @@ internal class LevObject : IPositionable
     public bool Equals(LevObject other) =>
         Position.X.Equals(other.Position.X) && Position.Y.Equals(other.Position.Y) && Type == other.Type &&
         AppleType == other.AppleType && AnimationNumber == other.AnimationNumber;
+
+    public static int ObjSortOrder(ObjectType type) => type switch
+    {
+        ObjectType.Killer => 1,
+        ObjectType.Apple => 2,
+        ObjectType.Flower => 3,
+        ObjectType.Start => 4,
+        _ => throw new ArgumentOutOfRangeException(nameof(type))
+    };
 }

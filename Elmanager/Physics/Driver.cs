@@ -34,6 +34,7 @@ internal class Driver
     public List<Event> TakenAppleEvents;
     public int ComputedFrames;
     public readonly HashSet<int> TakenApples = new();
+    public ElmaTime? LastTurnTime;
 
     public Driver(Vector leftWheelLocation)
     {
@@ -130,24 +131,28 @@ internal class Driver
         }
 
         var rot = LastRotation.Value;
-        var diff = CurrentTime - rot.Time;
-        if (diff.ToSeconds() > Player.ArmRotationDelay)
-        {
-            return 0;
-        }
+        var evt = new PlayerEvent<LogicalEventType>(
+            rot.Kind == RotationKind.Left ? LogicalEventType.LeftVolt : LogicalEventType.RightVolt,
+            rot.Time.ToSeconds());
 
-        return Player.GetArmRotationFromLastVolt(diff.ToSeconds(), rot.Kind == RotationKind.Right);
+        return Player.GetArmRotForEvent(evt, CurrentTime.ToSeconds(), Direction);
     }
 
     public PlayerState GetState()
     {
         return new(
-            Body.Location.X, Body.Location.Y,
-            LeftWheel.Location.X, LeftWheel.Location.Y,
-            RightWheel.Location.X, RightWheel.Location.Y,
+            Body.Location,
+            LeftWheel.Location,
+            RightWheel.Location,
             LeftWheel.Rotation, RightWheel.Rotation,
-            HeadLocation.X, HeadLocation.Y,
-            Body.Rotation / (2 * Math.PI) * 360, Direction, ArmRot()
+            HeadLocation,
+            Body.Rotation / (2 * Math.PI) * 360, Direction, ArmRot(),
+            LastTurnTime is { } turn
+                ?
+                Player.GetTurnProgressForEvent(CurrentTime.ToSeconds(), turn.ToSeconds(), Direction).Progress
+                : Direction == Direction.Left
+                    ? -1
+                    : 1
         );
     }
 

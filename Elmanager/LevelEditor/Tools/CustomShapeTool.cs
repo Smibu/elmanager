@@ -22,7 +22,6 @@ internal class CustomShapeTool : ToolBase, IEditorTool
 
     // Mouse Interaction
     private Vector _initialMousePosition = new();
-    private bool _hasFocus;
 
     // Transformation Properties
     private double _scalingFactor = 1.0;
@@ -38,9 +37,9 @@ internal class CustomShapeTool : ToolBase, IEditorTool
     {
     }
 
-    public TransientElements GetTransientElements()
+    public TransientElements GetTransientElements(bool hasFocus)
     {
-        if (!_hasFocus || _shapeSelection == null)
+        if (_shapeSelection == null)
         {
             return TransientElements.Empty;
         }
@@ -125,7 +124,7 @@ internal class CustomShapeTool : ToolBase, IEditorTool
         transformationMatrix = transformationMatrix * translationMatrix;
 
         level.Polygons = originalLevel.Polygons.Select(p => p.ApplyTransformation(transformationMatrix)).ToList();
-        level.Polygons.ForEach(polygon => polygon.UpdateDecompositionOrGrassSlopeInfo(Lev.GroundBounds, LevEditor.Settings.RenderingSettings.GrassZoom));
+        level.Polygons.ForEach(polygon => polygon.UpdateGrassSlopeInfo(Lev.GroundBounds, LevEditor.Settings.RenderingSettings.GrassZoom));
 
         level.Objects = originalLevel.Objects.Select(o =>
         {
@@ -142,13 +141,14 @@ internal class CustomShapeTool : ToolBase, IEditorTool
         }).ToList();
     }
 
-    public void Activate() => UpdateHelp();
+    public void Activate() { }
 
-    public void InActivate()
+    public LevVisualChange InActivate()
     {
+        return LevVisualChange.All;
     }
 
-    public void MouseDown(MouseEventArgs mouseData)
+    public LevVisualChange MouseDown(MouseEventArgs mouseData)
     {
         if (mouseData.Button == MouseButtons.Left)
         {
@@ -159,6 +159,7 @@ internal class CustomShapeTool : ToolBase, IEditorTool
             _initialMousePosition = CurrentPos;
             OpenDialog();
         }
+        return LevVisualChange.Nothing;
     }
 
     private void HandleLeftMouseDown()
@@ -167,9 +168,7 @@ internal class CustomShapeTool : ToolBase, IEditorTool
         {
             _initialMousePosition = CurrentPos;
             InsertShapeIntoLevel(CurrentPos - _initialMousePosition);
-            _hasFocus = false;
             ApplyTransformations(CurrentPos);
-            _hasFocus = true;
         }
         else
         {
@@ -178,23 +177,28 @@ internal class CustomShapeTool : ToolBase, IEditorTool
         }
     }
 
-    public void MouseMove(Vector p)
+    public LevVisualChange MouseMove(Vector p)
     {
-        _hasFocus = true;
         CurrentPos = p;
         AdjustForGrid(ref CurrentPos);
         if (_shapeSelection != null)
         {
             ApplyTransformations(CurrentPos);
             _initialMousePosition = CurrentPos;
+            return LevVisualChange.All;
         }
+
+        return LevVisualChange.Nothing;
     }
 
     public void MouseUp() { }
 
-    public void MouseOutOfEditor() => _hasFocus = false;
+    public LevVisualChange MouseOutOfEditor()
+    {
+        return LevVisualChange.Nothing;
+    }
 
-    public void KeyDown(KeyEventArgs e)
+    public LevVisualChange KeyDown(KeyEventArgs e)
     {
         switch (e.KeyCode)
         {
@@ -249,6 +253,7 @@ internal class CustomShapeTool : ToolBase, IEditorTool
         }
 
         ApplyTransformations(CurrentPos);
+        return LevVisualChange.All;
     }
 
     public void KeyUp(KeyEventArgs e) { }
@@ -291,9 +296,9 @@ internal class CustomShapeTool : ToolBase, IEditorTool
         Lev.Polygons.AddRange(level.Polygons);
         Lev.Objects.AddRange(level.Objects);
         Lev.GraphicElements.AddRange(level.GraphicElements);
-        Lev.UpdateAllPolygons(Global.AppSettings.LevelEditor.RenderingSettings.GrassZoom);
+        Lev.UpdateGrass(Global.AppSettings.LevelEditor.RenderingSettings.GrassZoom);
         Lev.UpdateImages(LevEditor.Renderer.OpenGlLgr?.DrawableImages ?? new Dictionary<string, DrawableImage>());
-        LevEditor.SetModified(LevModification.Ground | LevModification.Decorations | LevModification.Objects);
+        LevEditor.SetModified(LevModification.All);
     }
 
     public void SaveShape()
@@ -385,7 +390,7 @@ internal class CustomShapeTool : ToolBase, IEditorTool
         tempLevel.UpdateImages(LevEditor.Renderer.OpenGlLgr?.DrawableImages ?? new Dictionary<string, DrawableImage>());
         if (tempLevel.PolygonCount > 0 && tempLevel.Polygons.Any(p => p.IsGrass == false))
         {
-            tempLevel.UpdateAllPolygons(LevEditor.Settings.RenderingSettings.GrassZoom);
+            tempLevel.UpdateGrass(LevEditor.Settings.RenderingSettings.GrassZoom);
             tempLevel.UpdateBounds();
         }
 
@@ -395,18 +400,15 @@ internal class CustomShapeTool : ToolBase, IEditorTool
         tempLevel.Save(LevEditor.SaveShapeDialog.FileName);
     }
 
-    public void UpdateHelp()
-    {
-        LevEditor.InfoLabel.Text =
-            "LMouse: insert new shape; RMouse: select new shape; " +
-            "1-5: change placement anchor; " +
-            "+/-: adjust scaling factor; " +
-            "0: reset all transformations; " +
-            "6: toggle mirroring (None, Horizontal, Vertical, Both); " +
-            "7: rotate left; " +
-            "8: reset rotation; " +
-            "9: rotate right";
-    }
+    public string GetHelp() =>
+        "LMouse: insert new shape; RMouse: select new shape; " +
+        "1-5: change placement anchor; " +
+        "+/-: adjust scaling factor; " +
+        "0: reset all transformations; " +
+        "6: toggle mirroring (None, Horizontal, Vertical, Both); " +
+        "7: rotate left; " +
+        "8: reset rotation; " +
+        "9: rotate right";
 
     public override bool Busy => false;
 }

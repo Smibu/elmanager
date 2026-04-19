@@ -3,13 +3,13 @@ using System.Collections.Generic;
 using System.Windows.Forms;
 using Elmanager.Geometry;
 using Elmanager.Lev;
+using Elmanager.Rendering;
 
 namespace Elmanager.LevelEditor.Tools;
 
 internal class ObjectTool : ToolBase, IEditorTool
 {
     private ObjectType _currentObjectType = ObjectType.Apple;
-    private bool _hasFocus;
     private int _animNum = 1;
 
     internal ObjectTool(LevelEditorForm editor)
@@ -19,23 +19,20 @@ internal class ObjectTool : ToolBase, IEditorTool
 
     public void Activate()
     {
-        UpdateHelp();
     }
 
     public void ExtraRendering()
     {
     }
 
-    public void InActivate()
-    {
-    }
+    public LevVisualChange InActivate() => LevVisualChange.Objects;
 
-    public TransientElements GetTransientElements() => _hasFocus
+    public TransientElements GetTransientElements(bool hasFocus) => hasFocus
         ? TransientElements.FromObjects(new List<LevObject>
             { new(CurrentPos, _currentObjectType, AppleType.Normal) })
         : TransientElements.Empty;
 
-    public void KeyDown(KeyEventArgs key)
+    public LevVisualChange KeyDown(KeyEventArgs key)
     {
         switch (key.KeyCode)
         {
@@ -48,7 +45,6 @@ internal class ObjectTool : ToolBase, IEditorTool
                     _ => _currentObjectType
                 };
 
-                UpdateHelp();
                 break;
             case Keys.D1:
                 _animNum = 1;
@@ -78,32 +74,45 @@ internal class ObjectTool : ToolBase, IEditorTool
                 _animNum = 9;
                 break;
         }
+
+        return LevVisualChange.Objects;
     }
 
-    public void MouseDown(MouseEventArgs mouseData)
+    public LevVisualChange MouseDown(MouseEventArgs mouseData)
     {
-        if (mouseData.Button != MouseButtons.Left) return;
-        Lev.Objects.Add(new LevObject(CurrentPos, _currentObjectType, AppleType.Normal, _animNum));
-        LevEditor.SetModified(LevModification.Objects);
+        if (mouseData.Button == MouseButtons.Left)
+        {
+            Lev.Objects.Add(new LevObject(CurrentPos, _currentObjectType, AppleType.Normal, _animNum));
+            var mod = _currentObjectType switch
+            {
+                ObjectType.Apple => LevModification.Apples,
+                ObjectType.Killer => LevModification.Killers,
+                ObjectType.Flower => LevModification.Flowers,
+                _ => LevModification.Nothing
+            };
+            LevEditor.SetModified(mod);
+        }
+
+        return LevVisualChange.Nothing;
     }
 
-    public void MouseMove(Vector p)
+    public LevVisualChange MouseMove(Vector p)
     {
         CurrentPos = p;
-        _hasFocus = true;
         AdjustForGrid(ref CurrentPos);
+        return LevVisualChange.Objects;
     }
 
-    public void MouseOutOfEditor()
+    public LevVisualChange MouseOutOfEditor()
     {
-        _hasFocus = false;
+        return LevVisualChange.Objects;
     }
 
     public void MouseUp()
     {
     }
 
-    public void UpdateHelp()
+    public string GetHelp()
     {
         var objName = _currentObjectType switch
         {
@@ -112,7 +121,7 @@ internal class ObjectTool : ToolBase, IEditorTool
             ObjectType.Flower => "flower",
             _ => throw new Exception()
         };
-        LevEditor.InfoLabel.Text = $"LMouse: insert new object; Space: change object type ({objName})";
+        return $"LMouse: insert new object; Space: change object type ({objName})";
     }
 
     public override bool Busy => false;
