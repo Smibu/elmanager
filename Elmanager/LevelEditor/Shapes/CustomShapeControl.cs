@@ -1,4 +1,5 @@
 using System;
+using System.ComponentModel;
 using System.Drawing;
 using System.Windows.Forms;
 using Elmanager.IO;
@@ -67,8 +68,10 @@ internal partial class CustomShapeControl : UserControl
         DoubleClick += CustomShapeControl_DoubleClick;
     }
 
+    [DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
     public string? ShapeFullPath { get; set; }
 
+    [DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
     public string ShapeName
     {
         get => lblShapeName.Text;

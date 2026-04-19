@@ -38,6 +38,7 @@ internal class ToolStripMenuItemMod : ToolStripMenuItem
     }
 
     [Description("Gets or sets the custom shortcut text.")]
+    [DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
     public string ShortcutText
     {
         get => _shortcutText;

@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.Drawing;
 using System.IO;
 using System.Linq;
@@ -287,6 +288,7 @@ internal partial class LevelManagerForm : FormMod, IManagerGui
 
     public ObjectListView ObjectList => levelList;
 
+    [DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
     public string SearchPattern
     {
         get => levelFilenameBox.Text;

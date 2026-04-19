@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.Drawing;
 using System.Linq;
 using System.Windows.Forms;
@@ -59,6 +60,7 @@ internal partial class PictureForm
         TextureButtonCheckedChanged();
     }
 
+    [DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
     internal bool AutoTextureMode
     {
         get => _autoTextureMode;
@@ -83,6 +85,7 @@ internal partial class PictureForm
         }
     }
 
+    [DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
     internal TexturizationOptions TexturizationOptions
     {
         get => new(
@@ -106,8 +109,10 @@ internal partial class PictureForm
 
     private int IterationCount => iterationsTextBox.Value;
 
+    [DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
     internal bool AllowMultiple { get; set; }
 
+    [DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
     internal bool SetDefaultsAutomatically { get; set; }
 
     private bool MultiplePicturesSelected => PictureComboBox.SelectedItem!.ToString() == MultipleValues;

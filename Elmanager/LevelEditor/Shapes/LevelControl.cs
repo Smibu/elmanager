@@ -1,4 +1,5 @@
 using System;
+using System.ComponentModel;
 using System.Windows.Forms;
 using Elmanager.Lev;
 using Elmanager.Rendering;
@@ -20,6 +21,7 @@ internal class LevelControl : GLControl
     private readonly SceneSettings _sceneSettings;
     private readonly ZoomController _zoomController;
 
+    [DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
     public bool DisableRendering { get; set; } = true;
 
     internal LevelControl(GLControl sharedContext, SceneSettings sceneSettings, RenderingSettings renderingSettings, ElmaRenderer elmaRenderer, Level level) :

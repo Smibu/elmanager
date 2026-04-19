@@ -17,6 +17,7 @@ internal class GenericTextBox<T> : TextBox where T : struct
     }
 
     [Description("Gets or sets the default value.")]
+    [DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
     public T DefaultValue
     {
         get => _defaultValue;

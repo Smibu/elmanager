@@ -88,6 +88,7 @@ internal partial class LevelEditorForm : FormMod, IMessageFilter
     private readonly LevFileWatcher _levFileWatcher;
     private bool _hasFocus;
     public SelectionFilter SelectionFilter { get; }
+    [DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
     internal HighlightTarget? CurrentHighlight { get; set; }
 
     internal LevelEditorForm(string? levPath)
