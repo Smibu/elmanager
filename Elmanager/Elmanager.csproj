@@ -1,4 +1,4 @@
-﻿<Project Sdk="Microsoft.NET.Sdk">
+<Project Sdk="Microsoft.NET.Sdk">
     <PropertyGroup>
         <OutputType>WinExe</OutputType>
         <TargetFramework>net8.0-windows7.0</TargetFramework>
@@ -16,14 +16,14 @@
         <ApplicationIcon>Icons/Elma.ico</ApplicationIcon>
         <SatelliteResourceLanguages>en</SatelliteResourceLanguages>
         <Nullable>enable</Nullable>
-		<AllowUnsafeBlocks>true</AllowUnsafeBlocks>
-		<Configurations>Debug;Release;WineRelease</Configurations>
+        <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
+        <Configurations>Debug;Release;WineRelease</Configurations>
     </PropertyGroup>
     <PropertyGroup Condition="'$(Configuration)'=='WineRelease'">
-      <Optimize>True</Optimize>
+        <Optimize>True</Optimize>
     </PropertyGroup>
     <PropertyGroup Condition="'$(Configuration)'=='WineRelease'">
-      <DefineConstants>$(DefineConstants);WINE</DefineConstants>
+        <DefineConstants>$(DefineConstants);WINE</DefineConstants>
     </PropertyGroup>
     <ItemGroup>
         <PackageReference Include="NaturalSort.Extension" Version="4.3.0" />
