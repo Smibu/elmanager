@@ -1,11 +1,11 @@
-﻿using Elmanager.Geometry;
-using Elmanager.IO;
-using Elmanager.Lev;
-using Elmanager.Rendering;
 using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using Elmanager.Geometry;
+using Elmanager.IO;
+using Elmanager.Lev;
+using Elmanager.Rendering;
 
 namespace Elmanager.LevelEditor.Shapes;
 
@@ -19,7 +19,7 @@ internal class SleShape(Level level)
         {
             throw new ArgumentException($@"Invalid file format: {filePath}. Expected a .lev file.", nameof(filePath));
         }
-        
+
         if (!File.Exists(filePath))
         {
             throw new FileNotFoundException(@"The level file does not exist!", filePath);

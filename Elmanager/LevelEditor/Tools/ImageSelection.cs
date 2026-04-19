@@ -1,4 +1,4 @@
-﻿using Elmanager.Lgr;
+using Elmanager.Lgr;
 
 namespace Elmanager.LevelEditor.Tools;
 

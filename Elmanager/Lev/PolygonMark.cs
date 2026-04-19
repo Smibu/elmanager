@@ -1,4 +1,4 @@
-﻿namespace Elmanager.Lev;
+namespace Elmanager.Lev;
 
 internal enum PolygonMark
 {

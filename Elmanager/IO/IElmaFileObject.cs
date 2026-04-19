@@ -1,4 +1,4 @@
-﻿namespace Elmanager.IO;
+namespace Elmanager.IO;
 
 internal interface IElmaFileObject
 {

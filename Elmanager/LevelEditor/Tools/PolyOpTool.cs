@@ -10,8 +10,8 @@ using NetTopologySuite.Geometries;
 using NetTopologySuite.Operation.Buffer;
 using EndCapStyle = NetTopologySuite.Operation.Buffer.EndCapStyle;
 using JoinStyle = NetTopologySuite.Operation.Buffer.JoinStyle;
-using Polygon = Elmanager.Lev.Polygon;
 using NetGeometry = NetTopologySuite.Geometries.Geometry;
+using Polygon = Elmanager.Lev.Polygon;
 
 namespace Elmanager.LevelEditor.Tools;
 

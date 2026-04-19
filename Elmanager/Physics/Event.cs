@@ -1,3 +1,3 @@
-﻿namespace Elmanager.Physics;
+namespace Elmanager.Physics;
 
 internal record Event(double Time, EventType EventType);

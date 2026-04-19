@@ -1,4 +1,4 @@
-﻿using System.Collections.Generic;
+using System.Collections.Generic;
 using Elmanager.Geometry;
 
 namespace Elmanager.Physics;

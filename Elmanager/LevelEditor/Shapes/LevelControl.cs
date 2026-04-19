@@ -1,29 +1,30 @@
+using System;
+using System.Windows.Forms;
 using Elmanager.Lev;
 using Elmanager.Rendering;
 using Elmanager.Rendering.Camera;
 using OpenTK.GLControl;
 using OpenTK.Graphics.OpenGL;
 using OpenTK.Windowing.Common;
-using System;
-using System.Windows.Forms;
 
 namespace Elmanager.LevelEditor.Shapes;
 
 internal class LevelControl : GLControl
 {
     private ElmaRenderer? _renderer;
-    
+
     private Level _level;
-    
+
     private readonly ElmaCamera _camera;
     private readonly RenderingSettings _renderingSettings;
     private readonly SceneSettings _sceneSettings;
     private readonly ZoomController _zoomController;
-    
+
     public bool DisableRendering { get; set; } = true;
 
     internal LevelControl(GLControl sharedContext, SceneSettings sceneSettings, RenderingSettings renderingSettings, ElmaRenderer elmaRenderer, Level level) :
-        base(new GLControlSettings {
+        base(new GLControlSettings
+        {
             AutoLoadBindings = false,
             Profile = ContextProfile.Core
         })
@@ -100,7 +101,7 @@ internal class LevelControl : GLControl
         {
             return;
         }
-        
+
         if (Context == null)
         {
             return;

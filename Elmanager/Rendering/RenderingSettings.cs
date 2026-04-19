@@ -1,10 +1,10 @@
-﻿using System;
+using System;
 using System.ComponentModel;
 using System.Drawing;
 using System.IO;
+using System.Text.Json.Serialization;
 using Elmanager.Application;
 using Elmanager.Lev;
-using System.Text.Json.Serialization;
 
 namespace Elmanager.Rendering;
 

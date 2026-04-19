@@ -1,16 +1,16 @@
-﻿using Elmanager.Application;
-using Elmanager.Geometry;
-using Elmanager.IO;
-using Elmanager.Lev;
-using Elmanager.LevelEditor.Shapes;
-using Elmanager.Rendering;
-using Elmanager.UI;
 using System;
 using System.Collections.Generic;
 using System.Drawing;
 using System.IO;
 using System.Linq;
 using System.Windows.Forms;
+using Elmanager.Application;
+using Elmanager.Geometry;
+using Elmanager.IO;
+using Elmanager.Lev;
+using Elmanager.LevelEditor.Shapes;
+using Elmanager.Rendering;
+using Elmanager.UI;
 using Path = System.IO.Path;
 
 namespace Elmanager.LevelEditor.Tools;
@@ -45,7 +45,7 @@ internal class CustomShapeTool : ToolBase, IEditorTool
         }
 
         Level level = _shapeSelection.Shape.Obj.Level;
-        return new TransientElements(level.Polygons, level.Objects,level.GraphicElements);
+        return new TransientElements(level.Polygons, level.Objects, level.GraphicElements);
     }
 
     private void OpenDialog()
@@ -54,7 +54,7 @@ internal class CustomShapeTool : ToolBase, IEditorTool
         string shapesDirectory = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "sle_shapes");
         if (!Directory.Exists(shapesDirectory))
         {
-            UiUtils.ShowError("The 'sle_shapes' folder does not exist.\nSelect + right-click in editor to save selection as a new shape.", 
+            UiUtils.ShowError("The 'sle_shapes' folder does not exist.\nSelect + right-click in editor to save selection as a new shape.",
                 "Shapes directory not found", MessageBoxIcon.Exclamation);
             return;
         }

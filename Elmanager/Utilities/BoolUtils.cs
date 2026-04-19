@@ -1,4 +1,4 @@
-﻿namespace Elmanager.Utilities;
+namespace Elmanager.Utilities;
 
 internal static class BoolUtils
 {

@@ -1,11 +1,11 @@
-﻿using System;
-using Elmanager.Lev;
-using Elmanager.Rendering;
-using SvgNet;
+using System;
 using System.Drawing;
 using System.IO;
 using System.Linq;
 using Elmanager.Geometry;
+using Elmanager.Lev;
+using Elmanager.Rendering;
+using SvgNet;
 
 namespace Elmanager.LevelEditor;
 

@@ -1,9 +1,9 @@
-﻿using Elmanager.IO;
-using Elmanager.Rendering;
-using OpenTK.GLControl;
 using System;
 using System.Drawing;
 using System.Windows.Forms;
+using Elmanager.IO;
+using Elmanager.Rendering;
+using OpenTK.GLControl;
 using Color = System.Drawing.Color;
 using Pen = System.Drawing.Pen;
 

@@ -1,4 +1,4 @@
-﻿using System.Windows.Forms;
+using System.Windows.Forms;
 using Elmanager.Properties;
 
 namespace Elmanager.UI;

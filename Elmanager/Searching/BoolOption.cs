@@ -1,4 +1,4 @@
-﻿namespace Elmanager.Searching;
+namespace Elmanager.Searching;
 
 internal enum BoolOption
 {

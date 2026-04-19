@@ -1,4 +1,4 @@
-﻿using Elmanager.UI;
+using Elmanager.UI;
 
 namespace Elmanager.Application;
 

@@ -62,7 +62,7 @@ internal class Lgr : IDisposable
             {
                 throw new Exception($"Expected LGR version string 'LGR12', found '${lgrId}'.");
             }
-                
+
         }
         int numberOfPcXs = lgr.ReadInt32();
         lgr.ReadInt32(); // pictures.lst version, not needed

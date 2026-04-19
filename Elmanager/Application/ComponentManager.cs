@@ -1,4 +1,4 @@
-﻿using Elmanager.IO;
+using Elmanager.IO;
 using Elmanager.LevelEditor;
 using Elmanager.LevelManager;
 using Elmanager.Rec;

@@ -1,4 +1,4 @@
-﻿namespace Elmanager.UI;
+namespace Elmanager.UI;
 
 internal class NumericTextBox : GenericTextBox<double>
 {

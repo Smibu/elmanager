@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using Elmanager.UI;
 
 namespace Elmanager.Searching;

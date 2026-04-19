@@ -1,4 +1,4 @@
-﻿using Elmanager.ElmaPrimitives;
+using Elmanager.ElmaPrimitives;
 
 namespace Elmanager.Physics;
 

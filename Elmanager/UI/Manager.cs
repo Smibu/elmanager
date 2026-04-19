@@ -1,4 +1,4 @@
-﻿using System.IO;
+using System.IO;
 using BrightIdeasSoftware;
 using Elmanager.IO;
 using Microsoft.VisualBasic.FileIO;

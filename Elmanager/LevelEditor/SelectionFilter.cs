@@ -1,4 +1,4 @@
-﻿namespace Elmanager.LevelEditor;
+namespace Elmanager.LevelEditor;
 
 internal class SelectionFilter(LevelEditorForm levelEditorForm)
 {

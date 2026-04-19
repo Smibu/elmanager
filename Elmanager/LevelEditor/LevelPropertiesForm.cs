@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using Elmanager.IO;
 using Elmanager.Lev;
 using Elmanager.Utilities;

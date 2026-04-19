@@ -1,4 +1,4 @@
-﻿using Elmanager.LevelEditor.Tools;
+using Elmanager.LevelEditor.Tools;
 
 namespace Elmanager.LevelEditor;
 

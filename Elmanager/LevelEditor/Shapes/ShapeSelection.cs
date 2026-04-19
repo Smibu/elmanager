@@ -1,4 +1,4 @@
-﻿using Elmanager.IO;
+using Elmanager.IO;
 
 namespace Elmanager.LevelEditor.Shapes;
 
