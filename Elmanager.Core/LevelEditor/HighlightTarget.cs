@@ -2,11 +2,11 @@ using Elmanager.Lev;
 
 namespace Elmanager.LevelEditor;
 
-internal abstract record HighlightTarget
+public abstract record HighlightTarget
 {
-    internal record PolygonTarget(Polygon Polygon) : HighlightTarget;
-    internal record VertexTarget(Polygon Polygon, int VertexIndex) : HighlightTarget;
-    internal record ObjectTarget(int ObjectIndex) : HighlightTarget;
-    internal record GraphicElementTarget(int GraphicElementIndex) : HighlightTarget;
-    internal record PlayerTarget : HighlightTarget;
+    public record PolygonTarget(Polygon Polygon) : HighlightTarget;
+    public record VertexTarget(Polygon Polygon, int VertexIndex) : HighlightTarget;
+    public record ObjectTarget(int ObjectIndex) : HighlightTarget;
+    public record GraphicElementTarget(int GraphicElementIndex) : HighlightTarget;
+    public record PlayerTarget : HighlightTarget;
 }

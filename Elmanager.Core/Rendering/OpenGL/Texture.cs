@@ -3,7 +3,7 @@ using OpenTK.Graphics.OpenGL;
 
 namespace Elmanager.Rendering.OpenGL;
 
-internal class Texture : IDisposable
+public class Texture : IDisposable
 {
     private int Handle { get; } = GL.GenTexture();
 

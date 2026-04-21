@@ -1,8 +1,8 @@
 namespace Elmanager.Utilities;
 
-internal static class BoolUtils
+public static class BoolUtils
 {
-    internal static string BoolToString(object x)
+    public static string BoolToString(object x)
     {
         return (bool)x ? "Yes" : "No";
     }

@@ -5,7 +5,7 @@ using OpenTK.Graphics.OpenGL;
 
 namespace Elmanager.Rendering;
 
-internal record Pipelines : IDisposable
+public record Pipelines : IDisposable
 {
     public Pipeline GroundSky { get; } = Scene.GroundSky.CreatePipeline();
     public Pipeline Objects { get; } = Scene.Objects.CreatePipeline();

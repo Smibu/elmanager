@@ -2,7 +2,7 @@ using System.Drawing;
 
 namespace Elmanager.Lgr;
 
-internal record LgrImage(ImageMeta Meta, Bitmap Bmp)
+public record LgrImage(ImageMeta Meta, Bitmap Bmp)
 {
     public string Name => Meta.Name;
 

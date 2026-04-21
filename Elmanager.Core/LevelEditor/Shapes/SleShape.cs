@@ -9,7 +9,7 @@ using Elmanager.Rendering;
 
 namespace Elmanager.LevelEditor.Shapes;
 
-internal class SleShape(Level level)
+public class SleShape(Level level)
 {
     public Level Level { get; set; } = level;
 

@@ -1,6 +1,6 @@
 namespace Elmanager.Lev;
 
-internal enum AppleType
+public enum AppleType
 {
     Normal = 0,
     GravityUp = 1,

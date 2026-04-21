@@ -1,6 +1,6 @@
 namespace Elmanager.LevelEditor.Tools;
 
-internal enum PlacementAnchor
+public enum PlacementAnchor
 {
     Center,
     TopLeft,

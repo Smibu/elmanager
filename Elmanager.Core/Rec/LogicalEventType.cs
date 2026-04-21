@@ -1,6 +1,6 @@
 namespace Elmanager.Rec;
 
-internal enum LogicalEventType
+public enum LogicalEventType
 {
     Finish,
     FlowerTouch,

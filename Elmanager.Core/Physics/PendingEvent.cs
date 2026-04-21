@@ -1,5 +1,5 @@
 namespace Elmanager.Physics;
 
-internal abstract class PendingEvent
+public abstract class PendingEvent
 {
 }

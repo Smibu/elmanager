@@ -2,7 +2,7 @@ using Elmanager.ElmaPrimitives;
 
 namespace Elmanager.Physics;
 
-internal class RideRecorder
+public class RideRecorder
 {
     public void SaveEvent(Event e)
     {

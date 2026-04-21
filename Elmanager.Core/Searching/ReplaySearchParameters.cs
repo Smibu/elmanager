@@ -5,20 +5,20 @@ using Elmanager.Rec;
 
 namespace Elmanager.Searching;
 
-internal class ReplaySearchParameters : SearchParameters
+public class ReplaySearchParameters : SearchParameters
 {
-    internal BoolOption Finished = BoolOption.Dontcare;
-    internal BoolOption InternalRec = BoolOption.Dontcare;
-    internal BoolOption LevExists = BoolOption.Dontcare;
-    internal Regex LevFilenameMatcher = new("");
-    internal BoolOption MultiPlayer = BoolOption.Dontcare;
-    internal PlayerBounds P1Bounds = new();
-    internal PlayerBounds P2Bounds = new();
+    public BoolOption Finished = BoolOption.Dontcare;
+    public BoolOption InternalRec = BoolOption.Dontcare;
+    public BoolOption LevExists = BoolOption.Dontcare;
+    public Regex LevFilenameMatcher = new("");
+    public BoolOption MultiPlayer = BoolOption.Dontcare;
+    public PlayerBounds P1Bounds = new();
+    public PlayerBounds P2Bounds = new();
 
-    internal Range<double> Time = new(0, 7200);
-    internal BoolOption WrongLev = BoolOption.Dontcare;
+    public Range<double> Time = new(0, 7200);
+    public BoolOption WrongLev = BoolOption.Dontcare;
 
-    internal bool Matches(ElmaFileObject<Replay> o)
+    public bool Matches(ElmaFileObject<Replay> o)
     {
         var r = o.Obj;
         bool levOk = Check(LevExists, r.LevelExists) && Check(WrongLev, r.WrongLevelVersion) &&
@@ -31,7 +31,7 @@ internal class ReplaySearchParameters : SearchParameters
         return levOk && recOk && playersOk;
     }
 
-    internal void ResetOptions()
+    public void ResetOptions()
     {
         AcrossLev = BoolOption.Dontcare;
 
@@ -56,14 +56,14 @@ internal class ReplaySearchParameters : SearchParameters
         return o == BoolOption.Dontcare || (o == BoolOption.True && b) || (o == BoolOption.False && !b);
     }
 
-    internal class PlayerBounds
+    public class PlayerBounds
     {
-        internal Range<int> Apples = new(0, 10000);
-        internal Range<int> GroundTouches = new(0, 10000);
-        internal Range<int> LeftVolts = new(0, 10000);
-        internal Range<int> RightVolts = new(0, 10000);
-        internal Range<int> SuperVolts = new(0, 10000);
-        internal Range<int> Turns = new(0, 10000);
+        public Range<int> Apples = new(0, 10000);
+        public Range<int> GroundTouches = new(0, 10000);
+        public Range<int> LeftVolts = new(0, 10000);
+        public Range<int> RightVolts = new(0, 10000);
+        public Range<int> SuperVolts = new(0, 10000);
+        public Range<int> Turns = new(0, 10000);
 
         internal bool Matches(Player p)
         {

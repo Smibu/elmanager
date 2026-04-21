@@ -2,7 +2,7 @@ using System.Collections.Generic;
 
 namespace Elmanager.LevelEditor.Tools;
 
-internal record TexturizationOptions(
+public record TexturizationOptions(
     ImageSelection.TextureSelection Texture,
     double MinCoverPercentage,
     int Iterations,

@@ -3,7 +3,7 @@ using Elmanager.Rendering.OpenGL;
 
 namespace Elmanager.Rendering;
 
-internal record BikeTextures(
+public record BikeTextures(
     Texture Wheel,
     Texture Head,
     Texture Bike,

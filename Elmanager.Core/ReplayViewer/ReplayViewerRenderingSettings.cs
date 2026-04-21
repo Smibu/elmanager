@@ -5,7 +5,7 @@ using Elmanager.Rendering;
 
 namespace Elmanager.ReplayViewer;
 
-internal class ReplayViewerRenderingSettings : RenderingSettings
+public class ReplayViewerRenderingSettings : RenderingSettings
 {
     [Category("Colors"), DisplayName("Active player"), JsonPropertyName("ActivePlayerColor"), Description(TransparencyTip)]
     public Color ActivePlayerColor { get; set; } = Color.Black;
@@ -23,5 +23,5 @@ internal class ReplayViewerRenderingSettings : RenderingSettings
         InactivePlayerColor = s.InactivePlayerColor;
     }
 
-    internal override ReplayViewerRenderingSettings Clone() => new(this);
+    public override ReplayViewerRenderingSettings Clone() => new(this);
 }

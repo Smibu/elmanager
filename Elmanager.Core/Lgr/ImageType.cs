@@ -1,6 +1,6 @@
 namespace Elmanager.Lgr;
 
-internal enum ImageType
+public enum ImageType
 {
     Picture = 100,
     Texture = 101,

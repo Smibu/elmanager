@@ -5,7 +5,7 @@ using System.Text.Json.Serialization;
 
 namespace Elmanager.Utilities.Json;
 
-internal class PointConverter : JsonConverter<Point>
+public class PointConverter : JsonConverter<Point>
 {
     public override Point Read(
         ref Utf8JsonReader reader,

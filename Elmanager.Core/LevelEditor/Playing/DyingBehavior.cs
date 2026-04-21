@@ -1,6 +1,6 @@
 namespace Elmanager.LevelEditor.Playing;
 
-internal enum DyingBehavior
+public enum DyingBehavior
 {
     StopPlaying,
     PausePlaying,

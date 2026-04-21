@@ -1,6 +1,6 @@
 namespace Elmanager.LevelEditor.Shapes;
 
-internal enum ShapeMirrorOption
+public enum ShapeMirrorOption
 {
     None,
     Horizontal,

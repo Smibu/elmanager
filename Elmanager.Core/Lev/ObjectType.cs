@@ -1,6 +1,6 @@
 namespace Elmanager.Lev;
 
-internal enum ObjectType
+public enum ObjectType
 {
     Flower = 1,
     Apple = 2,

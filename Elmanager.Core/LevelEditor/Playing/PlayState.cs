@@ -1,6 +1,6 @@
 namespace Elmanager.LevelEditor.Playing;
 
-internal enum PlayState
+public enum PlayState
 {
     Stopped,
     Playing,

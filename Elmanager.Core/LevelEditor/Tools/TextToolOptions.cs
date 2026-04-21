@@ -2,7 +2,7 @@ using System.Drawing;
 
 namespace Elmanager.LevelEditor.Tools;
 
-internal struct TextToolOptions
+public struct TextToolOptions
 {
     public Font Font;
     public string FontStyleName;

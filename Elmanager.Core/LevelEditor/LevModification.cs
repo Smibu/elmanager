@@ -3,7 +3,7 @@ using System;
 namespace Elmanager.LevelEditor;
 
 [Flags]
-internal enum LevModification
+public enum LevModification
 {
     Nothing = 0,
     Ground = 0x1,

@@ -9,7 +9,7 @@ using SharpVectors.Converters;
 
 namespace Elmanager.LevelManager;
 
-internal record LevelItem(
+public record LevelItem(
     ElmaFileObject<Level> Efo,
     [property: Description("Replays")] int Replays
     ) : IElmaFileObject

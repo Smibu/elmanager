@@ -3,7 +3,7 @@ using Elmanager.Geometry;
 
 namespace Elmanager.Physics;
 
-internal class BodyPart
+public class BodyPart
 {
     public bool TouchingGround;
     public double Rotation;

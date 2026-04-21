@@ -3,15 +3,15 @@ using Elmanager.Rendering.OpenGL;
 
 namespace Elmanager.Rendering;
 
-internal record DrawableImage(Texture Texture, double Width, double Height, ImageMeta Meta)
+public record DrawableImage(Texture Texture, double Width, double Height, ImageMeta Meta)
 {
     private const double PixelFactor = 1 / 48.0;
 
-    internal double WidthMinusMargin => Width - 2 * EmptyPixelXMargin;
+    public double WidthMinusMargin => Width - 2 * EmptyPixelXMargin;
 
-    internal double HeightMinusMargin => Height - 2 * EmptyPixelYMargin;
+    public double HeightMinusMargin => Height - 2 * EmptyPixelYMargin;
 
-    internal double EmptyPixelXMargin =>
+    public double EmptyPixelXMargin =>
         Name switch
         {
             "maskhor" => PixelFactor,
@@ -20,7 +20,7 @@ internal record DrawableImage(Texture Texture, double Width, double Height, Imag
             _ => PixelFactor
         };
 
-    internal double EmptyPixelYMargin =>
+    public double EmptyPixelYMargin =>
         Name switch
         {
             "maskhor" => PixelFactor,

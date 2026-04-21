@@ -3,7 +3,7 @@ using Elmanager.Utilities;
 
 namespace Elmanager.ElmaPrimitives;
 
-internal readonly struct ElmaTime : IComparable
+public readonly struct ElmaTime : IComparable
 {
     private readonly double _val;
 

@@ -6,7 +6,7 @@ using Elmanager.Geometry;
 
 namespace Elmanager.Physics;
 
-internal class ElmaEdgeTree : IElmaEdgeTree
+public class ElmaEdgeTree : IElmaEdgeTree
 {
     private List<Edge>?[] _area = null!;
     private Vector _bottomLeft;

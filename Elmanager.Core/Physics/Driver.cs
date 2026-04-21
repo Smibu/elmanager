@@ -6,7 +6,7 @@ using Elmanager.Rec;
 
 namespace Elmanager.Physics;
 
-internal class Driver
+public class Driver
 {
     public BodyPart Body;
     public BodyPart LeftWheel;
@@ -207,7 +207,7 @@ internal class Driver
         }
     }
 
-    internal Driver Clone()
+    public Driver Clone()
     {
         return new(this);
     }

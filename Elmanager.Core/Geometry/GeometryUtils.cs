@@ -12,9 +12,9 @@ using Polygon = Elmanager.Lev.Polygon;
 
 namespace Elmanager.Geometry;
 
-internal static class GeometryUtils
+public static class GeometryUtils
 {
-    internal static IEnumerable<Polygon> ToElmaPolygons(this NetTopologySuite.Geometries.Polygon poly)
+    public static IEnumerable<Polygon> ToElmaPolygons(this NetTopologySuite.Geometries.Polygon poly)
     {
         var p = new Polygon(poly.Shell);
         yield return p;
@@ -25,12 +25,12 @@ internal static class GeometryUtils
         }
     }
 
-    internal static IEnumerable<NetTopologySuite.Geometries.Polygon> ToIPolygons(this IEnumerable<Polygon> polys)
+    public static IEnumerable<NetTopologySuite.Geometries.Polygon> ToIPolygons(this IEnumerable<Polygon> polys)
     {
         return polys.Select(polygon => polygon.ToIPolygon());
     }
 
-    internal static Vector FindPoint(Vector v1, Vector v2, Vector v3, double radius)
+    public static Vector FindPoint(Vector v1, Vector v2, Vector v3, double radius)
     {
         Vector a = v2 - v1;
         Vector b = v3 - v2;
@@ -40,7 +40,7 @@ internal static class GeometryUtils
         return v2 + new Vector(angle + a.Angle) * radius;
     }
 
-    internal static Polygon? Connect(Polygon p1, Polygon p2, Vector v1, Vector v2, double connectRadius)
+    public static Polygon? Connect(Polygon p1, Polygon p2, Vector v1, Vector v2, double connectRadius)
     {
         if (p1.ToIPolygon().Crosses(p2.ToIPolygon()))
             return null;
@@ -159,16 +159,16 @@ internal static class GeometryUtils
     internal static Vector? GetIntersectionPoint(Vector a1, Vector a2, Vector b1, Vector b2) =>
         new LineSegment(a1, a2).Intersection(new LineSegment(b1, b2))?.ToVector();
 
-    internal static double DistanceFromSegment(double ax, double ay, double bx, double by, double px, double py) =>
+    public static double DistanceFromSegment(double ax, double ay, double bx, double by, double px, double py) =>
         new LineSegment(new Coordinate(ax, ay), new Coordinate(bx, by)).Distance(new Coordinate(px, py));
 
-    internal static double DistanceFromLine(Vector a, Vector b, Vector p) =>
+    public static double DistanceFromLine(Vector a, Vector b, Vector p) =>
         new LineSegment(a, b).DistancePerpendicular(p);
 
-    internal static Vector OrthogonalProjection(Vector a, Vector b, Vector p) =>
+    public static Vector OrthogonalProjection(Vector a, Vector b, Vector p) =>
         new LineSegment(a, b).Project(p).ToVector();
 
-    internal static List<Vector> GetIntersectionPoints(List<Polygon> polygons)
+    public static List<Vector> GetIntersectionPoints(List<Polygon> polygons)
     {
         var f = GeometryFactory.Floating;
         var iPolygons = polygons.Where(poly => !poly.IsGrass).Select(p => p.ToIPolygon()).ToArray();
@@ -187,20 +187,20 @@ internal static class GeometryUtils
         return isects;
     }
 
-    internal static IEnumerable<Polygon> GetSelectedPolygons(this IEnumerable<Polygon> polys,
+    public static IEnumerable<Polygon> GetSelectedPolygons(this IEnumerable<Polygon> polys,
         bool includeGrass = false)
     {
         return polys.Where(p => (includeGrass || !p.IsGrass) && p.Vertices.Any(v => v.Mark == VectorMark.Selected));
     }
 
-    internal static NetTopologySuite.Geometries.Geometry GetSelectedPolygonsAsMultiPolygon(this IEnumerable<Polygon> px)
+    public static NetTopologySuite.Geometries.Geometry GetSelectedPolygonsAsMultiPolygon(this IEnumerable<Polygon> px)
     {
         var polys = px.GetSelectedPolygons().ToList();
         var multipoly = GeometryFactory.Floating.CreateMultiPolygon(polys.ToIPolygons().ToArray());
         return multipoly.IsEmpty ? multipoly : multipoly.Geometries.Aggregate((g, p) => p.SymmetricDifference(g));
     }
 
-    internal static IEnumerable<Envelope> FindCovering(this NetTopologySuite.Geometries.Geometry g, IEnumerable<Envelope> rectangles,
+    public static IEnumerable<Envelope> FindCovering(this NetTopologySuite.Geometries.Geometry g, IEnumerable<Envelope> rectangles,
         CancellationToken token, IProgress<double> progress, int iterations = 2, double minRectCover = 0.33,
         double minCoverBreak = 0.9)
     {

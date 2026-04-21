@@ -3,7 +3,7 @@ using System.Linq;
 
 namespace Elmanager.Lgr;
 
-internal record ListedImage(
+public record ListedImage(
     ImageMeta Data,
     Transparency Transparency
 )

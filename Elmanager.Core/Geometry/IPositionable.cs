@@ -1,6 +1,6 @@
 namespace Elmanager.Geometry;
 
-internal interface IPositionable
+public interface IPositionable
 {
     public double X { get; }
     public double Y { get; }

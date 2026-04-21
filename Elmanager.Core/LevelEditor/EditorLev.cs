@@ -3,4 +3,4 @@ using Elmanager.Lev;
 
 namespace Elmanager.LevelEditor;
 
-internal record EditorLev(Level Lev, ElmaFile? File);
+public record EditorLev(Level Lev, ElmaFile? File);

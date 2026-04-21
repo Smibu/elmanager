@@ -1,6 +1,6 @@
 namespace Elmanager.Lev;
 
-internal enum MirrorOption
+public enum MirrorOption
 {
     Horizontal,
     Vertical

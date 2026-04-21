@@ -1,3 +1,3 @@
 namespace Elmanager.Rendering;
 
-internal record RendererSettingsChangeResult(bool LgrUpdated);
+public record RendererSettingsChangeResult(bool LgrUpdated);

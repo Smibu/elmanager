@@ -4,16 +4,17 @@ using Elmanager.Rec;
 
 namespace Elmanager.ReplayViewer;
 
-internal class PlayListObject
+public class PlayListObject
 {
     [Description("File name")]
     public string FileName { get; }
     [Description("#")]
     public int PlayerNum { get; }
-    internal readonly Player Player;
-    internal Color DrivingLineColor;
 
-    internal PlayListObject(string fileName, int num, Player player)
+    public readonly Player Player;
+    public Color DrivingLineColor;
+
+    public PlayListObject(string fileName, int num, Player player)
     {
         FileName = fileName;
         PlayerNum = num;

@@ -2,7 +2,7 @@ using System.Text.Json.Serialization;
 
 namespace Elmanager.Settings;
 
-internal class GeneralSettings
+public class GeneralSettings
 {
     [JsonPropertyName("CheckForUpdatesOnStartup")]
     public bool CheckForUpdatesOnStartup { get; set; } = true;

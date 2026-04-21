@@ -9,16 +9,16 @@ using Elmanager.IO;
 
 namespace Elmanager.Rec;
 
-internal class Player
+public class Player
 {
-    internal readonly int Apples; // Number of appletakes and bugapples
+    public readonly int Apples; // Number of appletakes and bugapples
     private readonly List<PlayerEvent<ReplayEventType>> RawEvents = new();
     private readonly List<PlayerEvent<LogicalEventType>> Events = new();
     internal readonly int GroundTouches;
     internal readonly int LeftVolts;
     internal readonly int RightVolts;
     internal readonly int SuperVolts;
-    internal readonly double Time;
+    public readonly double Time;
     private double? _topSpeed;
     private double? _trip;
     internal readonly int Turns;
@@ -37,7 +37,7 @@ internal class Player
     private readonly Vector[] _rightWheel;
     private readonly List<double> _rightWheelRotation = new();
 
-    internal int FrameCount => _globalBody.Length;
+    public int FrameCount => _globalBody.Length;
 
     internal Player(BinaryReader rec, int frames)
     {
@@ -285,8 +285,8 @@ internal class Player
         _topSpeed = top * SpeedFactor;
     }
 
-    internal bool Finished => Events.Count > 0 && Events.Last().Type == LogicalEventType.Finish;
-    internal bool FakeFinish => Events.Count > 0 && Events.Last().Type == LogicalEventType.FlowerTouch;
+    public bool Finished => Events.Count > 0 && Events.Last().Type == LogicalEventType.Finish;
+    public bool FakeFinish => Events.Count > 0 && Events.Last().Type == LogicalEventType.FlowerTouch;
     internal bool IsLastEventApple => Events.Count > 0 && Events.Last().Type == LogicalEventType.AppleTake;
 
     private static double GetArmRotation(IReadOnlyList<PlayerEvent<LogicalEventType>> voltEvents, double time, Direction dir)
@@ -381,7 +381,7 @@ internal class Player
         return (dir, (-1.0 + Math.Min(diff / max, 1.0) * 2.0) * dirF);
     }
 
-    internal PlayerState GetInterpolatedState(double time)
+    public PlayerState GetInterpolatedState(double time)
     {
         _voltEvents ??= GetEvents(LogicalEventType.LeftVolt, LogicalEventType.RightVolt, LogicalEventType.SuperVolt);
         _turnEvents ??= GetEvents(LogicalEventType.Turn);
@@ -464,26 +464,26 @@ internal class Player
         }
     }
 
-    internal double[] GetEventTimes(params LogicalEventType[] eventTypes)
+    public double[] GetEventTimes(params LogicalEventType[] eventTypes)
     {
         return (from x in Events
                 where eventTypes.Contains(x.Type)
                 select x.Time).ToArray();
     }
 
-    internal List<PlayerEvent<LogicalEventType>> GetEvents(params LogicalEventType[] eventTypes)
+    public List<PlayerEvent<LogicalEventType>> GetEvents(params LogicalEventType[] eventTypes)
     {
         return Events.Where(x => eventTypes.Contains(x.Type)).ToList();
     }
 
-    internal Vector[] GlobalBody => _globalBody;
+    public Vector[] GlobalBody => _globalBody;
 
     private static double Interpolate(double firstValue, double secondValue, double step)
     {
         return firstValue + (secondValue - firstValue) * step;
     }
 
-    internal string GetPlayerInfoStr()
+    public string GetPlayerInfoStr()
     {
         return "Apples: " + Apples + "\r\n" + "Left volts: " + LeftVolts + "\r\n" + "Right volts: " +
                RightVolts + "\r\n" + "Supervolts: " + SuperVolts + "\r\n" + "Turns: " + Turns + "\r\n" +
@@ -491,5 +491,5 @@ internal class Player
                "Trip: " + Math.Round(Trip);
     }
 
-    internal const double SpeedFactor = 10000.0 / 23.0;
+    public const double SpeedFactor = 10000.0 / 23.0;
 }

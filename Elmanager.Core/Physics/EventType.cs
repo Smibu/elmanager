@@ -1,5 +1,5 @@
 namespace Elmanager.Physics;
 
-internal abstract class EventType
+public abstract class EventType
 {
 }

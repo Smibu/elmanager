@@ -10,7 +10,7 @@ using PixelFormat = System.Drawing.Imaging.PixelFormat;
 
 namespace Elmanager.Rendering;
 
-internal class OpenGlLgr : IDisposable
+public class OpenGlLgr : IDisposable
 {
     public const double ObjectRadius = 0.4;
 

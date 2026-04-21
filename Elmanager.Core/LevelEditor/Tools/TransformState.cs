@@ -4,7 +4,7 @@ using Elmanager.Rendering;
 
 namespace Elmanager.LevelEditor.Tools;
 
-internal class TransformState
+public class TransformState
 {
     public Polygon OriginalRectangle;
     public readonly List<LevObject> OriginalTransformObjects;

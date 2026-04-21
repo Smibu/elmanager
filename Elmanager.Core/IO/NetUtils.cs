@@ -5,9 +5,9 @@ using Elmanager.UI;
 
 namespace Elmanager.IO;
 
-internal static class NetUtils
+public static class NetUtils
 {
-    internal static async Task DownloadAndOpenFile(string uri, string destFile)
+    public static async Task DownloadAndOpenFile(string uri, string destFile)
     {
         var client = new HttpClient();
         try

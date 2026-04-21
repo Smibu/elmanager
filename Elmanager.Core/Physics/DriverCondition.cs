@@ -1,6 +1,6 @@
 namespace Elmanager.Physics;
 
-internal enum DriverCondition
+public enum DriverCondition
 {
     Dead,
     Alive,

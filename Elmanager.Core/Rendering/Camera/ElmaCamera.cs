@@ -2,13 +2,13 @@ using Elmanager.Geometry;
 
 namespace Elmanager.Rendering.Camera;
 
-internal class ElmaCamera
+public class ElmaCamera
 {
-    internal double CenterX;
-    internal double CenterY;
-    internal double ZoomLevel;
+    public double CenterX;
+    public double CenterY;
+    public double ZoomLevel;
 
-    internal Bounds GetBounds(double aspectRatio) => new()
+    public Bounds GetBounds(double aspectRatio) => new()
     {
         XMin = CenterX - ZoomLevel * aspectRatio,
         XMax = CenterX + ZoomLevel * aspectRatio,
@@ -16,7 +16,7 @@ internal class ElmaCamera
         YMax = CenterY + ZoomLevel
     };
 
-    internal Vector FixJitter(int viewPortWidth, int viewPortHeight)
+    public Vector FixJitter(int viewPortWidth, int viewPortHeight)
     {
         var aspectRatio = viewPortWidth / (double)viewPortHeight;
         var fixx = CenterX % (2 * ZoomLevel * aspectRatio / viewPortWidth);

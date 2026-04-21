@@ -2,7 +2,7 @@ using System.Windows.Media;
 
 namespace Elmanager.LevelEditor;
 
-internal struct SvgImportOptions
+public struct SvgImportOptions
 {
     public double Smoothness;
     public bool UseOutlinedGeometry;

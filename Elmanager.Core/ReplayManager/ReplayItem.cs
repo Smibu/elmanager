@@ -7,7 +7,7 @@ using Elmanager.Utilities;
 
 namespace Elmanager.ReplayManager;
 
-internal record ReplayItem(ElmaFileObject<Replay> Efo) : IElmaFileObject
+public record ReplayItem(ElmaFileObject<Replay> Efo) : IElmaFileObject
 {
     public Replay Rec => Efo.Obj;
 

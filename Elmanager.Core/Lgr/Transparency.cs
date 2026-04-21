@@ -1,6 +1,6 @@
 namespace Elmanager.Lgr;
 
-internal enum Transparency
+public enum Transparency
 {
     NotTransparent = 10,
     Palette0 = 11,

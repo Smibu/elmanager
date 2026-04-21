@@ -22,7 +22,7 @@ using PixelFormat = System.Drawing.Imaging.PixelFormat;
 
 namespace Elmanager.Rendering;
 
-internal class ElmaRenderer : IDisposable
+public class ElmaRenderer : IDisposable
 {
     private const double GroundDepth = 1000.0;
     private const int GroundStencil = 0;
@@ -41,16 +41,16 @@ internal class ElmaRenderer : IDisposable
     private readonly LgrCache _lgrCache = new();
     private int _viewportWidth = 1;
     private int _viewportHeight = 1;
-    internal double AspectRatio => _viewportWidth / (double)_viewportHeight;
-    internal int ViewportWidth => _viewportWidth;
-    internal int ViewportHeight => _viewportHeight;
+    public double AspectRatio => _viewportWidth / (double)_viewportHeight;
+    public int ViewportWidth => _viewportWidth;
+    public int ViewportHeight => _viewportHeight;
 
     private UniformBuffer CameraUniforms { get; }
     private UniformBuffer ColorUniforms { get; }
     private Pipelines Pipelines { get; }
     private readonly bool _ownsPipelines;
 
-    internal ElmaRenderer(GLControl renderingTarget, RenderingSettings settings, Pipelines? pipelines = null)
+    public ElmaRenderer(GLControl renderingTarget, RenderingSettings settings, Pipelines? pipelines = null)
     {
         _gfxContext = renderingTarget.Context!;
         InitializeOpengl(disableFrameBuffer: settings.DisableFrameBuffer);
@@ -68,7 +68,7 @@ internal class ElmaRenderer : IDisposable
         CameraUniforms.BindBufferBase();
     }
 
-    internal ElmaRenderer(GLControl renderingTarget, RenderingSettings settings, ElmaRenderer otherElmaRenderer) : this(renderingTarget, settings, otherElmaRenderer.Pipelines)
+    public ElmaRenderer(GLControl renderingTarget, RenderingSettings settings, ElmaRenderer otherElmaRenderer) : this(renderingTarget, settings, otherElmaRenderer.Pipelines)
     {
     }
 
@@ -229,7 +229,7 @@ internal class ElmaRenderer : IDisposable
         return snapShotBmp;
     }
 
-    internal Bitmap GetSnapShotOfCurrent()
+    public Bitmap GetSnapShotOfCurrent()
     {
         var width = _viewportWidth;
         var height = _viewportHeight;
@@ -244,12 +244,12 @@ internal class ElmaRenderer : IDisposable
         return snapShotBmp;
     }
 
-    internal void DrawCircle(Vector v, double radius, Color circleColor, int accuracy)
+    public void DrawCircle(Vector v, double radius, Color circleColor, int accuracy)
     {
         _graphics?.Lines.DrawCircle(v, radius, circleColor, accuracy, ColorUniforms, Pipelines.Lines);
     }
 
-    internal void DrawDummyPlayer(double leftWheelx, double leftWheely, PlayerRenderOpts opts, RenderingSettings settings)
+    public void DrawDummyPlayer(double leftWheelx, double leftWheely, PlayerRenderOpts opts, RenderingSettings settings)
     {
         var player = new PlayerState(
             new Vector(leftWheelx + Level.GlobalBodyDifferenceFromLeftWheelX, leftWheely + Level.GlobalBodyDifferenceFromLeftWheelY),
@@ -262,42 +262,42 @@ internal class ElmaRenderer : IDisposable
         DrawPlayer(player, opts, settings);
     }
 
-    internal void DrawLine(Vector v1, Vector v2, Color color)
+    public void DrawLine(Vector v1, Vector v2, Color color)
     {
         _graphics?.Lines.DrawLine(v1, v2, color, ColorUniforms, Pipelines.Lines);
     }
 
-    internal void DrawLineStrip(Polygon polygon, Color color)
+    public void DrawLineStrip(Polygon polygon, Color color)
     {
         _graphics?.Lines.DrawLineStrip(polygon.Vertices, color, ColorUniforms, Pipelines.Lines);
     }
 
-    internal void DrawLineStrip(IEnumerable<Vector> points, Color color)
+    public void DrawLineStrip(IEnumerable<Vector> points, Color color)
     {
         _graphics?.Lines.DrawLineStrip(points, color, ColorUniforms, Pipelines.Lines);
     }
 
-    internal void DrawPoint(Vector v, Color color)
+    public void DrawPoint(Vector v, Color color)
     {
         _graphics?.Lines.DrawPoint(v, color, ColorUniforms, Pipelines.Lines);
     }
 
-    internal void DrawPolygon(Polygon polygon, Color color)
+    public void DrawPolygon(Polygon polygon, Color color)
     {
         _graphics?.Lines.DrawLineLoop(polygon.Vertices, color, ColorUniforms, Pipelines.Lines);
     }
 
-    internal void DrawRectangle(Vector v1, Vector v2, Color rectColor)
+    public void DrawRectangle(Vector v1, Vector v2, Color rectColor)
     {
         _graphics?.Lines.DrawRectangle(v1, v2, rectColor, ColorUniforms, Pipelines.Lines);
     }
 
-    internal void MakeCurrent()
+    public void MakeCurrent()
     {
         _gfxContext.MakeCurrent();
     }
 
-    internal void DrawScene(ElmaCamera camera, double time, SceneSettings sceneSettings)
+    public void DrawScene(ElmaCamera camera, double time, SceneSettings sceneSettings)
     {
         if (_graphics == null) return;
         MakeCurrent();
@@ -407,12 +407,12 @@ internal class ElmaRenderer : IDisposable
         }
     }
 
-    internal void Swap()
+    public void Swap()
     {
         _gfxContext.SwapBuffers();
     }
 
-    internal void DrawSquare(Vector vector, double camZoomLevel, Color color)
+    public void DrawSquare(Vector vector, double camZoomLevel, Color color)
     {
         _graphics?.Lines.DrawRectangle(
             new Vector(vector.X - camZoomLevel, vector.Y - camZoomLevel),
@@ -420,14 +420,14 @@ internal class ElmaRenderer : IDisposable
             color, ColorUniforms, Pipelines.Lines);
     }
 
-    internal void ResetViewport(int width, int height)
+    public void ResetViewport(int width, int height)
     {
         GL.Viewport(0, 0, width, height);
         _viewportWidth = width;
         _viewportHeight = height;
     }
 
-    internal RendererSettingsChangeResult UpdateSettings(Level lev, RenderingSettings newSettings)
+    public RendererSettingsChangeResult UpdateSettings(Level lev, RenderingSettings newSettings, string? lgrDir = null)
     {
         var currentLgr = OpenGlLgr?.CurrentLgr.Path;
         var newLgr = newSettings.ResolveLgr(lev);
@@ -491,7 +491,7 @@ internal class ElmaRenderer : IDisposable
         }
     }
 
-    internal void DrawPlayer(PlayerState player, PlayerRenderOpts opts, RenderingSettings settings)
+    public void DrawPlayer(PlayerState player, PlayerRenderOpts opts, RenderingSettings settings)
     {
         if (_graphics == null) return;
 
@@ -508,7 +508,7 @@ internal class ElmaRenderer : IDisposable
         }
     }
 
-    internal void DrawPlayers(IReadOnlyList<(PlayerState State, PlayerRenderOpts Opts)> players, RenderingSettings settings)
+    public void DrawPlayers(IReadOnlyList<(PlayerState State, PlayerRenderOpts Opts)> players, RenderingSettings settings)
     {
         if (_graphics == null) return;
 
@@ -654,7 +654,7 @@ internal class ElmaRenderer : IDisposable
         bmp.Save(fileName, ImageFormat.Png);
     }
 
-    internal static double GetFirstGridLine(double size, double offset, double min)
+    public static double GetFirstGridLine(double size, double offset, double min)
     {
         if (offset < 0)
         {

@@ -6,7 +6,7 @@ using Elmanager.Lev;
 
 namespace Elmanager.Rendering.Camera;
 
-internal class ZoomController
+public class ZoomController
 {
     private double MaxDimension => Math.Max(ZoomFillxMax - ZoomFillxMin, ZoomFillyMax - ZoomFillyMin);
     private bool _smoothZoomInProgress;
@@ -22,19 +22,19 @@ internal class ZoomController
         _redrawRequested = redrawRequested;
     }
 
-    internal double CenterX
+    public double CenterX
     {
         get => Cam.CenterX;
         set => Cam.CenterX = value;
     }
 
-    internal double CenterY
+    public double CenterY
     {
         get => Cam.CenterY;
         set => Cam.CenterY = value;
     }
 
-    internal double ZoomLevel
+    public double ZoomLevel
     {
         get => Cam.ZoomLevel;
         set
@@ -47,7 +47,7 @@ internal class ZoomController
         }
     }
 
-    internal ElmaCamera Cam { get; }
+    public ElmaCamera Cam { get; }
 
     private double ZoomFillxMin => (1 + ZoomFillMargin) * Lev.Bounds.XMin - ZoomFillMargin * Lev.Bounds.XMax;
     private double ZoomFillxMax => (1 + ZoomFillMargin) * Lev.Bounds.XMax - ZoomFillMargin * Lev.Bounds.XMin;
@@ -56,7 +56,7 @@ internal class ZoomController
 
     public Level Lev { get; set; }
 
-    internal void Zoom(Vector p, bool zoomIn, double zoomFactor, RenderingSettings settings)
+    public void Zoom(Vector p, bool zoomIn, double zoomFactor, RenderingSettings settings)
     {
         var i = zoomIn ? zoomFactor : 1 / zoomFactor;
         var x = p.X;
@@ -66,7 +66,7 @@ internal class ZoomController
         PerformZoom(ZoomLevel * i, x, y, settings);
     }
 
-    internal void ZoomFill(RenderingSettings settings, double aspectRatio)
+    public void ZoomFill(RenderingSettings settings, double aspectRatio)
     {
         var levelAspectRatio = (ZoomFillxMax - ZoomFillxMin) / (ZoomFillyMax - ZoomFillyMin);
         var newZoomLevel = (ZoomFillyMax - ZoomFillyMin) / 2;

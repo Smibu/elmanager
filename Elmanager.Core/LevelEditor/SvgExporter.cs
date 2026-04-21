@@ -9,7 +9,7 @@ using SvgNet;
 
 namespace Elmanager.LevelEditor;
 
-internal static class SvgExporter
+public static class SvgExporter
 {
     public static void ExportAsSvg(Level level, RenderingSettings settings, string fileName)
     {

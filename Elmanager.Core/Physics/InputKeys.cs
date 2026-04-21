@@ -1,6 +1,6 @@
 namespace Elmanager.Physics;
 
-internal class InputKeys
+public class InputKeys
 {
     public bool Gas;
     public bool Brake;

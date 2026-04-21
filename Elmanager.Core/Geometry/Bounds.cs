@@ -2,7 +2,7 @@ using System;
 
 namespace Elmanager.Geometry;
 
-internal struct Bounds
+public struct Bounds
 {
     public required double XMin;
     public required double XMax;

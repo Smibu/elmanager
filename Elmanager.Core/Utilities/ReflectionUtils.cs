@@ -3,7 +3,7 @@ using System.Reflection;
 
 namespace Elmanager.Utilities;
 
-internal static class ReflectionUtils
+public static class ReflectionUtils
 {
     private static PropertyInfo? GetPropertyInfo(Type type, string propertyName)
     {
@@ -19,7 +19,7 @@ internal static class ReflectionUtils
         return propInfo;
     }
 
-    internal static object? GetPropertyValue(this object obj, string propertyName)
+    public static object? GetPropertyValue(this object obj, string propertyName)
     {
         if (obj == null)
             throw new ArgumentNullException(nameof(obj));

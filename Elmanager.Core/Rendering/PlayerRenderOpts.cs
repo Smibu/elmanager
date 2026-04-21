@@ -2,7 +2,7 @@ using System.Drawing;
 
 namespace Elmanager.Rendering;
 
-internal struct PlayerRenderOpts
+public struct PlayerRenderOpts
 {
     public Color Color;
     public bool IsActive;

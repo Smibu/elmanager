@@ -4,7 +4,7 @@ using Elmanager.Utilities;
 
 namespace Elmanager.Lev;
 
-internal sealed class Top10EntryMulti : Top10Entry
+public sealed class Top10EntryMulti : Top10Entry
 {
     internal Top10EntryMulti(string playerA, string playerB, int time)
     {

@@ -8,9 +8,9 @@ using Elmanager.IO;
 
 namespace Elmanager.Lgr;
 
-internal class Lgr : IDisposable
+public class Lgr : IDisposable
 {
-    internal readonly Dictionary<string, LgrImage> LgrImages = new();
+    public readonly Dictionary<string, LgrImage> LgrImages = new();
     private readonly Dictionary<string, ListedImage> _listedImages = new();
     internal readonly string Path;
 
@@ -24,7 +24,7 @@ internal class Lgr : IDisposable
         yield return $"qdown_{i}";
     }
 
-    internal IEnumerable<ListedImage> ListedImagesExcludingSpecial
+    public IEnumerable<ListedImage> ListedImagesExcludingSpecial
     {
         get
         {
@@ -165,5 +165,5 @@ internal class Lgr : IDisposable
         }
     }
 
-    internal LgrImage? ImageFromName(string name) => LgrImages.GetValueOrDefault(name);
+    public LgrImage? ImageFromName(string name) => LgrImages.GetValueOrDefault(name);
 }

@@ -5,7 +5,7 @@ using Elmanager.Rendering;
 
 namespace Elmanager.LevelEditor;
 
-internal class LevelEditorRenderingSettings : RenderingSettings
+public class LevelEditorRenderingSettings : RenderingSettings
 {
     [Category("Colors"), DisplayName("Crosshair"), JsonPropertyName("CrosshairColor"), Description(TransparencyTip)]
     public Color CrosshairColor { get; set; } = Color.Blue;
@@ -26,5 +26,5 @@ internal class LevelEditorRenderingSettings : RenderingSettings
         SelectionColor = s.SelectionColor;
     }
 
-    internal override LevelEditorRenderingSettings Clone() => new(this);
+    public override LevelEditorRenderingSettings Clone() => new(this);
 }

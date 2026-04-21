@@ -8,7 +8,7 @@ using System.Text.Json;
 
 namespace Elmanager.Lgr;
 
-internal class LgrManager
+public class LgrManager
 {
     private readonly Dictionary<string, string> _knownLgrs;
     private readonly Dictionary<string, string> _lgrFileHashes;

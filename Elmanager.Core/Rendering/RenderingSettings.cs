@@ -8,7 +8,7 @@ using Elmanager.Lev;
 
 namespace Elmanager.Rendering;
 
-internal class RenderingSettings
+public class RenderingSettings
 {
     private int _circleDrawingAccuracy = 30;
     private double _gridSize = 1.0;
@@ -88,7 +88,7 @@ internal class RenderingSettings
         PicturesInBackground = s.PicturesInBackground;
     }
 
-    internal virtual RenderingSettings Clone() => new(this);
+    public virtual RenderingSettings Clone() => new(this);
 
     [Category("Colors"), DisplayName("Ground fill"), JsonPropertyName("GroundFillColor")]
     public Color GroundFillColor { get; set; }

@@ -2,7 +2,7 @@ using Elmanager.Geometry;
 
 namespace Elmanager.Physics;
 
-internal class TaggedBodyPart
+public class TaggedBodyPart
 {
     public TaggedBodyPart(Vector position, BodyPartKind type)
     {

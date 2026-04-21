@@ -1,6 +1,6 @@
 namespace Elmanager.Physics;
 
-internal enum RotationKind
+public enum RotationKind
 {
     Left,
     Right,

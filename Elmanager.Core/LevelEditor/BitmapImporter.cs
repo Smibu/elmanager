@@ -6,9 +6,9 @@ using Elmanager.Vectrast;
 
 namespace Elmanager.LevelEditor;
 
-internal static class BitmapImporter
+public static class BitmapImporter
 {
-    internal static Level FromPath(string imageFileName)
+    public static Level FromPath(string imageFileName)
     {
         var lev = new Level();
         var vr = new VectRast();

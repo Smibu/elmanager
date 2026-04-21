@@ -1,6 +1,6 @@
 namespace Elmanager.LevelEditor.Playing;
 
-internal enum FollowDriverOption
+public enum FollowDriverOption
 {
     WhenPressingKey,
     Never,

@@ -3,7 +3,7 @@ using Elmanager.Lev;
 
 namespace Elmanager.Rendering;
 
-internal record LevEditState(Level Lev, TransientElements Elements)
+public record LevEditState(Level Lev, TransientElements Elements)
 {
     public IEnumerable<Polygon> GetPolygons()
     {

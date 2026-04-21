@@ -1,6 +1,6 @@
 namespace Elmanager.Searching;
 
-internal enum BoolOption
+public enum BoolOption
 {
     True,
     False,

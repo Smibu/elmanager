@@ -2,7 +2,7 @@ using OpenTK.Graphics.OpenGL;
 
 namespace Elmanager.Rendering.OpenGL;
 
-internal readonly struct StencilOptions
+public readonly struct StencilOptions
 {
     public StencilOp StencilFail { get; init; }
     public StencilOp DepthFail { get; init; }

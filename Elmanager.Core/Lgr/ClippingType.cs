@@ -1,6 +1,6 @@
 namespace Elmanager.Lgr;
 
-internal enum ClippingType
+public enum ClippingType
 {
     Unclipped = 0,
     Ground = 1,

@@ -4,7 +4,7 @@ using Elmanager.Utilities;
 
 namespace Elmanager.Lev;
 
-internal sealed class Top10EntrySingle : Top10Entry
+public sealed class Top10EntrySingle : Top10Entry
 {
     [Description("Player 1")] public override string PlayerA { get; protected set; }
     public override string PlayerB { get; protected set; }

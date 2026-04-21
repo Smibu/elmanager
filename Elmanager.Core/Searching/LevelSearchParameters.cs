@@ -6,22 +6,22 @@ using Elmanager.Lev;
 
 namespace Elmanager.Searching;
 
-internal class LevelSearchParameters : SearchParameters
+public class LevelSearchParameters : SearchParameters
 {
     private const int MaxCount = 10000;
-    internal Range<int> GroundPolygons = new(0, MaxCount);
-    internal Range<int> GrassPolygons = new(0, MaxCount);
-    internal Range<int> GroundVertices = new(0, MaxCount);
-    internal Range<int> GrassVertices = new(0, MaxCount);
-    internal Range<int> SingleTop10Times = new(0, MaxCount);
-    internal Range<int> MultiTop10Times = new(0, MaxCount);
-    internal Range<int> Killers = new(0, MaxCount);
-    internal Range<int> Flowers = new(0, MaxCount);
-    internal Range<int> Pictures = new(0, MaxCount);
-    internal Range<int> Textures = new(0, MaxCount);
-    internal Range<int> Apples = new(0, MaxCount);
+    public Range<int> GroundPolygons = new(0, MaxCount);
+    public Range<int> GrassPolygons = new(0, MaxCount);
+    public Range<int> GroundVertices = new(0, MaxCount);
+    public Range<int> GrassVertices = new(0, MaxCount);
+    public Range<int> SingleTop10Times = new(0, MaxCount);
+    public Range<int> MultiTop10Times = new(0, MaxCount);
+    public Range<int> Killers = new(0, MaxCount);
+    public Range<int> Flowers = new(0, MaxCount);
+    public Range<int> Pictures = new(0, MaxCount);
+    public Range<int> Textures = new(0, MaxCount);
+    public Range<int> Apples = new(0, MaxCount);
 
-    internal Dictionary<AppleType, Range<int>> GravApples = new()
+    public Dictionary<AppleType, Range<int>> GravApples = new()
     {
         {AppleType.Normal, new Range<int>(0, MaxCount)},
         {AppleType.GravityUp, new Range<int>(0, MaxCount)},
@@ -30,15 +30,15 @@ internal class LevelSearchParameters : SearchParameters
         {AppleType.GravityRight, new Range<int>(0, MaxCount)},
     };
 
-    internal Regex Title = new("");
-    internal Regex Lgr = new("");
-    internal Regex GroundTexture = new("");
-    internal Regex SkyTexture = new("");
-    internal Regex SinglePlayerNick = new("");
-    internal Regex MultiPlayerNick = new("");
+    public Regex Title = new("");
+    public Regex Lgr = new("");
+    public Regex GroundTexture = new("");
+    public Regex SkyTexture = new("");
+    public Regex SinglePlayerNick = new("");
+    public Regex MultiPlayerNick = new("");
 
-    internal Range<double> SinglePlayerBestTime = new(0, double.MaxValue);
-    internal Range<double> MultiPlayerBestTime = new(0, double.MaxValue);
+    public Range<double> SinglePlayerBestTime = new(0, double.MaxValue);
+    public Range<double> MultiPlayerBestTime = new(0, double.MaxValue);
 
     public bool Matches(ElmaFileObject<Level> o)
     {

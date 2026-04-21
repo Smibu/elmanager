@@ -4,7 +4,7 @@ using NetTopologySuite.Geometries;
 
 namespace Elmanager.Physics;
 
-internal class Edge
+public class Edge
 {
     public Vector From;
     public Vector To;

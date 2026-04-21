@@ -8,7 +8,7 @@ using Elmanager.Utilities;
 
 namespace Elmanager.Rec;
 
-internal class Replay
+public class Replay
 {
     public readonly bool Finished;
 
@@ -23,12 +23,12 @@ internal class Replay
     public readonly bool WrongLevelVersion;
     internal readonly bool AcrossLevel;
     private readonly int _internalIndex;
-    internal readonly bool IsInternal;
+    public readonly bool IsInternal;
 
-    internal readonly string? LevelPath;
-    internal Player Player1 => Players[0];
-    internal Player Player2 => Players[1];
-    internal readonly List<Player> Players = new(2);
+    public readonly string? LevelPath;
+    public Player Player1 => Players[0];
+    public Player Player2 => Players[1];
+    public readonly List<Player> Players = new(2);
 
     private Replay(string replayPath)
     {
@@ -146,7 +146,7 @@ internal class Replay
 
     public int LevId { get; }
 
-    internal Level GetLevel()
+    public Level GetLevel()
     {
         if (LevelPath is not null)
         {

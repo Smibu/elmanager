@@ -13,28 +13,28 @@ using Coordinate = NetTopologySuite.Geometries.Coordinate;
 
 namespace Elmanager.Lev;
 
-internal class Polygon
+public class Polygon
 {
-    internal bool IsGrass;
-    internal PolygonMark Mark;
-    internal List<Vector> Vertices;
-    internal const double BufferDistance = -1e-10;
+    public bool IsGrass;
+    public PolygonMark Mark;
+    public List<Vector> Vertices;
+    public const double BufferDistance = -1e-10;
 
     public GrassSlopeInfo? SlopeInfo { get; private set; }
 
-    internal Polygon(IEnumerable<Vector> vertices, bool isGrass = false)
+    public Polygon(IEnumerable<Vector> vertices, bool isGrass = false)
     {
         Vertices = new List<Vector>();
         Vertices.AddRange(vertices);
         IsGrass = isGrass;
     }
 
-    internal Polygon()
+    public Polygon()
     {
         Vertices = new List<Vector>(10);
     }
 
-    internal Polygon(Polygon p)
+    public Polygon(Polygon p)
         : this()
     {
         foreach (Vector x in p.Vertices)
@@ -44,7 +44,7 @@ internal class Polygon
         // don't clone SlopeInfo; it increases memory usage a lot and can be recomputed when needed
     }
 
-    internal Polygon(params Vector[] vertices)
+    public Polygon(params Vector[] vertices)
         : this()
     {
         foreach (Vector x in vertices)
@@ -77,7 +77,7 @@ internal class Polygon
         }
     }
 
-    internal Vector this[int index] =>
+    public Vector this[int index] =>
         index < 0 ? Vertices[Vertices.Count + index] : Vertices[index % Vertices.Count];
 
     private double SignedArea
@@ -89,7 +89,7 @@ internal class Polygon
         }
     }
 
-    internal bool IsCounterClockwise => SignedArea > 0;
+    public bool IsCounterClockwise => SignedArea > 0;
 
     internal Bounds Bounds
     {
@@ -111,7 +111,7 @@ internal class Polygon
 
     private bool IsSimple => ToIPolygon().IsSimple;
 
-    internal void UpdateGrassSlopeInfo(Bounds bounds, double grassZoom)
+    public void UpdateGrassSlopeInfo(Bounds bounds, double grassZoom)
     {
         if (IsGrass)
         {
@@ -145,7 +145,7 @@ internal class Polygon
             new Vector(lowerLeftCorner.X, lowerLeftCorner.Y + height));
     }
 
-    internal static Polygon Ellipse(Vector mid, double a, double b, double angle, int steps)
+    public static Polygon Ellipse(Vector mid, double a, double b, double angle, int steps)
     {
         var p = new Polygon();
         double beta = -angle * MathUtils.DegToRad;
@@ -164,12 +164,12 @@ internal class Polygon
         return p;
     }
 
-    internal void Add(Vector p)
+    public void Add(Vector p)
     {
         Vertices.Add(p);
     }
 
-    internal void Insert(int index, Vector p)
+    public void Insert(int index, Vector p)
     {
         index = GetIndex(index);
         Vertices.Insert(index, p);
@@ -180,7 +180,7 @@ internal class Polygon
         return index % Vertices.Count;
     }
 
-    internal void Move(Vector delta)
+    public void Move(Vector delta)
     {
         for (int i = 0; i < Vertices.Count; i++)
         {
@@ -188,7 +188,7 @@ internal class Polygon
         }
     }
 
-    internal double DistanceFromPoint(Vector p)
+    public double DistanceFromPoint(Vector p)
     {
         double smallest = double.MaxValue;
         double current;
@@ -249,7 +249,7 @@ internal class Polygon
         return smallest;
     }
 
-    internal void SetBeginPoint(int index)
+    public void SetBeginPoint(int index)
     {
         int i = GetIndex(index);
         if (i == 0)
@@ -261,17 +261,17 @@ internal class Polygon
         }
     }
 
-    internal void RemoveLastVertex()
+    public void RemoveLastVertex()
     {
         Vertices.RemoveAt(Vertices.Count - 1);
     }
 
-    internal Vector GetLastVertex()
+    public Vector GetLastVertex()
     {
         return Vertices[^1];
     }
 
-    internal void MarkVectorsAs(VectorMark mark)
+    public void MarkVectorsAs(VectorMark mark)
     {
         for (var index = 0; index < Vertices.Count; index++)
         {
@@ -279,7 +279,7 @@ internal class Polygon
         }
     }
 
-    internal int GetNearestVertexIndex(Vector p)
+    public int GetNearestVertexIndex(Vector p)
     {
         double smallest = (Vertices[0] - p).LengthSquared;
         int smallestIndex = 0;
@@ -296,12 +296,12 @@ internal class Polygon
         return smallestIndex;
     }
 
-    internal double GetNearestVertexDistance(Vector p)
+    public double GetNearestVertexDistance(Vector p)
     {
         return Math.Sqrt(Vertices.Select(t => (t - p).LengthSquared).Min());
     }
 
-    internal int GetNearestSegmentIndex(Vector p)
+    public int GetNearestSegmentIndex(Vector p)
     {
         double smallest = GeometryUtils.DistanceFromSegment(Vertices[0].X, Vertices[0].Y, Vertices[1].X,
             Vertices[1].Y, p.X, p.Y);
@@ -353,7 +353,7 @@ internal class Polygon
         UiUtils.ShowError("Failed to add intersection!!");
     }
 
-    internal Polygon Smoothen(int steps, double vertexOffset, bool onlySelected) //0.5 <= VertexOffset <= 1.0
+    public Polygon Smoothen(int steps, double vertexOffset, bool onlySelected) //0.5 <= VertexOffset <= 1.0
     {
         if (Math.Abs(vertexOffset - 1.0) < GeometryUtils.Tolerance)
         {
@@ -406,7 +406,7 @@ internal class Polygon
         return smoothPoly;
     }
 
-    internal Polygon Unsmoothen(double angle, double length, bool onlySelected)
+    public Polygon Unsmoothen(double angle, double length, bool onlySelected)
     {
         var unsmoothPoly = new Polygon(this);
         if (unsmoothPoly.Vertices.Count == 3)
@@ -440,7 +440,7 @@ internal class Polygon
         return unsmoothPoly;
     }
 
-    internal List<Polygon> PolygonOperationWith(Polygon p, PolygonOperationType type, Bounds bounds, double grassZoom)
+    public List<Polygon> PolygonOperationWith(Polygon p, PolygonOperationType type, Bounds bounds, double grassZoom)
     {
         if (!IsSimple || !p.IsSimple)
         {
@@ -492,15 +492,15 @@ internal class Polygon
         return Vertices.IndexOf(v);
     }
 
-    internal void ChangeOrientation()
+    public void ChangeOrientation()
     {
         Vertices.Reverse();
     }
 
-    internal bool AreaHasPoint(Vector p) =>
+    public bool AreaHasPoint(Vector p) =>
         RayCrossingCounter.LocatePointInRing(p, ToCoordinateArray()) == Location.Interior;
 
-    internal List<Polygon>? Cut(Vector v1, Vector v2, double cutRadius)
+    public List<Polygon>? Cut(Vector v1, Vector v2, double cutRadius)
     {
         var clone = new Polygon(this);
         Vector.MarkDefault = VectorMark.Selected;
@@ -570,7 +570,7 @@ internal class Polygon
         return null;
     }
 
-    internal Polygon ApplyTransformation(Matrix matrix, bool applySelectedOnly = false)
+    public Polygon ApplyTransformation(Matrix matrix, bool applySelectedOnly = false)
     {
         var transformed = new Polygon(this);
         for (int i = 0; i < Vertices.Count; i++)
@@ -589,7 +589,7 @@ internal class Polygon
         return new(corner1, new Vector(corner2.X, corner1.Y), corner2, new Vector(corner1.X, corner2.Y));
     }
 
-    internal NetTopologySuite.Geometries.Polygon ToIPolygon() => GeometryFactory.Floating.CreatePolygon(ToCoordinateArray());
+    public NetTopologySuite.Geometries.Polygon ToIPolygon() => GeometryFactory.Floating.CreatePolygon(ToCoordinateArray());
 
     private Coordinate[] ToCoordinateArray()
     {

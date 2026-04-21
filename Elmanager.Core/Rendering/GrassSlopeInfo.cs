@@ -6,7 +6,7 @@ using Elmanager.Lgr;
 
 namespace Elmanager.Rendering;
 
-internal class GrassSlopeInfo
+public class GrassSlopeInfo
 {
     public int GrassStart { get; }
     private readonly Dictionary<int, int> _info = new();

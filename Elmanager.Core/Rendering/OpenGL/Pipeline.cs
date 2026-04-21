@@ -3,7 +3,7 @@ using OpenTK.Graphics.OpenGL;
 
 namespace Elmanager.Rendering.OpenGL;
 
-internal class Pipeline : IDisposable
+public class Pipeline : IDisposable
 {
     private Shader Shader { get; }
     private StencilOptions? Stencil { get; }

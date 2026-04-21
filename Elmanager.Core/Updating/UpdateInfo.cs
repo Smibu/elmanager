@@ -4,13 +4,13 @@ using System.Text.Json.Serialization;
 
 namespace Elmanager.Updating;
 
-internal class Asset
+public class Asset
 {
     [JsonPropertyName("browser_download_url")]
     public required string BrowserDownloadUrl { get; set; }
 }
 
-internal class UpdateInfo
+public class UpdateInfo
 {
     [JsonPropertyName("tag_name")]
     public required string TagName { get; set; }

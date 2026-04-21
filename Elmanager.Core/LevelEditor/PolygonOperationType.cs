@@ -1,6 +1,6 @@
 namespace Elmanager.LevelEditor;
 
-internal enum PolygonOperationType
+public enum PolygonOperationType
 {
     Union,
     Difference,

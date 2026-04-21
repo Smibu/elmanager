@@ -1,12 +1,12 @@
 namespace Elmanager.Rec;
 
-internal class PlayerEvent<T>
+public class PlayerEvent<T>
 {
-    internal readonly int Info;
-    internal readonly double Time;
-    internal readonly T Type;
+    public readonly int Info;
+    public readonly double Time;
+    public readonly T Type;
 
-    internal PlayerEvent(T eventType, double eventTime, int info = 0)
+    public PlayerEvent(T eventType, double eventTime, int info = 0)
     {
         Type = eventType;
         Time = eventTime;

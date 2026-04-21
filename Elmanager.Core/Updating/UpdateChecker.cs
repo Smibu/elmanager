@@ -7,9 +7,9 @@ using Elmanager.Utilities.Json;
 
 namespace Elmanager.Updating;
 
-internal static class UpdateChecker
+public static class UpdateChecker
 {
-    internal static async Task<bool> CheckForUpdates()
+    public static async Task<bool> CheckForUpdates()
     {
         using var client = new HttpClient();
         client.DefaultRequestHeaders.Add("User-Agent", "Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:78.0) Gecko/20100101 Firefox/78.0");
@@ -34,5 +34,5 @@ internal static class UpdateChecker
     }
 
     private const string VersionUri = "https://api.github.com/repos/Smibu/elmanager/releases/latest";
-    internal const string ChangelogUri = "https://github.com/Smibu/elmanager/blob/master/Elmanager/changelog.md";
+    public const string ChangelogUri = "https://github.com/Smibu/elmanager/blob/master/Elmanager/changelog.md";
 }

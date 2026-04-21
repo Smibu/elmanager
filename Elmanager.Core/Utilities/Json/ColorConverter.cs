@@ -5,7 +5,7 @@ using System.Text.Json.Serialization;
 
 namespace Elmanager.Utilities.Json;
 
-internal class ColorConverter : JsonConverter<Color>
+public class ColorConverter : JsonConverter<Color>
 {
     public override Color Read(
         ref Utf8JsonReader reader,

@@ -8,7 +8,7 @@ using Elmanager.Rec;
 
 namespace Elmanager.Physics;
 
-internal class Engine
+public class Engine
 {
     private const double GravityStrength = 10.0;
     private const double SpringConstant = 10000.0;

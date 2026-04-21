@@ -5,7 +5,7 @@ using System.Text.Json.Serialization;
 
 namespace Elmanager.Utilities.Json;
 
-internal class SizeConverter : JsonConverter<Size>
+public class SizeConverter : JsonConverter<Size>
 {
     public override Size Read(
         ref Utf8JsonReader reader,

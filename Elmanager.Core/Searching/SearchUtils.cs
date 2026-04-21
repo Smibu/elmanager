@@ -7,7 +7,7 @@ using Elmanager.Utilities;
 
 namespace Elmanager.Searching;
 
-internal static class SearchUtils
+public static class SearchUtils
 {
     public static IEnumerable<string> FilterByRegex(IEnumerable<string> files, string pattern)
     {

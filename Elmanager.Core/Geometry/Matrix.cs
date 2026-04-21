@@ -3,7 +3,7 @@ using Elmanager.Utilities;
 
 namespace Elmanager.Geometry;
 
-internal struct Matrix
+public struct Matrix
 {
     private double _m11;
     private double _m12;
@@ -40,7 +40,7 @@ internal struct Matrix
         _offsetY = offsetY;
     }
 
-    internal static Matrix Identity { get; }
+    public static Matrix Identity { get; }
 
     public static bool operator ==(Matrix matrix1, Matrix matrix2)
     {
@@ -67,12 +67,12 @@ internal struct Matrix
             centerY * cos - centerY - centerX * sin);
     }
 
-    internal static Matrix CreateScaling(double scaleX, double scaleY)
+    public static Matrix CreateScaling(double scaleX, double scaleY)
     {
         return new(scaleX, 0, 0, scaleY, 0, 0);
     }
 
-    internal static Matrix CreateTranslation(double offsetX, double offsetY)
+    public static Matrix CreateTranslation(double offsetX, double offsetY)
     {
         return new(1, 0, 0, 1, offsetX, offsetY);
     }
@@ -95,13 +95,13 @@ internal struct Matrix
         return new() { X = v.X * _m11 + v.Y * _m21 + _offsetX, Y = v.Y * _m22 + v.X * _m12 + _offsetY, Mark = v.Mark };
     }
 
-    internal void Rotate(double angle)
+    public void Rotate(double angle)
     {
         angle = angle % 360;
         SetMatrix(this * CreateRotationRadians(angle * MathUtils.DegToRad));
     }
 
-    internal void Scale(double scaleX, double scaleY)
+    public void Scale(double scaleX, double scaleY)
     {
         SetMatrix(this * CreateScaling(scaleX, scaleY));
     }
@@ -111,7 +111,7 @@ internal struct Matrix
         return MultiplyVector(vector);
     }
 
-    internal void Translate(double offsetX, double offsetY)
+    public void Translate(double offsetX, double offsetY)
     {
         SetMatrix(this * CreateTranslation(offsetX, offsetY));
     }

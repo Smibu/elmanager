@@ -1,6 +1,6 @@
 namespace Elmanager.Lev;
 
-internal enum PolygonMark
+public enum PolygonMark
 {
     None = 0,
     Selected = 1,

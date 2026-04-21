@@ -4,7 +4,7 @@ using Elmanager.Utilities;
 
 namespace Elmanager.ElmaPrimitives;
 
-internal readonly struct PlayerState
+public readonly struct PlayerState
 {
     public PlayerState(Vector globalBody, Vector leftWheel, Vector rightWheel,
         double leftWheelRotation, double rightWheelRotation, Vector head,

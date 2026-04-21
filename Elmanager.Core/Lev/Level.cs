@@ -14,19 +14,19 @@ using NetTopologySuite.Geometries;
 
 namespace Elmanager.Lev;
 
-internal class Level
+public class Level
 {
     internal const double GlobalBodyDifferenceFromLeftWheelX = 0.85;
     internal const double GlobalBodyDifferenceFromLeftWheelY = 0.6;
-    internal const double HeadDifferenceFromLeftWheelX = 0.7595;
-    internal const double HeadDifferenceFromLeftWheelY = 1.67;
-    internal const int MaximumObjectCount = 252;
-    internal const int MaximumPolygonCount = 1200;
+    public const double HeadDifferenceFromLeftWheelX = 0.7595;
+    public const double HeadDifferenceFromLeftWheelY = 1.67;
+    public const int MaximumObjectCount = 252;
+    public const int MaximumPolygonCount = 1200;
     private const int MaximumPolygonVertexCount = 1000;
-    internal const double MaximumSize = 188.0;
-    internal const int MaximumGroundVertexCount = 20000;
-    internal const int MaximumPictureTextureCount = 5000;
-    internal const double RightWheelDifferenceFromLeftWheelX = 1.698;
+    public const double MaximumSize = 188.0;
+    public const int MaximumGroundVertexCount = 20000;
+    public const int MaximumPictureTextureCount = 5000;
+    public const double RightWheelDifferenceFromLeftWheelX = 1.698;
     private const uint EndOfDataMagicNumber = 0x67103A;
     private const uint EndOfDataMagicNumber2 = 0xB76A0515;
     private const uint EndOfFileMagicNumber = 0x845D52;
@@ -55,14 +55,14 @@ internal class Level
         "Hang Tight", "Hooked", "Apple Harvest", "More Levels"
     };
 
-    internal string GroundTextureName = "ground";
+    public string GroundTextureName = "ground";
     private readonly double[] _integrity = new double[4];
 
-    internal List<LevObject> Objects = new();
-    internal List<GraphicElement> GraphicElements = new();
-    internal List<Polygon> Polygons = new();
-    internal string SkyTextureName = "sky";
-    internal readonly LevelTop10 Top10 = new();
+    public List<LevObject> Objects = new();
+    public List<GraphicElement> GraphicElements = new();
+    public List<Polygon> Polygons = new();
+    public string SkyTextureName = "sky";
+    public readonly LevelTop10 Top10 = new();
     public int Identifier { get; private set; }
 
     public string LgrFile = "default";
@@ -70,7 +70,7 @@ internal class Level
     private Bounds _polygonBounds;
     private string LevStartMagic { get; set; } = "POT14";
 
-    internal Level()
+    public Level()
     {
     }
 
@@ -82,14 +82,14 @@ internal class Level
         UpdateBounds();
     }
 
-    internal static ElmaFileObject<Level> FromPath(string levelPath)
+    public static ElmaFileObject<Level> FromPath(string levelPath)
     {
         using var stream = File.OpenRead(levelPath);
         var lev = FromStream(stream);
         return ElmaFileObject<Level>.FromPath(levelPath, lev);
     }
 
-    internal static Level FromStream(Stream data)
+    public static Level FromStream(Stream data)
     {
         var lvl = new Level();
         try
@@ -299,7 +299,7 @@ internal class Level
 
     public int GroundVertexCount => Polygons.Where(x => !x.IsGrass).Sum(x => x.Vertices.Count);
 
-    internal bool HasTooLargePolygons
+    public bool HasTooLargePolygons
     {
         get
         {
@@ -314,7 +314,7 @@ internal class Level
         }
     }
 
-    internal List<Vector> GetTooShortEdges()
+    public List<Vector> GetTooShortEdges()
     {
         var result = new List<Vector>();
         foreach (var p in Polygons)
@@ -331,25 +331,25 @@ internal class Level
         return result;
     }
 
-    internal int GetGravityAppleCount(AppleType t)
+    public int GetGravityAppleCount(AppleType t)
     {
         return Objects.Count(o => o.Type == ObjectType.Apple && o.AppleType == t);
     }
 
-    internal bool HasTooManyObjects => Objects.Count > MaximumObjectCount;
+    public bool HasTooManyObjects => Objects.Count > MaximumObjectCount;
 
-    internal bool HasTooManyPolygons => Polygons.Count > MaximumPolygonCount;
+    public bool HasTooManyPolygons => Polygons.Count > MaximumPolygonCount;
 
-    internal bool HasTooManyVertices => GroundVertexCount > MaximumGroundVertexCount;
+    public bool HasTooManyVertices => GroundVertexCount > MaximumGroundVertexCount;
 
     private bool HasTopologyErrors => HasTooLargePolygons || HasTooManyObjects || HasTooFewObjects ||
                                       HasTooManyPolygons || HasTooManyVertices || HasTooManyPictures ||
                                       WheelLiesOnEdge || HasTexturesOutOfBounds || HeadTouchesGround || TooTall ||
                                       TooWide || GetIntersectionPoints().Count > 0 || GetTooShortEdges().Count > 0;
 
-    internal bool HasTooManyPictures => PictureTextureCount > MaximumPictureTextureCount;
+    public bool HasTooManyPictures => PictureTextureCount > MaximumPictureTextureCount;
 
-    internal bool HeadTouchesGround
+    public bool HeadTouchesGround
     {
         get
         {
@@ -362,7 +362,7 @@ internal class Level
         }
     }
 
-    internal bool WheelLiesOnEdge
+    public bool WheelLiesOnEdge
     {
         get
         {
@@ -375,7 +375,7 @@ internal class Level
         }
     }
 
-    internal bool HasTexturesOutOfBounds
+    public bool HasTexturesOutOfBounds
     {
         get
         {
@@ -396,7 +396,7 @@ internal class Level
 
     public int PictureCount => GraphicElements.Count(texture => texture is GraphicElement.Picture or GraphicElement.MissingPicture);
 
-    internal int PictureTextureCount => GraphicElements.Count;
+    public int PictureTextureCount => GraphicElements.Count;
 
     public string Title
     {
@@ -409,11 +409,11 @@ internal class Level
         }
     }
 
-    internal bool TooTall => _polygonBounds.YMax - _polygonBounds.YMin >= MaximumSize;
+    public bool TooTall => _polygonBounds.YMax - _polygonBounds.YMin >= MaximumSize;
 
-    internal bool TooWide => _polygonBounds.XMax - _polygonBounds.XMin >= MaximumSize;
+    public bool TooWide => _polygonBounds.XMax - _polygonBounds.XMin >= MaximumSize;
 
-    internal int VertexCount => Polygons.Sum(x => x.Vertices.Count);
+    public int VertexCount => Polygons.Sum(x => x.Vertices.Count);
 
     private double ObjectSum => Objects.Sum(x => x.Position.X - x.Position.Y + (int)x.Type);
 
@@ -427,9 +427,9 @@ internal class Level
 
     private bool IsLeb => LevStartMagic == "@@^!@";
 
-    internal bool HasTooFewObjects => Objects.Count < 2;
+    public bool HasTooFewObjects => Objects.Count < 2;
 
-    internal static string GetPossiblyInternal(string level)
+    public static string GetPossiblyInternal(string level)
     {
         if (IsInternalLevel(level))
         {
@@ -443,9 +443,9 @@ internal class Level
     internal static bool IsInternalLevel(string levStr) =>
         levStr.Length == 12 && levStr.Substring(0, 6).EqualsIgnoreCase("QWQUU0");
 
-    internal Level Clone() => new(this);
+    public Level Clone() => new(this);
 
-    internal void UpdateGrass(double grassZoom)
+    public void UpdateGrass(double grassZoom)
     {
         var groundBounds = GetGroundBounds();
         foreach (var x in Polygons)
@@ -454,16 +454,16 @@ internal class Level
         }
     }
 
-    internal List<LevObject> GetApplesAndFlowersInsideGround()
+    public List<LevObject> GetApplesAndFlowersInsideGround()
     {
         return
             Objects.FindAll(
                 x => (x.Type == ObjectType.Apple || x.Type == ObjectType.Flower) && IsObjectInsideGround(x));
     }
 
-    internal List<Vector> GetIntersectionPoints() => GeometryUtils.GetIntersectionPoints(Polygons);
+    public List<Vector> GetIntersectionPoints() => GeometryUtils.GetIntersectionPoints(Polygons);
 
-    internal void Import(Level other)
+    public void Import(Level other)
     {
         UpdateBounds();
         other.UpdateBounds();
@@ -497,7 +497,7 @@ internal class Level
         return clipping % 2 == 0;
     }
 
-    internal bool IsSky(Polygon poly)
+    public bool IsSky(Polygon poly)
     {
         var counter = new RayCrossingCounter(poly.Vertices[0]);
         foreach (var p in Polygons.Where(p => !p.IsGrass && !p.Equals(poly)))
@@ -512,7 +512,7 @@ internal class Level
         return counter.Location == Location.Exterior;
     }
 
-    internal void MirrorSelected(MirrorOption mirrorOption)
+    public void MirrorSelected(MirrorOption mirrorOption)
     {
         var xMin = double.PositiveInfinity;
         var xMax = double.NegativeInfinity;
@@ -599,7 +599,7 @@ internal class Level
         }
     }
 
-    internal ElmaFile Save(string savePath, bool saveAsFresh = true)
+    public ElmaFile Save(string savePath, bool saveAsFresh = true)
     {
         var levelFile = new List<byte>();
         if (saveAsFresh)
@@ -696,7 +696,7 @@ internal class Level
         return new ElmaFile(savePath);
     }
 
-    internal void UpdateBounds()
+    public void UpdateBounds()
     {
         var b = Polygons.Skip(1).Aggregate(Polygons.First().Bounds, (current, x) => current.Max(x.Bounds));
 
@@ -749,7 +749,7 @@ internal class Level
 
     public Bounds Bounds { get; private set; }
 
-    internal void UpdateImages(Dictionary<string, DrawableImage> lgrImages)
+    public void UpdateImages(Dictionary<string, DrawableImage> lgrImages)
     {
         var oldElements = GraphicElements.Select(p => p.ToFileData()).ToList();
         GraphicElements = new List<GraphicElement>();
@@ -839,7 +839,7 @@ internal class Level
         }
     }
 
-    internal static Level FromDimensions(double width, double height)
+    public static Level FromDimensions(double width, double height)
     {
         return new(
             Polygon.Rectangle(new Vector(), width,

@@ -1,6 +1,6 @@
 namespace Elmanager.LevelEditor.Tools;
 
-internal interface IEditorToolBase
+public interface IEditorToolBase
 {
     bool Busy { get; }
 }

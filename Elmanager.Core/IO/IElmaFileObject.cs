@@ -1,6 +1,6 @@
 namespace Elmanager.IO;
 
-internal interface IElmaFileObject
+public interface IElmaFileObject
 {
     public string Path { get; }
 }

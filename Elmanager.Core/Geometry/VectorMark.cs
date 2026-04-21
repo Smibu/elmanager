@@ -1,6 +1,6 @@
 namespace Elmanager.Geometry;
 
-internal enum VectorMark
+public enum VectorMark
 {
     None = 0,
     Selected = 1

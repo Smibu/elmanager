@@ -4,18 +4,18 @@ using NetTopologySuite.Geometries;
 
 namespace Elmanager.Geometry;
 
-internal struct Vector : IPositionable
+public struct Vector : IPositionable
 {
-    internal static VectorMark MarkDefault = VectorMark.None;
+    public static VectorMark MarkDefault = VectorMark.None;
 
-    internal Vector(double x, double y)
+    public Vector(double x, double y)
     {
         X = x;
         Y = y;
         Mark = MarkDefault;
     }
 
-    internal Vector(double x, double y, VectorMark mark)
+    public Vector(double x, double y, VectorMark mark)
     {
         X = x;
         Y = y;
@@ -29,7 +29,7 @@ internal struct Vector : IPositionable
         Mark = MarkDefault;
     }
 
-    internal double Angle
+    public double Angle
     {
         get
         {
@@ -38,7 +38,7 @@ internal struct Vector : IPositionable
         }
     }
 
-    internal double AnglePositive
+    public double AnglePositive
     {
         get
         {
@@ -49,9 +49,9 @@ internal struct Vector : IPositionable
         }
     }
 
-    internal double Length => Math.Sqrt(X * X + Y * Y);
+    public double Length => Math.Sqrt(X * X + Y * Y);
 
-    internal double LengthSquared => X * X + Y * Y;
+    public double LengthSquared => X * X + Y * Y;
 
     public Vector Transform(Matrix m)
     {
@@ -105,29 +105,29 @@ internal struct Vector : IPositionable
         return new(-vector.X, -vector.Y);
     }
 
-    internal static double CrossProduct(Vector vector1, Vector vector2)
+    public static double CrossProduct(Vector vector1, Vector vector2)
     {
         return vector1.X * vector2.Y - vector1.Y * vector2.X;
     }
 
-    internal double AngleBetween(Vector vector1)
+    public double AngleBetween(Vector vector1)
     {
         double y = (vector1.X * Y) - (X * vector1.Y);
         double x = (vector1.X * X) + (vector1.Y * Y);
         return (Math.Atan2(y, x) * MathUtils.RadToDeg);
     }
 
-    internal Vector Clone()
+    public Vector Clone()
     {
         return new(X, Y, Mark);
     }
 
-    internal Vector Unit()
+    public Vector Unit()
     {
         return this / Length;
     }
 
-    internal double Dist(Vector other)
+    public double Dist(Vector other)
     {
         var xd = X - other.X;
         var yd = Y - other.Y;

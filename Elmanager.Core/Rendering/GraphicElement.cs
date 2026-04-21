@@ -5,7 +5,7 @@ using Elmanager.Lgr;
 
 namespace Elmanager.Rendering;
 
-internal abstract record GraphicElement(
+public abstract record GraphicElement(
     ClippingType Clipping,
     int Distance,
     Vector Position
@@ -20,21 +20,21 @@ internal abstract record GraphicElement(
         set => Position = Position with { Mark = value };
     }
 
-    internal record Picture(
+    public record Picture(
         ClippingType Clipping,
         int Distance,
         Vector Position,
         DrawableImage PictureInfo
     ) : GraphicElement(Clipping, Distance, Position)
     {
-        internal override double Width => PictureInfo.Width;
-        internal override double Height => PictureInfo.Height;
+        public override double Width => PictureInfo.Width;
+        public override double Height => PictureInfo.Height;
 
         internal override GraphicElementFileItem ToFileData() =>
             GraphicElementFileItem.Picture(PictureInfo.Name, Position, Distance, Clipping);
     }
 
-    internal record Texture(
+    public record Texture(
         ClippingType Clipping,
         int Distance,
         Vector Position,
@@ -42,14 +42,14 @@ internal abstract record GraphicElement(
         DrawableImage MaskInfo
     ) : GraphicElement(Clipping, Distance, Position)
     {
-        internal override double Width => MaskInfo.Width;
-        internal override double Height => MaskInfo.Height;
+        public override double Width => MaskInfo.Width;
+        public override double Height => MaskInfo.Height;
 
         internal override GraphicElementFileItem ToFileData() =>
             GraphicElementFileItem.Texture(TextureInfo.Name, MaskInfo.Name, Position, Distance, Clipping);
     }
 
-    internal record MissingPicture(
+    public record MissingPicture(
         string Name,
         ClippingType Clipping,
         int Distance,
@@ -58,8 +58,8 @@ internal abstract record GraphicElement(
     {
         private double? _width;
         private double? _height;
-        internal override double Width => _width ??= DefaultSize.Width * 1 / 48.0;
-        internal override double Height => _height ??= DefaultSize.Height * 1 / 48.0;
+        public override double Width => _width ??= DefaultSize.Width * 1 / 48.0;
+        public override double Height => _height ??= DefaultSize.Height * 1 / 48.0;
 
         private Size DefaultSize => LgrManager.GetDefaultSize(Name);
 
@@ -67,7 +67,7 @@ internal abstract record GraphicElement(
             GraphicElementFileItem.Picture(Name, Position, Distance, Clipping);
     }
 
-    internal record MissingTexture(
+    public record MissingTexture(
         string TextureName,
         string MaskName,
         ClippingType Clipping,
@@ -77,8 +77,8 @@ internal abstract record GraphicElement(
     {
         private double? _width;
         private double? _height;
-        internal override double Width => _width ??= DefaultSize.Width * 1 / 48.0;
-        internal override double Height => _height ??= DefaultSize.Height * 1 / 48.0;
+        public override double Width => _width ??= DefaultSize.Width * 1 / 48.0;
+        public override double Height => _height ??= DefaultSize.Height * 1 / 48.0;
 
         private Size DefaultSize => LgrManager.GetDefaultSize(MaskName);
 
@@ -86,7 +86,7 @@ internal abstract record GraphicElement(
             GraphicElementFileItem.Texture(TextureName, MaskName, Position, Distance, Clipping);
     }
 
-    internal static Texture Text(ClippingType clipping, int distance, Vector position, DrawableImage texture,
+    public static Texture Text(ClippingType clipping, int distance, Vector position, DrawableImage texture,
         DrawableImage mask) =>
         new(
             clipping,
@@ -105,7 +105,7 @@ internal abstract record GraphicElement(
             position
         );
 
-    internal static Picture Pic(DrawableImage pictureImage, Vector position, int distance,
+    public static Picture Pic(DrawableImage pictureImage, Vector position, int distance,
         ClippingType clipping) => new(clipping, distance, position, pictureImage);
 
     internal static MissingPicture MissingPic(string name, ClippingType clipping, int distance, Vector position) =>
@@ -116,8 +116,8 @@ internal abstract record GraphicElement(
             position
         );
 
-    internal abstract double Width { get; }
-    internal abstract double Height { get; }
+    public abstract double Width { get; }
+    public abstract double Height { get; }
     internal abstract GraphicElementFileItem ToFileData();
     public Vector Position { get; set; } = Position;
 }

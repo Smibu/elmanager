@@ -1,6 +1,6 @@
 namespace Elmanager.Physics;
 
-internal enum GravityDirection
+public enum GravityDirection
 {
     None,
     Up,

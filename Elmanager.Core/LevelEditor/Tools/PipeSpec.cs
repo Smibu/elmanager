@@ -5,7 +5,7 @@ using Elmanager.Lev;
 
 namespace Elmanager.LevelEditor.Tools;
 
-internal class PipeSpec
+public class PipeSpec
 {
     public PipeSpec(Polygon pipeline, double radius, PipeMode mode, double appleDistance, int appleAmount)
     {

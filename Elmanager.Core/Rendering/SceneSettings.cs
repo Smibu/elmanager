@@ -2,7 +2,7 @@ using Elmanager.Geometry;
 
 namespace Elmanager.Rendering;
 
-internal class SceneSettings
+public class SceneSettings
 {
-    internal Vector GridOffset = new();
+    public Vector GridOffset = new();
 }

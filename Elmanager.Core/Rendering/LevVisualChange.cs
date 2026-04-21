@@ -3,7 +3,7 @@ using System;
 namespace Elmanager.Rendering;
 
 [Flags]
-internal enum LevVisualChange
+public enum LevVisualChange
 {
     Nothing = 0,
     Ground = 0x1,

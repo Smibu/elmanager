@@ -1,6 +1,6 @@
 namespace Elmanager.LevelEditor.Tools;
 
-internal enum PipeMode
+public enum PipeMode
 {
     NoApples = 0,
     ApplesAmount = 1,
