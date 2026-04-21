@@ -1,10 +1,8 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 18
-VisualStudioVersion = 18.4.11626.88 stable
+VisualStudioVersion = 18.4.11626.88
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Elmanager", "Elmanager\Elmanager.csproj", "{43DD2B25-6D1D-4ECD-9193-C60535FD75F1}"
-EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{765ED5E5-B6E6-4A41-B755-A19ABF6612AE}"
 	ProjectSection(SolutionItems) = preProject
 		.editorconfig = .editorconfig
@@ -15,28 +13,29 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution 
 		.github\workflows\release.yml = .github\workflows\release.yml
 	EndProjectSection
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Elmanager.Core", "Elmanager.Core\Elmanager.Core.csproj", "{E4DC14F9-6820-682D-EB38-9F8DC68B9EC3}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Elmanager.WinForms", "Elmanager.WinForms\Elmanager.WinForms.csproj", "{5289E4F2-23FE-4C88-8871-BACD18F6D422}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
-		Debug|x86 = Debug|x86
 		Release|Any CPU = Release|Any CPU
-		Release|x86 = Release|x86
 		WineRelease|Any CPU = WineRelease|Any CPU
-		WineRelease|x86 = WineRelease|x86
 	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
-		{43DD2B25-6D1D-4ECD-9193-C60535FD75F1}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{43DD2B25-6D1D-4ECD-9193-C60535FD75F1}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{43DD2B25-6D1D-4ECD-9193-C60535FD75F1}.Debug|x86.ActiveCfg = Debug|x86
-		{43DD2B25-6D1D-4ECD-9193-C60535FD75F1}.Debug|x86.Build.0 = Debug|x86
-		{43DD2B25-6D1D-4ECD-9193-C60535FD75F1}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{43DD2B25-6D1D-4ECD-9193-C60535FD75F1}.Release|Any CPU.Build.0 = Release|Any CPU
-		{43DD2B25-6D1D-4ECD-9193-C60535FD75F1}.Release|x86.ActiveCfg = Release|x86
-		{43DD2B25-6D1D-4ECD-9193-C60535FD75F1}.Release|x86.Build.0 = Release|x86
-		{43DD2B25-6D1D-4ECD-9193-C60535FD75F1}.WineRelease|Any CPU.ActiveCfg = WineRelease|Any CPU
-		{43DD2B25-6D1D-4ECD-9193-C60535FD75F1}.WineRelease|Any CPU.Build.0 = WineRelease|Any CPU
-		{43DD2B25-6D1D-4ECD-9193-C60535FD75F1}.WineRelease|x86.ActiveCfg = WineRelease|Any CPU
-		{43DD2B25-6D1D-4ECD-9193-C60535FD75F1}.WineRelease|x86.Build.0 = WineRelease|Any CPU
+		{E4DC14F9-6820-682D-EB38-9F8DC68B9EC3}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{E4DC14F9-6820-682D-EB38-9F8DC68B9EC3}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{E4DC14F9-6820-682D-EB38-9F8DC68B9EC3}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{E4DC14F9-6820-682D-EB38-9F8DC68B9EC3}.Release|Any CPU.Build.0 = Release|Any CPU
+		{E4DC14F9-6820-682D-EB38-9F8DC68B9EC3}.WineRelease|Any CPU.ActiveCfg = WineRelease|Any CPU
+		{E4DC14F9-6820-682D-EB38-9F8DC68B9EC3}.WineRelease|Any CPU.Build.0 = WineRelease|Any CPU
+		{5289E4F2-23FE-4C88-8871-BACD18F6D422}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{5289E4F2-23FE-4C88-8871-BACD18F6D422}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{5289E4F2-23FE-4C88-8871-BACD18F6D422}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{5289E4F2-23FE-4C88-8871-BACD18F6D422}.Release|Any CPU.Build.0 = Release|Any CPU
+		{5289E4F2-23FE-4C88-8871-BACD18F6D422}.WineRelease|Any CPU.ActiveCfg = WineRelease|Any CPU
+		{5289E4F2-23FE-4C88-8871-BACD18F6D422}.WineRelease|Any CPU.Build.0 = WineRelease|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

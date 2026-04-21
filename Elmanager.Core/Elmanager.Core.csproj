@@ -1,0 +1,23 @@
+<Project Sdk="Microsoft.NET.Sdk">
+    <PropertyGroup>
+        <TargetFramework>net10.0-windows7.0</TargetFramework>
+        <GenerateAssemblyInfo>false</GenerateAssemblyInfo>
+        <RootNamespace>Elmanager</RootNamespace>
+        <Nullable>enable</Nullable>
+        <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
+        <Configurations>Debug;Release;WineRelease</Configurations>
+    </PropertyGroup>
+    <PropertyGroup Condition="'$(Configuration)'=='WineRelease'">
+        <Optimize>True</Optimize>
+    </PropertyGroup>
+    <PropertyGroup Condition="'$(Configuration)'=='WineRelease'">
+        <DefineConstants>$(DefineConstants);WINE</DefineConstants>
+    </PropertyGroup>
+    <ItemGroup>
+        <PackageReference Include="NaturalSort.Extension" Version="4.3.0" />
+        <PackageReference Include="NetTopologySuite" Version="2.5.0" />
+        <PackageReference Include="OpenTK" Version="4.9.3" />
+        <PackageReference Include="SharpVectors" Version="1.8.4" />
+        <PackageReference Include="SvgNet" Version="3.3.6" />
+    </ItemGroup>
+</Project>
