@@ -343,6 +343,8 @@ internal partial class LevelEditorForm : FormMod, IMessageFilter
     private void AfterSettingsClosed()
     {
         var r = Renderer.UpdateSettings(Lev, Settings.RenderingSettings);
+        if (r.LgrLoadException != null)
+            UiUtils.ShowError("Error occurred when loading LGR file! Reason:\r\n\r\n" + r.LgrLoadException.Message);
         UpdateLgrTools(r);
         UpdateLabels();
         UpdateButtons();
@@ -1032,7 +1034,7 @@ internal partial class LevelEditorForm : FormMod, IMessageFilter
         SelectButton.Select();
         UpdateButtons();
         Size = Settings.Size;
-        Renderer = new ElmaRenderer(EditorControl, Settings.RenderingSettings);
+        Renderer = new ElmaRenderer(EditorControl.Context!, Settings.RenderingSettings);
         CurrentTool = Tools.SelectionTool;
         SetupEventHandlers();
         InitializeLevel(lev);
@@ -1056,6 +1058,8 @@ internal partial class LevelEditorForm : FormMod, IMessageFilter
         _zoomCtrl = new ZoomController(new ElmaCamera(), Lev, () => RedrawScene());
         SetNotModified();
         var r = Renderer.UpdateSettings(Lev, Settings.RenderingSettings);
+        if (r.LgrLoadException != null)
+            UiUtils.ShowError("Error occurred when loading LGR file! Reason:\r\n\r\n" + r.LgrLoadException.Message);
         Lev.UpdateBounds();
         ZoomFill();
         topologyList.Text = string.Empty;
@@ -1297,6 +1301,8 @@ internal partial class LevelEditorForm : FormMod, IMessageFilter
                         UiUtils.ShowError("Default ground and sky is enabled, so you won\'t see this change in editor.",
                             "Warning", MessageBoxIcon.Exclamation);
                     var r = Renderer.UpdateSettings(Lev, Settings.RenderingSettings);
+                    if (r.LgrLoadException != null)
+                        UiUtils.ShowError("Error occurred when loading LGR file! Reason:\r\n\r\n" + r.LgrLoadException.Message);
                     UpdateLgrTools(r);
                     UpdateLabels();
                     RedrawScene();
@@ -1325,6 +1331,8 @@ internal partial class LevelEditorForm : FormMod, IMessageFilter
         topologyList.Text = "";
         _errorPoints.Clear();
         var r = Renderer.UpdateSettings(Lev, Settings.RenderingSettings);
+        if (r.LgrLoadException != null)
+            UiUtils.ShowError("Error occurred when loading LGR file! Reason:\r\n\r\n" + r.LgrLoadException.Message);
         UpdateLgrTools(r);
         UpdateLabels();
         ChangeToolTo(CurrentTool);
@@ -1605,7 +1613,9 @@ internal partial class LevelEditorForm : FormMod, IMessageFilter
             - mouseCoords.Y + GetGridMouseRatio(settings.GridSize, gy, bounds.YMin, mouseCoords.Y) *
             newSize) % newSize;
         settings.GridSize = newSize;
-        Renderer.UpdateSettings(Lev, settings);
+        var gridUpdateResult = Renderer.UpdateSettings(Lev, settings);
+        if (gridUpdateResult.LgrLoadException != null)
+            UiUtils.ShowError("Error occurred when loading LGR file! Reason:\r\n\r\n" + gridUpdateResult.LgrLoadException.Message);
         RedrawScene();
     }
 
@@ -1651,7 +1661,9 @@ internal partial class LevelEditorForm : FormMod, IMessageFilter
         var rSettings = new RenderingSettingsForm(Settings.RenderingSettings);
         rSettings.Changed += x =>
         {
-            Renderer.UpdateSettings(Lev, x);
+            var r = Renderer.UpdateSettings(Lev, x);
+            if (r.LgrLoadException != null)
+                UiUtils.ShowError("Error occurred when loading LGR file! Reason:\r\n\r\n" + r.LgrLoadException.Message);
             RedrawScene();
         };
         rSettings.ShowDialog();
@@ -2057,7 +2069,9 @@ internal partial class LevelEditorForm : FormMod, IMessageFilter
         Settings.SnapToGrid = snapToGridButton.Checked;
         Settings.LockGrid = lockGridButton.Checked;
         Settings.ShowCrossHair = showCrossHairButton.Checked;
-        Renderer.UpdateSettings(Lev, settings);
+        var updateResult = Renderer.UpdateSettings(Lev, settings);
+        if (updateResult.LgrLoadException != null)
+            UiUtils.ShowError("Error occurred when loading LGR file! Reason:\r\n\r\n" + updateResult.LgrLoadException.Message);
         RedrawScene();
     }
 
@@ -2224,7 +2238,7 @@ internal partial class LevelEditorForm : FormMod, IMessageFilter
         LGRBox.Items.Clear();
         if (_lgrManager?.LgrFolderPath != Global.AppSettings.General.LgrDirectory && Global.AppSettings.General.LgrDirectory != null)
         {
-            _lgrManager = new LgrManager(Global.AppSettings.General.LgrDirectory);
+            _lgrManager = new LgrManager(Global.AppSettings.General.LgrDirectory, Resources.Lgrs);
         }
         else if (Global.AppSettings.General.LgrDirectory == null)
         {

@@ -153,7 +153,7 @@ internal partial class LevelManagerForm : FormMod, IManagerGui
                     ElmaFileObject<Replay> r;
                     try
                     {
-                        r = Replay.FromPath(f);
+                        r = Replay.FromPath(f, Global.GetLevelFiles(), Global.Internals);
                     }
                     catch (BadFileException)
                     {
@@ -184,7 +184,7 @@ internal partial class LevelManagerForm : FormMod, IManagerGui
         var (titleRe, lgrRe, gtRe, stRe, spnRe, mpnRe) = res.Value;
         var searchParams = new LevelSearchParameters
         {
-            AcrossLev = SearchParameters.GetBoolOptionFromTriSelect(elmaAcrossSelect),
+            AcrossLev = elmaAcrossSelect.SelectedOption,
             Date = new Range<DateTime>(minDateTime.Value, maxDateTime.Value),
             Size = new Range<int>((int)minFileSizeBox.Value * 1024, (int)maxFileSizeBox.Value * 1024),
             Title = titleRe,
@@ -195,24 +195,24 @@ internal partial class LevelManagerForm : FormMod, IManagerGui
             MultiPlayerNick = mpnRe,
             SinglePlayerBestTime = SearchUtils.GetTimeRange(minSingleBestTimeBox.Text, maxSingleBestTimeBox.Text),
             MultiPlayerBestTime = SearchUtils.GetTimeRange(minMultiBestTimeBox.Text, maxMultiBestTimeBox.Text),
-            GroundPolygons = Range<int>.FromNumericBoxes(minGroundPolygonsBox, maxGroundPolygonsBox),
-            GroundVertices = Range<int>.FromNumericBoxes(minGroundVerticesBox, maxGroundVerticesBox),
-            GrassPolygons = Range<int>.FromNumericBoxes(minGrassPolygonsBox, maxGrassPolygonsBox),
-            GrassVertices = Range<int>.FromNumericBoxes(minGrassVerticesBox, maxGrassVerticesBox),
-            SingleTop10Times = Range<int>.FromNumericBoxes(minSingleplayerTimesBox, maxSingleplayerTimesBox),
-            MultiTop10Times = Range<int>.FromNumericBoxes(minMultiplayerTimesBox, maxMultiplayerTimesBox),
-            Killers = Range<int>.FromNumericBoxes(minKillersBox, maxKillersBox),
-            Flowers = Range<int>.FromNumericBoxes(minFlowersBox, maxFlowersBox),
-            Pictures = Range<int>.FromNumericBoxes(minPicturesBox, maxPicturesBox),
-            Textures = Range<int>.FromNumericBoxes(minTexturesBox, maxTexturesBox),
-            Apples = Range<int>.FromNumericBoxes(minApplesBox, maxApplesBox),
+            GroundPolygons = Range<int>.FromNumericBoxes(minGroundPolygonsBox.ValueAsInt, maxGroundPolygonsBox.ValueAsInt),
+            GroundVertices = Range<int>.FromNumericBoxes(minGroundVerticesBox.ValueAsInt, maxGroundVerticesBox.ValueAsInt),
+            GrassPolygons = Range<int>.FromNumericBoxes(minGrassPolygonsBox.ValueAsInt, maxGrassPolygonsBox.ValueAsInt),
+            GrassVertices = Range<int>.FromNumericBoxes(minGrassVerticesBox.ValueAsInt, maxGrassVerticesBox.ValueAsInt),
+            SingleTop10Times = Range<int>.FromNumericBoxes(minSingleplayerTimesBox.ValueAsInt, maxSingleplayerTimesBox.ValueAsInt),
+            MultiTop10Times = Range<int>.FromNumericBoxes(minMultiplayerTimesBox.ValueAsInt, maxMultiplayerTimesBox.ValueAsInt),
+            Killers = Range<int>.FromNumericBoxes(minKillersBox.ValueAsInt, maxKillersBox.ValueAsInt),
+            Flowers = Range<int>.FromNumericBoxes(minFlowersBox.ValueAsInt, maxFlowersBox.ValueAsInt),
+            Pictures = Range<int>.FromNumericBoxes(minPicturesBox.ValueAsInt, maxPicturesBox.ValueAsInt),
+            Textures = Range<int>.FromNumericBoxes(minTexturesBox.ValueAsInt, maxTexturesBox.ValueAsInt),
+            Apples = Range<int>.FromNumericBoxes(minApplesBox.ValueAsInt, maxApplesBox.ValueAsInt),
             GravApples = new Dictionary<AppleType, Range<int>>
             {
-                {AppleType.Normal, Range<int>.FromNumericBoxes(minNormApplesBox, maxNormApplesBox)},
-                {AppleType.GravityUp, Range<int>.FromNumericBoxes(minGravUpApplesBox, maxGravUpApplesBox)},
-                {AppleType.GravityDown, Range<int>.FromNumericBoxes(minGravDownApplesBox, maxGravDownApplesBox)},
-                {AppleType.GravityLeft, Range<int>.FromNumericBoxes(minGravLeftApplesBox, maxGravLeftApplesBox)},
-                {AppleType.GravityRight, Range<int>.FromNumericBoxes(minGravRightApplesBox, maxGravRightApplesBox)}
+                {AppleType.Normal, Range<int>.FromNumericBoxes(minNormApplesBox.ValueAsInt, maxNormApplesBox.ValueAsInt)},
+                {AppleType.GravityUp, Range<int>.FromNumericBoxes(minGravUpApplesBox.ValueAsInt, maxGravUpApplesBox.ValueAsInt)},
+                {AppleType.GravityDown, Range<int>.FromNumericBoxes(minGravDownApplesBox.ValueAsInt, maxGravDownApplesBox.ValueAsInt)},
+                {AppleType.GravityLeft, Range<int>.FromNumericBoxes(minGravLeftApplesBox.ValueAsInt, maxGravLeftApplesBox.ValueAsInt)},
+                {AppleType.GravityRight, Range<int>.FromNumericBoxes(minGravRightApplesBox.ValueAsInt, maxGravRightApplesBox.ValueAsInt)}
             }
         };
 

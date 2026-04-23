@@ -78,7 +78,7 @@ internal class ReplayController : IDisposable
 
     public ReplayController(GLControl viewerBox, ReplayViewerRenderingSettings replayViewerRenderingSettings)
     {
-        Renderer = new ElmaRenderer(viewerBox, replayViewerRenderingSettings);
+        Renderer = new ElmaRenderer(viewerBox.Context!, replayViewerRenderingSettings);
         _settings = replayViewerRenderingSettings;
     }
 
@@ -412,7 +412,9 @@ internal class ReplayController : IDisposable
         MaxTime = PlayListReplays.Max(p => p.Player.FrameCount) / 30.0;
         CurrentTime = 0.0;
         Lev = lev;
-        Renderer.UpdateSettings(lev, _settings);
+        var updateResult = Renderer.UpdateSettings(lev, _settings);
+        if (updateResult.LgrLoadException != null)
+            UiUtils.ShowError("Error occurred when loading LGR file! Reason:\r\n\r\n" + updateResult.LgrLoadException.Message);
         _activePlayerIndices = new List<int>();
         _visiblePlayerIndices = new List<int>();
         _lastHiddenAppleCount = 0;

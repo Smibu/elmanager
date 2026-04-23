@@ -1,7 +1,6 @@
 using System.IO;
 using System.Net.Http;
 using System.Threading.Tasks;
-using Elmanager.UI;
 
 namespace Elmanager.IO;
 
@@ -10,18 +9,11 @@ public static class NetUtils
     public static async Task DownloadAndOpenFile(string uri, string destFile)
     {
         var client = new HttpClient();
-        try
         {
-            {
-                var result = await client.GetStreamAsync(uri);
-                await using var fs = File.Create(destFile);
-                await result.CopyToAsync(fs);
-            }
-            OsUtils.ShellExecute(destFile);
+            var result = await client.GetStreamAsync(uri);
+            await using var fs = File.Create(destFile);
+            await result.CopyToAsync(fs);
         }
-        catch (HttpRequestException)
-        {
-            UiUtils.ShowError("Failed to download file " + uri);
-        }
+        OsUtils.ShellExecute(destFile);
     }
 }

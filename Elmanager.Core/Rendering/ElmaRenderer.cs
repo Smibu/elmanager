@@ -11,9 +11,7 @@ using Elmanager.Rec;
 using Elmanager.Rendering.Camera;
 using Elmanager.Rendering.OpenGL;
 using Elmanager.Rendering.Scene;
-using Elmanager.UI;
 using Elmanager.Utilities;
-using OpenTK.GLControl;
 using OpenTK.Graphics.OpenGL;
 using OpenTK.Mathematics;
 using OpenTK.Windowing.Common;
@@ -50,9 +48,9 @@ public class ElmaRenderer : IDisposable
     private Pipelines Pipelines { get; }
     private readonly bool _ownsPipelines;
 
-    public ElmaRenderer(GLControl renderingTarget, RenderingSettings settings, Pipelines? pipelines = null)
+    public ElmaRenderer(IGraphicsContext renderingTarget, RenderingSettings settings, Pipelines? pipelines = null)
     {
-        _gfxContext = renderingTarget.Context!;
+        _gfxContext = renderingTarget;
         InitializeOpengl(disableFrameBuffer: settings.DisableFrameBuffer);
         _gfxContext.MakeCurrent();
 
@@ -68,7 +66,7 @@ public class ElmaRenderer : IDisposable
         CameraUniforms.BindBufferBase();
     }
 
-    public ElmaRenderer(GLControl renderingTarget, RenderingSettings settings, ElmaRenderer otherElmaRenderer) : this(renderingTarget, settings, otherElmaRenderer.Pipelines)
+    public ElmaRenderer(IGraphicsContext renderingTarget, RenderingSettings settings, ElmaRenderer otherElmaRenderer) : this(renderingTarget, settings, otherElmaRenderer.Pipelines)
     {
     }
 
@@ -430,9 +428,10 @@ public class ElmaRenderer : IDisposable
     public RendererSettingsChangeResult UpdateSettings(Level lev, RenderingSettings newSettings, string? lgrDir = null)
     {
         var currentLgr = OpenGlLgr?.CurrentLgr.Path;
-        var newLgr = newSettings.ResolveLgr(lev);
+        var newLgr = newSettings.ResolveLgr(lev, lgrDir);
         var lgrUpdated = false;
         var lgr = OpenGlLgr;
+        Exception? lgrLoadException = null;
         if (!currentLgr.EqualsIgnoreCase(newLgr))
         {
             if (File.Exists(newLgr))
@@ -448,7 +447,7 @@ public class ElmaRenderer : IDisposable
                 }
                 catch (Exception e)
                 {
-                    UiUtils.ShowError("Error occurred when loading LGR file! Reason:\r\n\r\n" + e.Message);
+                    lgrLoadException = e;
                 }
             }
         }
@@ -461,7 +460,7 @@ public class ElmaRenderer : IDisposable
         GL.LineWidth(newSettings.LineWidth);
         GL.PointSize((float)(newSettings.VertexSize * 300));
         InitializeBuffers(lev, lgr, newSettings);
-        return new RendererSettingsChangeResult(lgrUpdated);
+        return new RendererSettingsChangeResult(lgrUpdated, lgrLoadException);
     }
 
     public void Dispose()

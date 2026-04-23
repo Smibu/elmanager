@@ -4,6 +4,7 @@ using System.Windows.Forms;
 using Elmanager.Lev;
 using Elmanager.Rendering;
 using Elmanager.Rendering.Camera;
+using Elmanager.UI;
 using OpenTK.GLControl;
 using OpenTK.Graphics.OpenGL;
 using OpenTK.Windowing.Common;
@@ -41,7 +42,7 @@ internal class LevelControl : GLControl
 
         Load += (_, _) =>
         {
-            _renderer = new ElmaRenderer(this, _renderingSettings, elmaRenderer);
+            _renderer = new ElmaRenderer(Context!, _renderingSettings, elmaRenderer);
             UpdateRenderingContext();
         };
 
@@ -55,7 +56,9 @@ internal class LevelControl : GLControl
         {
             return;
         }
-        _renderer.UpdateSettings(_level, _renderingSettings);
+        var r = _renderer.UpdateSettings(_level, _renderingSettings);
+        if (r.LgrLoadException != null)
+            UiUtils.ShowError("Error occurred when loading LGR file! Reason:\r\n\r\n" + r.LgrLoadException.Message);
         _level.UpdateBounds();
         _zoomController.ZoomFill(_renderingSettings, Width / (double)Height);
         ResetViewport();

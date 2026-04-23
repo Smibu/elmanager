@@ -1,7 +1,6 @@
 using System;
 using System.Collections.Generic;
 using System.IO;
-using Elmanager.Application;
 using Elmanager.IO;
 using Elmanager.Lev;
 using Elmanager.Utilities;
@@ -22,16 +21,17 @@ public class Replay
 
     public readonly bool WrongLevelVersion;
     internal readonly bool AcrossLevel;
-    private readonly int _internalIndex;
-    public readonly bool IsInternal;
+    public bool IsInternal => _internalLevel is not null;
 
     public readonly string? LevelPath;
     public Player Player1 => Players[0];
     public Player Player2 => Players[1];
     public readonly List<Player> Players = new(2);
+    private readonly Level? _internalLevel;
 
-    private Replay(string replayPath)
+    private Replay(string replayPath, IReadOnlyList<string> levelFiles, IReadOnlyList<Level> internals)
     {
+        var isInternal = false;
         using (var stream = File.OpenRead(replayPath))
         {
             var rec = new BinaryReader(stream);
@@ -46,7 +46,7 @@ public class Replay
                 LevId = rec.ReadInt32();
                 LevelFilename = rec.ReadNullTerminatedString(12);
                 rec.ReadInt32();
-                IsInternal = Level.IsInternalLevel(LevelFilename);
+                isInternal = Level.IsInternalLevel(LevelFilename);
                 Players.Add(new Player(rec, frames));
                 if (IsMulti)
                 {
@@ -95,16 +95,16 @@ public class Replay
             Time = Player1.Time;
         }
 
-        if (IsInternal)
+        if (isInternal)
         {
             WrongLevelVersion = false;
             AcrossLevel = false;
-            _internalIndex = int.Parse(LevelFilename.Substring(6, 2));
+            var internalIndex = int.Parse(LevelFilename.Substring(6, 2));
+            _internalLevel = internals[internalIndex - 1];
         }
         else
         {
-            _internalIndex = -1;
-            foreach (var levelFile in Global.GetLevelFiles())
+            foreach (var levelFile in levelFiles)
             {
                 if (Path.GetFileName(levelFile).EqualsIgnoreCase(LevelFilename))
                 {
@@ -141,8 +141,8 @@ public class Replay
         }
     }
 
-    public static ElmaFileObject<Replay> FromPath(string replayPath) =>
-        ElmaFileObject<Replay>.FromPath(replayPath, new Replay(replayPath));
+    public static ElmaFileObject<Replay> FromPath(string replayPath, IReadOnlyList<string> levelFiles, IReadOnlyList<Level> internals) =>
+        ElmaFileObject<Replay>.FromPath(replayPath, new Replay(replayPath, levelFiles, internals));
 
     public int LevId { get; }
 
@@ -153,9 +153,9 @@ public class Replay
             return Level.FromPath(LevelPath).Obj;
         }
 
-        if (IsInternal)
+        if (_internalLevel is not null)
         {
-            return Global.Internals[_internalIndex - 1];
+            return _internalLevel;
         }
 
         throw new FileNotFoundException("The level file does not exist!", LevelFilename);

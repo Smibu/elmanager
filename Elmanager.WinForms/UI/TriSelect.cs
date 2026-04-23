@@ -1,5 +1,6 @@
 using System.ComponentModel;
 using System.Windows.Forms;
+using Elmanager.Searching;
 
 namespace Elmanager.UI;
 
@@ -10,23 +11,23 @@ internal partial class TriSelect : UserControl
         InitializeComponent();
     }
 
-    [Description("Gets or sets the selected option."), DefaultValue(0)]
-    public int SelectedOption
+    [Description("Gets or sets the selected option."), DefaultValue(BoolOption.Dontcare)]
+    public BoolOption SelectedOption
     {
         get
         {
             if (OptionButton1.Checked)
-                return 0;
-            return OptionButton2.Checked ? 1 : 2;
+                return BoolOption.True;
+            return OptionButton2.Checked ? BoolOption.False : BoolOption.Dontcare;
         }
         set
         {
             switch (value)
             {
-                case 0:
+                case BoolOption.True:
                     OptionButton1.Checked = true;
                     return;
-                case 1:
+                case BoolOption.False:
                     OptionButton2.Checked = true;
                     return;
                 default:

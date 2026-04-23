@@ -96,10 +96,10 @@ public class LgrManager
 
     public string LgrFolderPath { get; }
 
-    public LgrManager(string lgrFolderPath)
+    public LgrManager(string lgrFolderPath, string lgrJson)
     {
         LgrFolderPath = lgrFolderPath;
-        var jsonString = Properties.Resources.Lgrs;
+        var jsonString = lgrJson;
         var lgrs = JsonSerializer.Deserialize<List<KnownLgrEntry>>(jsonString)!;
         _knownLgrs = lgrs.ToDictionary(l => l.Hash, l => l.Name);
         _lgrFileHashes = ReadFileSha256Hashes(lgrFolderPath);

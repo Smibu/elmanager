@@ -3,7 +3,6 @@ using System.ComponentModel;
 using System.Drawing;
 using System.IO;
 using System.Text.Json.Serialization;
-using Elmanager.Application;
 using Elmanager.Lev;
 
 namespace Elmanager.Rendering;
@@ -276,14 +275,13 @@ public class RenderingSettings
         set => _grassZoom = Math.Clamp(value, 1, 3);
     }
 
-    public string? ResolveLgr(Level lev)
+    public string? ResolveLgr(Level lev, string? lgrDir)
     {
         if (LgrDisabled)
         {
             return null;
         }
 
-        var lgrDir = Global.AppSettings.General.LgrDirectory;
         if (!Directory.Exists(lgrDir))
         {
             return null;

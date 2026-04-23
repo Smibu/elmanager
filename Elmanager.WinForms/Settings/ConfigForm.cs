@@ -255,10 +255,14 @@ internal partial class ConfigForm : FormMod
         checkForUpdatesButton.Enabled = false;
         checkForUpdatesButton.Text = "Checking...";
         updateInfoLabel.Visible = false;
-        var hasUpdates = await UpdateChecker.CheckForUpdates();
+        var info = await UpdateChecker.CheckForUpdates(Global.Version);
         checkForUpdatesButton.Enabled = true;
         checkForUpdatesButton.Text = "Check now";
-        if (!hasUpdates)
+        if (info is not null)
+        {
+            new NewVersionForm(info).ShowDialog();
+        }
+        else
         {
             updateInfoLabel.Visible = true;
         }

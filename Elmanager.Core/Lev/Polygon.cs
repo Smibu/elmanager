@@ -1,11 +1,9 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using Elmanager.Application;
 using Elmanager.Geometry;
 using Elmanager.LevelEditor;
 using Elmanager.Rendering;
-using Elmanager.UI;
 using Elmanager.Utilities;
 using NetTopologySuite.Algorithm;
 using NetTopologySuite.Geometries;
@@ -188,7 +186,7 @@ public class Polygon
         }
     }
 
-    public double DistanceFromPoint(Vector p)
+    public double DistanceFromPoint(Vector p, bool showInactiveGrassEdges = false)
     {
         double smallest = double.MaxValue;
         double current;
@@ -236,7 +234,7 @@ public class Polygon
                     smallest = current;
             }
 
-            if (Global.AppSettings.LevelEditor.RenderingSettings.ShowInactiveGrassEdges)
+            if (showInactiveGrassEdges)
             {
                 var s = grassStart == 0 ? Vertices.Count - 1 : grassStart - 1;
                 current = GeometryUtils.DistanceFromSegment(Vertices[s].X, Vertices[s].Y, Vertices[grassStart].X, Vertices[grassStart].Y, p.X,
@@ -349,8 +347,6 @@ public class Polygon
             Vertices.Add(p);
             return;
         }
-
-        UiUtils.ShowError("Failed to add intersection!!");
     }
 
     public Polygon Smoothen(int steps, double vertexOffset, bool onlySelected) //0.5 <= VertexOffset <= 1.0

@@ -1,6 +1,10 @@
-using System.Windows.Media;
-
 namespace Elmanager.LevelEditor;
+
+public enum FillRule
+{
+    EvenOdd,
+    Nonzero
+}
 
 public struct SvgImportOptions
 {

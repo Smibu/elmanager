@@ -202,7 +202,7 @@ internal partial class ReplayManagerForm : FormMod, IManagerGui
             SearchOption.AllDirectories);
         var replayFiles = SearchUtils.FilterByRegex(allFiles, "");
         var dupes = replayFiles.GroupBy(x => Path.GetFileName(x).ToLower()).Where(g => g.Count() > 1)
-            .SelectMany(g => g).Select(x => new ReplayItem(Replay.FromPath(x)));
+            .SelectMany(g => g).Select(x => new ReplayItem(Replay.FromPath(x, Global.GetLevelFiles(), Global.Internals)));
         ObjectList.SetObjects(dupes);
         DisplaySelectionInfo();
     }
@@ -223,7 +223,7 @@ internal partial class ReplayManagerForm : FormMod, IManagerGui
         using (var md5 = MD5.Create())
         {
             var dupes = sameLengths.GroupBy(x => Convert.ToBase64String(md5.ComputeHash(File.ReadAllBytes(x))))
-                .Where(g => g.Count() > 1).SelectMany(g => g).Select(x => new ReplayItem(Replay.FromPath(x))).ToList();
+                .Where(g => g.Count() > 1).SelectMany(g => g).Select(x => new ReplayItem(Replay.FromPath(x, Global.GetLevelFiles(), Global.Internals))).ToList();
             ObjectList.SetObjects(dupes);
         }
 
@@ -560,8 +560,8 @@ internal partial class ReplayManagerForm : FormMod, IManagerGui
         var clickedButton = (Button)sender;
         if (clickedButton.Equals(SearchButton))
         {
-            searchForAllReplays = fastestSlowestSelect.SelectedOption == 2;
-            searchForFastestReplays = fastestSlowestSelect.SelectedOption == 0;
+            searchForAllReplays = fastestSlowestSelect.SelectedOption == BoolOption.Dontcare;
+            searchForFastestReplays = fastestSlowestSelect.SelectedOption == BoolOption.True;
         }
         else
         {
@@ -578,18 +578,18 @@ internal partial class ReplayManagerForm : FormMod, IManagerGui
             return;
         }
 
-        var p1Apples = Range<int>.FromNumericBoxes(TextBox1, TextBox14);
-        var p2Apples = Range<int>.FromNumericBoxes(TextBox3, TextBox16);
-        var p1Turns = Range<int>.FromNumericBoxes(TextBox2, TextBox23);
-        var p2Turns = Range<int>.FromNumericBoxes(TextBox10, TextBox15);
-        var p1Gt = Range<int>.FromNumericBoxes(TextBox11, TextBox24);
-        var p2Gt = Range<int>.FromNumericBoxes(TextBox12, TextBox13);
-        var p1Sv = Range<int>.FromNumericBoxes(TextBox4, TextBox21);
-        var p2Sv = Range<int>.FromNumericBoxes(TextBox9, TextBox22);
-        var p1Rv = Range<int>.FromNumericBoxes(TextBox6, TextBox19);
-        var p2Rv = Range<int>.FromNumericBoxes(TextBox7, TextBox20);
-        var p1Lv = Range<int>.FromNumericBoxes(TextBox8, TextBox17);
-        var p2Lv = Range<int>.FromNumericBoxes(TextBox5, TextBox18);
+        var p1Apples = Range<int>.FromNumericBoxes(TextBox1.ValueAsInt, TextBox14.ValueAsInt);
+        var p2Apples = Range<int>.FromNumericBoxes(TextBox3.ValueAsInt, TextBox16.ValueAsInt);
+        var p1Turns = Range<int>.FromNumericBoxes(TextBox2.ValueAsInt, TextBox23.ValueAsInt);
+        var p2Turns = Range<int>.FromNumericBoxes(TextBox10.ValueAsInt, TextBox15.ValueAsInt);
+        var p1Gt = Range<int>.FromNumericBoxes(TextBox11.ValueAsInt, TextBox24.ValueAsInt);
+        var p2Gt = Range<int>.FromNumericBoxes(TextBox12.ValueAsInt, TextBox13.ValueAsInt);
+        var p1Sv = Range<int>.FromNumericBoxes(TextBox4.ValueAsInt, TextBox21.ValueAsInt);
+        var p2Sv = Range<int>.FromNumericBoxes(TextBox9.ValueAsInt, TextBox22.ValueAsInt);
+        var p1Rv = Range<int>.FromNumericBoxes(TextBox6.ValueAsInt, TextBox19.ValueAsInt);
+        var p2Rv = Range<int>.FromNumericBoxes(TextBox7.ValueAsInt, TextBox20.ValueAsInt);
+        var p1Lv = Range<int>.FromNumericBoxes(TextBox8.ValueAsInt, TextBox17.ValueAsInt);
+        var p2Lv = Range<int>.FromNumericBoxes(TextBox5.ValueAsInt, TextBox18.ValueAsInt);
         Range<double> time;
         try
         {
@@ -615,14 +615,14 @@ internal partial class ReplayManagerForm : FormMod, IManagerGui
 
         var searchParams = new ReplaySearchParameters
         {
-            InternalRec = SearchParameters.GetBoolOptionFromTriSelect(intExtSelect),
-            AcrossLev = SearchParameters.GetBoolOptionFromTriSelect(elmaAcrossSelect),
+            InternalRec = intExtSelect.SelectedOption,
+            AcrossLev = elmaAcrossSelect.SelectedOption,
             Date = new Range<DateTime>(minDateTime.Value, maxDateTime.Value),
-            Finished = SearchParameters.GetBoolOptionFromTriSelect(finishedSelect),
+            Finished = finishedSelect.SelectedOption,
             LevExists = BoolOption.Dontcare,
             WrongLev = BoolOption.Dontcare,
             LevFilenameMatcher = levFilenameMatcher,
-            MultiPlayer = SearchParameters.GetBoolOptionFromTriSelect(singleMultiSelect),
+            MultiPlayer = singleMultiSelect.SelectedOption,
             Size = size,
             Time = time,
             P1Bounds =
@@ -700,7 +700,7 @@ internal partial class ReplayManagerForm : FormMod, IManagerGui
                     ElmaFileObject<Replay> srp;
                     try
                     {
-                        srp = Replay.FromPath(replayFile);
+                        srp = Replay.FromPath(replayFile, Global.GetLevelFiles(), Global.Internals);
                     }
                     catch (BadFileException)
                     {

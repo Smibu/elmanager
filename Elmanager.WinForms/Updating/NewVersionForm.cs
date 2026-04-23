@@ -1,4 +1,5 @@
 using System;
+using System.Net.Http;
 using System.Windows.Forms;
 using Elmanager.Application;
 using Elmanager.IO;
@@ -27,7 +28,15 @@ internal partial class NewVersionForm : FormMod
         downloadButton.Text = "Downloading...";
         downloadButton.Enabled = false;
         downloadButton.Refresh();
-        await NetUtils.DownloadAndOpenFile(_updateInfo.Link, System.Windows.Forms.Application.StartupPath + "\\Elmanager.zip");
+        try
+        {
+            await NetUtils.DownloadAndOpenFile(_updateInfo.Link, System.Windows.Forms.Application.StartupPath + "\\Elmanager.zip");
+        }
+        catch (HttpRequestException ex)
+        {
+            UiUtils.ShowError("Failed to download the update: " + ex.Message);
+            return;
+        }
         Environment.Exit(0);
     }
 

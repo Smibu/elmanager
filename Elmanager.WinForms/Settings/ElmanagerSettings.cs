@@ -71,7 +71,7 @@ internal class ElmanagerSettings
     public async Task Save()
     {
         await using var appSettingsFile = new FileStream(Path.Combine(ElmanagerFolder, _settingsFile), FileMode.Create);
-        await JsonSerializer.SerializeAsync(appSettingsFile, this, SourceGenerationContext.GetOptions());
+        await JsonSerializer.SerializeAsync(appSettingsFile, this, WinFormsSourceGenerationContext.GetOptions());
     }
 
     private static ElmanagerSettings GetSettings(string settingsFile)
@@ -80,7 +80,7 @@ internal class ElmanagerSettings
         try
         {
             var loadedSettings = JsonSerializer.Deserialize(File.ReadAllText(path),
-                typeof(ElmanagerSettings), SourceGenerationContext.GetOptions()) as ElmanagerSettings;
+                typeof(ElmanagerSettings), WinFormsSourceGenerationContext.GetOptions()) as ElmanagerSettings;
             return loadedSettings!;
         }
         catch (JsonException e)

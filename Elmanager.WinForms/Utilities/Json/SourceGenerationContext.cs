@@ -1,12 +1,13 @@
 using System.Text.Json;
 using System.Text.Json.Serialization;
-using Elmanager.Updating;
+using Elmanager.Settings;
+using Elmanager.Utilities.Json;
 
 namespace Elmanager.Utilities.Json;
 
 [JsonSourceGenerationOptions(WriteIndented = true)]
-[JsonSerializable(typeof(UpdateInfo))]
-internal partial class SourceGenerationContext : JsonSerializerContext
+[JsonSerializable(typeof(ElmanagerSettings))]
+internal partial class WinFormsSourceGenerationContext : JsonSerializerContext
 {
     public static JsonSerializerOptions GetOptions() =>
         new()

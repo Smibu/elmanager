@@ -60,7 +60,7 @@ internal static class Global
         {
             try
             {
-                var rp = Replay.FromPath(args[0]);
+                var rp = Replay.FromPath(args[0], GetLevelFiles(), Internals);
                 if (rp.Obj.LevelExists)
                 {
                     ComponentManager.LaunchReplayViewer(rp);
@@ -85,7 +85,12 @@ internal static class Global
         AppSettings = ElmanagerSettings.Load();
         if (AppSettings.General.CheckForUpdatesOnStartup)
         {
-            Task.Run(UpdateChecker.CheckForUpdates);
+            Task.Run(async () =>
+            {
+                var info = await UpdateChecker.CheckForUpdates(Version);
+                if (info is not null)
+                    new NewVersionForm(info).ShowDialog();
+            });
         }
 
         ParseCommandLine(args);

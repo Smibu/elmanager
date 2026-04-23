@@ -290,7 +290,7 @@ internal class TextTool : ToolBase, IEditorTool
 
     public static System.Windows.Media.Geometry CreateGeometry(DrawingGroup drawingGroup, SvgImportOptions opts)
     {
-        var geometry = new GeometryGroup { FillRule = opts.FillRule };
+        var geometry = new GeometryGroup { FillRule = (System.Windows.Media.FillRule)opts.FillRule };
         var defaultPen = new Pen(new SolidColorBrush(System.Windows.Media.Color.FromRgb(0, 0, 0)), 1);
         foreach (var drawing in drawingGroup.Children)
         {

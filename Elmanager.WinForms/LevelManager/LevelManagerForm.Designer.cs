@@ -1,4 +1,5 @@
-﻿using Elmanager.UI;
+using Elmanager.Searching;
+using Elmanager.UI;
 
 namespace Elmanager.LevelManager
 {
@@ -537,7 +538,7 @@ namespace Elmanager.LevelManager
             this.elmaAcrossSelect.Option1Text = "Across levels";
             this.elmaAcrossSelect.Option2Text = "Elma levels";
             this.elmaAcrossSelect.Option3Text = "Both";
-            this.elmaAcrossSelect.SelectedOption = 2;
+            this.elmaAcrossSelect.SelectedOption = BoolOption.Dontcare;
             this.elmaAcrossSelect.Size = new System.Drawing.Size(383, 44);
             this.elmaAcrossSelect.TabIndex = 66;
             // 

@@ -5,7 +5,6 @@ using Elmanager.ElmaPrimitives;
 using Elmanager.IO;
 using Elmanager.Lev;
 using Elmanager.Rendering;
-using SharpVectors.Converters;
 
 namespace Elmanager.LevelManager;
 

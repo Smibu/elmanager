@@ -203,7 +203,7 @@ internal abstract class ToolBase : IEditorToolBase
         {
             double currentDistance;
             if (((x.IsGrass && grassFilter) || (!x.IsGrass && groundFilter)) &&
-                (currentDistance = x.DistanceFromPoint(p)) <
+                (currentDistance = x.DistanceFromPoint(p, Global.AppSettings.LevelEditor.RenderingSettings.ShowInactiveGrassEdges)) <
                 ZoomCtrl.ZoomLevel * Global.AppSettings.LevelEditor.CaptureRadius)
             {
                 if (currentDistance < smallestDistance)

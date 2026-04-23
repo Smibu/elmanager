@@ -1,4 +1,5 @@
-﻿using System.Windows.Forms;
+using System.Windows.Forms;
+using Elmanager.Searching;
 using Elmanager.UI;
 
 namespace Elmanager.ReplayManager
@@ -456,7 +457,7 @@ namespace Elmanager.ReplayManager
             this.singleMultiSelect.Option1Text = "Multiplayer";
             this.singleMultiSelect.Option2Text = "Singleplayer";
             this.singleMultiSelect.Option3Text = "Both";
-            this.singleMultiSelect.SelectedOption = 2;
+            this.singleMultiSelect.SelectedOption = BoolOption.Dontcare;
             this.singleMultiSelect.Size = new System.Drawing.Size(266, 36);
             this.singleMultiSelect.TabIndex = 64;
             // 
@@ -470,7 +471,7 @@ namespace Elmanager.ReplayManager
             this.finishedSelect.Option1Text = "Finished";
             this.finishedSelect.Option2Text = "Not finished";
             this.finishedSelect.Option3Text = "Both";
-            this.finishedSelect.SelectedOption = 2;
+            this.finishedSelect.SelectedOption = BoolOption.Dontcare;
             this.finishedSelect.Size = new System.Drawing.Size(266, 35);
             this.finishedSelect.TabIndex = 62;
             // 
@@ -484,7 +485,7 @@ namespace Elmanager.ReplayManager
             this.elmaAcrossSelect.Option1Text = "Across levels";
             this.elmaAcrossSelect.Option2Text = "Elma levels";
             this.elmaAcrossSelect.Option3Text = "Both";
-            this.elmaAcrossSelect.SelectedOption = 2;
+            this.elmaAcrossSelect.SelectedOption = BoolOption.Dontcare;
             this.elmaAcrossSelect.Size = new System.Drawing.Size(266, 35);
             this.elmaAcrossSelect.TabIndex = 61;
             // 
@@ -498,7 +499,7 @@ namespace Elmanager.ReplayManager
             this.intExtSelect.Option1Text = "Internals";
             this.intExtSelect.Option2Text = "Externals";
             this.intExtSelect.Option3Text = "Both";
-            this.intExtSelect.SelectedOption = 2;
+            this.intExtSelect.SelectedOption = BoolOption.Dontcare;
             this.intExtSelect.Size = new System.Drawing.Size(266, 35);
             this.intExtSelect.TabIndex = 60;
             // 
@@ -512,7 +513,7 @@ namespace Elmanager.ReplayManager
             this.fastestSlowestSelect.Option1Text = "Fastest replays";
             this.fastestSlowestSelect.Option2Text = "Slowest replays";
             this.fastestSlowestSelect.Option3Text = "All";
-            this.fastestSlowestSelect.SelectedOption = 2;
+            this.fastestSlowestSelect.SelectedOption = BoolOption.Dontcare;
             this.fastestSlowestSelect.Size = new System.Drawing.Size(266, 35);
             this.fastestSlowestSelect.TabIndex = 63;
             // 

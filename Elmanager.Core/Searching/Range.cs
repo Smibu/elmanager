@@ -1,5 +1,4 @@
 using System;
-using Elmanager.UI;
 
 namespace Elmanager.Searching;
 
@@ -19,8 +18,8 @@ public class Range<T> where T : IComparable
         return _min.CompareTo(x) <= 0 && _max.CompareTo(x) >= 0;
     }
 
-    public static Range<int> FromNumericBoxes(NumericTextBox min, NumericTextBox max)
+    public static Range<int> FromNumericBoxes(int min, int max)
     {
-        return new(min.ValueAsInt, max.ValueAsInt);
+        return new(min, max);
     }
 }
