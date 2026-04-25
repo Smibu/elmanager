@@ -1,6 +1,7 @@
 using System;
 using System.Windows.Forms;
 using Elmanager.IO;
+using Elmanager.LevelEditor.Tools.Platform;
 using Elmanager.UI;
 
 namespace Elmanager.LevelEditor.Playing;
@@ -120,46 +121,47 @@ internal partial class PlaySettingsForm : FormMod
             return true;
         }
 
-        _currButton.Text = key.ToString();
+        var editorKey = InputAdapter.ToEditorKey(key);
+        _currButton.Text = editorKey.ToString();
         if (_currButton == gasButton)
         {
-            Settings.Gas = key;
+            Settings.Gas = editorKey;
         }
         else if (_currButton == brakeButton)
         {
-            Settings.Brake = key;
+            Settings.Brake = editorKey;
         }
         else if (_currButton == brakeAliasButton)
         {
-            Settings.BrakeAlias = key;
+            Settings.BrakeAlias = editorKey;
         }
         else if (_currButton == leftVoltButton)
         {
-            Settings.LeftVolt = key;
+            Settings.LeftVolt = editorKey;
         }
         else if (_currButton == rightVoltButton)
         {
-            Settings.RightVolt = key;
+            Settings.RightVolt = editorKey;
         }
         else if (_currButton == aloVoltButton)
         {
-            Settings.AloVolt = key;
+            Settings.AloVolt = editorKey;
         }
         else if (_currButton == turnButton)
         {
-            Settings.Turn = key;
+            Settings.Turn = editorKey;
         }
         else if (_currButton == saveButton)
         {
-            Settings.Save = key;
+            Settings.Save = editorKey;
         }
         else if (_currButton == loadButton)
         {
-            Settings.Load = key;
+            Settings.Load = editorKey;
         }
         else if (_currButton == escAliasButton)
         {
-            Settings.EscAlias = key;
+            Settings.EscAlias = editorKey;
         }
 
         UpdateGui();

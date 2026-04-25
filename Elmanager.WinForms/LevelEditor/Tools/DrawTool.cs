@@ -1,11 +1,8 @@
-using System.Collections.Generic;
 using System.Drawing;
-using System.Windows.Forms;
-using Elmanager.Application;
 using Elmanager.Geometry;
 using Elmanager.Lev;
+using Elmanager.LevelEditor.Input;
 using Elmanager.Rendering;
-using Elmanager.Utilities;
 
 namespace Elmanager.LevelEditor.Tools;
 
@@ -16,7 +13,7 @@ internal class DrawTool : ToolBase, IEditorTool
     private Vector _lastMousePosition;
     private double _mouseTrip;
 
-    internal DrawTool(LevelEditorForm editor)
+    internal DrawTool(ILevelEditor editor)
         : base(editor)
     {
     }
@@ -28,7 +25,7 @@ internal class DrawTool : ToolBase, IEditorTool
     }
 
     public string GetHelp() =>
-        $"Hold LMouse to create vertex; +/-: adjust threshold ({Global.AppSettings.LevelEditor.DrawStep:F2})";
+        $"Hold LMouse to create vertex; +/-: adjust threshold ({LevEditor.Settings.DrawStep:F2})";
 
     public void ExtraRendering()
     {
@@ -42,17 +39,17 @@ internal class DrawTool : ToolBase, IEditorTool
         return LevVisualChange.Nothing;
     }
 
-    public LevVisualChange KeyDown(KeyEventArgs key)
+    public LevVisualChange KeyDown(EditorKeyEventArgs key)
     {
         switch (key.KeyCode)
         {
-            case KeyUtils.Increase:
-                Global.AppSettings.LevelEditor.DrawStep += ThresholdAdjustStep;
+            case EditorKeyUtils.Increase:
+                LevEditor.Settings.DrawStep += ThresholdAdjustStep;
                 break;
-            case KeyUtils.Decrease:
-                if (Global.AppSettings.LevelEditor.DrawStep > ThresholdAdjustStep)
+            case EditorKeyUtils.Decrease:
+                if (LevEditor.Settings.DrawStep > ThresholdAdjustStep)
                 {
-                    Global.AppSettings.LevelEditor.DrawStep -= ThresholdAdjustStep;
+                    LevEditor.Settings.DrawStep -= ThresholdAdjustStep;
                 }
 
                 break;
@@ -61,17 +58,17 @@ internal class DrawTool : ToolBase, IEditorTool
         return LevVisualChange.Nothing;
     }
 
-    public LevVisualChange MouseDown(MouseEventArgs mouseData)
+    public LevVisualChange MouseDown(EditorMouseEventArgs mouseData)
     {
         switch (mouseData.Button)
         {
-            case MouseButtons.Left:
+            case EditorMouseButton.Left:
                 _currentPolygon = new Polygon();
                 _currentPolygon.Add(CurrentPos);
                 _mouseTrip = 0;
                 _lastMousePosition = CurrentPos;
                 break;
-            case MouseButtons.Right:
+            case EditorMouseButton.Right:
                 break;
         }
         return LevVisualChange.Nothing;
@@ -83,7 +80,7 @@ internal class DrawTool : ToolBase, IEditorTool
         if (_currentPolygon is null) return LevVisualChange.Nothing;
         _mouseTrip += (p - _lastMousePosition).Length;
         _lastMousePosition = p;
-        var scaledStep = Global.AppSettings.LevelEditor.DrawStep * ZoomCtrl.ZoomLevel * 0.1;
+        var scaledStep = LevEditor.Settings.DrawStep * ZoomCtrl.ZoomLevel * 0.1;
         if (_mouseTrip > scaledStep)
         {
             while (!(_mouseTrip < scaledStep))

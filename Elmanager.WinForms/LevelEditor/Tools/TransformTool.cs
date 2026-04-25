@@ -1,14 +1,10 @@
 using System;
 using System.Collections.Generic;
 using System.Drawing;
-using System.Windows.Forms;
-using System.Windows.Input;
-using Elmanager.Application;
 using Elmanager.Geometry;
 using Elmanager.Lev;
+using Elmanager.LevelEditor.Input;
 using Elmanager.Rendering;
-using KeyEventArgs = System.Windows.Forms.KeyEventArgs;
-using MouseEventArgs = System.Windows.Forms.MouseEventArgs;
 
 namespace Elmanager.LevelEditor.Tools;
 
@@ -16,14 +12,14 @@ internal class TransformTool : ToolBase, IEditorTool
 {
     private TransformState? _transformState;
 
-    internal TransformTool(LevelEditorForm editor)
+    internal TransformTool(ILevelEditor editor)
         : base(editor)
     {
     }
 
-    private bool DisableRotation => Keyboard.IsKeyDown(Key.LeftShift);
+    private bool DisableRotation => Keyboard.IsKeyDown(ModifierKey.LeftShift);
 
-    private bool DisableScaling => Keyboard.IsKeyDown(Key.LeftCtrl);
+    private bool DisableScaling => Keyboard.IsKeyDown(ModifierKey.LeftCtrl);
 
     private bool Transforming => _transformState?.TransformPolygonIndex is { };
 
@@ -147,18 +143,18 @@ internal class TransformTool : ToolBase, IEditorTool
         return LevVisualChange.Nothing;
     }
 
-    public LevVisualChange KeyDown(KeyEventArgs key)
+    public LevVisualChange KeyDown(EditorKeyEventArgs key)
     {
-        if (key.KeyCode == Keys.Space)
+        if (key.KeyCode == EditorKey.Space)
         {
             LevEditor.ChangeToSelectionTool();
         }
         return LevVisualChange.Nothing;
     }
 
-    public LevVisualChange MouseDown(MouseEventArgs mouseData)
+    public LevVisualChange MouseDown(EditorMouseEventArgs mouseData)
     {
-        if (mouseData.Button != MouseButtons.Left
+        if (mouseData.Button != EditorMouseButton.Left
             || Transforming
             || _transformState is null)
         {
@@ -169,14 +165,14 @@ internal class TransformTool : ToolBase, IEditorTool
         for (int i = 0; i < 4; i++)
         {
             if ((transformRectangle[i] - CurrentPos).Length <
-                Global.AppSettings.LevelEditor.CaptureRadius * ZoomCtrl.ZoomLevel)
+                LevEditor.Settings.CaptureRadius * ZoomCtrl.ZoomLevel)
             {
                 _transformState.TransformPolygonIndex = i;
                 break;
             }
 
             if (((transformRectangle[i] + transformRectangle[i + 1]) / 2 - CurrentPos).Length <
-                Global.AppSettings.LevelEditor.CaptureRadius * ZoomCtrl.ZoomLevel)
+                LevEditor.Settings.CaptureRadius * ZoomCtrl.ZoomLevel)
             {
                 _transformState.TransformPolygonIndex = i + 4;
                 break;
@@ -184,7 +180,7 @@ internal class TransformTool : ToolBase, IEditorTool
         }
 
         if (((transformRectangle[0] + transformRectangle[2]) / 2 - CurrentPos).Length <
-            Global.AppSettings.LevelEditor.CaptureRadius * ZoomCtrl.ZoomLevel)
+            LevEditor.Settings.CaptureRadius * ZoomCtrl.ZoomLevel)
         {
             _transformState.TransformPolygonIndex = 8;
         }
@@ -249,7 +245,7 @@ internal class TransformTool : ToolBase, IEditorTool
             Lev.Polygons[^(i + 1)] =
                 _transformState.OriginalTransformPolygons[^(i + 1)].ApplyTransformation(transformMatrix, true);
             Lev.Polygons[^(i + 1)].UpdateGrassSlopeInfo(Lev.GroundBounds,
-                LevEditor.Settings.RenderingSettings.GrassZoom);
+                LevEditor.RenderingSettings.GrassZoom);
             modification |= Lev.Polygons[^(i + 1)].IsGrass ? LevVisualChange.Grass : LevVisualChange.Ground;
         }
 

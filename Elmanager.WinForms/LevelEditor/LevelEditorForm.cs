@@ -13,8 +13,10 @@ using Elmanager.Application;
 using Elmanager.Geometry;
 using Elmanager.IO;
 using Elmanager.Lev;
+using Elmanager.LevelEditor.Input;
 using Elmanager.LevelEditor.Playing;
 using Elmanager.LevelEditor.Tools;
+using Elmanager.LevelEditor.Tools.Platform;
 using Elmanager.Lgr;
 using Elmanager.Physics;
 using Elmanager.Properties;
@@ -36,7 +38,7 @@ using Timer = System.Timers.Timer;
 
 namespace Elmanager.LevelEditor;
 
-internal partial class LevelEditorForm : FormMod, IMessageFilter
+internal partial class LevelEditorForm : FormMod, IMessageFilter, ILevelEditor
 {
     private const string CoordinateFormat = "F3";
     private const string LevEditorName = "SLE";
@@ -89,11 +91,61 @@ internal partial class LevelEditorForm : FormMod, IMessageFilter
     private bool _hasFocus;
     public SelectionFilter SelectionFilter { get; }
     [DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
-    internal HighlightTarget? CurrentHighlight { get; set; }
+    private HighlightTarget? CurrentHighlight { get; set; }
+    private IEditorCursorManager CursorManager { get; }
+    private IKeyboardState KeyboardState { get; } = new WinFormsKeyboardState();
+    private IPictureDialogService PictureDialogService { get; }
+    private ICustomShapeService CustomShapeService { get; }
+
+    ElmaRenderer ILevelEditor.Renderer => Renderer;
+    Level ILevelEditor.Lev => Lev;
+    ZoomController ILevelEditor.ZoomCtrl => ZoomCtrl;
+    SceneSettings ILevelEditor.SceneSettings => SceneSettings;
+    ISelectionFilter ILevelEditor.SelectionFilter => SelectionFilter;
+    PlayController ILevelEditor.PlayController => WinFormsPlayController;
+    IEditorCursorManager ILevelEditor.CursorManager => CursorManager;
+    IKeyboardState ILevelEditor.KeyboardState => KeyboardState;
+    LevelEditorRenderingSettings ILevelEditor.RenderingSettings => Settings.RenderingSettings;
+    IPictureDialogService ILevelEditor.PictureDialogService => PictureDialogService;
+    ICustomShapeService ILevelEditor.CustomShapeService => CustomShapeService;
+
+    bool ILevelEditor.ObjectFramesVisible => ShowObjectFramesButton.Checked;
+    bool ILevelEditor.ObjectsVisible => ShowObjectsButton.Checked;
+    bool ILevelEditor.GrassEdgesVisible => ShowGrassEdgesButton.Checked;
+    bool ILevelEditor.GrassVisible => showGrassButton.Checked;
+    bool ILevelEditor.GroundEdgesVisible => ShowGroundEdgesButton.Checked;
+    bool ILevelEditor.GroundVisible => ShowGroundButton.Checked;
+    bool ILevelEditor.TextureFramesVisible => ShowTextureFramesButton.Checked;
+    bool ILevelEditor.TexturesVisible => ShowTexturesButton.Checked;
+    bool ILevelEditor.PictureFramesVisible => ShowPictureFramesButton.Checked;
+    bool ILevelEditor.PicturesVisible => ShowPicturesButton.Checked;
+
+    HighlightTarget? ILevelEditor.CurrentHighlight
+    {
+        get => CurrentHighlight;
+        set => CurrentHighlight = value;
+    }
+
+    string ILevelEditor.HighlightText
+    {
+        get => HighlightLabel.Text;
+        set => HighlightLabel.Text = value;
+    }
+
+    void ILevelEditor.ShowError(string message, string caption) => UiUtils.ShowError(message, caption);
+    void ILevelEditor.SetModified(LevModification value) => SetModified(value);
+    void ILevelEditor.PreserveSelection() => PreserveSelection();
+    void ILevelEditor.UpdateSelectionInfo() => UpdateSelectionInfo();
+    void ILevelEditor.RedrawScene() => RedrawScene();
+    void ILevelEditor.ChangeToSelectionTool() => ChangeToSelectionTool();
+    void ILevelEditor.TransformMenuItemClick() => TransformMenuItemClick();
 
     internal LevelEditorForm(string? levPath)
     {
         InitializeComponent();
+        CursorManager = new WinFormsCursorManager(EditorControl, this);
+        PictureDialogService = new WinFormsPictureDialogService(() => EditorLgr);
+        CustomShapeService = new WinFormsCustomShapeService(this);
         InitializeInternalMenu();
         _levFileWatcher = new LevFileWatcher(this);
         SelectionFilter = new SelectionFilter(this);
@@ -221,7 +273,7 @@ internal partial class LevelEditorForm : FormMod, IMessageFilter
 
     internal SceneSettings SceneSettings => _sceneSettings;
 
-    internal PlayController PlayController { get; } = new() { Settings = Global.AppSettings.LevelEditor.PlayingSettings };
+    internal WinFormsPlayController WinFormsPlayController { get; } = new() { Settings = Global.AppSettings.LevelEditor.PlayingSettings };
     public Lgr.Lgr? EditorLgr => Renderer.OpenGlLgr?.CurrentLgr;
 
     internal void TransformMenuItemClick(object? sender = null, EventArgs? e = null)
@@ -241,7 +293,7 @@ internal partial class LevelEditorForm : FormMod, IMessageFilter
 
     internal void RedrawScene(object? sender = null, EventArgs? e = null)
     {
-        if (PlayController.PlayingOrPaused)
+        if (WinFormsPlayController.PlayingOrPaused)
         {
             return;
         }
@@ -266,7 +318,7 @@ internal partial class LevelEditorForm : FormMod, IMessageFilter
 
         if (value.HasFlag(LevModification.Ground) || value.HasFlag(LevModification.Apples) || value.HasFlag(LevModification.Killers) || value.HasFlag(LevModification.Flowers))
         {
-            PlayController.UpdateEngine(Lev);
+            WinFormsPlayController.UpdateEngine(Lev);
         }
     }
 
@@ -554,12 +606,12 @@ internal partial class LevelEditorForm : FormMod, IMessageFilter
             Settings.Size = Size;
         }
 
-        Settings.WindowState = WindowState;
+        Settings.WindowState = WindowState.ToSettingsWindowState();
         Settings.LastLevel = LevFile?.Path;
-        if (PlayController.PlayingOrPaused)
+        if (WinFormsPlayController.PlayingOrPaused)
         {
             e.Cancel = true;
-            await PlayController.StopPlaying();
+            await WinFormsPlayController.StopPlaying();
             Close();
         }
     }
@@ -650,7 +702,7 @@ internal partial class LevelEditorForm : FormMod, IMessageFilter
 
     private void DoRedrawScene()
     {
-        var jf = PlayController.Playing && PlayController.FollowDriver
+        var jf = WinFormsPlayController.Playing && WinFormsPlayController.FollowDriver
             ? _zoomCtrl.Cam.FixJitter(EditorControl.Width, EditorControl.Height)
             : new Vector();
         Renderer.DrawScene(_zoomCtrl.Cam, 0, _sceneSettings);
@@ -722,22 +774,22 @@ internal partial class LevelEditorForm : FormMod, IMessageFilter
             }
         }
 
-        if (PlayController.PlayingOrPaused)
+        if (WinFormsPlayController.PlayingOrPaused)
         {
             _zoomCtrl.Cam.CenterX += jf.X;
             _zoomCtrl.Cam.CenterY += jf.Y;
             Renderer.SetCamera(_zoomCtrl.Cam);
-            var driver = PlayController.Driver!;
+            var driver = WinFormsPlayController.Driver!;
             if (Settings.RenderingSettings.ShowObjects && Renderer.OpenGlLgr != null)
             {
-                Renderer.DrawPlayer(driver.GetState(), PlayController.RenderOptsLgr, Settings.RenderingSettings);
+                Renderer.DrawPlayer(driver.GetState(), WinFormsPlayController.RenderOptsLgr, Settings.RenderingSettings);
             }
             else if (Settings.RenderingSettings.ShowObjectFrames)
             {
-                Renderer.DrawPlayer(driver.GetState(), PlayController.RenderOptsFrame, Settings.RenderingSettings);
+                Renderer.DrawPlayer(driver.GetState(), WinFormsPlayController.RenderOptsFrame, Settings.RenderingSettings);
             }
 
-            if (PlayController.PlayerSelection == VectorMark.Selected)
+            if (WinFormsPlayController.PlayerSelection == VectorMark.Selected)
                 Renderer.AddSelectionPoint(driver.Body.Location);
         }
 
@@ -760,8 +812,8 @@ internal partial class LevelEditorForm : FormMod, IMessageFilter
                 case HighlightTarget.GraphicElementTarget gt:
                     Renderer.DrawGraphicElementFrame(Lev.GraphicElements[gt.GraphicElementIndex], Settings.RenderingSettings, Settings.RenderingSettings.HighlightColor);
                     break;
-                case HighlightTarget.PlayerTarget when PlayController.PlayingOrPaused:
-                    Renderer.DrawPoint(PlayController.Driver!.Body.Location, Settings.RenderingSettings.HighlightColor);
+                case HighlightTarget.PlayerTarget when WinFormsPlayController.PlayingOrPaused:
+                    Renderer.DrawPoint(WinFormsPlayController.Driver!.Body.Location, Settings.RenderingSettings.HighlightColor);
                     break;
             }
         }
@@ -773,7 +825,7 @@ internal partial class LevelEditorForm : FormMod, IMessageFilter
         Renderer.Swap();
     }
 
-    internal LevelEditorSettings Settings => Global.AppSettings.LevelEditor;
+    public LevelEditorSettings Settings => Global.AppSettings.LevelEditor;
 
     private void CutButtonChanged(object? sender, EventArgs e)
     {
@@ -863,7 +915,7 @@ internal partial class LevelEditorForm : FormMod, IMessageFilter
                 }
             }
 
-            PlayController.NotifyDeletedApples(deletedApples);
+            WinFormsPlayController.NotifyDeletedApples(deletedApples);
             SetModified(mod);
             UpdateSelectionInfo();
         }
@@ -997,7 +1049,7 @@ internal partial class LevelEditorForm : FormMod, IMessageFilter
         }
         else
         {
-            PlayController.UpdateGravity(chosenAppleType);
+            WinFormsPlayController.UpdateGravity(chosenAppleType);
         }
     }
 
@@ -1011,7 +1063,7 @@ internal partial class LevelEditorForm : FormMod, IMessageFilter
             settingsButton.Visible = false;
         }
 #pragma warning restore CS0162
-        PlayController.PlayingPaused += () => Invoke(SetNotPlaying);
+        WinFormsPlayController.PlayingPaused += () => Invoke(SetNotPlaying);
         var graphics = CreateGraphics();
         _dpiX = graphics.DpiX / 96;
         _dpiY = graphics.DpiY / 96;
@@ -1030,7 +1082,7 @@ internal partial class LevelEditorForm : FormMod, IMessageFilter
         LGRBox.Width *= dpiXint;
         GroundComboBox.Width *= dpiXint;
         SkyComboBox.Width *= dpiXint;
-        WindowState = Settings.WindowState;
+        WindowState = Settings.WindowState.ToFormWindowState();
         SelectButton.Select();
         UpdateButtons();
         Size = Settings.Size;
@@ -1053,7 +1105,7 @@ internal partial class LevelEditorForm : FormMod, IMessageFilter
         {
             _levFileWatcher.ClearLevDiskSnapshot();
         }
-        await PlayController.NotifyLevelChanged();
+        await WinFormsPlayController.NotifyLevelChanged();
         PlayTimeLabel.Text = "";
         _zoomCtrl = new ZoomController(new ElmaCamera(), Lev, () => RedrawScene());
         SetNotModified();
@@ -1082,7 +1134,7 @@ internal partial class LevelEditorForm : FormMod, IMessageFilter
             _ => e
         };
 
-        var mod = CurrentTool.KeyDown(e);
+        var mod = CurrentTool.KeyDown(InputAdapter.ToEditorKeyEventArgs(e));
         UpdateRendererBuffers(mod);
         UpdateToolHelp();
         var wasModified = false;
@@ -1095,7 +1147,7 @@ internal partial class LevelEditorForm : FormMod, IMessageFilter
             case Keys.Down:
             case Keys.Left:
             case Keys.Right:
-                if (!PlayController.PlayingOrPaused)
+                if (!WinFormsPlayController.PlayingOrPaused)
                 {
                     CameraUtils.BeginArrowScroll(() => RedrawScene(), _zoomCtrl);
                 }
@@ -1120,22 +1172,22 @@ internal partial class LevelEditorForm : FormMod, IMessageFilter
                 DeleteSelected(null, null);
                 break;
             case Keys.Oemcomma:
-                wasModified = PolyOpTool.PolyOpSelected(PolygonOperationType.Union, Lev.Polygons);
+                wasModified = Tools.PolyOpTool.PolyOpSelected(PolygonOperationType.Union, Lev.Polygons);
                 break;
             case Keys.OemPeriod:
-                wasModified = PolyOpTool.PolyOpSelected(PolygonOperationType.Difference, Lev.Polygons);
+                wasModified = Tools.PolyOpTool.PolyOpSelected(PolygonOperationType.Difference, Lev.Polygons);
                 break;
 #pragma warning disable CS0162
             case Keys.Enter when Physics:
-                PlayController.UpdateInputKeys();
+                WinFormsPlayController.UpdateInputKeys();
                 playButton_Click(null, null);
                 break;
 #pragma warning restore CS0162
             case Keys.Oem2:
-                wasModified = PolyOpTool.PolyOpSelected(PolygonOperationType.SymmetricDifference, Lev.Polygons);
+                wasModified = Tools.PolyOpTool.PolyOpSelected(PolygonOperationType.SymmetricDifference, Lev.Polygons);
                 break;
             case Keys.Escape:
-                if (!PlayController.PlayingOrPaused)
+                if (!WinFormsPlayController.PlayingOrPaused)
                 {
                     _fullScreenController.Restore();
                 }
@@ -1367,8 +1419,8 @@ internal partial class LevelEditorForm : FormMod, IMessageFilter
         var info = ToolBase.GetNearestVertexInfo(p);
         int nearestObjectIndex = ToolBase.GetNearestObjectIndex(p);
         int nearestPictureIndex = ToolBase.GetNearestPictureIndex(p);
-        var player = PlayController.GetNearestDriverBodyPart(p, ToolBase.CaptureRadiusScaled);
-        PlayController.FollowDriver = false;
+        var player = WinFormsPlayController.GetNearestDriverBodyPart(p, ToolBase.CaptureRadiusScaled);
+        WinFormsPlayController.FollowDriver = false;
         switch (e.Button)
         {
             case MouseButtons.Right:
@@ -1481,7 +1533,7 @@ internal partial class LevelEditorForm : FormMod, IMessageFilter
                             GravityDownMenuItem.Visible = true;
                             GravityLeftMenuItem.Visible = true;
                             GravityRightMenuItem.Visible = true;
-                            switch (PlayController.Driver!.GravityDirection)
+                            switch (WinFormsPlayController.Driver!.GravityDirection)
                             {
                                 case GravityDirection.Up:
                                     UpdateGravityMenu(GravityUpMenuItem);
@@ -1518,7 +1570,7 @@ internal partial class LevelEditorForm : FormMod, IMessageFilter
                 break;
         }
 
-        var mod = CurrentTool.MouseDown(e);
+        var mod = CurrentTool.MouseDown(InputAdapter.ToEditorMouseEventArgs(e));
         UpdateRendererBuffers(mod);
         UpdateToolHelp();
         RedrawScene();
@@ -2336,9 +2388,9 @@ internal partial class LevelEditorForm : FormMod, IMessageFilter
     {
         if (EditorControl.Width > 0 && EditorControl.Height > 0)
         {
-            if (PlayController.PlayingOrPaused)
+            if (WinFormsPlayController.PlayingOrPaused)
             {
-                PlayController.ResetViewPortRequested = (EditorControl.Width, EditorControl.Height);
+                WinFormsPlayController.ResetViewPortRequested = (EditorControl.Width, EditorControl.Height);
             }
             else
             {
@@ -2683,7 +2735,7 @@ internal partial class LevelEditorForm : FormMod, IMessageFilter
 
     private void unionToolStripMenuItem_Click(object sender, EventArgs e)
     {
-        if (PolyOpTool.PolyOpSelected(PolygonOperationType.Union, Lev.Polygons))
+        if (Tools.PolyOpTool.PolyOpSelected(PolygonOperationType.Union, Lev.Polygons))
         {
             SetModifiedAndRender(LevModification.Ground);
         }
@@ -2691,7 +2743,7 @@ internal partial class LevelEditorForm : FormMod, IMessageFilter
 
     private void differenceToolStripMenuItem_Click(object sender, EventArgs e)
     {
-        if (PolyOpTool.PolyOpSelected(PolygonOperationType.Difference, Lev.Polygons))
+        if (Tools.PolyOpTool.PolyOpSelected(PolygonOperationType.Difference, Lev.Polygons))
         {
             SetModifiedAndRender(LevModification.Ground);
         }
@@ -2699,7 +2751,7 @@ internal partial class LevelEditorForm : FormMod, IMessageFilter
 
     private void intersectionToolStripMenuItem_Click(object sender, EventArgs e)
     {
-        if (PolyOpTool.PolyOpSelected(PolygonOperationType.Intersection, Lev.Polygons))
+        if (Tools.PolyOpTool.PolyOpSelected(PolygonOperationType.Intersection, Lev.Polygons))
         {
             SetModifiedAndRender(LevModification.Ground);
         }
@@ -2707,7 +2759,7 @@ internal partial class LevelEditorForm : FormMod, IMessageFilter
 
     private void symmetricDifferenceToolStripMenuItem_Click(object sender, EventArgs e)
     {
-        if (PolyOpTool.PolyOpSelected(PolygonOperationType.SymmetricDifference, Lev.Polygons))
+        if (Tools.PolyOpTool.PolyOpSelected(PolygonOperationType.SymmetricDifference, Lev.Polygons))
         {
             SetModifiedAndRender(LevModification.Ground);
         }
@@ -2798,15 +2850,15 @@ internal partial class LevelEditorForm : FormMod, IMessageFilter
 
     private async void playButton_Click(object? sender, EventArgs? e)
     {
-        if (PlayController.Paused)
+        if (WinFormsPlayController.Paused)
         {
-            PlayController.PlayState = PlayState.Playing;
+            WinFormsPlayController.PlayState = PlayState.Playing;
             SetToPlaying();
             return;
         }
-        if (PlayController.Playing)
+        if (WinFormsPlayController.Playing)
         {
-            PlayController.PlayState = PlayState.Paused;
+            WinFormsPlayController.PlayState = PlayState.Paused;
             SetNotPlaying();
             return;
         }
@@ -2819,7 +2871,7 @@ internal partial class LevelEditorForm : FormMod, IMessageFilter
         var t = new Timer(100);
         var updateTime = new Action(() =>
         {
-            PlayTimeLabel.Text = PlayController.Driver!.CurrentTime.ToSeconds().ToTimeString(1);
+            PlayTimeLabel.Text = WinFormsPlayController.Driver!.CurrentTime.ToSeconds().ToTimeString(1);
         });
         t.Elapsed += (_, _) =>
         {
@@ -2834,7 +2886,7 @@ internal partial class LevelEditorForm : FormMod, IMessageFilter
             _zoomCtrl.ZoomLevel = Settings.PlayingSettings.PlayZoomLevel;
         }
 
-        await PlayController.BeginLoop(Lev, _sceneSettings, Renderer, _zoomCtrl, DoRedrawScene);
+        await WinFormsPlayController.BeginLoop(Lev, _sceneSettings, Renderer, _zoomCtrl, DoRedrawScene);
 
         if (Settings.PlayingSettings.FollowDriverOption == FollowDriverOption.WhenPressingKey)
         {
@@ -2843,8 +2895,8 @@ internal partial class LevelEditorForm : FormMod, IMessageFilter
         }
 
         t.Stop();
-        PlayTimeLabel.Text = PlayController.Driver!.CurrentTime.ToSeconds().ToTimeString();
-        if (PlayController.Driver.Condition == DriverCondition.Finished)
+        PlayTimeLabel.Text = WinFormsPlayController.Driver!.CurrentTime.ToSeconds().ToTimeString();
+        if (WinFormsPlayController.Driver.Condition == DriverCondition.Finished)
         {
             PlayTimeLabel.Text += " F";
         }
@@ -2872,9 +2924,9 @@ internal partial class LevelEditorForm : FormMod, IMessageFilter
 
     private async void stopButton_Click(object? sender, EventArgs? e)
     {
-        if (PlayController.PlayingOrPaused)
+        if (WinFormsPlayController.PlayingOrPaused)
         {
-            await PlayController.StopPlaying();
+            await WinFormsPlayController.StopPlaying();
         }
 
         if (Settings.PlayingSettings.ToggleFullscreen)
@@ -2885,26 +2937,26 @@ internal partial class LevelEditorForm : FormMod, IMessageFilter
 
     private void settingsButton_Click(object sender, EventArgs e)
     {
-        var f = new PlaySettingsForm(PlayController.Settings);
+        var f = new PlaySettingsForm(WinFormsPlayController.Settings);
         var result = f.ShowDialog();
         if (result == DialogResult.OK)
         {
-            PlayController.Settings = f.Settings;
+            WinFormsPlayController.Settings = f.Settings;
             Settings.PlayingSettings = f.Settings;
         }
     }
 
     public bool PreFilterMessage(ref Message m)
     {
-        if (PlayController.Playing)
+        if (WinFormsPlayController.Playing)
         {
             // The message filter is global, so the control that is receiving the message
             // might be in a different form (e.g. level manager). Hence the need for IsChild check.
             if (m.Msg is NativeUtils.WmKeydown or NativeUtils.WmKeyup && NativeUtils.IsChild(Handle, m.HWnd))
             {
-                PlayController.UpdateInputKeys();
+                WinFormsPlayController.UpdateInputKeys();
                 var key = (Keys)m.WParam;
-                if (PlayController.Settings.DisableShortcuts)
+                if (WinFormsPlayController.Settings.DisableShortcuts)
                 {
                     if (m.Msg == NativeUtils.WmKeydown)
                     {
@@ -2985,7 +3037,7 @@ internal partial class LevelEditorForm : FormMod, IMessageFilter
 
     private void fixSelfIntersectionsMenuItem_Click(object sender, EventArgs e)
     {
-        if (PolyOpTool.FixSelfIntersections(Lev.Polygons))
+        if (Tools.PolyOpTool.FixSelfIntersections(Lev.Polygons))
         {
             SetModified(LevModification.Ground);
             RedrawScene();

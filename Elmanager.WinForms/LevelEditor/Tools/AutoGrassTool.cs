@@ -2,10 +2,9 @@ using System;
 using System.Collections.Generic;
 using System.Drawing;
 using System.Linq;
-using System.Windows.Forms;
-using Elmanager.Application;
 using Elmanager.Geometry;
 using Elmanager.Lev;
+using Elmanager.LevelEditor.Input;
 using Elmanager.Rendering;
 using Elmanager.Utilities;
 
@@ -18,7 +17,7 @@ internal class AutoGrassTool : ToolBase, IEditorTool
     private Polygon? _currentPolygon;
     private List<Polygon>? _currentAutograssPolys;
 
-    internal AutoGrassTool(LevelEditorForm editor)
+    internal AutoGrassTool(ILevelEditor editor)
         : base(editor)
     {
     }
@@ -52,19 +51,19 @@ internal class AutoGrassTool : ToolBase, IEditorTool
 
     public LevVisualChange InActivate() => CancelAutoGrass();
 
-    public LevVisualChange KeyDown(KeyEventArgs key)
+    public LevVisualChange KeyDown(EditorKeyEventArgs key)
     {
         if (_currentPolygon is { })
         {
             var changed = true;
             switch (key.KeyCode)
             {
-                case KeyUtils.Increase:
-                    Global.AppSettings.LevelEditor.AutoGrassThickness += 0.025;
+                case EditorKeyUtils.Increase:
+                    LevEditor.Settings.AutoGrassThickness += 0.025;
                     break;
-                case KeyUtils.Decrease:
-                    if (Global.AppSettings.LevelEditor.AutoGrassThickness > 0.025)
-                        Global.AppSettings.LevelEditor.AutoGrassThickness -= 0.025;
+                case EditorKeyUtils.Decrease:
+                    if (LevEditor.Settings.AutoGrassThickness > 0.025)
+                        LevEditor.Settings.AutoGrassThickness -= 0.025;
                     break;
                 default:
                     changed = false;
@@ -81,11 +80,11 @@ internal class AutoGrassTool : ToolBase, IEditorTool
         return LevVisualChange.Nothing;
     }
 
-    public LevVisualChange MouseDown(MouseEventArgs mouseData)
+    public LevVisualChange MouseDown(EditorMouseEventArgs mouseData)
     {
         switch (mouseData.Button)
         {
-            case MouseButtons.Left:
+            case EditorMouseButton.Left:
                 if (_currentPolygon is null)
                 {
                     if (GetNearestVertexInfo(CurrentPos) is { } v && !v.Polygon.IsGrass)
@@ -104,7 +103,7 @@ internal class AutoGrassTool : ToolBase, IEditorTool
                 }
 
                 break;
-            case MouseButtons.Right:
+            case EditorMouseButton.Right:
                 return CancelAutoGrass();
         }
 
@@ -146,20 +145,20 @@ internal class AutoGrassTool : ToolBase, IEditorTool
 
     public string GetHelp() =>
         AutoGrassPolygonSelected
-            ? $"LMouse: apply AutoGrass; +/-: adjust thickness ({Global.AppSettings.LevelEditor.AutoGrassThickness:F3}); RMouse: cancel."
+            ? $"LMouse: apply AutoGrass; +/-: adjust thickness ({LevEditor.Settings.AutoGrassThickness:F3}); RMouse: cancel."
             : "LMouse: select ground polygon to create grass polygon for.";
 
     internal List<Polygon> AutoGrass(Polygon poly)
     {
         var polygons = CreateGrassPolygons(poly);
         polygons.ForEach(p => p.UpdateGrassSlopeInfo(Lev.GroundBounds,
-            LevEditor.Settings.RenderingSettings.GrassZoom));
+            LevEditor.RenderingSettings.GrassZoom));
         return polygons;
     }
 
     private List<Polygon> CreateGrassPolygons(Polygon p)
     {
-        double autoGrassThickness = Global.AppSettings.LevelEditor.AutoGrassThickness;
+        double autoGrassThickness = LevEditor.Settings.AutoGrassThickness;
         List<Polygon> grassPolys = new List<Polygon>();
         bool isSky = Lev.IsSky(p);
         // TODO: Make autograss work without the WithYNegated hack.

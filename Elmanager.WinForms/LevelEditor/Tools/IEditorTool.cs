@@ -1,14 +1,14 @@
-using System.Windows.Forms;
 using Elmanager.Geometry;
+using Elmanager.LevelEditor.Input;
 using Elmanager.Rendering;
 
 namespace Elmanager.LevelEditor.Tools;
 
 internal interface IEditorTool : IEditorToolBase
 {
-    LevVisualChange MouseDown(MouseEventArgs mouseData);
+    LevVisualChange MouseDown(EditorMouseEventArgs mouseData);
     void MouseUp();
-    LevVisualChange KeyDown(KeyEventArgs key);
+    LevVisualChange KeyDown(EditorKeyEventArgs key);
     LevVisualChange MouseMove(Vector p);
     LevVisualChange MouseOutOfEditor();
 

@@ -3,14 +3,13 @@ using System.Drawing;
 using System.IO;
 using System.Text.Json.Serialization;
 using System.Text.RegularExpressions;
-using System.Windows.Forms;
 using Elmanager.Lev;
 using Elmanager.LevelEditor.Playing;
 using Elmanager.Settings;
 
 namespace Elmanager.LevelEditor;
 
-internal class LevelEditorSettings
+public class LevelEditorSettings
 {
     [JsonPropertyName("AutoGrassThickness")]
     public double AutoGrassThickness { get; set; } = 0.2;
@@ -63,7 +62,7 @@ internal class LevelEditorSettings
     [JsonPropertyName("UseHighlight")]
     public bool UseHighlight { get; set; } = true;
     [JsonPropertyName("WindowState")]
-    public FormWindowState WindowState { get; set; } = FormWindowState.Normal;
+    public WindowState WindowState { get; set; } = WindowState.Normal;
     [JsonPropertyName("LevelTemplate")]
     public string LevelTemplate { get; set; } = "50,50";
     [JsonPropertyName("CapturePicturesAndTexturesFromBordersOnly")]
@@ -75,7 +74,7 @@ internal class LevelEditorSettings
     [JsonPropertyName("EnableStartPositionFeature")]
     public bool EnableStartPositionFeature { get; set; } = true;
 
-    internal static Level TryGetTemplateLevel(string text)
+    public static Level TryGetTemplateLevel(string text)
     {
         if (text == null)
         {
@@ -107,7 +106,7 @@ internal class LevelEditorSettings
         return Level.FromDimensions(width, height);
     }
 
-    internal Level GetTemplateLevel()
+    public Level GetTemplateLevel()
     {
         try
         {

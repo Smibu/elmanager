@@ -1,8 +1,7 @@
 using System;
-using System.Windows.Forms;
-using Elmanager.Application;
 using Elmanager.Geometry;
 using Elmanager.Lev;
+using Elmanager.LevelEditor.Input;
 using Elmanager.Rendering;
 using Elmanager.Rendering.Camera;
 
@@ -11,14 +10,16 @@ namespace Elmanager.LevelEditor.Tools;
 internal abstract class ToolBase : IEditorToolBase
 {
     protected Vector CurrentPos;
-    protected readonly Control _editorControl;
-    protected readonly LevelEditorForm LevEditor;
+    protected readonly IEditorCursorManager CursorManager;
+    protected readonly IKeyboardState Keyboard;
+    protected readonly ILevelEditor LevEditor;
     protected ElmaRenderer Renderer => LevEditor.Renderer;
 
-    protected ToolBase(LevelEditorForm editor)
+    protected ToolBase(ILevelEditor editor)
     {
         LevEditor = editor;
-        _editorControl = editor.EditorControl;
+        CursorManager = editor.CursorManager;
+        Keyboard = editor.KeyboardState;
     }
 
     protected Level Lev => LevEditor.Lev;
@@ -67,7 +68,7 @@ internal abstract class ToolBase : IEditorToolBase
         }
 
         if (Math.Sqrt(smallest) <
-            Math.Max(ZoomCtrl.ZoomLevel * Global.AppSettings.LevelEditor.CaptureRadius, OpenGlLgr.ObjectRadius))
+            Math.Max(ZoomCtrl.ZoomLevel * LevEditor.Settings.CaptureRadius, OpenGlLgr.ObjectRadius))
             return index;
         return -1;
     }
@@ -77,9 +78,9 @@ internal abstract class ToolBase : IEditorToolBase
         var pictureFilter = LevEditor.SelectionFilter.EffectivePictureFilter;
         var textureFilter = LevEditor.SelectionFilter.EffectiveTextureFilter;
         int found = -1;
-        if (Global.AppSettings.LevelEditor.CapturePicturesAndTexturesFromBordersOnly)
+        if (LevEditor.Settings.CapturePicturesAndTexturesFromBordersOnly)
         {
-            var limit = ZoomCtrl.ZoomLevel * Global.AppSettings.LevelEditor.CaptureRadius;
+            var limit = ZoomCtrl.ZoomLevel * LevEditor.Settings.CaptureRadius;
             for (int j = 0; j < Lev.GraphicElements.Count; j++)
             {
                 GraphicElement z = Lev.GraphicElements[j];
@@ -159,7 +160,7 @@ internal abstract class ToolBase : IEditorToolBase
             double currentDistance;
             if (((poly.IsGrass && grassFilter) || (!poly.IsGrass && groundFilter)) &&
                 (currentDistance = poly.GetNearestVertexDistance(p)) <
-                ZoomCtrl.ZoomLevel * Global.AppSettings.LevelEditor.CaptureRadius)
+                ZoomCtrl.ZoomLevel * LevEditor.Settings.CaptureRadius)
             {
                 int currentIndex = poly.GetNearestVertexIndex(p);
                 if (currentDistance < smallestDistance)
@@ -203,8 +204,8 @@ internal abstract class ToolBase : IEditorToolBase
         {
             double currentDistance;
             if (((x.IsGrass && grassFilter) || (!x.IsGrass && groundFilter)) &&
-                (currentDistance = x.DistanceFromPoint(p, Global.AppSettings.LevelEditor.RenderingSettings.ShowInactiveGrassEdges)) <
-                ZoomCtrl.ZoomLevel * Global.AppSettings.LevelEditor.CaptureRadius)
+                (currentDistance = x.DistanceFromPoint(p, LevEditor.RenderingSettings.ShowInactiveGrassEdges)) <
+                ZoomCtrl.ZoomLevel * LevEditor.Settings.CaptureRadius)
             {
                 if (currentDistance < smallestDistance)
                 {
@@ -223,7 +224,7 @@ internal abstract class ToolBase : IEditorToolBase
         return null;
     }
 
-    public double CaptureRadiusScaled => ZoomCtrl.ZoomLevel * Global.AppSettings.LevelEditor.CaptureRadius;
+    public double CaptureRadiusScaled => ZoomCtrl.ZoomLevel * LevEditor.Settings.CaptureRadius;
 
     protected void ResetHighlight()
     {
@@ -238,10 +239,10 @@ internal abstract class ToolBase : IEditorToolBase
 
     protected void AdjustForGrid(ref Vector p)
     {
-        if (!Global.AppSettings.LevelEditor.RenderingSettings.ShowGrid ||
-            !Global.AppSettings.LevelEditor.SnapToGrid)
+        if (!LevEditor.Settings.RenderingSettings.ShowGrid ||
+            !LevEditor.Settings.SnapToGrid)
             return;
-        var gridSize = Global.AppSettings.LevelEditor.RenderingSettings.GridSize;
+        var gridSize = LevEditor.Settings.RenderingSettings.GridSize;
         double x = (p.X + SceneSettings.GridOffset.X) % gridSize;
         if (Math.Abs(x) > gridSize / 2)
         {
@@ -260,14 +261,12 @@ internal abstract class ToolBase : IEditorToolBase
 
     protected void ChangeCursorToHand()
     {
-        if (Global.AppSettings.LevelEditor.UseHighlight)
-            _editorControl.Cursor = Cursors.Hand;
+        CursorManager.ChangeCursorToHand();
     }
 
     protected void ChangeToDefaultCursorIfHand()
     {
-        if (_editorControl.Cursor == Cursors.Hand)
-            LevEditor.ChangeToDefaultCursor();
+        CursorManager.ChangeToDefaultCursorIfHand();
     }
 
     protected void MarkAllAs(VectorMark mark)

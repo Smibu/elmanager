@@ -6,20 +6,25 @@ using System.Linq;
 using System.Threading.Tasks;
 using Elmanager.ElmaPrimitives;
 using Elmanager.Geometry;
-using Elmanager.IO;
 using Elmanager.Lev;
+using Elmanager.LevelEditor.Input;
 using Elmanager.Physics;
 using Elmanager.Rendering;
 using Elmanager.Rendering.Camera;
-using Elmanager.UI;
 
 namespace Elmanager.LevelEditor.Playing;
 
-internal class PlayController
+public class PlayController
 {
+    private readonly IGameLoopRunner _loopRunner;
     private Engine? _engine;
     private bool PlayingStopRequested { get; set; }
     private bool PlayingRestartRequested { get; set; }
+
+    public PlayController(IGameLoopRunner loopRunner)
+    {
+        _loopRunner = loopRunner;
+    }
 
     public PlaySettings Settings
     {
@@ -144,28 +149,28 @@ internal class PlayController
         };
     }
 
-    public void UpdateInputKeys()
+    public void UpdateInputKeys(IKeyboardState keyboard)
     {
-        _keys.Gas = KeyboardUtils.IsKeyDown(Settings.Gas);
-        _keys.Brake = KeyboardUtils.IsKeyDown(Settings.Brake) || KeyboardUtils.IsKeyDown(Settings.BrakeAlias);
-        _keys.LeftVolt = KeyboardUtils.IsKeyDown(Settings.LeftVolt);
-        _keys.RightVolt = KeyboardUtils.IsKeyDown(Settings.RightVolt);
-        _keys.AloVolt = KeyboardUtils.IsKeyDown(Settings.AloVolt);
-        _keys.Turn = KeyboardUtils.IsKeyDown(Settings.Turn);
+        _keys.Gas = keyboard.IsKeyDown(Settings.Gas);
+        _keys.Brake = keyboard.IsKeyDown(Settings.Brake) || keyboard.IsKeyDown(Settings.BrakeAlias);
+        _keys.LeftVolt = keyboard.IsKeyDown(Settings.LeftVolt);
+        _keys.RightVolt = keyboard.IsKeyDown(Settings.RightVolt);
+        _keys.AloVolt = keyboard.IsKeyDown(Settings.AloVolt);
+        _keys.Turn = keyboard.IsKeyDown(Settings.Turn);
         if (_keys.IsAnyDown && Settings.FollowDriverOption == FollowDriverOption.WhenPressingKey &&
             CurrentBodyPart is null)
         {
             FollowDriver = true;
         }
-        if (KeyboardUtils.IsKeyDown(Settings.Save))
+        if (keyboard.IsKeyDown(Settings.Save))
         {
             _saveLoadRequest = SaveLoadRequest.Save;
         }
-        else if (KeyboardUtils.IsKeyDown(Settings.Load) && _savedDriverState != null)
+        else if (keyboard.IsKeyDown(Settings.Load) && _savedDriverState != null)
         {
             _saveLoadRequest = SaveLoadRequest.Load;
         }
-        else if (KeyboardUtils.IsKeyDown(Settings.EscAlias))
+        else if (keyboard.IsKeyDown(Settings.EscAlias))
         {
             PlayingStopRequested = true;
         }
@@ -230,7 +235,6 @@ internal class PlayController
         PlayerSelection = VectorMark.None;
         var rnd = new Random();
         var maxFpsVariation = Settings.PhysicsFps / 10;
-        var tcs = new TaskCompletionSource();
         var physElapsed = 0.0;
         int lastTakenApplesCount = -1;
 
@@ -240,12 +244,6 @@ internal class PlayController
             renderer.UpdateFadedObjects(lev, Driver.TakenApples);
             physElapsed = 0.0;
             _timer.Restart();
-        }
-
-        void StopLoop()
-        {
-            System.Windows.Forms.Application.Idle -= OnIdle;
-            tcs.TrySetResult();
         }
 
         void ProcessFrame()
@@ -357,29 +355,8 @@ internal class PlayController
             }
         }
 
-        void OnIdle(object? sender, EventArgs e)
-        {
-            while (NativeUtils.IsApplicationIdle())
-            {
-                if (PlayingStopRequested)
-                {
-                    StopLoop();
-                    return;
-                }
-
-                ProcessFrame();
-
-                if (PlayingStopRequested)
-                {
-                    StopLoop();
-                    return;
-                }
-            }
-        }
-
         _timer.Restart();
-        System.Windows.Forms.Application.Idle += OnIdle;
-        await tcs.Task;
+        await _loopRunner.Run(() => PlayingStopRequested, (Action)ProcessFrame);
 
         renderer.UpdateFadedObjects(lev, []);
         PlayState = PlayState.Stopped;

@@ -1,8 +1,7 @@
 using System;
 using System.Collections.Generic;
-using System.Windows.Forms;
-using Elmanager.Application;
 using Elmanager.Geometry;
+using Elmanager.LevelEditor.Input;
 using Elmanager.Rendering;
 
 namespace Elmanager.LevelEditor.Tools;
@@ -11,10 +10,12 @@ internal class PictureTool : ToolBase, IEditorTool
 {
     private GraphicElement? _currentElem;
     private PlacementAnchor _anchor = PlacementAnchor.Center;
+    private readonly IPictureDialogService _pictureDialog;
 
-    internal PictureTool(LevelEditorForm editor)
+    internal PictureTool(ILevelEditor editor)
         : base(editor)
     {
+        _pictureDialog = editor.PictureDialogService;
     }
 
     public void Activate()
@@ -31,26 +32,26 @@ internal class PictureTool : ToolBase, IEditorTool
 
     public LevVisualChange InActivate() => LevVisualChange.GraphicElements;
 
-    public LevVisualChange KeyDown(KeyEventArgs key)
+    public LevVisualChange KeyDown(EditorKeyEventArgs key)
     {
         switch (key.KeyCode)
         {
-            case Keys.Space:
+            case EditorKey.Space:
                 OpenDialog();
                 break;
-            case Keys.D1:
+            case EditorKey.D1:
                 _anchor = PlacementAnchor.Center;
                 break;
-            case Keys.D2:
+            case EditorKey.D2:
                 _anchor = PlacementAnchor.TopLeft;
                 break;
-            case Keys.D3:
+            case EditorKey.D3:
                 _anchor = PlacementAnchor.TopRight;
                 break;
-            case Keys.D4:
+            case EditorKey.D4:
                 _anchor = PlacementAnchor.BottomLeft;
                 break;
-            case Keys.D5:
+            case EditorKey.D5:
                 _anchor = PlacementAnchor.BottomRight;
                 break;
         }
@@ -58,11 +59,11 @@ internal class PictureTool : ToolBase, IEditorTool
         return LevVisualChange.GraphicElements;
     }
 
-    public LevVisualChange MouseDown(MouseEventArgs mouseData)
+    public LevVisualChange MouseDown(EditorMouseEventArgs mouseData)
     {
         switch (mouseData.Button)
         {
-            case MouseButtons.Left:
+            case EditorMouseButton.Left:
 
                 if (_currentElem is { })
                 {
@@ -74,7 +75,7 @@ internal class PictureTool : ToolBase, IEditorTool
                     OpenDialog();
 
                 break;
-            case MouseButtons.Right:
+            case EditorMouseButton.Right:
                 OpenDialog();
                 break;
         }
@@ -117,45 +118,20 @@ internal class PictureTool : ToolBase, IEditorTool
     public string GetHelp() =>
         "LMouse: insert new element; RMouse: select element type; 1-5: change placement anchor.";
 
-    private GraphicElement? OpenDialogNow(PictureForm picForm, bool setDefaultsAutomatically)
+    private GraphicElement? OpenDialogNow(bool setDefaultsAutomatically)
     {
-        if (Renderer.OpenGlLgr == null)
-        {
-            return null;
-        }
-        picForm.Location = Control.MousePosition;
-        picForm.AllowMultiple = false;
-        picForm.AutoTextureMode = false;
-        picForm.SetDefaultsAutomatically = setDefaultsAutomatically;
-        picForm.ShowDialog();
-        if (picForm.Selection is { } sel)
-        {
-            var clipping = sel.Clipping!.Value;
-            var distance = sel.Distance!.Value;
-            return sel switch
-            {
-                ImageSelection.TextureSelection t => GraphicElement.Text(clipping, distance,
-                    CurrentPos, Renderer.OpenGlLgr.DrawableImageFromLgrImage(t.Txt),
-                    Renderer.OpenGlLgr.DrawableImageFromLgrImage(t.Mask)),
-                ImageSelection.PictureSelection p => GraphicElement.Pic(Renderer.OpenGlLgr.DrawableImageFromLgrImage(p.Pic),
-                    CurrentPos, distance, clipping),
-                _ => throw new Exception("Unexpected")
-            };
-        }
-
-        return null;
+        return _pictureDialog.ShowPictureDialog(Renderer, CurrentPos, _currentElem, setDefaultsAutomatically);
     }
 
     private void OpenDialog()
     {
-        var picForm = new PictureForm(LevEditor.EditorLgr!, _currentElem);
         if (_currentElem is null)
         {
-            _currentElem = OpenDialogNow(picForm, setDefaultsAutomatically: true);
+            _currentElem = OpenDialogNow(setDefaultsAutomatically: true);
         }
         else
         {
-            var newElem = OpenDialogNow(picForm, setDefaultsAutomatically: Global.AppSettings.LevelEditor.AlwaysSetDefaultsInPictureTool);
+            var newElem = OpenDialogNow(setDefaultsAutomatically: LevEditor.Settings.AlwaysSetDefaultsInPictureTool);
             _currentElem = newElem ?? _currentElem;
         }
     }

@@ -1,14 +1,8 @@
-using System.Collections.Generic;
 using System.Drawing;
-using System.Windows.Forms;
-using System.Windows.Input;
-using Elmanager.Application;
 using Elmanager.Geometry;
 using Elmanager.Lev;
+using Elmanager.LevelEditor.Input;
 using Elmanager.Rendering;
-using Elmanager.Utilities;
-using KeyEventArgs = System.Windows.Forms.KeyEventArgs;
-using MouseEventArgs = System.Windows.Forms.MouseEventArgs;
 
 namespace Elmanager.LevelEditor.Tools;
 
@@ -22,7 +16,7 @@ internal class PipeTool : ToolBase, IEditorTool
     private int _appleAmount = 20;
     private double _appleDistance = 3.0;
 
-    internal PipeTool(LevelEditorForm editor)
+    internal PipeTool(ILevelEditor editor)
         : base(editor)
     {
     }
@@ -31,7 +25,7 @@ internal class PipeTool : ToolBase, IEditorTool
 
     public void Activate()
     {
-        _pipeRadius = Global.AppSettings.LevelEditor.PipeRadius;
+        _pipeRadius = LevEditor.Settings.PipeRadius;
     }
 
     public void ExtraRendering()
@@ -55,20 +49,20 @@ internal class PipeTool : ToolBase, IEditorTool
     public LevVisualChange InActivate()
     {
         _pipeSpec = null;
-        Global.AppSettings.LevelEditor.PipeRadius = _pipeRadius;
+        LevEditor.Settings.PipeRadius = _pipeRadius;
         return LevVisualChange.Ground | LevVisualChange.Apples;
     }
 
-    public LevVisualChange KeyDown(KeyEventArgs key)
+    public LevVisualChange KeyDown(EditorKeyEventArgs key)
     {
         double radiusStep = PipeStep;
         switch (key.KeyCode)
         {
-            case KeyUtils.IncreaseBig:
+            case EditorKeyUtils.IncreaseBig:
                 radiusStep *= 10;
-                goto case KeyUtils.Increase;
-            case KeyUtils.Increase:
-                if (Keyboard.IsKeyDown(Key.LeftCtrl))
+                goto case EditorKeyUtils.Increase;
+            case EditorKeyUtils.Increase:
+                if (Keyboard.IsKeyDown(ModifierKey.LeftCtrl))
                 {
                     switch (_pipeMode)
                     {
@@ -87,11 +81,11 @@ internal class PipeTool : ToolBase, IEditorTool
                     _pipeRadius += radiusStep;
 
                 break;
-            case KeyUtils.DecreaseBig:
+            case EditorKeyUtils.DecreaseBig:
                 radiusStep *= 10;
-                goto case KeyUtils.Decrease;
-            case KeyUtils.Decrease:
-                if (Keyboard.IsKeyDown(Key.LeftCtrl))
+                goto case EditorKeyUtils.Decrease;
+            case EditorKeyUtils.Decrease:
+                if (Keyboard.IsKeyDown(ModifierKey.LeftCtrl))
                 {
                     switch (_pipeMode)
                     {
@@ -109,7 +103,7 @@ internal class PipeTool : ToolBase, IEditorTool
                 else if (_pipeRadius > radiusStep) _pipeRadius -= radiusStep;
 
                 break;
-            case Keys.Space:
+            case EditorKey.Space:
                 _pipeMode = _pipeMode switch
                 {
                     PipeMode.NoApples => PipeMode.ApplesDistance,
@@ -132,11 +126,11 @@ internal class PipeTool : ToolBase, IEditorTool
             _pipeSpec = new PipeSpec(_pipeSpec.Pipeline, _pipeRadius, _pipeMode, _appleDistance, _appleAmount);
     }
 
-    public LevVisualChange MouseDown(MouseEventArgs mouseData)
+    public LevVisualChange MouseDown(EditorMouseEventArgs mouseData)
     {
         switch (mouseData.Button)
         {
-            case MouseButtons.Left:
+            case EditorMouseButton.Left:
                 if (_pipeSpec is { })
                     _pipeSpec.Pipeline.Add(CurrentPos);
                 else
@@ -148,7 +142,7 @@ internal class PipeTool : ToolBase, IEditorTool
                 }
 
                 break;
-            case MouseButtons.Right:
+            case EditorMouseButton.Right:
                 if (_pipeSpec is { })
                 {
                     _pipeSpec.Pipeline.RemoveLastVertex();

@@ -3,11 +3,11 @@ using System.Collections.Generic;
 using System.Globalization;
 using System.Linq;
 using System.Windows;
-using System.Windows.Forms;
 using System.Windows.Markup;
 using System.Windows.Media;
 using Elmanager.Geometry;
 using Elmanager.Lev;
+using Elmanager.LevelEditor.Input;
 using Elmanager.Rendering;
 using NetTopologySuite.Geometries;
 using Brushes = System.Windows.Media.Brushes;
@@ -39,11 +39,11 @@ internal class TextTool : ToolBase, IEditorTool
     {
     }
 
-    public LevVisualChange MouseDown(MouseEventArgs mouseData)
+    public LevVisualChange MouseDown(EditorMouseEventArgs mouseData)
     {
         switch (mouseData.Button)
         {
-            case MouseButtons.Left:
+            case EditorMouseButton.Left:
                 _currentTextPolygons = new List<Polygon>();
                 LevEditor.RedrawScene();
                 var result = TextToolForm.ShowDefault(_currentOptions, HandleChange);
@@ -65,15 +65,11 @@ internal class TextTool : ToolBase, IEditorTool
 
                 LevEditor.RedrawScene();
                 break;
-            case MouseButtons.None:
+            case EditorMouseButton.None:
                 break;
-            case MouseButtons.Right:
+            case EditorMouseButton.Right:
                 break;
-            case MouseButtons.Middle:
-                break;
-            case MouseButtons.XButton1:
-                break;
-            case MouseButtons.XButton2:
+            case EditorMouseButton.Middle:
                 break;
             default:
                 throw new ArgumentOutOfRangeException();
@@ -91,7 +87,7 @@ internal class TextTool : ToolBase, IEditorTool
     {
     }
 
-    public LevVisualChange KeyDown(KeyEventArgs key)
+    public LevVisualChange KeyDown(EditorKeyEventArgs key)
     {
         return LevVisualChange.Nothing;
     }

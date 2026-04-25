@@ -1,8 +1,8 @@
 using System.Collections.Generic;
 using System.Drawing;
 using System.Linq;
-using System.Windows.Forms;
 using Elmanager.Geometry;
+using Elmanager.LevelEditor.Input;
 using Elmanager.Rendering;
 using NetTopologySuite.Geometries;
 using Polygon = Elmanager.Lev.Polygon;
@@ -13,7 +13,7 @@ internal class CutConnectTool : ToolBase, IEditorTool
 {
     private Vector _start;
 
-    internal CutConnectTool(LevelEditorForm editor) : base(editor)
+    internal CutConnectTool(ILevelEditor editor) : base(editor)
     {
     }
 
@@ -35,16 +35,16 @@ internal class CutConnectTool : ToolBase, IEditorTool
         return LevVisualChange.Nothing;
     }
 
-    public LevVisualChange KeyDown(KeyEventArgs key)
+    public LevVisualChange KeyDown(EditorKeyEventArgs key)
     {
         return LevVisualChange.Nothing;
     }
 
-    public LevVisualChange MouseDown(MouseEventArgs mouseData)
+    public LevVisualChange MouseDown(EditorMouseEventArgs mouseData)
     {
         switch (mouseData.Button)
         {
-            case MouseButtons.Left:
+            case EditorMouseButton.Left:
                 AdjustForGrid(ref CurrentPos);
                 if (!StartSelected)
                 {
@@ -58,7 +58,7 @@ internal class CutConnectTool : ToolBase, IEditorTool
                 }
 
                 break;
-            case MouseButtons.Right:
+            case EditorMouseButton.Right:
                 StartSelected = false;
                 break;
         }

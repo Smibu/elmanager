@@ -1,6 +1,8 @@
+using Elmanager.LevelEditor.Tools;
+
 namespace Elmanager.LevelEditor;
 
-internal class SelectionFilter(LevelEditorForm levelEditorForm)
+internal class SelectionFilter(ILevelEditor levelEditor) : ISelectionFilter
 {
     public bool AppleFilter { get; set; } = true;
     public bool FlowerFilter { get; set; } = true;
@@ -11,33 +13,33 @@ internal class SelectionFilter(LevelEditorForm levelEditorForm)
     public bool PictureFilter { get; set; } = true;
     public bool TextureFilter { get; set; } = true;
 
-    internal bool EffectiveAppleFilter => AppleFilter &&
-                                          (levelEditorForm.ShowObjectFramesButton.Checked ||
-                                           levelEditorForm.ShowObjectsButton.Checked);
+    public bool EffectiveAppleFilter => AppleFilter &&
+                                          (levelEditor.ObjectFramesVisible ||
+                                           levelEditor.ObjectsVisible);
 
-    internal bool EffectiveKillerFilter => KillerFilter &&
-                                           (levelEditorForm.ShowObjectFramesButton.Checked ||
-                                            levelEditorForm.ShowObjectsButton.Checked);
+    public bool EffectiveKillerFilter => KillerFilter &&
+                                           (levelEditor.ObjectFramesVisible ||
+                                            levelEditor.ObjectsVisible);
 
-    internal bool EffectiveFlowerFilter => FlowerFilter &&
-                                           (levelEditorForm.ShowObjectFramesButton.Checked ||
-                                            levelEditorForm.ShowObjectsButton.Checked);
+    public bool EffectiveFlowerFilter => FlowerFilter &&
+                                           (levelEditor.ObjectFramesVisible ||
+                                            levelEditor.ObjectsVisible);
 
-    internal bool EffectiveStartFilter => StartFilter &&
-                                           (levelEditorForm.ShowObjectFramesButton.Checked ||
-                                            levelEditorForm.ShowObjectsButton.Checked);
+    public bool EffectiveStartFilter => StartFilter &&
+                                           (levelEditor.ObjectFramesVisible ||
+                                            levelEditor.ObjectsVisible);
 
-    internal bool EffectiveGrassFilter => GrassFilter &&
-                                          (levelEditorForm.ShowGrassEdgesButton.Checked ||
-                                           levelEditorForm.showGrassButton.Checked);
+    public bool EffectiveGrassFilter => GrassFilter &&
+                                          (levelEditor.GrassEdgesVisible ||
+                                           levelEditor.GrassVisible);
 
-    internal bool EffectiveGroundFilter => GroundFilter &&
-                                           (levelEditorForm.ShowGroundEdgesButton.Checked ||
-                                            levelEditorForm.ShowGroundButton.Checked);
+    public bool EffectiveGroundFilter => GroundFilter &&
+                                           (levelEditor.GroundEdgesVisible ||
+                                            levelEditor.GroundVisible);
 
-    internal bool EffectiveTextureFilter => TextureFilter &&
-                                            (levelEditorForm.ShowTextureFramesButton.Checked || levelEditorForm.ShowTexturesButton.Checked);
+    public bool EffectiveTextureFilter => TextureFilter &&
+                                            (levelEditor.TextureFramesVisible || levelEditor.TexturesVisible);
 
-    internal bool EffectivePictureFilter => PictureFilter &&
-                                            (levelEditorForm.ShowPictureFramesButton.Checked || levelEditorForm.ShowPicturesButton.Checked);
+    public bool EffectivePictureFilter => PictureFilter &&
+                                            (levelEditor.PictureFramesVisible || levelEditor.PicturesVisible);
 }

@@ -1,30 +1,30 @@
 using System.Text.Json.Serialization;
-using System.Windows.Forms;
+using Elmanager.LevelEditor.Input;
 
 namespace Elmanager.LevelEditor.Playing;
 
-internal class PlaySettings
+public class PlaySettings
 {
     [JsonPropertyName("Gas")]
-    public Keys Gas { get; set; } = Keys.Up;
+    public EditorKey Gas { get; set; } = EditorKey.Up;
     [JsonPropertyName("Brake")]
-    public Keys Brake { get; set; } = Keys.Down;
+    public EditorKey Brake { get; set; } = EditorKey.Down;
     [JsonPropertyName("BrakeAlias")]
-    public Keys BrakeAlias { get; set; } = Keys.X;
+    public EditorKey BrakeAlias { get; set; } = EditorKey.X;
     [JsonPropertyName("LeftVolt")]
-    public Keys LeftVolt { get; set; } = Keys.Left;
+    public EditorKey LeftVolt { get; set; } = EditorKey.Left;
     [JsonPropertyName("RightVolt")]
-    public Keys RightVolt { get; set; } = Keys.Right;
+    public EditorKey RightVolt { get; set; } = EditorKey.Right;
     [JsonPropertyName("AloVolt")]
-    public Keys AloVolt { get; set; } = Keys.Insert;
+    public EditorKey AloVolt { get; set; } = EditorKey.Insert;
     [JsonPropertyName("Turn")]
-    public Keys Turn { get; set; } = Keys.Space;
+    public EditorKey Turn { get; set; } = EditorKey.Space;
     [JsonPropertyName("EscAlias")]
-    public Keys EscAlias { get; set; } = Keys.Escape;
+    public EditorKey EscAlias { get; set; } = EditorKey.Escape;
     [JsonPropertyName("Save")]
-    public Keys Save { get; set; } = Keys.LShiftKey;
+    public EditorKey Save { get; set; } = EditorKey.LShiftKey;
     [JsonPropertyName("Load")]
-    public Keys Load { get; set; } = Keys.RShiftKey;
+    public EditorKey Load { get; set; } = EditorKey.RShiftKey;
     [JsonPropertyName("DyingBehavior")]
     public DyingBehavior DyingBehavior { get; set; } = DyingBehavior.StopPlaying;
     [JsonPropertyName("FollowDriverOption")]

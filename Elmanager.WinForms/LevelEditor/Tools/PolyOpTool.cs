@@ -1,11 +1,10 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Windows.Forms;
 using Elmanager.Geometry;
 using Elmanager.Lev;
+using Elmanager.LevelEditor.Input;
 using Elmanager.Rendering;
-using Elmanager.UI;
 using NetTopologySuite.Geometries;
 using NetTopologySuite.Operation.Buffer;
 using EndCapStyle = NetTopologySuite.Operation.Buffer.EndCapStyle;
@@ -20,7 +19,7 @@ internal class PolyOpTool : ToolBase, IEditorTool
     private PolygonOperationType _currentOpType = PolygonOperationType.Union;
     private Polygon? _firstPolygon;
 
-    internal PolyOpTool(LevelEditorForm editor)
+    internal PolyOpTool(ILevelEditor editor)
         : base(editor)
     {
     }
@@ -68,9 +67,9 @@ internal class PolyOpTool : ToolBase, IEditorTool
         return LevVisualChange.Nothing;
     }
 
-    public LevVisualChange KeyDown(KeyEventArgs key)
+    public LevVisualChange KeyDown(EditorKeyEventArgs key)
     {
-        if (key.KeyCode == Keys.Space && !FirstSelected)
+        if (key.KeyCode == EditorKey.Space && !FirstSelected)
         {
             switch (_currentOpType)
             {
@@ -88,11 +87,11 @@ internal class PolyOpTool : ToolBase, IEditorTool
         return LevVisualChange.Nothing;
     }
 
-    public LevVisualChange MouseDown(MouseEventArgs mouseData)
+    public LevVisualChange MouseDown(EditorMouseEventArgs mouseData)
     {
         switch (mouseData.Button)
         {
-            case MouseButtons.Left:
+            case EditorMouseButton.Left:
                 var info = GetNearestVertexInfo(CurrentPos);
                 if (_firstPolygon is { })
                 {
@@ -104,7 +103,7 @@ internal class PolyOpTool : ToolBase, IEditorTool
                             try
                             {
                                 Lev.Polygons.AddRange(
-                                    v.Polygon.PolygonOperationWith(_firstPolygon, _currentOpType, Lev.GroundBounds, LevEditor.Settings.RenderingSettings.GrassZoom));
+                                    v.Polygon.PolygonOperationWith(_firstPolygon, _currentOpType, Lev.GroundBounds, LevEditor.RenderingSettings.GrassZoom));
                                 Lev.Polygons.RemoveAll(p => p.Vertices.Count < 3);
                                 Lev.Polygons.Remove(_firstPolygon);
                                 Lev.Polygons.Remove(v.Polygon);
@@ -112,7 +111,7 @@ internal class PolyOpTool : ToolBase, IEditorTool
                             }
                             catch (PolygonException e)
                             {
-                                UiUtils.ShowError(e.Message);
+                                LevEditor.ShowError(e.Message);
                             }
 
                             _firstPolygon = null;
@@ -130,7 +129,7 @@ internal class PolyOpTool : ToolBase, IEditorTool
                 }
 
                 break;
-            case MouseButtons.Right:
+            case EditorMouseButton.Right:
                 if (_firstPolygon is { })
                 {
                     _firstPolygon = null;
@@ -168,7 +167,7 @@ internal class PolyOpTool : ToolBase, IEditorTool
     {
     }
 
-    public static bool FixSelfIntersections(List<Polygon> polygons)
+    public bool FixSelfIntersections(List<Polygon> polygons)
     {
         var originalPolys = polygons.GetSelectedPolygons().ToList();
         switch (originalPolys.Count)
@@ -176,14 +175,14 @@ internal class PolyOpTool : ToolBase, IEditorTool
             case 0:
                 return false;
             case > 1:
-                UiUtils.ShowError("Only one polygon must be selected.", "Error in fixing self-intersections");
+                LevEditor.ShowError("Only one polygon must be selected.", "Error in fixing self-intersections");
                 return false;
         }
 
         var selection = polygons.GetSelectedPolygonsAsMultiPolygon();
         if (selection.IsValid)
         {
-            UiUtils.ShowError("The selected polygon has no self-intersections.", "Error in fixing self-intersections");
+            LevEditor.ShowError("The selected polygon has no self-intersections.", "Error in fixing self-intersections");
             return false;
         }
         var fixedPolys = selection.Buffer(0);
@@ -200,7 +199,7 @@ internal class PolyOpTool : ToolBase, IEditorTool
                 polygons.AddRange(polygon.ToElmaPolygons());
                 break;
             default:
-                UiUtils.ShowError("Failed to fix selection.", "Error in fixing self-intersections");
+                LevEditor.ShowError("Failed to fix selection.", "Error in fixing self-intersections");
                 return false;
         }
 
@@ -208,7 +207,7 @@ internal class PolyOpTool : ToolBase, IEditorTool
         return true;
     }
 
-    public static bool PolyOpSelected(PolygonOperationType opType, List<Polygon> polygons)
+    public bool PolyOpSelected(PolygonOperationType opType, List<Polygon> polygons)
     {
         var polys = polygons.GetSelectedPolygons().ToList();
         NetGeometry SymDiff(NetGeometry g, NetGeometry p) => p.SymmetricDifference(g);
@@ -252,7 +251,7 @@ internal class PolyOpTool : ToolBase, IEditorTool
         }
         catch (TopologyException)
         {
-            UiUtils.ShowError(
+            LevEditor.ShowError(
                 "Could not perform this operation. Make sure the polygons don't have self-intersections.");
             return false;
         }
@@ -277,7 +276,7 @@ internal class PolyOpTool : ToolBase, IEditorTool
 
         if (!polygons.Any())
         {
-            UiUtils.ShowError("The level would become empty after this operation.");
+            LevEditor.ShowError("The level would become empty after this operation.");
             polygons.AddRange(polys);
             polygons.AddRange(touching);
         }

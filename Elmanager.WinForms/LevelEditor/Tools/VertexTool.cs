@@ -1,12 +1,8 @@
 using System.Drawing;
-using System.Windows.Forms;
-using System.Windows.Input;
-using Elmanager.Application;
 using Elmanager.Geometry;
 using Elmanager.Lev;
+using Elmanager.LevelEditor.Input;
 using Elmanager.Rendering;
-using KeyEventArgs = System.Windows.Forms.KeyEventArgs;
-using MouseEventArgs = System.Windows.Forms.MouseEventArgs;
 
 namespace Elmanager.LevelEditor.Tools;
 
@@ -16,7 +12,7 @@ internal class VertexTool : ToolBase, IEditorTool
     private NearestVertexInfo.EdgeInfo? _nearestVertexInfo;
     private Vector? _rectangleStart;
 
-    internal VertexTool(LevelEditorForm editor)
+    internal VertexTool(ILevelEditor editor)
         : base(editor)
     {
     }
@@ -48,7 +44,7 @@ internal class VertexTool : ToolBase, IEditorTool
         }
         else
         {
-            if (Global.AppSettings.LevelEditor.UseHighlight && _nearestVertexInfo is { } v)
+            if (LevEditor.Settings.UseHighlight && _nearestVertexInfo is { } v)
             {
                 Renderer.DrawLine(v.Polygon[v.StartIndex], v.Polygon[v.EndIndex],
                     Color.Yellow);
@@ -62,31 +58,31 @@ internal class VertexTool : ToolBase, IEditorTool
         return LevVisualChange.Nothing;
     }
 
-    public LevVisualChange KeyDown(KeyEventArgs key)
+    public LevVisualChange KeyDown(EditorKeyEventArgs key)
     {
-        if (key.KeyCode == Keys.Space && _currentPolygon is not null)
+        if (key.KeyCode == EditorKey.Space && _currentPolygon is not null)
         {
             _currentPolygon.RemoveLastVertex();
             _currentPolygon.ChangeOrientation();
             _currentPolygon.Add(CurrentPos);
-            _currentPolygon.UpdateGrassSlopeInfo(Lev.GroundBounds, LevEditor.Settings.RenderingSettings.GrassZoom);
+            _currentPolygon.UpdateGrassSlopeInfo(Lev.GroundBounds, LevEditor.RenderingSettings.GrassZoom);
         }
 
         return LevVisualChange.Nothing;
     }
 
-    public LevVisualChange MouseDown(MouseEventArgs mouseData)
+    public LevVisualChange MouseDown(EditorMouseEventArgs mouseData)
     {
         switch (mouseData.Button)
         {
-            case MouseButtons.Left:
+            case EditorMouseButton.Left:
                 var nearestIndex = GetNearestSegmentInfo(CurrentPos);
                 AdjustForGrid(ref CurrentPos);
                 if (_rectangleStart is { } r)
                 {
                     var rect = Polygon.Rectangle(r, CurrentPos);
                     Lev.Polygons.Add(rect);
-                    rect.UpdateGrassSlopeInfo(Lev.GroundBounds, LevEditor.Settings.RenderingSettings.GrassZoom);
+                    rect.UpdateGrassSlopeInfo(Lev.GroundBounds, LevEditor.RenderingSettings.GrassZoom);
                     LevEditor.SetModified(LevModification.Ground);
                     _rectangleStart = null;
                     return LevVisualChange.Nothing;
@@ -94,7 +90,7 @@ internal class VertexTool : ToolBase, IEditorTool
 
                 if (_currentPolygon is null)
                 {
-                    if (Keyboard.IsKeyDown(Key.LeftShift))
+                    if (Keyboard.IsKeyDown(ModifierKey.LeftShift))
                     {
                         _rectangleStart = CurrentPos;
                     }
@@ -118,12 +114,12 @@ internal class VertexTool : ToolBase, IEditorTool
                     if (_currentPolygon.Vertices.Count == 3)
                     {
                         Lev.Polygons.Add(_currentPolygon);
-                        _currentPolygon.UpdateGrassSlopeInfo(Lev.GroundBounds, LevEditor.Settings.RenderingSettings.GrassZoom);
+                        _currentPolygon.UpdateGrassSlopeInfo(Lev.GroundBounds, LevEditor.RenderingSettings.GrassZoom);
                     }
                 }
 
                 break;
-            case MouseButtons.Right:
+            case EditorMouseButton.Right:
                 FinishVertexCreation();
                 break;
         }
@@ -139,7 +135,7 @@ internal class VertexTool : ToolBase, IEditorTool
             _currentPolygon.Vertices[^1] = CurrentPos;
             if (_currentPolygon.Vertices.Count > 2)
             {
-                _currentPolygon.UpdateGrassSlopeInfo(Lev.GroundBounds, LevEditor.Settings.RenderingSettings.GrassZoom);
+                _currentPolygon.UpdateGrassSlopeInfo(Lev.GroundBounds, LevEditor.RenderingSettings.GrassZoom);
                 return _currentPolygon.IsGrass ? LevVisualChange.Grass : LevVisualChange.Ground;
             }
         }
@@ -178,7 +174,7 @@ internal class VertexTool : ToolBase, IEditorTool
             _currentPolygon.RemoveLastVertex();
             if (_currentPolygon.Vertices.Count > 2)
             {
-                _currentPolygon.UpdateGrassSlopeInfo(Lev.GroundBounds, LevEditor.Settings.RenderingSettings.GrassZoom);
+                _currentPolygon.UpdateGrassSlopeInfo(Lev.GroundBounds, LevEditor.RenderingSettings.GrassZoom);
                 LevEditor.SetModified(_currentPolygon.IsGrass ? LevModification.Grass : LevModification.Ground);
             }
             else

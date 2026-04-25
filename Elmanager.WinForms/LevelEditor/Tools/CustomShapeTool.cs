@@ -1,17 +1,11 @@
 using System;
 using System.Collections.Generic;
-using System.Drawing;
-using System.IO;
 using System.Linq;
-using System.Windows.Forms;
-using Elmanager.Application;
 using Elmanager.Geometry;
-using Elmanager.IO;
 using Elmanager.Lev;
+using Elmanager.LevelEditor.Input;
 using Elmanager.LevelEditor.Shapes;
 using Elmanager.Rendering;
-using Elmanager.UI;
-using Path = System.IO.Path;
 
 namespace Elmanager.LevelEditor.Tools;
 
@@ -29,9 +23,12 @@ internal class CustomShapeTool : ToolBase, IEditorTool
     private ShapeMirrorOption _selectedMirrorOption = ShapeMirrorOption.None;
     private PlacementAnchor _anchor = PlacementAnchor.Center;
 
-    internal CustomShapeTool(LevelEditorForm editorForm) : base(editorForm)
+    internal CustomShapeTool(ILevelEditor editorForm) : base(editorForm)
     {
+        _customShapeService = editorForm.CustomShapeService;
     }
+
+    private readonly ICustomShapeService _customShapeService;
 
     public void ExtraRendering()
     {
@@ -50,36 +47,7 @@ internal class CustomShapeTool : ToolBase, IEditorTool
 
     private void OpenDialog()
     {
-        // Validate that Shapes exist
-        string shapesDirectory = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "sle_shapes");
-        if (!Directory.Exists(shapesDirectory))
-        {
-            UiUtils.ShowError("The 'sle_shapes' folder does not exist.\nSelect + right-click in editor to save selection as a new shape.",
-                "Shapes directory not found", MessageBoxIcon.Exclamation);
-            return;
-        }
-
-        // Check each subdirectory for .lev files
-        var subdirectories = Directory.GetDirectories(shapesDirectory);
-        bool hasLevFiles = false;
-
-        foreach (var subdirectory in subdirectories)
-        {
-            if (Directory.GetFiles(subdirectory, "*.lev", SearchOption.TopDirectoryOnly).Length > 0)
-            {
-                hasLevFiles = true;
-                break;
-            }
-        }
-
-        if (!hasLevFiles)
-        {
-            UiUtils.ShowError("No .lev files found in any subdirectory of 'sle_shapes'.\nSelect + right-click in editor to save selection as a new shape.",
-                "No shapes found", MessageBoxIcon.Information);
-            return;
-        }
-
-        ElmaFileObject<SleShape>? shape = ShapeSelectionForm.ShowForm(LevEditor.EditorControl, LevEditor.Renderer, _shapeSelection?.Shape.File.Path);
+        var shape = _customShapeService.OpenShapeDialog(_shapeSelection?.Shape.File.Path);
         if (shape != null)
         {
             shape.Obj.Level.UpdateImages(LevEditor.Renderer.OpenGlLgr?.DrawableImages ?? new Dictionary<string, DrawableImage>());
@@ -124,7 +92,7 @@ internal class CustomShapeTool : ToolBase, IEditorTool
         transformationMatrix = transformationMatrix * translationMatrix;
 
         level.Polygons = originalLevel.Polygons.Select(p => p.ApplyTransformation(transformationMatrix)).ToList();
-        level.Polygons.ForEach(polygon => polygon.UpdateGrassSlopeInfo(Lev.GroundBounds, LevEditor.Settings.RenderingSettings.GrassZoom));
+        level.Polygons.ForEach(polygon => polygon.UpdateGrassSlopeInfo(Lev.GroundBounds, LevEditor.RenderingSettings.GrassZoom));
 
         level.Objects = originalLevel.Objects.Select(o =>
         {
@@ -148,13 +116,13 @@ internal class CustomShapeTool : ToolBase, IEditorTool
         return LevVisualChange.All;
     }
 
-    public LevVisualChange MouseDown(MouseEventArgs mouseData)
+    public LevVisualChange MouseDown(EditorMouseEventArgs mouseData)
     {
-        if (mouseData.Button == MouseButtons.Left)
+        if (mouseData.Button == EditorMouseButton.Left)
         {
             HandleLeftMouseDown();
         }
-        else if (mouseData.Button == MouseButtons.Right)
+        else if (mouseData.Button == EditorMouseButton.Right)
         {
             _initialMousePosition = CurrentPos;
             OpenDialog();
@@ -198,40 +166,40 @@ internal class CustomShapeTool : ToolBase, IEditorTool
         return LevVisualChange.Nothing;
     }
 
-    public LevVisualChange KeyDown(KeyEventArgs e)
+    public LevVisualChange KeyDown(EditorKeyEventArgs e)
     {
         switch (e.KeyCode)
         {
-            case Keys.D0:
+            case EditorKey.D0:
                 _scalingFactor = 1.0;
                 _rotationAngle = 0.0;
                 _selectedMirrorOption = ShapeMirrorOption.None;
                 _anchor = PlacementAnchor.Center;
                 break;
-            case Keys.D1:
+            case EditorKey.D1:
                 _anchor = PlacementAnchor.Center;
                 break;
-            case Keys.D2:
+            case EditorKey.D2:
                 _anchor = PlacementAnchor.TopLeft;
                 break;
-            case Keys.D3:
+            case EditorKey.D3:
                 _anchor = PlacementAnchor.TopRight;
                 break;
-            case Keys.D4:
+            case EditorKey.D4:
                 _anchor = PlacementAnchor.BottomLeft;
                 break;
-            case Keys.D5:
+            case EditorKey.D5:
                 _anchor = PlacementAnchor.BottomRight;
                 break;
-            case Keys.Oemplus:
-            case Keys.Add:
+            case EditorKey.OemPlus:
+            case EditorKey.Add:
                 _scalingFactor += 0.1;
                 break;
-            case Keys.OemMinus:
-            case Keys.Subtract:
+            case EditorKey.OemMinus:
+            case EditorKey.Subtract:
                 _scalingFactor = Math.Max(0.1, _scalingFactor - 0.1);
                 break;
-            case Keys.D6:
+            case EditorKey.D6:
                 _selectedMirrorOption = _selectedMirrorOption switch
                 {
                     ShapeMirrorOption.None => ShapeMirrorOption.Horizontal,
@@ -241,13 +209,13 @@ internal class CustomShapeTool : ToolBase, IEditorTool
                     _ => ShapeMirrorOption.None
                 };
                 break;
-            case Keys.D7:
+            case EditorKey.D7:
                 _rotationAngle -= 5.0; // Rotate left by 5 degrees
                 break;
-            case Keys.D8:
+            case EditorKey.D8:
                 _rotationAngle = 0.0; // Reset rotation
                 break;
-            case Keys.D9:
+            case EditorKey.D9:
                 _rotationAngle += 5.0; // Rotate right by 5 degrees
                 break;
         }
@@ -256,7 +224,7 @@ internal class CustomShapeTool : ToolBase, IEditorTool
         return LevVisualChange.All;
     }
 
-    public void KeyUp(KeyEventArgs e) { }
+    public void KeyUp(EditorKeyEventArgs e) { }
 
     private Vector GetAnchorOffset(Vector min, Vector max) =>
         _anchor switch
@@ -296,108 +264,15 @@ internal class CustomShapeTool : ToolBase, IEditorTool
         Lev.Polygons.AddRange(level.Polygons);
         Lev.Objects.AddRange(level.Objects);
         Lev.GraphicElements.AddRange(level.GraphicElements);
-        Lev.UpdateGrass(Global.AppSettings.LevelEditor.RenderingSettings.GrassZoom);
+        Lev.UpdateGrass(LevEditor.RenderingSettings.GrassZoom);
         Lev.UpdateImages(LevEditor.Renderer.OpenGlLgr?.DrawableImages ?? new Dictionary<string, DrawableImage>());
         LevEditor.SetModified(LevModification.All);
     }
 
     public void SaveShape()
     {
-        var selectedPolygons = LevEditor.Lev.Polygons.Where(p => p.Vertices.Any(v => v.Mark == VectorMark.Selected)).ToList();
-        var selectedObjects = LevEditor.Lev.Objects.Where(o => o.Position.Mark == VectorMark.Selected && o.Type != ObjectType.Start).ToList();
-        var selectedGraphicElements = LevEditor.Lev.GraphicElements.Where(t => t.Position.Mark == VectorMark.Selected).ToList();
-
-        if (selectedPolygons.Count == 0 && selectedObjects.Count == 0 && selectedGraphicElements.Count == 0)
-        {
-            return;
-        }
-
-        bool allGrassSelected = selectedPolygons.All(pol => pol.IsGrass);
-        if (allGrassSelected)
-        {
-            MessageBox.Show(@"All selected polygons are grass. Custom shapes require at least 1 ground polygon!",
-                    @"Warning", MessageBoxButtons.OK, MessageBoxIcon.Warning);
-            return;
-        }
-
-        string shapesDirectory = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "sle_shapes");
-
-        if (!Directory.Exists(shapesDirectory))
-        {
-            try
-            {
-                Directory.CreateDirectory(shapesDirectory);
-            }
-            catch (Exception ex)
-            {
-                UiUtils.ShowError("Error creating directory: " + shapesDirectory + "\n\n" + ex.Message, "Error", MessageBoxIcon.Error);
-                return;
-            }
-        }
-
-        if (Directory.GetDirectories(shapesDirectory).Length == 0)
-        {
-            string uncategorizedDirName = Path.Combine(shapesDirectory, "Uncategorized");
-
-            try
-            {
-                Directory.CreateDirectory(uncategorizedDirName);
-            }
-            catch (Exception ex)
-            {
-                UiUtils.ShowError("Error creating directory: " + uncategorizedDirName + "\n\n" + ex.Message, "Error", MessageBoxIcon.Error);
-                return;
-            }
-
-            _lastUsedShapeFolder = uncategorizedDirName;
-        }
-
-        if (_lastUsedShapeFolder != null && !Directory.Exists(_lastUsedShapeFolder))
-        {
-            _lastUsedShapeFolder = null;
-        }
-
-        LevEditor.SaveShapeDialog.FileName = "Type Shape Title Here";
-        LevEditor.SaveShapeDialog.InitialDirectory = _lastUsedShapeFolder ?? shapesDirectory;
-
-        var result = LevEditor.SaveShapeDialog.ShowDialog();
-
-        if (result != DialogResult.OK)
-        {
-            return;
-        }
-
-        string fullShapesDirectory = Path.GetFullPath(shapesDirectory);
-        string fullFilePath = Path.GetFullPath(LevEditor.SaveShapeDialog.FileName);
-
-        if (!fullFilePath.StartsWith(fullShapesDirectory, StringComparison.OrdinalIgnoreCase) ||
-            Path.GetDirectoryName(fullFilePath)!.Equals(fullShapesDirectory, StringComparison.OrdinalIgnoreCase))
-        {
-            UiUtils.ShowError("Shapes must be saved within a subfolder of the 'sle_shapes' directory.", "Error", MessageBoxIcon.Error);
-            return;
-        }
-
-        _lastUsedShapeFolder = Path.GetDirectoryName(fullFilePath);
-
-        var clonedPolygons = selectedPolygons.Select(p => p.Clone()).ToList();
-        var clonedObjects = selectedObjects.Select(o => o.Clone()).ToList();
-        var clonedGraphicElements = selectedGraphicElements.Select(ge => ge with { Position = ge.Position.Clone() }).ToList();
-
-        var tempLevel = new Level();
-        tempLevel.Polygons.AddRange(clonedPolygons);
-        tempLevel.Objects.AddRange(clonedObjects);
-        tempLevel.GraphicElements.AddRange(clonedGraphicElements);
-        tempLevel.UpdateImages(LevEditor.Renderer.OpenGlLgr?.DrawableImages ?? new Dictionary<string, DrawableImage>());
-        if (tempLevel.PolygonCount > 0 && tempLevel.Polygons.Any(p => p.IsGrass == false))
-        {
-            tempLevel.UpdateGrass(LevEditor.Settings.RenderingSettings.GrassZoom);
-            tempLevel.UpdateBounds();
-        }
-
-        // Add start object, as it is needed.
-        tempLevel.Objects.Add(new LevObject(new Vector(0, 0), ObjectType.Start, AppleType.Normal));
-
-        tempLevel.Save(LevEditor.SaveShapeDialog.FileName);
+        _lastUsedShapeFolder = _customShapeService.SaveShape(LevEditor, LevEditor.Renderer, _lastUsedShapeFolder) ??
+                               _lastUsedShapeFolder;
     }
 
     public string GetHelp() =>

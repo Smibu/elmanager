@@ -1,12 +1,10 @@
 using System;
 using System.Collections.Generic;
 using System.Drawing;
-using System.Windows.Forms;
-using Elmanager.Application;
 using Elmanager.Geometry;
 using Elmanager.Lev;
+using Elmanager.LevelEditor.Input;
 using Elmanager.Rendering;
-using Elmanager.Utilities;
 
 namespace Elmanager.LevelEditor.Tools;
 
@@ -23,7 +21,7 @@ internal class FrameTool : ToolBase, IEditorTool
         Outward
     }
 
-    internal FrameTool(LevelEditorForm editor)
+    internal FrameTool(ILevelEditor editor)
         : base(editor)
     {
     }
@@ -32,7 +30,7 @@ internal class FrameTool : ToolBase, IEditorTool
 
     public void Activate()
     {
-        _frameRadius = Global.AppSettings.LevelEditor.FrameRadius;
+        _frameRadius = LevEditor.Settings.FrameRadius;
     }
 
     public string GetHelp() =>
@@ -52,7 +50,7 @@ internal class FrameTool : ToolBase, IEditorTool
 
     public LevVisualChange InActivate()
     {
-        Global.AppSettings.LevelEditor.FrameRadius = _frameRadius;
+        LevEditor.Settings.FrameRadius = _frameRadius;
         if (Framing)
         {
             CancelFraming();
@@ -62,22 +60,22 @@ internal class FrameTool : ToolBase, IEditorTool
         return LevVisualChange.Nothing;
     }
 
-    public LevVisualChange KeyDown(KeyEventArgs key)
+    public LevVisualChange KeyDown(EditorKeyEventArgs key)
     {
         if (_frame is null) return LevVisualChange.Nothing;
         switch (key.KeyCode)
         {
-            case KeyUtils.Increase:
+            case EditorKeyUtils.Increase:
                 _frameRadius += 0.05;
                 break;
-            case KeyUtils.Decrease:
+            case EditorKeyUtils.Decrease:
                 if (_frameRadius > 0.05)
                 {
                     _frameRadius -= 0.05;
                 }
 
                 break;
-            case Keys.Space:
+            case EditorKey.Space:
                 _frameType = _frameType switch
                 {
                     FrameType.Normal => FrameType.Inward,
@@ -93,11 +91,11 @@ internal class FrameTool : ToolBase, IEditorTool
         return LevVisualChange.Ground | LevVisualChange.Grass;
     }
 
-    public LevVisualChange MouseDown(MouseEventArgs mouseData)
+    public LevVisualChange MouseDown(EditorMouseEventArgs mouseData)
     {
         switch (mouseData.Button)
         {
-            case MouseButtons.Left:
+            case EditorMouseButton.Left:
                 if (GetNearestVertexInfo(CurrentPos) is { } v && !Framing)
                 {
                     var poly = v.Polygon;
@@ -119,7 +117,7 @@ internal class FrameTool : ToolBase, IEditorTool
                 }
 
                 break;
-            case MouseButtons.Right:
+            case EditorMouseButton.Right:
                 if (Framing)
                     return CancelFraming();
                 break;

@@ -1,8 +1,8 @@
 using System;
 using System.Collections.Generic;
-using System.Windows.Forms;
 using Elmanager.Geometry;
 using Elmanager.Lev;
+using Elmanager.LevelEditor.Input;
 using Elmanager.Rendering;
 
 namespace Elmanager.LevelEditor.Tools;
@@ -12,7 +12,7 @@ internal class ObjectTool : ToolBase, IEditorTool
     private ObjectType _currentObjectType = ObjectType.Apple;
     private int _animNum = 1;
 
-    internal ObjectTool(LevelEditorForm editor)
+    internal ObjectTool(ILevelEditor editor)
         : base(editor)
     {
     }
@@ -32,11 +32,11 @@ internal class ObjectTool : ToolBase, IEditorTool
             { new(CurrentPos, _currentObjectType, AppleType.Normal) })
         : TransientElements.Empty;
 
-    public LevVisualChange KeyDown(KeyEventArgs key)
+    public LevVisualChange KeyDown(EditorKeyEventArgs key)
     {
         switch (key.KeyCode)
         {
-            case Keys.Space:
+            case EditorKey.Space:
                 _currentObjectType = _currentObjectType switch
                 {
                     ObjectType.Apple => ObjectType.Killer,
@@ -46,31 +46,31 @@ internal class ObjectTool : ToolBase, IEditorTool
                 };
 
                 break;
-            case Keys.D1:
+            case EditorKey.D1:
                 _animNum = 1;
                 break;
-            case Keys.D2:
+            case EditorKey.D2:
                 _animNum = 2;
                 break;
-            case Keys.D3:
+            case EditorKey.D3:
                 _animNum = 3;
                 break;
-            case Keys.D4:
+            case EditorKey.D4:
                 _animNum = 4;
                 break;
-            case Keys.D5:
+            case EditorKey.D5:
                 _animNum = 5;
                 break;
-            case Keys.D6:
+            case EditorKey.D6:
                 _animNum = 6;
                 break;
-            case Keys.D7:
+            case EditorKey.D7:
                 _animNum = 7;
                 break;
-            case Keys.D8:
+            case EditorKey.D8:
                 _animNum = 8;
                 break;
-            case Keys.D9:
+            case EditorKey.D9:
                 _animNum = 9;
                 break;
         }
@@ -78,9 +78,9 @@ internal class ObjectTool : ToolBase, IEditorTool
         return LevVisualChange.Objects;
     }
 
-    public LevVisualChange MouseDown(MouseEventArgs mouseData)
+    public LevVisualChange MouseDown(EditorMouseEventArgs mouseData)
     {
-        if (mouseData.Button == MouseButtons.Left)
+        if (mouseData.Button == EditorMouseButton.Left)
         {
             Lev.Objects.Add(new LevObject(CurrentPos, _currentObjectType, AppleType.Normal, _animNum));
             var mod = _currentObjectType switch

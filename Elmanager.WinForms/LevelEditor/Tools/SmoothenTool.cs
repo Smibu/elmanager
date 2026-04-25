@@ -2,15 +2,10 @@ using System;
 using System.Collections.Generic;
 using System.Drawing;
 using System.Linq;
-using System.Windows.Forms;
-using System.Windows.Input;
-using Elmanager.Application;
 using Elmanager.Geometry;
 using Elmanager.Lev;
+using Elmanager.LevelEditor.Input;
 using Elmanager.Rendering;
-using Elmanager.Utilities;
-using KeyEventArgs = System.Windows.Forms.KeyEventArgs;
-using MouseEventArgs = System.Windows.Forms.MouseEventArgs;
 
 namespace Elmanager.LevelEditor.Tools;
 
@@ -23,7 +18,7 @@ internal class SmoothenTool : ToolBase, IEditorTool
     private double _unsmoothAngle = 10;
     private double _unsmoothLength = 1.0;
 
-    internal SmoothenTool(LevelEditorForm editor) : base(editor)
+    internal SmoothenTool(ILevelEditor editor) : base(editor)
     {
     }
 
@@ -31,10 +26,10 @@ internal class SmoothenTool : ToolBase, IEditorTool
 
     public void Activate()
     {
-        _smoothSteps = Math.Max(Global.AppSettings.LevelEditor.SmoothSteps, 3);
-        _smoothVertexOffset = Math.Max(Global.AppSettings.LevelEditor.SmoothVertexOffset, 50);
-        _unsmoothAngle = Math.Max(Global.AppSettings.LevelEditor.UnsmoothAngle, 1);
-        _unsmoothLength = Math.Max(Global.AppSettings.LevelEditor.UnsmoothLength, 0.1);
+        _smoothSteps = Math.Max(LevEditor.Settings.SmoothSteps, 3);
+        _smoothVertexOffset = Math.Max(LevEditor.Settings.SmoothVertexOffset, 50);
+        _unsmoothAngle = Math.Max(LevEditor.Settings.UnsmoothAngle, 1);
+        _unsmoothLength = Math.Max(LevEditor.Settings.UnsmoothLength, 0.1);
     }
 
     public void ExtraRendering()
@@ -46,24 +41,24 @@ internal class SmoothenTool : ToolBase, IEditorTool
 
     public LevVisualChange InActivate()
     {
-        Global.AppSettings.LevelEditor.SmoothSteps = _smoothSteps;
-        Global.AppSettings.LevelEditor.SmoothVertexOffset = _smoothVertexOffset;
-        Global.AppSettings.LevelEditor.UnsmoothAngle = _unsmoothAngle;
-        Global.AppSettings.LevelEditor.UnsmoothLength = _unsmoothLength;
+        LevEditor.Settings.SmoothSteps = _smoothSteps;
+        LevEditor.Settings.SmoothVertexOffset = _smoothVertexOffset;
+        LevEditor.Settings.UnsmoothAngle = _unsmoothAngle;
+        LevEditor.Settings.UnsmoothLength = _unsmoothLength;
         CancelSmoothing();
         return LevVisualChange.Nothing;
     }
 
-    public LevVisualChange KeyDown(KeyEventArgs key)
+    public LevVisualChange KeyDown(EditorKeyEventArgs key)
     {
         if (Smoothing is { })
         {
             switch (key.KeyCode)
             {
-                case KeyUtils.Increase:
+                case EditorKeyUtils.Increase:
                     if (!_unsmooth)
                     {
-                        if (Keyboard.IsKeyDown(Key.LeftCtrl))
+                        if (Keyboard.IsKeyDown(ModifierKey.LeftCtrl))
                         {
                             if (_smoothVertexOffset < 100)
                                 _smoothVertexOffset += 1;
@@ -75,7 +70,7 @@ internal class SmoothenTool : ToolBase, IEditorTool
                     }
                     else
                     {
-                        if (Keyboard.IsKeyDown(Key.LeftCtrl))
+                        if (Keyboard.IsKeyDown(ModifierKey.LeftCtrl))
                         {
                             if (_unsmoothAngle < 180)
                                 _unsmoothAngle += 2;
@@ -88,10 +83,10 @@ internal class SmoothenTool : ToolBase, IEditorTool
                     }
 
                     break;
-                case KeyUtils.Decrease:
+                case EditorKeyUtils.Decrease:
                     if (!_unsmooth)
                     {
-                        if (Keyboard.IsKeyDown(Key.LeftCtrl))
+                        if (Keyboard.IsKeyDown(ModifierKey.LeftCtrl))
                         {
                             if (_smoothVertexOffset > 50)
                                 _smoothVertexOffset -= 1;
@@ -104,7 +99,7 @@ internal class SmoothenTool : ToolBase, IEditorTool
                     }
                     else
                     {
-                        if (Keyboard.IsKeyDown(Key.LeftCtrl))
+                        if (Keyboard.IsKeyDown(ModifierKey.LeftCtrl))
                         {
                             if (_unsmoothAngle > 0)
                                 _unsmoothAngle -= 2;
@@ -125,11 +120,11 @@ internal class SmoothenTool : ToolBase, IEditorTool
         {
             switch (key.KeyCode)
             {
-                case Keys.Space:
+                case EditorKey.Space:
                     if (Smoothing is null)
                     {
                         Smoothing = SmoothState.All;
-                        _unsmooth = Keyboard.IsKeyDown(Key.LeftCtrl);
+                        _unsmooth = Keyboard.IsKeyDown(ModifierKey.LeftCtrl);
                         UpdatePolygonSmooth();
                     }
 
@@ -140,12 +135,12 @@ internal class SmoothenTool : ToolBase, IEditorTool
         return LevVisualChange.Nothing;
     }
 
-    public LevVisualChange MouseDown(MouseEventArgs mouseData)
+    public LevVisualChange MouseDown(EditorMouseEventArgs mouseData)
     {
         var info = GetNearestVertexInfo(CurrentPos);
         switch (mouseData.Button)
         {
-            case MouseButtons.Left:
+            case EditorMouseButton.Left:
                 if (Smoothing is { })
                 {
                     switch (Smoothing)
@@ -163,18 +158,18 @@ internal class SmoothenTool : ToolBase, IEditorTool
                     LevEditor.SetModified(LevModification.Ground);
                     LevEditor.UpdateSelectionInfo();
                     foreach (Polygon x in _smoothPolys)
-                        x.UpdateGrassSlopeInfo(Lev.GroundBounds, LevEditor.Settings.RenderingSettings.GrassZoom);
+                        x.UpdateGrassSlopeInfo(Lev.GroundBounds, LevEditor.RenderingSettings.GrassZoom);
                 }
                 else if (info is { } v)
                 {
                     Smoothing = SmoothState.Polygon(v.Polygon);
                     ResetHighlight();
-                    _unsmooth = Keyboard.IsKeyDown(Key.LeftCtrl);
+                    _unsmooth = Keyboard.IsKeyDown(ModifierKey.LeftCtrl);
                     UpdatePolygonSmooth();
                 }
 
                 break;
-            case MouseButtons.Right:
+            case EditorMouseButton.Right:
                 CancelSmoothing();
                 break;
         }

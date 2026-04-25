@@ -1,14 +1,9 @@
 using System;
 using System.Collections.Generic;
-using System.Windows.Forms;
-using System.Windows.Input;
-using Elmanager.Application;
 using Elmanager.Geometry;
 using Elmanager.Lev;
+using Elmanager.LevelEditor.Input;
 using Elmanager.Rendering;
-using Elmanager.Utilities;
-using KeyEventArgs = System.Windows.Forms.KeyEventArgs;
-using MouseEventArgs = System.Windows.Forms.MouseEventArgs;
 
 namespace Elmanager.LevelEditor.Tools;
 
@@ -18,7 +13,7 @@ internal class EllipseTool : ToolBase, IEditorTool
     private Vector? _ellipseCenter;
     private int _ellipseSteps = 10;
 
-    internal EllipseTool(LevelEditorForm editor)
+    internal EllipseTool(ILevelEditor editor)
         : base(editor)
     {
     }
@@ -29,16 +24,16 @@ internal class EllipseTool : ToolBase, IEditorTool
 
     public void Activate()
     {
-        _ellipseSteps = Math.Max(Global.AppSettings.LevelEditor.EllipseSteps, 3);
+        _ellipseSteps = Math.Max(LevEditor.Settings.EllipseSteps, 3);
     }
 
     public void ExtraRendering()
     {
         if (_ellipse is { })
         {
-            if (Global.AppSettings.LevelEditor.RenderingSettings.ShowGroundEdges)
+            if (LevEditor.RenderingSettings.ShowGroundEdges)
             {
-                Renderer.DrawPolygon(_ellipse, Global.AppSettings.LevelEditor.RenderingSettings.GroundEdgeColor);
+                Renderer.DrawPolygon(_ellipse, LevEditor.RenderingSettings.GroundEdgeColor);
             }
         }
     }
@@ -56,7 +51,7 @@ internal class EllipseTool : ToolBase, IEditorTool
 
     public LevVisualChange InActivate()
     {
-        Global.AppSettings.LevelEditor.EllipseSteps = _ellipseSteps;
+        LevEditor.Settings.EllipseSteps = _ellipseSteps;
         if (CreatingEllipse)
         {
             _ellipseCenter = null;
@@ -66,16 +61,16 @@ internal class EllipseTool : ToolBase, IEditorTool
         return LevVisualChange.Nothing;
     }
 
-    public LevVisualChange KeyDown(KeyEventArgs key)
+    public LevVisualChange KeyDown(EditorKeyEventArgs key)
     {
         if (!CreatingEllipse) return LevVisualChange.Nothing;
         switch (key.KeyCode)
         {
-            case KeyUtils.Increase:
+            case EditorKeyUtils.Increase:
                 _ellipseSteps++;
                 UpdateEllipse();
                 break;
-            case KeyUtils.Decrease:
+            case EditorKeyUtils.Decrease:
                 if (_ellipseSteps > 3)
                 {
                     _ellipseSteps--;
@@ -88,11 +83,11 @@ internal class EllipseTool : ToolBase, IEditorTool
         return LevVisualChange.Ground;
     }
 
-    public LevVisualChange MouseDown(MouseEventArgs mouseData)
+    public LevVisualChange MouseDown(EditorMouseEventArgs mouseData)
     {
         switch (mouseData.Button)
         {
-            case MouseButtons.Left:
+            case EditorMouseButton.Left:
                 if (_ellipse is { })
                 {
                     Lev.Polygons.Add(_ellipse);
@@ -106,7 +101,7 @@ internal class EllipseTool : ToolBase, IEditorTool
                 }
 
                 break;
-            case MouseButtons.Right:
+            case EditorMouseButton.Right:
                 if (CreatingEllipse)
                 {
                     return InActivate();
@@ -143,7 +138,7 @@ internal class EllipseTool : ToolBase, IEditorTool
     private void UpdateEllipse()
     {
         if (_ellipseCenter is not { } c) return;
-        if (Keyboard.IsKeyDown(Key.LeftCtrl))
+        if (Keyboard.IsKeyDown(ModifierKey.LeftCtrl))
         {
             double dist =
                 Math.Sqrt((CurrentPos.X - c.X) * (CurrentPos.X - c.X) +
