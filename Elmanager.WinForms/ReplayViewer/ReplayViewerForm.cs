@@ -212,7 +212,7 @@ internal partial class ReplayViewerForm : FormMod
                 case Keys.Down:
                 case Keys.Left:
                 case Keys.Right:
-                    CameraUtils.BeginArrowScroll(RedrawSceneIfNotPlaying, _replayController.ZoomCtrl);
+                    WinFormsArrowScroll.BeginArrowScroll(RedrawSceneIfNotPlaying, _replayController.ZoomCtrl);
                     break;
             }
         }

@@ -1149,7 +1149,7 @@ internal partial class LevelEditorForm : FormMod, IMessageFilter, ILevelEditor
             case Keys.Right:
                 if (!WinFormsPlayController.PlayingOrPaused)
                 {
-                    CameraUtils.BeginArrowScroll(() => RedrawScene(), _zoomCtrl);
+                    WinFormsArrowScroll.BeginArrowScroll(() => RedrawScene(), _zoomCtrl);
                 }
                 break;
             case Keys.Z:
@@ -2878,7 +2878,7 @@ internal partial class LevelEditorForm : FormMod, IMessageFilter, ILevelEditor
             Invoke(updateTime);
         };
         t.Start();
-        CameraUtils.AllowScroll = false;
+        WinFormsArrowScroll.AllowScroll = false;
         var oldZoom = _zoomCtrl.ZoomLevel;
 
         if (Settings.PlayingSettings.FollowDriverOption == FollowDriverOption.WhenPressingKey)
