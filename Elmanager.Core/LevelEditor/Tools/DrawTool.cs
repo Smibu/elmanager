@@ -6,14 +6,14 @@ using Elmanager.Rendering;
 
 namespace Elmanager.LevelEditor.Tools;
 
-internal class DrawTool : ToolBase, IEditorTool
+public class DrawTool : ToolBase, IEditorTool
 {
     private const double ThresholdAdjustStep = 0.125;
     private Polygon? _currentPolygon;
     private Vector _lastMousePosition;
     private double _mouseTrip;
 
-    internal DrawTool(ILevelEditor editor)
+    public DrawTool(ILevelEditor editor)
         : base(editor)
     {
     }

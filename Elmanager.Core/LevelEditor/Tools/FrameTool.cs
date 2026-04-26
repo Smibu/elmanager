@@ -8,7 +8,7 @@ using Elmanager.Rendering;
 
 namespace Elmanager.LevelEditor.Tools;
 
-internal class FrameTool : ToolBase, IEditorTool
+public class FrameTool : ToolBase, IEditorTool
 {
     private FrameState? _frame;
     private double _frameRadius = 0.2;
@@ -21,7 +21,7 @@ internal class FrameTool : ToolBase, IEditorTool
         Outward
     }
 
-    internal FrameTool(ILevelEditor editor)
+    public FrameTool(ILevelEditor editor)
         : base(editor)
     {
     }

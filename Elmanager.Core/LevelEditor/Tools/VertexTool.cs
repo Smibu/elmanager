@@ -6,13 +6,13 @@ using Elmanager.Rendering;
 
 namespace Elmanager.LevelEditor.Tools;
 
-internal class VertexTool : ToolBase, IEditorTool
+public class VertexTool : ToolBase, IEditorTool
 {
     private Polygon? _currentPolygon;
     private NearestVertexInfo.EdgeInfo? _nearestVertexInfo;
     private Vector? _rectangleStart;
 
-    internal VertexTool(ILevelEditor editor)
+    public VertexTool(ILevelEditor editor)
         : base(editor)
     {
     }

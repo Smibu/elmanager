@@ -7,13 +7,13 @@ using Elmanager.Rendering;
 
 namespace Elmanager.LevelEditor.Tools;
 
-internal class EllipseTool : ToolBase, IEditorTool
+public class EllipseTool : ToolBase, IEditorTool
 {
     private Polygon? _ellipse;
     private Vector? _ellipseCenter;
     private int _ellipseSteps = 10;
 
-    internal EllipseTool(ILevelEditor editor)
+    public EllipseTool(ILevelEditor editor)
         : base(editor)
     {
     }

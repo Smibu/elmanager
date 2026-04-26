@@ -14,12 +14,12 @@ using Polygon = Elmanager.Lev.Polygon;
 
 namespace Elmanager.LevelEditor.Tools;
 
-internal class PolyOpTool : ToolBase, IEditorTool
+public class PolyOpTool : ToolBase, IEditorTool
 {
     private PolygonOperationType _currentOpType = PolygonOperationType.Union;
     private Polygon? _firstPolygon;
 
-    internal PolyOpTool(ILevelEditor editor)
+    public PolyOpTool(ILevelEditor editor)
         : base(editor)
     {
     }

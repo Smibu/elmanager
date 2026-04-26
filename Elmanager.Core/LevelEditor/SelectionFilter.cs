@@ -2,7 +2,7 @@ using Elmanager.LevelEditor.Tools;
 
 namespace Elmanager.LevelEditor;
 
-internal class SelectionFilter(ILevelEditor levelEditor) : ISelectionFilter
+public class SelectionFilter(ILevelEditor levelEditor) : ISelectionFilter
 {
     public bool AppleFilter { get; set; } = true;
     public bool FlowerFilter { get; set; } = true;

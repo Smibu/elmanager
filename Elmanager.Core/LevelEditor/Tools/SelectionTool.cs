@@ -8,7 +8,7 @@ using Elmanager.Rendering;
 
 namespace Elmanager.LevelEditor.Tools;
 
-internal class SelectionTool : ToolBase, IEditorTool
+public class SelectionTool : ToolBase, IEditorTool
 {
     private LevModification _currLevModification;
     private Vector _lockCenter; //for lock lines -mode
@@ -24,7 +24,7 @@ internal class SelectionTool : ToolBase, IEditorTool
     private double _mouseTrip;
     private Vector _lastMousePosition;
 
-    internal SelectionTool(ILevelEditor editor)
+    public SelectionTool(ILevelEditor editor)
         : base(editor)
     {
     }

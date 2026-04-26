@@ -9,7 +9,7 @@ using Elmanager.Rendering;
 
 namespace Elmanager.LevelEditor.Tools;
 
-internal class SmoothenTool : ToolBase, IEditorTool
+public class SmoothenTool : ToolBase, IEditorTool
 {
     private List<Polygon> _smoothPolys = new();
     private int _smoothSteps = 3;
@@ -18,7 +18,7 @@ internal class SmoothenTool : ToolBase, IEditorTool
     private double _unsmoothAngle = 10;
     private double _unsmoothLength = 1.0;
 
-    internal SmoothenTool(ILevelEditor editor) : base(editor)
+    public SmoothenTool(ILevelEditor editor) : base(editor)
     {
     }
 

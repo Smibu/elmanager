@@ -4,7 +4,7 @@ using Elmanager.Rendering;
 
 namespace Elmanager.LevelEditor.Tools;
 
-internal interface IEditorTool : IEditorToolBase
+public interface IEditorTool : IEditorToolBase
 {
     LevVisualChange MouseDown(EditorMouseEventArgs mouseData);
     void MouseUp();

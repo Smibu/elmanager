@@ -8,11 +8,11 @@ using Elmanager.Rendering;
 
 namespace Elmanager.LevelEditor.Tools;
 
-internal class TransformTool : ToolBase, IEditorTool
+public class TransformTool : ToolBase, IEditorTool
 {
     private TransformState? _transformState;
 
-    internal TransformTool(ILevelEditor editor)
+    public TransformTool(ILevelEditor editor)
         : base(editor)
     {
     }

@@ -9,7 +9,7 @@ using Elmanager.Rendering;
 
 namespace Elmanager.LevelEditor.Tools;
 
-internal class CustomShapeTool : ToolBase, IEditorTool
+public class CustomShapeTool : ToolBase, IEditorTool
 {
     private ShapeSelection? _shapeSelection;
     private string? _lastUsedShapeFolder;
@@ -23,7 +23,7 @@ internal class CustomShapeTool : ToolBase, IEditorTool
     private ShapeMirrorOption _selectedMirrorOption = ShapeMirrorOption.None;
     private PlacementAnchor _anchor = PlacementAnchor.Center;
 
-    internal CustomShapeTool(ILevelEditor editorForm) : base(editorForm)
+    public CustomShapeTool(ILevelEditor editorForm) : base(editorForm)
     {
         _customShapeService = editorForm.CustomShapeService;
     }

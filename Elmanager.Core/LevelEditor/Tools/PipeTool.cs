@@ -6,7 +6,7 @@ using Elmanager.Rendering;
 
 namespace Elmanager.LevelEditor.Tools;
 
-internal class PipeTool : ToolBase, IEditorTool
+public class PipeTool : ToolBase, IEditorTool
 {
     private const double AppleDistanceStep = 0.25;
     private PipeMode _pipeMode = PipeMode.NoApples;
@@ -16,7 +16,7 @@ internal class PipeTool : ToolBase, IEditorTool
     private int _appleAmount = 20;
     private double _appleDistance = 3.0;
 
-    internal PipeTool(ILevelEditor editor)
+    public PipeTool(ILevelEditor editor)
         : base(editor)
     {
     }

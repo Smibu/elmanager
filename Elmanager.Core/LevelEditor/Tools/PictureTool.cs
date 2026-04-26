@@ -6,13 +6,13 @@ using Elmanager.Rendering;
 
 namespace Elmanager.LevelEditor.Tools;
 
-internal class PictureTool : ToolBase, IEditorTool
+public class PictureTool : ToolBase, IEditorTool
 {
     private GraphicElement? _currentElem;
     private PlacementAnchor _anchor = PlacementAnchor.Center;
     private readonly IPictureDialogService _pictureDialog;
 
-    internal PictureTool(ILevelEditor editor)
+    public PictureTool(ILevelEditor editor)
         : base(editor)
     {
         _pictureDialog = editor.PictureDialogService;

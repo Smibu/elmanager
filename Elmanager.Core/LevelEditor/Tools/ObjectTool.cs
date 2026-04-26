@@ -7,12 +7,12 @@ using Elmanager.Rendering;
 
 namespace Elmanager.LevelEditor.Tools;
 
-internal class ObjectTool : ToolBase, IEditorTool
+public class ObjectTool : ToolBase, IEditorTool
 {
     private ObjectType _currentObjectType = ObjectType.Apple;
     private int _animNum = 1;
 
-    internal ObjectTool(ILevelEditor editor)
+    public ObjectTool(ILevelEditor editor)
         : base(editor)
     {
     }

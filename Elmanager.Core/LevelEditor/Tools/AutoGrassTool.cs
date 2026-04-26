@@ -10,14 +10,14 @@ using Elmanager.Utilities;
 
 namespace Elmanager.LevelEditor.Tools;
 
-internal class AutoGrassTool : ToolBase, IEditorTool
+public class AutoGrassTool : ToolBase, IEditorTool
 {
     private const double GrassHeight = 1.0;
     private const double MaximumGrassAngle = 60.0;
     private Polygon? _currentPolygon;
     private List<Polygon>? _currentAutograssPolys;
 
-    internal AutoGrassTool(ILevelEditor editor)
+    public AutoGrassTool(ILevelEditor editor)
         : base(editor)
     {
     }
@@ -148,7 +148,7 @@ internal class AutoGrassTool : ToolBase, IEditorTool
             ? $"LMouse: apply AutoGrass; +/-: adjust thickness ({LevEditor.Settings.AutoGrassThickness:F3}); RMouse: cancel."
             : "LMouse: select ground polygon to create grass polygon for.";
 
-    internal List<Polygon> AutoGrass(Polygon poly)
+    public List<Polygon> AutoGrass(Polygon poly)
     {
         var polygons = CreateGrassPolygons(poly);
         polygons.ForEach(p => p.UpdateGrassSlopeInfo(Lev.GroundBounds,

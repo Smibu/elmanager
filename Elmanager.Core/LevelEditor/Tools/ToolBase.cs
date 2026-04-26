@@ -7,7 +7,7 @@ using Elmanager.Rendering.Camera;
 
 namespace Elmanager.LevelEditor.Tools;
 
-internal abstract class ToolBase : IEditorToolBase
+public abstract class ToolBase : IEditorToolBase
 {
     protected Vector CurrentPos;
     protected readonly IEditorCursorManager CursorManager;
@@ -29,7 +29,7 @@ internal abstract class ToolBase : IEditorToolBase
 
     public abstract bool Busy { get; }
 
-    internal int GetNearestObjectIndex(Vector p)
+    public int GetNearestObjectIndex(Vector p)
     {
         int index = -1;
         double smallest = double.MaxValue;
@@ -73,7 +73,7 @@ internal abstract class ToolBase : IEditorToolBase
         return -1;
     }
 
-    internal int GetNearestPictureIndex(Vector p)
+    public int GetNearestPictureIndex(Vector p)
     {
         var pictureFilter = LevEditor.SelectionFilter.EffectivePictureFilter;
         var textureFilter = LevEditor.SelectionFilter.EffectiveTextureFilter;
@@ -129,7 +129,7 @@ internal abstract class ToolBase : IEditorToolBase
         return found;
     }
 
-    internal record NearestVertexInfo
+    public record NearestVertexInfo
     {
         internal record VertexInfo(int Index, Polygon P) : NearestVertexInfo;
         internal record EdgeInfo(int StartIndex, int EndIndex, Polygon P) : NearestVertexInfo;
@@ -137,7 +137,7 @@ internal abstract class ToolBase : IEditorToolBase
         internal static VertexInfo Vertex(int index, Polygon p) => new(index, p);
         internal static EdgeInfo Edge(int start, int end, Polygon p) => new(start, end, p);
 
-        internal Polygon Polygon => this switch
+        public Polygon Polygon => this switch
         {
             EdgeInfo edgeInfo => edgeInfo.P,
             VertexInfo vertexInfo => vertexInfo.P,
@@ -145,7 +145,7 @@ internal abstract class ToolBase : IEditorToolBase
         };
     }
 
-    internal NearestVertexInfo? GetNearestVertexInfo(Vector p)
+    public NearestVertexInfo? GetNearestVertexInfo(Vector p)
     {
         int nearestIndex = -1;
         int nearestSelectedIndex = -1;

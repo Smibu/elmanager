@@ -50,7 +50,7 @@ internal partial class LevelEditorForm : FormMod, IMessageFilter, ILevelEditor
     internal Level Lev => _editorLev.Lev;
     private ElmaFile? LevFile => _editorLev.File;
     internal ElmaRenderer Renderer = null!;
-    private readonly EditorTools Tools;
+    private readonly WinFormsEditorTools Tools;
     private List<string>? _currLevDirFiles;
     private bool _draggingScreen;
     private List<Vector> _errorPoints = new();
@@ -149,7 +149,7 @@ internal partial class LevelEditorForm : FormMod, IMessageFilter, ILevelEditor
         InitializeInternalMenu();
         _levFileWatcher = new LevFileWatcher(this);
         SelectionFilter = new SelectionFilter(this);
-        Tools = new EditorTools(
+        Tools = new WinFormsEditorTools(
             new SelectionTool(this),
             new VertexTool(this),
             new DrawTool(this),

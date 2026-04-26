@@ -9,11 +9,11 @@ using Polygon = Elmanager.Lev.Polygon;
 
 namespace Elmanager.LevelEditor.Tools;
 
-internal class CutConnectTool : ToolBase, IEditorTool
+public class CutConnectTool : ToolBase, IEditorTool
 {
     private Vector _start;
 
-    internal CutConnectTool(ILevelEditor editor) : base(editor)
+    public CutConnectTool(ILevelEditor editor) : base(editor)
     {
     }
 
