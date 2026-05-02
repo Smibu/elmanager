@@ -120,8 +120,7 @@ public class VertexTool : ToolBase, IEditorTool
 
                 break;
             case EditorMouseButton.Right:
-                FinishVertexCreation();
-                break;
+                return FinishVertexCreation();
         }
         return LevVisualChange.Nothing;
     }
@@ -167,25 +166,29 @@ public class VertexTool : ToolBase, IEditorTool
     {
     }
 
-    private void FinishVertexCreation()
+    private LevVisualChange FinishVertexCreation()
     {
-        if (_currentPolygon is { })
+        if (_currentPolygon is { } poly)
         {
-            _currentPolygon.RemoveLastVertex();
-            if (_currentPolygon.Vertices.Count > 2)
+            _currentPolygon = null;
+            poly.RemoveLastVertex();
+            if (poly.Vertices.Count > 2)
             {
-                _currentPolygon.UpdateGrassSlopeInfo(Lev.GroundBounds, LevEditor.RenderingSettings.GrassZoom);
-                LevEditor.SetModified(_currentPolygon.IsGrass ? LevModification.Grass : LevModification.Ground);
+                poly.UpdateGrassSlopeInfo(Lev.GroundBounds, LevEditor.RenderingSettings.GrassZoom);
+                LevEditor.SetModified(poly.IsGrass ? LevModification.Grass : LevModification.Ground);
             }
             else
-                Lev.Polygons.Remove(_currentPolygon);
-
-            _currentPolygon = null;
+            {
+                Lev.Polygons.Remove(poly);
+                return LevVisualChange.Ground;
+            }
         }
         else if (_rectangleStart is { })
         {
             _rectangleStart = null;
         }
+
+        return LevVisualChange.Nothing;
     }
 
     public override bool Busy => _currentPolygon is { } || _rectangleStart is { };
