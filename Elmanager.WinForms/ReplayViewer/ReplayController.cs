@@ -17,6 +17,7 @@ using Elmanager.Rendering.Camera;
 using Elmanager.UI;
 using OpenTK.GLControl;
 using Timer = System.Timers.Timer;
+using Vector = Elmanager.Geometry.Vector;
 
 namespace Elmanager.ReplayViewer;
 
@@ -78,7 +79,7 @@ internal class ReplayController : IDisposable
 
     public ReplayController(GLControl viewerBox, ReplayViewerRenderingSettings replayViewerRenderingSettings)
     {
-        Renderer = new ElmaRenderer(viewerBox.Context!, replayViewerRenderingSettings);
+        Renderer = new ElmaRenderer(new GlControlContext(viewerBox), replayViewerRenderingSettings);
         _settings = replayViewerRenderingSettings;
     }
 

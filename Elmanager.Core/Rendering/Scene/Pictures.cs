@@ -1,9 +1,11 @@
 using System;
 using System.Collections.Generic;
+using System.Numerics;
 using Elmanager.Lgr;
 using Elmanager.Rendering.OpenGL;
 using Elmanager.Utilities;
-using OpenTK.Mathematics;
+using Texture = Elmanager.Rendering.OpenGL.Texture;
+using VertexArray = Elmanager.Rendering.OpenGL.VertexArray;
 
 namespace Elmanager.Rendering.Scene;
 

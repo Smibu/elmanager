@@ -1,6 +1,6 @@
 using System;
 using System.Collections.Generic;
-using OpenTK.Graphics.OpenGL;
+using Silk.NET.OpenGL;
 
 namespace Elmanager.Rendering.OpenGL;
 
@@ -53,16 +53,17 @@ internal class PipelineBuilder
     public Pipeline Build()
     {
         var shader = new Shader(_vertexShader, _fragmentShader);
+        var gl = GlProvider.GL;
 
         if (_textureLocations.Count > 0)
         {
             shader.Use();
             foreach (var kvp in _textureLocations)
             {
-                int loc = GL.GetUniformLocation(shader.Handle, kvp.Key);
+                int loc = gl.GetUniformLocation(shader.Handle, kvp.Key);
                 if (loc != -1)
                 {
-                    GL.Uniform1(loc, kvp.Value);
+                    gl.Uniform1(loc, kvp.Value);
                 }
                 else
                 {
@@ -70,7 +71,7 @@ internal class PipelineBuilder
                 }
             }
 
-            GL.UseProgram(0);
+            gl.UseProgram(0);
         }
 
         return new Pipeline(shader, _stencil, _depthTest, _blend, _sourceBlend, _destinationBlend);

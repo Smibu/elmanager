@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Drawing;
 using System.Drawing.Imaging;
 using System.IO;
+using System.Numerics;
 using Elmanager.ElmaPrimitives;
 using Elmanager.Geometry;
 using Elmanager.Lev;
@@ -12,16 +13,17 @@ using Elmanager.Rendering.Camera;
 using Elmanager.Rendering.OpenGL;
 using Elmanager.Rendering.Scene;
 using Elmanager.Utilities;
-using OpenTK.Graphics.OpenGL;
-using OpenTK.Mathematics;
-using OpenTK.Windowing.Common;
+using Silk.NET.OpenGL;
 using Buffer = Elmanager.Rendering.OpenGL.Buffer;
 using PixelFormat = System.Drawing.Imaging.PixelFormat;
+using Vector = Elmanager.Geometry.Vector;
+using VertexArray = Elmanager.Rendering.OpenGL.VertexArray;
 
 namespace Elmanager.Rendering;
 
 public class ElmaRenderer : IDisposable
 {
+    private static GL GL => GlProvider.GL;
     private const double GroundDepth = 1000.0;
     private const int GroundStencil = 0;
     private const float MinDistance = 0.0f;
@@ -32,9 +34,9 @@ public class ElmaRenderer : IDisposable
 
     private readonly IGraphicsContext _gfxContext;
     private readonly Vertices _lineLoop;
-    private int _frameBuffer;
-    private int _colorRenderBuffer;
-    private int _depthStencilRenderBuffer;
+    private uint _frameBuffer;
+    private uint _colorRenderBuffer;
+    private uint _depthStencilRenderBuffer;
     private int _maxRenderbufferSize;
     private readonly LgrCache _lgrCache = new();
     private int _viewportWidth = 1;
@@ -211,8 +213,11 @@ public class ElmaRenderer : IDisposable
             var bmpData = snapShotBmp.LockBits(new Rectangle(0, 0, width, height), ImageLockMode.WriteOnly,
                 PixelFormat.Format24bppRgb);
             GL.ReadBuffer(ReadBufferMode.ColorAttachment0);
-            GL.ReadPixels(0, 0, width, height, OpenTK.Graphics.OpenGL.PixelFormat.Bgr, PixelType.UnsignedByte,
-                bmpData.Scan0);
+            unsafe
+            {
+                GL.ReadPixels(0, 0, (uint)width, (uint)height, GLEnum.Bgr, GLEnum.UnsignedByte,
+                    (void*)bmpData.Scan0);
+            }
             snapShotBmp.UnlockBits(bmpData);
             snapShotBmp.RotateFlip(RotateFlipType.RotateNoneFlipY);
             GL.BindFramebuffer(FramebufferTarget.ReadFramebuffer, 0);
@@ -235,8 +240,11 @@ public class ElmaRenderer : IDisposable
         var bmpData = snapShotBmp.LockBits(new Rectangle(0, 0, width, height), ImageLockMode.WriteOnly,
             PixelFormat.Format24bppRgb);
         GL.ReadBuffer(ReadBufferMode.Front);
-        GL.ReadPixels(0, 0, width, height, OpenTK.Graphics.OpenGL.PixelFormat.Bgr, PixelType.UnsignedByte,
-            bmpData.Scan0);
+        unsafe
+        {
+            GL.ReadPixels(0, 0, (uint)width, (uint)height, GLEnum.Bgr, GLEnum.UnsignedByte,
+                (void*)bmpData.Scan0);
+        }
         snapShotBmp.UnlockBits(bmpData);
         snapShotBmp.RotateFlip(RotateFlipType.RotateNoneFlipY);
         return snapShotBmp;
@@ -310,7 +318,7 @@ public class ElmaRenderer : IDisposable
             (float)bounds.XMax, (float)bounds.YMin,
             (float)bounds.XMax, (float)bounds.YMax
         ];
-        _graphics.GroundSky.GroundVertices.VertexArray.SetData(groundVerts, BufferUsageHint.StreamDraw);
+        _graphics.GroundSky.GroundVertices.VertexArray.SetData(groundVerts, BufferUsageARB.StreamDraw);
         _graphics.GroundSky.DrawSky(ColorUniforms, Pipelines.GroundSky);
         SetCameraUniforms(projection, 0, 0, camera.ZoomLevel);
         _graphics.GroundSky.DrawGround(ColorUniforms, Pipelines.GroundSky);
@@ -335,7 +343,7 @@ public class ElmaRenderer : IDisposable
             Pipelines.LinesDashed);
     }
 
-    public (Matrix4 Projection, Bounds Bounds) SetCamera(ElmaCamera camera)
+    public (Matrix4x4 Projection, Bounds Bounds) SetCamera(ElmaCamera camera)
     {
         var bounds = camera.GetBounds(AspectRatio);
         var projection = GetProjectionMatrix(bounds);
@@ -343,7 +351,7 @@ public class ElmaRenderer : IDisposable
         return (projection, bounds);
     }
 
-    private void SetCameraUniforms(Matrix4 projection, double centerX, double centerY, double zoomLevel)
+    private void SetCameraUniforms(Matrix4x4 projection, double centerX, double centerY, double zoomLevel)
     {
         var zoom = _zoomTextures ? 1.0f : (float)zoomLevel * 0.15f;
         CameraUniforms.SetData(new CameraUniforms(
@@ -354,12 +362,23 @@ public class ElmaRenderer : IDisposable
         ));
     }
 
-    private static Matrix4 GetProjectionMatrix(Bounds bounds) =>
-        Matrix4.CreateOrthographicOffCenter(
+    private static Matrix4x4 GetProjectionMatrix(Bounds bounds) =>
+        CreateOrthographicOffCenter(
             (float)bounds.XMin, (float)bounds.XMax,
             (float)bounds.YMin, (float)bounds.YMax,
             -(MinDistance - 1.0f), -(MaxDistance + 1.0f));
 
+    private static Matrix4x4 CreateOrthographicOffCenter(float left, float right, float bottom, float top, float zNear, float zFar)
+    {
+        var m = Matrix4x4.Identity;
+        m.M11 = 2f / (right - left);
+        m.M22 = 2f / (top - bottom);
+        m.M33 = -2f / (zFar - zNear);
+        m.M41 = -(right + left) / (right - left);
+        m.M42 = -(top + bottom) / (top - bottom);
+        m.M43 = -(zFar + zNear) / (zFar - zNear);
+        return m;
+    }
     public void DrawGraphicElementFrame(GraphicElement e, RenderingSettings settings, Color color)
     {
         bool dashed;
@@ -420,7 +439,7 @@ public class ElmaRenderer : IDisposable
 
     public void ResetViewport(int width, int height)
     {
-        GL.Viewport(0, 0, width, height);
+        GL.Viewport(0, 0, (uint)width, (uint)height);
         _viewportWidth = width;
         _viewportHeight = height;
     }
@@ -456,7 +475,7 @@ public class ElmaRenderer : IDisposable
             lev.UpdateImages(lgr.DrawableImages);
             lev.UpdateGrass(newSettings.GrassZoom);
         }
-        GL.ClearColor(newSettings.SkyFillColor);
+        GL.ClearColor(newSettings.SkyFillColor.R / 255f, newSettings.SkyFillColor.G / 255f, newSettings.SkyFillColor.B / 255f, newSettings.SkyFillColor.A / 255f);
         GL.LineWidth(newSettings.LineWidth);
         GL.PointSize((float)(newSettings.VertexSize * 300));
         InitializeBuffers(lev, lgr, newSettings);
@@ -609,9 +628,10 @@ public class ElmaRenderer : IDisposable
         GL.Hint(HintTarget.PolygonSmoothHint, HintMode.Fastest);
         GL.Hint(HintTarget.LineSmoothHint, HintMode.Fastest);
 
-        _maxRenderbufferSize = Math.Min(GL.GetInteger(GetPName.MaxRenderbufferSize), 4096);
+        GL.GetInteger(GetPName.MaxRenderbufferSize, out int maxRbSize);
+        _maxRenderbufferSize = Math.Min(maxRbSize, 4096);
 
-        if (GL.GetError() != ErrorCode.NoError || disableFrameBuffer)
+        if (GL.GetError() != GLEnum.NoError || disableFrameBuffer)
         {
             _maxRenderbufferSize = 0;
         }
@@ -620,14 +640,14 @@ public class ElmaRenderer : IDisposable
         {
             _colorRenderBuffer = GL.GenRenderbuffer();
             GL.BindRenderbuffer(RenderbufferTarget.Renderbuffer, _colorRenderBuffer);
-            GL.RenderbufferStorage(RenderbufferTarget.Renderbuffer, RenderbufferStorage.Rgba8, _maxRenderbufferSize,
-                _maxRenderbufferSize);
+            GL.RenderbufferStorage(RenderbufferTarget.Renderbuffer, InternalFormat.Rgba8, (uint)_maxRenderbufferSize,
+                (uint)_maxRenderbufferSize);
             GL.BindRenderbuffer(RenderbufferTarget.Renderbuffer, 0);
 
             _depthStencilRenderBuffer = GL.GenRenderbuffer();
             GL.BindRenderbuffer(RenderbufferTarget.Renderbuffer, _depthStencilRenderBuffer);
-            GL.RenderbufferStorage(RenderbufferTarget.Renderbuffer, RenderbufferStorage.DepthStencil,
-                _maxRenderbufferSize, _maxRenderbufferSize);
+            GL.RenderbufferStorage(RenderbufferTarget.Renderbuffer, InternalFormat.DepthStencil,
+                (uint)_maxRenderbufferSize, (uint)_maxRenderbufferSize);
             GL.BindRenderbuffer(RenderbufferTarget.Renderbuffer, 0);
 
             _frameBuffer = GL.GenFramebuffer();

@@ -1,12 +1,14 @@
 using System;
 using Elmanager.Rendering.OpenGL;
 using Elmanager.Rendering.Scene;
-using OpenTK.Graphics.OpenGL;
+using Silk.NET.OpenGL;
+using Texture = Elmanager.Rendering.OpenGL.Texture;
 
 namespace Elmanager.Rendering;
 
 public record Pipelines : IDisposable
 {
+    private static GL GL => GlProvider.GL;
     public Pipeline GroundSky { get; } = Scene.GroundSky.CreatePipeline();
     public Pipeline Objects { get; } = Scene.Objects.CreatePipeline();
     public Pipeline Grass { get; } = Scene.Grass.CreatePipeline();
@@ -28,7 +30,7 @@ public record Pipelines : IDisposable
     {
         var texture = new Texture();
         texture.Bind();
-        GL.TexImage2D(TextureTarget.Texture2D, 0, PixelInternalFormat.Rgba,
+        GL.TexImage2D(TextureTarget.Texture2D, 0, InternalFormat.Rgba,
             1, 1, 0, PixelFormat.Rgba, PixelType.UnsignedByte,
             new byte[] { 255, 255, 255, 255 });
         GL.TexParameter(TextureTarget.Texture2D, TextureParameterName.TextureMinFilter,

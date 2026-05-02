@@ -1,12 +1,14 @@
 using System;
 using System.Collections.Generic;
 using Elmanager.Rendering.OpenGL;
-using OpenTK.Graphics.OpenGL;
+using Silk.NET.OpenGL;
+using VertexArray = Elmanager.Rendering.OpenGL.VertexArray;
 
 namespace Elmanager.Rendering.Scene;
 
 internal class PolygonFrames : IDisposable
 {
+    private static GL GL => GlProvider.GL;
     private bool ShowGroundEdges { get; }
     private bool ShowGrassEdges { get; }
     private bool ShowInactiveGrassEdges { get; }
@@ -116,7 +118,7 @@ internal class PolygonFrames : IDisposable
             {
                 linesDashedPipeline.Use();
                 InactiveGrassVertices.Bind();
-                GL.DrawArrays(PrimitiveType.Lines, 0, InactiveGrassVertices.Count);
+                GL.DrawArrays(PrimitiveType.Lines, 0, (uint)InactiveGrassVertices.Count);
             }
         }
 
@@ -126,10 +128,10 @@ internal class PolygonFrames : IDisposable
             linesPipeline.Use();
 
             groundVertices.VertexArray.Bind();
-            GL.DrawArrays(PrimitiveType.Points, 0, groundVertices.VertexCount);
+            GL.DrawArrays(PrimitiveType.Points, 0, (uint)groundVertices.VertexCount);
 
             GrassVertices.VertexArray.Bind();
-            GL.DrawArrays(PrimitiveType.Points, 0, GrassVertices.VertexCount);
+            GL.DrawArrays(PrimitiveType.Points, 0, (uint)GrassVertices.VertexCount);
         }
     }
 

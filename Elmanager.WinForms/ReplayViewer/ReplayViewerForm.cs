@@ -47,7 +47,7 @@ internal partial class ReplayViewerForm : FormMod
         _fullScreenController = new FullScreenController(this, ViewerResized, new List<Control> { TabControl1 });
         ViewerBox.HandleCreated += (_, _) =>
         {
-            ViewerBox.Context.SwapInterval = 0;
+            ViewerBox.Context!.SwapInterval = 0;
             Initialize();
             ViewerResized();
             _tcs.SetResult();

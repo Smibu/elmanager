@@ -2,7 +2,9 @@ using System;
 using System.Collections.Generic;
 using Elmanager.Rendering.OpenGL;
 using Elmanager.Utilities;
-using OpenTK.Graphics.OpenGL;
+using Silk.NET.OpenGL;
+using Texture = Elmanager.Rendering.OpenGL.Texture;
+using VertexArray = Elmanager.Rendering.OpenGL.VertexArray;
 
 namespace Elmanager.Rendering.Scene;
 
@@ -183,7 +185,7 @@ internal class Grass : IDisposable
     private static BoundVertexArray CreateBatchBuffer(float[] data, Vertices quad)
     {
         var bound = VertexArray.CreateInstanced(quad, PerVertexInfo, InstanceVertexInfo);
-        bound.SetData(data, BufferUsageHint.DynamicDraw);
+        bound.SetData(data, BufferUsageARB.DynamicDraw);
         return bound;
     }
 
@@ -220,7 +222,7 @@ internal class GrassBatch(Texture texture, BoundVertexArray instanceBuffer, int 
 
     public void Update(float[] data)
     {
-        InstanceBuffer.SetData(data, BufferUsageHint.DynamicDraw);
+        InstanceBuffer.SetData(data, BufferUsageARB.DynamicDraw);
         Count = data.Length / 3;
     }
 

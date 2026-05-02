@@ -1,12 +1,13 @@
 using System;
-using OpenTK.Graphics.OpenGL;
+using Silk.NET.OpenGL;
 
 namespace Elmanager.Rendering.OpenGL;
 
-internal class Buffer(BufferTarget type) : IDisposable
+internal class Buffer(BufferTargetARB type) : IDisposable
 {
-    internal int Handle { get; } = GL.GenBuffer();
-    private BufferTarget Type { get; } = type;
+    private static GL GL => GlProvider.GL;
+    internal uint Handle { get; } = GlProvider.GL.GenBuffer();
+    private BufferTargetARB Type { get; } = type;
     public int Count { get; private set; }
 
     public void Bind()
@@ -14,17 +15,17 @@ internal class Buffer(BufferTarget type) : IDisposable
         GL.BindBuffer(Type, Handle);
     }
 
-    public void SetData<T>(T[] data, BufferUsageHint usage = BufferUsageHint.DynamicDraw) where T : struct
+    public void SetData<T>(T[] data, BufferUsageARB usage = BufferUsageARB.DynamicDraw) where T : unmanaged
     {
         Bind();
-        GL.BufferData(Type, data.Length * System.Runtime.InteropServices.Marshal.SizeOf<T>(), data, usage);
+        GL.BufferData(Type, (nuint)(data.Length * System.Runtime.InteropServices.Marshal.SizeOf<T>()), data, usage);
         Count = data.Length;
     }
 
     public static Buffer CreateIndex(uint[] data)
     {
-        var buffer = new Buffer(BufferTarget.ElementArrayBuffer);
-        buffer.SetData(data, BufferUsageHint.StaticDraw);
+        var buffer = new Buffer(BufferTargetARB.ElementArrayBuffer);
+        buffer.SetData(data, BufferUsageARB.StaticDraw);
         return buffer;
     }
 

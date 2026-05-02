@@ -3,12 +3,14 @@ using System.Collections.Generic;
 using System.Drawing;
 using Elmanager.Geometry;
 using Elmanager.Rendering.OpenGL;
-using OpenTK.Graphics.OpenGL;
+using Silk.NET.OpenGL;
+using VertexArray = Elmanager.Rendering.OpenGL.VertexArray;
 
 namespace Elmanager.Rendering.Scene;
 
 internal class Selection : IDisposable
 {
+    private static GL GL => GlProvider.GL;
     private readonly BoundVertexArray _pointBuffer;
     private readonly BoundVertexArray _lineBuffer;
     private readonly List<float> _points = [];
@@ -73,10 +75,10 @@ internal class Selection : IDisposable
         {
             var pointArray = _points.ToArray();
             var pointCount = pointArray.Length / 2;
-            _pointBuffer.SetData(pointArray, BufferUsageHint.StreamDraw);
+            _pointBuffer.SetData(pointArray, BufferUsageARB.StreamDraw);
 
             _pointBuffer.Bind();
-            GL.DrawArrays(PrimitiveType.Points, 0, pointCount);
+            GL.DrawArrays(PrimitiveType.Points, 0, (uint)pointCount);
 
             _points.Clear();
         }
@@ -85,10 +87,10 @@ internal class Selection : IDisposable
         {
             var lineArray = _lines.ToArray();
             var lineCount = lineArray.Length / 2;
-            _lineBuffer.SetData(lineArray, BufferUsageHint.StreamDraw);
+            _lineBuffer.SetData(lineArray, BufferUsageARB.StreamDraw);
 
             _lineBuffer.Bind();
-            GL.DrawArrays(PrimitiveType.Lines, 0, lineCount);
+            GL.DrawArrays(PrimitiveType.Lines, 0, (uint)lineCount);
 
             _lines.Clear();
         }

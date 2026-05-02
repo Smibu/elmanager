@@ -1,11 +1,13 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Numerics;
 using Elmanager.ElmaPrimitives;
 using Elmanager.Rec;
 using Elmanager.Rendering.OpenGL;
-using OpenTK.Graphics.OpenGL;
-using OpenTK.Mathematics;
+using Silk.NET.OpenGL;
+using Texture = Elmanager.Rendering.OpenGL.Texture;
+using VertexArray = Elmanager.Rendering.OpenGL.VertexArray;
 
 namespace Elmanager.Rendering.Scene;
 
@@ -240,45 +242,45 @@ internal class Players : IDisposable
             MatHead(s.HeadNoTurn, HeadDiameter, s.TurnProgress, Dist(s.BaseDistance, HeadDist, i)));
 
         SetBuffer(Body, states, (i, s) =>
-            Matrix4.CreateScale(new Vector3(BodyXScale, BodyYScale, 1.0f))
-            * Matrix4.CreateRotationZ(BodyBaseRotation)
-            * Matrix4.CreateTranslation(new Vector3(Vec3YNeg(BodyOffset)) / BodyScale)
+            Matrix4x4.CreateScale(BodyXScale, BodyYScale, 1.0f)
+            * Matrix4x4.CreateRotationZ(BodyBaseRotation)
+            * Matrix4x4.CreateTranslation(Vec3YNeg(BodyOffset) * (1f / BodyScale))
             * MatHead(s.HeadNoTurn, BodyScale, s.TurnProgress, Dist(s.BaseDistance, BodyDist, i)));
 
         var armLegAngles = states.Select(s => (arm: GetArmAngles(s), leg: GetLegAngles(s))).ToArray();
 
         SetBuffer(UpArm, states, armLegAngles, (i, s, angles) =>
-            Matrix4.CreateTranslation(new Vector3(-0.5f + UpArmJointOffset, 0.0f, 0.0f))
-            * Matrix4.CreateScale(new Vector3(UpArmXScale, -1.0f, 1.0f))
-            * Matrix4.CreateRotationZ(-angles.arm.angle2 + MathF.PI)
-            * Matrix4.CreateTranslation(new Vector3(Vec3YNeg(UpArmOffset)) / UpArmScale)
+            Matrix4x4.CreateTranslation(-0.5f + UpArmJointOffset, 0.0f, 0.0f)
+            * Matrix4x4.CreateScale(UpArmXScale, -1.0f, 1.0f)
+            * Matrix4x4.CreateRotationZ(-angles.arm.angle2 + MathF.PI)
+            * Matrix4x4.CreateTranslation(Vec3YNeg(UpArmOffset) * (1f / UpArmScale))
             * MatHead(s.HeadNoTurn, UpArmScale, s.TurnProgress, Dist(s.BaseDistance, UpArmDist, i)));
 
         SetBuffer(Forarm, states, armLegAngles, (i, s, angles) =>
-            Matrix4.CreateTranslation(new Vector3(-0.5f + ForarmJointOffset, 0.0f, 0.0f))
-            * Matrix4.CreateScale(new Vector3(ForarmXScale, 1.0f, 1.0f))
-            * Matrix4.CreateRotationZ(-angles.arm.angle1)
-            * Matrix4.CreateTranslation(new Vector3(Vec3YNeg(angles.arm.pos)) / ForarmScale)
+            Matrix4x4.CreateTranslation(-0.5f + ForarmJointOffset, 0.0f, 0.0f)
+            * Matrix4x4.CreateScale(ForarmXScale, 1.0f, 1.0f)
+            * Matrix4x4.CreateRotationZ(-angles.arm.angle1)
+            * Matrix4x4.CreateTranslation(Vec3YNeg(angles.arm.pos) * (1f / ForarmScale))
             * MatHead(s.HeadNoTurn, ForarmScale, s.TurnProgress, Dist(s.BaseDistance, ForarmDist, i)));
 
         SetBuffer(Thigh, states, armLegAngles, (i, s, angles) =>
-            Matrix4.CreateTranslation(new Vector3(-0.5f + ThighJointOffset, 0.0f, 0.0f))
-            * Matrix4.CreateScale(new Vector3(ThighXScale, 1.0f, 1.0f))
-            * Matrix4.CreateRotationZ(-angles.leg.angle2 + MathF.PI)
-            * Matrix4.CreateTranslation(new Vector3(Vec3YNeg(ThighOffset)) / ThighScale)
+            Matrix4x4.CreateTranslation(-0.5f + ThighJointOffset, 0.0f, 0.0f)
+            * Matrix4x4.CreateScale(ThighXScale, 1.0f, 1.0f)
+            * Matrix4x4.CreateRotationZ(-angles.leg.angle2 + MathF.PI)
+            * Matrix4x4.CreateTranslation(Vec3YNeg(ThighOffset) * (1f / ThighScale))
             * MatHead(s.HeadNoTurn, ThighScale, s.TurnProgress, Dist(s.BaseDistance, ThighDist, i)));
 
         SetBuffer(Leg, states, armLegAngles, (i, s, angles) =>
-            Matrix4.CreateTranslation(new Vector3(-0.5f + LegJointOffsetX, LegJointOffsetY, 0.0f))
-            * Matrix4.CreateScale(new Vector3(LegXScale, LegYScale, 1.0f))
-            * Matrix4.CreateRotationZ(-angles.leg.angle1)
-            * Matrix4.CreateTranslation(new Vector3(Vec3YNeg(angles.leg.pos)) / LegScale)
+            Matrix4x4.CreateTranslation(-0.5f + LegJointOffsetX, LegJointOffsetY, 0.0f)
+            * Matrix4x4.CreateScale(LegXScale, LegYScale, 1.0f)
+            * Matrix4x4.CreateRotationZ(-angles.leg.angle1)
+            * Matrix4x4.CreateTranslation(Vec3YNeg(angles.leg.pos) * (1f / LegScale))
             * MatHead(s.HeadNoTurn, LegScale, s.TurnProgress, Dist(s.BaseDistance, LegDist, i)));
 
         SetBuffer(Bike, states, (i, s) =>
-            Matrix4.CreateTranslation(new Vector3(BikeRotationOffset.X, BikeRotationOffset.Y, 0.0f))
-            * Matrix4.CreateScale(new Vector3(BikeXScale, 1.0f, 1.0f))
-            * Matrix4.CreateRotationZ(BikeBaseRotation)
+            Matrix4x4.CreateTranslation(BikeRotationOffset.X, BikeRotationOffset.Y, 0.0f)
+            * Matrix4x4.CreateScale(BikeXScale, 1.0f, 1.0f)
+            * Matrix4x4.CreateRotationZ(BikeBaseRotation)
             * MatBody(s.Body, BikeScale, s.TurnProgress, Dist(s.BaseDistance, BikeDist, i)));
 
         SetBuffer(Susp1, states, (i, s) =>
@@ -288,13 +290,13 @@ internal class Players : IDisposable
             var diff = wheelRelative - Susp1Offset;
             var angle = AngleBetween(Vector2.UnitX, diff);
 
-            return Matrix4.CreateTranslation(new Vector3(-0.5f + Susp1JointOffsetBike, 0.0f, 0.0f))
-                   * Matrix4.CreateScale(new Vector3(
-                       diff.Length + (Susp1JointOffsetBike + Susp1JointOffsetWheel) * Math.Min(diff.Length, 1.0f),
+            return Matrix4x4.CreateTranslation(-0.5f + Susp1JointOffsetBike, 0.0f, 0.0f)
+                   * Matrix4x4.CreateScale(
+                       diff.Length() + (Susp1JointOffsetBike + Susp1JointOffsetWheel) * Math.Min(diff.Length(), 1.0f),
                        SuspYScale,
-                       1.0f))
-                   * Matrix4.CreateRotationZ(-angle + MathF.PI)
-                   * Matrix4.CreateTranslation(new Vector3(Vec3YNeg(Susp1Offset)))
+                       1.0f)
+                   * Matrix4x4.CreateRotationZ(-angle + MathF.PI)
+                   * Matrix4x4.CreateTranslation(Vec3YNeg(Susp1Offset))
                    * MatBody(s.Body, 1.0f, s.TurnProgress, Dist(s.BaseDistance, SuspDist, i));
         });
 
@@ -305,13 +307,13 @@ internal class Players : IDisposable
             var diff = wheelRelative - Susp2Offset;
             var angle = AngleBetween(Vector2.UnitX, diff);
 
-            return Matrix4.CreateTranslation(new Vector3(0.5f - Susp2JointOffsetBikeX, Susp2JointOffsetBikeY, 0.0f))
-                   * Matrix4.CreateScale(new Vector3(
-                       diff.Length + (Susp2JointOffsetBikeX + Susp2JointOffsetWheel) * Math.Min(diff.Length, 1.0f),
+            return Matrix4x4.CreateTranslation(0.5f - Susp2JointOffsetBikeX, Susp2JointOffsetBikeY, 0.0f)
+                   * Matrix4x4.CreateScale(
+                       diff.Length() + (Susp2JointOffsetBikeX + Susp2JointOffsetWheel) * Math.Min(diff.Length(), 1.0f),
                        SuspYScale,
-                       1.0f))
-                   * Matrix4.CreateRotationZ(-angle)
-                   * Matrix4.CreateTranslation(new Vector3(Vec3YNeg(Susp2Offset)))
+                       1.0f)
+                   * Matrix4x4.CreateRotationZ(-angle)
+                   * Matrix4x4.CreateTranslation(Vec3YNeg(Susp2Offset))
                    * MatBody(s.Body, 1.0f, s.TurnProgress, Dist(s.BaseDistance, SuspDist, i));
         });
 
@@ -370,7 +372,7 @@ internal class Players : IDisposable
             float currAngle = peakAngle * s.ArmProgress;
             float baseAngle = AngleBetween(Vector2.UnitX, diff);
             float finalAngle = baseAngle - currAngle;
-            forarmOffset = circleCenter + FromAngle(finalAngle) * (diff.Length * (1.0f - s.ArmProgress * 0.5f));
+            forarmOffset = circleCenter + FromAngle(finalAngle) * (diff.Length() * (1.0f - s.ArmProgress * 0.5f));
         }
         else
         {
@@ -380,7 +382,7 @@ internal class Players : IDisposable
             float finalAngle = baseAngle - currAngle;
             float maxLength = ForarmLength + UpArmLength;
             forarmOffset = circleCenter + FromAngle(finalAngle) *
-                (diff.Length + (maxLength - diff.Length) * s.ArmProgress * -1.0f);
+                (diff.Length() + (maxLength - diff.Length()) * s.ArmProgress * -1.0f);
         }
 
         var angles = CircleIntersectionAngles(forarmOffset, ForarmLength, UpArmOffset, UpArmLength, Intersection.Second);
@@ -395,12 +397,12 @@ internal class Players : IDisposable
         }
     }
 
-    private static Vector2 Vec3YNeg(Vector2 v) => new(v.X, -v.Y);
+    private static Vector3 Vec3YNeg(Vector2 v) => new(v.X, -v.Y, 0f);
 
     private static void SetBuffer(
         BoundVertexArray buffer,
         IReadOnlyList<VisualPlayer> states,
-        Func<int, VisualPlayer, Matrix4> matFn)
+        Func<int, VisualPlayer, Matrix4x4> matFn)
     {
         if (states.Count == 0) return;
         var flat = new float[states.Count * 8];
@@ -417,14 +419,14 @@ internal class Players : IDisposable
             flat[i * 8 + 7] = states[i].Opacity;
         }
 
-        buffer.SetData(flat, BufferUsageHint.StreamDraw);
+        buffer.SetData(flat, BufferUsageARB.StreamDraw);
     }
 
     private static void SetBuffer<TU>(
         BoundVertexArray buffer,
         IReadOnlyList<VisualPlayer> states,
         IReadOnlyList<TU> extra,
-        Func<int, VisualPlayer, TU, Matrix4> matFn)
+        Func<int, VisualPlayer, TU, Matrix4x4> matFn)
     {
         if (states.Count == 0) return;
         var flat = new float[states.Count * 8];
@@ -441,22 +443,22 @@ internal class Players : IDisposable
             flat[i * 8 + 7] = states[i].Opacity;
         }
 
-        buffer.SetData(flat, BufferUsageHint.StreamDraw);
+        buffer.SetData(flat, BufferUsageARB.StreamDraw);
     }
 
-    private static Matrix4 MatBody(VisualBikePart bikePart, float diameter, float xScale, float distance)
+    private static Matrix4x4 MatBody(VisualBikePart bikePart, float diameter, float xScale, float distance)
     {
-        return Matrix4.CreateScale(new Vector3(diameter * xScale, diameter, 1.0f))
-               * Matrix4.CreateRotationZ(bikePart.Rotation + MathF.PI)
-               * Matrix4.CreateTranslation(bikePart.Center.X, bikePart.Center.Y, distance);
+        return Matrix4x4.CreateScale(diameter * xScale, diameter, 1.0f)
+               * Matrix4x4.CreateRotationZ(bikePart.Rotation + MathF.PI)
+               * Matrix4x4.CreateTranslation(bikePart.Center.X, bikePart.Center.Y, distance);
     }
 
-    private static Matrix4 MatHead(VisualBikePart bikePart, float diameter, float xScale, float distance)
+    private static Matrix4x4 MatHead(VisualBikePart bikePart, float diameter, float xScale, float distance)
     {
-        return Matrix4.CreateTranslation(new Vector3(-HeadTurnOffset / diameter, 0.0f, 0.0f))
-               * Matrix4.CreateScale(new Vector3(diameter * xScale, diameter, 1.0f))
-               * Matrix4.CreateRotationZ(bikePart.Rotation + MathF.PI)
-               * Matrix4.CreateTranslation(bikePart.Center.X, bikePart.Center.Y, distance);
+        return Matrix4x4.CreateTranslation(-HeadTurnOffset / diameter, 0.0f, 0.0f)
+               * Matrix4x4.CreateScale(diameter * xScale, diameter, 1.0f)
+               * Matrix4x4.CreateRotationZ(bikePart.Rotation + MathF.PI)
+               * Matrix4x4.CreateTranslation(bikePart.Center.X, bikePart.Center.Y, distance);
     }
 
     private static Vector2 UndoRotation(Vector2 v, float bikeRot)
@@ -488,7 +490,7 @@ internal class Players : IDisposable
         Intersection isect)
     {
         var diff = center2 - center1;
-        float dist = diff.Length;
+        float dist = diff.Length();
 
         if (dist > radius1 + radius2 || dist < Math.Abs(radius1 - radius2))
         {

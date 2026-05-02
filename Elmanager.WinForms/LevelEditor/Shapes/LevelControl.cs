@@ -4,9 +4,9 @@ using System.Windows.Forms;
 using Elmanager.Lev;
 using Elmanager.Rendering;
 using Elmanager.Rendering.Camera;
+using Elmanager.Rendering.OpenGL;
 using Elmanager.UI;
 using OpenTK.GLControl;
-using OpenTK.Graphics.OpenGL;
 using OpenTK.Windowing.Common;
 
 namespace Elmanager.LevelEditor.Shapes;
@@ -42,7 +42,7 @@ internal class LevelControl : GLControl
 
         Load += (_, _) =>
         {
-            _renderer = new ElmaRenderer(Context!, _renderingSettings, elmaRenderer);
+            _renderer = new ElmaRenderer(new GlControlContext(this), _renderingSettings, elmaRenderer);
             UpdateRenderingContext();
         };
 
@@ -88,7 +88,7 @@ internal class LevelControl : GLControl
             MakeCurrent();
         }
 
-        GL.Viewport(0, 0, Width, Height);
+        GlProvider.GL.Viewport(0, 0, (uint)Width, (uint)Height);
 
         if (Context != null)
             Context.SwapInterval = 0;
@@ -133,7 +133,7 @@ internal class LevelControl : GLControl
             MakeCurrent();
         }
 
-        GL.Viewport(0, 0, Width, Height);
+        GlProvider.GL.Viewport(0, 0, (uint)Width, (uint)Height);
         _zoomController.ZoomFill(_renderingSettings, Width / (double)Height);
     }
 

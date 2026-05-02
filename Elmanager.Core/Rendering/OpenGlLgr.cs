@@ -5,13 +5,15 @@ using System.Drawing.Imaging;
 using Elmanager.Lev;
 using Elmanager.Lgr;
 using Elmanager.Rendering.OpenGL;
-using OpenTK.Graphics.OpenGL;
+using Silk.NET.OpenGL;
 using PixelFormat = System.Drawing.Imaging.PixelFormat;
+using Texture = Elmanager.Rendering.OpenGL.Texture;
 
 namespace Elmanager.Rendering;
 
 public class OpenGlLgr : IDisposable
 {
+    private static Silk.NET.OpenGL.GL GL => GlProvider.GL;
     public const double ObjectRadius = 0.4;
 
     private readonly List<GrassPic> _grassImages = new();
@@ -219,8 +221,11 @@ public class OpenGlLgr : IDisposable
             (int)TextureMagFilter.Nearest);
         GL.TexParameter(TextureTarget.Texture2D, TextureParameterName.TextureWrapS, (int)textureOptions.WrapMode);
         GL.TexParameter(TextureTarget.Texture2D, TextureParameterName.TextureWrapT, (int)textureOptions.WrapMode);
-        GL.TexImage2D(TextureTarget.Texture2D, 0, PixelInternalFormat.Rgba, bmpData.Width, bmpData.Height, 0,
-            OpenTK.Graphics.OpenGL.PixelFormat.Bgra, PixelType.UnsignedByte, bmpData.Scan0);
+        unsafe
+        {
+            GL.TexImage2D(TextureTarget.Texture2D, 0, InternalFormat.Rgba, (uint)bmpData.Width, (uint)bmpData.Height, 0,
+                Silk.NET.OpenGL.PixelFormat.Bgra, PixelType.UnsignedByte, (void*)bmpData.Scan0);
+        }
         bmp.UnlockBits(bmpData);
         return texture;
     }
@@ -231,7 +236,7 @@ public class OpenGlLgr : IDisposable
     private static GrassPic CreateGrassPic(GrassImage img)
     {
         return new GrassPic(
-            FromLgrImage(img.Image, new TextureOptions { WrapMode = TextureWrapMode.Clamp },
+            FromLgrImage(img.Image, new TextureOptions { WrapMode = TextureWrapMode.ClampToEdge },
                 1 / 48.0),
             img.Image.Bmp, img.Delta);
     }

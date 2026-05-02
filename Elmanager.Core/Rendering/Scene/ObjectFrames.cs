@@ -1,7 +1,8 @@
 using System;
 using Elmanager.Rendering.OpenGL;
-using OpenTK.Graphics.OpenGL;
+using Silk.NET.OpenGL;
 using Buffer = Elmanager.Rendering.OpenGL.Buffer;
+using VertexArray = Elmanager.Rendering.OpenGL.VertexArray;
 
 namespace Elmanager.Rendering.Scene;
 

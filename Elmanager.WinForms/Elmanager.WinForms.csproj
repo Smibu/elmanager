@@ -31,6 +31,7 @@
     <ItemGroup>
         <PackageReference Include="ObjectListView.Repack.Core3" Version="2.9.3" />
         <PackageReference Include="OpenTK.GLControl" Version="4.0.2" />
+        <PackageReference Include="Silk.NET.OpenGL" Version="2.23.0" />
         <PackageReference Include="SharpVectors" Version="1.8.4" />
         <PackageReference Include="NaturalSort.Extension" Version="4.3.0" />
     </ItemGroup>

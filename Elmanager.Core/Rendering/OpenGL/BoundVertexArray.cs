@@ -1,5 +1,5 @@
 using System;
-using OpenTK.Graphics.OpenGL;
+using Silk.NET.OpenGL;
 
 namespace Elmanager.Rendering.OpenGL;
 
@@ -21,7 +21,7 @@ internal class BoundVertexArray : IDisposable
         Vao.Bind();
     }
 
-    public void SetData<T>(T[] data, BufferUsageHint usage = BufferUsageHint.DynamicDraw) where T : struct
+    public void SetData<T>(T[] data, BufferUsageARB usage = BufferUsageARB.DynamicDraw) where T : unmanaged
     {
         Buffer.SetData(data, usage);
     }

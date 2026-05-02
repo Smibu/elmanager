@@ -2,13 +2,16 @@ using System;
 using System.Collections.Generic;
 using System.Drawing;
 using Elmanager.Rendering.OpenGL;
-using OpenTK.Graphics.OpenGL;
+using Silk.NET.OpenGL;
 using Buffer = Elmanager.Rendering.OpenGL.Buffer;
+using Texture = Elmanager.Rendering.OpenGL.Texture;
+using VertexArray = Elmanager.Rendering.OpenGL.VertexArray;
 
 namespace Elmanager.Rendering.Scene;
 
 internal class GroundSky : IDisposable
 {
+    private static GL GL => GlProvider.GL;
     private const string VertexShader = @"
         #version 320 es
         precision highp float;

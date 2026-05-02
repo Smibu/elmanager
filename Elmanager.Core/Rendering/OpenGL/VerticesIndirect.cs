@@ -1,25 +1,26 @@
 using System;
 using System.Linq;
-using OpenTK.Graphics.OpenGL;
+using Silk.NET.OpenGL;
 
 namespace Elmanager.Rendering.OpenGL;
 
 internal class VerticesIndirect : IDisposable
 {
+    private static GL GL => GlProvider.GL;
     public BoundVertexArray VertexArray { get; }
-    private Buffer IndirectBuffer { get; } = new(BufferTarget.DrawIndirectBuffer);
+    private Buffer IndirectBuffer { get; } = new(BufferTargetARB.DrawIndirectBuffer);
     private int CommandCount { get; set; }
     public int VertexCount { get; private set; }
 
     public VerticesIndirect(BoundVertexArray vertexArray, float[] vertices, int[] firsts, int[] counts,
-        BufferUsageHint usageHint = BufferUsageHint.DynamicDraw)
+        BufferUsageARB usageHint = BufferUsageARB.DynamicDraw)
     {
         VertexArray = vertexArray;
         Update(vertices, firsts, counts, usageHint);
     }
 
     public void Update(float[] vertices, int[] firsts, int[] counts,
-        BufferUsageHint usageHint = BufferUsageHint.DynamicDraw)
+        BufferUsageARB usageHint = BufferUsageARB.DynamicDraw)
     {
         VertexArray.SetData(vertices, usageHint);
         VertexCount = vertices.Length / 2;
@@ -36,7 +37,10 @@ internal class VerticesIndirect : IDisposable
 
     public void Draw(PrimitiveType primitiveType)
     {
-        GL.MultiDrawArraysIndirect(primitiveType, IntPtr.Zero, CommandCount, 0);
+        unsafe
+        {
+            GL.MultiDrawArraysIndirect(primitiveType, (void*)0, (uint)CommandCount, 0);
+        }
     }
 
     public void Dispose()

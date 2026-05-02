@@ -3,12 +3,14 @@ using System.Collections.Generic;
 using System.Drawing;
 using Elmanager.Geometry;
 using Elmanager.Rendering.OpenGL;
-using OpenTK.Graphics.OpenGL;
+using Silk.NET.OpenGL;
+using VertexArray = Elmanager.Rendering.OpenGL.VertexArray;
 
 namespace Elmanager.Rendering.Scene;
 
 internal class Lines : IDisposable
 {
+    private static GL GL => GlProvider.GL;
     private const string VertexShader = @"
         #version 320 es
         precision highp float;
@@ -226,12 +228,12 @@ internal class Lines : IDisposable
     private void DrawInternal(float[] lineData, ColorUniform color, UniformBuffer colorUniforms, PrimitiveType primitiveType, Pipeline pipeline)
     {
         var vertexCount = lineData.Length / 2;
-        _vertexBuffer.SetData(lineData, BufferUsageHint.StreamDraw);
+        _vertexBuffer.SetData(lineData, BufferUsageARB.StreamDraw);
 
         colorUniforms.SetData(color);
         pipeline.Use();
         _vertexBuffer.Bind();
-        GL.DrawArrays(primitiveType, 0, vertexCount);
+        GL.DrawArrays(primitiveType, 0, (uint)vertexCount);
     }
 
     public void Dispose()

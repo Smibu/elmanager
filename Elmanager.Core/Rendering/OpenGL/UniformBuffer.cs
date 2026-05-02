@@ -1,12 +1,13 @@
 using System;
 using System.Runtime.InteropServices;
-using OpenTK.Graphics.OpenGL;
+using Silk.NET.OpenGL;
 
 namespace Elmanager.Rendering.OpenGL;
 
 internal class UniformBuffer : IDisposable
 {
-    private int Handle { get; } = GL.GenBuffer();
+    private static GL GL => GlProvider.GL;
+    private uint Handle { get; } = GlProvider.GL.GenBuffer();
     private int BindingPoint { get; }
 
     internal UniformBuffer(int bindingPoint)
@@ -16,19 +17,19 @@ internal class UniformBuffer : IDisposable
 
     private void Bind()
     {
-        GL.BindBuffer(BufferTarget.UniformBuffer, Handle);
+        GL.BindBuffer(BufferTargetARB.UniformBuffer, Handle);
     }
 
     public void BindBufferBase()
     {
-        GL.BindBufferBase(BufferRangeTarget.UniformBuffer, BindingPoint, Handle);
+        GL.BindBufferBase(BufferTargetARB.UniformBuffer, (uint)BindingPoint, Handle);
     }
 
-    public void SetData<T>(T data) where T : struct
+    public void SetData<T>(T data) where T : unmanaged
     {
         Bind();
         int size = Marshal.SizeOf<T>();
-        GL.BufferData(BufferTarget.UniformBuffer, size, ref data, BufferUsageHint.DynamicDraw);
+        GL.BufferData(BufferTargetARB.UniformBuffer, (nuint)size, ref data, BufferUsageARB.DynamicDraw);
     }
 
     public void Dispose()

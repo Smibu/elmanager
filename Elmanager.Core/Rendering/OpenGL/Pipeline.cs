@@ -1,10 +1,11 @@
 using System;
-using OpenTK.Graphics.OpenGL;
+using Silk.NET.OpenGL;
 
 namespace Elmanager.Rendering.OpenGL;
 
 public class Pipeline : IDisposable
 {
+    private static GL GL => GlProvider.GL;
     private Shader Shader { get; }
     private StencilOptions? Stencil { get; }
     private bool DepthTest { get; }
@@ -30,7 +31,7 @@ public class Pipeline : IDisposable
         {
             GL.Enable(EnableCap.StencilTest);
             var opts = Stencil.Value;
-            GL.StencilFunc(opts.Compare, (int)opts.Reference, (int)opts.ReadMask);
+            GL.StencilFunc(opts.Compare, (int)opts.Reference, opts.ReadMask);
             GL.StencilOp(opts.StencilFail, opts.DepthFail, opts.Pass);
             GL.StencilMask(opts.WriteMask);
         }

@@ -1,12 +1,13 @@
 using System;
-using OpenTK.Graphics.OpenGL;
+using Silk.NET.OpenGL;
 
 namespace Elmanager.Rendering.OpenGL;
 
 internal class VertexArray : IDisposable
 {
-    private int Handle { get; } = GL.GenVertexArray();
-    private const int InstanceBinding = 1;
+    private static GL GL => GlProvider.GL;
+    private uint Handle { get; } = GlProvider.GL.GenVertexArray();
+    private const uint InstanceBinding = 1;
 
     private VertexArray()
     {
@@ -14,18 +15,18 @@ internal class VertexArray : IDisposable
 
     public static BoundVertexArray Create(VertexInfo info, float[]? data)
     {
-        var buffer = new Buffer(BufferTarget.ArrayBuffer);
+        var buffer = new Buffer(BufferTargetARB.ArrayBuffer);
         var vao = new VertexArray();
         vao.ConfigureVertexAttributes(buffer, info);
         var boundVao = new BoundVertexArray(vao, buffer);
         if (data != null)
-            boundVao.SetData(data, BufferUsageHint.StaticDraw);
+            boundVao.SetData(data, BufferUsageARB.StaticDraw);
         return boundVao;
     }
 
     public static BoundVertexArray CreateInstanced(Vertices geometry, VertexInfo perVertexInfo, VertexInfo instanceInfo)
     {
-        var instanceBuffer = new Buffer(BufferTarget.ArrayBuffer);
+        var instanceBuffer = new Buffer(BufferTargetARB.ArrayBuffer);
         var vao = new VertexArray();
         vao.ConfigureVertexAttributes(geometry.VertexArray.Buffer, perVertexInfo);
         vao.ConfigureVertexAttributes(instanceBuffer, instanceInfo);
@@ -35,7 +36,7 @@ internal class VertexArray : IDisposable
 
     public static VertexArray CreateSeparateInstanced(Vertices geometry, VertexInfo perVertexInfo, VertexInfo instanceInfo)
     {
-        const int perVertexBinding = 0;
+        const uint perVertexBinding = 0;
 
         var vao = new VertexArray();
         vao.Bind();
@@ -46,8 +47,8 @@ internal class VertexArray : IDisposable
         ConfigureVertexFormats(instanceInfo, InstanceBinding);
         GL.VertexBindingDivisor(InstanceBinding, 1);
 
-        GL.BindVertexBuffer(perVertexBinding, geometry.VertexArray.Buffer.Handle, IntPtr.Zero,
-            perVertexInfo.CalculateStride());
+        GL.BindVertexBuffer(perVertexBinding, geometry.VertexArray.Buffer.Handle, 0,
+            (uint)perVertexInfo.CalculateStride());
         geometry.IndexBuffer.Bind();
 
         return vao;
@@ -68,22 +69,25 @@ internal class VertexArray : IDisposable
 
         foreach (var attr in info.Attrs)
         {
-            GL.EnableVertexAttribArray(attr.Location);
+            GL.EnableVertexAttribArray((uint)attr.Location);
 
             var glType = GetOpenGLType(attr.Format);
             var size = attr.Format.Size();
             var normalized = attr.Format.Normalized();
 
-            GL.VertexAttribPointer(
-                attr.Location,
-                size,
-                glType,
-                normalized,
-                stride,
-                offset
-            );
+            unsafe
+            {
+                GL.VertexAttribPointer(
+                    (uint)attr.Location,
+                    size,
+                    glType,
+                    normalized,
+                    (uint)stride,
+                    (void*)offset
+                );
+            }
 
-            GL.VertexAttribDivisor(attr.Location, info.StepMode == VertexStepMode.Instance ? 1 : 0);
+            GL.VertexAttribDivisor((uint)attr.Location, info.StepMode == VertexStepMode.Instance ? 1u : 0u);
 
             offset += attr.Format.Bytes();
         }
@@ -117,16 +121,16 @@ internal class VertexArray : IDisposable
         };
     }
 
-    private static void ConfigureVertexFormats(VertexInfo info, int bindingPoint)
+    private static void ConfigureVertexFormats(VertexInfo info, uint bindingPoint)
     {
-        int offset = 0;
+        uint offset = 0;
         foreach (var attr in info.Attrs)
         {
-            GL.EnableVertexAttribArray(attr.Location);
-            GL.VertexAttribFormat(attr.Location, attr.Format.Size(), GetAttribType(attr.Format),
+            GL.EnableVertexAttribArray((uint)attr.Location);
+            GL.VertexAttribFormat((uint)attr.Location, attr.Format.Size(), GetAttribType(attr.Format),
                 attr.Format.Normalized(), offset);
-            GL.VertexAttribBinding(attr.Location, bindingPoint);
-            offset += attr.Format.Bytes();
+            GL.VertexAttribBinding((uint)attr.Location, bindingPoint);
+            offset += (uint)attr.Format.Bytes();
         }
     }
 
@@ -137,6 +141,6 @@ internal class VertexArray : IDisposable
 
     public void BindInstanceBuffer(Buffer buffer, int instanceStride)
     {
-        GL.BindVertexBuffer(InstanceBinding, buffer.Handle, IntPtr.Zero, instanceStride);
+        GL.BindVertexBuffer(InstanceBinding, buffer.Handle, 0, (uint)instanceStride);
     }
 }

@@ -214,7 +214,7 @@ internal partial class LevelEditorForm : FormMod, IMessageFilter, ILevelEditor
         System.Windows.Forms.Application.AddMessageFilter(this);
         EditorControl.HandleCreated += (_, _) =>
         {
-            EditorControl.Context.SwapInterval = 0;
+            EditorControl.Context!.SwapInterval = 0;
             Initialize(lev);
             _tcs.SetResult();
         };
@@ -571,7 +571,7 @@ internal partial class LevelEditorForm : FormMod, IMessageFilter, ILevelEditor
         SelectButton.Select();
         UpdateButtons();
         Size = Settings.Size;
-        Renderer = new ElmaRenderer(EditorControl.Context!, Settings.RenderingSettings);
+        Renderer = new ElmaRenderer(new GlControlContext(EditorControl), Settings.RenderingSettings);
         PictureDialogService = new WinFormsPictureDialogService(Renderer);
         ProgressService = new WinFormsProgressService(this);
         CurrentTool = Tools.SelectionTool;

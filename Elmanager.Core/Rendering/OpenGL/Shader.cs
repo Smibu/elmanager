@@ -1,11 +1,12 @@
 using System;
-using OpenTK.Graphics.OpenGL;
+using Silk.NET.OpenGL;
 
 namespace Elmanager.Rendering.OpenGL;
 
 internal class Shader : IDisposable
 {
-    public int Handle { get; }
+    private static GL GL => GlProvider.GL;
+    public uint Handle { get; }
 
     public Shader(string vertexSource, string fragmentSource)
     {
@@ -29,10 +30,10 @@ internal class Shader : IDisposable
         GL.DeleteShader(fragmentShader);
     }
 
-    private static void CompileShader(int shader)
+    private static void CompileShader(uint shader)
     {
         GL.CompileShader(shader);
-        GL.GetShader(shader, ShaderParameter.CompileStatus, out var code);
+        GL.GetShader(shader, ShaderParameterName.CompileStatus, out int code);
         if (code != 1)
         {
             var infoLog = GL.GetShaderInfoLog(shader);
@@ -40,10 +41,10 @@ internal class Shader : IDisposable
         }
     }
 
-    private static void LinkProgram(int program)
+    private static void LinkProgram(uint program)
     {
         GL.LinkProgram(program);
-        GL.GetProgram(program, GetProgramParameterName.LinkStatus, out var code);
+        GL.GetProgram(program, ProgramPropertyARB.LinkStatus, out int code);
         if (code != 1)
         {
             throw new Exception($"Error occurred while linking Program({program})");

@@ -1,11 +1,12 @@
 using System;
-using OpenTK.Graphics.OpenGL;
+using Silk.NET.OpenGL;
 
 namespace Elmanager.Rendering.OpenGL;
 
 public class Texture : IDisposable
 {
-    private int Handle { get; } = GL.GenTexture();
+    private static GL GL => GlProvider.GL;
+    private uint Handle { get; } = GlProvider.GL.GenTexture();
 
     public void Bind(TextureUnit unit = TextureUnit.Texture0)
     {
