@@ -56,7 +56,7 @@ internal class LevelControl : GLControl
         {
             return;
         }
-        var r = _renderer.UpdateSettings(_level, _renderingSettings);
+        var r = _renderer.UpdateSettings(_level, _renderingSettings, null);
         if (r.LgrLoadException != null)
             UiUtils.ShowError("Error occurred when loading LGR file! Reason:\r\n\r\n" + r.LgrLoadException.Message);
         _level.UpdateBounds();

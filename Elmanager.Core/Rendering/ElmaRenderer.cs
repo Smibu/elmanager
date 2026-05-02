@@ -425,7 +425,7 @@ public class ElmaRenderer : IDisposable
         _viewportHeight = height;
     }
 
-    public RendererSettingsChangeResult UpdateSettings(Level lev, RenderingSettings newSettings, string? lgrDir = null)
+    public RendererSettingsChangeResult UpdateSettings(Level lev, RenderingSettings newSettings, string? lgrDir)
     {
         var currentLgr = OpenGlLgr?.CurrentLgr.Path;
         var newLgr = newSettings.ResolveLgr(lev, lgrDir);

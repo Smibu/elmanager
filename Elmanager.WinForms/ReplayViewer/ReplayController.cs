@@ -412,7 +412,7 @@ internal class ReplayController : IDisposable
         MaxTime = PlayListReplays.Max(p => p.Player.FrameCount) / 30.0;
         CurrentTime = 0.0;
         Lev = lev;
-        var updateResult = Renderer.UpdateSettings(lev, _settings);
+        var updateResult = Renderer.UpdateSettings(lev, _settings, Global.AppSettings.General.LgrDirectory);
         if (updateResult.LgrLoadException != null)
             UiUtils.ShowError("Error occurred when loading LGR file! Reason:\r\n\r\n" + updateResult.LgrLoadException.Message);
         _activePlayerIndices = new List<int>();

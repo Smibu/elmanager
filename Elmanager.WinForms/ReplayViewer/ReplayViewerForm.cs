@@ -355,7 +355,7 @@ internal partial class ReplayViewerForm : FormMod
         var settingsForm = new RenderingSettingsForm(Global.AppSettings.ReplayViewer.RenderingSettings);
         settingsForm.Changed += x =>
         {
-            var r = _replayController.Renderer.UpdateSettings(_replayController.Lev!, x);
+            var r = _replayController.Renderer.UpdateSettings(_replayController.Lev!, x, Global.AppSettings.General.LgrDirectory);
             if (r.LgrLoadException != null)
                 UiUtils.ShowError("Error occurred when loading LGR file! Reason:\r\n\r\n" + r.LgrLoadException.Message);
             RedrawSceneIfNotPlaying();

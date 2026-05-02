@@ -32,6 +32,7 @@ public interface ILevelEditor
 
     IPictureDialogService PictureDialogService { get; }
     ICustomShapeService CustomShapeService { get; }
+    IProgressService ProgressService { get; }
 
     bool ObjectFramesVisible { get; }
     bool ObjectsVisible { get; }
@@ -43,4 +44,5 @@ public interface ILevelEditor
     bool TexturesVisible { get; }
     bool PictureFramesVisible { get; }
     bool PicturesVisible { get; }
+    void UpdateUndoRedo();
 }

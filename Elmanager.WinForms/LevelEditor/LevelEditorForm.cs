@@ -5,7 +5,6 @@ using System.Drawing;
 using System.IO;
 using System.Linq;
 using System.Text.RegularExpressions;
-using System.Threading;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 using System.Windows.Input;
@@ -29,11 +28,9 @@ using Color = System.Drawing.Color;
 using Control = System.Windows.Forms.Control;
 using Cursor = System.Windows.Forms.Cursor;
 using Cursors = System.Windows.Forms.Cursors;
-using Envelope = NetTopologySuite.Geometries.Envelope;
 using KeyEventArgs = System.Windows.Forms.KeyEventArgs;
 using MouseEventArgs = System.Windows.Forms.MouseEventArgs;
 using Point = System.Drawing.Point;
-using Polygon = Elmanager.Lev.Polygon;
 using Timer = System.Timers.Timer;
 
 namespace Elmanager.LevelEditor;
@@ -42,38 +39,22 @@ internal partial class LevelEditorForm : FormMod, IMessageFilter, ILevelEditor
 {
     private const string CoordinateFormat = "F3";
     private const string LevEditorName = "SLE";
-    private const int MouseWheelStep = 20;
     private const bool Physics = true;
-    private readonly List<Level> _history = new();
+    private readonly LevelEditorController Controller;
     private IEditorTool CurrentTool = null!;
-    private EditorLev _editorLev = new(new Level(), null);
-    internal Level Lev => _editorLev.Lev;
-    private ElmaFile? LevFile => _editorLev.File;
+    internal Level Lev => Controller.Lev;
+    private ElmaFile? LevFile => Controller.LevFile;
     internal ElmaRenderer Renderer = null!;
     private readonly WinFormsEditorTools Tools;
     private List<string>? _currLevDirFiles;
     private bool _draggingScreen;
-    private List<Vector> _errorPoints = new();
-    private int _historyIndex;
-    private int _savedIndex;
     private string? _loadedLevFilesDir;
-    private int _lockCoord;
-    private bool _lockMouseX;
-    private bool _lockMouseY;
-    private bool _modified;
+
     private Vector _moveStartPosition;
-    private int _selectedObjectCount;
-    private int _selectedObjectIndex;
-    private int _selectedPictureCount;
-    private int _selectedPictureIndex;
-    private int _selectedPolygonCount;
-    private int _selectedTextureCount;
-    private int _selectedVerticeCount;
     private bool IsLgrLoaded => EditorLgr != null;
     private bool _draggingGrid;
     private Vector _gridStartOffset;
     private bool _programmaticPropertyChange;
-    private Vector? _savedStartPosition;
     private float _dpiX;
     private float _dpiY;
     private Vector? _contextMenuClickPosition;
@@ -85,8 +66,6 @@ internal partial class LevelEditorForm : FormMod, IMessageFilter, ILevelEditor
     private readonly FullScreenController _fullScreenController;
     private LgrManager? _lgrManager;
     private static readonly string[] ImportableExtensions = { DirUtils.LevExtension, DirUtils.LebExtension, ".bmp", ".png", ".gif", ".tiff", ".exif", ".svg", ".svgz" };
-    private ToolBase.NearestVertexInfo? _grassInfo;
-    private TexturizationOptions? _texturizationOpts;
     private readonly LevFileWatcher _levFileWatcher;
     private bool _hasFocus;
     public SelectionFilter SelectionFilter { get; }
@@ -94,8 +73,9 @@ internal partial class LevelEditorForm : FormMod, IMessageFilter, ILevelEditor
     private HighlightTarget? CurrentHighlight { get; set; }
     private IEditorCursorManager CursorManager { get; }
     private IKeyboardState KeyboardState { get; } = new WinFormsKeyboardState();
-    private IPictureDialogService PictureDialogService { get; }
+    private IPictureDialogService PictureDialogService { get; set; } = null!;
     private ICustomShapeService CustomShapeService { get; }
+    private IProgressService ProgressService { get; set; } = null!;
 
     ElmaRenderer ILevelEditor.Renderer => Renderer;
     Level ILevelEditor.Lev => Lev;
@@ -108,6 +88,7 @@ internal partial class LevelEditorForm : FormMod, IMessageFilter, ILevelEditor
     LevelEditorRenderingSettings ILevelEditor.RenderingSettings => Settings.RenderingSettings;
     IPictureDialogService ILevelEditor.PictureDialogService => PictureDialogService;
     ICustomShapeService ILevelEditor.CustomShapeService => CustomShapeService;
+    IProgressService ILevelEditor.ProgressService => ProgressService;
 
     bool ILevelEditor.ObjectFramesVisible => ShowObjectFramesButton.Checked;
     bool ILevelEditor.ObjectsVisible => ShowObjectsButton.Checked;
@@ -143,8 +124,8 @@ internal partial class LevelEditorForm : FormMod, IMessageFilter, ILevelEditor
     internal LevelEditorForm(string? levPath)
     {
         InitializeComponent();
+        Controller = new LevelEditorController(this);
         CursorManager = new WinFormsCursorManager(EditorControl, this);
-        PictureDialogService = new WinFormsPictureDialogService(() => EditorLgr);
         CustomShapeService = new WinFormsCustomShapeService(this);
         InitializeInternalMenu();
         _levFileWatcher = new LevFileWatcher(this);
@@ -171,7 +152,7 @@ internal partial class LevelEditorForm : FormMod, IMessageFilter, ILevelEditor
             ? TryLoadLevel(levPath)
             : Settings.LastLevel != null
                 ? TryLoadLevel(Settings.LastLevel)
-                : CreateBlankLevel();
+                : Controller.CreateBlankLevel();
         PostInit(lev);
     }
 
@@ -198,7 +179,7 @@ internal partial class LevelEditorForm : FormMod, IMessageFilter, ILevelEditor
 
     internal void SetLevel(ElmaFileObject<Level> lev)
     {
-        SaveStartPositionIfEnabled(lev);
+        Controller.SaveStartPositionIfEnabled(lev);
         InitializeLevel(new EditorLev(lev.Obj, lev.File));
     }
 
@@ -213,20 +194,12 @@ internal partial class LevelEditorForm : FormMod, IMessageFilter, ILevelEditor
         {
             UiUtils.ShowError("Error occurred while loading level file: " + ex.Message, "Warning",
                 MessageBoxIcon.Exclamation);
-            return CreateBlankLevel();
+            return Controller.CreateBlankLevel();
         }
         catch (Exception ex) when (ex is FileNotFoundException || ex is DirectoryNotFoundException)
         {
             ShowWarning($"The level {levPath} was not found.");
-            return CreateBlankLevel();
-        }
-    }
-
-    private void SaveStartPositionIfEnabled(ElmaFileObject<Level> lev)
-    {
-        if (Settings.EnableStartPositionFeature)
-        {
-            SaveStartPosition(lev.Obj);
+            return Controller.CreateBlankLevel();
         }
     }
 
@@ -253,10 +226,9 @@ internal partial class LevelEditorForm : FormMod, IMessageFilter, ILevelEditor
         await _tcs.Task;
     }
 
-    internal bool Modified => _modified;
+    internal bool Modified => Controller.Modified;
 
-    private int SelectedElementCount => _selectedObjectCount + _selectedPictureCount + _selectedVerticeCount +
-                                        _selectedTextureCount;
+    private int SelectedElementCount => Controller.SelectedElementCount;
 
     private ToolBase ToolBase => ((ToolBase)CurrentTool);
 
@@ -269,14 +241,14 @@ internal partial class LevelEditorForm : FormMod, IMessageFilter, ILevelEditor
         }
     }
 
-    internal ZoomController ZoomCtrl => _zoomCtrl;
+    private ZoomController ZoomCtrl => _zoomCtrl;
 
-    internal SceneSettings SceneSettings => _sceneSettings;
+    private SceneSettings SceneSettings => _sceneSettings;
 
-    internal WinFormsPlayController WinFormsPlayController { get; } = new() { Settings = Global.AppSettings.LevelEditor.PlayingSettings };
-    public Lgr.Lgr? EditorLgr => Renderer.OpenGlLgr?.CurrentLgr;
+    private WinFormsPlayController WinFormsPlayController { get; } = new() { Settings = Global.AppSettings.LevelEditor.PlayingSettings };
+    private Lgr.Lgr? EditorLgr => Renderer.OpenGlLgr?.CurrentLgr;
 
-    internal void TransformMenuItemClick(object? sender = null, EventArgs? e = null)
+    private void TransformMenuItemClick(object? sender = null, EventArgs? e = null)
     {
         if (!CurrentTool.Busy)
         {
@@ -291,7 +263,7 @@ internal partial class LevelEditorForm : FormMod, IMessageFilter, ILevelEditor
         }
     }
 
-    internal void RedrawScene(object? sender = null, EventArgs? e = null)
+    private void RedrawScene(object? sender = null, EventArgs? e = null)
     {
         if (WinFormsPlayController.PlayingOrPaused)
         {
@@ -301,24 +273,15 @@ internal partial class LevelEditorForm : FormMod, IMessageFilter, ILevelEditor
         DoRedrawScene();
     }
 
-    internal void SetModified(LevModification value, bool updateHistory = true)
+    private void SetModified(LevModification value, bool updateHistory = true)
     {
         var wasModified = value != LevModification.Nothing;
-        _modified = wasModified || _modified;
+        Controller.SetModified(value, Renderer, CurrentTool, WinFormsPlayController, Settings, updateHistory);
         if (wasModified)
         {
-            UpdateRendererBuffers((LevVisualChange)value);
             EnableSaveButtons(true);
-            Lev.UpdateBounds();
-            if (updateHistory)
-                AddToHistory();
             if (Settings.CheckTopologyDynamically)
                 CheckTopology();
-        }
-
-        if (value.HasFlag(LevModification.Ground) || value.HasFlag(LevModification.Apples) || value.HasFlag(LevModification.Killers) || value.HasFlag(LevModification.Flowers))
-        {
-            WinFormsPlayController.UpdateEngine(Lev);
         }
     }
 
@@ -328,73 +291,24 @@ internal partial class LevelEditorForm : FormMod, IMessageFilter, ILevelEditor
         SaveToolStripMenuItem.Enabled = value;
     }
 
-    internal void UpdateSelectionInfo()
+    private void UpdateSelectionInfo()
     {
-        _selectedVerticeCount = 0;
-        _selectedPolygonCount = 0;
-        _selectedObjectCount = 0;
-        _selectedPictureCount = 0;
-        _selectedTextureCount = 0;
-        foreach (Polygon x in Lev.Polygons)
-        {
-            bool hasSelectedVertices = false;
-            foreach (Vector z in x.Vertices)
-            {
-                if (z.Mark == VectorMark.Selected)
-                {
-                    hasSelectedVertices = true;
-                    _selectedVerticeCount++;
-                }
-            }
-
-            if (hasSelectedVertices)
-                _selectedPolygonCount++;
-        }
-
-        foreach (LevObject x in Lev.Objects)
-            if (x.Position.Mark == VectorMark.Selected)
-                _selectedObjectCount++;
-        foreach (GraphicElement x in Lev.GraphicElements)
-            if (x.Position.Mark == VectorMark.Selected)
-                if (x is GraphicElement.Picture or GraphicElement.MissingPicture)
-                    _selectedPictureCount++;
-                else
-                    _selectedTextureCount++;
-        SelectionLabel.Text = "Selected " + _selectedVerticeCount + " vertices of " + _selectedPolygonCount +
-                              " polygons, " + _selectedObjectCount + " objects, " + _selectedPictureCount +
-                              " pictures, " + _selectedTextureCount + " textures.";
+        Controller.UpdateSelectionInfo();
+        SelectionLabel.Text = Controller.GetSelectionText();
         MirrorHorizontallyToolStripMenuItem.Enabled = SelectedElementCount >= 2;
-    }
-
-    private void AddToHistory()
-    {
-        if (_historyIndex < _history.Count - 1)
-        {
-            _history.RemoveRange(_historyIndex + 1, _history.Count - _historyIndex - 1);
-            _historyIndex = _history.Count - 1;
-        }
-
-        _history.Add(Lev.Clone());
-        _historyIndex++;
-        if (_historyIndex <= _savedIndex)
-        {
-            _savedIndex = -1;
-        }
-
-        UpdateUndoRedo();
     }
 
     public void UpdateLevel(Level lev)
     {
-        _editorLev = _editorLev with { Lev = lev };
+        Controller.UpdateLevel(lev);
         SetModified(LevModification.All);
-        _savedIndex = _historyIndex;
+        Controller.MarkSaved();
         LoadFromHistory();
     }
 
     private void AfterSettingsClosed()
     {
-        var r = Renderer.UpdateSettings(Lev, Settings.RenderingSettings);
+        var r = Renderer.UpdateSettings(Lev, Settings.RenderingSettings, Global.AppSettings.General.LgrDirectory);
         if (r.LgrLoadException != null)
             UiUtils.ShowError("Error occurred when loading LGR file! Reason:\r\n\r\n" + r.LgrLoadException.Message);
         UpdateLgrTools(r);
@@ -411,34 +325,7 @@ internal partial class LevelEditorForm : FormMod, IMessageFilter, ILevelEditor
 
     private void BringToFrontToolStripMenuItemClick(object sender, EventArgs e)
     {
-        var mod = LevModification.Nothing;
-        if (_selectedObjectIndex >= 0)
-        {
-            var obj = Lev.Objects[_selectedObjectIndex];
-            Lev.Objects.RemoveAt(_selectedObjectIndex);
-            Lev.Objects.Add(obj);
-            mod = obj.Type switch
-            {
-                ObjectType.Apple => LevModification.Apples,
-                ObjectType.Killer => LevModification.Killers,
-                ObjectType.Flower => LevModification.Flowers,
-                _ => LevModification.Nothing
-            };
-        }
-        else if (_selectedPictureIndex >= 0)
-        {
-            var obj = Lev.GraphicElements[_selectedPictureIndex];
-            Lev.GraphicElements.RemoveAt(_selectedPictureIndex);
-            Lev.GraphicElements.Insert(0, obj);
-            mod = obj is GraphicElement.Picture or GraphicElement.MissingPicture ? LevModification.Pictures : LevModification.Textures;
-        }
-        else if (_grassInfo is not null)
-        {
-            Lev.Polygons.Remove(_grassInfo.Polygon);
-            Lev.Polygons.Insert(0, _grassInfo.Polygon);
-        }
-
-        SetModified(mod);
+        Controller.BringToFront();
     }
 
     public void ChangeToDefaultCursor()
@@ -456,7 +343,7 @@ internal partial class LevelEditorForm : FormMod, IMessageFilter, ILevelEditor
         RedrawScene();
     }
 
-    public void ChangeToSelectionTool()
+    private void ChangeToSelectionTool()
     {
         ChangeToolTo(Tools.SelectionTool);
     }
@@ -471,80 +358,22 @@ internal partial class LevelEditorForm : FormMod, IMessageFilter, ILevelEditor
 
     private void CheckTopology()
     {
-        var items = topologyList.DropDownItems;
         if (!CurrentTool.Busy)
         {
-            items.Clear();
+            topologyList.DropDownItems.Clear();
             ResetTopologyListStyle();
             topologyList.Text = "Checking topology...";
             ToolStrip2.Refresh();
-            _errorPoints.Clear();
-            if (Lev.TooWide)
-                items.Add(
-                    "Level is too wide. Current width: " + Lev.Width + ", maximum width: " + Level.MaximumSize);
-            if (Lev.TooTall)
-                items.Add("Level is too tall. Current height: " + Lev.Height + ", maximum height: " +
-                          Level.MaximumSize);
-            if (Lev.HasTooLargePolygons)
-                items.Add("There are polygons with too many vertices in the level.");
-            if (Lev.HasTooManyObjects)
-                items.Add("There are too many objects in the level. Current: " + Lev.Objects.Count + ", maximum: " +
-                          Level.MaximumObjectCount);
-            if (Lev.HasTooFewObjects)
-                items.Add("There must be at least one object in the level (in addition to the start object).");
-            if (Lev.HasTooManyPolygons)
-                items.Add("There are too many polygons in the level. Current: " + Lev.Polygons.Count +
-                          ", maximum: " +
-                          Level.MaximumPolygonCount);
-            if (Lev.HasTooManyVertices)
-                items.Add("There are too many ground vertices in the level. Current: " + Lev.GroundVertexCount +
-                          ", maximum: " +
-                          Level.MaximumGroundVertexCount);
-            if (Lev.HasTooManyPictures)
-                items.Add("There are too many pictures and textures in the level. Current: " +
-                          Lev.PictureTextureCount + ", maximum: " +
-                          Level.MaximumPictureTextureCount);
-            if (Lev.HeadTouchesGround)
-                items.Add("The driver\'s head is touching ground.");
-            if (Lev.WheelLiesOnEdge)
-                items.Add("The driver\'s wheel is lying on an edge.");
-            if (Lev.HasTexturesOutOfBounds)
-                items.Add("Some textures are too far outside of the level polygons.");
 
-            _errorPoints = Lev.GetIntersectionPoints();
-            if (_errorPoints.Count > 0)
-                items.Add("There are intersections in the level.");
+            var errorItems = Controller.CheckTopologyErrors(CurrentTool);
+            foreach (var item in errorItems)
+                topologyList.DropDownItems.Add(item);
 
-            var errObjs = Lev.GetApplesAndFlowersInsideGround();
-            if (errObjs.Count > 0)
-            {
-                foreach (var errObj in errObjs)
-                    _errorPoints.Add(errObj.Position);
-                items.Add("Some apples and/or flowers are inside ground.");
-            }
+            // Determine if there are hard errors vs warnings
+            var hasWarnings = errorItems.Any(i => i.StartsWith("Level has pictures that the LGR is missing"));
+            var hasErrors = errorItems.Any(i => !i.StartsWith("Level has pictures that the LGR is missing"));
 
-            var shortEdges = Lev.GetTooShortEdges();
-            if (shortEdges.Count > 0)
-            {
-                _errorPoints.AddRange(shortEdges);
-                items.Add("Some polygon edges are too short.");
-            }
-
-            var hasErrors = items.Count > 0;
-            var missingNames = Lev.GraphicElements.Select(e => e switch
-            {
-                GraphicElement.MissingPicture missingPicture => missingPicture.Name,
-                GraphicElement.MissingTexture missingTexture => missingTexture.TextureName,
-                _ => null
-            }).Where(name => name != null).Distinct().ToList();
-            var hasWarnings = missingNames.Any();
-            if (hasWarnings)
-            {
-                var text = $"Level has pictures that the LGR is missing: {string.Join(", ", missingNames)}";
-                items.Add(text);
-            }
-
-            var c = items.Count;
+            var c = errorItems.Count;
             if (c == 0)
             {
                 topologyList.Text = "No problems.";
@@ -558,15 +387,7 @@ internal partial class LevelEditorForm : FormMod, IMessageFilter, ILevelEditor
             }
             else
             {
-                if (c > 1)
-                {
-                    topologyList.Text = c + " problems were found!";
-                }
-                else
-                {
-                    topologyList.Text = "1 problem was found!";
-                }
-
+                topologyList.Text = c > 1 ? c + " problems were found!" : "1 problem was found!";
                 topologyList.ForeColor = Color.Red;
                 topologyList.Font = new Font(topologyList.Font, FontStyle.Bold);
             }
@@ -589,10 +410,7 @@ internal partial class LevelEditorForm : FormMod, IMessageFilter, ILevelEditor
 
     private void ClearHistory()
     {
-        _history.Clear();
-        _history.Add(Lev.Clone());
-        _historyIndex = 0;
-        _savedIndex = -1;
+        Controller.ClearHistory();
         UpdateUndoRedo();
     }
 
@@ -618,211 +436,16 @@ internal partial class LevelEditorForm : FormMod, IMessageFilter, ILevelEditor
 
     private void CopyMenuItemClick(object sender, EventArgs e)
     {
-        var copiedPolygons = new List<Polygon>();
-        var copiedObjects = new List<LevObject>();
-        var copiedTextures = new List<GraphicElement>();
-        Vector.MarkDefault = VectorMark.Selected;
-        var delta = Keyboard.IsKeyDown(Key.LeftShift)
-            ? Settings.RenderingSettings.GridSize
-            : _zoomCtrl.Cam.ZoomLevel * 0.1;
-        foreach (Polygon x in Lev.Polygons)
-        {
-            var copy = new Polygon();
-            for (var index = 0; index < x.Vertices.Count; index++)
-            {
-                Vector z = x.Vertices[index];
-                if (z.Mark == VectorMark.Selected)
-                {
-                    x.Vertices[index] = new Vector(z.X, z.Y, VectorMark.None);
-                    copy.Add(new Vector(z.X + delta,
-                        z.Y - delta));
-                }
-            }
-
-            if (copy.Vertices.Count > 2)
-            {
-                copiedPolygons.Add(copy);
-                copy.IsGrass = x.IsGrass;
-                copy.UpdateGrassSlopeInfo(Lev.GroundBounds, Settings.RenderingSettings.GrassZoom);
-            }
-        }
-
-        foreach (LevObject x in Lev.Objects)
-        {
-            if (x.Mark == VectorMark.Selected && x.Type != ObjectType.Start)
-            {
-                x.Mark = VectorMark.None;
-                copiedObjects.Add(
-                    new LevObject(
-                        x.Position +
-                        new Vector(delta,
-                            -delta), x.Type, x.AppleType,
-                        x.AnimationNumber));
-            }
-        }
-
-        foreach (GraphicElement x in Lev.GraphicElements)
-        {
-            if (x.Position.Mark == VectorMark.Selected)
-            {
-                var copiedGraphicElement = x with { Position = new Vector(x.X + delta, x.Y - delta) };
-                copiedTextures.Add(copiedGraphicElement);
-                x.Mark = VectorMark.None;
-            }
-        }
-
-        Vector.MarkDefault = VectorMark.None;
-        Lev.Polygons.AddRange(copiedPolygons);
-        Lev.Objects.AddRange(copiedObjects);
-        Lev.GraphicElements.AddRange(copiedTextures);
-        var mod = LevModification.Nothing;
-        foreach (var obj in copiedObjects)
-        {
-            mod |= obj.Type switch
-            {
-                ObjectType.Apple => LevModification.Apples,
-                ObjectType.Killer => LevModification.Killers,
-                ObjectType.Flower => LevModification.Flowers,
-                _ => LevModification.Nothing
-            };
-        }
-        if (copiedPolygons.Count > 0)
-        {
-            mod |= LevModification.Ground;
-        }
-        foreach (var tex in copiedTextures)
-        {
-            mod |= tex is GraphicElement.Picture or GraphicElement.MissingPicture ? LevModification.Pictures : LevModification.Textures;
-        }
-        SetModified(mod);
-        RedrawScene();
+        Controller.CopySelected(_zoomCtrl);
     }
 
     private bool CurrLevDirExists() => LevFile?.FileInfo.Directory?.Exists ?? false;
 
     private void DoRedrawScene()
     {
-        var jf = WinFormsPlayController.Playing && WinFormsPlayController.FollowDriver
-            ? _zoomCtrl.Cam.FixJitter(EditorControl.Width, EditorControl.Height)
-            : new Vector();
-        Renderer.DrawScene(_zoomCtrl.Cam, 0, _sceneSettings);
-
-        if (Settings.ShowCrossHair)
-        {
-            var bounds = _zoomCtrl.Cam.GetBounds(Renderer.AspectRatio);
-            var mouse = GetMouseCoordinates();
-            Renderer.DrawDashLine(bounds.XMin, mouse.Y, bounds.XMax,
-                mouse.Y, Settings.RenderingSettings.CrosshairColor);
-            Renderer.DrawDashLine(mouse.X, bounds.YMin, mouse.X,
-                bounds.YMax, Settings.RenderingSettings.CrosshairColor);
-        }
-
-        foreach (Polygon x in Lev.Polygons)
-        {
-            switch (x.Mark)
-            {
-                case PolygonMark.Selected:
-                    Renderer.DrawPolygon(x, Color.Red);
-                    break;
-                case PolygonMark.Erroneous:
-                    Renderer.DrawPolygon(x, Color.Red);
-                    break;
-            }
-
-            foreach (Vector z in x.Vertices)
-            {
-                if (z.Mark == VectorMark.Selected)
-                    Renderer.AddSelectionPoint(z);
-            }
-        }
-
-        foreach (LevObject t in Lev.Objects)
-        {
-            if (t.Position.Mark == VectorMark.Selected)
-                Renderer.AddSelectionPoint(t.Position);
-
-            if (t.Type == ObjectType.Start)
-            {
-                Renderer.DrawDummyPlayer(t.X, t.Y, new PlayerRenderOpts(Color.Green, false, Settings.RenderingSettings.ShowObjects, false), Settings.RenderingSettings);
-            }
-        }
-
-        foreach (GraphicElement t in Lev.GraphicElements)
-        {
-            if (t.Position.Mark == VectorMark.Selected)
-            {
-                var p1 = new Vector(t.Position.X, t.Position.Y);
-                var p2 = new Vector(t.Position.X + t.Width, t.Position.Y);
-                var p3 = new Vector(t.Position.X + t.Width, t.Position.Y - t.Height);
-                var p4 = new Vector(t.Position.X, t.Position.Y - t.Height);
-                Renderer.AddSelectionLineLoop([p1, p2, p3, p4]);
-            }
-        }
-
-        foreach (Vector x in _errorPoints)
-            Renderer.DrawSquare(x, _zoomCtrl.Cam.ZoomLevel / 25, Color.Red);
-        if (_savedStartPosition is { } p)
-        {
-            if (Settings.RenderingSettings.ShowObjects)
-            {
-                Renderer.DrawDummyPlayer(p.X, p.Y, new PlayerRenderOpts(Color.Green, false, true, true), Settings.RenderingSettings);
-            }
-
-            if (Settings.RenderingSettings.ShowObjectFrames)
-            {
-                Renderer.DrawDummyPlayer(p.X, p.Y, new PlayerRenderOpts(Color.Green, false, false, true), Settings.RenderingSettings);
-            }
-        }
-
-        if (WinFormsPlayController.PlayingOrPaused)
-        {
-            _zoomCtrl.Cam.CenterX += jf.X;
-            _zoomCtrl.Cam.CenterY += jf.Y;
-            Renderer.SetCamera(_zoomCtrl.Cam);
-            var driver = WinFormsPlayController.Driver!;
-            if (Settings.RenderingSettings.ShowObjects && Renderer.OpenGlLgr != null)
-            {
-                Renderer.DrawPlayer(driver.GetState(), WinFormsPlayController.RenderOptsLgr, Settings.RenderingSettings);
-            }
-            else if (Settings.RenderingSettings.ShowObjectFrames)
-            {
-                Renderer.DrawPlayer(driver.GetState(), WinFormsPlayController.RenderOptsFrame, Settings.RenderingSettings);
-            }
-
-            if (WinFormsPlayController.PlayerSelection == VectorMark.Selected)
-                Renderer.AddSelectionPoint(driver.Body.Location);
-        }
-
-        if (Settings.UseHighlight && CurrentHighlight is { } hl)
-        {
-            switch (hl)
-            {
-                case HighlightTarget.PolygonTarget pt:
-                    if (pt.Polygon.IsGrass)
-                        Renderer.DrawGrassPolygon(pt.Polygon, Settings.RenderingSettings.HighlightColor, Settings.RenderingSettings);
-                    else
-                        Renderer.DrawPolygon(pt.Polygon, Settings.RenderingSettings.HighlightColor);
-                    break;
-                case HighlightTarget.VertexTarget vt:
-                    Renderer.DrawPoint(vt.Polygon.Vertices[vt.VertexIndex], Settings.RenderingSettings.HighlightColor);
-                    break;
-                case HighlightTarget.ObjectTarget ot:
-                    Renderer.DrawPoint(Lev.Objects[ot.ObjectIndex].Position, Settings.RenderingSettings.HighlightColor);
-                    break;
-                case HighlightTarget.GraphicElementTarget gt:
-                    Renderer.DrawGraphicElementFrame(Lev.GraphicElements[gt.GraphicElementIndex], Settings.RenderingSettings, Settings.RenderingSettings.HighlightColor);
-                    break;
-                case HighlightTarget.PlayerTarget when WinFormsPlayController.PlayingOrPaused:
-                    Renderer.DrawPoint(WinFormsPlayController.Driver!.Body.Location, Settings.RenderingSettings.HighlightColor);
-                    break;
-            }
-        }
-
-        CurrentTool.ExtraRendering();
-
-        Renderer.DrawSelection(Settings.RenderingSettings.SelectionColor);
-
-        Renderer.Swap();
+        Controller.DrawEditorScene(Renderer, _zoomCtrl.Cam, _sceneSettings, Settings,
+            WinFormsPlayController, CurrentTool, CurrentHighlight,
+            EditorControl.Width, EditorControl.Height, GetMouseCoordinates);
     }
 
     public LevelEditorSettings Settings => Global.AppSettings.LevelEditor;
@@ -835,90 +458,12 @@ internal partial class LevelEditorForm : FormMod, IMessageFilter, ILevelEditor
 
     private void DeleteAllGrassToolStripMenuItemClick(object? sender, EventArgs e)
     {
-        var mod = LevModification.Nothing;
-        for (int i = Lev.Polygons.Count - 1; i >= 0; i--)
-        {
-            Polygon x = Lev.Polygons[i];
-            if (x.IsGrass)
-            {
-                mod = LevModification.Grass;
-                Lev.Polygons.Remove(x);
-            }
-        }
-
-        SetModified(mod);
-        RedrawScene();
+        Controller.DeleteAllGrass();
     }
 
     private void DeleteSelected(object? sender, EventArgs? e)
     {
-        if (!CurrentTool.Busy)
-        {
-            var mod = LevModification.Nothing;
-            for (int j = Lev.Polygons.Count - 1; j >= 0; j--)
-            {
-                bool polyModified = false;
-                Polygon x = Lev.Polygons[j];
-                for (int i = x.Vertices.Count - 1; i >= 0; i--)
-                {
-                    if (x.Vertices[i].Mark == VectorMark.Selected &&
-                        (Lev.Polygons.Count > 1 || x.Vertices.Count > 3))
-                    {
-                        x.Vertices.RemoveAt(i);
-                        if (x.IsGrass)
-                        {
-                            mod |= LevModification.Grass;
-                        }
-                        else
-                        {
-                            mod |= LevModification.Ground;
-                        }
-                        polyModified = true;
-                    }
-                }
-
-                if (x.Vertices.Count < 3)
-                    Lev.Polygons.Remove(x);
-                else if (polyModified)
-                    x.UpdateGrassSlopeInfo(Lev.GroundBounds, Settings.RenderingSettings.GrassZoom);
-            }
-
-            var deletedApples = new HashSet<int>();
-            for (int i = Lev.Objects.Count - 1; i >= 0; i--)
-            {
-                if (Lev.Objects[i].Position.Mark == VectorMark.Selected)
-                {
-                    if (Lev.Objects[i].Type == ObjectType.Start)
-                        continue;
-                    mod |= Lev.Objects[i].Type switch
-                    {
-                        ObjectType.Apple => LevModification.Apples,
-                        ObjectType.Killer => LevModification.Killers,
-                        ObjectType.Flower => LevModification.Flowers,
-                        _ => LevModification.Nothing
-                    };
-                    if (Lev.Objects[i].Type == ObjectType.Apple)
-                    {
-                        deletedApples.Add(i);
-                    }
-                    Lev.Objects.RemoveAt(i);
-                }
-            }
-
-            for (int i = Lev.GraphicElements.Count - 1; i >= 0; i--)
-            {
-                GraphicElement x = Lev.GraphicElements[i];
-                if (x.Position.Mark == VectorMark.Selected)
-                {
-                    Lev.GraphicElements.Remove(x);
-                    mod |= x is GraphicElement.Picture or GraphicElement.MissingPicture ? LevModification.Pictures : LevModification.Textures;
-                }
-            }
-
-            WinFormsPlayController.NotifyDeletedApples(deletedApples);
-            SetModified(mod);
-            UpdateSelectionInfo();
-        }
+        Controller.DeleteSelected(CurrentTool);
     }
 
     private void DrawButtonChanged(object? sender, EventArgs e)
@@ -967,54 +512,13 @@ internal partial class LevelEditorForm : FormMod, IMessageFilter, ILevelEditor
     {
         var mousePosNoTr = Invoke(() => EditorControl.PointToClient(MousePosition));
         var bounds = _zoomCtrl.Cam.GetBounds(Renderer.AspectRatio);
-        var mousePos = new Vector
-        {
-            X =
-                bounds.XMin +
-                mousePosNoTr.X * bounds.XSize / EditorControl.Width,
-            Y =
-                bounds.YMax -
-                mousePosNoTr.Y * bounds.YSize / EditorControl.Height
-        };
-        return mousePos;
+        return LevelEditorController.ScreenToWorld(mousePosNoTr.X, mousePosNoTr.Y,
+            EditorControl.Width, EditorControl.Height, bounds);
     }
 
     private void HandleGrassMenu(object sender, EventArgs e)
     {
-        var polys = new List<Polygon>();
-        var selectedPolygons = Lev.Polygons.GetSelectedPolygons(includeGrass: true).ToList();
-        if (_grassInfo is not null)
-        {
-            if (selectedPolygons.Contains(_grassInfo.Polygon))
-            {
-                polys.AddRange(selectedPolygons);
-            }
-            else
-            {
-                polys.Add(_grassInfo.Polygon);
-            }
-        }
-        else
-        {
-            polys.AddRange(selectedPolygons);
-        }
-
-        var mod = LevModification.Nothing;
-        polys.ForEach(p =>
-        {
-            p.IsGrass = !p.IsGrass;
-            if (!p.IsGrass)
-            {
-                mod |= LevModification.Ground;
-            }
-            else
-            {
-                mod |= LevModification.Grass;
-            }
-            p.UpdateGrassSlopeInfo(Lev.GroundBounds, Settings.RenderingSettings.GrassZoom);
-        });
-        SetModified(mod);
-        RedrawScene();
+        Controller.ToggleGrass();
     }
 
     private void HandleGravityMenu(object sender, EventArgs e)
@@ -1031,26 +535,7 @@ internal partial class LevelEditorForm : FormMod, IMessageFilter, ILevelEditor
         else
             chosenAppleType = AppleType.GravityRight;
 
-        if (_selectedObjectIndex >= 0)
-        {
-            var currApple = Lev.Objects[_selectedObjectIndex];
-            if (currApple.Position.Mark == VectorMark.Selected)
-            {
-                Lev.Objects.Where(
-                        obj => obj.Position.Mark == VectorMark.Selected && obj.Type == ObjectType.Apple)
-                    .ToList()
-                    .ForEach(apple => apple.AppleType = chosenAppleType);
-            }
-            else
-            {
-                currApple.AppleType = chosenAppleType;
-            }
-            SetModified(LevModification.Apples);
-        }
-        else
-        {
-            WinFormsPlayController.UpdateGravity(chosenAppleType);
-        }
+        Controller.HandleGravity(chosenAppleType, WinFormsPlayController);
     }
 
     private void Initialize(EditorLev lev)
@@ -1087,6 +572,8 @@ internal partial class LevelEditorForm : FormMod, IMessageFilter, ILevelEditor
         UpdateButtons();
         Size = Settings.Size;
         Renderer = new ElmaRenderer(EditorControl.Context!, Settings.RenderingSettings);
+        PictureDialogService = new WinFormsPictureDialogService(Renderer);
+        ProgressService = new WinFormsProgressService(this);
         CurrentTool = Tools.SelectionTool;
         SetupEventHandlers();
         InitializeLevel(lev);
@@ -1094,11 +581,11 @@ internal partial class LevelEditorForm : FormMod, IMessageFilter, ILevelEditor
 
     private async void InitializeLevel(EditorLev lev)
     {
-        _editorLev = lev;
+        Controller.SetEditorLev(lev);
         if (lev.File is not null)
         {
             var elmaFileObject = new ElmaFileObject<Level>(lev.File, lev.Lev);
-            SaveStartPositionIfEnabled(elmaFileObject);
+            Controller.SaveStartPositionIfEnabled(elmaFileObject);
             _levFileWatcher.StoreLevDiskSnapshot(elmaFileObject);
         }
         else
@@ -1109,7 +596,7 @@ internal partial class LevelEditorForm : FormMod, IMessageFilter, ILevelEditor
         PlayTimeLabel.Text = "";
         _zoomCtrl = new ZoomController(new ElmaCamera(), Lev, () => RedrawScene());
         SetNotModified();
-        var r = Renderer.UpdateSettings(Lev, Settings.RenderingSettings);
+        var r = Renderer.UpdateSettings(Lev, Settings.RenderingSettings, Global.AppSettings.General.LgrDirectory);
         if (r.LgrLoadException != null)
             UiUtils.ShowError("Error occurred when loading LGR file! Reason:\r\n\r\n" + r.LgrLoadException.Message);
         Lev.UpdateBounds();
@@ -1122,10 +609,10 @@ internal partial class LevelEditorForm : FormMod, IMessageFilter, ILevelEditor
         ClearHistory();
         UpdatePrevNextButtons();
         ChangeToolTo(CurrentTool);
-        _errorPoints.Clear();
+        Controller.ErrorPoints.Clear();
     }
 
-    private void KeyHandlerDown(object? sender, KeyEventArgs e)
+    private async void KeyHandlerDown(object? sender, KeyEventArgs e)
     {
         e = e.KeyCode switch
         {
@@ -1141,7 +628,7 @@ internal partial class LevelEditorForm : FormMod, IMessageFilter, ILevelEditor
         switch (e.KeyCode)
         {
             case Keys.Oem5:
-                TexturizeSelection();
+                await Controller.TexturizeSelection();
                 break;
             case Keys.Up:
             case Keys.Down:
@@ -1153,18 +640,16 @@ internal partial class LevelEditorForm : FormMod, IMessageFilter, ILevelEditor
                 }
                 break;
             case Keys.Z:
-                if (!_lockMouseX)
+                if (!Controller.LockMouseX)
                 {
-                    _lockMouseX = true;
-                    _lockCoord = MousePosition.X;
+                    Controller.SetLockMouseX(true, MousePosition.X);
                 }
 
                 break;
             case Keys.X:
-                if (!_lockMouseY)
+                if (!Controller.LockMouseY)
                 {
-                    _lockMouseY = true;
-                    _lockCoord = MousePosition.Y;
+                    Controller.SetLockMouseY(true, MousePosition.Y);
                 }
 
                 break;
@@ -1212,81 +697,6 @@ internal partial class LevelEditorForm : FormMod, IMessageFilter, ILevelEditor
         InfoLabel.Text = CurrentTool.GetHelp();
     }
 
-    private async void TexturizeSelection()
-    {
-        if (Renderer.OpenGlLgr is null)
-        {
-            UiUtils.ShowError("You need to set LGR directory from settings before you can use texturize tool.", "Note",
-                MessageBoxIcon.Information);
-            return;
-        }
-
-        var selected = Lev.Polygons.GetSelectedPolygonsAsMultiPolygon();
-        if (selected.IsEmpty)
-        {
-            return;
-        }
-
-        var picForm = new PictureForm(Renderer.OpenGlLgr.CurrentLgr, null)
-        {
-            AutoTextureMode = true,
-            AllowMultiple = false,
-            SetDefaultsAutomatically = true
-        };
-        if (_texturizationOpts is { })
-        {
-            picForm.TexturizationOptions = _texturizationOpts;
-        }
-        picForm.SetDefaultDistanceAndClipping();
-        picForm.ShowDialog();
-        if (picForm.Selection is not ImageSelection.TextureSelection sel)
-        {
-            return;
-        }
-
-        var opts = picForm.TexturizationOptions;
-        _texturizationOpts = opts;
-
-        var masks = opts.SelectedMasks.Select(x => Renderer.OpenGlLgr.DrawableImageFromLgrImage(Renderer.OpenGlLgr.CurrentLgr.ImageFromName(x)!)).ToList();
-        var texture = Renderer.OpenGlLgr.DrawableImageFromLgrImage(sel.Txt);
-        var rects = masks
-            .Select(i => new Envelope(0, i.WidthMinusMargin, 0, i.HeightMinusMargin));
-
-        var src = new CancellationTokenSource();
-
-        var progress = new Progress<double>();
-        var task = Task.Factory.StartNew(() => selected.FindCovering(rects, src.Token, progress,
-            iterations: opts.Iterations,
-            minRectCover: opts.MinCoverPercentage / 100).ToList(), src.Token);
-
-        var progressForm = new ProgressDialog(task, src, progress);
-        BeginInvoke(() => { progressForm.ShowDialog(); });
-        List<Envelope> covering;
-        try
-        {
-            covering = await task;
-        }
-        catch (PolygonException e)
-        {
-            UiUtils.ShowError(e.Message);
-            return;
-        }
-        catch (OperationCanceledException)
-        {
-            return;
-        }
-
-        var selmasks =
-            covering.Select(env =>
-                masks.First(m => Math.Abs(m.WidthMinusMargin * m.HeightMinusMargin - env.Area) < 0.001));
-        var pics = selmasks.Zip(covering,
-            (m, c) =>
-                GraphicElement.Text(sel.Clipping!.Value, sel.Distance!.Value,
-                    new Vector(c.MinX - m.EmptyPixelXMargin, c.MaxY + m.EmptyPixelYMargin), texture, m));
-        Lev.GraphicElements.AddRange(pics);
-        SetModified(LevModification.Textures);
-    }
-
     private void SetModifiedAndRender(LevModification value)
     {
         SetModified(value);
@@ -1298,10 +708,10 @@ internal partial class LevelEditorForm : FormMod, IMessageFilter, ILevelEditor
         switch (e.KeyCode)
         {
             case Keys.Z:
-                _lockMouseX = false;
+                Controller.SetLockMouseX(false);
                 break;
             case Keys.X:
-                _lockMouseY = false;
+                Controller.SetLockMouseY(false);
                 break;
         }
     }
@@ -1352,7 +762,7 @@ internal partial class LevelEditorForm : FormMod, IMessageFilter, ILevelEditor
                     if (Settings.RenderingSettings.DefaultGroundAndSky)
                         UiUtils.ShowError("Default ground and sky is enabled, so you won\'t see this change in editor.",
                             "Warning", MessageBoxIcon.Exclamation);
-                    var r = Renderer.UpdateSettings(Lev, Settings.RenderingSettings);
+                    var r = Renderer.UpdateSettings(Lev, Settings.RenderingSettings, Global.AppSettings.General.LgrDirectory);
                     if (r.LgrLoadException != null)
                         UiUtils.ShowError("Error occurred when loading LGR file! Reason:\r\n\r\n" + r.LgrLoadException.Message);
                     UpdateLgrTools(r);
@@ -1375,20 +785,17 @@ internal partial class LevelEditorForm : FormMod, IMessageFilter, ILevelEditor
 
     private void LoadFromHistory()
     {
-        _editorLev = _editorLev with { Lev = _history[_historyIndex].Clone() };
-        _zoomCtrl.Lev = Lev;
-        Lev.UpdateGrass(Settings.RenderingSettings.GrassZoom);
+        Controller.LoadFromHistory(_zoomCtrl, Settings.RenderingSettings);
         UpdateUndoRedo();
         topologyList.DropDownItems.Clear();
         topologyList.Text = "";
-        _errorPoints.Clear();
-        var r = Renderer.UpdateSettings(Lev, Settings.RenderingSettings);
+        var r = Renderer.UpdateSettings(Lev, Settings.RenderingSettings, Global.AppSettings.General.LgrDirectory);
         if (r.LgrLoadException != null)
             UiUtils.ShowError("Error occurred when loading LGR file! Reason:\r\n\r\n" + r.LgrLoadException.Message);
         UpdateLgrTools(r);
         UpdateLabels();
         ChangeToolTo(CurrentTool);
-        if (_savedIndex != _historyIndex)
+        if (!Controller.IsSaved)
         {
             SetModified(LevModification.All, false);
         }
@@ -1401,15 +808,12 @@ internal partial class LevelEditorForm : FormMod, IMessageFilter, ILevelEditor
     private void SetNotModified()
     {
         EnableSaveButtons(false);
-        _modified = false;
+        Controller.SetNotModified();
     }
 
     private void MirrorHorizontallyToolStripMenuItem_Click(object sender, EventArgs e)
     {
-        Lev.MirrorSelected(MirrorOption.Horizontal);
-        Lev.UpdateGrass(Settings.RenderingSettings.GrassZoom);
-        SetModified(LevModification.All);
-        RedrawScene();
+        Controller.MirrorSelected(MirrorOption.Horizontal);
     }
 
     private void MouseDownEvent(object sender, MouseEventArgs e)
@@ -1452,7 +856,7 @@ internal partial class LevelEditorForm : FormMod, IMessageFilter, ILevelEditor
                     }
 
                     TransformMenuItem.Visible = SelectedElementCount > 1;
-                    _selectedObjectIndex = nearestObjectIndex;
+                    Controller.SelectedObjectIndex = nearestObjectIndex;
                     if (nearestObjectIndex >= 0)
                     {
                         bringToFrontToolStripMenuItem.Visible = true;
@@ -1491,7 +895,7 @@ internal partial class LevelEditorForm : FormMod, IMessageFilter, ILevelEditor
                                 break;
                             case ObjectType.Start when Settings.EnableStartPositionFeature:
                                 saveStartPositionToolStripMenuItem.Visible = true;
-                                if (_savedStartPosition != null)
+                                if (Controller.SavedStartPosition != null)
                                 {
                                     restoreStartPositionToolStripMenuItem.Visible = true;
                                 }
@@ -1503,7 +907,7 @@ internal partial class LevelEditorForm : FormMod, IMessageFilter, ILevelEditor
                     if (info is not null)
                     {
                         GrassMenuItem.Visible = true;
-                        _grassInfo = info;
+                        Controller.GrassInfo = info;
                         if (info.Polygon.IsGrass)
                         {
                             bringToFrontToolStripMenuItem.Visible = true;
@@ -1511,7 +915,7 @@ internal partial class LevelEditorForm : FormMod, IMessageFilter, ILevelEditor
                         }
                     }
 
-                    _selectedPictureIndex = nearestPictureIndex;
+                    Controller.SelectedPictureIndex = nearestPictureIndex;
                     if (nearestPictureIndex >= 0)
                     {
                         PicturePropertiesMenuItem.Visible = true;
@@ -1519,7 +923,7 @@ internal partial class LevelEditorForm : FormMod, IMessageFilter, ILevelEditor
                         sendToBackToolStripMenuItem.Visible = true;
                     }
 
-                    if (_selectedPolygonCount > 0)
+                    if (Controller.SelectedPolygonCount > 0)
                     {
                         bool allGrassSelected = Lev.Polygons.Where(pol => pol.Vertices.Any(v => v.Mark == VectorMark.Selected)).All(pol => pol.IsGrass);
                         createCustomShapeMenuItem.Visible = !allGrassSelected;
@@ -1593,23 +997,16 @@ internal partial class LevelEditorForm : FormMod, IMessageFilter, ILevelEditor
     private void MouseMoveEvent(object sender, MouseEventArgs e)
     {
         _hasFocus = true;
-        if (_lockMouseX)
-            Cursor.Position = new Point(_lockCoord, MousePosition.Y);
-        else if (_lockMouseY)
-            Cursor.Position = new Point(MousePosition.X, _lockCoord);
+        if (Controller.LockMouseX)
+            Cursor.Position = new Point(Controller.LockCoord, MousePosition.Y);
+        else if (Controller.LockMouseY)
+            Cursor.Position = new Point(MousePosition.X, Controller.LockCoord);
         ShowCoordinates();
         if (_draggingScreen || _draggingGrid)
         {
             Vector z = GetMouseCoordinates();
-            if (!Settings.LockGrid && _draggingGrid)
-            {
-                _sceneSettings.GridOffset = _gridStartOffset + _moveStartPosition - z;
-            }
-            else
-            {
-                _zoomCtrl.CenterX = _zoomCtrl.CenterX - (z.X - _moveStartPosition.X);
-                _zoomCtrl.CenterY = _zoomCtrl.CenterY - (z.Y - _moveStartPosition.Y);
-            }
+            Controller.HandleDragMove(z, _moveStartPosition, _draggingGrid,
+                _sceneSettings, _gridStartOffset, Settings.LockGrid, _zoomCtrl);
         }
 
         var mod = CurrentTool.MouseMove(GetMouseCoordinates());
@@ -1630,44 +1027,8 @@ internal partial class LevelEditorForm : FormMod, IMessageFilter, ILevelEditor
 
     private void MouseWheelZoom(long delta)
     {
-        if (!Settings.LockGrid && Keyboard.IsKeyDown(Key.LeftCtrl))
-        {
-            double currSize = Settings.RenderingSettings.GridSize;
-            double newSize = currSize + Math.Sign(delta) * _zoomCtrl.Cam.ZoomLevel / 50.0;
-            if (newSize > 0)
-            {
-                SetGridSizeWithMouse(newSize, GetMouseCoordinates());
-            }
-        }
-        else
-        {
-            _zoomCtrl.Zoom(GetMouseCoordinates(), delta > 0, 1 - MouseWheelStep / 100.0, Settings.RenderingSettings);
-            UpdateZoomLabel();
-        }
-    }
-
-    private static double GetGridMouseRatio(double size, double offset, double min, double mouse)
-    {
-        var dist = mouse - ElmaRenderer.GetFirstGridLine(size, offset, min);
-        return (dist % size) / size;
-    }
-
-    private void SetGridSizeWithMouse(double newSize, Vector mouseCoords)
-    {
-        var settings = Settings.RenderingSettings;
-        var bounds = _zoomCtrl.Cam.GetBounds(Renderer.AspectRatio);
-        var gx = _sceneSettings.GridOffset.X;
-        _sceneSettings.GridOffset.X = (gx + ElmaRenderer.GetFirstGridLine(newSize, gx, bounds.XMin)
-            - mouseCoords.X + GetGridMouseRatio(settings.GridSize, gx, bounds.XMin, mouseCoords.X) *
-            newSize) % newSize;
-        var gy = _sceneSettings.GridOffset.Y;
-        _sceneSettings.GridOffset.Y = (gy + ElmaRenderer.GetFirstGridLine(newSize, gy, bounds.YMin)
-            - mouseCoords.Y + GetGridMouseRatio(settings.GridSize, gy, bounds.YMin, mouseCoords.Y) *
-            newSize) % newSize;
-        settings.GridSize = newSize;
-        var gridUpdateResult = Renderer.UpdateSettings(Lev, settings);
-        if (gridUpdateResult.LgrLoadException != null)
-            UiUtils.ShowError("Error occurred when loading LGR file! Reason:\r\n\r\n" + gridUpdateResult.LgrLoadException.Message);
+        Controller.MouseWheelZoom(delta, GetMouseCoordinates(), _zoomCtrl, _sceneSettings, Settings, Renderer, Global.AppSettings.General.LgrDirectory);
+        UpdateZoomLabel();
         RedrawScene();
     }
 
@@ -1680,7 +1041,7 @@ internal partial class LevelEditorForm : FormMod, IMessageFilter, ILevelEditor
     {
         if (!PromptToSaveIfModified())
             return;
-        var lev = CreateBlankLevel();
+        var lev = Controller.CreateBlankLevel();
         InitializeLevel(lev);
     }
 
@@ -1696,7 +1057,7 @@ internal partial class LevelEditorForm : FormMod, IMessageFilter, ILevelEditor
         AfterSettingsClosed();
         if (!Settings.EnableStartPositionFeature)
         {
-            _savedStartPosition = null;
+            Controller.ClearSavedStartPosition();
         }
     }
 
@@ -1713,7 +1074,7 @@ internal partial class LevelEditorForm : FormMod, IMessageFilter, ILevelEditor
         var rSettings = new RenderingSettingsForm(Settings.RenderingSettings);
         rSettings.Changed += x =>
         {
-            var r = Renderer.UpdateSettings(Lev, x);
+            var r = Renderer.UpdateSettings(Lev, x, Global.AppSettings.General.LgrDirectory);
             if (r.LgrLoadException != null)
                 UiUtils.ShowError("Error occurred when loading LGR file! Reason:\r\n\r\n" + r.LgrLoadException.Message);
             RedrawScene();
@@ -1749,69 +1110,7 @@ internal partial class LevelEditorForm : FormMod, IMessageFilter, ILevelEditor
 
     private void PicturePropertiesToolStripMenuItemClick(object sender, EventArgs e)
     {
-        if (Renderer.OpenGlLgr is null)
-        {
-            return;
-        }
-        var selectedElems = Lev.GraphicElements.Where(p => p.Position.Mark == VectorMark.Selected).ToList();
-        var picForm = new PictureForm(Renderer.OpenGlLgr.CurrentLgr, null)
-        {
-            SetDefaultsAutomatically = Settings.AlwaysSetDefaultsInPictureTool
-        };
-        if (selectedElems.Count > 0)
-        {
-            picForm.AllowMultiple = true;
-            picForm.SelectMultiple(selectedElems);
-        }
-        else
-        {
-            picForm.AllowMultiple = false;
-            var selectedElem = Lev.GraphicElements[_selectedPictureIndex];
-            picForm.SelectElement(selectedElem);
-            selectedElems = new List<GraphicElement> { selectedElem };
-        }
-
-        picForm.AutoTextureMode = false;
-        picForm.ShowDialog();
-        if (picForm.Selection is not { } sel) return;
-        Lev.GraphicElements = Lev.GraphicElements.Select(curr =>
-        {
-            if (selectedElems.Find(s => ReferenceEquals(s, curr)) is null)
-            {
-                return curr;
-            }
-
-            var clipping = sel.Clipping ?? curr.Clipping;
-            var distance = sel.Distance ?? curr.Distance;
-            var position = curr.Position;
-
-            return sel switch
-            {
-                ImageSelection.MixedSelection => curr with { Distance = distance, Clipping = clipping },
-                ImageSelection.PictureSelection(var pic, _, _) => GraphicElement.Pic(
-                    Renderer.OpenGlLgr.DrawableImageFromLgrImage(pic), position, distance, clipping),
-                ImageSelection.TextureSelection(var txt, var mask, _, _) => GraphicElement.Text(clipping, distance,
-                    position,
-                    Renderer.OpenGlLgr.DrawableImageFromLgrImage(txt),
-                    Renderer.OpenGlLgr.DrawableImageFromLgrImage(mask)),
-                ImageSelection.TextureSelectionMultipleMasks(var txt, _, _) when
-                    curr is GraphicElement.Texture t =>
-                    GraphicElement.Text(clipping, distance, position, Renderer.OpenGlLgr.DrawableImageFromLgrImage(txt), t.MaskInfo),
-                ImageSelection.TextureSelectionMultipleMasks(var txt, _, _) when curr is GraphicElement.Picture
-                    =>
-                    GraphicElement.Text(clipping, distance, position, Renderer.OpenGlLgr.DrawableImageFromLgrImage(txt),
-                        Renderer.OpenGlLgr.DrawableImageFromLgrImage(EditorLgr!.LgrImages.Values.First(i => i.Type == ImageType.Mask))),
-                ImageSelection.TextureSelectionMultipleTextures(var mask, _, _) when
-                    curr is GraphicElement.Texture t => GraphicElement.Text(clipping,
-                        distance, position, t.TextureInfo, Renderer.OpenGlLgr.DrawableImageFromLgrImage(mask)),
-                ImageSelection.TextureSelectionMultipleTextures when
-                    curr is GraphicElement.Picture => curr with { Distance = distance, Clipping = clipping },
-                _ => throw new ArgumentOutOfRangeException(nameof(sel))
-            };
-        }).ToList();
-
-        SetModified(LevModification.Pictures | LevModification.Textures);
-        RedrawScene();
+        Controller.ShowPictureProperties(Settings.AlwaysSetDefaultsInPictureTool);
     }
 
     private void PipeButtonChanged(object? sender, EventArgs e)
@@ -1874,18 +1173,14 @@ internal partial class LevelEditorForm : FormMod, IMessageFilter, ILevelEditor
 
     private void QuickGrassToolStripMenuItemClick(object sender, EventArgs e)
     {
-        var grassPolys = Lev.Polygons.Where(x => !x.IsGrass)
-            .SelectMany(Tools.AutoGrassTool.AutoGrass).ToList();
-        Lev.Polygons.AddRange(grassPolys);
-        SetModified(grassPolys.Count > 0 ? LevModification.Grass : LevModification.Nothing);
-        RedrawScene();
+        Controller.QuickGrass(Tools.AutoGrassTool);
     }
 
     private void Redo(object sender, EventArgs e)
     {
-        if (_historyIndex < _history.Count - 1 && !CurrentTool.Busy)
+        if (Controller.CanRedo && !CurrentTool.Busy)
         {
-            _historyIndex++;
+            Controller.Redo();
             LoadFromHistory();
         }
     }
@@ -1901,36 +1196,10 @@ internal partial class LevelEditorForm : FormMod, IMessageFilter, ILevelEditor
         string suggestion = string.Empty;
         if (Settings.UseFilenameSuggestion)
         {
-            var filenameStart = Settings.BaseFilename;
-            int highestNumber = 0;
-            int lowestNumber = int.MaxValue;
-            foreach (string levelFile in Global.GetLevelFiles())
-            {
-                string x = Path.GetFileNameWithoutExtension(levelFile);
-                if (x.StartsWith(filenameStart, StringComparison.OrdinalIgnoreCase))
-                {
-                    bool isNum = int.TryParse(x.Substring(filenameStart.Length), out var levelNumber);
-                    if (isNum)
-                    {
-                        highestNumber = Math.Max(highestNumber, levelNumber);
-                        lowestNumber = Math.Min(lowestNumber, levelNumber);
-                    }
-                }
-            }
-
             try
             {
-                int newNumber;
-                if (highestNumber == 0 || lowestNumber <= 1)
-                {
-                    newNumber = highestNumber + 1;
-                }
-                else
-                {
-                    newNumber = lowestNumber - 1;
-                }
-
-                suggestion = filenameStart + newNumber.ToString(Settings.NumberFormat);
+                suggestion = Controller.GetFilenameSuggestion(
+                    Global.GetLevelFiles(), Settings.BaseFilename, Settings.NumberFormat);
             }
             catch (FormatException)
             {
@@ -1983,9 +1252,9 @@ internal partial class LevelEditorForm : FormMod, IMessageFilter, ILevelEditor
 
             try
             {
-                _editorLev = _editorLev with { File = _levFileWatcher.WithoutEvents(() => Lev.Save(path)) };
-                _savedIndex = _historyIndex;
-                _levFileWatcher.StoreLevDiskSnapshot(new ElmaFileObject<Level>(_editorLev.File, _editorLev.Lev));
+                Controller.UpdateEditorLevFile(_levFileWatcher.WithoutEvents(() => Lev.Save(path)));
+                Controller.MarkSaved();
+                _levFileWatcher.StoreLevDiskSnapshot(new ElmaFileObject<Level>(Controller.LevFile!, Controller.Lev));
                 if (!Global.GetLevelFiles().Contains(path))
                 {
                     Global.GetLevelFiles().Add(path);
@@ -2005,44 +1274,7 @@ internal partial class LevelEditorForm : FormMod, IMessageFilter, ILevelEditor
 
     private void SelectAllToolStripMenuItemClick(object sender, EventArgs e)
     {
-        foreach (var polygon in Lev.Polygons)
-        {
-            if ((polygon.IsGrass && SelectionFilter.EffectiveGrassFilter) || (!polygon.IsGrass && SelectionFilter.EffectiveGroundFilter))
-                polygon.MarkVectorsAs(VectorMark.Selected);
-        }
-
-        foreach (var levelObject in Lev.Objects)
-        {
-            switch (levelObject.Type)
-            {
-                case ObjectType.Apple:
-                    if (SelectionFilter.EffectiveAppleFilter)
-                        levelObject.Mark = VectorMark.Selected;
-                    break;
-                case ObjectType.Killer:
-                    if (SelectionFilter.EffectiveKillerFilter)
-                        levelObject.Mark = VectorMark.Selected;
-                    break;
-                case ObjectType.Flower:
-                    if (SelectionFilter.EffectiveFlowerFilter)
-                        levelObject.Mark = VectorMark.Selected;
-                    break;
-                case ObjectType.Start:
-                    if (SelectionFilter.EffectiveStartFilter)
-                        levelObject.Mark = VectorMark.Selected;
-                    break;
-            }
-        }
-
-        foreach (var ge in Lev.GraphicElements)
-        {
-            if ((SelectionFilter.EffectiveTextureFilter && ge is GraphicElement.Texture) ||
-                (SelectionFilter.EffectivePictureFilter && ge is GraphicElement.Picture))
-                ge.Mark = VectorMark.Selected;
-        }
-
-        RedrawScene();
-        UpdateSelectionInfo();
+        Controller.SelectAll();
     }
 
     private void SelectButtonChanged(object? sender, EventArgs e)
@@ -2053,34 +1285,7 @@ internal partial class LevelEditorForm : FormMod, IMessageFilter, ILevelEditor
 
     private void SendToBackToolStripMenuItemClick(object? sender, EventArgs e)
     {
-        var mod = LevModification.Nothing;
-        if (_selectedObjectIndex >= 0)
-        {
-            var obj = Lev.Objects[_selectedObjectIndex];
-            Lev.Objects.RemoveAt(_selectedObjectIndex);
-            Lev.Objects.Insert(0, obj);
-            mod |= obj.Type switch
-            {
-                ObjectType.Apple => LevModification.Apples,
-                ObjectType.Killer => LevModification.Killers,
-                ObjectType.Flower => LevModification.Flowers,
-                _ => LevModification.Nothing
-            };
-        }
-        else if (_selectedPictureIndex >= 0)
-        {
-            var obj = Lev.GraphicElements[_selectedPictureIndex];
-            Lev.GraphicElements.RemoveAt(_selectedPictureIndex);
-            Lev.GraphicElements.Add(obj);
-            mod |= obj is GraphicElement.Picture or GraphicElement.MissingPicture ? LevModification.Pictures : LevModification.Textures;
-        }
-        else if (_grassInfo is not null)
-        {
-            Lev.Polygons.Remove(_grassInfo.Polygon);
-            Lev.Polygons.Add(_grassInfo.Polygon);
-        }
-
-        SetModified(mod);
+        Controller.SendToBack();
     }
 
     private void SetAllFilters(object? sender, EventArgs e)
@@ -2088,15 +1293,6 @@ internal partial class LevelEditorForm : FormMod, IMessageFilter, ILevelEditor
         foreach (ToolStripMenuItem x in SelectionFilterToolStripMenuItem.DropDownItems)
             if (x.CheckOnClick)
                 x.Checked = EnableAllToolStripMenuItem.Equals(sender);
-    }
-
-    private EditorLev CreateBlankLevel()
-    {
-        var lev = Settings.GetTemplateLevel();
-        if (!Settings.UseFilenameForTitle)
-            lev.Title = Settings.DefaultTitle;
-        _savedStartPosition = null;
-        return new EditorLev(lev, null);
     }
 
     private void SettingChanged(object? sender, EventArgs e)
@@ -2121,7 +1317,7 @@ internal partial class LevelEditorForm : FormMod, IMessageFilter, ILevelEditor
         Settings.SnapToGrid = snapToGridButton.Checked;
         Settings.LockGrid = lockGridButton.Checked;
         Settings.ShowCrossHair = showCrossHairButton.Checked;
-        var updateResult = Renderer.UpdateSettings(Lev, settings);
+        var updateResult = Renderer.UpdateSettings(Lev, settings, Global.AppSettings.General.LgrDirectory);
         if (updateResult.LgrLoadException != null)
             UiUtils.ShowError("Error occurred when loading LGR file! Reason:\r\n\r\n" + updateResult.LgrLoadException.Message);
         RedrawScene();
@@ -2203,9 +1399,9 @@ internal partial class LevelEditorForm : FormMod, IMessageFilter, ILevelEditor
 
     private void Undo(object sender, EventArgs e)
     {
-        if (_historyIndex > 0 && !CurrentTool.Busy)
+        if (Controller.CanUndo && !CurrentTool.Busy)
         {
-            _historyIndex--;
+            Controller.Undo();
             LoadFromHistory();
         }
     }
@@ -2370,10 +1566,10 @@ internal partial class LevelEditorForm : FormMod, IMessageFilter, ILevelEditor
         }
     }
 
-    private void UpdateUndoRedo()
+    public void UpdateUndoRedo()
     {
-        UndoButton.Enabled = _historyIndex > 0;
-        RedoButton.Enabled = _historyIndex < _history.Count - 1;
+        UndoButton.Enabled = Controller.CanUndo;
+        RedoButton.Enabled = Controller.CanRedo;
         UndoToolStripMenuItem.Enabled = UndoButton.Enabled;
         RedoToolStripMenuItem.Enabled = RedoButton.Enabled;
     }
@@ -2430,9 +1626,9 @@ internal partial class LevelEditorForm : FormMod, IMessageFilter, ILevelEditor
             : Color.White;
     }
 
-    public void PreserveSelection()
+    private void PreserveSelection()
     {
-        _history[_historyIndex] = Lev.Clone();
+        Controller.PreserveSelection();
     }
 
     private void importLevelsToolStripMenuItem_Click(object sender, EventArgs e)
@@ -2534,86 +1730,15 @@ internal partial class LevelEditorForm : FormMod, IMessageFilter, ILevelEditor
 
     private void ConvertClicked(object sender, EventArgs e)
     {
-        var selectedVertices = Lev.Polygons
-            .SelectMany(p => p.Vertices.Where(v => v.Mark == VectorMark.Selected)).ToList();
-        selectedVertices.AddRange(
-            Lev.Objects.Where(v =>
-                    v.Position.Mark == VectorMark.Selected && v.Type != ObjectType.Start)
-                .Select(o => o.Position));
-        selectedVertices.AddRange(
-            Lev.GraphicElements.Where(v => v.Position.Mark == VectorMark.Selected).Select(p => p.Position));
-
-        void RemoveSelected()
-        {
-            var first = Lev.Polygons.First().Clone();
-            Lev.Polygons.ForEach(p => p.Vertices.RemoveAll(v => v.Mark == VectorMark.Selected));
-            Lev.Polygons.RemoveAll(p => p.Vertices.Count < 3);
-            if (Lev.Polygons.Count == 0)
-            {
-                Lev.Polygons.Add(first);
-            }
-
-            Lev.Objects.RemoveAll(o =>
-                o.Position.Mark == VectorMark.Selected && o.Type != ObjectType.Start);
-            Lev.GraphicElements.RemoveAll(p => p.Position.Mark == VectorMark.Selected);
-        }
-
-        var objType = ObjectType.Apple;
+        ObjectType? objType = null;
         if (sender.Equals(applesConvertItem))
-        {
-            // default
-        }
+            objType = ObjectType.Apple;
         else if (sender.Equals(killersConvertItem))
-        {
             objType = ObjectType.Killer;
-        }
         else if (sender.Equals(flowersConvertItem))
-        {
             objType = ObjectType.Flower;
-        }
-        else
-        {
-            // handle picture
-            var picForm = new PictureForm(Renderer.OpenGlLgr!.CurrentLgr, null)
-            {
-                AllowMultiple = false,
-                AutoTextureMode = false,
-                SetDefaultsAutomatically = true
-            };
-            picForm.SetDefaultDistanceAndClipping();
-            picForm.ShowDialog();
-            if (picForm.Selection is { } sel)
-            {
-                RemoveSelected();
-                var clipping = sel.Clipping!.Value;
-                var distance = sel.Distance!.Value;
-                foreach (var selectedVertex in selectedVertices)
-                {
-                    GraphicElement g = picForm.Selection switch
-                    {
-                        ImageSelection.TextureSelection t => GraphicElement.Text(clipping, distance, selectedVertex,
-                            Renderer.OpenGlLgr.DrawableImageFromLgrImage(t.Txt), Renderer.OpenGlLgr.DrawableImageFromLgrImage(t.Mask)),
-                        ImageSelection.PictureSelection p => GraphicElement.Pic(
-                            Renderer.OpenGlLgr.DrawableImageFromLgrImage(p.Pic), selectedVertex, distance, clipping),
-                        _ => throw new Exception("Unexpected")
-                    };
-                    Lev.GraphicElements.Add(g);
-                }
-            }
 
-            SetModified(LevModification.Pictures | LevModification.Textures);
-            return;
-        }
-
-        RemoveSelected();
-
-        foreach (var selectedVertex in selectedVertices)
-        {
-            var obj = new LevObject(selectedVertex, objType, AppleType.Normal);
-            Lev.Objects.Add(obj);
-        }
-
-        SetModified(LevModification.All);
+        Controller.ConvertSelected(objType);
     }
 
     private void TextButton_CheckedChanged(object sender, EventArgs e)
@@ -2699,7 +1824,7 @@ internal partial class LevelEditorForm : FormMod, IMessageFilter, ILevelEditor
                 CurrLevDirFiles[index] = newPath;
             }
 
-            _editorLev = _editorLev with { File = new ElmaFile(newPath) };
+            Controller.UpdateEditorLevFile(new ElmaFile(newPath));
             UpdateLabels();
             filenameBox_TextChanged();
         }
@@ -2765,62 +1890,37 @@ internal partial class LevelEditorForm : FormMod, IMessageFilter, ILevelEditor
         }
     }
 
-    private void texturizeMenuItem_Click(object sender, EventArgs e)
+    private async void texturizeMenuItem_Click(object sender, EventArgs e)
     {
-        TexturizeSelection();
+        await Controller.TexturizeSelection();
     }
 
     private void SaveStartPosition_Click(object sender, EventArgs e)
     {
-        SaveStartPosition(Lev);
-    }
-
-    private void SaveStartPosition(Level level)
-    {
-        foreach (var o in level.Objects)
-        {
-            if (o.Type == ObjectType.Start)
-            {
-                _savedStartPosition = o.Position.Clone();
-            }
-        }
+        Controller.SaveStartPosition(Lev);
     }
 
     private void restoreStartPositionToolStripMenuItem_Click(object sender, EventArgs e)
     {
-        if (_savedStartPosition is not { } p)
+        var mod = Controller.RestoreStartPosition();
+        if (mod != LevModification.Nothing)
         {
-            return;
-        }
-        foreach (var o in Lev.Objects)
-        {
-            if (o.Type == ObjectType.Start)
-            {
-                var oldPos = o.Position;
-                o.Position = p.Clone();
-                if (!Equals(oldPos, _savedStartPosition))
-                {
-                    SetModified(LevModification.Objects);
-                }
-            }
+            SetModified(mod);
         }
     }
 
     private void MirrorVerticallyToolStripMenuItem_Click(object sender, EventArgs e)
     {
-        Lev.MirrorSelected(MirrorOption.Vertical);
-        Lev.UpdateGrass(Settings.RenderingSettings.GrassZoom);
-        SetModified(LevModification.All);
-        RedrawScene();
+        Controller.MirrorSelected(MirrorOption.Vertical);
     }
 
     private void MoveStartHereToolStripMenuItem_Click(object sender, EventArgs e)
     {
-        var s = Lev.Objects.Find(o => o.Type == ObjectType.Start);
-        if (s != null && _contextMenuClickPosition is { } p)
+        if (_contextMenuClickPosition is { } p)
         {
-            s.Position = p;
-            SetModified(LevModification.Start);
+            var mod = Controller.MoveStartHere(p);
+            if (mod != LevModification.Nothing)
+                SetModified(mod);
         }
     }
 
@@ -2981,49 +2081,20 @@ internal partial class LevelEditorForm : FormMod, IMessageFilter, ILevelEditor
         return false;
     }
 
-    private void DeselectPolygonsWith(Func<Polygon, bool> cond)
-    {
-        foreach (var polygon in Lev.Polygons.Where(cond))
-        {
-            polygon.Vertices = polygon.Vertices.Select(v => v with { Mark = VectorMark.None }).ToList();
-        }
 
-        RedrawScene();
-    }
+    private void deselectGroundPolygonsToolStripMenuItem_Click(object sender, EventArgs e) { Controller.DeselectPolygonsWith(p => !p.IsGrass); RedrawScene(); }
 
-    private void DeselectObjectsWith(Func<LevObject, bool> cond)
-    {
-        foreach (var obj in Lev.Objects.Where(cond))
-        {
-            obj.Mark = VectorMark.None;
-        }
+    private void deselectGrassPolygonsToolStripMenuItem_Click(object sender, EventArgs e) { Controller.DeselectPolygonsWith(p => p.IsGrass); RedrawScene(); }
 
-        RedrawScene();
-    }
+    private void deselectApplesToolStripMenuItem_Click(object sender, EventArgs e) { Controller.DeselectObjectsWith(o => o.Type == ObjectType.Apple); RedrawScene(); }
 
-    private void DeselectGraphicElementsWith(Func<GraphicElement, bool> cond)
-    {
-        foreach (var elem in Lev.GraphicElements.Where(cond))
-        {
-            elem.Mark = VectorMark.None;
-        }
+    private void deselectKillersToolStripMenuItem_Click(object sender, EventArgs e) { Controller.DeselectObjectsWith(o => o.Type == ObjectType.Killer); RedrawScene(); }
 
-        RedrawScene();
-    }
+    private void deselectFlowersToolStripMenuItem_Click(object sender, EventArgs e) { Controller.DeselectObjectsWith(o => o.Type == ObjectType.Flower); RedrawScene(); }
 
-    private void deselectGroundPolygonsToolStripMenuItem_Click(object sender, EventArgs e) => DeselectPolygonsWith(p => !p.IsGrass);
+    private void deselectPicturesToolStripMenuItem_Click(object sender, EventArgs e) { Controller.DeselectGraphicElementsWith(ge => ge is GraphicElement.Picture); RedrawScene(); }
 
-    private void deselectGrassPolygonsToolStripMenuItem_Click(object sender, EventArgs e) => DeselectPolygonsWith(p => p.IsGrass);
-
-    private void deselectApplesToolStripMenuItem_Click(object sender, EventArgs e) => DeselectObjectsWith(o => o.Type == ObjectType.Apple);
-
-    private void deselectKillersToolStripMenuItem_Click(object sender, EventArgs e) => DeselectObjectsWith(o => o.Type == ObjectType.Killer);
-
-    private void deselectFlowersToolStripMenuItem_Click(object sender, EventArgs e) => DeselectObjectsWith(o => o.Type == ObjectType.Flower);
-
-    private void deselectPicturesToolStripMenuItem_Click(object sender, EventArgs e) => DeselectGraphicElementsWith(ge => ge is GraphicElement.Picture);
-
-    private void deselectTexturesToolStripMenuItem_Click(object sender, EventArgs e) => DeselectGraphicElementsWith(ge => ge is GraphicElement.Texture);
+    private void deselectTexturesToolStripMenuItem_Click(object sender, EventArgs e) { Controller.DeselectGraphicElementsWith(ge => ge is GraphicElement.Texture); RedrawScene(); }
 
     private void zoomLabel_Click(object sender, EventArgs e)
     {

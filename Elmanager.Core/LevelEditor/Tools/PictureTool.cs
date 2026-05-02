@@ -10,12 +10,10 @@ public class PictureTool : ToolBase, IEditorTool
 {
     private GraphicElement? _currentElem;
     private PlacementAnchor _anchor = PlacementAnchor.Center;
-    private readonly IPictureDialogService _pictureDialog;
 
     public PictureTool(ILevelEditor editor)
         : base(editor)
     {
-        _pictureDialog = editor.PictureDialogService;
     }
 
     public void Activate()
@@ -120,7 +118,8 @@ public class PictureTool : ToolBase, IEditorTool
 
     private GraphicElement? OpenDialogNow(bool setDefaultsAutomatically)
     {
-        return _pictureDialog.ShowPictureDialog(Renderer, CurrentPos, _currentElem, setDefaultsAutomatically);
+        return LevEditor.PictureDialogService.ShowPictureDialog(Renderer.OpenGlLgr?.CurrentLgr, CurrentPos,
+            _currentElem, setDefaultsAutomatically);
     }
 
     private void OpenDialog()
