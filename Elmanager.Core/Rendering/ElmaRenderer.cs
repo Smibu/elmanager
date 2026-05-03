@@ -638,6 +638,8 @@ public class ElmaRenderer : IDisposable
 
         if (_maxRenderbufferSize > 0)
         {
+            GL.GetInteger(GLEnum.FramebufferBinding, out var oldFb);
+
             _colorRenderBuffer = GL.GenRenderbuffer();
             GL.BindRenderbuffer(RenderbufferTarget.Renderbuffer, _colorRenderBuffer);
             GL.RenderbufferStorage(RenderbufferTarget.Renderbuffer, InternalFormat.Rgba8, (uint)_maxRenderbufferSize,
@@ -658,7 +660,7 @@ public class ElmaRenderer : IDisposable
             GL.FramebufferRenderbuffer(FramebufferTarget.Framebuffer,
                 FramebufferAttachment.DepthStencilAttachment,
                 RenderbufferTarget.Renderbuffer, _depthStencilRenderBuffer);
-            GL.BindFramebuffer(FramebufferTarget.Framebuffer, 0);
+            GL.BindFramebuffer(FramebufferTarget.Framebuffer, (uint)oldFb);
         }
     }
 
