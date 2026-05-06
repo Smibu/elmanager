@@ -12,11 +12,11 @@ internal class Lines : IDisposable
 {
     private static GL GL => GlProvider.GL;
     private const string VertexShader = @"
-        #version 320 es
+        #version 300 es
         precision highp float;
         layout(location = 0) in vec2 a_position;
 
-        layout(std140, binding = 0) uniform Camera {
+        layout(std140) uniform Camera {
             mat4 u_projection;
             vec2 u_camPos;
             float u_grassZoom;
@@ -29,10 +29,10 @@ internal class Lines : IDisposable
     ";
 
     private const string FragmentShader = @"
-        #version 320 es
+        #version 300 es
         precision highp float;
 
-        layout(std140, binding = 1) uniform Colors {
+        layout(std140) uniform Colors {
             vec4 u_color;
         };
 
@@ -44,11 +44,11 @@ internal class Lines : IDisposable
     ";
 
     private const string DashedVertexShader = @"
-        #version 320 es
+        #version 300 es
         precision highp float;
         layout(location = 0) in vec2 a_position;
 
-        layout(std140, binding = 0) uniform Camera {
+        layout(std140) uniform Camera {
             mat4 u_projection;
             vec2 u_camPos;
             float u_grassZoom;
@@ -70,10 +70,10 @@ internal class Lines : IDisposable
     ";
 
     private const string DashedFragmentShader = @"
-        #version 320 es
+        #version 300 es
         precision highp float;
 
-        layout(std140, binding = 1) uniform Colors {
+        layout(std140) uniform Colors {
             vec4 u_color;
         };
 
@@ -92,11 +92,15 @@ internal class Lines : IDisposable
     ";
 
     internal static Pipeline CreatePipeline() => PipelineBuilder.Create(VertexShader, FragmentShader)
+        .WithUniformBlockBinding("Camera", 0)
+        .WithUniformBlockBinding("Colors", 1)
         .WithStencil(Pipelines.StencilUnclipped)
         .WithBlend()
         .Build();
 
     internal static Pipeline CreateDashedPipeline() => PipelineBuilder.Create(DashedVertexShader, DashedFragmentShader)
+        .WithUniformBlockBinding("Camera", 0)
+        .WithUniformBlockBinding("Colors", 1)
         .WithStencil(Pipelines.StencilUnclipped)
         .WithBlend()
         .Build();

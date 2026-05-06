@@ -9,7 +9,7 @@ namespace Elmanager.Rendering.Scene;
 internal class Objects : IDisposable
 {
     private const string VertexShader = @"
-        #version 320 es
+        #version 300 es
         precision highp float;
         layout(location = 0) in vec2 a_texcoord;
         layout(location = 1) in vec4 a_instancePos;
@@ -18,7 +18,7 @@ internal class Objects : IDisposable
         out vec2 v_coord;
         out float v_alpha;
 
-        layout(std140, binding = 0) uniform Camera {
+        layout(std140) uniform Camera {
             mat4 u_projection;
             vec2 u_camPos;
             float u_grassZoom;
@@ -36,7 +36,7 @@ internal class Objects : IDisposable
     ";
 
     private const string FragmentShader = @"
-        #version 320 es
+        #version 300 es
         precision highp float;
 
         in vec2 v_coord;
@@ -56,6 +56,7 @@ internal class Objects : IDisposable
     ";
 
     internal static Pipeline CreatePipeline() => PipelineBuilder.Create(VertexShader, FragmentShader)
+        .WithUniformBlockBinding("Camera", 0)
         .WithTextureLocation(0, "u_texture")
         .WithStencil(Pipelines.StencilUnclipped)
         .WithDepthTest()

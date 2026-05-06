@@ -7,7 +7,6 @@ internal class VertexArray : IDisposable
 {
     private static GL GL => GlProvider.GL;
     private uint Handle { get; } = GlProvider.GL.GenVertexArray();
-    private const uint InstanceBinding = 1;
 
     private VertexArray()
     {
@@ -34,24 +33,21 @@ internal class VertexArray : IDisposable
         return new BoundVertexArray(vao, instanceBuffer);
     }
 
-    public static VertexArray CreateSeparateInstanced(Vertices geometry, VertexInfo perVertexInfo, VertexInfo instanceInfo)
+    public static UnboundVertexArray CreateSeparateInstanced(Vertices geometry, VertexInfo perVertexInfo, VertexInfo instanceInfo)
     {
-        const uint perVertexBinding = 0;
-
         var vao = new VertexArray();
+        vao.ConfigureVertexAttributes(geometry.VertexArray.Buffer, perVertexInfo);
+
         vao.Bind();
+        foreach (var attr in instanceInfo.Attrs)
+        {
+            GL.EnableVertexAttribArray((uint)attr.Location);
+            GL.VertexAttribDivisor((uint)attr.Location, 1);
+        }
 
-        ConfigureVertexFormats(perVertexInfo, perVertexBinding);
-        GL.VertexBindingDivisor(perVertexBinding, 0);
-
-        ConfigureVertexFormats(instanceInfo, InstanceBinding);
-        GL.VertexBindingDivisor(InstanceBinding, 1);
-
-        GL.BindVertexBuffer(perVertexBinding, geometry.VertexArray.Buffer.Handle, 0,
-            (uint)perVertexInfo.CalculateStride());
         geometry.IndexBuffer.Bind();
 
-        return vao;
+        return new UnboundVertexArray(vao, instanceInfo);
     }
 
     public void Bind()
@@ -93,7 +89,7 @@ internal class VertexArray : IDisposable
         }
     }
 
-    private static VertexAttribPointerType GetOpenGLType(VertexFormat format)
+    internal static VertexAttribPointerType GetOpenGLType(VertexFormat format)
     {
         return format switch
         {
@@ -107,40 +103,8 @@ internal class VertexArray : IDisposable
         };
     }
 
-    private static VertexAttribType GetAttribType(VertexFormat format)
-    {
-        return format switch
-        {
-            VertexFormat.Float32 or VertexFormat.Float32x2 or VertexFormat.Float32x3 or VertexFormat.Float32x4
-                => VertexAttribType.Float,
-            VertexFormat.UInt8 or VertexFormat.UInt8x2 or VertexFormat.UInt8x3 or VertexFormat.UInt8x4 or
-                VertexFormat.UInt8Norm or VertexFormat.UInt8x2Norm or VertexFormat.UInt8x3Norm
-                or VertexFormat.UInt8x4Norm
-                => VertexAttribType.UnsignedByte,
-            _ => VertexAttribType.Float
-        };
-    }
-
-    private static void ConfigureVertexFormats(VertexInfo info, uint bindingPoint)
-    {
-        uint offset = 0;
-        foreach (var attr in info.Attrs)
-        {
-            GL.EnableVertexAttribArray((uint)attr.Location);
-            GL.VertexAttribFormat((uint)attr.Location, attr.Format.Size(), GetAttribType(attr.Format),
-                attr.Format.Normalized(), offset);
-            GL.VertexAttribBinding((uint)attr.Location, bindingPoint);
-            offset += (uint)attr.Format.Bytes();
-        }
-    }
-
     public void Dispose()
     {
         GL.DeleteVertexArray(Handle);
-    }
-
-    public void BindInstanceBuffer(Buffer buffer, int instanceStride)
-    {
-        GL.BindVertexBuffer(InstanceBinding, buffer.Handle, 0, (uint)instanceStride);
     }
 }

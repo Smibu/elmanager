@@ -13,20 +13,20 @@ internal class GroundSky : IDisposable
 {
     private static GL GL => GlProvider.GL;
     private const string VertexShader = @"
-        #version 320 es
+        #version 300 es
         precision highp float;
         layout(location = 0) in vec2 a_pos;
 
         out vec2 v_pos;
 
-        layout(std140, binding = 0) uniform Camera {
+        layout(std140) uniform Camera {
             mat4 u_projection;
             vec2 u_camPos;
             float u_grassZoom;
             float u_zoom;
         };
 
-        layout(std140, binding = 1) uniform Colors {
+        layout(std140) uniform Colors {
             vec4 u_color;
         };
 
@@ -37,21 +37,21 @@ internal class GroundSky : IDisposable
     ";
 
     private const string FragmentShader = @"
-        #version 320 es
+        #version 300 es
         precision highp float;
         in vec2 v_pos;
         out vec4 color;
 
         uniform sampler2D u_texture;
 
-        layout(std140, binding = 0) uniform Camera {
+        layout(std140) uniform Camera {
             mat4 u_projection;
             vec2 u_camPos;
             float u_grassZoom;
             float u_zoom;
         };
 
-        layout(std140, binding = 1) uniform Colors {
+        layout(std140) uniform Colors {
             vec4 u_color;
         };
 
@@ -66,6 +66,8 @@ internal class GroundSky : IDisposable
     ";
 
     internal static Pipeline CreatePipeline() => PipelineBuilder.Create(VertexShader, FragmentShader)
+        .WithUniformBlockBinding("Camera", 0)
+        .WithUniformBlockBinding("Colors", 1)
         .WithStencil(new StencilOptions
         {
             Compare = StencilFunction.Equal,

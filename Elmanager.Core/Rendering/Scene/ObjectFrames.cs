@@ -9,19 +9,19 @@ namespace Elmanager.Rendering.Scene;
 internal class ObjectFrames : IDisposable
 {
     private const string VertexShader = @"
-        #version 320 es
+        #version 300 es
         precision highp float;
         layout(location = 0) in vec2 a_position;
         layout(location = 1) in vec4 a_instancePos;
         layout(location = 2) in float a_instanceAlpha;
 
-        layout(std140, binding = 0) uniform Camera {
+        layout(std140) uniform Camera {
             mat4 u_projection;
             vec2 u_camPos;
             float u_grassZoom;
             float u_zoom;
         };
-        layout(std140, binding = 1) uniform Colors {
+        layout(std140) uniform Colors {
             vec4 u_color;
         };
 
@@ -41,16 +41,16 @@ internal class ObjectFrames : IDisposable
     ";
 
     private const string FragmentShader = @"
-        #version 320 es
+        #version 300 es
         precision highp float;
 
-        layout(std140, binding = 0) uniform Camera {
+        layout(std140) uniform Camera {
             mat4 u_projection;
             vec2 u_camPos;
             float u_grassZoom;
             float u_zoom;
         };
-        layout(std140, binding = 1) uniform Colors {
+        layout(std140) uniform Colors {
             vec4 u_color;
         };
 
@@ -63,14 +63,14 @@ internal class ObjectFrames : IDisposable
     ";
 
     internal static Pipeline CreatePipeline() => PipelineBuilder.Create(VertexShader, FragmentShader)
+        .WithUniformBlockBinding("Camera", 0)
+        .WithUniformBlockBinding("Colors", 1)
         .WithStencil(Pipelines.StencilUnclipped)
         .WithBlend()
         .Build();
 
     private static readonly VertexInfo PerVertexInfo = new VertexInfo()
         .Attr(0, VertexFormat.Float32x2);
-
-    private const int InstanceStride = 5 * sizeof(float);
 
     private bool ShowObjectFrames { get; }
     private bool ShowGravityAppleArrows { get; }
@@ -80,8 +80,8 @@ internal class ObjectFrames : IDisposable
     private ColorUniform AppleGravityArrowColor { get; }
     private Vertices CircleVertices { get; }
     private Vertices ArrowVertices { get; }
-    private VertexArray CircleVao { get; }
-    private VertexArray ArrowVao { get; }
+    private UnboundVertexArray CircleVao { get; }
+    private UnboundVertexArray ArrowVao { get; }
 
     private ObjectFrames(
         bool showObjectFrames,
@@ -92,8 +92,8 @@ internal class ObjectFrames : IDisposable
         ColorUniform appleGravityArrowColor,
         Vertices circleVertices,
         Vertices arrowVertices,
-        VertexArray circleVao,
-        VertexArray arrowVao)
+        UnboundVertexArray circleVao,
+        UnboundVertexArray arrowVao)
     {
         ShowObjectFrames = showObjectFrames;
         ShowGravityAppleArrows = showGravityAppleArrows;
@@ -171,19 +171,17 @@ internal class ObjectFrames : IDisposable
 
         if (ShowObjectFrames)
         {
-            CircleVao.Bind();
-
             if (objects.Killers.Count > 0)
             {
                 colorUniforms.SetData(KillerColor);
-                CircleVao.BindInstanceBuffer(objects.Killers.InstanceBuffer.Buffer, InstanceStride);
+                CircleVao.BindWithInstanceBuffer(objects.Killers.InstanceBuffer.Buffer);
                 CircleVertices.DrawInstanced(objects.Killers.Count);
             }
 
             if (objects.Flowers.Count > 0)
             {
                 colorUniforms.SetData(FlowerColor);
-                CircleVao.BindInstanceBuffer(objects.Flowers.InstanceBuffer.Buffer, InstanceStride);
+                CircleVao.BindWithInstanceBuffer(objects.Flowers.InstanceBuffer.Buffer);
                 CircleVertices.DrawInstanced(objects.Flowers.Count);
             }
 
@@ -193,7 +191,7 @@ internal class ObjectFrames : IDisposable
                 foreach (var appleBatch in objects.Apples)
                 {
                     if (appleBatch.Batch.Count == 0) continue;
-                    CircleVao.BindInstanceBuffer(appleBatch.Batch.InstanceBuffer.Buffer, InstanceStride);
+                    CircleVao.BindWithInstanceBuffer(appleBatch.Batch.InstanceBuffer.Buffer);
                     CircleVertices.DrawInstanced(appleBatch.Batch.Count);
                 }
             }
@@ -201,9 +199,8 @@ internal class ObjectFrames : IDisposable
 
         if (ShowGravityAppleArrows && objects.GravityAppleArrows.Count > 0)
         {
-            ArrowVao.Bind();
             colorUniforms.SetData(AppleGravityArrowColor);
-            ArrowVao.BindInstanceBuffer(objects.GravityAppleArrows.InstanceBuffer.Buffer, InstanceStride);
+            ArrowVao.BindWithInstanceBuffer(objects.GravityAppleArrows.InstanceBuffer.Buffer);
             ArrowVertices.DrawInstanced(objects.GravityAppleArrows.Count);
         }
     }

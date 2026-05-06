@@ -14,7 +14,7 @@ namespace Elmanager.Rendering.Scene;
 internal class Players : IDisposable
 {
     private const string PlayerVertShader = @"
-        #version 320 es
+        #version 300 es
         precision highp float;
         layout(location = 0) in vec2 a_texcoord;
         layout(location = 1) in vec4 a_rotScale;
@@ -23,7 +23,7 @@ internal class Players : IDisposable
         out vec2 v_coord;
         out float v_opacity;
 
-        layout(std140, binding = 0) uniform Camera {
+        layout(std140) uniform Camera {
             mat4 u_projection;
             vec2 u_camPos;
             float u_grassZoom;
@@ -43,7 +43,7 @@ internal class Players : IDisposable
     ";
 
     private const string PlayerFragShader = @"
-        #version 320 es
+        #version 300 es
         precision highp float;
 
         in vec2 v_coord;
@@ -63,6 +63,7 @@ internal class Players : IDisposable
     ";
 
     internal static Pipeline CreatePipeline() => PipelineBuilder.Create(PlayerVertShader, PlayerFragShader)
+        .WithUniformBlockBinding("Camera", 0)
         .WithStencil(Pipelines.StencilUnclipped)
         .WithDepthTest()
         .WithBlend()

@@ -14,6 +14,7 @@ internal class PipelineBuilder
     private BlendingFactor _sourceBlend = BlendingFactor.SrcAlpha;
     private BlendingFactor _destinationBlend = BlendingFactor.OneMinusSrcAlpha;
     private readonly Dictionary<string, int> _textureLocations = new();
+    private readonly Dictionary<string, uint> _uniformBlockBindings = new();
 
     private PipelineBuilder(string vertexShader, string fragmentShader)
     {
@@ -50,6 +51,12 @@ internal class PipelineBuilder
         return this;
     }
 
+    public PipelineBuilder WithUniformBlockBinding(string name, uint binding)
+    {
+        _uniformBlockBindings[name] = binding;
+        return this;
+    }
+
     public Pipeline Build()
     {
         var shader = new Shader(_vertexShader, _fragmentShader);
@@ -72,6 +79,22 @@ internal class PipelineBuilder
             }
 
             gl.UseProgram(0);
+        }
+
+        if (_uniformBlockBindings.Count > 0)
+        {
+            foreach (var kvp in _uniformBlockBindings)
+            {
+                uint index = gl.GetUniformBlockIndex(shader.Handle, kvp.Key);
+                if (index != uint.MaxValue)
+                {
+                    gl.UniformBlockBinding(shader.Handle, index, kvp.Value);
+                }
+                else
+                {
+                    throw new InvalidOperationException($"Uniform block '{kvp.Key}' not found in shader");
+                }
+            }
         }
 
         return new Pipeline(shader, _stencil, _depthTest, _blend, _sourceBlend, _destinationBlend);
