@@ -21,10 +21,12 @@ internal class Lines : IDisposable
             vec2 u_camPos;
             float u_grassZoom;
             float u_zoom;
+            float u_pointSize;
         };
 
         void main() {
             gl_Position = u_projection * vec4(a_position.x, a_position.y, 0.0, 1.0);
+            gl_PointSize = u_pointSize;
         }
     ";
 
@@ -53,6 +55,7 @@ internal class Lines : IDisposable
             vec2 u_camPos;
             float u_grassZoom;
             float u_zoom;
+            float u_pointSize;
         };
 
         out vec2 v_pos;

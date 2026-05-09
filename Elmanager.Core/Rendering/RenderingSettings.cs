@@ -13,7 +13,6 @@ public class RenderingSettings
     private double _gridSize = 1.0;
     private float _lineWidth = 2.0f;
     private int _smoothZoomDuration = 200;
-    private double _vertexSize = 0.02;
     private double _grassZoom = 1.0;
     protected const string TransparencyTip = "For transparency, add 4th value at the start, for example: 80, 255, 255, 255";
 
@@ -59,7 +58,6 @@ public class RenderingSettings
         SmoothZoomDuration = s.SmoothZoomDuration;
         GridSize = s.GridSize;
         LineWidth = s.LineWidth;
-        VertexSize = s.VertexSize;
         SmoothZoomEnabled = s.SmoothZoomEnabled;
         ShowGround = s.ShowGround;
         ShowGroundEdges = s.ShowGroundEdges;
@@ -85,6 +83,7 @@ public class RenderingSettings
         GrassZoom = s.GrassZoom;
         LgrDisabled = s.LgrDisabled;
         PicturesInBackground = s.PicturesInBackground;
+        PointSize = s.PointSize;
     }
 
     public virtual RenderingSettings Clone() => new(this);
@@ -183,12 +182,8 @@ public class RenderingSettings
         }
     }
 
-    [DisplayName("Vertex size"), JsonPropertyName("VertexSize")]
-    public double VertexSize
-    {
-        get => _vertexSize;
-        set => _vertexSize = value > 0 ? value : 0.02;
-    }
+    [DisplayName("Point size"), JsonPropertyName("PointSize")]
+    public float PointSize { get; set; } = 4.0f;
 
     [DisplayName("Smooth zoom enabled"), JsonPropertyName("SmoothZoomEnabled")]
     public bool SmoothZoomEnabled { get; set; }

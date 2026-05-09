@@ -73,13 +73,15 @@ public class ElmaRenderer : IDisposable
     }
 
     public OpenGlLgr? OpenGlLgr => _graphics?.LgrGraphics?.Lgr;
-    private float _grassZoom = 1.0f;
-    private bool _zoomTextures = true;
+    private float _grassZoom;
+    private float _pointSize;
+    private bool _zoomTextures;
 
     private void InitializeBuffers(Level lev, OpenGlLgr? lgr, RenderingSettings settings)
     {
         _graphics?.Dispose();
         _grassZoom = (float)settings.GrassZoom;
+        _pointSize = settings.PointSize;
         _zoomTextures = settings.ZoomTextures;
         GL.LineWidth(settings.LineWidth);
         var state = new LevEditState(lev, TransientElements.Empty);
@@ -358,7 +360,8 @@ public class ElmaRenderer : IDisposable
             projection,
             new Vector2((float)centerX, (float)centerY),
             _grassZoom,
-            zoom
+            zoom,
+            _pointSize
         ));
     }
 
@@ -477,7 +480,6 @@ public class ElmaRenderer : IDisposable
         }
         GL.ClearColor(newSettings.SkyFillColor.R / 255f, newSettings.SkyFillColor.G / 255f, newSettings.SkyFillColor.B / 255f, newSettings.SkyFillColor.A / 255f);
         GL.LineWidth(newSettings.LineWidth);
-        GL.PointSize((float)(newSettings.VertexSize * 300));
         InitializeBuffers(lev, lgr, newSettings);
         return new RendererSettingsChangeResult(lgrUpdated, lgrLoadException);
     }
