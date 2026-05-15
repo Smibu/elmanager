@@ -282,7 +282,7 @@ public class RenderingSettings
             return null;
         }
 
-        var levLgr = Path.Combine(lgrDir, lev.LgrFile + ".lgr");
+        var levLgr = Path.Combine(lgrDir, lev.LgrFile.ToLower() + ".lgr");
         if (File.Exists(levLgr))
         {
             return levLgr;
