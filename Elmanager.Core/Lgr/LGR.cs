@@ -1,10 +1,10 @@
 using System;
 using System.Collections.Generic;
-using System.Drawing;
 using System.IO;
 using System.Linq;
 using System.Text;
 using Elmanager.IO;
+using SkiaSharp;
 
 namespace Elmanager.Lgr;
 
@@ -126,7 +126,7 @@ public class Lgr : IDisposable
             lgr.ReadInt32(); // unknown, not used
             lgr.ReadInt32(); // unknown, not used
             lgr.ReadInt32(); // size of PCX
-            Bitmap bmp = new Pcx(stream).ToBitmap();
+            SKBitmap bmp = new Pcx(stream).ToBitmap();
             if (imageData.Type != ImageType.Texture)
             {
                 switch (transparency)
@@ -134,21 +134,21 @@ public class Lgr : IDisposable
                     case Transparency.NotTransparent:
                         break;
                     case Transparency.Palette0:
-                        bmp.MakeTransparent(Color.Black); // TODO get from palette index 0
+                        MakeTransparent(bmp, new SKColor(0, 0, 0)); // TODO get from palette index 0
                         break;
                     // If the transparency field value is invalid, we'll assume Transparency.TopLeft as it is the most common case.
                     default:
                         // case Transparency.TopLeft:
-                        bmp.MakeTransparent(bmp.GetPixel(0, 0));
+                        MakeTransparent(bmp, bmp.GetPixel(0, 0));
                         break;
                     case Transparency.TopRight:
-                        bmp.MakeTransparent(bmp.GetPixel(bmp.Width - 1, 0));
+                        MakeTransparent(bmp, bmp.GetPixel(bmp.Width - 1, 0));
                         break;
                     case Transparency.BottomLeft:
-                        bmp.MakeTransparent(bmp.GetPixel(0, bmp.Height - 1));
+                        MakeTransparent(bmp, bmp.GetPixel(0, bmp.Height - 1));
                         break;
                     case Transparency.BottomRight:
-                        bmp.MakeTransparent(bmp.GetPixel(bmp.Width - 1, bmp.Height - 1));
+                        MakeTransparent(bmp, bmp.GetPixel(bmp.Width - 1, bmp.Height - 1));
                         break;
                 }
             }
@@ -166,4 +166,18 @@ public class Lgr : IDisposable
     }
 
     public LgrImage? ImageFromName(string name) => LgrImages.GetValueOrDefault(name);
+
+    private static unsafe void MakeTransparent(SKBitmap bmp, SKColor transparentColor)
+    {
+        var pixels = (uint*)bmp.GetPixels();
+        var count = bmp.Width * bmp.Height;
+        var target = (uint)transparentColor;
+        for (var i = 0; i < count; i++)
+        {
+            if (pixels[i] == target)
+            {
+                pixels[i] = 0;
+            }
+        }
+    }
 }

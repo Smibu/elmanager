@@ -1,8 +1,7 @@
 using System;
-using System.Drawing;
-using System.Drawing.Imaging;
 using System.IO;
 using System.Runtime.InteropServices;
+using SkiaSharp;
 
 namespace Elmanager.Lgr;
 
@@ -90,7 +89,7 @@ internal class Pcx
                 int red = pb.ReadByte();
                 int green = pb.ReadByte();
                 int blue = pb.ReadByte();
-                palette[i] = (red << 16) + (green << 8) + (blue << 0);
+                palette[i] = (255 << 24) + (red << 16) + (green << 8) + (blue << 0);
             }
 
             for (var i = 0; i < Height; i++)
@@ -104,14 +103,11 @@ internal class Pcx
         // pb.Close();
     }
 
-    internal Bitmap ToBitmap()
+    internal SKBitmap ToBitmap()
     {
-        var bmp = new Bitmap(Width, Height, PixelFormat.Format24bppRgb);
-        var bmpData = bmp.LockBits(
-            new Rectangle(0, 0, bmp.Width, bmp.Height),
-            ImageLockMode.WriteOnly, PixelFormat.Format32bppArgb);
-        Marshal.Copy(PixelData, 0, bmpData.Scan0, PixelData.Length);
-        bmp.UnlockBits(bmpData);
+        var bmp = new SKBitmap(Width, Height, SKColorType.Bgra8888, SKAlphaType.Unpremul);
+        var pixels = bmp.GetPixels();
+        Marshal.Copy(PixelData, 0, pixels, PixelData.Length);
         return bmp;
     }
 }

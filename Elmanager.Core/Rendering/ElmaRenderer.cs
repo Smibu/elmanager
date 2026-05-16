@@ -1,7 +1,6 @@
 using System;
 using System.Collections.Generic;
 using System.Drawing;
-using System.Drawing.Imaging;
 using System.IO;
 using System.Numerics;
 using Elmanager.ElmaPrimitives;
@@ -14,8 +13,8 @@ using Elmanager.Rendering.OpenGL;
 using Elmanager.Rendering.Scene;
 using Elmanager.Utilities;
 using Silk.NET.OpenGL;
+using SkiaSharp;
 using Buffer = Elmanager.Rendering.OpenGL.Buffer;
-using PixelFormat = System.Drawing.Imaging.PixelFormat;
 using Vector = Elmanager.Geometry.Vector;
 using VertexArray = Elmanager.Rendering.OpenGL.VertexArray;
 
@@ -197,9 +196,9 @@ public class ElmaRenderer : IDisposable
         _graphics?.Objects.SetVisibleObjects(lev, hiddenObjectIndices, null);
     }
 
-    private Bitmap GetSnapShot(ZoomController zoomCtrl, SceneSettings sceneSettings, RenderingSettings settings)
+    private SKBitmap GetSnapShot(ZoomController zoomCtrl, SceneSettings sceneSettings, RenderingSettings settings)
     {
-        Bitmap snapShotBmp;
+        SKBitmap snapShotBmp;
         if (_maxRenderbufferSize > 0)
         {
             var width = _maxRenderbufferSize;
@@ -211,17 +210,15 @@ public class ElmaRenderer : IDisposable
             ResetViewport(width, height);
             zoomCtrl.ZoomFill(settings, AspectRatio);
             DrawScene(zoomCtrl.Cam, 0, sceneSettings);
-            snapShotBmp = new Bitmap(width, height);
-            var bmpData = snapShotBmp.LockBits(new Rectangle(0, 0, width, height), ImageLockMode.WriteOnly,
-                PixelFormat.Format24bppRgb);
+            snapShotBmp = new SKBitmap(width, height, SKColorType.Bgra8888, SKAlphaType.Premul);
+            var pixels = snapShotBmp.GetPixels();
             GL.ReadBuffer(ReadBufferMode.ColorAttachment0);
             unsafe
             {
-                GL.ReadPixels(0, 0, (uint)width, (uint)height, GLEnum.Bgr, GLEnum.UnsignedByte,
-                    (void*)bmpData.Scan0);
+                GL.ReadPixels(0, 0, (uint)width, (uint)height, GLEnum.Bgra, GLEnum.UnsignedByte,
+                    (void*)pixels);
             }
-            snapShotBmp.UnlockBits(bmpData);
-            snapShotBmp.RotateFlip(RotateFlipType.RotateNoneFlipY);
+            FlipVertically(snapShotBmp);
             GL.BindFramebuffer(FramebufferTarget.ReadFramebuffer, 0);
             GL.BindFramebuffer(FramebufferTarget.DrawFramebuffer, 0);
             ResetViewport(oldViewportWidth, oldViewportHeight);
@@ -234,22 +231,40 @@ public class ElmaRenderer : IDisposable
         return snapShotBmp;
     }
 
-    public Bitmap GetSnapShotOfCurrent()
+    public SKBitmap GetSnapShotOfCurrent()
     {
         var width = _viewportWidth;
         var height = _viewportHeight;
-        var snapShotBmp = new Bitmap(width, height);
-        var bmpData = snapShotBmp.LockBits(new Rectangle(0, 0, width, height), ImageLockMode.WriteOnly,
-            PixelFormat.Format24bppRgb);
+        var snapShotBmp = new SKBitmap(width, height, SKColorType.Bgra8888, SKAlphaType.Premul);
+        var pixels = snapShotBmp.GetPixels();
         GL.ReadBuffer(ReadBufferMode.Front);
         unsafe
         {
-            GL.ReadPixels(0, 0, (uint)width, (uint)height, GLEnum.Bgr, GLEnum.UnsignedByte,
-                (void*)bmpData.Scan0);
+            GL.ReadPixels(0, 0, (uint)width, (uint)height, GLEnum.Bgra, GLEnum.UnsignedByte,
+                (void*)pixels);
         }
-        snapShotBmp.UnlockBits(bmpData);
-        snapShotBmp.RotateFlip(RotateFlipType.RotateNoneFlipY);
+        FlipVertically(snapShotBmp);
         return snapShotBmp;
+    }
+
+    private static void FlipVertically(SKBitmap bmp)
+    {
+        var rowBytes = bmp.RowBytes;
+        var temp = new byte[rowBytes];
+        var pixels = bmp.GetPixels();
+        for (var y = 0; y < bmp.Height / 2; y++)
+        {
+            var topOffset = y * rowBytes;
+            var bottomOffset = (bmp.Height - 1 - y) * rowBytes;
+            unsafe
+            {
+                var top = (byte*)pixels + topOffset;
+                var bottom = (byte*)pixels + bottomOffset;
+                new Span<byte>(top, rowBytes).CopyTo(temp);
+                new Span<byte>(bottom, rowBytes).CopyTo(new Span<byte>(top, rowBytes));
+                temp.AsSpan().CopyTo(new Span<byte>(bottom, rowBytes));
+            }
+        }
     }
 
     public void DrawCircle(Vector v, double radius, Color circleColor, int accuracy)
@@ -674,7 +689,10 @@ public class ElmaRenderer : IDisposable
     public void SaveSnapShot(string fileName, ZoomController zoomCtrl, SceneSettings sceneSettings, RenderingSettings settings)
     {
         using var bmp = GetSnapShot(zoomCtrl, sceneSettings, settings);
-        bmp.Save(fileName, ImageFormat.Png);
+        using var image = SKImage.FromBitmap(bmp);
+        using var data = image.Encode(SKEncodedImageFormat.Png, 100);
+        using var stream = File.OpenWrite(fileName);
+        data.SaveTo(stream);
     }
 
     public static double GetFirstGridLine(double size, double offset, double min)

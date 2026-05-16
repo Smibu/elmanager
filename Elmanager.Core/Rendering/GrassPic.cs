@@ -1,9 +1,9 @@
 
-using System.Drawing;
+using SkiaSharp;
 
 namespace Elmanager.Rendering;
 
-public record GrassPic(DrawableImage Image, Bitmap Bmp, int Delta)
+public record GrassPic(DrawableImage Image, SKBitmap Bmp, int Delta)
 {
     public int Width => Bmp.Width;
     public int Height => Bmp.Height;

@@ -1,12 +1,11 @@
 using System;
 using System.Collections.Generic;
 using System.Drawing;
-using System.Drawing.Imaging;
 using Elmanager.Lev;
 using Elmanager.Lgr;
 using Elmanager.Rendering.OpenGL;
 using Silk.NET.OpenGL;
-using PixelFormat = System.Drawing.Imaging.PixelFormat;
+using SkiaSharp;
 using Texture = Elmanager.Rendering.OpenGL.Texture;
 
 namespace Elmanager.Rendering;
@@ -197,24 +196,22 @@ public class OpenGlLgr : IDisposable
 
     private static Texture LoadTexture(LgrImage pcx, Rectangle srcRect)
     {
-        var newBmp = new Bitmap(srcRect.Width, srcRect.Height, pcx.Bmp.PixelFormat);
-        var gfx = Graphics.FromImage(newBmp);
-        gfx.DrawImage(pcx.Bmp, srcRect with { X = 0, Y = 0 }, srcRect.X, srcRect.Y,
-            srcRect.Width, srcRect.Height, GraphicsUnit.Pixel);
-        gfx.Dispose();
+        var newBmp = new SKBitmap(srcRect.Width, srcRect.Height, pcx.Bmp.ColorType, pcx.Bmp.AlphaType);
+        using var canvas = new SKCanvas(newBmp);
+        canvas.DrawBitmap(pcx.Bmp, new SKRect(srcRect.X, srcRect.Y, srcRect.Right, srcRect.Bottom),
+            new SKRect(0, 0, srcRect.Width, srcRect.Height));
         return LoadTexture(newBmp);
     }
 
     private static Texture LoadTexture(LgrImage pcx, TextureOptions? textureOptions = null) =>
         LoadTexture(pcx.Bmp, textureOptions);
 
-    private static Texture LoadTexture(Bitmap bmp, TextureOptions? textureOptions = null)
+    private static Texture LoadTexture(SKBitmap bmp, TextureOptions? textureOptions = null)
     {
         textureOptions ??= new TextureOptions();
         var texture = new Texture();
         texture.Bind();
-        var bmpData = bmp.LockBits(new Rectangle(0, 0, bmp.Width, bmp.Height), ImageLockMode.ReadOnly,
-            PixelFormat.Format32bppArgb);
+        var pixels = bmp.GetPixels();
         GL.TexParameter(TextureTarget.Texture2D, TextureParameterName.TextureMinFilter,
             (int)TextureMinFilter.Nearest);
         GL.TexParameter(TextureTarget.Texture2D, TextureParameterName.TextureMagFilter,
@@ -223,10 +220,9 @@ public class OpenGlLgr : IDisposable
         GL.TexParameter(TextureTarget.Texture2D, TextureParameterName.TextureWrapT, (int)textureOptions.WrapMode);
         unsafe
         {
-            GL.TexImage2D(TextureTarget.Texture2D, 0, InternalFormat.Rgba, (uint)bmpData.Width, (uint)bmpData.Height, 0,
-                Silk.NET.OpenGL.PixelFormat.Bgra, PixelType.UnsignedByte, (void*)bmpData.Scan0);
+            GL.TexImage2D(TextureTarget.Texture2D, 0, InternalFormat.Rgba, (uint)bmp.Width, (uint)bmp.Height, 0,
+                Silk.NET.OpenGL.PixelFormat.Bgra, PixelType.UnsignedByte, (void*)pixels);
         }
-        bmp.UnlockBits(bmpData);
         return texture;
     }
 

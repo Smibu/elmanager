@@ -1,8 +1,8 @@
 using System;
-using System.Drawing;
 using Elmanager.Geometry;
 using Elmanager.Lev;
 using Elmanager.Vectrast;
+using SkiaSharp;
 
 namespace Elmanager.LevelEditor;
 
@@ -13,7 +13,7 @@ public static class BitmapImporter
         var lev = new Level();
         var vr = new VectRast();
         byte[,] pixelOn;
-        Bitmap bmp;
+        SKBitmap bmp;
         var transformMatrix = Matrix2D.ScaleM(1, -1);
         try
         {

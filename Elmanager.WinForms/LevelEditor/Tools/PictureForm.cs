@@ -2,11 +2,13 @@ using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Drawing;
+using System.IO;
 using System.Linq;
 using System.Windows.Forms;
 using Elmanager.Lgr;
 using Elmanager.Rendering;
 using Elmanager.UI;
+using SkiaSharp;
 
 namespace Elmanager.LevelEditor.Tools;
 
@@ -271,7 +273,7 @@ internal partial class PictureForm
                 SetDefaultDistanceAndClipping();
             }
 
-            UpdatePicture(selectedPicture.Bmp);
+            UpdatePicture(SkBitmapToImage(selectedPicture.Bmp));
         }
     }
 
@@ -288,7 +290,7 @@ internal partial class PictureForm
                 SetDefaultDistanceAndClipping();
             }
 
-            UpdatePicture(selectedTexture.Bmp);
+            UpdatePicture(SkBitmapToImage(selectedTexture.Bmp));
         }
     }
 
@@ -318,6 +320,12 @@ internal partial class PictureForm
         ImageBox.Image = bmp;
         ImageBox.Width = bmp.Width;
         ImageBox.Height = bmp.Height;
+    }
+
+    private static Image SkBitmapToImage(SKBitmap skBitmap)
+    {
+        using var image = SKImage.FromBitmap(skBitmap);
+        return Image.FromStream(image.Encode().AsStream());
     }
 
     private void ButtonClick(object sender, EventArgs e)

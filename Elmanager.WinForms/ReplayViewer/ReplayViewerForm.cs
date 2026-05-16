@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.ComponentModel;
 using System.Drawing;
 using System.Drawing.Imaging;
+using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
 using System.Windows.Forms;
@@ -18,6 +19,7 @@ using Elmanager.Rendering.Camera;
 using Elmanager.Settings;
 using Elmanager.UI;
 using Elmanager.Utilities;
+using SkiaSharp;
 using Control = System.Windows.Forms.Control;
 using Cursor = System.Windows.Forms.Cursor;
 using Cursors = System.Windows.Forms.Cursors;
@@ -456,7 +458,10 @@ internal partial class ReplayViewerForm : FormMod
         if (SaveFileDialog1.ShowDialog() == DialogResult.OK)
         {
             using var bmp = _replayController.Renderer.GetSnapShotOfCurrent();
-            bmp.Save(SaveFileDialog1.FileName, ImageFormat.Png);
+            using var image = SKImage.FromBitmap(bmp);
+            using var data = image.Encode(SKEncodedImageFormat.Png, 100);
+            using var stream = File.OpenWrite(SaveFileDialog1.FileName);
+            data.SaveTo(stream);
         }
     }
 

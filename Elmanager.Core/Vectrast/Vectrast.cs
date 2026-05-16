@@ -2,7 +2,7 @@
 
 using System;
 using System.Collections.Generic;
-using System.Drawing;
+using SkiaSharp;
 
 namespace Elmanager.Vectrast;
 
@@ -10,7 +10,7 @@ internal class VectRast
 {
     public readonly List<List<DoubleVector2>> Polygons = new();
 
-    public SortedList<IntVector2, VectorPixel> CreateVectors(byte[,] pixelOn, Bitmap bmp)
+    public SortedList<IntVector2, VectorPixel> CreateVectors(byte[,] pixelOn, SKBitmap bmp)
     {
         var vectors = new SortedList<IntVector2, VectorPixel>(bmp.Width * bmp.Height / 32);
         var vectorsReverse = new Dictionary<IntVector2, VectorPixel>(bmp.Width * bmp.Height / 32);
@@ -258,9 +258,9 @@ internal class VectRast
         }
     }
 
-    public void LoadAsBmp(string fileName, out Bitmap bmp, out byte[,] pixelOn, byte merging)
+    public void LoadAsBmp(string fileName, out SKBitmap bmp, out byte[,] pixelOn, byte merging)
     {
-        bmp = new Bitmap(fileName);
+        bmp = SKBitmap.Decode(fileName);
         pixelOn = new byte[bmp.Width + 2, bmp.Height + 2];
         for (var j = -1; j <= bmp.Height; j++)
             for (var i = -1; i <= bmp.Width; i++)
@@ -270,7 +270,7 @@ internal class VectRast
                 else
                 {
                     var col = bmp.GetPixel(i, j);
-                    if (col.R < 250 || col.G < 250 || col.B < 250)
+                    if (col.Red < 250 || col.Green < 250 || col.Blue < 250)
                     {
                         pixelOn[i + 1, j + 1] = 1;
                     }
