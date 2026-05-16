@@ -171,7 +171,8 @@ public class Lgr : IDisposable
     {
         var pixels = (uint*)bmp.GetPixels();
         var count = bmp.Width * bmp.Height;
-        var target = (uint)transparentColor;
+        var target = ((uint)transparentColor.Alpha << 24) | ((uint)transparentColor.Blue << 16) |
+                     ((uint)transparentColor.Green << 8) | transparentColor.Red;
         for (var i = 0; i < count; i++)
         {
             if (pixels[i] == target)

@@ -89,7 +89,7 @@ internal class Pcx
                 int red = pb.ReadByte();
                 int green = pb.ReadByte();
                 int blue = pb.ReadByte();
-                palette[i] = (255 << 24) + (red << 16) + (green << 8) + (blue << 0);
+                palette[i] = (255 << 24) + (blue << 16) + (green << 8) + (red << 0);
             }
 
             for (var i = 0; i < Height; i++)
@@ -105,7 +105,7 @@ internal class Pcx
 
     internal SKBitmap ToBitmap()
     {
-        var bmp = new SKBitmap(Width, Height, SKColorType.Bgra8888, SKAlphaType.Unpremul);
+        var bmp = new SKBitmap(Width, Height, SKColorType.Rgba8888, SKAlphaType.Unpremul);
         var pixels = bmp.GetPixels();
         Marshal.Copy(PixelData, 0, pixels, PixelData.Length);
         return bmp;

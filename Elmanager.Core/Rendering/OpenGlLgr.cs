@@ -221,7 +221,7 @@ public class OpenGlLgr : IDisposable
         unsafe
         {
             GL.TexImage2D(TextureTarget.Texture2D, 0, InternalFormat.Rgba, (uint)bmp.Width, (uint)bmp.Height, 0,
-                Silk.NET.OpenGL.PixelFormat.Bgra, PixelType.UnsignedByte, (void*)pixels);
+                Silk.NET.OpenGL.PixelFormat.Rgba, PixelType.UnsignedByte, (void*)pixels);
         }
         return texture;
     }
