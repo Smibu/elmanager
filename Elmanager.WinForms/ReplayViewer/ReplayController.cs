@@ -407,7 +407,6 @@ internal class ReplayController : IDisposable
 
         var lev = replays[0].Obj.GetLevel();
         ZoomCtrl = new ZoomController(new ElmaCamera(),
-            lev,
             RedrawSceneIfNotPlaying)
         { ZoomLevel = 5.0 };
         MaxTime = PlayListReplays.Max(p => p.Player.FrameCount) / 30.0;
@@ -427,7 +426,7 @@ internal class ReplayController : IDisposable
     public void SetInitialView()
     {
         if (Global.AppSettings.ReplayViewer.DontSelectPlayersByDefault)
-            ZoomCtrl.ZoomFill(_settings, Renderer.AspectRatio);
+            ZoomCtrl.ZoomFill(_settings, Renderer.AspectRatio, Lev!);
         else
         {
             ZoomCtrl.ZoomLevel = Global.AppSettings.ReplayViewer.ZoomLevel;

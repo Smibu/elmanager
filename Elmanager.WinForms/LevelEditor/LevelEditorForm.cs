@@ -594,7 +594,7 @@ internal partial class LevelEditorForm : FormMod, IMessageFilter, ILevelEditor
         }
         await WinFormsPlayController.NotifyLevelChanged();
         PlayTimeLabel.Text = "";
-        _zoomCtrl = new ZoomController(new ElmaCamera(), Lev, () => RedrawScene());
+        _zoomCtrl = new ZoomController(new ElmaCamera(), () => RedrawScene());
         SetNotModified();
         var r = Renderer.UpdateSettings(Lev, Settings.RenderingSettings, Global.AppSettings.General.LgrDirectory);
         if (r.LgrLoadException != null)
@@ -785,7 +785,7 @@ internal partial class LevelEditorForm : FormMod, IMessageFilter, ILevelEditor
 
     private void LoadFromHistory()
     {
-        Controller.LoadFromHistory(_zoomCtrl, Settings.RenderingSettings);
+        Controller.LoadFromHistory(Settings.RenderingSettings);
         UpdateUndoRedo();
         topologyList.DropDownItems.Clear();
         topologyList.Text = "";
@@ -1608,7 +1608,7 @@ internal partial class LevelEditorForm : FormMod, IMessageFilter, ILevelEditor
 
     private void ZoomFill()
     {
-        _zoomCtrl.ZoomFill(Settings.RenderingSettings, Renderer.AspectRatio);
+        _zoomCtrl.ZoomFill(Settings.RenderingSettings, Renderer.AspectRatio, Lev);
         UpdateZoomLabel();
     }
 
@@ -1714,7 +1714,7 @@ internal partial class LevelEditorForm : FormMod, IMessageFilter, ILevelEditor
         {
             if (saveAsPictureDialog.FileName.EndsWith(".png"))
             {
-                Renderer.SaveSnapShot(saveAsPictureDialog.FileName, _zoomCtrl, _sceneSettings, Settings.RenderingSettings);
+                Renderer.SaveSnapShot(saveAsPictureDialog.FileName, _zoomCtrl, _sceneSettings, Settings.RenderingSettings, Lev);
             }
             else if (saveAsPictureDialog.FileName.EndsWith(".svg"))
             {

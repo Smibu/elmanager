@@ -8,17 +8,15 @@ namespace Elmanager.Rendering.Camera;
 
 public class ZoomController
 {
-    private double MaxDimension => Math.Max(ZoomFillxMax - ZoomFillxMin, ZoomFillyMax - ZoomFillyMin);
     private bool _smoothZoomInProgress;
     private readonly Action _redrawRequested;
     private const double ZoomFillMargin = 0.05;
     private const double MinimumZoom = 0.000001;
 
 
-    public ZoomController(ElmaCamera camera, Level lev, Action redrawRequested)
+    public ZoomController(ElmaCamera camera, Action redrawRequested)
     {
         Cam = camera;
-        Lev = lev;
         _redrawRequested = redrawRequested;
     }
 
@@ -39,8 +37,6 @@ public class ZoomController
         get => Cam.ZoomLevel;
         set
         {
-            if (value > MaxDimension * 2)
-                value = MaxDimension * 2;
             if (value < MinimumZoom)
                 value = MinimumZoom;
             Cam.ZoomLevel = value;
@@ -49,12 +45,18 @@ public class ZoomController
 
     public ElmaCamera Cam { get; }
 
-    private double ZoomFillxMin => (1 + ZoomFillMargin) * Lev.Bounds.XMin - ZoomFillMargin * Lev.Bounds.XMax;
-    private double ZoomFillxMax => (1 + ZoomFillMargin) * Lev.Bounds.XMax - ZoomFillMargin * Lev.Bounds.XMin;
-    private double ZoomFillyMin => (1 + ZoomFillMargin) * Lev.Bounds.YMin - ZoomFillMargin * Lev.Bounds.YMax;
-    private double ZoomFillyMax => (1 + ZoomFillMargin) * Lev.Bounds.YMax - ZoomFillMargin * Lev.Bounds.YMin;
-
-    public Level Lev { get; set; }
+    public void ZoomFill(RenderingSettings settings, double aspectRatio, Level lev)
+    {
+        var xMin = (1 + ZoomFillMargin) * lev.Bounds.XMin - ZoomFillMargin * lev.Bounds.XMax;
+        var xMax = (1 + ZoomFillMargin) * lev.Bounds.XMax - ZoomFillMargin * lev.Bounds.XMin;
+        var yMin = (1 + ZoomFillMargin) * lev.Bounds.YMin - ZoomFillMargin * lev.Bounds.YMax;
+        var yMax = (1 + ZoomFillMargin) * lev.Bounds.YMax - ZoomFillMargin * lev.Bounds.YMin;
+        var levelAspectRatio = (xMax - xMin) / (yMax - yMin);
+        var newZoomLevel = (yMax - yMin) / 2;
+        if (levelAspectRatio > aspectRatio)
+            newZoomLevel = (xMax - xMin) / 2 / aspectRatio;
+        PerformZoom(newZoomLevel, (xMax + xMin) / 2, (yMax + yMin) / 2, settings);
+    }
 
     public void Zoom(Vector p, bool zoomIn, double zoomFactor, RenderingSettings settings)
     {
@@ -64,15 +66,6 @@ public class ZoomController
         x -= (x - Cam.CenterX) * i;
         y -= (y - Cam.CenterY) * i;
         PerformZoom(ZoomLevel * i, x, y, settings);
-    }
-
-    public void ZoomFill(RenderingSettings settings, double aspectRatio)
-    {
-        var levelAspectRatio = (ZoomFillxMax - ZoomFillxMin) / (ZoomFillyMax - ZoomFillyMin);
-        var newZoomLevel = (ZoomFillyMax - ZoomFillyMin) / 2;
-        if (levelAspectRatio > aspectRatio)
-            newZoomLevel = (ZoomFillxMax - ZoomFillxMin) / 2 / aspectRatio;
-        PerformZoom(newZoomLevel, (ZoomFillxMax + ZoomFillxMin) / 2, (ZoomFillyMax + ZoomFillyMin) / 2, settings);
     }
 
     private void PerformZoom(double newZoomLevel, double newCenterX, double newCenterY, RenderingSettings settings)

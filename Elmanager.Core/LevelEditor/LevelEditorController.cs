@@ -187,10 +187,9 @@ public class LevelEditorController(ILevelEditor levelEditor)
         return false;
     }
 
-    public void LoadFromHistory(ZoomController zoomCtrl, LevelEditorRenderingSettings renderingSettings)
+    public void LoadFromHistory(LevelEditorRenderingSettings renderingSettings)
     {
         _editorLev = _editorLev with { Lev = _history[_historyIndex].Clone() };
-        zoomCtrl.Lev = Lev;
         Lev.UpdateGrass(renderingSettings.GrassZoom);
         _errorPoints.Clear();
         if (_savedIndex == _historyIndex)

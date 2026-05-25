@@ -36,7 +36,7 @@ internal class LevelControl : GLControl
 
         _level = level;
         _camera = new ElmaCamera();
-        _zoomController = new ZoomController(_camera, _level, () => RedrawScene());
+        _zoomController = new ZoomController(_camera, () => RedrawScene());
 
         _sceneSettings = sceneSettings;
 
@@ -60,7 +60,7 @@ internal class LevelControl : GLControl
         if (r.LgrLoadException != null)
             UiUtils.ShowError("Error occurred when loading LGR file! Reason:\r\n\r\n" + r.LgrLoadException.Message);
         _level.UpdateBounds();
-        _zoomController.ZoomFill(_renderingSettings, Width / (double)Height);
+        _zoomController.ZoomFill(_renderingSettings, Width / (double)Height, _level);
         ResetViewport();
         Render();
     }
@@ -73,8 +73,6 @@ internal class LevelControl : GLControl
         }
 
         _level = level;
-
-        _zoomController.Lev = _level;
 
         UpdateRenderingContext();
     }
@@ -134,7 +132,7 @@ internal class LevelControl : GLControl
         }
 
         GlProvider.GL.Viewport(0, 0, (uint)Width, (uint)Height);
-        _zoomController.ZoomFill(_renderingSettings, Width / (double)Height);
+        _zoomController.ZoomFill(_renderingSettings, Width / (double)Height, _level);
     }
 
     private void RedrawScene()

@@ -263,7 +263,7 @@ internal partial class ReplayViewerForm : FormMod
                 ToggleFullScreen(null, null);
                 break;
             case Keys.F5:
-                _replayController.ZoomCtrl.ZoomFill(RenderingSettings, _replayController.Renderer.AspectRatio);
+                _replayController.ZoomCtrl.ZoomFill(RenderingSettings, _replayController.Renderer.AspectRatio, _replayController.Lev!);
                 break;
             case Keys.Enter:
                 TextBoxKeyPress(e);
@@ -390,7 +390,7 @@ internal partial class ReplayViewerForm : FormMod
             Invoke(ope);
         };
 
-        ZoomFillButton.MouseDown += (_, _) => _replayController.ZoomCtrl.ZoomFill(RenderingSettings, _replayController.Renderer.AspectRatio);
+        ZoomFillButton.MouseDown += (_, _) => _replayController.ZoomCtrl.ZoomFill(RenderingSettings, _replayController.Renderer.AspectRatio, _replayController.Lev!);
         PlayButton.MouseDown += (_, _) => _replayController.TogglePlay();
         StopButton.MouseDown += async (_, _) =>
         {

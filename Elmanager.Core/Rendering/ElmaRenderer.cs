@@ -196,7 +196,7 @@ public class ElmaRenderer : IDisposable
         _graphics?.Objects.SetVisibleObjects(lev, hiddenObjectIndices, null);
     }
 
-    private SKBitmap GetSnapShot(ZoomController zoomCtrl, SceneSettings sceneSettings, RenderingSettings settings)
+    private SKBitmap GetSnapShot(ZoomController zoomCtrl, SceneSettings sceneSettings, RenderingSettings settings, Level lev)
     {
         SKBitmap snapShotBmp;
         if (_maxRenderbufferSize > 0)
@@ -208,7 +208,7 @@ public class ElmaRenderer : IDisposable
             var oldViewportWidth = _viewportWidth;
             var oldViewportHeight = _viewportHeight;
             ResetViewport(width, height);
-            zoomCtrl.ZoomFill(settings, AspectRatio);
+            zoomCtrl.ZoomFill(settings, AspectRatio, lev);
             DrawScene(zoomCtrl.Cam, 0, sceneSettings);
             snapShotBmp = new SKBitmap(width, height, SKColorType.Bgra8888, SKAlphaType.Premul);
             var pixels = snapShotBmp.GetPixels();
@@ -686,9 +686,9 @@ public class ElmaRenderer : IDisposable
         _graphics?.Lines.DrawDashLine(x1, y1, x2, y2, color, ColorUniforms, Pipelines.LinesDashed);
     }
 
-    public void SaveSnapShot(string fileName, ZoomController zoomCtrl, SceneSettings sceneSettings, RenderingSettings settings)
+    public void SaveSnapShot(string fileName, ZoomController zoomCtrl, SceneSettings sceneSettings, RenderingSettings settings, Level lev)
     {
-        using var bmp = GetSnapShot(zoomCtrl, sceneSettings, settings);
+        using var bmp = GetSnapShot(zoomCtrl, sceneSettings, settings, lev);
         using var image = SKImage.FromBitmap(bmp);
         using var data = image.Encode(SKEncodedImageFormat.Png, 100);
         using var stream = File.OpenWrite(fileName);
