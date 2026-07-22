@@ -530,7 +530,7 @@ public class LevelEditorController(ILevelEditor levelEditor)
         polys.ForEach(p =>
         {
             p.IsGrass = !p.IsGrass;
-            mod |= !p.IsGrass ? LevModification.Ground : LevModification.Grass;
+            mod |= LevModification.Ground | LevModification.Grass;
             p.UpdateGrassSlopeInfo(Lev.GroundBounds, editor.Settings.RenderingSettings.GrassZoom);
         });
         editor.SetModified(mod);
