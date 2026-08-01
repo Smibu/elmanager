@@ -346,18 +346,18 @@ public class ElmaRenderer : IDisposable
             _graphics.LgrGraphics.Textures.Draw(Pipelines.TextureUnclipped, Pipelines.TextureGround, Pipelines.TextureSky);
             _graphics.LgrGraphics.Pictures.Draw(Pipelines.PictureUnclipped, Pipelines.PictureGround, Pipelines.PictureSky);
         }
-        _graphics.GraphicElementFrames.DrawPictureFrames(ColorUniforms, Pipelines.GraphicElementFrames);
-        _graphics.GraphicElementFrames.DrawTextureFrames(ColorUniforms, Pipelines.GraphicElementFrames);
-        _graphics.GraphicElementFrames.DrawMissingPictureFrames(ColorUniforms, Pipelines.GraphicElementFramesDashed);
-        _graphics.GraphicElementFrames.DrawMissingTextureFrames(ColorUniforms, Pipelines.GraphicElementFramesDashed);
-        _graphics.PolygonFrames.Draw(ColorUniforms, _graphics.GroundSky.SkyVertices, Pipelines.Lines, Pipelines.LinesDashed);
-        _graphics.ObjectFrames.Draw(_graphics.Objects, ColorUniforms, Pipelines.ObjectFrames);
         _graphics.Lines.DrawGrid(
             bounds.XMin, bounds.XMax,
             bounds.YMin, bounds.YMax,
             sceneSettings.GridOffset,
             ColorUniforms,
             Pipelines.LinesDashed);
+        _graphics.GraphicElementFrames.DrawPictureFrames(ColorUniforms, Pipelines.GraphicElementFrames);
+        _graphics.GraphicElementFrames.DrawTextureFrames(ColorUniforms, Pipelines.GraphicElementFrames);
+        _graphics.GraphicElementFrames.DrawMissingPictureFrames(ColorUniforms, Pipelines.GraphicElementFramesDashed);
+        _graphics.GraphicElementFrames.DrawMissingTextureFrames(ColorUniforms, Pipelines.GraphicElementFramesDashed);
+        _graphics.PolygonFrames.Draw(ColorUniforms, _graphics.GroundSky.SkyVertices, Pipelines.Lines, Pipelines.LinesDashed);
+        _graphics.ObjectFrames.Draw(_graphics.Objects, ColorUniforms, Pipelines.ObjectFrames);
     }
 
     public (Matrix4x4 Projection, Bounds Bounds) SetCamera(ElmaCamera camera)
