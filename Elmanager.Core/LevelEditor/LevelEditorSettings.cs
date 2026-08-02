@@ -31,8 +31,6 @@ public class LevelEditorSettings
     public double FrameRadius { get; set; } = 0.2;
     [JsonPropertyName("LastLevel")]
     public string? LastLevel { get; set; }
-    [JsonPropertyName("MouseClickStep")]
-    public int MouseClickStep { get; set; } = 50;
     [JsonPropertyName("NumberFormat")]
     public string NumberFormat { get; set; } = "0";
     [JsonPropertyName("PipeRadius")]
