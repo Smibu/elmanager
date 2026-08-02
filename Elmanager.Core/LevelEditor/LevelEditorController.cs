@@ -1016,7 +1016,7 @@ public class LevelEditorController(ILevelEditor levelEditor)
                 renderer.AddSelectionPoint(driver.Body.Location);
         }
 
-        if (settings.UseHighlight && currentHighlight is { } hl)
+        if (currentHighlight is { } hl)
         {
             switch (hl)
             {

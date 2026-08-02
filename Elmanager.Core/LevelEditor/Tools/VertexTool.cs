@@ -42,13 +42,10 @@ public class VertexTool : ToolBase, IEditorTool
             AdjustForGrid(ref CurrentPos);
             Renderer.DrawRectangle(r, CurrentPos, Color.Blue);
         }
-        else
+        else if (_nearestVertexInfo is { } v)
         {
-            if (LevEditor.Settings.UseHighlight && _nearestVertexInfo is { } v)
-            {
-                Renderer.DrawLine(v.Polygon[v.StartIndex], v.Polygon[v.EndIndex],
-                    Color.Yellow);
-            }
+            Renderer.DrawLine(v.Polygon[v.StartIndex], v.Polygon[v.EndIndex],
+                Color.Yellow);
         }
     }
 

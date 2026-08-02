@@ -43,7 +43,6 @@ internal partial class ConfigForm : FormMod
         baseFilenameBox.Text = Global.AppSettings.LevelEditor.BaseFilename;
         numberFormatBox.Text = Global.AppSettings.LevelEditor.NumberFormat;
         DefaultTitleBox.Text = Global.AppSettings.LevelEditor.DefaultTitle;
-        HighlightBox.Checked = Global.AppSettings.LevelEditor.UseHighlight;
         CheckForUpdatesBox.Checked = Global.AppSettings.General.CheckForUpdatesOnStartup;
         capturePicTextFromBordersCheckBox.Checked =
             Global.AppSettings.LevelEditor.CapturePicturesAndTexturesFromBordersOnly;
@@ -208,7 +207,6 @@ internal partial class ConfigForm : FormMod
 
         Global.AppSettings.LevelEditor.CheckTopologyWhenSaving = CheckTopologyWhenSavingBox.Checked;
         Global.AppSettings.LevelEditor.CheckTopologyDynamically = DynamicCheckTopologyBox.Checked;
-        Global.AppSettings.LevelEditor.UseHighlight = HighlightBox.Checked;
         Global.AppSettings.LevelEditor.UseFilenameSuggestion = FilenameSuggestionBox.Checked;
         Global.AppSettings.LevelEditor.UseFilenameForTitle = SameAsFilenameBox.Checked;
         Global.AppSettings.LevelEditor.BaseFilename = baseFilenameBox.Text;

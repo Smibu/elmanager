@@ -82,7 +82,6 @@ namespace Elmanager.Settings
             browseButton = new Button();
             Label6 = new Label();
             Label8 = new Label();
-            HighlightBox = new CheckBox();
             alwaysSetDefaultsInPictureTool = new CheckBox();
             capturePicTextFromBordersCheckBox = new CheckBox();
             RenderingSettingsButton = new Button();
@@ -525,7 +524,6 @@ namespace Elmanager.Settings
             sleTab.Controls.Add(startPositionFeatureCheckBox);
             sleTab.Controls.Add(tableLayoutPanel3);
             sleTab.Controls.Add(tableLayoutPanel2);
-            sleTab.Controls.Add(HighlightBox);
             sleTab.Controls.Add(alwaysSetDefaultsInPictureTool);
             sleTab.Controls.Add(capturePicTextFromBordersCheckBox);
             sleTab.Controls.Add(RenderingSettingsButton);
@@ -729,17 +727,6 @@ namespace Elmanager.Settings
             Label8.TabIndex = 4;
             Label8.Text = "Mouse capture radius:";
             // 
-            // HighlightBox
-            // 
-            HighlightBox.AutoSize = true;
-            HighlightBox.Location = new System.Drawing.Point(22, 131);
-            HighlightBox.Margin = new Padding(6);
-            HighlightBox.Name = "HighlightBox";
-            HighlightBox.Size = new System.Drawing.Size(456, 36);
-            HighlightBox.TabIndex = 10;
-            HighlightBox.Text = "Highlight level elements under mouse";
-            HighlightBox.UseVisualStyleBackColor = true;
-            // 
             // alwaysSetDefaultsInPictureTool
             // 
             alwaysSetDefaultsInPictureTool.AutoSize = true;
@@ -871,7 +858,6 @@ namespace Elmanager.Settings
         internal System.Windows.Forms.Label Label8;
         internal System.Windows.Forms.CheckBox CheckTopologyWhenSavingBox;
         internal System.Windows.Forms.CheckBox DynamicCheckTopologyBox;
-        internal System.Windows.Forms.CheckBox HighlightBox;
         internal System.Windows.Forms.ColorDialog ColorDialog1;
         internal System.Windows.Forms.TextBox baseFilenameBox;
         internal System.Windows.Forms.Label Label19;

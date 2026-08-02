@@ -17,8 +17,7 @@ internal class WinFormsCursorManager : IEditorCursorManager
 
     public void ChangeCursorToHand()
     {
-        if (Global.AppSettings.LevelEditor.UseHighlight)
-            _editorControl.Cursor = Cursors.Hand;
+        _editorControl.Cursor = Cursors.Hand;
     }
 
     public void ChangeToDefaultCursorIfHand()

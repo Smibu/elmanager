@@ -59,8 +59,6 @@ public class LevelEditorSettings
     public bool UseFilenameForTitle { get; set; }
     [JsonPropertyName("UseFilenameSuggestion")]
     public bool UseFilenameSuggestion { get; set; }
-    [JsonPropertyName("UseHighlight")]
-    public bool UseHighlight { get; set; } = true;
     [JsonPropertyName("WindowState")]
     public WindowState WindowState { get; set; } = WindowState.Normal;
     [JsonPropertyName("LevelTemplate")]
