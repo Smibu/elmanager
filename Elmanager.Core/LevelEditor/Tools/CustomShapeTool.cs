@@ -78,17 +78,10 @@ public class CustomShapeTool : ToolBase, IEditorTool
         Level level = _shapeSelection.Shape.Obj.Level;
         Level originalLevel = _shapeSelection.Original.Level;
 
-        // Center shape around mouse position
-        Vector center = new Vector((level.Bounds.XMin + level.Bounds.XMax) / 2, (level.Bounds.YMin + level.Bounds.YMax) / 2);
-        var min = new Vector(level.Bounds.XMin, level.Bounds.YMin);
-        var max = new Vector(level.Bounds.XMax, level.Bounds.YMax);
-
-        // Scale min / max before calculating anchor offset
-        min *= scalingMatrix;
-        max *= scalingMatrix;
-        Vector anchorOffset = GetAnchorOffset(min, max);
-
-        var translationMatrix = Matrix.CreateTranslation(mousePosition.X - center.X + anchorOffset.X, mousePosition.Y - center.Y + anchorOffset.Y);
+        var transformedAnchor = GetAnchorPosition(originalLevel).Transform(transformationMatrix);
+        var translationMatrix = Matrix.CreateTranslation(
+            mousePosition.X - transformedAnchor.X,
+            mousePosition.Y - transformedAnchor.Y);
         transformationMatrix = transformationMatrix * translationMatrix;
 
         level.Polygons = originalLevel.Polygons.Select(p => p.ApplyTransformation(transformationMatrix)).ToList();
@@ -226,14 +219,16 @@ public class CustomShapeTool : ToolBase, IEditorTool
 
     public void KeyUp(EditorKeyEventArgs e) { }
 
-    private Vector GetAnchorOffset(Vector min, Vector max) =>
+    private Vector GetAnchorPosition(Level level) =>
         _anchor switch
         {
-            PlacementAnchor.Center => new Vector(0, 0),
-            PlacementAnchor.TopLeft => new Vector(min.X - max.X, max.Y - min.Y) / 2,
-            PlacementAnchor.TopRight => new Vector(max.X - min.X, max.Y - min.Y) / 2,
-            PlacementAnchor.BottomLeft => new Vector(min.X - max.X, min.Y - max.Y) / 2,
-            PlacementAnchor.BottomRight => new Vector(max.X - min.X, min.Y - max.Y) / 2,
+            PlacementAnchor.Center => new Vector(
+                (level.Bounds.XMin + level.Bounds.XMax) / 2,
+                (level.Bounds.YMin + level.Bounds.YMax) / 2),
+            PlacementAnchor.TopLeft => new Vector(level.Bounds.XMin, level.Bounds.YMax),
+            PlacementAnchor.TopRight => new Vector(level.Bounds.XMax, level.Bounds.YMax),
+            PlacementAnchor.BottomLeft => new Vector(level.Bounds.XMin, level.Bounds.YMin),
+            PlacementAnchor.BottomRight => new Vector(level.Bounds.XMax, level.Bounds.YMin),
             _ => throw new ArgumentOutOfRangeException()
         };
 
