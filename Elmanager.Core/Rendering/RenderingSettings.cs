@@ -18,7 +18,6 @@ public class RenderingSettings
 
     public RenderingSettings()
     {
-        GroundFillColor = Color.Black;
         GroundEdgeColor = Color.Black;
         GrassEdgeColor = Color.Green;
         AppleColor = Color.Red;
@@ -32,8 +31,6 @@ public class RenderingSettings
         SkyFillColor = Color.LightGray;
         AppleGravityArrowColor = Color.White;
         ShowGroundEdges = true;
-        ShowPictureFrames = false;
-        ShowTextureFrames = false;
         ShowObjectFrames = true;
         ShowGravityAppleArrows = true;
         ShowInactiveGrassEdges = false;
@@ -89,7 +86,7 @@ public class RenderingSettings
     public virtual RenderingSettings Clone() => new(this);
 
     [Category("Colors"), DisplayName("Ground fill"), JsonPropertyName("GroundFillColor")]
-    public Color GroundFillColor { get; set; }
+    public Color GroundFillColor { get; set; } = Color.FromArgb(255, 153, 153, 153);
 
     [Category("Colors"), DisplayName("Ground edge"), JsonPropertyName("GroundEdgeColor"), Description(TransparencyTip)]
     public Color GroundEdgeColor { get; set; }
@@ -189,7 +186,7 @@ public class RenderingSettings
     public bool SmoothZoomEnabled { get; set; }
 
     [Category("Visibility"), DisplayName("Ground"), JsonPropertyName("ShowGround")]
-    public bool ShowGround { get; set; }
+    public bool ShowGround { get; set; } = true;
 
     [Category("Visibility"), DisplayName("Center points of objects"), JsonPropertyName("ShowObjectCenters")]
     public bool ShowObjectCenters { get; set; }
@@ -201,10 +198,10 @@ public class RenderingSettings
     public bool ShowVertices { get; set; }
 
     [Category("Visibility"), DisplayName("Picture frames"), JsonPropertyName("ShowPictureFrames")]
-    public bool ShowPictureFrames { get; set; }
+    public bool ShowPictureFrames { get; set; } = true;
 
     [Category("Visibility"), DisplayName("Texture frames"), JsonPropertyName("ShowTextureFrames")]
-    public bool ShowTextureFrames { get; set; }
+    public bool ShowTextureFrames { get; set; } = true;
 
     [Category("Visibility"), DisplayName("Grass edges"), JsonPropertyName("ShowGrassEdges")]
     public bool ShowGrassEdges { get; set; }
@@ -216,22 +213,22 @@ public class RenderingSettings
     public bool DefaultGroundAndSky { get; set; }
 
     [Category("Visibility"), DisplayName("Ground texture"), JsonPropertyName("GroundTextureEnabled")]
-    public bool GroundTextureEnabled { get; set; }
+    public bool GroundTextureEnabled { get; set; } = true;
 
     [Category("Visibility"), DisplayName("Sky texture"), JsonPropertyName("SkyTextureEnabled")]
-    public bool SkyTextureEnabled { get; set; }
+    public bool SkyTextureEnabled { get; set; } = true;
 
     [Category("Visibility"), DisplayName("Pictures"), JsonPropertyName("ShowPictures")]
-    public bool ShowPictures { get; set; }
+    public bool ShowPictures { get; set; } = true;
 
     [Category("Visibility"), DisplayName("Textures"), JsonPropertyName("ShowTextures")]
-    public bool ShowTextures { get; set; }
+    public bool ShowTextures { get; set; } = true;
 
     [Category("Visibility"), DisplayName("Grass"), JsonPropertyName("ShowGrass")]
-    public bool ShowGrass { get; set; }
+    public bool ShowGrass { get; set; } = true;
 
     [Category("Visibility"), DisplayName("Objects"), JsonPropertyName("ShowObjects")]
-    public bool ShowObjects { get; set; }
+    public bool ShowObjects { get; set; } = true;
 
     [Category("Visibility"), DisplayName("Object frames"), JsonPropertyName("ShowObjectFrames")]
     public bool ShowObjectFrames { get; set; }
