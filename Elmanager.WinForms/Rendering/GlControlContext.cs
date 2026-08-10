@@ -19,6 +19,7 @@ internal partial class GlControlContext : IGraphicsContext
         _control = control;
         _control.MakeCurrent();
         GlProvider.Initialize(GL.GetApi(GetProcAddress));
+        GlProvider.GL.Enable(EnableCap.ProgramPointSize);
     }
 
     private static nint GetProcAddress(string name)
