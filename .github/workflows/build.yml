@@ -36,19 +36,19 @@ jobs:
       with:
         dotnet-version: 10.0.x
     - name: Build with dotnet
-      working-directory: Elmanager
+      working-directory: Elmanager.WinForms
       run: dotnet publish --configuration ${{ matrix.configuration }}
     - name: Upload Release artifact
       if: matrix.configuration == 'Release'
       uses: actions/upload-artifact@v4
       with:
         name: Elmanager-${{ matrix.configuration }}
-        path: Elmanager/bin/${{ matrix.configuration }}/net8.0-windows7.0/win-x64/publish/Elmanager.exe
+        path: Elmanager.WinForms/bin/${{ matrix.configuration }}/net8.0-windows7.0/win-x64/publish/Elmanager.exe
         compression-level: 9
     - name: Upload WineRelease artifact
       if: matrix.configuration == 'WineRelease'
       uses: actions/upload-artifact@v4
       with:
         name: Elmanager-${{ matrix.configuration }}
-        path: Elmanager/bin/${{ matrix.configuration }}/net8.0-windows7.0/win-x64/publish/
+        path: Elmanager.WinForms/bin/${{ matrix.configuration }}/net8.0-windows7.0/win-x64/publish/
         compression-level: 9
