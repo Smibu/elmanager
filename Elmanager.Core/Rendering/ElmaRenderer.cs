@@ -37,21 +37,24 @@ public class ElmaRenderer : IDisposable
     private uint _colorRenderBuffer;
     private uint _depthStencilRenderBuffer;
     private int _maxRenderbufferSize;
-    private readonly LgrCache _lgrCache = new();
+    private readonly ILgrCache _lgrCache;
     private int _viewportWidth = 1;
     private int _viewportHeight = 1;
     public double AspectRatio => _viewportWidth / (double)_viewportHeight;
     public int ViewportWidth => _viewportWidth;
     public int ViewportHeight => _viewportHeight;
+    public double LogicalViewportHeight => _viewportHeight / RenderScaling;
+    public float RenderScaling { get; private set; } = 1.0f;
 
     private UniformBuffer CameraUniforms { get; }
     private UniformBuffer ColorUniforms { get; }
     private Pipelines Pipelines { get; }
     private readonly bool _ownsPipelines;
 
-    public ElmaRenderer(IGraphicsContext renderingTarget, RenderingSettings settings, Pipelines? pipelines = null)
+    public ElmaRenderer(IGraphicsContext renderingTarget, RenderingSettings settings, ILgrCache lgrCache, Pipelines? pipelines = null)
     {
         _gfxContext = renderingTarget;
+        _lgrCache = lgrCache;
         InitializeOpengl(disableFrameBuffer: settings.DisableFrameBuffer);
         _gfxContext.MakeCurrent();
 
@@ -67,12 +70,13 @@ public class ElmaRenderer : IDisposable
         CameraUniforms.BindBufferBase();
     }
 
-    public ElmaRenderer(IGraphicsContext renderingTarget, RenderingSettings settings, ElmaRenderer otherElmaRenderer) : this(renderingTarget, settings, otherElmaRenderer.Pipelines)
+    public ElmaRenderer(IGraphicsContext renderingTarget, RenderingSettings settings, ILgrCache lgrCache, ElmaRenderer otherElmaRenderer) : this(renderingTarget, settings, lgrCache, otherElmaRenderer.Pipelines)
     {
     }
 
     public OpenGlLgr? OpenGlLgr => _graphics?.LgrGraphics?.Lgr;
     private float _grassZoom;
+    private float _lineWidth = 1.0f;
     private float _pointSize;
     private bool _zoomTextures;
 
@@ -82,7 +86,7 @@ public class ElmaRenderer : IDisposable
         _grassZoom = (float)settings.GrassZoom;
         _pointSize = settings.PointSize;
         _zoomTextures = settings.ZoomTextures;
-        GL.LineWidth(settings.LineWidth);
+        SetLineWidth(settings.LineWidth);
         var state = new LevEditState(lev, TransientElements.Empty);
         _graphics = new LevelGraphics(
             GroundSky: GroundSky.Create(state, lgr, settings, Pipelines.White1X1Texture),
@@ -196,31 +200,31 @@ public class ElmaRenderer : IDisposable
         _graphics?.Objects.SetVisibleObjects(lev, hiddenObjectIndices, null);
     }
 
-    private SKBitmap GetSnapShot(ZoomController zoomCtrl, SceneSettings sceneSettings, RenderingSettings settings, Level lev)
+    private SKBitmap GetSnapShot(ZoomController zoomCtrl, RenderingSettings settings, Level lev,
+        Action<int, int> drawScene)
     {
         SKBitmap snapShotBmp;
         if (_maxRenderbufferSize > 0)
         {
             var width = _maxRenderbufferSize;
             var height = _maxRenderbufferSize;
-            GL.BindFramebuffer(FramebufferTarget.ReadFramebuffer, _frameBuffer);
-            GL.BindFramebuffer(FramebufferTarget.DrawFramebuffer, _frameBuffer);
+            GL.GetInteger(GLEnum.FramebufferBinding, out var oldFrameBuffer);
+            GL.BindFramebuffer(FramebufferTarget.Framebuffer, _frameBuffer);
             var oldViewportWidth = _viewportWidth;
             var oldViewportHeight = _viewportHeight;
             ResetViewport(width, height);
             zoomCtrl.ZoomFill(settings, AspectRatio, lev);
-            DrawScene(zoomCtrl.Cam, 0, sceneSettings);
-            snapShotBmp = new SKBitmap(width, height, SKColorType.Bgra8888, SKAlphaType.Premul);
+            drawScene(width, height);
+            snapShotBmp = CreateReadbackBitmap(width, height);
             var pixels = snapShotBmp.GetPixels();
             GL.ReadBuffer(ReadBufferMode.ColorAttachment0);
             unsafe
             {
-                GL.ReadPixels(0, 0, (uint)width, (uint)height, GLEnum.Bgra, GLEnum.UnsignedByte,
+                GL.ReadPixels(0, 0, (uint)width, (uint)height, GLEnum.Rgba, GLEnum.UnsignedByte,
                     (void*)pixels);
             }
             FlipVertically(snapShotBmp);
-            GL.BindFramebuffer(FramebufferTarget.ReadFramebuffer, 0);
-            GL.BindFramebuffer(FramebufferTarget.DrawFramebuffer, 0);
+            GL.BindFramebuffer(FramebufferTarget.Framebuffer, (uint)oldFrameBuffer);
             ResetViewport(oldViewportWidth, oldViewportHeight);
         }
         else
@@ -235,17 +239,23 @@ public class ElmaRenderer : IDisposable
     {
         var width = _viewportWidth;
         var height = _viewportHeight;
-        var snapShotBmp = new SKBitmap(width, height, SKColorType.Bgra8888, SKAlphaType.Premul);
+        var snapShotBmp = CreateReadbackBitmap(width, height);
         var pixels = snapShotBmp.GetPixels();
-        GL.ReadBuffer(ReadBufferMode.Front);
+        GL.GetInteger(GLEnum.FramebufferBinding, out var framebuffer);
+        GL.ReadBuffer(GlProvider.IsOpenGLES
+            ? framebuffer == 0 ? ReadBufferMode.Back : ReadBufferMode.ColorAttachment0
+            : ReadBufferMode.Front);
         unsafe
         {
-            GL.ReadPixels(0, 0, (uint)width, (uint)height, GLEnum.Bgra, GLEnum.UnsignedByte,
+            GL.ReadPixels(0, 0, (uint)width, (uint)height, GLEnum.Rgba, GLEnum.UnsignedByte,
                 (void*)pixels);
         }
         FlipVertically(snapShotBmp);
         return snapShotBmp;
     }
+
+    private static SKBitmap CreateReadbackBitmap(int width, int height) =>
+        new(width, height, SKColorType.Rgba8888, SKAlphaType.Premul);
 
     private static void FlipVertically(SKBitmap bmp)
     {
@@ -376,7 +386,7 @@ public class ElmaRenderer : IDisposable
             new Vector2((float)centerX, (float)centerY),
             _grassZoom,
             zoom,
-            _pointSize
+            _pointSize * RenderScaling
         ));
     }
 
@@ -462,21 +472,43 @@ public class ElmaRenderer : IDisposable
         _viewportHeight = height;
     }
 
-    public RendererSettingsChangeResult UpdateSettings(Level lev, RenderingSettings newSettings, string? lgrDir)
+    public void SetRenderScaling(float renderScaling)
     {
-        var currentLgr = OpenGlLgr?.CurrentLgr.Path;
-        var newLgr = newSettings.ResolveLgr(lev, lgrDir);
+        if (!float.IsFinite(renderScaling) || renderScaling <= 0)
+            throw new ArgumentOutOfRangeException(nameof(renderScaling),
+                "Render scaling must be finite and greater than zero.");
+
+        if (RenderScaling == renderScaling)
+            return;
+
+        RenderScaling = renderScaling;
+        ApplyLineWidth();
+    }
+
+    public void SetLineWidth(float lineWidth)
+    {
+        _lineWidth = lineWidth;
+        ApplyLineWidth();
+    }
+
+    private void ApplyLineWidth() => GL.LineWidth(_lineWidth * RenderScaling);
+
+    public RendererSettingsChangeResult UpdateSettings(Level lev, RenderingSettings newSettings)
+    {
+        var currentLgr = OpenGlLgr?.CurrentLgr.Name;
+        var resolved = ResolveLgr(lev, newSettings);
+        var newLgr = resolved?.Name;
         var lgrUpdated = false;
         var lgr = OpenGlLgr;
         Exception? lgrLoadException = null;
         if (!currentLgr.EqualsIgnoreCase(newLgr))
         {
-            if (File.Exists(newLgr))
+            if (resolved != null)
             {
                 var old = lgr;
                 try
                 {
-                    lgr = new OpenGlLgr(_lgrCache.GetOrLoadLgr(newLgr));
+                    lgr = new OpenGlLgr(resolved);
                     lev.UpdateImages(lgr.DrawableImages);
                     lev.UpdateGrass(newSettings.GrassZoom);
                     old?.Dispose();
@@ -484,6 +516,7 @@ public class ElmaRenderer : IDisposable
                 }
                 catch (Exception e)
                 {
+                    Console.WriteLine(e);
                     lgrLoadException = e;
                 }
             }
@@ -494,9 +527,18 @@ public class ElmaRenderer : IDisposable
             lev.UpdateGrass(newSettings.GrassZoom);
         }
         GL.ClearColor(newSettings.SkyFillColor.R / 255f, newSettings.SkyFillColor.G / 255f, newSettings.SkyFillColor.B / 255f, newSettings.SkyFillColor.A / 255f);
-        GL.LineWidth(newSettings.LineWidth);
         InitializeBuffers(lev, lgr, newSettings);
         return new RendererSettingsChangeResult(lgrUpdated, lgrLoadException);
+    }
+
+    private Lgr.Lgr? ResolveLgr(Level lev, RenderingSettings settings)
+    {
+        if (settings.LgrDisabled)
+        {
+            return null;
+        }
+
+        return _lgrCache.TryGetLoaded(lev.LgrFile.ToLower()) ?? _lgrCache.TryGetLoaded("default");
     }
 
     public void Dispose()
@@ -639,11 +681,7 @@ public class ElmaRenderer : IDisposable
 
     private void InitializeOpengl(bool disableFrameBuffer)
     {
-        GL.ClearDepth(GroundDepth);
         GL.ClearStencil(GroundStencil);
-        GL.Hint(HintTarget.TextureCompressionHint, HintMode.Fastest);
-        GL.Hint(HintTarget.PolygonSmoothHint, HintMode.Fastest);
-        GL.Hint(HintTarget.LineSmoothHint, HintMode.Fastest);
 
         GL.GetInteger(GetPName.MaxRenderbufferSize, out int maxRbSize);
         _maxRenderbufferSize = Math.Min(maxRbSize, 4096);
@@ -665,7 +703,7 @@ public class ElmaRenderer : IDisposable
 
             _depthStencilRenderBuffer = GL.GenRenderbuffer();
             GL.BindRenderbuffer(RenderbufferTarget.Renderbuffer, _depthStencilRenderBuffer);
-            GL.RenderbufferStorage(RenderbufferTarget.Renderbuffer, InternalFormat.DepthStencil,
+            GL.RenderbufferStorage(RenderbufferTarget.Renderbuffer, InternalFormat.Depth24Stencil8,
                 (uint)_maxRenderbufferSize, (uint)_maxRenderbufferSize);
             GL.BindRenderbuffer(RenderbufferTarget.Renderbuffer, 0);
 
@@ -688,11 +726,27 @@ public class ElmaRenderer : IDisposable
 
     public void SaveSnapShot(string fileName, ZoomController zoomCtrl, SceneSettings sceneSettings, RenderingSettings settings, Level lev)
     {
-        using var bmp = GetSnapShot(zoomCtrl, sceneSettings, settings, lev);
+        using var stream = File.Create(fileName);
+        SaveSnapShot(stream, zoomCtrl, sceneSettings, settings, lev);
+    }
+
+    public void SaveSnapShot(Stream stream, ZoomController zoomCtrl, SceneSettings sceneSettings, RenderingSettings settings, Level lev)
+    {
+        var pngBytes = GetSnapShotPngBytes(zoomCtrl, sceneSettings, settings, lev);
+        stream.Write(pngBytes);
+    }
+
+    public byte[] GetSnapShotPngBytes(ZoomController zoomCtrl, SceneSettings sceneSettings, RenderingSettings settings, Level lev)
+        => GetSnapShotPngBytes(zoomCtrl, settings, lev,
+            (_, _) => DrawScene(zoomCtrl.Cam, 0, sceneSettings));
+
+    public byte[] GetSnapShotPngBytes(ZoomController zoomCtrl, RenderingSettings settings, Level lev,
+        Action<int, int> drawScene)
+    {
+        using var bmp = GetSnapShot(zoomCtrl, settings, lev, drawScene);
         using var image = SKImage.FromBitmap(bmp);
         using var data = image.Encode(SKEncodedImageFormat.Png, 100);
-        using var stream = File.OpenWrite(fileName);
-        data.SaveTo(stream);
+        return data.ToArray();
     }
 
     public static double GetFirstGridLine(double size, double offset, double min)

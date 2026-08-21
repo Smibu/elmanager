@@ -30,7 +30,7 @@ public class PlaySettings
     [JsonPropertyName("FollowDriverOption")]
     public FollowDriverOption FollowDriverOption { get; set; } = FollowDriverOption.WhenPressingKey;
     [JsonPropertyName("DisableShortcuts")]
-    public bool DisableShortcuts { get; set; }
+    public bool DisableShortcuts { get; set; } = true;
     [JsonPropertyName("PhysicsFps")]
     public int PhysicsFps { get; set; } = 1000;
     [JsonPropertyName("ConstantFps")]

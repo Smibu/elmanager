@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Threading.Tasks;
 using System.Windows.Forms;
 using Elmanager.Geometry;
 using Elmanager.IO;
@@ -22,14 +23,14 @@ internal class WinFormsCustomShapeService : ICustomShapeService
         _levEditor = levEditor;
     }
 
-    public ElmaFileObject<SleShape>? OpenShapeDialog(string? currentShapePath)
+    public Task<ElmaFileObject<SleShape>?> OpenShapeDialog(string? currentShapePath)
     {
         string shapesDirectory = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "sle_shapes");
         if (!Directory.Exists(shapesDirectory))
         {
             UiUtils.ShowError("The 'sle_shapes' folder does not exist.\nSelect + right-click in editor to save selection as a new shape.",
                 "Shapes directory not found", MessageBoxIcon.Exclamation);
-            return null;
+            return Task.FromResult<ElmaFileObject<SleShape>?>(null);
         }
 
         var subdirectories = Directory.GetDirectories(shapesDirectory);
@@ -48,13 +49,14 @@ internal class WinFormsCustomShapeService : ICustomShapeService
         {
             UiUtils.ShowError("No .lev files found in any subdirectory of 'sle_shapes'.\nSelect + right-click in editor to save selection as a new shape.",
                 "No shapes found", MessageBoxIcon.Information);
-            return null;
+            return Task.FromResult<ElmaFileObject<SleShape>?>(null);
         }
 
-        return ShapeSelectionForm.ShowForm(_levEditor.EditorControl, _levEditor.Renderer, currentShapePath);
+        return Task.FromResult(ShapeSelectionForm.ShowForm(
+            _levEditor.EditorControl, _levEditor.Renderer, currentShapePath));
     }
 
-    public string? SaveShape(ILevelEditor editor, ElmaRenderer renderer, string? lastUsedShapeFolder)
+    public Task<string?> SaveShape(ILevelEditor editor, ElmaRenderer renderer, string? lastUsedShapeFolder)
     {
         string? newFolder = lastUsedShapeFolder;
         var selectedPolygons = _levEditor.Lev.Polygons.Where(p => p.Vertices.Any(v => v.Mark == VectorMark.Selected)).ToList();
@@ -63,7 +65,7 @@ internal class WinFormsCustomShapeService : ICustomShapeService
 
         if (selectedPolygons.Count == 0 && selectedObjects.Count == 0 && selectedGraphicElements.Count == 0)
         {
-            return null;
+            return Task.FromResult<string?>(null);
         }
 
         bool allGrassSelected = selectedPolygons.All(pol => pol.IsGrass);
@@ -71,7 +73,7 @@ internal class WinFormsCustomShapeService : ICustomShapeService
         {
             MessageBox.Show(@"All selected polygons are grass. Custom shapes require at least 1 ground polygon!",
                 @"Warning", MessageBoxButtons.OK, MessageBoxIcon.Warning);
-            return null;
+            return Task.FromResult<string?>(null);
         }
 
         string shapesDirectory = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "sle_shapes");
@@ -85,7 +87,7 @@ internal class WinFormsCustomShapeService : ICustomShapeService
             catch (Exception ex)
             {
                 UiUtils.ShowError("Error creating directory: " + shapesDirectory + "\n\n" + ex.Message, "Error", MessageBoxIcon.Error);
-                return null;
+                return Task.FromResult<string?>(null);
             }
         }
 
@@ -100,7 +102,7 @@ internal class WinFormsCustomShapeService : ICustomShapeService
             catch (Exception ex)
             {
                 UiUtils.ShowError("Error creating directory: " + uncategorizedDirName + "\n\n" + ex.Message, "Error", MessageBoxIcon.Error);
-                return null;
+                return Task.FromResult<string?>(null);
             }
 
             newFolder = uncategorizedDirName;
@@ -118,7 +120,7 @@ internal class WinFormsCustomShapeService : ICustomShapeService
 
         if (result != DialogResult.OK)
         {
-            return null;
+            return Task.FromResult<string?>(null);
         }
 
         string fullShapesDirectory = Path.GetFullPath(shapesDirectory);
@@ -128,7 +130,7 @@ internal class WinFormsCustomShapeService : ICustomShapeService
             Path.GetDirectoryName(fullFilePath)!.Equals(fullShapesDirectory, StringComparison.OrdinalIgnoreCase))
         {
             UiUtils.ShowError("Shapes must be saved within a subfolder of the 'sle_shapes' directory.", "Error", MessageBoxIcon.Error);
-            return null;
+            return Task.FromResult<string?>(null);
         }
 
         newFolder = Path.GetDirectoryName(fullFilePath);
@@ -151,6 +153,6 @@ internal class WinFormsCustomShapeService : ICustomShapeService
         tempLevel.Objects.Add(new LevObject(new Vector(0, 0), ObjectType.Start, AppleType.Normal));
 
         tempLevel.Save(_levEditor.SaveShapeDialog.FileName);
-        return newFolder;
+        return Task.FromResult(newFolder);
     }
 }

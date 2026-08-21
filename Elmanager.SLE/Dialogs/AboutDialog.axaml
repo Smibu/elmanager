@@ -1,0 +1,19 @@
+<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             x:Class="Elmanager.SLE.Dialogs.AboutDialog"
+             Width="520">
+  <StackPanel Margin="16" Spacing="12">
+    <TextBlock Text="About SLE"
+               FontSize="16"
+               FontWeight="Bold" />
+    <TextBlock Text="Smibu's Level Editor for Elasto Mania"
+               TextWrapping="Wrap" />
+    <HyperlinkButton Content="https://github.com/Smibu/elmanager"
+                     NavigateUri="https://github.com/Smibu/elmanager"
+                     HorizontalAlignment="Left" />
+    <Button Content="Close"
+            Width="80"
+            HorizontalAlignment="Right"
+            Click="OnCloseClick" />
+  </StackPanel>
+</UserControl>

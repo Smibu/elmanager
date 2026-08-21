@@ -1,0 +1,10 @@
+<Window xmlns="https://github.com/avaloniaui"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:editor="using:Elmanager.SLE.Editor"
+        x:Class="Elmanager.SLE.MainWindow"
+        Title="SLE"
+        Width="1200"
+        Height="800"
+        Closing="OnWindowClosing">
+  <editor:MainView x:Name="EditorView" />
+</Window>

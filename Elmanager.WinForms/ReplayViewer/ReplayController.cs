@@ -11,6 +11,7 @@ using Elmanager.ElmaPrimitives;
 using Elmanager.Geometry;
 using Elmanager.IO;
 using Elmanager.Lev;
+using Elmanager.Lgr;
 using Elmanager.Rec;
 using Elmanager.Rendering;
 using Elmanager.Rendering.Camera;
@@ -79,7 +80,7 @@ internal class ReplayController : IDisposable
 
     public ReplayController(GLControl viewerBox, ReplayViewerRenderingSettings replayViewerRenderingSettings)
     {
-        Renderer = new ElmaRenderer(new GlControlContext(viewerBox), replayViewerRenderingSettings);
+        Renderer = new ElmaRenderer(new GlControlContext(viewerBox), replayViewerRenderingSettings, new DirectoryLgrCache(() => Global.AppSettings.General.LgrDirectory));
         _settings = replayViewerRenderingSettings;
     }
 
@@ -412,7 +413,7 @@ internal class ReplayController : IDisposable
         MaxTime = PlayListReplays.Max(p => p.Player.FrameCount) / 30.0;
         CurrentTime = 0.0;
         Lev = lev;
-        var updateResult = Renderer.UpdateSettings(lev, _settings, Global.AppSettings.General.LgrDirectory);
+        var updateResult = Renderer.UpdateSettings(lev, _settings);
         if (updateResult.LgrLoadException != null)
             UiUtils.ShowError("Error occurred when loading LGR file! Reason:\r\n\r\n" + updateResult.LgrLoadException.Message);
         _activePlayerIndices = new List<int>();

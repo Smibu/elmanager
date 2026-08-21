@@ -1,0 +1,222 @@
+<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             xmlns:settings="using:Elmanager.SLE.Dialogs.Settings"
+             xmlns:ui="using:Elmanager.SLE.UI"
+             mc:Ignorable="d"
+             Width="520"
+             x:DataType="settings:SettingsDialogViewModel"
+             x:Class="Elmanager.SLE.Dialogs.SettingsDialog">
+  <UserControl.Styles>
+    <Style Selector="Button.danger">
+      <Setter Property="Background" Value="#C62828" />
+      <Setter Property="BorderBrush" Value="#C62828" />
+      <Setter Property="Foreground" Value="White" />
+    </Style>
+    <Style Selector="Button.danger:pointerover /template/ ContentPresenter#PART_ContentPresenter">
+      <Setter Property="Background" Value="#D32F2F" />
+      <Setter Property="BorderBrush" Value="#D32F2F" />
+      <Setter Property="Foreground" Value="White" />
+    </Style>
+    <Style Selector="Button.danger:pressed /template/ ContentPresenter#PART_ContentPresenter">
+      <Setter Property="Background" Value="#B71C1C" />
+      <Setter Property="BorderBrush" Value="#B71C1C" />
+      <Setter Property="Foreground" Value="White" />
+    </Style>
+    <Style Selector="Button.danger:disabled /template/ ContentPresenter#PART_ContentPresenter">
+      <Setter Property="Background" Value="#66C62828" />
+      <Setter Property="BorderBrush" Value="#66C62828" />
+      <Setter Property="Foreground" Value="#99FFFFFF" />
+    </Style>
+    <Style Selector="DataValidationErrors">
+      <Setter Property="FontSize" Value="12" />
+    </Style>
+    <Style Selector="TabItem">
+      <Setter Property="FontSize" Value="16" />
+      <Setter Property="FontWeight" Value="SemiBold" />
+      <Setter Property="MinHeight" Value="32" />
+      <Setter Property="Padding" Value="0,0,16,0" />
+    </Style>
+  </UserControl.Styles>
+  <UserControl.DataTemplates>
+    <DataTemplate DataType="{x:Type settings:BooleanSettingViewModel}"
+                  x:DataType="settings:BooleanSettingViewModel">
+      <CheckBox Classes="setting-editor"
+                Content="{Binding Name}"
+                FontWeight="SemiBold"
+                HorizontalAlignment="Left"
+                IsChecked="{Binding Value}"
+                Margin="0,2"
+                ToolTip.Tip="{Binding HelpText}"
+                ToolTip.ShowDelay="0" />
+    </DataTemplate>
+
+    <DataTemplate DataType="{x:Type settings:TextSettingViewModel}"
+                  x:DataType="settings:TextSettingViewModel">
+      <Grid ColumnDefinitions="2*,3*" ColumnSpacing="16" Margin="0,2">
+        <TextBlock Text="{Binding Name}"
+                   FontWeight="SemiBold"
+                   TextWrapping="Wrap"
+                   VerticalAlignment="Center" />
+        <TextBox Grid.Column="1"
+                 Classes="setting-editor"
+                 Text="{Binding Value, UpdateSourceTrigger=LostFocus}"
+                 ToolTip.Tip="{Binding HelpText}"
+                 ToolTip.ShowDelay="0"
+                 VerticalAlignment="Center" />
+      </Grid>
+    </DataTemplate>
+
+    <DataTemplate DataType="{x:Type settings:NumericSettingViewModel}"
+                  x:DataType="settings:NumericSettingViewModel">
+      <Grid ColumnDefinitions="2*,3*" ColumnSpacing="16" Margin="0,2">
+        <TextBlock Text="{Binding Name}"
+                   FontWeight="SemiBold"
+                   TextWrapping="Wrap"
+                   VerticalAlignment="Center" />
+        <NumericUpDown Grid.Column="1"
+                       Classes="setting-editor"
+                       Value="{Binding Value}"
+                       Minimum="{Binding Minimum}"
+                       Maximum="{Binding Maximum}"
+                       Increment="{Binding Increment}"
+                       FormatString="{Binding FormatString}"
+                       ParsingNumberStyle="{Binding ParsingNumberStyle}"
+                       ToolTip.Tip="{Binding HelpText}"
+                       ToolTip.ShowDelay="0"
+                       VerticalAlignment="Center" />
+      </Grid>
+    </DataTemplate>
+
+    <DataTemplate DataType="{x:Type settings:ChoiceSettingViewModel}"
+                  x:DataType="settings:ChoiceSettingViewModel">
+      <Grid ColumnDefinitions="2*,3*" ColumnSpacing="16" Margin="0,2">
+        <TextBlock Text="{Binding Name}"
+                   FontWeight="SemiBold"
+                   TextWrapping="Wrap"
+                   VerticalAlignment="Center" />
+        <ComboBox Grid.Column="1"
+                  Classes="setting-editor"
+                  ItemsSource="{Binding Options}"
+                  SelectedIndex="{Binding Value}"
+                  ToolTip.Tip="{Binding HelpText}"
+                  ToolTip.ShowDelay="0"
+                  VerticalAlignment="Center" />
+      </Grid>
+    </DataTemplate>
+
+    <DataTemplate DataType="{x:Type settings:KeySettingViewModel}"
+                  x:DataType="settings:KeySettingViewModel">
+      <Grid ColumnDefinitions="2*,3*" ColumnSpacing="16" Margin="0,2">
+        <TextBlock Text="{Binding Name}"
+                   FontWeight="SemiBold"
+                   TextWrapping="Wrap"
+                   VerticalAlignment="Center" />
+        <DataValidationErrors x:Name="KeyValidation"
+                              Grid.Column="1"
+                              DataValidationErrors.Errors="{Binding ValidationErrors}"
+                              Owner="{Binding #KeyValidation}">
+          <Button Classes="setting-editor"
+                  Content="{Binding DisplayValue}"
+                  Click="KeySettingButton_Click"
+                  HorizontalAlignment="Left"
+                  MinWidth="170"
+                  ToolTip.Tip="{Binding HelpText}"
+                  ToolTip.ShowDelay="0" />
+        </DataValidationErrors>
+      </Grid>
+    </DataTemplate>
+
+    <DataTemplate DataType="{x:Type settings:StorageSettingViewModel}"
+                  x:DataType="settings:StorageSettingViewModel">
+      <Grid ColumnDefinitions="2*,3*" ColumnSpacing="16" Margin="0,2">
+        <TextBlock Text="{Binding Name}"
+                   FontWeight="SemiBold"
+                   TextWrapping="Wrap"
+                   VerticalAlignment="Center" />
+        <Grid Grid.Column="1" ColumnDefinitions="*,Auto" ColumnSpacing="8">
+          <TextBlock Text="{Binding Value?.DisplayName, TargetNullValue='Not selected'}"
+                     TextTrimming="CharacterEllipsis"
+                     VerticalAlignment="Center" />
+          <StackPanel Grid.Column="1" Orientation="Horizontal" Spacing="8">
+            <Button Classes="setting-editor"
+                    Content="{Binding ButtonText}"
+                    Command="{Binding SelectCommand}"
+                    MinWidth="80"
+                    ToolTip.Tip="{Binding HelpText}"
+                    ToolTip.ShowDelay="0" />
+            <Button Content="Clear"
+                    Command="{Binding ClearCommand}"
+                    IsVisible="{Binding Value, Converter={x:Static ObjectConverters.IsNotNull}}" />
+          </StackPanel>
+        </Grid>
+      </Grid>
+    </DataTemplate>
+
+    <DataTemplate DataType="{x:Type settings:ColorSettingViewModel}"
+                  x:DataType="settings:ColorSettingViewModel">
+      <Grid ColumnDefinitions="2*,3*" ColumnSpacing="16" Margin="0,2">
+        <TextBlock Text="{Binding Name}"
+                   FontWeight="SemiBold"
+                   TextWrapping="Wrap"
+                   VerticalAlignment="Center" />
+        <ColorPicker Grid.Column="1"
+                     Classes="setting-editor"
+                     Color="{Binding Value}"
+                     HorizontalAlignment="Left"
+                     Width="110"
+                     ToolTip.Tip="{Binding HelpText}"
+                     ToolTip.ShowDelay="0" />
+      </Grid>
+    </DataTemplate>
+  </UserControl.DataTemplates>
+
+  <Grid Margin="8" RowDefinitions="Auto,*,Auto" RowSpacing="8">
+    <TextBlock Grid.Row="0" Text="Settings" FontSize="16" FontWeight="Bold" />
+    <TabControl x:Name="CategoryTabs"
+                Grid.Row="1"
+                Height="480"
+                Padding="0"
+                ItemsSource="{Binding Categories}"
+                SelectedItem="{Binding SelectedCategory}">
+      <TabControl.ItemTemplate>
+        <DataTemplate x:DataType="settings:SettingsCategoryViewModel">
+          <TextBlock Text="{Binding Name}" />
+        </DataTemplate>
+      </TabControl.ItemTemplate>
+      <TabControl.ContentTemplate>
+        <DataTemplate x:DataType="settings:SettingsCategoryViewModel">
+          <ScrollViewer VerticalScrollBarVisibility="Auto"
+                        Padding="0,0,24,0"
+                        HorizontalScrollBarVisibility="Disabled">
+            <ItemsControl ItemsSource="{Binding Settings}" />
+          </ScrollViewer>
+        </DataTemplate>
+      </TabControl.ContentTemplate>
+    </TabControl>
+    <Grid Grid.Row="2" ColumnDefinitions="Auto,*,Auto">
+      <Button x:Name="ResetAllSettingsButton"
+              Classes="danger"
+              Content="Reset all settings">
+        <Button.Flyout>
+          <Flyout Placement="Top">
+            <StackPanel Spacing="8">
+              <TextBlock Text="Reset all settings to their defaults?" />
+              <StackPanel Orientation="Horizontal" Spacing="8" HorizontalAlignment="Right">
+                <Button Content="Cancel" Click="CancelResetButton_Click" />
+                <Button Classes="danger" Content="Reset" Click="ConfirmResetButton_Click" />
+              </StackPanel>
+            </StackPanel>
+          </Flyout>
+        </Button.Flyout>
+      </Button>
+      <ui:CopyToClipboardButton Grid.Column="1"
+                                Content="Export to clipboard"
+                                TextToCopy="{Binding SettingsJson}"
+                                HorizontalAlignment="Center"
+                                MinWidth="140" />
+      <Button Grid.Column="2" Content="Close" Click="CloseButton_Click" Width="80" />
+    </Grid>
+  </Grid>
+</UserControl>

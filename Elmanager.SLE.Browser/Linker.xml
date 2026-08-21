@@ -1,0 +1,5 @@
+<linker>
+	<assembly fullname="Avalonia.OpenGL">
+		<type fullname="Avalonia.OpenGL.GlInterface/__wasmDummy*" preserve="all" />
+	</assembly>
+</linker>

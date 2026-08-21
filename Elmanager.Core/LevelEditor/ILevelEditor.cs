@@ -26,6 +26,8 @@ public interface ILevelEditor
     void SetModified(LevModification value);
     void PreserveSelection();
     void UpdateSelectionInfo();
+    void SignalVisualChange(LevVisualChange value);
+    void SignalRenderingSettingsChange();
     void RedrawScene();
     void ChangeToSelectionTool();
     void TransformMenuItemClick();

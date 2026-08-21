@@ -1,4 +1,6 @@
 using System;
+using System.Collections.Generic;
+using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Windows.Forms;
@@ -15,8 +17,11 @@ internal class WinFormsProgressService : IProgressService
         _owner = owner;
     }
 
-    public async Task<T?> RunWithProgress<T>(Task<T> task, CancellationTokenSource src, Progress<double> progress) where T : class
+    public async Task<List<T>?> RunWithProgress<T>(Func<IProgress<double>, CancellationToken, IEnumerable<T>> work)
     {
+        var src = new CancellationTokenSource();
+        var progress = new Progress<double>();
+        var task = Task.Factory.StartNew(() => work(progress, src.Token).ToList(), src.Token);
         var progressForm = new ProgressDialog(task, src, progress);
         _owner.BeginInvoke(() => { progressForm.ShowDialog(); });
         try

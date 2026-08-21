@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Threading.Tasks;
 using Elmanager.Geometry;
 using Elmanager.LevelEditor.Input;
 using Elmanager.Rendering;
@@ -35,7 +36,7 @@ public class PictureTool : ToolBase, IEditorTool
         switch (key.KeyCode)
         {
             case EditorKey.Space:
-                OpenDialog();
+                _ = OpenDialogAndRedraw();
                 break;
             case EditorKey.D1:
                 _anchor = PlacementAnchor.Center;
@@ -70,11 +71,11 @@ public class PictureTool : ToolBase, IEditorTool
                     LevEditor.SetModified(_currentElem is GraphicElement.Picture ? LevModification.Pictures : LevModification.Textures);
                 }
                 else
-                    OpenDialog();
+                    _ = OpenDialogAndRedraw();
 
                 break;
             case EditorMouseButton.Right:
-                OpenDialog();
+                _ = OpenDialogAndRedraw();
                 break;
         }
         return LevVisualChange.Nothing;
@@ -116,24 +117,30 @@ public class PictureTool : ToolBase, IEditorTool
     public string GetHelp() =>
         "LMouse: insert new element; RMouse: select element type; 1-5: change placement anchor.";
 
-    private GraphicElement? OpenDialogNow(bool setDefaultsAutomatically)
+    private async Task OpenDialogAndRedraw()
     {
-        return LevEditor.PictureDialogService.ShowPictureDialog(Renderer.OpenGlLgr?.CurrentLgr, CurrentPos,
+        await OpenDialog();
+        LevEditor.RedrawScene();
+    }
+
+    private async Task<GraphicElement?> OpenDialogNow(bool setDefaultsAutomatically)
+    {
+        return await LevEditor.PictureDialogService.ShowPictureDialog(Renderer.OpenGlLgr?.CurrentLgr, CurrentPos,
             _currentElem, setDefaultsAutomatically);
     }
 
-    private void OpenDialog()
+    private async Task OpenDialog()
     {
         if (_currentElem is null)
         {
-            _currentElem = OpenDialogNow(setDefaultsAutomatically: true);
+            _currentElem = await OpenDialogNow(setDefaultsAutomatically: true);
         }
         else
         {
-            var newElem = OpenDialogNow(setDefaultsAutomatically: LevEditor.Settings.AlwaysSetDefaultsInPictureTool);
+            var newElem = await OpenDialogNow(setDefaultsAutomatically: LevEditor.Settings.AlwaysSetDefaultsInPictureTool);
             _currentElem = newElem ?? _currentElem;
         }
     }
 
-    public override bool Busy => false;
+    public override bool Busy => true;
 }

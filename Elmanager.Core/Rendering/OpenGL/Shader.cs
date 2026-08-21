@@ -11,11 +11,11 @@ internal class Shader : IDisposable
     public Shader(string vertexSource, string fragmentSource)
     {
         var vertexShader = GL.CreateShader(ShaderType.VertexShader);
-        GL.ShaderSource(vertexShader, vertexSource);
+        GL.ShaderSource(vertexShader, vertexSource.Trim());
         CompileShader(vertexShader);
 
         var fragmentShader = GL.CreateShader(ShaderType.FragmentShader);
-        GL.ShaderSource(fragmentShader, fragmentSource);
+        GL.ShaderSource(fragmentShader, fragmentSource.Trim());
         CompileShader(fragmentShader);
 
         Handle = GL.CreateProgram();

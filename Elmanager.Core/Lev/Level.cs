@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Text;
+using System.Threading.Tasks;
 using Elmanager.ElmaPrimitives;
 using Elmanager.Geometry;
 using Elmanager.IO;
@@ -599,7 +600,7 @@ public class Level
         }
     }
 
-    public ElmaFile Save(string savePath, bool saveAsFresh = true)
+    public byte[] GetBytes(bool saveAsFresh = true)
     {
         var levelFile = new List<byte>();
         if (saveAsFresh)
@@ -692,7 +693,25 @@ public class Level
         WriteTop10Part(levelFile, Top10.MultiPlayer);
         CryptTop10(levelFile, levelFile.Count - 688);
         levelFile.AddRange(BitConverter.GetBytes(EndOfFileMagicNumber));
-        File.WriteAllBytes(savePath, levelFile.ToArray());
+        return levelFile.ToArray();
+    }
+
+    public void SaveToStream(Stream stream, bool saveAsFresh = true)
+    {
+        var bytes = GetBytes(saveAsFresh);
+        stream.Write(bytes);
+    }
+
+    public async Task SaveToStreamAsync(Stream stream, bool saveAsFresh = true)
+    {
+        var bytes = GetBytes(saveAsFresh);
+        await stream.WriteAsync(bytes);
+    }
+
+    public ElmaFile Save(string savePath, bool saveAsFresh = true)
+    {
+        var bytes = GetBytes(saveAsFresh);
+        File.WriteAllBytes(savePath, bytes);
         return new ElmaFile(savePath);
     }
 

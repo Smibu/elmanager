@@ -40,10 +40,10 @@ internal partial class LevelEditorForm : FormMod, IMessageFilter, ILevelEditor
     private const string CoordinateFormat = "F3";
     private const string LevEditorName = "SLE";
     private const bool Physics = true;
-    private readonly LevelEditorController Controller;
+    private readonly LevelEditorController<EditorLev> Controller;
     private IEditorTool CurrentTool = null!;
     internal Level Lev => Controller.Lev;
-    private ElmaFile? LevFile => Controller.LevFile;
+    private ElmaFile? LevFile => Controller.EditorLev.File;
     internal ElmaRenderer Renderer = null!;
     private readonly WinFormsEditorTools Tools;
     private List<string>? _currLevDirFiles;
@@ -117,6 +117,13 @@ internal partial class LevelEditorForm : FormMod, IMessageFilter, ILevelEditor
     void ILevelEditor.SetModified(LevModification value) => SetModified(value);
     void ILevelEditor.PreserveSelection() => PreserveSelection();
     void ILevelEditor.UpdateSelectionInfo() => UpdateSelectionInfo();
+    void ILevelEditor.SignalVisualChange(LevVisualChange value) => UpdateRendererBuffers((LevVisualChange)value);
+    void ILevelEditor.SignalRenderingSettingsChange()
+    {
+        var result = Renderer.UpdateSettings(Lev, Settings.RenderingSettings);
+        if (result.LgrLoadException != null)
+            UiUtils.ShowError("Error occurred when loading LGR file! Reason:\r\n\r\n" + result.LgrLoadException.Message);
+    }
     void ILevelEditor.RedrawScene() => RedrawScene();
     void ILevelEditor.ChangeToSelectionTool() => ChangeToSelectionTool();
     void ILevelEditor.TransformMenuItemClick() => TransformMenuItemClick();
@@ -124,7 +131,7 @@ internal partial class LevelEditorForm : FormMod, IMessageFilter, ILevelEditor
     internal LevelEditorForm(string? levPath)
     {
         InitializeComponent();
-        Controller = new LevelEditorController(this);
+        Controller = new LevelEditorController<EditorLev>(this, EditorLev.CreateBlankLevel(this, lev => new EditorLev(lev, null)));
         CursorManager = new WinFormsCursorManager(EditorControl, this);
         CustomShapeService = new WinFormsCustomShapeService(this);
         InitializeInternalMenu();
@@ -152,7 +159,7 @@ internal partial class LevelEditorForm : FormMod, IMessageFilter, ILevelEditor
             ? TryLoadLevel(levPath)
             : Settings.LastLevel != null
                 ? TryLoadLevel(Settings.LastLevel)
-                : Controller.CreateBlankLevel();
+                : EditorLev.CreateBlankLevel(this, lev => new EditorLev(lev, null));
         PostInit(lev);
     }
 
@@ -194,12 +201,12 @@ internal partial class LevelEditorForm : FormMod, IMessageFilter, ILevelEditor
         {
             UiUtils.ShowError("Error occurred while loading level file: " + ex.Message, "Warning",
                 MessageBoxIcon.Exclamation);
-            return Controller.CreateBlankLevel();
+            return EditorLev.CreateBlankLevel(this, lev => new EditorLev(lev, null));
         }
         catch (Exception ex) when (ex is FileNotFoundException || ex is DirectoryNotFoundException)
         {
             ShowWarning($"The level {levPath} was not found.");
-            return Controller.CreateBlankLevel();
+            return EditorLev.CreateBlankLevel(this, lev => new EditorLev(lev, null));
         }
     }
 
@@ -279,6 +286,9 @@ internal partial class LevelEditorForm : FormMod, IMessageFilter, ILevelEditor
         Controller.SetModified(value, Renderer, CurrentTool, WinFormsPlayController, Settings, updateHistory);
         if (wasModified)
         {
+            Renderer.UpdateBuffers(
+                new LevEditState(Lev, CurrentTool.GetTransientElements(true)),
+                (LevVisualChange)value);
             EnableSaveButtons(true);
             if (Settings.CheckTopologyDynamically)
                 CheckTopology();
@@ -308,7 +318,7 @@ internal partial class LevelEditorForm : FormMod, IMessageFilter, ILevelEditor
 
     private void AfterSettingsClosed()
     {
-        var r = Renderer.UpdateSettings(Lev, Settings.RenderingSettings, Global.AppSettings.General.LgrDirectory);
+        var r = Renderer.UpdateSettings(Lev, Settings.RenderingSettings);
         if (r.LgrLoadException != null)
             UiUtils.ShowError("Error occurred when loading LGR file! Reason:\r\n\r\n" + r.LgrLoadException.Message);
         UpdateLgrTools(r);
@@ -512,7 +522,7 @@ internal partial class LevelEditorForm : FormMod, IMessageFilter, ILevelEditor
     {
         var mousePosNoTr = Invoke(() => EditorControl.PointToClient(MousePosition));
         var bounds = _zoomCtrl.Cam.GetBounds(Renderer.AspectRatio);
-        return LevelEditorController.ScreenToWorld(mousePosNoTr.X, mousePosNoTr.Y,
+        return LevelEditorController<EditorLev>.ScreenToWorld(mousePosNoTr.X, mousePosNoTr.Y,
             EditorControl.Width, EditorControl.Height, bounds);
     }
 
@@ -571,7 +581,7 @@ internal partial class LevelEditorForm : FormMod, IMessageFilter, ILevelEditor
         SelectButton.Select();
         UpdateButtons();
         Size = Settings.Size;
-        Renderer = new ElmaRenderer(new GlControlContext(EditorControl), Settings.RenderingSettings);
+        Renderer = new ElmaRenderer(new GlControlContext(EditorControl), Settings.RenderingSettings, new DirectoryLgrCache(() => Global.AppSettings.General.LgrDirectory));
         PictureDialogService = new WinFormsPictureDialogService(Renderer);
         ProgressService = new WinFormsProgressService(this);
         CurrentTool = Tools.SelectionTool;
@@ -596,7 +606,7 @@ internal partial class LevelEditorForm : FormMod, IMessageFilter, ILevelEditor
         PlayTimeLabel.Text = "";
         _zoomCtrl = new ZoomController(new ElmaCamera(), () => RedrawScene());
         SetNotModified();
-        var r = Renderer.UpdateSettings(Lev, Settings.RenderingSettings, Global.AppSettings.General.LgrDirectory);
+        var r = Renderer.UpdateSettings(Lev, Settings.RenderingSettings);
         if (r.LgrLoadException != null)
             UiUtils.ShowError("Error occurred when loading LGR file! Reason:\r\n\r\n" + r.LgrLoadException.Message);
         Lev.UpdateBounds();
@@ -762,7 +772,7 @@ internal partial class LevelEditorForm : FormMod, IMessageFilter, ILevelEditor
                     if (Settings.RenderingSettings.DefaultGroundAndSky)
                         UiUtils.ShowError("Default ground and sky is enabled, so you won\'t see this change in editor.",
                             "Warning", MessageBoxIcon.Exclamation);
-                    var r = Renderer.UpdateSettings(Lev, Settings.RenderingSettings, Global.AppSettings.General.LgrDirectory);
+                    var r = Renderer.UpdateSettings(Lev, Settings.RenderingSettings);
                     if (r.LgrLoadException != null)
                         UiUtils.ShowError("Error occurred when loading LGR file! Reason:\r\n\r\n" + r.LgrLoadException.Message);
                     UpdateLgrTools(r);
@@ -789,7 +799,7 @@ internal partial class LevelEditorForm : FormMod, IMessageFilter, ILevelEditor
         UpdateUndoRedo();
         topologyList.DropDownItems.Clear();
         topologyList.Text = "";
-        var r = Renderer.UpdateSettings(Lev, Settings.RenderingSettings, Global.AppSettings.General.LgrDirectory);
+        var r = Renderer.UpdateSettings(Lev, Settings.RenderingSettings);
         if (r.LgrLoadException != null)
             UiUtils.ShowError("Error occurred when loading LGR file! Reason:\r\n\r\n" + r.LgrLoadException.Message);
         UpdateLgrTools(r);
@@ -1027,7 +1037,7 @@ internal partial class LevelEditorForm : FormMod, IMessageFilter, ILevelEditor
 
     private void MouseWheelZoom(long delta)
     {
-        Controller.MouseWheelZoom(delta, GetMouseCoordinates(), _zoomCtrl, _sceneSettings, Settings, Renderer, Global.AppSettings.General.LgrDirectory);
+        Controller.MouseWheelZoom(delta, GetMouseCoordinates(), _zoomCtrl, _sceneSettings, Settings, Renderer);
         UpdateZoomLabel();
         RedrawScene();
     }
@@ -1041,7 +1051,7 @@ internal partial class LevelEditorForm : FormMod, IMessageFilter, ILevelEditor
     {
         if (!PromptToSaveIfModified())
             return;
-        var lev = Controller.CreateBlankLevel();
+        var lev = EditorLev.CreateBlankLevel(this, lev => new EditorLev(lev, null));
         InitializeLevel(lev);
     }
 
@@ -1074,7 +1084,7 @@ internal partial class LevelEditorForm : FormMod, IMessageFilter, ILevelEditor
         var rSettings = new RenderingSettingsForm(Settings.RenderingSettings);
         rSettings.Changed += x =>
         {
-            var r = Renderer.UpdateSettings(Lev, x, Global.AppSettings.General.LgrDirectory);
+            var r = Renderer.UpdateSettings(Lev, x);
             if (r.LgrLoadException != null)
                 UiUtils.ShowError("Error occurred when loading LGR file! Reason:\r\n\r\n" + r.LgrLoadException.Message);
             RedrawScene();
@@ -1108,9 +1118,9 @@ internal partial class LevelEditorForm : FormMod, IMessageFilter, ILevelEditor
         }
     }
 
-    private void PicturePropertiesToolStripMenuItemClick(object sender, EventArgs e)
+    private async void PicturePropertiesToolStripMenuItemClick(object sender, EventArgs e)
     {
-        Controller.ShowPictureProperties(Settings.AlwaysSetDefaultsInPictureTool);
+        await Controller.ShowPictureProperties(Settings.AlwaysSetDefaultsInPictureTool);
     }
 
     private void PipeButtonChanged(object? sender, EventArgs e)
@@ -1252,9 +1262,9 @@ internal partial class LevelEditorForm : FormMod, IMessageFilter, ILevelEditor
 
             try
             {
-                Controller.UpdateEditorLevFile(_levFileWatcher.WithoutEvents(() => Lev.Save(path)));
+                Controller.SetEditorLev(Controller.EditorLev with { File = _levFileWatcher.WithoutEvents(() => Lev.Save(path)) });
                 Controller.MarkSaved();
-                _levFileWatcher.StoreLevDiskSnapshot(new ElmaFileObject<Level>(Controller.LevFile!, Controller.Lev));
+                _levFileWatcher.StoreLevDiskSnapshot(new ElmaFileObject<Level>(Controller.EditorLev.File!, Controller.Lev));
                 if (!Global.GetLevelFiles().Contains(path))
                 {
                     Global.GetLevelFiles().Add(path);
@@ -1317,7 +1327,7 @@ internal partial class LevelEditorForm : FormMod, IMessageFilter, ILevelEditor
         Settings.SnapToGrid = snapToGridButton.Checked;
         Settings.LockGrid = lockGridButton.Checked;
         Settings.ShowCrossHair = showCrossHairButton.Checked;
-        var updateResult = Renderer.UpdateSettings(Lev, settings, Global.AppSettings.General.LgrDirectory);
+        var updateResult = Renderer.UpdateSettings(Lev, settings);
         if (updateResult.LgrLoadException != null)
             UiUtils.ShowError("Error occurred when loading LGR file! Reason:\r\n\r\n" + updateResult.LgrLoadException.Message);
         RedrawScene();
@@ -1728,7 +1738,7 @@ internal partial class LevelEditorForm : FormMod, IMessageFilter, ILevelEditor
         }
     }
 
-    private void ConvertClicked(object sender, EventArgs e)
+    private async void ConvertClicked(object sender, EventArgs e)
     {
         ObjectType? objType = null;
         if (sender.Equals(applesConvertItem))
@@ -1738,7 +1748,7 @@ internal partial class LevelEditorForm : FormMod, IMessageFilter, ILevelEditor
         else if (sender.Equals(flowersConvertItem))
             objType = ObjectType.Flower;
 
-        Controller.ConvertSelected(objType);
+        await Controller.ConvertSelected(objType);
     }
 
     private void TextButton_CheckedChanged(object sender, EventArgs e)
@@ -1824,7 +1834,7 @@ internal partial class LevelEditorForm : FormMod, IMessageFilter, ILevelEditor
                 CurrLevDirFiles[index] = newPath;
             }
 
-            Controller.UpdateEditorLevFile(new ElmaFile(newPath));
+            Controller.SetEditorLev(Controller.EditorLev with { File = new ElmaFile(newPath) });
             UpdateLabels();
             filenameBox_TextChanged();
         }
@@ -1986,7 +1996,7 @@ internal partial class LevelEditorForm : FormMod, IMessageFilter, ILevelEditor
             _zoomCtrl.ZoomLevel = Settings.PlayingSettings.PlayZoomLevel;
         }
 
-        await WinFormsPlayController.BeginLoop(Lev, _sceneSettings, Renderer, _zoomCtrl, DoRedrawScene);
+        await WinFormsPlayController.BeginLoop(Lev, Renderer, _zoomCtrl, DoRedrawScene);
 
         if (Settings.PlayingSettings.FollowDriverOption == FollowDriverOption.WhenPressingKey)
         {
@@ -2115,8 +2125,8 @@ internal partial class LevelEditorForm : FormMod, IMessageFilter, ILevelEditor
         }
     }
 
-    private void createCustomShapeMenuItem_Click(object sender, EventArgs e)
+    private async void createCustomShapeMenuItem_Click(object sender, EventArgs e)
     {
-        Tools.CustomShapeTool.SaveShape();
+        await Tools.CustomShapeTool.SaveShape();
     }
 }

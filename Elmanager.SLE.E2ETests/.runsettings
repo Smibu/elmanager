@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RunSettings>
+  <Playwright>
+	<BrowserName>chromium</BrowserName>
+	<ExpectTimeout>15000</ExpectTimeout>
+	<LaunchOptions>
+	  <Headless>true</Headless>
+	</LaunchOptions>
+  </Playwright>
+
+  <MSTest>
+	<Parallelize>
+	  <Workers>4</Workers>
+	  <Scope>MethodLevel</Scope>
+	</Parallelize>
+  </MSTest>
+
+  <LoggerRunSettings>
+	<Loggers>
+	  <Logger friendlyName="console" enabled="true">
+		<Configuration>
+		  <Verbosity>detailed</Verbosity>
+		</Configuration>
+	  </Logger>
+	</Loggers>
+  </LoggerRunSettings>
+
+  <RunConfiguration>
+	<TestSessionTimeout>600000</TestSessionTimeout>
+  </RunConfiguration>
+</RunSettings>

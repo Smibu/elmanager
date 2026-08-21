@@ -192,11 +192,20 @@ public class PlayController
 
     public event Action? PlayingPaused;
 
-    public async Task BeginLoop(Level lev, SceneSettings sceneSettings, ElmaRenderer renderer,
-        ZoomController zoomCtrl, Action render)
+    public async Task BeginLoop(Level lev, ElmaRenderer renderer, ZoomController zoomCtrl,
+        Action? render = null, Action<HashSet<int>>? updateFadedObjects = null)
     {
-        _playTask = BeginLoopImpl(lev, renderer, zoomCtrl, render);
-        await WaitUntilStop();
+        updateFadedObjects ??= takenApples => renderer.UpdateFadedObjects(lev, takenApples);
+        var playTask = BeginLoopImpl(lev, renderer, zoomCtrl, render, updateFadedObjects);
+        _playTask = playTask;
+        try
+        {
+            await playTask;
+        }
+        finally
+        {
+            _playTask = null;
+        }
     }
 
     private async Task WaitUntilStop()
@@ -220,7 +229,7 @@ public class PlayController
     }
 
     private async Task BeginLoopImpl(Level lev, ElmaRenderer renderer,
-        ZoomController zoomCtrl, Action render)
+        ZoomController zoomCtrl, Action? render, Action<HashSet<int>> updateFadedObjects)
     {
         _engine = new Engine(lev.Polygons, lev.Objects, new ElmaEdgeTree());
         SetInvulnerability();
@@ -230,6 +239,7 @@ public class PlayController
         _timer.Reset();
         PlayState = PlayState.Playing;
         PlayingStopRequested = false;
+        PlayingRestartRequested = false;
         ShouldRestartAfterResuming = false;
         FollowDriver = Settings.FollowDriverOption == FollowDriverOption.WhenPressingKey;
         PlayerSelection = VectorMark.None;
@@ -241,7 +251,7 @@ public class PlayController
         void RestartPlaying()
         {
             Driver = _engine.InitDriver();
-            renderer.UpdateFadedObjects(lev, Driver.TakenApples);
+            updateFadedObjects(Driver.TakenApples);
             physElapsed = 0.0;
             _timer.Restart();
         }
@@ -277,12 +287,6 @@ public class PlayController
             {
                 renderer.ResetViewport(w, h);
                 ResetViewPortRequested = null;
-            }
-
-            if (FollowDriver)
-            {
-                zoomCtrl.CenterX = Driver.Body.Location.X;
-                zoomCtrl.CenterY = Driver.Body.Location.Y;
             }
 
             if (CurrentBodyPart != null)
@@ -335,11 +339,9 @@ public class PlayController
 
             if (Driver.TakenApples.Count != lastTakenApplesCount)
             {
-                renderer.UpdateFadedObjects(lev, Driver.TakenApples);
+                updateFadedObjects(Driver.TakenApples);
                 lastTakenApplesCount = Driver.TakenApples.Count;
             }
-
-            render();
 
             switch (_saveLoadRequest)
             {
@@ -349,18 +351,32 @@ public class PlayController
                     break;
                 case SaveLoadRequest.Load when _savedDriverState is not null:
                     Driver = _savedDriverState.Clone();
-                    renderer.UpdateFadedObjects(lev, Driver.TakenApples);
+                    updateFadedObjects(Driver.TakenApples);
                     _saveLoadRequest = SaveLoadRequest.None;
                     break;
             }
+
+            if (FollowDriver)
+            {
+                zoomCtrl.CenterX = Driver.Body.Location.X;
+                zoomCtrl.CenterY = Driver.Body.Location.Y;
+            }
+
+            render?.Invoke();
         }
 
         _timer.Restart();
-        await _loopRunner.Run(() => PlayingStopRequested, (Action)ProcessFrame);
-
-        renderer.UpdateFadedObjects(lev, []);
-        PlayState = PlayState.Stopped;
-        _engine = null;
-        PlayingStopRequested = false;
+        try
+        {
+            await _loopRunner.Run(() => PlayingStopRequested, (Action)ProcessFrame);
+        }
+        finally
+        {
+            updateFadedObjects([]);
+            PlayState = PlayState.Stopped;
+            _engine = null;
+            PlayingStopRequested = false;
+            PlayingRestartRequested = false;
+        }
     }
 }

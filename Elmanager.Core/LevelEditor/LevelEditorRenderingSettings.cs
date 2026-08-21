@@ -16,7 +16,8 @@ public class LevelEditorRenderingSettings : RenderingSettings
 
     public LevelEditorRenderingSettings()
     {
-
+        PicturesInBackground = false;
+        ShowGrassEdges = true;
     }
 
     private LevelEditorRenderingSettings(LevelEditorRenderingSettings s) : base(s)

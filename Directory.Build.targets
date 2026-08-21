@@ -1,0 +1,10 @@
+<Project>
+  <Target Name="ExcludeReleasePackageDebugInfo"
+          AfterTargets="ResolvePackageAssets"
+          Condition="'$(Configuration)' == 'Release'">
+    <ItemGroup>
+      <NativeCopyLocalItems Remove="@(NativeCopyLocalItems)"
+                            Condition="'%(Extension)' == '.pdb' or '%(Extension)' == '.dbg'" />
+    </ItemGroup>
+  </Target>
+</Project>

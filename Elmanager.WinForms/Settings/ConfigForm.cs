@@ -34,7 +34,7 @@ internal partial class ConfigForm : FormMod
         lmConfirmDeletion.Checked = Global.AppSettings.LevelManager.ConfirmDelete;
         lmShowTooltip.Checked = Global.AppSettings.LevelManager.ShowTooltipInList;
 
-        LevelTemplateBox.Text = Global.AppSettings.LevelEditor.LevelTemplate;
+        LevelTemplateBox.Text = Global.AppSettings.LevelEditor.LevelTemplate?.Id ?? "";
         CaptureRadiusBox.Text = Global.AppSettings.LevelEditor.CaptureRadius.ToString();
         CheckTopologyWhenSavingBox.Checked = Global.AppSettings.LevelEditor.CheckTopologyWhenSaving;
         DynamicCheckTopologyBox.Checked = Global.AppSettings.LevelEditor.CheckTopologyDynamically;
@@ -198,7 +198,8 @@ internal partial class ConfigForm : FormMod
         try
         {
             LevelEditorSettings.TryGetTemplateLevel(LevelTemplateBox.Text);
-            Global.AppSettings.LevelEditor.LevelTemplate = LevelTemplateBox.Text;
+            Global.AppSettings.LevelEditor.LevelTemplate =
+                new Bookmark(LevelTemplateBox.Text, LevelTemplateBox.Text);
         }
         catch (SettingsException settingsException)
         {
@@ -227,7 +228,7 @@ internal partial class ConfigForm : FormMod
         Global.AppSettings.LevelEditor.EnableStartPositionFeature = startPositionFeatureCheckBox.Checked;
         try
         {
-            Global.AppSettings.LevelEditor.CaptureRadius = double.Parse(CaptureRadiusBox.Text);
+            Global.AppSettings.LevelEditor.CaptureRadius = int.Parse(CaptureRadiusBox.Text);
         }
         catch (FormatException)
         {

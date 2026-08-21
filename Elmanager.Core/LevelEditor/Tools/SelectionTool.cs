@@ -333,7 +333,7 @@ public class SelectionTool : ToolBase, IEditorTool
         }
         else if (!Busy)
         {
-            ResetHighlight();
+            HighlightTarget? highlight = null;
             var nearestVertex = GetNearestVertexInfo(p);
             int nearestObject = GetNearestObjectIndex(p);
             int nearestTextureIndex = GetNearestPictureIndex(p);
@@ -341,7 +341,7 @@ public class SelectionTool : ToolBase, IEditorTool
             if (nearestVertex is NearestVertexInfo.EdgeInfo ei)
             {
                 ChangeCursorToHand();
-                LevEditor.CurrentHighlight = new HighlightTarget.PolygonTarget(ei.Polygon);
+                highlight = new HighlightTarget.PolygonTarget(ei.Polygon);
                 LevEditor.HighlightText = ei.Polygon.IsGrass ? "Grass" : "Ground";
                 LevEditor.HighlightText += " polygon, " + ei.Polygon.Vertices.Count + " vertices";
             }
@@ -350,7 +350,7 @@ public class SelectionTool : ToolBase, IEditorTool
                 ChangeCursorToHand();
                 if (vi.Polygon.Vertices[vi.Index].Mark == VectorMark.None)
                 {
-                    LevEditor.CurrentHighlight = new HighlightTarget.VertexTarget(vi.Polygon, vi.Index);
+                    highlight = new HighlightTarget.VertexTarget(vi.Polygon, vi.Index);
                 }
                 LevEditor.HighlightText = vi.Polygon.IsGrass ? "Grass" : "Ground";
                 LevEditor.HighlightText += " polygon, vertex " + (vi.Index + 1) + " of " +
@@ -360,14 +360,14 @@ public class SelectionTool : ToolBase, IEditorTool
             {
                 ChangeCursorToHand();
                 if (Lev.Objects[nearestObject].Mark == VectorMark.None)
-                    LevEditor.CurrentHighlight = new HighlightTarget.ObjectTarget(nearestObject);
+                    highlight = new HighlightTarget.ObjectTarget(nearestObject);
                 ShowObjectInfo(nearestObject);
             }
             else if (nearestTextureIndex >= 0)
             {
                 ChangeCursorToHand();
                 if (Lev.GraphicElements[nearestTextureIndex].Mark == VectorMark.None)
-                    LevEditor.CurrentHighlight = new HighlightTarget.GraphicElementTarget(nearestTextureIndex);
+                    highlight = new HighlightTarget.GraphicElementTarget(nearestTextureIndex);
                 ShowTextureInfo(nearestTextureIndex);
             }
             else if (nearestBodyPart is { })
@@ -376,7 +376,7 @@ public class SelectionTool : ToolBase, IEditorTool
                 LevEditor.HighlightText = "Player";
                 if (LevEditor.PlayController.PlayerSelection == VectorMark.None)
                 {
-                    LevEditor.CurrentHighlight = new HighlightTarget.PlayerTarget();
+                    highlight = new HighlightTarget.PlayerTarget();
                 }
             }
             else
@@ -384,6 +384,8 @@ public class SelectionTool : ToolBase, IEditorTool
                 ChangeToDefaultCursorIfHand();
                 LevEditor.HighlightText = "";
             }
+
+            LevEditor.CurrentHighlight = highlight;
         }
 
         return LevVisualChange.Nothing;

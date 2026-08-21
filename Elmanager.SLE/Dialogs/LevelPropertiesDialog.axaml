@@ -1,0 +1,49 @@
+<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             x:Class="Elmanager.SLE.Dialogs.LevelPropertiesDialog"
+             Width="860">
+  <StackPanel Margin="8" Spacing="8">
+    <TextBlock Text="Level properties" FontSize="16" FontWeight="Bold" />
+
+    <Grid ColumnDefinitions="220,*,*" ColumnSpacing="12">
+      <StackPanel Spacing="4">
+        <TextBlock Text="Statistics" FontWeight="SemiBold" />
+        <TextBox x:Name="PropertiesBox"
+                 AcceptsReturn="True"
+                 IsReadOnly="True"
+                 Height="300"
+                 FontFamily="monospace"
+                 ScrollViewer.HorizontalScrollBarVisibility="Auto"
+                 ScrollViewer.VerticalScrollBarVisibility="Auto" />
+      </StackPanel>
+
+      <StackPanel Grid.Column="1" Spacing="4">
+        <TextBlock Text="Singleplayer times" FontWeight="SemiBold" />
+        <TextBox x:Name="SinglePlayerTimesBox"
+                 AcceptsReturn="True"
+                 IsReadOnly="True"
+                 Height="300"
+                 FontFamily="monospace"
+                 ScrollViewer.HorizontalScrollBarVisibility="Auto"
+                 ScrollViewer.VerticalScrollBarVisibility="Auto" />
+      </StackPanel>
+
+      <StackPanel Grid.Column="2" Spacing="4">
+        <TextBlock Text="Multiplayer times" FontWeight="SemiBold" />
+        <TextBox x:Name="MultiPlayerTimesBox"
+                 AcceptsReturn="True"
+                 IsReadOnly="True"
+                 Height="300"
+                 FontFamily="monospace"
+                 ScrollViewer.HorizontalScrollBarVisibility="Auto"
+                 ScrollViewer.VerticalScrollBarVisibility="Auto" />
+      </StackPanel>
+    </Grid>
+
+    <Button Content="OK"
+            Width="80"
+            HotKey="Enter"
+            HorizontalAlignment="Right"
+            Click="OnOkClick" />
+  </StackPanel>
+</UserControl>

@@ -1,54 +1,75 @@
-name: Build
+name: CI
 
 on:
   push:
-    branches: '*'
-    tags-ignore:
-      - '[0-9]+.[0-9]+.[0-9]+'
+    branches:
+      - master
+      - dev
   pull_request:
-    branches: '*'
+    branches:
+      - master
   workflow_call:
+
+permissions:
+  contents: read
+  deployments: write
 
 env:
   DOTNET_CLI_TELEMETRY_OPTOUT: 1
   DOTNET_NOLOGO: 1
-jobs:
-  format:
-    runs-on: [windows-latest]
-    steps:
-    - uses: actions/checkout@v6
-    - name: Setup .NET
-      uses: actions/setup-dotnet@v5
-      with:
-        dotnet-version: 10.0.x
-    - name: Check formatting
-      run: dotnet format --verify-no-changes
 
-  build:
-    runs-on: [windows-latest]
-    strategy:
-      matrix:
-        configuration: [Release, WineRelease]
+jobs:
+  verify:
+    name: Build and test
+    runs-on: ubuntu-latest
     steps:
-    - uses: actions/checkout@v6
-    - name: Setup .NET
-      uses: actions/setup-dotnet@v5
-      with:
-        dotnet-version: 10.0.x
-    - name: Build with dotnet
-      working-directory: Elmanager.WinForms
-      run: dotnet publish --configuration ${{ matrix.configuration }}
-    - name: Upload Release artifact
-      if: matrix.configuration == 'Release'
-      uses: actions/upload-artifact@v4
-      with:
-        name: Elmanager-${{ matrix.configuration }}
-        path: Elmanager.WinForms/bin/${{ matrix.configuration }}/net8.0-windows7.0/win-x64/publish/Elmanager.exe
-        compression-level: 9
-    - name: Upload WineRelease artifact
-      if: matrix.configuration == 'WineRelease'
-      uses: actions/upload-artifact@v4
-      with:
-        name: Elmanager-${{ matrix.configuration }}
-        path: Elmanager.WinForms/bin/${{ matrix.configuration }}/net8.0-windows7.0/win-x64/publish/
-        compression-level: 9
+      - name: Checkout
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+
+      - name: Setup .NET
+        uses: actions/setup-dotnet@a98b56852c35b8e3190ac28c8c2271da59106c68 # v6.0.0
+        with:
+          dotnet-version: 10.0.x
+          workloads: wasm-tools
+
+      - name: Check formatting
+        run: dotnet format --verify-no-changes
+
+      - name: Build solution
+        run: dotnet build
+
+      - name: Install Playwright browser
+        run: pwsh Elmanager.SLE.E2ETests/bin/Debug/net10.0/playwright.ps1 install chromium --no-progress
+
+      - name: Run unit tests
+        run: dotnet test Elmanager.SLE.Tests/Elmanager.SLE.Tests.csproj
+
+      - name: Run E2E tests
+        run: dotnet test Elmanager.SLE.E2ETests/Elmanager.SLE.E2ETests.csproj
+
+  browser:
+    name: Publish SLE Browser
+    needs: verify
+    if: github.event_name != 'pull_request'
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+
+      - name: Setup .NET
+        uses: actions/setup-dotnet@a98b56852c35b8e3190ac28c8c2271da59106c68 # v6.0.0
+        with:
+          dotnet-version: 10.0.x
+          workloads: wasm-tools
+
+      - name: Publish with Cloudflare profile
+        run: dotnet publish Elmanager.SLE.Browser/Elmanager.SLE.Browser.csproj -p:PublishProfile=Cloudflare
+
+      - name: Deploy to Cloudflare Pages
+        if: github.ref_type == 'branch'
+        uses: cloudflare/wrangler-action@ebbaa1584979971c8614a24965b4405ff95890e0 # v4.0.0
+        with:
+          apiToken: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+          accountId: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
+          gitHubToken: ${{ secrets.GITHUB_TOKEN }}
+          command: pages deploy Elmanager.SLE.Browser/bin/Release/net10.0-browser/cloudflare/wwwroot --project-name=${{ vars.CLOUDFLARE_PAGES_PROJECT_NAME }} --branch=${{ github.ref_name }}

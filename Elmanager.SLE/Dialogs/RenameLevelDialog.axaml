@@ -1,0 +1,21 @@
+<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             x:Class="Elmanager.SLE.Dialogs.RenameLevelDialog"
+             Width="400">
+  <StackPanel Margin="8" Spacing="8">
+    <TextBlock Text="Rename level file" FontSize="16" FontWeight="Bold" />
+    <TextBlock Text="Filename:" />
+    <Grid ColumnDefinitions="*,Auto">
+      <TextBox x:Name="FileNameBox" />
+      <TextBlock Grid.Column="1" Text=".lev" Margin="4,0,0,0" VerticalAlignment="Center" />
+    </Grid>
+    <TextBlock x:Name="ValidationText"
+               IsVisible="{Binding #ValidationText.Text, Converter={x:Static StringConverters.IsNotNullOrEmpty}}"
+               Foreground="{DynamicResource SystemControlErrorTextForegroundBrush}"
+               TextWrapping="Wrap" />
+    <StackPanel Orientation="Horizontal" Spacing="8" HorizontalAlignment="Right">
+      <Button x:Name="OkButton" Content="OK" Click="OnOkClick" HotKey="Enter" Width="80" />
+      <Button Content="Cancel" Click="OnCancelClick" Width="80" />
+    </StackPanel>
+  </StackPanel>
+</UserControl>

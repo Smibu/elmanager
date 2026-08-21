@@ -1,0 +1,60 @@
+<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             mc:Ignorable="d"
+             Width="440"
+             x:Class="Elmanager.SLE.Dialogs.TexturizeDialog">
+  <StackPanel Orientation="Vertical" Margin="8" Spacing="8">
+    <TextBlock Text="Texturize" FontSize="16" FontWeight="Bold" />
+
+    <StackPanel>
+      <TextBlock Text="Texture:" Margin="0,0,0,4" />
+      <ComboBox x:Name="TextureComboBox"
+                HorizontalAlignment="Stretch"
+                MinHeight="76"
+                ItemContainerTheme="{StaticResource ImageGridItemTheme}"
+                ItemTemplate="{StaticResource ImageGridItemTemplate}"
+                SelectionBoxItemTemplate="{StaticResource SelectedImageTemplate}">
+        <ComboBox.ItemsPanel>
+          <ItemsPanelTemplate>
+            <WrapPanel Orientation="Horizontal" />
+          </ItemsPanelTemplate>
+        </ComboBox.ItemsPanel>
+      </ComboBox>
+    </StackPanel>
+
+    <StackPanel>
+      <TextBlock Text="Masks:" Margin="0,0,0,4" />
+      <ListBox x:Name="MaskListBox" MaxHeight="150" SelectionMode="Multiple,Toggle" />
+    </StackPanel>
+
+    <Grid ColumnDefinitions="Auto,120" RowDefinitions="Auto,Auto,Auto,Auto"
+          ColumnSpacing="8" RowSpacing="8" HorizontalAlignment="Left">
+      <TextBlock Grid.Row="0" Grid.Column="0" Text="Distance:" VerticalAlignment="Center" />
+      <TextBox Grid.Row="0" Grid.Column="1" x:Name="DistanceBox" Text="500"
+               HorizontalAlignment="Stretch" />
+
+      <TextBlock Grid.Row="1" Grid.Column="0" Text="Clipping:" VerticalAlignment="Center" />
+      <ComboBox Grid.Row="1" Grid.Column="1" x:Name="ClippingComboBox" SelectedIndex="0"
+                HorizontalAlignment="Stretch">
+        <ComboBoxItem Content="Unclipped" />
+        <ComboBoxItem Content="Ground" />
+        <ComboBoxItem Content="Sky" />
+      </ComboBox>
+
+      <TextBlock Grid.Row="2" Grid.Column="0" Text="Min cover %:" VerticalAlignment="Center" />
+      <TextBox Grid.Row="2" Grid.Column="1" x:Name="MinCoverBox" Text="50"
+               HorizontalAlignment="Stretch" />
+
+      <TextBlock Grid.Row="3" Grid.Column="0" Text="Iterations:" VerticalAlignment="Center" />
+      <TextBox Grid.Row="3" Grid.Column="1" x:Name="IterationsBox" Text="10"
+               HorizontalAlignment="Stretch" />
+    </Grid>
+
+    <StackPanel Orientation="Horizontal" Spacing="8" HorizontalAlignment="Right">
+      <Button Content="OK" Click="OkButton_Click" Width="80" />
+      <Button Content="Cancel" Click="CancelButton_Click" Width="80" />
+    </StackPanel>
+  </StackPanel>
+</UserControl>

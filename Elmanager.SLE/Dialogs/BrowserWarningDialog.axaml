@@ -1,0 +1,21 @@
+<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             x:Class="Elmanager.SLE.Dialogs.BrowserWarningDialog"
+             Width="420">
+  <StackPanel Margin="8" Spacing="12">
+    <TextBlock Text="Warning"
+               FontSize="16"
+               FontWeight="Bold"
+               Foreground="Red" />
+    <TextBlock TextWrapping="Wrap">
+      <Run Text="You are using some non-Chromium-based browser, but web SLE works best on Chromium-based browsers." />
+    </TextBlock>
+    <TextBlock TextWrapping="Wrap">
+      <Run Text="For example, your browser probably lacks support for manipulating local files, and this makes some functions either very clunky or not work at all." />
+    </TextBlock>
+    <Button Content="I understand"
+            Click="OnOkClick"
+            HotKey="Enter"
+            HorizontalAlignment="Right" />
+  </StackPanel>
+</UserControl>

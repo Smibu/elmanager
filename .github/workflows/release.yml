@@ -3,50 +3,184 @@ name: Release
 on:
   push:
     tags:
-      - '[0-9]+.[0-9]+.[0-9]+'
+      - '**'
+
 env:
   DOTNET_CLI_TELEMETRY_OPTOUT: 1
   DOTNET_NOLOGO: 1
-jobs:
-  build:
-    uses: ./.github/workflows/build.yml
-  release:
-    needs: [build]
-    runs-on: [windows-latest]
 
+jobs:
+  ci:
+    name: Require successful CI
+    runs-on: ubuntu-latest
+    permissions:
+      checks: read
     steps:
-    - name: Download build artifacts
-      uses: actions/download-artifact@v4
-    - name: Create Release ZIP archive
-      run: Compress-Archive -Path Elmanager-Release/Elmanager.exe -DestinationPath Elmanager-Release.zip
-    - name: Create WineRelease ZIP archive
-      run: Compress-Archive -Path Elmanager-WineRelease/* -DestinationPath Elmanager-WineRelease.zip
-    - name: Create release
-      id: create_release
-      uses: actions/create-release@v1
-      env:
-        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-      with:
-        tag_name: ${{ github.ref }}
-        release_name: ${{ github.ref }}
-        body: 'See [changelog](https://github.com/Smibu/elmanager/blob/master/Elmanager/changelog.md).'
-        draft: false
-        prerelease: true
-    - name: Upload Release asset
-      uses: actions/upload-release-asset@v1.0.1
-      env:
-        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-      with:
-        upload_url: ${{ steps.create_release.outputs.upload_url }}
-        asset_path: ./Elmanager-Release.zip
-        asset_name: Elmanager-Release.zip
-        asset_content_type: application/zip
-    - name: Upload WineRelease asset
-      uses: actions/upload-release-asset@v1.0.1
-      env:
-        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-      with:
-        upload_url: ${{ steps.create_release.outputs.upload_url }}
-        asset_path: ./Elmanager-WineRelease.zip
-        asset_name: Elmanager-WineRelease.zip
-        asset_content_type: application/zip
+      - name: Verify Build and test check
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          successful_checks="$(
+            gh api --method GET \
+              "repos/$GITHUB_REPOSITORY/commits/$GITHUB_SHA/check-runs" \
+              -f check_name='Build and test' \
+              -f filter=latest \
+              --jq '[.check_runs[] | select(.app.slug == "github-actions" and .status == "completed" and .conclusion == "success")] | length'
+          )"
+
+          if [ "$successful_checks" -eq 0 ]; then
+            echo "::error::Commit $GITHUB_SHA does not have a successful 'Build and test' check"
+            exit 1
+          fi
+
+  package-windows:
+    name: Package Windows assets
+    needs: ci
+    runs-on: windows-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+
+      - name: Setup .NET
+        uses: actions/setup-dotnet@a98b56852c35b8e3190ac28c8c2271da59106c68 # v6.0.0
+        with:
+          dotnet-version: 10.0.x
+
+      - name: Publish Elmanager
+        run: dotnet publish Elmanager.WinForms/Elmanager.WinForms.csproj -c Release --runtime win-x64 --output "$env:RUNNER_TEMP/Elmanager"
+
+      - name: Publish SLE Desktop
+        run: dotnet publish Elmanager.SLE.Desktop/Elmanager.SLE.Desktop.csproj -c Release --runtime win-x64 --output "$env:RUNNER_TEMP/SLE"
+
+      - name: Create ZIP archives
+        shell: pwsh
+        run: |
+          New-Item -ItemType Directory -Force artifacts | Out-Null
+          Compress-Archive -Path "$env:RUNNER_TEMP/Elmanager/*" -DestinationPath artifacts/Elmanager.zip
+          Compress-Archive -Path "$env:RUNNER_TEMP/SLE/*" -DestinationPath artifacts/SLE.zip
+
+      - name: Upload Windows assets
+        uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
+        with:
+          name: release-windows
+          path: |
+            artifacts/Elmanager.zip
+            artifacts/SLE.zip
+          if-no-files-found: error
+
+  package-macos:
+    name: Package macOS asset
+    needs: ci
+    runs-on: macos-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+
+      - name: Setup .NET
+        uses: actions/setup-dotnet@a98b56852c35b8e3190ac28c8c2271da59106c68 # v6.0.0
+        with:
+          dotnet-version: 10.0.x
+
+      - name: Publish SLE Desktop
+        run: |
+          dotnet publish Elmanager.SLE.Desktop/Elmanager.SLE.Desktop.csproj -c Release --runtime osx-arm64 --output "$RUNNER_TEMP/SLE" -p:StripSymbols=false
+          strip -no_code_signature_warning -x "$RUNNER_TEMP/SLE/sle"
+
+      - name: Create DMG
+        run: |
+          mkdir -p artifacts
+          hdiutil create -volname SLE -srcfolder "$RUNNER_TEMP/SLE" -ov -format UDZO artifacts/SLE.dmg
+
+      - name: Upload macOS asset
+        uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
+        with:
+          name: release-macos
+          path: artifacts/SLE.dmg
+          if-no-files-found: error
+
+  package-linux:
+    name: Package Linux asset
+    needs: ci
+    runs-on: ubuntu-22.04
+    env:
+      APPDIR: ${{ github.workspace }}/artifacts/SLE.AppDir
+    steps:
+      - name: Checkout
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+
+      - name: Setup .NET
+        uses: actions/setup-dotnet@a98b56852c35b8e3190ac28c8c2271da59106c68 # v6.0.0
+        with:
+          dotnet-version: 10.0.x
+
+      - name: Publish SLE Desktop
+        run: dotnet publish Elmanager.SLE.Desktop/Elmanager.SLE.Desktop.csproj -c Release --runtime linux-x64 --output "$APPDIR/usr/bin"
+
+      - name: Assemble AppDir
+        shell: bash
+        run: |
+          cp Elmanager.SLE.Browser/wwwroot/favicon.svg "$APPDIR/sle.svg"
+          ln -s sle.svg "$APPDIR/.DirIcon"
+          cat > "$APPDIR/AppRun" <<'EOF'
+          #!/bin/sh
+          HERE="$(dirname "$(readlink -f "$0")")"
+          exec "$HERE/usr/bin/sle" "$@"
+          EOF
+          cat > "$APPDIR/sle.desktop" <<'EOF'
+          [Desktop Entry]
+          Type=Application
+          Name=SLE
+          Exec=sle
+          Icon=sle
+          Categories=Graphics;
+          Terminal=false
+          EOF
+          chmod +x "$APPDIR/AppRun" "$APPDIR/usr/bin/sle"
+
+      - name: Create AppImage
+        shell: bash
+        run: |
+          curl --fail --location --output "$RUNNER_TEMP/appimagetool.AppImage" \
+            https://github.com/AppImage/appimagetool/releases/download/continuous/appimagetool-x86_64.AppImage
+          chmod +x "$RUNNER_TEMP/appimagetool.AppImage"
+          ARCH=x86_64 "$RUNNER_TEMP/appimagetool.AppImage" --appimage-extract-and-run \
+            --no-appstream "$APPDIR" "$GITHUB_WORKSPACE/artifacts/SLE.AppImage"
+
+      - name: Upload Linux asset
+        uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
+        with:
+          name: release-linux
+          path: artifacts/SLE.AppImage
+          if-no-files-found: error
+
+  release:
+    name: Create GitHub release
+    needs:
+      - package-windows
+      - package-macos
+      - package-linux
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    steps:
+      - name: Download release assets
+        uses: actions/download-artifact@3e5f45b2cfb9172054b4087a40e8e0b5a5461e7c # v8.0.1
+        with:
+          pattern: release-*
+          path: release-assets
+          merge-multiple: true
+
+      - name: Create release
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          gh release create "$GITHUB_REF_NAME" \
+            release-assets/Elmanager.zip \
+            release-assets/SLE.zip \
+            release-assets/SLE.dmg \
+            release-assets/SLE.AppImage \
+            --repo "$GITHUB_REPOSITORY" \
+            --title "$GITHUB_REF_NAME" \
+            --notes "See [changelog](https://github.com/$GITHUB_REPOSITORY/blob/$GITHUB_SHA/Elmanager.WinForms/changelog.md)." \
+            --prerelease \
+            --verify-tag

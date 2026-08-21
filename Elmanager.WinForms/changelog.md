@@ -1,6 +1,7 @@
 # Elmanager changelog
 
 ## Upcoming
+* SLE: Migrated to Avalonia UI from Windows Forms, enabling cross-platform and web support.
 * SLE / Replay viewer: Rewrote renderer using modern OpenGL. Performance is much better in big levels.
 * SLE / Replay viewer: Turn animation is shown.
 

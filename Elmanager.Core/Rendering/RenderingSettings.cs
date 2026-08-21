@@ -1,9 +1,7 @@
 using System;
 using System.ComponentModel;
 using System.Drawing;
-using System.IO;
 using System.Text.Json.Serialization;
-using Elmanager.Lev;
 
 namespace Elmanager.Rendering;
 
@@ -11,7 +9,7 @@ public class RenderingSettings
 {
     private int _circleDrawingAccuracy = 30;
     private double _gridSize = 1.0;
-    private float _lineWidth = 2.0f;
+    private float _lineWidth = 1.0f;
     private int _smoothZoomDuration = 200;
     private double _grassZoom = 1.0;
     protected const string TransparencyTip = "For transparency, add 4th value at the start, for example: 80, 255, 255, 255";
@@ -265,32 +263,5 @@ public class RenderingSettings
     {
         get => _grassZoom;
         set => _grassZoom = Math.Clamp(value, 1, 3);
-    }
-
-    public string? ResolveLgr(Level lev, string? lgrDir)
-    {
-        if (LgrDisabled)
-        {
-            return null;
-        }
-
-        if (!Directory.Exists(lgrDir))
-        {
-            return null;
-        }
-
-        var levLgr = Path.Combine(lgrDir, lev.LgrFile.ToLower() + ".lgr");
-        if (File.Exists(levLgr))
-        {
-            return levLgr;
-        }
-
-        var defaultLgr = Path.Combine(lgrDir, "default.lgr");
-        if (File.Exists(defaultLgr))
-        {
-            return defaultLgr;
-        }
-
-        return null;
     }
 }

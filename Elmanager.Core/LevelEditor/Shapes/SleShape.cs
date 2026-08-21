@@ -25,14 +25,20 @@ public class SleShape(Level level)
             throw new FileNotFoundException(@"The level file does not exist!", filePath);
         }
 
+        using var stream = File.OpenRead(filePath);
+        return LoadFromStream(stream, filePath);
+    }
+
+    public static ElmaFileObject<SleShape> LoadFromStream(Stream stream, string sourceName)
+    {
         Level level;
         try
         {
-            level = Level.FromPath(filePath).Obj;
+            level = Level.FromStream(stream);
         }
         catch (Exception ex)
         {
-            throw new InvalidOperationException($@"Failed to load level from {filePath}.", ex);
+            throw new InvalidOperationException($@"Failed to load level from {sourceName}.", ex);
         }
 
         // Remove start object
@@ -66,7 +72,7 @@ public class SleShape(Level level)
         level.UpdateBounds();
 
         var sleShape = new SleShape(level);
-        var elmaFile = new ElmaFile(filePath);
+        var elmaFile = new ElmaFile(sourceName);
 
         return new ElmaFileObject<SleShape>(elmaFile, sleShape);
     }

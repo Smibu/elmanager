@@ -1,28 +1,51 @@
 using System;
+using System.Collections.Generic;
 using System.Drawing;
 using System.IO;
+using System.Runtime.InteropServices.JavaScript;
+using System.Text.Json;
 using System.Text.Json.Serialization;
 using System.Text.RegularExpressions;
+using System.Threading.Tasks;
 using Elmanager.Lev;
 using Elmanager.LevelEditor.Playing;
 using Elmanager.Settings;
+using Elmanager.Utilities.Json;
 
 namespace Elmanager.LevelEditor;
 
-public class LevelEditorSettings
+public enum LevSaveState
 {
+    Saved,
+    Unsaved,
+    New
+}
+
+public partial class LevelEditorSettings
+{
+    private const string SettingsFileName = "sle_settings.json";
+    private const string SleFolderBrowser = "/sle";
+
+    public const double MinToolbarIconSize = 16;
+    public const double MaxToolbarIconSize = 60;
+    public const double ToolbarIconSizeStep = 1;
+
+    private static string SleFolder => OperatingSystem.IsBrowser() ? SleFolderBrowser : AppContext.BaseDirectory;
+
     [JsonPropertyName("AutoGrassThickness")]
     public double AutoGrassThickness { get; set; } = 0.2;
     [JsonPropertyName("BaseFilename")]
     public string BaseFilename { get; set; } = "MyLev";
     [JsonPropertyName("CaptureRadius")]
-    public double CaptureRadius { get; set; } = 0.015;
+    public int CaptureRadius { get; set; } = 10;
     [JsonPropertyName("CheckTopologyDynamically")]
     public bool CheckTopologyDynamically { get; set; }
     [JsonPropertyName("CheckTopologyWhenSaving")]
     public bool CheckTopologyWhenSaving { get; set; }
     [JsonPropertyName("DefaultTitle")]
     public string DefaultTitle { get; set; } = "New level";
+    [JsonPropertyName("DefaultFilename")]
+    public string DefaultFilename { get; set; } = "";
     [JsonPropertyName("DrawStep")]
     public double DrawStep { get; set; } = 1.0;
     [JsonPropertyName("EllipseSteps")]
@@ -31,16 +54,34 @@ public class LevelEditorSettings
     public double FrameRadius { get; set; } = 0.2;
     [JsonPropertyName("LastLevel")]
     public string? LastLevel { get; set; }
+    [JsonPropertyName("LevelFolder")]
+    public Bookmark? LevelFolder { get; set; }
+    [JsonPropertyName("SavedFile")]
+    public Bookmark? SavedFile { get; set; }
+    [JsonPropertyName("LgrFolder")]
+    public Bookmark? LgrFolder { get; set; }
+    [JsonPropertyName("DroppedLgrs")]
+    public List<Bookmark> DroppedLgrs { get; set; } = [];
     [JsonPropertyName("NumberFormat")]
     public string NumberFormat { get; set; } = "0";
     [JsonPropertyName("PipeRadius")]
     public double PipeRadius { get; set; } = 1.0;
     [JsonPropertyName("RenderingSettings")]
     public LevelEditorRenderingSettings RenderingSettings { get; set; } = new();
+    [JsonPropertyName("ShapeFolder")]
+    public Bookmark? ShapeFolder { get; set; }
     [JsonPropertyName("Size")]
     public Size Size { get; set; } = new(800, 600);
     [JsonPropertyName("SnapToGrid")]
     public bool SnapToGrid { get; set; }
+
+    [JsonPropertyName("ToolbarIconSize")]
+    public double ToolbarIconSize
+    {
+        get;
+        set => field = Math.Clamp(value, MinToolbarIconSize, MaxToolbarIconSize);
+    } = 28;
+
     [JsonPropertyName("LockGrid")]
     public bool LockGrid { get; set; }
     [JsonPropertyName("ShowCrossHair")]
@@ -58,9 +99,9 @@ public class LevelEditorSettings
     [JsonPropertyName("UseFilenameSuggestion")]
     public bool UseFilenameSuggestion { get; set; }
     [JsonPropertyName("WindowState")]
-    public WindowState WindowState { get; set; } = WindowState.Normal;
+    public WindowState WindowState { get; set; } = WindowState.Maximized;
     [JsonPropertyName("LevelTemplate")]
-    public string LevelTemplate { get; set; } = "50,50";
+    public Bookmark? LevelTemplate { get; set; }
     [JsonPropertyName("CapturePicturesAndTexturesFromBordersOnly")]
     public bool CapturePicturesAndTexturesFromBordersOnly { get; set; }
     [JsonPropertyName("AlwaysSetDefaultsInPictureTool")]
@@ -69,8 +110,52 @@ public class LevelEditorSettings
     public PlaySettings PlayingSettings { get; set; } = new();
     [JsonPropertyName("EnableStartPositionFeature")]
     public bool EnableStartPositionFeature { get; set; } = true;
+    [JsonPropertyName("SaveState")]
+    public LevSaveState SaveState { get; set; }
+    [JsonPropertyName("NonChromiumWarningShown")]
+    public bool NonChromiumWarningShown { get; set; }
 
-    public static Level TryGetTemplateLevel(string text)
+    public static LevelEditorSettings Load()
+    {
+        var path = Path.Combine(SleFolder, SettingsFileName);
+        if (!File.Exists(path))
+            return new LevelEditorSettings();
+
+        var json = File.ReadAllText(path);
+        try
+        {
+            return JsonSerializer.Deserialize(json, SourceGenerationContext.GetLevelEditorSettingsTypeInfo()) ??
+                   new LevelEditorSettings();
+        }
+        catch (Exception)
+        {
+            return new LevelEditorSettings();
+        }
+    }
+
+    public string ToJson() =>
+        JsonSerializer.Serialize(this, SourceGenerationContext.GetLevelEditorSettingsTypeInfo());
+
+    public async Task Save()
+    {
+        Directory.CreateDirectory(SleFolder);
+        var path = Path.Combine(SleFolder, SettingsFileName);
+        await using (var stream = new FileStream(path, FileMode.Create))
+        {
+            await JsonSerializer.SerializeAsync(
+                stream,
+                this,
+                SourceGenerationContext.GetLevelEditorSettingsTypeInfo());
+        }
+
+        if (OperatingSystem.IsBrowser())
+            await SyncToIndexedDb();
+    }
+
+    [JSImport("syncToIndexedDb", "filesystem.js")]
+    private static partial Task SyncToIndexedDb();
+
+    public static Level TryGetTemplateLevel(string? text)
     {
         if (text == null)
         {
@@ -106,7 +191,7 @@ public class LevelEditorSettings
     {
         try
         {
-            return TryGetTemplateLevel(LevelTemplate);
+            return TryGetTemplateLevel(LevelTemplate?.Id);
         }
         catch (SettingsException)
         {

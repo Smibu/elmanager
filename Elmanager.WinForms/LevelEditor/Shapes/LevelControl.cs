@@ -1,7 +1,9 @@
 using System;
 using System.ComponentModel;
 using System.Windows.Forms;
+using Elmanager.Application;
 using Elmanager.Lev;
+using Elmanager.Lgr;
 using Elmanager.Rendering;
 using Elmanager.Rendering.Camera;
 using Elmanager.Rendering.OpenGL;
@@ -42,7 +44,7 @@ internal class LevelControl : GLControl
 
         Load += (_, _) =>
         {
-            _renderer = new ElmaRenderer(new GlControlContext(this), _renderingSettings, elmaRenderer);
+            _renderer = new ElmaRenderer(new GlControlContext(this), _renderingSettings, new DirectoryLgrCache(() => Global.AppSettings.General.LgrDirectory), elmaRenderer);
             UpdateRenderingContext();
         };
 
@@ -56,7 +58,7 @@ internal class LevelControl : GLControl
         {
             return;
         }
-        var r = _renderer.UpdateSettings(_level, _renderingSettings, null);
+        var r = _renderer.UpdateSettings(_level, _renderingSettings);
         if (r.LgrLoadException != null)
             UiUtils.ShowError("Error occurred when loading LGR file! Reason:\r\n\r\n" + r.LgrLoadException.Message);
         _level.UpdateBounds();

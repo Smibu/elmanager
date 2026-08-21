@@ -1,0 +1,42 @@
+<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:dialogs="using:Elmanager.SLE.Dialogs"
+             x:Class="Elmanager.SLE.Dialogs.ShapeSaveDialog"
+             Width="430">
+  <StackPanel Margin="8" Spacing="8">
+    <TextBlock Text="Save as shape" FontSize="16" FontWeight="Bold" />
+
+    <Grid ColumnDefinitions="110,*" RowDefinitions="Auto,Auto,Auto" RowSpacing="8">
+      <TextBlock Grid.Row="0" Text="Shape name:" VerticalAlignment="Center" />
+      <TextBox x:Name="ShapeNameBox" Grid.Row="0" Grid.Column="1" />
+
+      <TextBlock Grid.Row="1" Grid.Column="0" Text="Category:" VerticalAlignment="Center" />
+      <ComboBox x:Name="CategoryComboBox"
+                Grid.Row="1"
+                Grid.Column="1" />
+
+      <Grid Grid.Row="2"
+            Grid.ColumnSpan="2"
+            ColumnDefinitions="110,*"
+            DataContext="{Binding #CategoryComboBox.SelectedItem}"
+            x:DataType="dialogs:ShapeSaveCategoryChoice">
+        <TextBlock Text="New category:"
+                   IsVisible="{Binding IsNew, FallbackValue=False}"
+                   VerticalAlignment="Center" />
+        <TextBox x:Name="NewCategoryBox"
+                 Grid.Column="1"
+                 IsVisible="{Binding IsNew, FallbackValue=False}" />
+      </Grid>
+    </Grid>
+
+    <TextBlock x:Name="ValidationText"
+               IsVisible="{Binding #ValidationText.Text, Converter={x:Static StringConverters.IsNotNullOrEmpty}}"
+               Foreground="{DynamicResource SystemControlErrorTextForegroundBrush}"
+               TextWrapping="Wrap" />
+
+    <StackPanel Orientation="Horizontal" Spacing="8" HorizontalAlignment="Right">
+      <Button Content="Save" Click="OnSaveClick" Width="80" />
+      <Button Content="Cancel" Click="OnCancelClick" Width="80" />
+    </StackPanel>
+  </StackPanel>
+</UserControl>

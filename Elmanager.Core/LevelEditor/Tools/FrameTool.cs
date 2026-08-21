@@ -131,15 +131,17 @@ public class FrameTool : ToolBase, IEditorTool
         CurrentPos = p;
         if (!Framing)
         {
-            ResetHighlight();
+            HighlightTarget? highlight = null;
             if (GetNearestVertexInfo(p) is { } v)
             {
                 ChangeCursorToHand();
                 if (v.Polygon.Mark != PolygonMark.Selected)
-                    LevEditor.CurrentHighlight = new HighlightTarget.PolygonTarget(v.Polygon);
+                    highlight = new HighlightTarget.PolygonTarget(v.Polygon);
             }
             else
                 ChangeToDefaultCursorIfHand();
+
+            LevEditor.CurrentHighlight = highlight;
         }
         else
             ChangeToDefaultCursorIfHand();

@@ -2,6 +2,7 @@
 
 using System;
 using System.Collections.Generic;
+using System.IO;
 using SkiaSharp;
 
 namespace Elmanager.Vectrast;
@@ -260,7 +261,14 @@ internal class VectRast
 
     public void LoadAsBmp(string fileName, out SKBitmap bmp, out byte[,] pixelOn, byte merging)
     {
-        bmp = SKBitmap.Decode(fileName);
+        using var stream = File.OpenRead(fileName);
+        LoadAsBmp(stream, out bmp, out pixelOn, merging);
+    }
+
+    public void LoadAsBmp(Stream stream, out SKBitmap bmp, out byte[,] pixelOn, byte merging)
+    {
+        bmp = SKBitmap.Decode(stream) ??
+              throw new ArgumentException("The stream does not contain a supported image.", nameof(stream));
         pixelOn = new byte[bmp.Width + 2, bmp.Height + 2];
         for (var j = -1; j <= bmp.Height; j++)
             for (var i = -1; i <= bmp.Width; i++)

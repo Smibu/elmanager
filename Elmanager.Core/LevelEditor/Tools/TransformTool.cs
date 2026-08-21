@@ -165,14 +165,14 @@ public class TransformTool : ToolBase, IEditorTool
         for (int i = 0; i < 4; i++)
         {
             if ((transformRectangle[i] - CurrentPos).Length <
-                LevEditor.Settings.CaptureRadius * ZoomCtrl.ZoomLevel)
+                CaptureRadiusScaled)
             {
                 _transformState.TransformPolygonIndex = i;
                 break;
             }
 
             if (((transformRectangle[i] + transformRectangle[i + 1]) / 2 - CurrentPos).Length <
-                LevEditor.Settings.CaptureRadius * ZoomCtrl.ZoomLevel)
+                CaptureRadiusScaled)
             {
                 _transformState.TransformPolygonIndex = i + 4;
                 break;
@@ -180,7 +180,7 @@ public class TransformTool : ToolBase, IEditorTool
         }
 
         if (((transformRectangle[0] + transformRectangle[2]) / 2 - CurrentPos).Length <
-            LevEditor.Settings.CaptureRadius * ZoomCtrl.ZoomLevel)
+            CaptureRadiusScaled)
         {
             _transformState.TransformPolygonIndex = 8;
         }

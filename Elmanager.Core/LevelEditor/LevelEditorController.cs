@@ -1,7 +1,6 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Threading;
 using System.Threading.Tasks;
 using Elmanager.Geometry;
 using Elmanager.IO;
@@ -15,10 +14,10 @@ using Envelope = NetTopologySuite.Geometries.Envelope;
 
 namespace Elmanager.LevelEditor;
 
-public class LevelEditorController(ILevelEditor levelEditor)
+public class LevelEditorController<TEditorLev>(ILevelEditor levelEditor, TEditorLev lev) where TEditorLev : IEditorLev
 {
     private readonly List<Level> _history = new();
-    private EditorLev _editorLev = new(new Level(), null);
+    private TEditorLev _editorLev = lev;
     private int _historyIndex;
     private int _savedIndex;
     private bool _modified;
@@ -39,7 +38,7 @@ public class LevelEditorController(ILevelEditor levelEditor)
     private int _selectedTextureCount;
 
     public Level Lev => _editorLev.Lev;
-    public ElmaFile? LevFile => _editorLev.File;
+    public TEditorLev EditorLev => _editorLev;
     public bool Modified => _modified;
     public List<Vector> ErrorPoints => _errorPoints;
     public Vector? SavedStartPosition => _savedStartPosition;
@@ -55,14 +54,22 @@ public class LevelEditorController(ILevelEditor levelEditor)
     public bool CanRedo => _historyIndex < _history.Count - 1;
     private TexturizationOptions? _texturizationOpts;
 
-    public void SetEditorLev(EditorLev lev)
+    public void SetEditorLev(TEditorLev lev)
     {
+        ClearHighlight();
         _editorLev = lev;
     }
 
-    public void UpdateEditorLevFile(ElmaFile? file)
+    private void ClearHighlight()
     {
-        _editorLev = _editorLev with { File = file };
+        levelEditor.CurrentHighlight = null;
+        levelEditor.HighlightText = string.Empty;
+    }
+
+    private void ReplaceLevel(Level lev)
+    {
+        ClearHighlight();
+        _editorLev = (TEditorLev)_editorLev.WithLev(lev);
     }
 
     public void SetNotModified()
@@ -82,9 +89,6 @@ public class LevelEditorController(ILevelEditor levelEditor)
         _modified = wasModified || _modified;
         if (wasModified)
         {
-            renderer.UpdateBuffers(
-                new LevEditState(Lev, currentTool.GetTransientElements(true)),
-                (LevVisualChange)value);
             Lev.UpdateBounds();
             if (updateHistory)
                 AddToHistory();
@@ -189,7 +193,7 @@ public class LevelEditorController(ILevelEditor levelEditor)
 
     public void LoadFromHistory(LevelEditorRenderingSettings renderingSettings)
     {
-        _editorLev = _editorLev with { Lev = _history[_historyIndex].Clone() };
+        ReplaceLevel(_history[_historyIndex].Clone());
         Lev.UpdateGrass(renderingSettings.GrassZoom);
         _errorPoints.Clear();
         if (_savedIndex == _historyIndex)
@@ -212,7 +216,7 @@ public class LevelEditorController(ILevelEditor levelEditor)
 
     public void UpdateLevel(Level lev)
     {
-        _editorLev = _editorLev with { Lev = lev };
+        ReplaceLevel(lev);
         _savedIndex = _historyIndex;
     }
 
@@ -508,6 +512,29 @@ public class LevelEditorController(ILevelEditor levelEditor)
     public void ToggleGrass()
     {
         var editor = levelEditor;
+        var polys = GetPolygonsForGrassToggle();
+        var mod = LevModification.Nothing;
+        polys.ForEach(p =>
+        {
+            p.IsGrass = !p.IsGrass;
+            mod |= LevModification.Ground | LevModification.Grass;
+            p.UpdateGrassSlopeInfo(Lev.GroundBounds, editor.Settings.RenderingSettings.GrassZoom);
+        });
+        editor.SetModified(mod);
+        editor.RedrawScene();
+    }
+
+    public bool WouldToggleGrassLeaveNoGroundPolygons()
+    {
+        int groundPolygonCount = Lev.GroundPolygonCount;
+        foreach (var polygon in GetPolygonsForGrassToggle())
+            groundPolygonCount += polygon.IsGrass ? 1 : -1;
+
+        return groundPolygonCount <= 0;
+    }
+
+    private List<Polygon> GetPolygonsForGrassToggle()
+    {
         var polys = new List<Polygon>();
         var selectedPolygons = Lev.Polygons.GetSelectedPolygons(includeGrass: true).ToList();
         if (_grassInfo is not null)
@@ -526,15 +553,7 @@ public class LevelEditorController(ILevelEditor levelEditor)
             polys.AddRange(selectedPolygons);
         }
 
-        var mod = LevModification.Nothing;
-        polys.ForEach(p =>
-        {
-            p.IsGrass = !p.IsGrass;
-            mod |= LevModification.Ground | LevModification.Grass;
-            p.UpdateGrassSlopeInfo(Lev.GroundBounds, editor.Settings.RenderingSettings.GrassZoom);
-        });
-        editor.SetModified(mod);
-        editor.RedrawScene();
+        return polys;
     }
 
     public void HandleGravity(AppleType chosenAppleType, PlayController playController)
@@ -752,7 +771,7 @@ public class LevelEditorController(ILevelEditor levelEditor)
     private const int MouseWheelStep = 20;
 
     public void MouseWheelZoom(long delta, Vector mouseCoords, ZoomController zoomCtrl,
-        SceneSettings sceneSettings, LevelEditorSettings settings, ElmaRenderer renderer, string? lgrDir)
+        SceneSettings sceneSettings, LevelEditorSettings settings, ElmaRenderer renderer)
     {
         if (!settings.LockGrid && levelEditor.KeyboardState.IsKeyDown(ModifierKey.LeftCtrl))
         {
@@ -760,7 +779,7 @@ public class LevelEditorController(ILevelEditor levelEditor)
             double newSize = currSize + Math.Sign(delta) * zoomCtrl.Cam.ZoomLevel / 50.0;
             if (newSize > 0)
             {
-                SetGridSizeWithMouse(newSize, mouseCoords, zoomCtrl, sceneSettings, settings, renderer, lgrDir);
+                SetGridSizeWithMouse(newSize, mouseCoords, zoomCtrl, sceneSettings, settings, renderer);
             }
         }
         else
@@ -770,14 +789,12 @@ public class LevelEditorController(ILevelEditor levelEditor)
     }
 
     private void SetGridSizeWithMouse(double newSize, Vector mouseCoords, ZoomController zoomCtrl,
-        SceneSettings sceneSettings, LevelEditorSettings settings, ElmaRenderer renderer, string? lgrDir)
+        SceneSettings sceneSettings, LevelEditorSettings settings, ElmaRenderer renderer)
     {
         var renderSettings = settings.RenderingSettings;
         var bounds = zoomCtrl.Cam.GetBounds(renderer.AspectRatio);
         SetGridSizeAtMouse(newSize, mouseCoords, sceneSettings, renderSettings, bounds);
-        var gridUpdateResult = renderer.UpdateSettings(Lev, renderSettings, lgrDir);
-        if (gridUpdateResult.LgrLoadException != null)
-            levelEditor.ShowError("Error occurred when loading LGR file! Reason:\r\n\r\n" + gridUpdateResult.LgrLoadException.Message);
+        levelEditor.SignalRenderingSettingsChange();
     }
 
     private static double GetGridMouseRatio(double size, double offset, double min, double mouse)
@@ -1048,7 +1065,7 @@ public class LevelEditorController(ILevelEditor levelEditor)
         renderer.Swap();
     }
 
-    public void ConvertSelected(ObjectType? objType)
+    public async Task ConvertSelected(ObjectType? objType)
     {
         var editor = levelEditor;
         var selectedVertices = GetSelectedVertices();
@@ -1061,7 +1078,7 @@ public class LevelEditorController(ILevelEditor levelEditor)
         }
 
         // Convert to picture/texture
-        var sel = editor.PictureDialogService.ShowConvertToPictureDialog(editor.Renderer.OpenGlLgr?.CurrentLgr);
+        var sel = await editor.PictureDialogService.ShowConvertToPictureDialog(editor.Renderer.OpenGlLgr?.CurrentLgr);
         if (sel is { } && editor.Renderer.OpenGlLgr is not null)
         {
             RemoveSelected();
@@ -1082,10 +1099,10 @@ public class LevelEditorController(ILevelEditor levelEditor)
             }
         }
 
-        editor.SetModified(LevModification.Pictures | LevModification.Textures);
+        editor.SetModified(LevModification.Pictures | LevModification.Textures | LevModification.Ground);
     }
 
-    public void ShowPictureProperties(bool alwaysSetDefaults)
+    public async Task ShowPictureProperties(bool alwaysSetDefaults)
     {
         var editor = levelEditor;
         if (editor.Renderer.OpenGlLgr is null)
@@ -1100,7 +1117,7 @@ public class LevelEditorController(ILevelEditor levelEditor)
             selectedElems = new List<GraphicElement> { selectedElem };
         }
 
-        var sel = editor.PictureDialogService.ShowPicturePropertiesDialog(
+        var sel = await editor.PictureDialogService.ShowPicturePropertiesDialog(
             editor.Renderer.OpenGlLgr.CurrentLgr, selectedElems, alwaysSetDefaults);
         if (sel is null) return;
 
@@ -1125,7 +1142,7 @@ public class LevelEditorController(ILevelEditor levelEditor)
             return;
         }
 
-        var result = editor.PictureDialogService.ShowTexturizeDialog(
+        var result = await editor.PictureDialogService.ShowTexturizeDialog(
             editor.Renderer.OpenGlLgr.CurrentLgr, existingOptions);
         if (result is not { } dialogResult)
         {
@@ -1143,16 +1160,13 @@ public class LevelEditorController(ILevelEditor levelEditor)
         var rects = masks
             .Select(i => new Envelope(0, i.WidthMinusMargin, 0, i.HeightMinusMargin));
 
-        var src = new CancellationTokenSource();
-        var progress = new Progress<double>();
-        var task = Task.Factory.StartNew(() => selected.FindCovering(rects, src.Token, progress,
-            iterations: opts.Iterations,
-            minRectCover: opts.MinCoverPercentage / 100).ToList(), src.Token);
-
         List<Envelope>? covering;
         try
         {
-            covering = await editor.ProgressService.RunWithProgress(task, src, progress);
+            covering = await editor.ProgressService.RunWithProgress((progress, token) =>
+                selected.FindCovering(rects, token, progress,
+                    iterations: opts.Iterations,
+                    minRectCover: opts.MinCoverPercentage / 100));
         }
         catch (PolygonException e)
         {
@@ -1171,15 +1185,5 @@ public class LevelEditorController(ILevelEditor levelEditor)
                     new Vector(c.MinX - m.EmptyPixelXMargin, c.MaxY + m.EmptyPixelYMargin), texture, m));
         Lev.GraphicElements.AddRange(pics);
         editor.SetModified(LevModification.Textures);
-    }
-
-    public EditorLev CreateBlankLevel()
-    {
-        var settings = levelEditor.Settings;
-        var lev = settings.GetTemplateLevel();
-        if (!settings.UseFilenameForTitle)
-            lev.Title = settings.DefaultTitle;
-        ClearSavedStartPosition();
-        return new EditorLev(lev, null);
     }
 }

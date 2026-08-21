@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Threading.Tasks;
 using System.Windows.Forms;
 using Elmanager.Geometry;
 using Elmanager.Rendering;
@@ -16,14 +17,14 @@ internal class WinFormsPictureDialogService : IPictureDialogService
         _renderer = renderer;
     }
 
-    public GraphicElement? ShowPictureDialog(
+    public async Task<GraphicElement?> ShowPictureDialog(
         LgrFile? lgr,
         Vector currentPos,
         GraphicElement? currentElem,
         bool setDefaultsAutomatically)
     {
         var elems = currentElem is { } e ? new List<GraphicElement> { e } : new List<GraphicElement>();
-        var sel = ShowPicturePropertiesDialog(lgr, elems, setDefaultsAutomatically, currentPos);
+        var sel = await ShowPicturePropertiesDialog(lgr, elems, setDefaultsAutomatically, currentPos);
         if (sel is null || _renderer.OpenGlLgr is null)
         {
             return null;
@@ -42,7 +43,7 @@ internal class WinFormsPictureDialogService : IPictureDialogService
         };
     }
 
-    public (ImageSelection.TextureSelection Selection, TexturizationOptions Options)? ShowTexturizeDialog(
+    public Task<(ImageSelection.TextureSelection Selection, TexturizationOptions Options)?> ShowTexturizeDialog(
         LgrFile? lgr,
         TexturizationOptions? existingOptions)
     {
@@ -50,13 +51,13 @@ internal class WinFormsPictureDialogService : IPictureDialogService
             existingTexturizationOptions: existingOptions);
         if (result is not (ImageSelection.TextureSelection sel, { } opts))
         {
-            return null;
+            return Task.FromResult<(ImageSelection.TextureSelection Selection, TexturizationOptions Options)?>(null);
         }
 
-        return (sel, opts);
+        return Task.FromResult<(ImageSelection.TextureSelection Selection, TexturizationOptions Options)?>((sel, opts));
     }
 
-    public ImageSelection? ShowPicturePropertiesDialog(
+    public Task<ImageSelection?> ShowPicturePropertiesDialog(
         LgrFile? lgr,
         List<GraphicElement> selectedElems,
         bool setDefaultsAutomatically,
@@ -65,7 +66,7 @@ internal class WinFormsPictureDialogService : IPictureDialogService
         var (sel, _) = ShowPictureDialogCore(lgr, autoTextureMode: false,
             setDefaultsAutomatically: setDefaultsAutomatically,
             selectedElems: selectedElems, currentPos: currentPos) ?? default;
-        return sel;
+        return Task.FromResult(sel);
     }
 
     private (ImageSelection Selection, TexturizationOptions? TexturizationOptions)? ShowPictureDialogCore(
@@ -123,6 +124,6 @@ internal class WinFormsPictureDialogService : IPictureDialogService
         return (selection, texturizationOptions);
     }
 
-    public ImageSelection? ShowConvertToPictureDialog(LgrFile? lgr) =>
+    public Task<ImageSelection?> ShowConvertToPictureDialog(LgrFile? lgr) =>
         ShowPicturePropertiesDialog(lgr, new List<GraphicElement>(), setDefaultsAutomatically: true);
 }

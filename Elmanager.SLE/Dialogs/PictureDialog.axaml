@@ -1,0 +1,70 @@
+<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             mc:Ignorable="d"
+             Width="440"
+             x:Class="Elmanager.SLE.Dialogs.PictureDialog">
+  <StackPanel Orientation="Vertical" Margin="8" Spacing="8">
+    <TextBlock Text="Picture / Texture" FontSize="16" FontWeight="Bold" />
+
+    <StackPanel Orientation="Horizontal" Spacing="16">
+      <RadioButton x:Name="PictureRadio" Content="Picture" GroupName="ImageType" IsChecked="True" />
+      <RadioButton x:Name="TextureRadio" Content="Texture" GroupName="ImageType" />
+    </StackPanel>
+
+    <StackPanel IsVisible="{Binding #TextureRadio.IsChecked, Converter={x:Static BoolConverters.Not}}">
+      <TextBlock Text="Picture:" Margin="0,0,0,4" />
+      <ComboBox x:Name="PictureComboBox"
+                HorizontalAlignment="Stretch"
+                MinHeight="76"
+                ItemContainerTheme="{StaticResource ImageGridItemTheme}"
+                ItemTemplate="{StaticResource ImageGridItemTemplate}"
+                SelectionBoxItemTemplate="{StaticResource SelectedImageTemplate}">
+        <ComboBox.ItemsPanel>
+          <ItemsPanelTemplate>
+            <WrapPanel Orientation="Horizontal" />
+          </ItemsPanelTemplate>
+        </ComboBox.ItemsPanel>
+      </ComboBox>
+    </StackPanel>
+
+    <StackPanel IsVisible="{Binding #TextureRadio.IsChecked}">
+      <TextBlock Text="Texture:" Margin="0,0,0,4" />
+      <ComboBox x:Name="TextureComboBox"
+                HorizontalAlignment="Stretch"
+                MinHeight="76"
+                ItemContainerTheme="{StaticResource ImageGridItemTheme}"
+                ItemTemplate="{StaticResource ImageGridItemTemplate}"
+                SelectionBoxItemTemplate="{StaticResource SelectedImageTemplate}">
+        <ComboBox.ItemsPanel>
+          <ItemsPanelTemplate>
+            <WrapPanel Orientation="Horizontal" />
+          </ItemsPanelTemplate>
+        </ComboBox.ItemsPanel>
+      </ComboBox>
+      <TextBlock Text="Mask:" Margin="0,8,0,4" />
+      <ComboBox x:Name="MaskComboBox" HorizontalAlignment="Stretch" />
+    </StackPanel>
+
+    <Grid ColumnDefinitions="Auto,120" RowDefinitions="Auto,Auto"
+          ColumnSpacing="8" RowSpacing="8" HorizontalAlignment="Left">
+      <TextBlock Grid.Row="0" Grid.Column="0" Text="Distance:" VerticalAlignment="Center" />
+      <TextBox Grid.Row="0" Grid.Column="1" x:Name="DistanceBox" Text="500"
+               HorizontalAlignment="Stretch" />
+
+      <TextBlock Grid.Row="1" Grid.Column="0" Text="Clipping:" VerticalAlignment="Center" />
+      <ComboBox Grid.Row="1" Grid.Column="1" x:Name="ClippingComboBox" SelectedIndex="0"
+                HorizontalAlignment="Stretch">
+        <ComboBoxItem Content="Unclipped" />
+        <ComboBoxItem Content="Ground" />
+        <ComboBoxItem Content="Sky" />
+      </ComboBox>
+    </Grid>
+
+    <StackPanel Orientation="Horizontal" Spacing="8" HorizontalAlignment="Right">
+      <Button Content="OK" Click="OkButton_Click" Width="80" />
+      <Button Content="Cancel" Click="CancelButton_Click" Width="80" />
+    </StackPanel>
+  </StackPanel>
+</UserControl>

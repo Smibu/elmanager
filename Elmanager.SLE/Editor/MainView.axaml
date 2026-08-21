@@ -1,0 +1,580 @@
+<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:dialogs="using:AvaloniaDialogs.Views"
+             xmlns:lgrUtil="using:Elmanager.SLE.LgrUtil"
+             xmlns:local="using:Elmanager.SLE.Editor"
+             xmlns:ui="using:Elmanager.SLE.UI"
+             x:Class="Elmanager.SLE.Editor.MainView"
+             Loaded="Control_OnLoaded"
+             KeyDown="OnKeyDown"
+             Focusable="True"
+             KeyUp="OnKeyUp"
+             LostFocus="OnLostFocus">
+  <UserControl.Resources>
+    <x:Double x:Key="ToolbarIconSize">24</x:Double>
+    <Thickness x:Key="ToolbarIconPadding">3</Thickness>
+    <DataTemplate x:Key="LgrDropdownItemTemplate" x:DataType="lgrUtil:LgrDropdownItem">
+      <Grid ColumnDefinitions="Auto,Auto,Auto">
+        <TextBlock Text="{Binding Filename}"
+                   VerticalAlignment="Center" />
+        <Border Grid.Column="1"
+                HorizontalAlignment="Left"
+                VerticalAlignment="Center"
+                Margin="6,0,0,0"
+                Padding="6,2"
+                Background="{DynamicResource SystemControlBackgroundChromeMediumLowBrush}"
+                CornerRadius="3"
+                IsVisible="{Binding IsFound}">
+          <TextBlock Text="{Binding KnownName}"
+                     FontSize="11"
+                     Opacity="0.8" />
+        </Border>
+        <Border Grid.Column="1"
+                HorizontalAlignment="Left"
+                VerticalAlignment="Center"
+                Margin="6,0,0,0"
+                Padding="6,1"
+                BorderBrush="{DynamicResource SystemControlErrorTextForegroundBrush}"
+                BorderThickness="1"
+                CornerRadius="3"
+                IsVisible="{Binding !IsFound}">
+          <TextBlock Text="Not found"
+                     FontSize="11"
+                     Foreground="{DynamicResource SystemControlErrorTextForegroundBrush}" />
+        </Border>
+        <TextBlock Grid.Column="2"
+                   Text="Dropped"
+                   FontSize="10"
+                   Opacity="0.65"
+                   Margin="6,0,0,0"
+                   VerticalAlignment="Center"
+                   IsVisible="{Binding IsDropped}" />
+      </Grid>
+    </DataTemplate>
+  </UserControl.Resources>
+  <UserControl.Styles>
+    <Style Selector="Button:disabled Image, ToggleButton:disabled Image">
+      <Setter Property="Opacity" Value="0.35" />
+    </Style>
+    <Style Selector="WrapPanel.iconToolbar > Button">
+      <Setter Property="Padding" Value="{DynamicResource ToolbarIconPadding}" />
+    </Style>
+    <Style Selector="WrapPanel.iconToolbar > ToggleButton">
+      <Setter Property="Padding" Value="{DynamicResource ToolbarIconPadding}" />
+    </Style>
+    <Style Selector="WrapPanel.iconToolbar > Button > Image, WrapPanel.iconToolbar > ToggleButton > Image, WrapPanel.iconToolbar > Button > Grid.toolbarIcon">
+      <Setter Property="Width" Value="{DynamicResource ToolbarIconSize}" />
+      <Setter Property="Height" Value="{DynamicResource ToolbarIconSize}" />
+    </Style>
+    <Style Selector="MenuItem.symDiffShortcut /template/ TextBlock#PART_InputGestureText">
+      <Setter Property="Text" Value="'" />
+    </Style>
+    <Style Selector="MenuItem.texturizeShortcut /template/ TextBlock#PART_InputGestureText">
+      <Setter Property="Text" Value="§" />
+    </Style>
+    <Style Selector="Border.statusBarSeparator">
+      <Setter Property="Width" Value="1" />
+      <Setter Property="Margin" Value="0,4" />
+      <Setter Property="Background" Value="{DynamicResource SystemControlForegroundBaseMediumBrush}" />
+      <Setter Property="Opacity" Value="0.35" />
+    </Style>
+  </UserControl.Styles>
+  <Panel>
+    <dialogs:ReactiveDialogHost
+      x:Name="RootDialogHost"
+      OverlayBackground="Transparent"
+      DisableOpeningAnimation="True"
+      DialogOpenedCallback="OnDialogOpened"
+      DialogClosingCallback="OnDialogClosing">
+      <DockPanel>
+        <Menu x:Name="EditorMenu" DockPanel.Dock="Top">
+          <MenuItem Header="_File">
+            <MenuItem x:Name="NewMenuItem" Header="_New" InputGesture="Ctrl+N" Click="OnNewClick" />
+            <MenuItem x:Name="OpenMenuItem" Header="_Open" InputGesture="Ctrl+O" Click="OnOpenClick" />
+            <MenuItem Header="Open _internal">
+              <MenuItem x:Name="OpenInternal1MenuItem" Header="1 - 28" />
+              <MenuItem x:Name="OpenInternal2MenuItem" Header="29 - 55" />
+            </MenuItem>
+            <MenuItem x:Name="SaveMenuItem" Header="_Save" InputGesture="Ctrl+S" Click="OnSaveClick" IsEnabled="False" />
+            <MenuItem x:Name="SaveAsMenuItem" Header="Save _as..." Click="OnSaveAsClick" />
+            <MenuItem x:Name="SaveAsPictureMenuItem" Header="Save as _picture..." InputGesture="Ctrl+P" Click="OnSaveAsPictureClick" />
+            <MenuItem x:Name="DeleteLevMenuItem" Header="_Delete" Click="OnDeleteLevClick" IsEnabled="False" />
+            <Separator x:Name="ExitSeparator" />
+            <MenuItem x:Name="ExitMenuItem" Header="E_xit" Click="OnExitClick" />
+          </MenuItem>
+          <MenuItem Header="_Tools">
+            <MenuItem x:Name="QuickGrassMenuItem" Header="_QuickGrass" InputGesture="Ctrl+G" Click="OnQuickGrassClick" />
+            <MenuItem x:Name="DeleteAllGrassMenuItem" Header="Delete all _grass" InputGesture="Ctrl+D" Click="OnDeleteAllGrassClick" />
+            <MenuItem x:Name="UndoMenuItem" Header="_Undo" InputGesture="Ctrl+Z" Click="OnUndoClick" />
+            <MenuItem x:Name="RedoMenuItem" Header="_Redo" InputGesture="Ctrl+Y" Click="OnRedoClick" />
+            <Separator />
+            <MenuItem x:Name="ZoomFillMenuItem" Header="Zoom _fill" InputGesture="F5" Click="OnZoomFillClick" />
+            <MenuItem x:Name="CheckTopologyMenuItem" Header="_Check topology" InputGesture="F6" Click="OnCheckTopologyClick" />
+            <MenuItem x:Name="LevelPropertiesMenuItem" Header="_Level properties" InputGesture="F4" Click="OnLevelPropertiesClick" />
+            <Separator />
+            <MenuItem x:Name="PreviousLevelMenuItem" Header="_Previous level" InputGesture="F2" Click="OnPrevNextClick" />
+            <MenuItem x:Name="NextLevelMenuItem" Header="_Next level" InputGesture="F3" Click="OnPrevNextClick" />
+            <Separator />
+            <MenuItem x:Name="SelectAllMenuItem" Header="Select _all" InputGesture="Ctrl+A" Click="OnSelectAllClick" />
+            <MenuItem x:Name="ImportLevelsMenuItem" Header="_Import level(s)/image(s)..." InputGesture="Ctrl+V" Click="OnImportLevelsClick" />
+            <Separator />
+            <MenuItem Header="_Settings..." InputGesture="F7" Click="OnSettingsClick" />
+          </MenuItem>
+          <MenuItem Header="_Selection">
+            <MenuItem Header="_Copy" InputGesture="Ctrl+C" Click="OnCopyClick" />
+            <MenuItem Header="Copy and snap to _grid" InputGesture="Ctrl+Shift+C" Click="OnCopyClick" />
+            <MenuItem Header="Save as s_hape..." Click="OnSaveShapeClick" />
+            <MenuItem x:Name="MirrorHMenuItem" Header="Mirror _horizontally" InputGesture="Ctrl+M" Click="OnMirrorHClick" />
+            <MenuItem x:Name="MirrorVMenuItem" Header="Mirror _vertically" InputGesture="Ctrl+Shift+M" Click="OnMirrorVClick" />
+            <MenuItem x:Name="DeleteSelectedMenuItem" Header="_Delete" Click="OnDeleteSelectedClick" />
+            <Separator />
+            <MenuItem x:Name="UnionMenuItem" Header="_Union" InputGesture="," Click="OnUnionClick" />
+            <MenuItem x:Name="DifferenceMenuItem" Header="D_ifference" InputGesture="." Click="OnDifferenceClick" />
+            <MenuItem x:Name="IntersectionMenuItem" Header="I_ntersection" Click="OnIntersectionClick" />
+            <MenuItem x:Name="SymDiffMenuItem" Classes="symDiffShortcut" Header="_Symmetric difference" InputGesture="Oem2" Click="OnSymDiffClick" />
+            <MenuItem x:Name="FixSelfIntMenuItem" Header="_Fix self-intersections" InputGesture="F9" Click="OnFixSelfIntClick" />
+            <Separator />
+            <MenuItem x:Name="TexturizeMenuItem" Classes="texturizeShortcut" Header="_Texturize" InputGesture="Oem5" Click="OnTexturizeClick" />
+            <Separator />
+            <MenuItem Header="Deselect ground polygons" Click="OnDeselectGroundClick" />
+            <MenuItem Header="Deselect grass polygons" Click="OnDeselectGrassClick" />
+            <MenuItem Header="Deselect apples" Click="OnDeselectApplesClick" />
+            <MenuItem Header="Deselect killers" Click="OnDeselectKillersClick" />
+            <MenuItem Header="Deselect flowers" Click="OnDeselectFlowersClick" />
+            <MenuItem Header="Deselect pictures" Click="OnDeselectPicturesClick" />
+            <MenuItem Header="Deselect textures" Click="OnDeselectTexturesClick" />
+          </MenuItem>
+          <MenuItem x:Name="SelectionFilterMenuItem" Header="Selection _filter">
+            <MenuItem x:Name="EnableAllFilterMenuItem" Header="_Enable all" Click="OnEnableAllFiltersClick" StaysOpenOnClick="True" />
+            <MenuItem x:Name="DisableAllFilterMenuItem" Header="_Disable all" Click="OnDisableAllFiltersClick" StaysOpenOnClick="True" />
+            <Separator />
+            <MenuItem x:Name="GroundFilterMenuItem" Header="_Ground polygons" ToggleType="CheckBox" IsChecked="True" StaysOpenOnClick="True" Click="OnFilterItemClick" />
+            <MenuItem x:Name="GrassFilterMenuItem" Header="G_rass polygons" ToggleType="CheckBox" IsChecked="True" StaysOpenOnClick="True" Click="OnFilterItemClick" />
+            <MenuItem x:Name="ApplesFilterMenuItem" Header="_Apples" ToggleType="CheckBox" IsChecked="True" StaysOpenOnClick="True" Click="OnFilterItemClick" />
+            <MenuItem x:Name="KillersFilterMenuItem" Header="_Killers" ToggleType="CheckBox" IsChecked="True" StaysOpenOnClick="True" Click="OnFilterItemClick" />
+            <MenuItem x:Name="FlowersFilterMenuItem" Header="_Flowers" ToggleType="CheckBox" IsChecked="True" StaysOpenOnClick="True" Click="OnFilterItemClick" />
+            <MenuItem x:Name="StartFilterMenuItem" Header="_Start" ToggleType="CheckBox" IsChecked="True" StaysOpenOnClick="True" Click="OnFilterItemClick" />
+            <MenuItem x:Name="PicturesFilterMenuItem" Header="_Pictures" ToggleType="CheckBox" IsChecked="True" StaysOpenOnClick="True" Click="OnFilterItemClick" />
+            <MenuItem x:Name="TexturesFilterMenuItem" Header="_Textures" ToggleType="CheckBox" IsChecked="True" StaysOpenOnClick="True" Click="OnFilterItemClick" />
+          </MenuItem>
+          <MenuItem Header="_Help">
+            <MenuItem Header="_About SLE" Click="OnAboutClick" />
+          </MenuItem>
+        </Menu>
+
+        <StackPanel x:Name="EditorToolbars"
+                    DockPanel.Dock="Top" Background="Transparent"
+                    PointerWheelChanged="OnToolbarPointerWheelChanged">
+          <WrapPanel x:Name="MainToolbar" Classes="iconToolbar" Orientation="Horizontal" Margin="2">
+            <Button x:Name="NewButton" Click="OnNewClick" Margin="1" ToolTip.Tip="New">
+              <Image Source="{StaticResource NewIcon}" />
+            </Button>
+            <Button x:Name="OpenButton" Click="OnOpenClick" Margin="1" ToolTip.Tip="Open">
+              <Image Source="{StaticResource OpenIcon}" />
+            </Button>
+            <Button x:Name="SaveButton" Click="OnSaveClick" IsEnabled="False" Margin="1" ToolTip.Tip="Save">
+              <Image Source="{StaticResource SaveIcon}" />
+            </Button>
+            <Button x:Name="SaveAsButton" Click="OnSaveAsClick" Margin="1" ToolTip.Tip="Save As">
+              <Image Source="{StaticResource SaveAsIcon}" />
+            </Button>
+            <Button x:Name="RenameButton" Click="OnRenameLevClick" IsEnabled="False" Margin="1" ToolTip.Tip="Rename level file">
+              <Image Source="{StaticResource RenameIcon}" />
+            </Button>
+            <Button x:Name="DeleteButton" Click="OnDeleteLevClick" IsEnabled="False" Margin="1" ToolTip.Tip="Delete this level">
+              <Image Source="{StaticResource DeleteIcon}" />
+            </Button>
+            <CommandBarSeparator />
+            <Button x:Name="CheckTopologyButton" Click="OnCheckTopologyClick" Margin="1" ToolTip.Tip="Check topology">
+              <Viewbox Width="{DynamicResource ToolbarIconSize}" Height="{DynamicResource ToolbarIconSize}">
+                <Canvas Width="256" Height="256">
+                  <Path x:Name="TopologyCheckmark"
+                        Data="M48,132 L104,188 L208,76"
+                        Stroke="#2EAF4A"
+                        StrokeThickness="28"
+                        StrokeLineCap="Round"
+                        StrokeJoin="Round" />
+                </Canvas>
+              </Viewbox>
+              <FlyoutBase.AttachedFlyout>
+                <Flyout Placement="Bottom">
+                  <ScrollViewer Width="400"
+                                MaxHeight="300"
+                                HorizontalScrollBarVisibility="Disabled"
+                                VerticalScrollBarVisibility="Auto">
+                    <ItemsControl x:Name="TopologyErrorList">
+                      <ItemsControl.ItemTemplate>
+                        <DataTemplate>
+                          <TextBlock Text="{Binding}"
+                                     Margin="0,2"
+                                     TextWrapping="Wrap" />
+                        </DataTemplate>
+                      </ItemsControl.ItemTemplate>
+                    </ItemsControl>
+                  </ScrollViewer>
+                </Flyout>
+              </FlyoutBase.AttachedFlyout>
+            </Button>
+            <Button x:Name="ZoomFillButton" Click="OnZoomFillClick" Margin="1" ToolTip.Tip="Zoom fill">
+              <Image Source="{StaticResource ZoomFillIcon}" />
+            </Button>
+            <CommandBarSeparator />
+            <Button x:Name="UndoButton" Click="OnUndoClick" IsEnabled="False" Margin="1" ToolTip.Tip="Undo">
+              <Image Source="{StaticResource UndoIcon}" />
+            </Button>
+            <Button x:Name="RedoButton" Click="OnRedoClick" IsEnabled="False" Margin="1" ToolTip.Tip="Redo">
+              <Image Source="{StaticResource RedoIcon}" />
+            </Button>
+            <CommandBarSeparator />
+            <Button x:Name="PrevButton" Click="OnPrevNextClick" Margin="1" ToolTip.Tip="Previous level">
+              <Image Source="{StaticResource PreviousIcon}" />
+            </Button>
+            <Button x:Name="NextButton" Click="OnPrevNextClick" Margin="1" ToolTip.Tip="Next level">
+              <Image Source="{StaticResource NextIcon}" />
+            </Button>
+            <CommandBarSeparator />
+            <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
+              <Label Content="Title:" Target="TitleBox" VerticalAlignment="Center" Margin="4,0" />
+              <TextBox x:Name="TitleBox" MinWidth="120" MaxLength="50" Margin="1"
+                       TextChanged="OnTitleTextChanged" />
+            </StackPanel>
+            <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
+              <Label Content="LGR:" Target="LgrBox" VerticalAlignment="Center" Margin="4,0" />
+              <ComboBox x:Name="LgrBox"
+                        MinWidth="200"
+                        Margin="1"
+                        ItemTemplate="{StaticResource LgrDropdownItemTemplate}"
+                        SelectionBoxItemTemplate="{StaticResource LgrDropdownItemTemplate}"
+                        SelectionChanged="OnLgrSelectionChanged" />
+              <Button x:Name="SelectLgrFolderButton" Content="Select LGR folder..." Margin="1"
+                      Click="OnSelectLgrFolderClick" IsVisible="False" />
+            </StackPanel>
+            <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
+              <Label Content="Ground:" Target="GroundComboBox" VerticalAlignment="Center" Margin="4,0" />
+              <ComboBox x:Name="GroundComboBox" Width="100" Margin="1"
+                        SelectionChanged="OnTextureSelectionChanged" />
+            </StackPanel>
+            <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
+              <Label Content="Sky:" Target="SkyComboBox" VerticalAlignment="Center" Margin="4,0" />
+              <ComboBox x:Name="SkyComboBox" Width="100" Margin="1"
+                        SelectionChanged="OnTextureSelectionChanged" />
+            </StackPanel>
+          </WrapPanel>
+
+          <WrapPanel x:Name="RenderingToolbar" Classes="iconToolbar" Orientation="Horizontal" Margin="2">
+            <WrapPanel.Resources>
+            </WrapPanel.Resources>
+            <WrapPanel.Styles>
+              <Style Selector="ToggleButton">
+                <Setter Property="BorderThickness" Value="1.5" />
+              </Style>
+              <Style Selector="ToggleButton:checked /template/ ContentPresenter#PART_ContentPresenter">
+                <Setter Property="Background" Value="{DynamicResource SystemControlBackgroundBaseLowBrush}" />
+                <Setter Property="BorderBrush" Value="#0078D4" />
+              </Style>
+              <Style Selector="ToggleButton:checked:pointerover /template/ ContentPresenter#PART_ContentPresenter">
+                <Setter Property="Background" Value="{DynamicResource ToggleButtonBackgroundPointerOver}" />
+                <Setter Property="BorderBrush" Value="#0078D4" />
+              </Style>
+            </WrapPanel.Styles>
+            <ToggleButton x:Name="ShowGridButton" Margin="1" Click="OnRenderingToggleChanged" ToolTip.Tip="Show grid">
+              <Image Source="{StaticResource GridIcon}" />
+            </ToggleButton>
+            <ToggleButton x:Name="SnapToGridButton" Margin="1" Click="OnRenderingToggleChanged" ToolTip.Tip="Snap to grid">
+              <Image Source="{StaticResource SnapIcon}" />
+            </ToggleButton>
+            <ToggleButton x:Name="LockGridButton" Margin="1" Click="OnRenderingToggleChanged" ToolTip.Tip="Lock grid">
+              <Image Source="{StaticResource LockGridIcon}" />
+            </ToggleButton>
+            <ToggleButton x:Name="ShowCrossHairButton" Margin="1" Click="OnRenderingToggleChanged" ToolTip.Tip="Show crosshair">
+              <Image Source="{StaticResource CrosshairIcon}" />
+            </ToggleButton>
+            <ToggleButton x:Name="ShowGrassEdgesButton" IsChecked="True" Margin="1" Click="OnRenderingToggleChanged" ToolTip.Tip="Show grass edges">
+              <Image Source="{StaticResource GrassEdgesIcon}" />
+            </ToggleButton>
+            <ToggleButton x:Name="ShowInactiveGrassEdgesButton" Margin="1" Click="OnRenderingToggleChanged" ToolTip.Tip="Show inactive grass edges">
+              <Image Source="{StaticResource InactiveGrassEdgesIcon}" />
+            </ToggleButton>
+            <ToggleButton x:Name="ShowGroundEdgesButton" IsChecked="True" Margin="1" Click="OnRenderingToggleChanged" ToolTip.Tip="Show ground edges">
+              <Image Source="{StaticResource EdgesIcon}" />
+            </ToggleButton>
+            <ToggleButton x:Name="ShowGroundButton" Margin="1" Click="OnRenderingToggleChanged" ToolTip.Tip="Show ground">
+              <Image Source="{StaticResource GroundFillIcon}" />
+            </ToggleButton>
+            <ToggleButton x:Name="ShowVerticesButton" Margin="1" Click="OnRenderingToggleChanged" ToolTip.Tip="Show vertices">
+              <Image Source="{StaticResource VerticesIcon}" />
+            </ToggleButton>
+            <ToggleButton x:Name="ShowTextureFramesButton" Margin="1" Click="OnRenderingToggleChanged" ToolTip.Tip="Show texture frames">
+              <Image Source="{StaticResource TextureFrameIcon}" />
+            </ToggleButton>
+            <ToggleButton x:Name="ShowPictureFramesButton" Margin="1" Click="OnRenderingToggleChanged" ToolTip.Tip="Show picture frames">
+              <Image Source="{StaticResource PictureFrameIcon}" />
+            </ToggleButton>
+            <ToggleButton x:Name="ShowObjectFramesButton" IsChecked="True" Margin="1" Click="OnRenderingToggleChanged" ToolTip.Tip="Show object frames">
+              <Image Source="{StaticResource ObjectFrameIcon}" />
+            </ToggleButton>
+            <ToggleButton x:Name="ShowGravAppleButton" Margin="1" Click="OnRenderingToggleChanged" ToolTip.Tip="Show gravity arrows">
+              <Image Source="{StaticResource AppleArrowIcon}" />
+            </ToggleButton>
+            <CommandBarSeparator />
+            <ToggleButton x:Name="ShowTexturesButton" Margin="1" Click="OnRenderingToggleChanged" ToolTip.Tip="Show textures">
+              <Image Source="{StaticResource TextureIcon}" />
+            </ToggleButton>
+            <ToggleButton x:Name="ShowPicturesButton" Margin="1" Click="OnRenderingToggleChanged" ToolTip.Tip="Show pictures">
+              <Image Source="{StaticResource PictureIcon}" />
+            </ToggleButton>
+            <ToggleButton x:Name="ShowObjectsButton" Margin="1" Click="OnRenderingToggleChanged" ToolTip.Tip="Show objects">
+              <Image Source="{StaticResource ObjectIcon}" />
+            </ToggleButton>
+            <ToggleButton x:Name="ShowGrassButton" Margin="1" Click="OnRenderingToggleChanged" ToolTip.Tip="Show grass">
+              <Image Source="{StaticResource GrassIcon}" />
+            </ToggleButton>
+            <ToggleButton x:Name="ShowGroundTextureButton" Margin="1" Click="OnRenderingToggleChanged" ToolTip.Tip="Show ground texture">
+              <Image Source="{StaticResource GroundIcon}" />
+            </ToggleButton>
+            <ToggleButton x:Name="ShowSkyTextureButton" Margin="1" Click="OnRenderingToggleChanged" ToolTip.Tip="Show sky texture">
+              <Image Source="{StaticResource SkyIcon}" />
+            </ToggleButton>
+            <ToggleButton x:Name="ZoomTexturesButton" IsChecked="True" Margin="1" Click="OnRenderingToggleChanged" ToolTip.Tip="Zoom textures">
+              <Image Source="{StaticResource ZoomTextureIcon}" />
+            </ToggleButton>
+            <CommandBarSeparator />
+            <Button x:Name="PlayButton" Click="OnPlayClick" Focusable="False" Margin="1" ToolTip.Tip="Play">
+              <Grid Classes="toolbarIcon" RenderTransformOrigin="50%,50%">
+                <Grid.RenderTransform>
+                  <ScaleTransform ScaleX="0.80" ScaleY="0.80" />
+                </Grid.RenderTransform>
+                <Image x:Name="PlayIconImage" Source="{StaticResource PlayIcon}" />
+                <Image x:Name="PauseIconImage" Source="{StaticResource PauseIcon}" IsVisible="False" />
+              </Grid>
+            </Button>
+            <Button x:Name="StopButton" Click="OnStopClick" Focusable="False" IsEnabled="False" Margin="1" ToolTip.Tip="Stop">
+              <Image Source="{StaticResource StopIcon}" RenderTransformOrigin="50%,50%">
+                <Image.RenderTransform>
+                  <ScaleTransform ScaleX="0.80" ScaleY="0.80" />
+                </Image.RenderTransform>
+              </Image>
+            </Button>
+            <Button x:Name="PlaySettingsButton" Click="OnPlaySettingsClick" Focusable="False" Margin="1" ToolTip.Tip="Playing settings">
+              <Image Source="{StaticResource PlaySettingsIcon}" />
+            </Button>
+            <TextBlock x:Name="PlayTimeLabel" MinWidth="72" Margin="4,0"
+                       VerticalAlignment="Center" />
+            <Button x:Name="BestTimesButton" Click="OnLevelPropertiesClick" Focusable="False"
+                    IsVisible="False" Margin="4,0,1,0" Padding="4,2"
+                    VerticalAlignment="Center" ToolTip.Tip="Show level properties">
+              <TextBlock x:Name="BestTimeLabel" />
+            </Button>
+          </WrapPanel>
+        </StackPanel>
+
+        <StackPanel x:Name="InfoBar"
+                    DockPanel.Dock="Top" Orientation="Horizontal" Margin="0,0,0,0">
+          <TextBlock x:Name="InfoLabel" Text="Ready." Margin="4,2" />
+        </StackPanel>
+
+        <StackPanel x:Name="StatusBar"
+                    DockPanel.Dock="Bottom" Orientation="Horizontal" Background="{DynamicResource SystemControlBackgroundChromeMediumLowBrush}" Height="24">
+          <Button x:Name="ZoomLabel" Content="Zoom:" Width="140" Margin="4,2"
+                  Padding="0" BorderThickness="0" Background="Transparent"
+                  Click="OnZoomLabelClick" />
+          <Border Classes="statusBarSeparator" />
+          <TextBlock x:Name="MouseXLabel" Text="X:" Width="110" Margin="4,2,0,2" />
+          <Border Classes="statusBarSeparator" />
+          <TextBlock x:Name="MouseYLabel" Text="Y:" Width="110" Margin="4,2" />
+          <Border Classes="statusBarSeparator" />
+          <TextBlock x:Name="SelectionLabel" Text="" Margin="4,2" />
+          <Border Classes="statusBarSeparator" />
+          <TextBlock x:Name="HighlightLabel" Text="" Margin="4,2" />
+        </StackPanel>
+
+        <Grid>
+          <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="120" />
+            <ColumnDefinition Width="*" />
+          </Grid.ColumnDefinitions>
+
+          <ScrollViewer x:Name="EditorToolPanel"
+                        Grid.Column="0"
+                        HorizontalScrollBarVisibility="Disabled"
+                        VerticalScrollBarVisibility="Auto"
+                        Background="{DynamicResource SystemControlBackgroundChromeMediumLowBrush}">
+            <StackPanel x:Name="ToolPanel">
+              <StackPanel.Styles>
+                <Style Selector="ToggleButton:checked /template/ ContentPresenter#PART_ContentPresenter">
+                  <Setter Property="Background" Value="#0078D4" />
+                  <Setter Property="BorderBrush" Value="#0078D4" />
+                </Style>
+                <Style Selector="ToggleButton:checked:pointerover /template/ ContentPresenter#PART_ContentPresenter">
+                  <Setter Property="Background" Value="#106EBE" />
+                  <Setter Property="BorderBrush" Value="#106EBE" />
+                </Style>
+              </StackPanel.Styles>
+              <ToggleButton x:Name="SelectButton" Content="_Select" IsChecked="True" Click="OnToolChanged" HorizontalAlignment="Stretch" HorizontalContentAlignment="Center" />
+              <ToggleButton x:Name="VertexButton" Content="_Vertex" Click="OnToolChanged" HorizontalAlignment="Stretch" HorizontalContentAlignment="Center" />
+              <ToggleButton x:Name="DrawButton" Content="_Draw" Click="OnToolChanged" HorizontalAlignment="Stretch" HorizontalContentAlignment="Center" />
+              <ToggleButton x:Name="ObjectButton" Content="_Object" Click="OnToolChanged" HorizontalAlignment="Stretch" HorizontalContentAlignment="Center" />
+              <ToggleButton x:Name="PipeButton" Content="_Pipe" Click="OnToolChanged" HorizontalAlignment="Stretch" HorizontalContentAlignment="Center" />
+              <ToggleButton x:Name="EllipseButton" Content="_Ellipse" Click="OnToolChanged" HorizontalAlignment="Stretch" HorizontalContentAlignment="Center" />
+              <ToggleButton x:Name="PolyOpButton" Content="Po_lyOp" Click="OnToolChanged" HorizontalAlignment="Stretch" HorizontalContentAlignment="Center" />
+              <ToggleButton x:Name="FrameButton" Content="_Frame" Click="OnToolChanged" HorizontalAlignment="Stretch" HorizontalContentAlignment="Center" />
+              <ToggleButton x:Name="SmoothenButton" Content="S_moothen" Click="OnToolChanged" HorizontalAlignment="Stretch" HorizontalContentAlignment="Center" />
+              <ToggleButton x:Name="CutConnectButton" Content="_Cut/connect" Click="OnToolChanged" HorizontalAlignment="Stretch" HorizontalContentAlignment="Center" />
+              <ToggleButton x:Name="AutoGrassButton" Content="_AutoGrass" Click="OnToolChanged" HorizontalAlignment="Stretch" HorizontalContentAlignment="Center" />
+              <ToggleButton x:Name="PictureButton" Content="P_icture" Click="OnToolChanged" HorizontalAlignment="Stretch" HorizontalContentAlignment="Center" />
+              <ToggleButton x:Name="TextButton" Content="_Text" Click="OnToolChanged" HorizontalAlignment="Stretch" HorizontalContentAlignment="Center" />
+              <ToggleButton x:Name="CustomShapeButton" Content="S_hape" Click="OnToolChanged" HorizontalAlignment="Stretch" HorizontalContentAlignment="Center" />
+            </StackPanel>
+          </ScrollViewer>
+
+          <Grid Grid.Column="1" x:Name="ViewportDropTarget"
+                ClipToBounds="True"
+                Background="Transparent"
+                DragDrop.AllowDrop="True"
+                DragDrop.DragEnter="OnDragOver"
+                DragDrop.DragOver="OnDragOver"
+                DragDrop.DragLeave="OnDragLeave"
+                DragDrop.Drop="OnDrop">
+            <Border x:Name="GlViewport"
+                    Background="Transparent"
+                    Focusable="True"
+                    PointerMoved="OnViewportPointerMoved"
+                    PointerPressed="OnViewportPointerPressed"
+                    PointerReleased="OnViewportPointerReleased"
+                    PointerExited="OnViewportPointerExited"
+                    PointerWheelChanged="OnViewportPointerWheelChanged"
+                    AttachedToVisualTree="OnViewportAttached"
+                    DetachedFromVisualTree="OnViewportDetached">
+              <Border.ContextMenu>
+                <ContextMenu x:Name="EditorContextMenu" Placement="Pointer" Opening="OnEditorContextMenuOpening">
+                  <MenuItem x:Name="CtxCopyMenuItem" Header="Copy" Click="OnCopyClick" />
+                  <MenuItem x:Name="CtxTransformMenuItem" Header="Transform" Click="OnCtxTransformClick" />
+                  <MenuItem x:Name="CtxDeleteMenuItem" Header="Delete" Click="OnDeleteSelectedClick" />
+                  <MenuItem x:Name="CtxGrassMenuItem" Header="Toggle grass" Click="OnCtxToggleGrassClick" />
+                  <MenuItem x:Name="CtxGravityNoneMenuItem" Header="Gravity none" ToggleType="CheckBox" Click="OnCtxGravityClick" />
+                  <MenuItem x:Name="CtxGravityUpMenuItem" Header="Gravity up" ToggleType="CheckBox" Click="OnCtxGravityClick" />
+                  <MenuItem x:Name="CtxGravityDownMenuItem" Header="Gravity down" ToggleType="CheckBox" Click="OnCtxGravityClick" />
+                  <MenuItem x:Name="CtxGravityLeftMenuItem" Header="Gravity left" ToggleType="CheckBox" Click="OnCtxGravityClick" />
+                  <MenuItem x:Name="CtxGravityRightMenuItem" Header="Gravity right" ToggleType="CheckBox" Click="OnCtxGravityClick" />
+                  <MenuItem x:Name="CtxPicturePropertiesMenuItem" Header="Picture properties" Click="OnCtxPicturePropertiesClick" />
+                  <MenuItem x:Name="CtxBringToFrontMenuItem" Header="Bring to front" Click="OnCtxBringToFrontClick" />
+                  <MenuItem x:Name="CtxSendToBackMenuItem" Header="Send to back" Click="OnCtxSendToBackClick" />
+                  <MenuItem x:Name="CtxConvertMenuItem" Header="Convert to">
+                    <MenuItem x:Name="CtxApplesConvertItem" Header="Apples" Click="OnCtxConvertClick" />
+                    <MenuItem x:Name="CtxKillersConvertItem" Header="Killers" Click="OnCtxConvertClick" />
+                    <MenuItem x:Name="CtxFlowersConvertItem" Header="Flowers" Click="OnCtxConvertClick" />
+                    <MenuItem x:Name="CtxPicturesConvertItem" Header="Pictures" Click="OnCtxConvertClick" />
+                  </MenuItem>
+                  <MenuItem x:Name="CtxSaveStartPositionMenuItem" Header="Save start position" Click="OnCtxSaveStartPositionClick" />
+                  <MenuItem x:Name="CtxRestoreStartPositionMenuItem" Header="Restore start position" Click="OnCtxRestoreStartPositionClick" />
+                  <MenuItem x:Name="CtxMoveStartHereMenuItem" Header="Move start here" Click="OnCtxMoveStartHereClick" />
+                  <MenuItem x:Name="CtxSaveShapeMenuItem" Header="Save as shape..." Click="OnCtxSaveShapeClick" />
+                </ContextMenu>
+              </Border.ContextMenu>
+            </Border>
+
+            <Grid x:Name="DropOverlay"
+                  IsVisible="False"
+                  IsHitTestVisible="False"
+                  Background="#B3151A20">
+              <Grid>
+                <Grid.ColumnDefinitions>
+                  <ColumnDefinition Width="*" />
+                  <ColumnDefinition Width="*" />
+                </Grid.ColumnDefinitions>
+
+                <Border x:Name="DropPrimaryRegion"
+                        Margin="12"
+                        Padding="16"
+                        Background="#B30078D4"
+                        BorderBrush="White"
+                        BorderThickness="2"
+                        CornerRadius="8">
+                  <StackPanel HorizontalAlignment="Center" VerticalAlignment="Center" Spacing="8">
+                    <TextBlock x:Name="DropPrimaryText"
+                               Foreground="White"
+                               FontSize="28"
+                               FontWeight="Bold"
+                               TextAlignment="Center" />
+                    <TextBlock x:Name="DropPrimaryDescription"
+                               Foreground="White"
+                               FontSize="16"
+                               TextAlignment="Center"
+                               TextWrapping="Wrap" />
+                  </StackPanel>
+                </Border>
+
+                <Border x:Name="DropSecondaryRegion"
+                        Grid.Column="1"
+                        Margin="12"
+                        Padding="16"
+                        Background="#B30078D4"
+                        BorderBrush="White"
+                        BorderThickness="2"
+                        CornerRadius="8">
+                  <StackPanel HorizontalAlignment="Center" VerticalAlignment="Center" Spacing="8">
+                    <TextBlock Text="IMPORT LEVEL"
+                               Foreground="White"
+                               FontSize="28"
+                               FontWeight="Bold"
+                               TextAlignment="Center" />
+                    <TextBlock Text="Add its contents to the current level"
+                               Foreground="White"
+                               FontSize="16"
+                               TextAlignment="Center"
+                               TextWrapping="Wrap" />
+                  </StackPanel>
+                </Border>
+              </Grid>
+            </Grid>
+          </Grid>
+        </Grid>
+      </DockPanel>
+    </dialogs:ReactiveDialogHost>
+
+    <ItemsControl x:Name="ExceptionNotificationList"
+                  HorizontalAlignment="Right"
+                  VerticalAlignment="Top"
+                  Margin="16"
+                  MaxWidth="440">
+      <ItemsControl.ItemTemplate>
+        <DataTemplate x:DataType="local:ExceptionNotification">
+          <Border Margin="0,0,0,8"
+                  Padding="12,8"
+                  Background="{DynamicResource SystemControlBackgroundChromeMediumLowBrush}"
+                  BorderBrush="{DynamicResource SystemControlErrorTextForegroundBrush}"
+                  BorderThickness="1"
+                  CornerRadius="8">
+            <Grid RowDefinitions="Auto,Auto"
+                  ColumnDefinitions="*,Auto">
+              <StackPanel Spacing="4">
+                <TextBlock Text="Something went wrong"
+                           Foreground="{DynamicResource SystemControlErrorTextForegroundBrush}"
+                           FontWeight="SemiBold" />
+                <TextBlock Text="{Binding Message}"
+                           Foreground="{DynamicResource SystemControlForegroundBaseHighBrush}"
+                           TextWrapping="Wrap" />
+              </StackPanel>
+              <Button Grid.Row="0"
+                      Grid.Column="1"
+                      Content="×"
+                      Margin="8,0,0,0"
+                      Padding="6,2"
+                      VerticalAlignment="Top"
+                      Background="Transparent"
+                      Foreground="{DynamicResource SystemControlForegroundBaseMediumBrush}"
+                      Click="OnDismissExceptionClick" />
+              <ui:CopyToClipboardButton Grid.Row="1"
+                                        Grid.Column="0"
+                                        Grid.ColumnSpan="2"
+                                        Content="Copy details"
+                                        TextToCopy="{Binding Details}"
+                                        Margin="0,8,0,0"
+                                        HorizontalAlignment="Right" />
+            </Grid>
+          </Border>
+        </DataTemplate>
+      </ItemsControl.ItemTemplate>
+    </ItemsControl>
+  </Panel>
+</UserControl>

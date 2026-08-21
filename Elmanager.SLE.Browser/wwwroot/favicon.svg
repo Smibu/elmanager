@@ -1,0 +1,53 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64">
+  <defs>
+    <linearGradient id="brick" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#d13a28"/>
+      <stop offset=".45" stop-color="#ad2418"/>
+      <stop offset="1" stop-color="#8f1a12"/>
+    </linearGradient>
+    <pattern id="bricks" width="30" height="14" patternUnits="userSpaceOnUse">
+      <rect width="30" height="14" fill="#aaa69c"/>
+      <g fill="url(#brick)">
+        <rect x="1" y="1" width="13" height="5" rx="1"/>
+        <rect x="16" y="1" width="13" height="5" rx="1"/>
+        <rect x="-6.5" y="8" width="13" height="5" rx="1"/>
+        <rect x="8.5" y="8" width="13" height="5" rx="1"/>
+        <rect x="23.5" y="8" width="13" height="5" rx="1"/>
+      </g>
+    </pattern>
+    <linearGradient id="steel" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#f8fafc"/>
+      <stop offset=".45" stop-color="#aeb5bd"/>
+      <stop offset=".7" stop-color="#eef1f4"/>
+      <stop offset="1" stop-color="#737b84"/>
+    </linearGradient>
+  </defs>
+
+  <path d="M28 42 6.5 1.5 8.5 .75 36 38Z"
+        fill="url(#steel)" stroke="#545b63" stroke-width=".75" stroke-linejoin="round"/>
+
+  <path d="M4 22 16 6 30 12 43 6 59 19 55 37 9 36Z"
+        fill="url(#bricks)" stroke="#111" stroke-width="3" stroke-linejoin="round"/>
+
+  <path d="M36 42 57.5 1.5 55.5 .75 28 38Z"
+        fill="url(#steel)" stroke="#545b63" stroke-width=".75" stroke-linejoin="round"/>
+
+  <path d="
+        M32 35
+        L19.2 45.6
+        A9 9 0 1 0 22.5 49.9
+        L32 44.5
+        L41.5 49.9
+        A9 9 0 1 0 44.8 45.6
+        Z
+        M18.7 53
+        A4.7 4.7 0 1 1 9.3 53
+        A4.7 4.7 0 1 1 18.7 53
+        M54.7 53
+        A4.7 4.7 0 1 1 45.3 53
+        A4.7 4.7 0 1 1 54.7 53
+        "
+        fill="#1686d9" fill-rule="evenodd"
+        stroke="#111" stroke-width="2" stroke-linejoin="round"/>
+  <circle cx="32" cy="40" r="4" fill="#e5b83f" stroke="#111" stroke-width="1.75"/>
+</svg>

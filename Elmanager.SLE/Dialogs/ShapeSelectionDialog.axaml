@@ -1,0 +1,74 @@
+<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:platform="using:Elmanager.SLE.Platform"
+             xmlns:ui="using:Elmanager.SLE.UI"
+             x:Class="Elmanager.SLE.Dialogs.ShapeSelectionDialog"
+             Width="720">
+  <Grid Margin="8" RowDefinitions="Auto,Auto,Auto,*,Auto" RowSpacing="8">
+    <TextBlock Grid.Row="0" Text="Select shape" FontSize="16" FontWeight="Bold" />
+
+    <StackPanel Grid.Row="1" Orientation="Horizontal" Spacing="8">
+      <TextBlock Text="Category:" VerticalAlignment="Center" />
+      <ComboBox x:Name="CategoryComboBox"
+                Width="240"
+                SelectionChanged="OnCategorySelectionChanged" />
+    </StackPanel>
+
+    <TextBlock x:Name="LoadWarningText"
+               Grid.Row="2"
+               IsVisible="False"
+               Foreground="DarkOrange"
+               TextWrapping="Wrap" />
+
+    <Grid Grid.Row="3">
+      <ListBox x:Name="ShapeListBox"
+               Height="430"
+               SelectionMode="Single"
+               DoubleTapped="OnShapeDoubleTapped">
+        <ListBox.ItemsPanel>
+          <ItemsPanelTemplate>
+            <WrapPanel Orientation="Horizontal" />
+          </ItemsPanelTemplate>
+        </ListBox.ItemsPanel>
+        <ListBox.ItemTemplate>
+          <DataTemplate x:DataType="platform:ShapeEntry">
+            <Border Width="156"
+                    Height="156"
+                    Margin="4"
+                    Padding="5"
+                    BorderBrush="{DynamicResource ThemeBorderLowBrush}"
+                    BorderThickness="1"
+                    CornerRadius="4">
+              <Grid RowDefinitions="*,Auto">
+                <ui:ShapePreview Shape="{Binding Shape}"
+                                 RenderingSettings="{Binding RenderingSettings}" />
+                <StackPanel Grid.Row="1" Margin="2,4,2,0">
+                  <TextBlock Text="{Binding Name}"
+                             TextAlignment="Center"
+                             TextTrimming="CharacterEllipsis"
+                             ToolTip.Tip="{Binding Name}" />
+                  <TextBlock Text="{Binding Category}"
+                             FontSize="10"
+                             Opacity="0.65"
+                             TextAlignment="Center"
+                             TextTrimming="CharacterEllipsis" />
+                </StackPanel>
+              </Grid>
+            </Border>
+          </DataTemplate>
+        </ListBox.ItemTemplate>
+      </ListBox>
+
+      <TextBlock x:Name="EmptyText"
+                 IsVisible="False"
+                 HorizontalAlignment="Center"
+                 VerticalAlignment="Center"
+                 Text="No shapes found in this category." />
+    </Grid>
+
+    <StackPanel Grid.Row="4" Orientation="Horizontal" Spacing="8" HorizontalAlignment="Right">
+      <Button Content="OK" Click="OnOkClick" Width="80" />
+      <Button Content="Cancel" Click="OnCancelClick" Width="80" />
+    </StackPanel>
+  </Grid>
+</UserControl>

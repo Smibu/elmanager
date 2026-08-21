@@ -1,0 +1,55 @@
+<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             xmlns:editorTools="using:Elmanager.SLE.Editor.Tools"
+             xmlns:ui="using:Elmanager.SLE.UI"
+             mc:Ignorable="d"
+             x:Class="Elmanager.SLE.Dialogs.TextToolDialog">
+  <StackPanel Orientation="Vertical" Margin="8" Spacing="8">
+    <TextBlock Text="Text" FontSize="16" FontWeight="Bold" />
+
+    <TextBox x:Name="TextBox" AcceptsReturn="True" Height="100"
+             TextWrapping="Wrap" />
+
+    <Grid ColumnDefinitions="Auto,Auto" RowDefinitions="Auto,Auto">
+      <TextBlock Grid.Row="0" Grid.Column="0" Text="Font:" Margin="0,0,0,4" />
+      <TextBlock Grid.Row="0" Grid.Column="1" Text="Style:" Margin="8,0,0,4" />
+
+      <StackPanel Grid.Row="1" Grid.Column="0" Orientation="Vertical" Spacing="8">
+        <AutoCompleteBox x:Name="FontBox" Width="250" FilterMode="Contains" MinimumPrefixLength="0" />
+        <StackPanel Orientation="Horizontal" Spacing="16">
+          <StackPanel Orientation="Horizontal" Spacing="8" VerticalAlignment="Center">
+            <TextBlock Text="Size:" VerticalAlignment="Center" />
+            <NumericUpDown x:Name="SizeBox" Width="110" Minimum="1" Maximum="99" Increment="1" Value="9" />
+          </StackPanel>
+          <ui:Spinner x:Name="LoadingPanel" IsVisible="False" VerticalAlignment="Center" />
+        </StackPanel>
+        <CheckBox x:Name="UnderlineCheck" Content="Underline" VerticalAlignment="Center" />
+        <CheckBox x:Name="StrikeoutCheck" Content="Strikeout" VerticalAlignment="Center" />
+      </StackPanel>
+      <ListBox Grid.Row="1" Grid.Column="1" x:Name="StyleListBox" Height="160" Width="120" Margin="8,0,0,0">
+        <ListBox.ItemTemplate>
+          <DataTemplate x:DataType="editorTools:TypefaceStyle">
+            <TextBlock Text="{Binding Name}" />
+          </DataTemplate>
+        </ListBox.ItemTemplate>
+      </ListBox>
+    </Grid>
+
+    <DockPanel>
+      <TextBlock Text="Smoothness:" DockPanel.Dock="Left" VerticalAlignment="Center" Margin="0,0,8,0" Width="90" />
+      <Slider x:Name="SmoothnessSlider" Minimum="0" Maximum="80" TickFrequency="1" IsSnapToTickEnabled="True" />
+    </DockPanel>
+
+    <DockPanel>
+      <TextBlock Text="Line height:" DockPanel.Dock="Left" VerticalAlignment="Center" Margin="0,0,8,0" Width="90" />
+      <Slider x:Name="LineHeightSlider" Minimum="0" Maximum="2000" TickFrequency="1" IsSnapToTickEnabled="True" />
+    </DockPanel>
+
+    <StackPanel Orientation="Horizontal" Spacing="8" HorizontalAlignment="Right">
+      <Button Content="OK" Click="OkButton_Click" Width="80" HotKey="Ctrl+Enter" />
+      <Button Content="Cancel" Click="CancelButton_Click" Width="80" />
+    </StackPanel>
+  </StackPanel>
+</UserControl>

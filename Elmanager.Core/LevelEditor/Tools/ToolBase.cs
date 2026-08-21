@@ -68,7 +68,7 @@ public abstract class ToolBase : IEditorToolBase
         }
 
         if (Math.Sqrt(smallest) <
-            Math.Max(ZoomCtrl.ZoomLevel * LevEditor.Settings.CaptureRadius, OpenGlLgr.ObjectRadius))
+            Math.Max(CaptureRadiusScaled, OpenGlLgr.ObjectRadius))
             return index;
         return -1;
     }
@@ -80,7 +80,7 @@ public abstract class ToolBase : IEditorToolBase
         int found = -1;
         if (LevEditor.Settings.CapturePicturesAndTexturesFromBordersOnly)
         {
-            var limit = ZoomCtrl.ZoomLevel * LevEditor.Settings.CaptureRadius;
+            var limit = CaptureRadiusScaled;
             for (int j = 0; j < Lev.GraphicElements.Count; j++)
             {
                 GraphicElement z = Lev.GraphicElements[j];
@@ -160,7 +160,7 @@ public abstract class ToolBase : IEditorToolBase
             double currentDistance;
             if (((poly.IsGrass && grassFilter) || (!poly.IsGrass && groundFilter)) &&
                 (currentDistance = poly.GetNearestVertexDistance(p)) <
-                ZoomCtrl.ZoomLevel * LevEditor.Settings.CaptureRadius)
+                CaptureRadiusScaled)
             {
                 int currentIndex = poly.GetNearestVertexIndex(p);
                 if (currentDistance < smallestDistance)
@@ -205,7 +205,7 @@ public abstract class ToolBase : IEditorToolBase
             double currentDistance;
             if (((x.IsGrass && grassFilter) || (!x.IsGrass && groundFilter)) &&
                 (currentDistance = x.DistanceFromPoint(p, LevEditor.RenderingSettings.ShowInactiveGrassEdges)) <
-                ZoomCtrl.ZoomLevel * LevEditor.Settings.CaptureRadius)
+                CaptureRadiusScaled)
             {
                 if (currentDistance < smallestDistance)
                 {
@@ -224,7 +224,8 @@ public abstract class ToolBase : IEditorToolBase
         return null;
     }
 
-    public double CaptureRadiusScaled => ZoomCtrl.ZoomLevel * LevEditor.Settings.CaptureRadius;
+    public double CaptureRadiusScaled =>
+        2 * ZoomCtrl.ZoomLevel * LevEditor.Settings.CaptureRadius / Renderer.LogicalViewportHeight;
 
     protected void ResetHighlight()
     {

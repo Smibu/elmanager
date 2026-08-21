@@ -1,0 +1,36 @@
+<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             x:Class="Elmanager.SLE.Dialogs.SvgImportOptionsDialog"
+             Width="520">
+  <StackPanel Margin="12" Spacing="12">
+    <TextBlock x:Name="TitleText" FontSize="16" FontWeight="Bold" TextWrapping="Wrap" />
+
+    <CheckBox x:Name="UseOutlinedGeometryCheck" Content="Use outlined geometry" />
+
+    <Border IsVisible="{Binding #UseOutlinedGeometryCheck.IsChecked}"
+            BorderBrush="{DynamicResource SystemControlForegroundBaseMediumBrush}"
+            BorderThickness="1" CornerRadius="4" Padding="8">
+      <StackPanel Spacing="6">
+        <TextBlock Text="Fill rule" FontWeight="SemiBold" />
+        <StackPanel Orientation="Horizontal" Spacing="16">
+          <RadioButton x:Name="EvenOddRadio" Content="EvenOdd" GroupName="FillRule" />
+          <RadioButton x:Name="NonZeroRadio" Content="NonZero" GroupName="FillRule" />
+        </StackPanel>
+      </StackPanel>
+    </Border>
+
+    <CheckBox x:Name="NeverWidenClosedPathsCheck" Content="Never widen closed paths" />
+
+    <DockPanel>
+      <TextBlock Text="Smoothness:" DockPanel.Dock="Left" VerticalAlignment="Center"
+                 Width="100" Margin="0,0,8,0" />
+      <Slider x:Name="SmoothnessSlider" Minimum="0" Maximum="100"
+              TickFrequency="1" IsSnapToTickEnabled="True" />
+    </DockPanel>
+
+    <StackPanel Orientation="Horizontal" Spacing="8" HorizontalAlignment="Right">
+      <Button Content="OK" Width="80" Click="OkButton_Click" HotKey="Enter" />
+      <Button Content="Cancel" Width="80" Click="CancelButton_Click" />
+    </StackPanel>
+  </StackPanel>
+</UserControl>

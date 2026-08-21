@@ -13,6 +13,11 @@ public static class SvgExporter
 {
     public static void ExportAsSvg(Level level, RenderingSettings settings, string fileName)
     {
+        File.WriteAllText(fileName, CreateSvg(level, settings));
+    }
+
+    public static string CreateSvg(Level level, RenderingSettings settings)
+    {
         const int scale = 10;
         var m = Matrix.CreateTranslation(-level.Bounds.XMin + 1, -level.Bounds.YMax - 1) * Matrix.CreateScaling(scale, -scale);
         var objOffset = new Vector(-0.4, 0.4);
@@ -62,6 +67,6 @@ public static class SvgExporter
         }
 
         sb.AppendLine("</svg>");
-        File.WriteAllText(fileName, sb.ToString());
+        return sb.ToString();
     }
 }

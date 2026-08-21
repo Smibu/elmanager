@@ -12,7 +12,7 @@ public class Lgr : IDisposable
 {
     public readonly Dictionary<string, LgrImage> LgrImages = new();
     private readonly Dictionary<string, ListedImage> _listedImages = new();
-    internal readonly string Path;
+    public readonly string Name;
 
     public static readonly HashSet<string> TransparencyIgnoreSet =
         new(Enumerable.Range(0, 19).SelectMany(TransparencyIgnoreHelper));
@@ -48,8 +48,19 @@ public class Lgr : IDisposable
 
     internal Lgr(string lgrFile)
     {
+        Name = System.IO.Path.GetFileNameWithoutExtension(lgrFile).ToLower();
         using var stream = File.OpenRead(lgrFile);
-        Path = lgrFile;
+        Init(stream);
+    }
+
+    public Lgr(Stream stream, string name)
+    {
+        Name = name;
+        Init(stream);
+    }
+
+    private void Init(Stream stream)
+    {
         var lgr = new BinaryReader(stream, Encoding.ASCII);
         var lgrId = lgr.ReadString(5);
         if (lgrId != "LGR12")

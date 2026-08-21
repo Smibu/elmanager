@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading.Tasks;
 using Elmanager.Geometry;
 using Elmanager.Lev;
 using Elmanager.LevelEditor.Input;
@@ -13,6 +14,7 @@ public class CustomShapeTool : ToolBase, IEditorTool
 {
     private ShapeSelection? _shapeSelection;
     private string? _lastUsedShapeFolder;
+    private bool _dialogOpen;
 
     // Mouse Interaction
     private Vector _initialMousePosition = new();
@@ -45,14 +47,30 @@ public class CustomShapeTool : ToolBase, IEditorTool
         return new TransientElements(level.Polygons, level.Objects, level.GraphicElements);
     }
 
-    private void OpenDialog()
+    private async Task OpenDialog()
     {
-        var shape = _customShapeService.OpenShapeDialog(_shapeSelection?.Shape.File.Path);
-        if (shape != null)
+        if (_dialogOpen)
+            return;
+
+        _dialogOpen = true;
+        try
         {
-            shape.Obj.Level.UpdateImages(LevEditor.Renderer.OpenGlLgr?.DrawableImages ?? new Dictionary<string, DrawableImage>());
-            _shapeSelection = new ShapeSelection(shape, new SleShape(shape.Obj.Level.Clone()));
-            ApplyTransformations(CurrentPos);
+            var shape = await _customShapeService.OpenShapeDialog(_shapeSelection?.Shape.File.Path);
+            if (shape != null)
+            {
+                shape.Obj.Level.UpdateImages(LevEditor.Renderer.OpenGlLgr?.DrawableImages ?? new Dictionary<string, DrawableImage>());
+                _shapeSelection = new ShapeSelection(shape, new SleShape(shape.Obj.Level.Clone()));
+                ApplyTransformations(CurrentPos);
+            }
+        }
+        catch (Exception ex)
+        {
+            LevEditor.ShowError($"Could not open shapes: {ex.Message}", "Shape tool");
+        }
+        finally
+        {
+            _dialogOpen = false;
+            LevEditor.RedrawScene();
         }
     }
 
@@ -118,7 +136,7 @@ public class CustomShapeTool : ToolBase, IEditorTool
         else if (mouseData.Button == EditorMouseButton.Right)
         {
             _initialMousePosition = CurrentPos;
-            OpenDialog();
+            _ = OpenDialog();
         }
         return LevVisualChange.Nothing;
     }
@@ -134,7 +152,7 @@ public class CustomShapeTool : ToolBase, IEditorTool
         else
         {
             _initialMousePosition = CurrentPos;
-            OpenDialog();
+            _ = OpenDialog();
         }
     }
 
@@ -264,10 +282,25 @@ public class CustomShapeTool : ToolBase, IEditorTool
         LevEditor.SetModified(LevModification.All);
     }
 
-    public void SaveShape()
+    public async Task SaveShape()
     {
-        _lastUsedShapeFolder = _customShapeService.SaveShape(LevEditor, LevEditor.Renderer, _lastUsedShapeFolder) ??
-                               _lastUsedShapeFolder;
+        if (_dialogOpen)
+            return;
+
+        _dialogOpen = true;
+        try
+        {
+            _lastUsedShapeFolder = await _customShapeService.SaveShape(
+                LevEditor, LevEditor.Renderer, _lastUsedShapeFolder) ?? _lastUsedShapeFolder;
+        }
+        catch (Exception ex)
+        {
+            LevEditor.ShowError($"Could not save shape: {ex.Message}", "Save as shape");
+        }
+        finally
+        {
+            _dialogOpen = false;
+        }
     }
 
     public string GetHelp() =>
@@ -280,5 +313,5 @@ public class CustomShapeTool : ToolBase, IEditorTool
         "8: reset rotation; " +
         "9: rotate right";
 
-    public override bool Busy => false;
+    public override bool Busy => _dialogOpen;
 }

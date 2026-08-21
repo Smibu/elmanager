@@ -1,0 +1,12 @@
+{
+  "profiles": {
+    "Elmanager.SLE.Browser": {
+      "commandName": "Project",
+      "launchBrowser": true,
+      "environmentVariables": {
+        "ASPNETCORE_ENVIRONMENT": "Development"
+      },
+      "applicationUrl": "http://localhost:63472"
+    }
+  }
+}

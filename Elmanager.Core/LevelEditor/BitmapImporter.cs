@@ -1,4 +1,5 @@
 using System;
+using System.IO;
 using Elmanager.Geometry;
 using Elmanager.Lev;
 using Elmanager.Vectrast;
@@ -10,6 +11,12 @@ public static class BitmapImporter
 {
     public static Level FromPath(string imageFileName)
     {
+        using var stream = File.OpenRead(imageFileName);
+        return FromStream(stream, imageFileName);
+    }
+
+    public static Level FromStream(Stream imageStream, string imageFileName)
+    {
         var lev = new Level();
         var vr = new VectRast();
         byte[,] pixelOn;
@@ -17,7 +24,7 @@ public static class BitmapImporter
         var transformMatrix = Matrix2D.ScaleM(1, -1);
         try
         {
-            vr.LoadAsBmp(imageFileName, out bmp, out pixelOn, 1);
+            vr.LoadAsBmp(imageStream, out bmp, out pixelOn, 1);
         }
         catch (ArgumentException)
         {
@@ -26,24 +33,30 @@ public static class BitmapImporter
 
         try
         {
-            vr.CollapseVectors(vr.CreateVectors(pixelOn, bmp));
-        }
-        catch (Exception e)
-        {
-            throw new ImportException(e.Message);
-        }
+            try
+            {
+                vr.CollapseVectors(vr.CreateVectors(pixelOn, bmp));
+            }
+            catch (Exception e)
+            {
+                throw new ImportException(e.Message);
+            }
 
-        transformMatrix = Matrix2D.TranslationM(-bmp.Width / 2.0, -bmp.Height / 2.0) * transformMatrix;
-        transformMatrix = transformMatrix * Matrix2D.ScaleM(0.1, 0.1);
-        bmp.Dispose();
+            transformMatrix = Matrix2D.TranslationM(-bmp.Width / 2.0, -bmp.Height / 2.0) * transformMatrix;
+            transformMatrix = transformMatrix * Matrix2D.ScaleM(0.1, 0.1);
 
-        try
-        {
-            vr.TransformVectors(transformMatrix);
+            try
+            {
+                vr.TransformVectors(transformMatrix);
+            }
+            catch (Exception e)
+            {
+                throw new ImportException(e.Message);
+            }
         }
-        catch (Exception e)
+        finally
         {
-            throw new ImportException(e.Message);
+            bmp.Dispose();
         }
 
         if (vr.Polygons.Count == 0)
