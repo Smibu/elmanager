@@ -201,7 +201,12 @@ public partial class MainView
             }
         }
 
+        var canReadSavedFile = storageFile != null &&
+                               bookmark != null &&
+                               await bookmark.HasFileReadPermissionAsync();
+
         if (Settings.SaveState == LevSaveState.Saved &&
+            canReadSavedFile &&
             storageFile != null &&
             await OpenLevelFromStorageFile(storageFile))
         {
@@ -210,13 +215,7 @@ public partial class MainView
 
         try
         {
-            var restoredSaveState = Settings.SaveState switch
-            {
-                LevSaveState.Unsaved => LevSaveState.Unsaved,
-                LevSaveState.Saved when storageFile != null => LevSaveState.Unsaved,
-                _ => LevSaveState.New
-            };
-            await OpenLevelFromPath(AutosavePath, storageFile, restoredSaveState);
+            await OpenLevelFromPath(AutosavePath, storageFile, Settings.SaveState);
             return;
         }
         catch (FileNotFoundException)
@@ -227,7 +226,7 @@ public partial class MainView
             LogException(ex, "Could not load the autosaved level.");
         }
 
-        if (storageFile != null)
+        if (canReadSavedFile && storageFile != null)
         {
             try
             {

@@ -23,6 +23,9 @@ internal static partial class BrowserInterop
     [JSImport("getBookmarkedFolderFileNames", "storage-interop.js")]
     private static partial Task<JSObject?> GetBookmarkedFolderFileNamesAsObject(string bookmark);
 
+    [JSImport("hasBookmarkedFileReadPermission", "storage-interop.js")]
+    internal static partial Task<bool> HasBookmarkedFileReadPermission(string bookmark);
+
     [JSImport("renameBookmarkedFile", "storage-interop.js")]
     private static partial Task RenameBookmarkedFileCore(string bookmark, string newName);
 

@@ -1,5 +1,10 @@
 import { dotnet } from './_framework/dotnet.js';
-import { getBookmarkedFolderFileNames, renameBookmarkedFile, toStringArray } from './storage-interop.js';
+import {
+    getBookmarkedFolderFileNames,
+    hasBookmarkedFileReadPermission,
+    renameBookmarkedFile,
+    toStringArray
+} from './storage-interop.js';
 
 const is_browser = typeof window != "undefined";
 if (!is_browser) throw new Error(`Expected to be running in a browser`);
@@ -66,6 +71,7 @@ setModuleImports('browser.js', {
 
 setModuleImports('storage-interop.js', {
     getBookmarkedFolderFileNames,
+    hasBookmarkedFileReadPermission,
     renameBookmarkedFile,
     toStringArray
 });

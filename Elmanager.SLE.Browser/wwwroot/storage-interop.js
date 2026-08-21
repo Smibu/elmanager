@@ -76,6 +76,21 @@ export async function getBookmarkedFolderFileNames(bookmark) {
     }
 }
 
+export async function hasBookmarkedFileReadPermission(bookmark) {
+    const database = await openAvaloniaDatabase();
+    try {
+        const bookmarkKey = decodeAvaloniaBrowserBookmark(bookmark);
+        const file = await readBookmark(database, bookmarkKey);
+        if (!file || file.kind !== "file") {
+            throw new Error("The bookmarked file could not be found.");
+        }
+
+        return await file.queryPermission({ mode: "read" }) === "granted";
+    } finally {
+        database.close();
+    }
+}
+
 export async function renameBookmarkedFile(bookmark, newName) {
     const database = await openAvaloniaDatabase();
     try {
