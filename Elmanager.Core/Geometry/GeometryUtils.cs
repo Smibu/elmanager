@@ -168,23 +168,18 @@ public static class GeometryUtils
     public static Vector OrthogonalProjection(Vector a, Vector b, Vector p) =>
         new LineSegment(a, b).Project(p).ToVector();
 
-    public static List<Vector> GetIntersectionPoints(List<Polygon> polygons)
+    public static Vector? GetIntersectionPoint(List<Polygon> polygons)
     {
         var f = GeometryFactory.Floating;
         var iPolygons = polygons.Where(poly => !poly.IsGrass).Select(p => p.ToIPolygon()).ToArray();
         var multipoly = f.CreateMultiPolygon(iPolygons);
-        var isects = (from iPolygon in iPolygons
-                      select new IsValidOp(iPolygon).ValidationError?.Coordinate
-            into validOp
-                      where validOp != null
-                      select new Vector(validOp.X, validOp.Y)).ToList();
         var validOpMulti = new IsValidOp(multipoly).ValidationError;
         if (validOpMulti is { ErrorType: TopologyValidationErrors.SelfIntersection })
         {
-            isects.Add(new Vector(validOpMulti.Coordinate.X, validOpMulti.Coordinate.Y));
+            return new Vector(validOpMulti.Coordinate.X, validOpMulti.Coordinate.Y);
         }
 
-        return isects;
+        return null;
     }
 
     public static IEnumerable<Polygon> GetSelectedPolygons(this IEnumerable<Polygon> polys,

@@ -355,7 +355,7 @@ public class Level
     private bool HasTopologyErrors => HasTooLargePolygons || HasTooManyObjects || HasTooFewObjects ||
                                       HasTooManyPolygons || HasTooManyVertices || HasTooManyPictures ||
                                       WheelLiesOnEdge || HasTexturesOutOfBounds || HeadTouchesGround || TooTall ||
-                                      TooWide || GetIntersectionPoints().Count > 0 || GetTooShortEdges().Count > 0;
+                                      TooWide || GetIntersectionPoint() is not null || GetTooShortEdges().Count > 0;
 
     public bool HasTooManyPictures => PictureTextureCount > MaximumPictureTextureCount;
 
@@ -488,7 +488,7 @@ public class Level
         }).ToList();
     }
 
-    public List<Vector> GetIntersectionPoints() => GeometryUtils.GetIntersectionPoints(Polygons);
+    public Vector? GetIntersectionPoint() => GeometryUtils.GetIntersectionPoint(Polygons);
 
     public void Import(Level other)
     {

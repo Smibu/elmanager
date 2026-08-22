@@ -401,9 +401,12 @@ public class LevelEditorController<TEditorLev>(ILevelEditor levelEditor, TEditor
         if (Lev.HasTexturesOutOfBounds)
             items.Add("Some textures are too far outside of the level polygons.");
 
-        _errorPoints = Lev.GetIntersectionPoints();
-        if (_errorPoints.Count > 0)
+        var intersectionPoint = Lev.GetIntersectionPoint();
+        if (intersectionPoint is { } point)
+        {
+            _errorPoints.Add(point);
             items.Add("There are intersections in the level.");
+        }
 
         var errorPositions = Lev.GetApplesAndFlowersInsideGround();
         if (errorPositions.Count > 0)

@@ -291,16 +291,14 @@ internal class TextTool : ToolBase, IEditorTool
     {
         polys.ForEach(p => p.RemoveDuplicateVertices());
         polys.RemoveAll(p => p.Vertices.Count < 3);
-        var intersections = GeometryUtils.GetIntersectionPoints(polys);
-        if (intersections.Count > 0)
+        var intersectionPoint = GeometryUtils.GetIntersectionPoint(polys);
+        if (intersectionPoint is { } point)
         {
             var f = GeometryFactory.Floating;
             var iarray = polys.Select(p => p.ToIPolygon()).ToArray();
 
             NetTopologySuite.Geometries.Geometry union = f.CreateMultiPolygon(iarray);
-            union = intersections.Aggregate(union,
-                (current, vector) =>
-                    current.Union(f.CreatePoint(new Coordinate(vector.X, vector.Y)).Buffer(0.0001, 1)));
+            union = union.Union(f.CreatePoint(new Coordinate(point.X, point.Y)).Buffer(0.0001, 1));
             polys.Clear();
             switch (union)
             {
