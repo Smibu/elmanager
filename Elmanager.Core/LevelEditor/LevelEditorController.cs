@@ -405,11 +405,10 @@ public class LevelEditorController<TEditorLev>(ILevelEditor levelEditor, TEditor
         if (_errorPoints.Count > 0)
             items.Add("There are intersections in the level.");
 
-        var errObjs = Lev.GetApplesAndFlowersInsideGround();
-        if (errObjs.Count > 0)
+        var errorPositions = Lev.GetApplesAndFlowersInsideGround();
+        if (errorPositions.Count > 0)
         {
-            foreach (var errObj in errObjs)
-                _errorPoints.Add(errObj.Position);
+            _errorPoints.AddRange(errorPositions);
             items.Add("Some apples and/or flowers are inside ground.");
         }
 

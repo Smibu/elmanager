@@ -11,7 +11,9 @@ using Elmanager.Lgr;
 using Elmanager.Rendering;
 using Elmanager.Utilities;
 using NetTopologySuite.Algorithm;
+using NetTopologySuite.Algorithm.Locate;
 using NetTopologySuite.Geometries;
+using NetTopologySuite.Operation.Distance;
 using NetTopologySuite.Operation.Polygonize;
 
 namespace Elmanager.Lev;
@@ -462,11 +464,28 @@ public class Level
         }
     }
 
-    public List<LevObject> GetApplesAndFlowersInsideGround()
+    public List<Vector> GetApplesAndFlowersInsideGround()
     {
-        return
-            Objects.FindAll(
-                x => (x.Type == ObjectType.Apple || x.Type == ObjectType.Flower) && IsObjectInsideGround(x));
+        var positions = Objects
+            .Where(x => x.Type is ObjectType.Apple or ObjectType.Flower)
+            .Select(x => x.Position);
+
+        var factory = GeometryFactory.Floating;
+        var groundPolygons = Polygons
+            .Where(polygon => !polygon.IsGrass)
+            .Select(polygon => polygon.ToIPolygon())
+            .ToArray();
+
+        var ground = factory.CreateMultiPolygon(groundPolygons);
+        var skyLocator = new IndexedPointInAreaLocator(ground);
+        var edgeDistance = new IndexedFacetDistance(ground);
+
+        return positions.Where(position =>
+        {
+            var coordinate = position.ToCoordinate();
+            return skyLocator.Locate(coordinate) == Location.Exterior &&
+                   edgeDistance.Distance(factory.CreatePoint(coordinate)) >= OpenGlLgr.ObjectRadius;
+        }).ToList();
     }
 
     public List<Vector> GetIntersectionPoints() => GeometryUtils.GetIntersectionPoints(Polygons);
@@ -491,18 +510,6 @@ public class Level
         GraphicElements.AddRange(other.GraphicElements);
 
         UpdateBounds();
-    }
-
-    private bool IsObjectInsideGround(LevObject o)
-    {
-        return !Polygons.Any(polygon => polygon.DistanceFromPoint(o.Position) < OpenGlLgr.ObjectRadius) &&
-               IsPointInGround(o.Position);
-    }
-
-    private bool IsPointInGround(Vector p)
-    {
-        var clipping = Polygons.Count(x => !x.IsGrass && x.AreaHasPoint(p));
-        return clipping % 2 == 0;
     }
 
     public bool IsSky(Polygon poly)
