@@ -12,11 +12,18 @@ using Elmanager.Rendering;
 using Elmanager.Utilities;
 using NetTopologySuite.Algorithm;
 using NetTopologySuite.Geometries;
+using NetTopologySuite.Operation.Polygonize;
 
 namespace Elmanager.Lev;
 
 public class Level
 {
+    private enum RingOrientation
+    {
+        Clockwise,
+        CounterClockwise
+    }
+
     internal const double GlobalBodyDifferenceFromLeftWheelX = 0.85;
     internal const double GlobalBodyDifferenceFromLeftWheelY = 0.6;
     public const double HeadDifferenceFromLeftWheelX = 0.7595;
@@ -620,7 +627,8 @@ public class Level
         var sum = (PictureSum + ObjectSum + PolygonSum) * 3247.764325643;
         _integrity[0] = sum;
         _integrity[1] = rnd.Next(5871) + 11877 - sum;
-        if (HasTopologyErrors)
+        var hasTopologyErrors = HasTopologyErrors;
+        if (hasTopologyErrors)
             _integrity[2] = rnd.Next(4982) + 20961 - sum;
         else
             _integrity[2] = rnd.Next(5871) + 11877 - sum;
@@ -632,20 +640,7 @@ public class Level
         levelFile.AddRange(GetByteArrayFromString(GroundTextureName, 10));
         levelFile.AddRange(GetByteArrayFromString(SkyTextureName, 10));
         levelFile.AddRange(BitConverter.GetBytes(Polygons.Count + MagicDouble));
-        foreach (var x in Polygons)
-        {
-            if (!x.IsGrass && !(x.IsCounterClockwise ^ IsSky(x)))
-                x.ChangeOrientation();
-            levelFile.AddRange(BitConverter.GetBytes(x.IsGrass));
-            for (var i = 1; i <= 3; i++)
-                levelFile.Add(0);
-            levelFile.AddRange(BitConverter.GetBytes(x.Vertices.Count));
-            foreach (var z in x.Vertices)
-            {
-                levelFile.AddRange(BitConverter.GetBytes(z.X));
-                levelFile.AddRange(BitConverter.GetBytes(-z.Y));
-            }
-        }
+        WritePolygons(levelFile, hasTopologyErrors);
 
         levelFile.AddRange(BitConverter.GetBytes(Objects.Count + MagicDouble));
         foreach (var x in Objects)
@@ -694,6 +689,79 @@ public class Level
         CryptTop10(levelFile, levelFile.Count - 688);
         levelFile.AddRange(BitConverter.GetBytes(EndOfFileMagicNumber));
         return levelFile.ToArray();
+    }
+
+    private void WritePolygons(List<byte> levelFile, bool hasTopologyErrors)
+    {
+        if (hasTopologyErrors)
+        {
+            foreach (var polygon in Polygons)
+                WritePolygon(levelFile, polygon);
+            return;
+        }
+
+        var polygonizer = new Polygonizer(extractOnlyPolygonal: true)
+        {
+            IsCheckingRingsValid = false
+        };
+        foreach (var polygon in Polygons.Where(polygon => !polygon.IsGrass))
+            polygonizer.Add(polygon.ToIPolygon().Shell);
+
+        var groundPolygons = polygonizer.GetPolygons()
+            .Cast<NetTopologySuite.Geometries.Polygon>()
+            .ToList();
+        var groundRingCount = groundPolygons.Sum(polygon => polygon.NumInteriorRings + 1);
+        if (groundRingCount != GroundPolygonCount)
+            throw new InvalidOperationException("Polygonization changed the number of ground polygons.");
+
+        foreach (var polygon in groundPolygons)
+        {
+            WritePolygon(levelFile, polygon.Shell, RingOrientation.Clockwise);
+            foreach (var hole in polygon.Holes)
+                WritePolygon(levelFile, hole, RingOrientation.CounterClockwise);
+        }
+
+        foreach (var polygon in Polygons.Where(polygon => polygon.IsGrass))
+            WritePolygon(levelFile, polygon);
+    }
+
+    private static void WritePolygon(List<byte> levelFile, Polygon polygon)
+    {
+        WritePolygonHeader(levelFile, polygon.IsGrass, polygon.Vertices.Count);
+        foreach (var vertex in polygon.Vertices)
+        {
+            levelFile.AddRange(BitConverter.GetBytes(vertex.X));
+            levelFile.AddRange(BitConverter.GetBytes(-vertex.Y));
+        }
+    }
+
+    private static void WritePolygon(List<byte> levelFile, LinearRing ring, RingOrientation orientation)
+    {
+        var sequence = ring.CoordinateSequence;
+        WritePolygonHeader(levelFile, false, sequence.Count - 1);
+        var isCounterClockwise = Orientation.IsCCW(sequence);
+        var writeForward = orientation switch
+        {
+            RingOrientation.Clockwise => !isCounterClockwise,
+            RingOrientation.CounterClockwise => isCounterClockwise,
+            _ => throw new ArgumentOutOfRangeException(nameof(orientation), orientation, null)
+        };
+        var start = writeForward ? 0 : sequence.Count - 2;
+        var end = writeForward ? sequence.Count - 1 : -1;
+        var step = writeForward ? 1 : -1;
+        for (var i = start; i != end; i += step)
+        {
+            levelFile.AddRange(BitConverter.GetBytes(sequence.GetX(i)));
+            levelFile.AddRange(BitConverter.GetBytes(-sequence.GetY(i)));
+        }
+    }
+
+    private static void WritePolygonHeader(List<byte> levelFile, bool isGrass, int vertexCount)
+    {
+        levelFile.AddRange(BitConverter.GetBytes(isGrass));
+        for (var i = 1; i <= 3; i++)
+            levelFile.Add(0);
+        levelFile.AddRange(BitConverter.GetBytes(vertexCount));
     }
 
     public void SaveToStream(Stream stream, bool saveAsFresh = true)
