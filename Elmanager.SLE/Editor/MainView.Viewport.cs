@@ -104,6 +104,7 @@ public partial class MainView
         }
 
         _hasFocus = false;
+        _cursorManager.ChangeToDefaultCursorIfHand();
         var mod = _currentTool.MouseOutOfEditor();
         SetPendingModification(mod);
         UpdateToolHelp();
