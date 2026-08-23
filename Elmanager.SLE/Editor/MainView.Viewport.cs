@@ -17,6 +17,13 @@ public partial class MainView
     private readonly AvaloniaGraphicsContext _glContext = new();
 
     private CompositionCustomVisual? _glVisual;
+    private bool _pendingViewportReveal;
+
+    private void RevealViewportAfterNextRender()
+    {
+        _pendingViewportReveal = true;
+        RedrawScene();
+    }
 
     private void OnViewportPointerPressed(object? sender, PointerPressedEventArgs e)
     {
@@ -250,9 +257,16 @@ public partial class MainView
 
                 DrawEditorScene(size.Width, size.Height);
 
-                if (firstRender)
+                if (_pendingViewportReveal)
                 {
-                    Dispatcher.UIThread.Post(() => Console.WriteLine("First render done"), DispatcherPriority.Background);
+                    _pendingViewportReveal = false;
+                    Dispatcher.UIThread.Post(
+                        () =>
+                        {
+                            ViewportLoadingIndicator.IsVisible = false;
+                            Console.WriteLine("First render done");
+                        },
+                        DispatcherPriority.Background);
                 }
 
                 if (settingsChange?.LgrUpdated == true)

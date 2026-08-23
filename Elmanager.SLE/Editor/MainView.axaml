@@ -473,6 +473,14 @@
               </Border.ContextMenu>
             </Border>
 
+            <Border x:Name="ViewportLoadingIndicator"
+                    Background="{DynamicResource SystemControlBackgroundAltHighBrush}">
+              <ui:Spinner Width="36"
+                          Height="36"
+                          HorizontalAlignment="Center"
+                          VerticalAlignment="Center" />
+            </Border>
+
             <Grid x:Name="DropOverlay"
                   IsVisible="False"
                   IsHitTestVisible="False"

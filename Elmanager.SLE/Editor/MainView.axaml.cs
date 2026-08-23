@@ -172,6 +172,7 @@ public partial class MainView : UserControl, ILevelEditor
         Focus();
         RegisterHotkeys();
         await TryRestoreLastLevel();
+        RevealViewportAfterNextRender();
         await ShowBrowserWarningIfNeeded();
     }
 
