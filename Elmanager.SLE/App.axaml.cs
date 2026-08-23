@@ -9,7 +9,7 @@ namespace Elmanager.SLE;
 
 public class App : Application
 {
-    private static readonly DateTime Version = new(2026, 8, 21);
+    private static readonly DateTime Version = new(2026, 8, 23);
 
     internal static string TitleWithVersion(string title) => $"{title} [{Version:dd.MM.yyyy}]";
 
