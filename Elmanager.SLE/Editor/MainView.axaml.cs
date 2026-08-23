@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Net.Http;
+using System.Threading;
 using System.Threading.Tasks;
 using Avalonia;
 using Avalonia.Controls;
@@ -37,6 +38,7 @@ public partial class MainView : UserControl, ILevelEditor
     private readonly AvaloniaCursorManager _cursorManager;
     private readonly FullscreenController _fullscreenController;
     private readonly AvaloniaGameLoopRunner _gameLoopRunner;
+    private readonly Lock _levelModificationLock = new();
     private readonly BookmarkLgrCache _lgrCache;
     private readonly PlayController _playController;
     private readonly SceneSettings _sceneSettings = new();

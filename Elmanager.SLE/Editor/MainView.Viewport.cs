@@ -29,7 +29,10 @@ public partial class MainView
         var point = e.GetCurrentPoint(GlViewport);
         var p = ScreenToWorld(point.Position);
         _lastMouseCoords = p;
-        _currentTool.MouseMove(p);
+        lock (_levelModificationLock)
+        {
+            _currentTool.MouseMove(p);
+        }
 
         var props = point.Properties;
         if (props.IsMiddleButtonPressed)
@@ -81,8 +84,11 @@ public partial class MainView
                 _sceneSettings, _gridStartOffset, Settings.LockGrid, _zoomCtrl);
         }
 
-        var mod = _currentTool.MouseMove(p);
-        SetPendingModification(mod);
+        lock (_levelModificationLock)
+        {
+            var mod = _currentTool.MouseMove(p);
+            SetPendingModification(mod);
+        }
         UpdateToolHelp();
         RedrawScene();
     }
@@ -212,55 +218,58 @@ public partial class MainView
     {
         try
         {
-            RendererSettingsChangeResult? settingsChange = null;
-            var firstRender = _renderer == null;
-            _renderer ??= new ElmaRenderer(_glContext, Settings.RenderingSettings, _lgrCache);
-            _renderer.SetRenderScaling(renderScaling);
-            if (firstRender || _pendingSettingsUpdate)
+            lock (_levelModificationLock)
             {
-                settingsChange = _renderer.UpdateSettings(_controller.Lev, Settings.RenderingSettings);
-                _pendingSettingsUpdate = false;
+                RendererSettingsChangeResult? settingsChange = null;
+                var firstRender = _renderer == null;
+                _renderer ??= new ElmaRenderer(_glContext, Settings.RenderingSettings, _lgrCache);
+                _renderer.SetRenderScaling(renderScaling);
+                if (firstRender || _pendingSettingsUpdate)
+                {
+                    settingsChange = _renderer.UpdateSettings(_controller.Lev, Settings.RenderingSettings);
+                    _pendingSettingsUpdate = false;
+                }
+
+                if (firstRender || _pendingZoomFill)
+                {
+                    _pendingZoomFill = false;
+                    ZoomFill(size.Width / (double)size.Height);
+                }
+
+                var requestNextFrame = _gameLoopRunner.RunFrame();
+                var applesUpdated = false;
+
+                if (_pendingModification is { } mod)
+                {
+                    UpdateRendererBuffers(mod);
+                    applesUpdated = mod.HasFlag(LevVisualChange.Apples);
+                    _pendingModification = null;
+                }
+
+                ApplyFadedObjects(applesUpdated);
+
+                DrawEditorScene(size.Width, size.Height);
+
+                if (firstRender)
+                {
+                    Dispatcher.UIThread.Post(() => Console.WriteLine("First render done"), DispatcherPriority.Background);
+                }
+
+                if (settingsChange?.LgrUpdated == true)
+                {
+                    Dispatcher.UIThread.Post(() => Console.WriteLine("LGR load ready"), DispatcherPriority.Background);
+                }
+
+                if (settingsChange?.LgrLoadException is { } lgrLoadException)
+                {
+                    Dispatcher.UIThread.Post(() => LogException(
+                            lgrLoadException,
+                            "Could not load the selected LGR."),
+                        DispatcherPriority.Background);
+                }
+
+                return requestNextFrame;
             }
-
-            if (firstRender || _pendingZoomFill)
-            {
-                _pendingZoomFill = false;
-                ZoomFill(size.Width / (double)size.Height);
-            }
-
-            var requestNextFrame = _gameLoopRunner.RunFrame();
-            var applesUpdated = false;
-
-            if (_pendingModification is { } mod)
-            {
-                UpdateRendererBuffers(mod);
-                applesUpdated = mod.HasFlag(LevVisualChange.Apples);
-                _pendingModification = null;
-            }
-
-            ApplyFadedObjects(applesUpdated);
-
-            DrawEditorScene(size.Width, size.Height);
-
-            if (firstRender)
-            {
-                Dispatcher.UIThread.Post(() => Console.WriteLine("First render done"), DispatcherPriority.Background);
-            }
-
-            if (settingsChange?.LgrUpdated == true)
-            {
-                Dispatcher.UIThread.Post(() => Console.WriteLine("LGR load ready"), DispatcherPriority.Background);
-            }
-
-            if (settingsChange?.LgrLoadException is { } lgrLoadException)
-            {
-                Dispatcher.UIThread.Post(() => LogException(
-                        lgrLoadException,
-                        "Could not load the selected LGR."),
-                    DispatcherPriority.Background);
-            }
-
-            return requestNextFrame;
         }
         catch (Exception e)
         {
