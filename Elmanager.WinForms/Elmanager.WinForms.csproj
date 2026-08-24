@@ -18,13 +18,6 @@
         <SatelliteResourceLanguages>en</SatelliteResourceLanguages>
         <Nullable>enable</Nullable>
         <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
-        <Configurations>Debug;Release;WineRelease</Configurations>
-    </PropertyGroup>
-    <PropertyGroup Condition="'$(Configuration)'=='WineRelease'">
-        <Optimize>True</Optimize>
-    </PropertyGroup>
-    <PropertyGroup Condition="'$(Configuration)'=='WineRelease'">
-        <DefineConstants>$(DefineConstants);WINE</DefineConstants>
     </PropertyGroup>
     <ItemGroup>
         <ProjectReference Include="..\Elmanager.Core\Elmanager.Core.csproj" />
