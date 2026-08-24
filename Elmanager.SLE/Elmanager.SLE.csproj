@@ -21,7 +21,7 @@
   <ItemGroup>
     <AvaloniaResource Include="Resources\Icons.axaml" />
     <AvaloniaResource Include="Resources\googlefonts.txt" />
-    <AvaloniaResource Include="..\Elmanager.WinForms\Resources\lgrs.json" Link="Resources\lgrs.json" />
+    <AvaloniaResource Include="Resources\lgrs.json" />
   </ItemGroup>
 
   <ItemGroup>

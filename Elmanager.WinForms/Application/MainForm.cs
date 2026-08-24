@@ -27,13 +27,6 @@ internal partial class MainForm : FormMod
         OsUtils.ShellExecute(homePageLabel.Text);
     }
 
-    private void OpenLevelEditor(object sender, EventArgs e)
-    {
-        Cursor = Cursors.WaitCursor;
-        ComponentManager.LaunchLevelEditor();
-        Close();
-    }
-
     private void OpenReplayManager(object sender, EventArgs e)
     {
         Cursor = Cursors.WaitCursor;
@@ -43,11 +36,6 @@ internal partial class MainForm : FormMod
 
     private void StartUp(object sender, EventArgs e)
     {
-    }
-
-    private void LinkLabel1LinkClicked(object sender, LinkLabelLinkClickedEventArgs e)
-    {
-        OsUtils.ShellExecute("https://web.archive.org/web/20160121234513/https://www.oscarstours.ca/avis-de-deces/m-marck-antoine-simoneau");
     }
 
     private void linkLabel2_LinkClicked(object sender, LinkLabelLinkClickedEventArgs e)

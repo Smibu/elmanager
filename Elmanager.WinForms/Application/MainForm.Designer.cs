@@ -28,16 +28,12 @@ namespace Elmanager.Application
 		//Do not modify it using the code editor.
 		private void InitializeComponent()
 			{
-            this.components = new System.ComponentModel.Container();
             this.rmButton = new System.Windows.Forms.Button();
-            this.levelEditorButton = new System.Windows.Forms.Button();
             this.titleLabel = new System.Windows.Forms.Label();
             this.byLabel = new System.Windows.Forms.Label();
             this.versionLabel = new System.Windows.Forms.Label();
             this.homePageLabel = new System.Windows.Forms.LinkLabel();
             this.configButton = new System.Windows.Forms.Button();
-            this.linkLabel1 = new System.Windows.Forms.LinkLabel();
-            this.toolTip1 = new System.Windows.Forms.ToolTip(this.components);
             this.linkLabel2 = new System.Windows.Forms.LinkLabel();
             this.levelManagerButton = new System.Windows.Forms.Button();
             this.SuspendLayout();
@@ -55,21 +51,6 @@ namespace Elmanager.Application
             this.rmButton.Text = "Replay manager";
             this.rmButton.UseVisualStyleBackColor = true;
             this.rmButton.Click += new System.EventHandler(this.OpenReplayManager);
-            // 
-            // levelEditorButton
-            // 
-            this.levelEditorButton.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
-            | System.Windows.Forms.AnchorStyles.Right)));
-            this.levelEditorButton.AutoSize = true;
-            this.levelEditorButton.Location = new System.Drawing.Point(174, 408);
-            this.levelEditorButton.Margin = new System.Windows.Forms.Padding(6);
-            this.levelEditorButton.Name = "levelEditorButton";
-            this.levelEditorButton.Size = new System.Drawing.Size(276, 50);
-            this.levelEditorButton.TabIndex = 3;
-            this.levelEditorButton.Text = "SLE";
-            this.levelEditorButton.UseVisualStyleBackColor = true;
-            this.levelEditorButton.Click += new System.EventHandler(this.OpenLevelEditor);
-            // 
             // titleLabel
             // 
             this.titleLabel.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
@@ -128,7 +109,7 @@ namespace Elmanager.Application
             this.configButton.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
             this.configButton.AutoSize = true;
-            this.configButton.Location = new System.Drawing.Point(174, 466);
+            this.configButton.Location = new System.Drawing.Point(174, 408);
             this.configButton.Margin = new System.Windows.Forms.Padding(6);
             this.configButton.Name = "configButton";
             this.configButton.Size = new System.Drawing.Size(276, 50);
@@ -136,31 +117,6 @@ namespace Elmanager.Application
             this.configButton.Text = "Configuration";
             this.configButton.UseVisualStyleBackColor = true;
             this.configButton.Click += new System.EventHandler(this.ConfigButtonClick);
-            // 
-            // linkLabel1
-            // 
-            this.linkLabel1.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
-            this.linkLabel1.AutoSize = true;
-            this.linkLabel1.LinkArea = new System.Windows.Forms.LinkArea(41, 6);
-            this.linkLabel1.Location = new System.Drawing.Point(64, 548);
-            this.linkLabel1.Margin = new System.Windows.Forms.Padding(6, 0, 6, 0);
-            this.linkLabel1.Name = "linkLabel1";
-            this.linkLabel1.Size = new System.Drawing.Size(518, 38);
-            this.linkLabel1.TabIndex = 5;
-            this.linkLabel1.TabStop = true;
-            this.linkLabel1.Text = "Testing && SLE toolbar graphics: Mawane (R.I.P.)";
-            this.toolTip1.SetToolTip(this.linkLabel1, "https://web.archive.org/web/20160121234513/https://www.oscarstours.ca/avis-de-dec" +
-        "es/m-marck-antoine-simoneau");
-            this.linkLabel1.UseCompatibleTextRendering = true;
-            this.linkLabel1.LinkClicked += new System.Windows.Forms.LinkLabelLinkClickedEventHandler(this.LinkLabel1LinkClicked);
-            // 
-            // toolTip1
-            // 
-            this.toolTip1.AutoPopDelay = 50000;
-            this.toolTip1.InitialDelay = 1;
-            this.toolTip1.ReshowDelay = 100;
-            this.toolTip1.UseFading = false;
-            // 
             // linkLabel2
             // 
             this.linkLabel2.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
@@ -195,13 +151,11 @@ namespace Elmanager.Application
             this.ClientSize = new System.Drawing.Size(624, 642);
             this.Controls.Add(this.levelManagerButton);
             this.Controls.Add(this.linkLabel2);
-            this.Controls.Add(this.linkLabel1);
             this.Controls.Add(this.configButton);
             this.Controls.Add(this.homePageLabel);
             this.Controls.Add(this.versionLabel);
             this.Controls.Add(this.byLabel);
             this.Controls.Add(this.titleLabel);
-            this.Controls.Add(this.levelEditorButton);
             this.Controls.Add(this.rmButton);
             this.Font = new System.Drawing.Font("Segoe UI", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point);
             this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedSingle;
@@ -216,14 +170,11 @@ namespace Elmanager.Application
 
         }
 		internal System.Windows.Forms.Button rmButton;
-		internal System.Windows.Forms.Button levelEditorButton;
 		internal System.Windows.Forms.Label titleLabel;
 		internal System.Windows.Forms.Label byLabel;
 		internal System.Windows.Forms.Label versionLabel;
 		internal System.Windows.Forms.LinkLabel homePageLabel;
         internal System.Windows.Forms.Button configButton;
-        private System.Windows.Forms.LinkLabel linkLabel1;
-        private System.Windows.Forms.ToolTip toolTip1;
         private System.Windows.Forms.LinkLabel linkLabel2;
         internal System.Windows.Forms.Button levelManagerButton;
     }

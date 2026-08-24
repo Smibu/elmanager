@@ -7,7 +7,6 @@ using System.Text.Json;
 using System.Text.Json.Serialization;
 using System.Threading.Tasks;
 using Elmanager.Application;
-using Elmanager.LevelEditor;
 using Elmanager.LevelManager;
 using Elmanager.ReplayManager;
 using Elmanager.ReplayViewer;
@@ -26,8 +25,6 @@ internal class ElmanagerSettings
 
     [JsonPropertyName("General"), JsonInclude]
     public GeneralSettings General = new();
-    [JsonPropertyName("LevelEditor"), JsonInclude]
-    public LevelEditorSettings LevelEditor = new();
     [JsonPropertyName("ReplayManager"), JsonInclude]
     public ReplayManagerSettings ReplayManager = new();
     [JsonPropertyName("LevelManager"), JsonInclude]

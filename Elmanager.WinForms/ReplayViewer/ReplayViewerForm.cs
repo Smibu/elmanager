@@ -7,7 +7,6 @@ using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
 using System.Windows.Forms;
-using System.Windows.Input;
 using BrightIdeasSoftware;
 using Elmanager.Application;
 using Elmanager.Geometry;
@@ -276,7 +275,8 @@ internal partial class ReplayViewerForm : FormMod
 
     private RenderingSettings RenderingSettings => Global.AppSettings.ReplayViewer.RenderingSettings;
 
-    private static bool IsCtrlDown() => Keyboard.IsKeyDown(Key.LeftCtrl) || Keyboard.IsKeyDown(Key.RightCtrl);
+    private static bool IsCtrlDown() =>
+        KeyboardUtils.IsKeyDown(Keys.LControlKey) || KeyboardUtils.IsKeyDown(Keys.RControlKey);
 
     private void MouseClickZoomBoxTextChanged(object sender, EventArgs e)
     {

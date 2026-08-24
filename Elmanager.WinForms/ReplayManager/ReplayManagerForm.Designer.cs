@@ -38,7 +38,6 @@ namespace Elmanager.ReplayManager
             this.RemoveFromListToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.CopyToToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.MoveToToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.OpenLevelMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.RenameToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.RenamePatternToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.CompareToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
@@ -187,7 +186,6 @@ namespace Elmanager.ReplayManager
             this.RemoveFromListToolStripMenuItem,
             this.CopyToToolStripMenuItem,
             this.MoveToToolStripMenuItem,
-            this.OpenLevelMenuItem,
             this.RenameToolStripMenuItem,
             this.RenamePatternToolStripMenuItem,
             this.CompareToolStripMenuItem,
@@ -197,7 +195,7 @@ namespace Elmanager.ReplayManager
             this.DeleteToolStripMenuItem,
             this.autoresizeColumnsToolStripMenuItem});
             this.ContextMenuStrip1.Name = "ContextMenuStrip1";
-            this.ContextMenuStrip1.Size = new System.Drawing.Size(209, 312);
+            this.ContextMenuStrip1.Size = new System.Drawing.Size(209, 290);
             // 
             // SelectAllToolStripMenuItem
             // 
@@ -238,15 +236,6 @@ namespace Elmanager.ReplayManager
             this.MoveToToolStripMenuItem.Size = new System.Drawing.Size(208, 22);
             this.MoveToToolStripMenuItem.Text = "Move to...";
             this.MoveToToolStripMenuItem.Click += new System.EventHandler(this.MoveOrCopy);
-            // 
-            // OpenLevelMenuItem
-            // 
-            this.OpenLevelMenuItem.Name = "OpenLevelMenuItem";
-            this.OpenLevelMenuItem.ShortcutKeys = ((System.Windows.Forms.Keys)((System.Windows.Forms.Keys.Control | System.Windows.Forms.Keys.L)));
-            this.OpenLevelMenuItem.Size = new System.Drawing.Size(208, 22);
-            this.OpenLevelMenuItem.Text = "Open level file";
-            this.OpenLevelMenuItem.Click += new System.EventHandler(this.OpenLevelMenuItemClick);
-            // 
             // RenameToolStripMenuItem
             // 
             this.RenameToolStripMenuItem.Name = "RenameToolStripMenuItem";
@@ -1366,7 +1355,6 @@ namespace Elmanager.ReplayManager
         internal System.Windows.Forms.ToolStripMenuItem SaveListToTextFileToolStripMenuItem;
 		internal System.Windows.Forms.ToolStripMenuItem RemoveFromListToolStripMenuItem;
 		internal System.Windows.Forms.ToolStripMenuItem DeleteToolStripMenuItem;
-		internal System.Windows.Forms.ToolStripMenuItem OpenLevelMenuItem;
         internal System.Windows.Forms.Button ConfigButton;
         internal System.Windows.Forms.FolderBrowserDialog FolderBrowserDialog1;
 		internal System.Windows.Forms.TabControl TabControl1;

@@ -50,12 +50,8 @@ internal static class Global
             ComponentManager.LaunchMainForm();
         else if (args[0] == "/replaymanager")
             ComponentManager.LaunchReplayManager();
-        else if (args[0] == "/leveleditor")
-            ComponentManager.LaunchLevelEditor();
         else if (args[0] == "/levelmanager")
             ComponentManager.LaunchLevelManager();
-        else if (args[0].EndsWith(DirUtils.LevExtension, StringComparison.OrdinalIgnoreCase))
-            ComponentManager.LaunchLevelEditor(args[0]);
         else if (args[0].EndsWith(DirUtils.RecExtension, StringComparison.OrdinalIgnoreCase))
         {
             try

@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using System.IO;
 using System.Windows.Forms;
 using Elmanager.Application;
-using Elmanager.LevelEditor;
 using Elmanager.UI;
 using Elmanager.Updating;
 using SearchOption = System.IO.SearchOption;
@@ -34,37 +33,9 @@ internal partial class ConfigForm : FormMod
         lmConfirmDeletion.Checked = Global.AppSettings.LevelManager.ConfirmDelete;
         lmShowTooltip.Checked = Global.AppSettings.LevelManager.ShowTooltipInList;
 
-        LevelTemplateBox.Text = Global.AppSettings.LevelEditor.LevelTemplate?.Id ?? "";
-        CaptureRadiusBox.Text = Global.AppSettings.LevelEditor.CaptureRadius.ToString();
-        CheckTopologyWhenSavingBox.Checked = Global.AppSettings.LevelEditor.CheckTopologyWhenSaving;
-        DynamicCheckTopologyBox.Checked = Global.AppSettings.LevelEditor.CheckTopologyDynamically;
-        FilenameSuggestionBox.Checked = Global.AppSettings.LevelEditor.UseFilenameSuggestion;
-        SameAsFilenameBox.Checked = Global.AppSettings.LevelEditor.UseFilenameForTitle;
-        baseFilenameBox.Text = Global.AppSettings.LevelEditor.BaseFilename;
-        numberFormatBox.Text = Global.AppSettings.LevelEditor.NumberFormat;
-        DefaultTitleBox.Text = Global.AppSettings.LevelEditor.DefaultTitle;
         CheckForUpdatesBox.Checked = Global.AppSettings.General.CheckForUpdatesOnStartup;
-        capturePicTextFromBordersCheckBox.Checked =
-            Global.AppSettings.LevelEditor.CapturePicturesAndTexturesFromBordersOnly;
-        if (Global.AppSettings.LevelEditor.RenderingSettings.DisableFrameBuffer &&
-            Global.AppSettings.ReplayViewer.RenderingSettings.DisableFrameBuffer)
-        {
-            DisableFrameBufferUsageCheckBox.CheckState = CheckState.Checked;
-        }
-        else if (Global.AppSettings.LevelEditor.RenderingSettings.DisableFrameBuffer ||
-                 Global.AppSettings.ReplayViewer.RenderingSettings.DisableFrameBuffer)
-        {
-            DisableFrameBufferUsageCheckBox.CheckState = CheckState.Indeterminate;
-        }
-        else
-        {
-            DisableFrameBufferUsageCheckBox.CheckState = CheckState.Unchecked;
-        }
-
-        alwaysSetDefaultsInPictureTool.Checked = Global.AppSettings.LevelEditor.AlwaysSetDefaultsInPictureTool;
-        startPositionFeatureCheckBox.Checked = Global.AppSettings.LevelEditor.EnableStartPositionFeature;
-        FilenameSuggestionBoxCheckedChanged(null, null);
-        SameAsFilenameBoxCheckedChanged(null, null);
+        DisableFrameBufferUsageCheckBox.Checked =
+            Global.AppSettings.ReplayViewer.RenderingSettings.DisableFrameBuffer;
     }
 
     private static string GetDefaultLgrFile(IList<string> lgrFiles)
@@ -141,27 +112,6 @@ internal partial class ConfigForm : FormMod
         }
     }
 
-    private void FilenameSuggestionBoxCheckedChanged(object? sender, EventArgs? e)
-    {
-        baseFilenameBox.Enabled = FilenameSuggestionBox.Checked;
-        numberFormatBox.Enabled = FilenameSuggestionBox.Checked;
-    }
-
-    private void PanelClick(object sender, EventArgs e)
-    {
-        Panel clickedPanel = (Panel)sender;
-        ColorDialog1.Color = clickedPanel.BackColor;
-        if (ColorDialog1.ShowDialog() == DialogResult.OK)
-            clickedPanel.BackColor = ColorDialog1.Color;
-    }
-
-    private void RenderingSettingsButtonClick(object sender, EventArgs e)
-    {
-        RenderingSettingsForm rSettingsForm =
-            new RenderingSettingsForm(Global.AppSettings.LevelEditor.RenderingSettings);
-        rSettingsForm.ShowDialog();
-    }
-
     private void ResetButtonClick(object sender, EventArgs e)
     {
         if (
@@ -171,11 +121,6 @@ internal partial class ConfigForm : FormMod
             Global.AppSettings = new ElmanagerSettings();
             Close();
         }
-    }
-
-    private void SameAsFilenameBoxCheckedChanged(object? sender, EventArgs? e)
-    {
-        DefaultTitleBox.Enabled = !SameAsFilenameBox.Checked;
     }
 
     private void SaveSettings(object sender, FormClosingEventArgs e)
@@ -195,58 +140,12 @@ internal partial class ConfigForm : FormMod
         Global.AppSettings.LevelManager.ConfirmDelete = lmConfirmDeletion.Checked;
         Global.AppSettings.LevelManager.ShowTooltipInList = lmShowTooltip.Checked;
 
-        try
-        {
-            LevelEditorSettings.TryGetTemplateLevel(LevelTemplateBox.Text);
-            Global.AppSettings.LevelEditor.LevelTemplate =
-                new Bookmark(LevelTemplateBox.Text, LevelTemplateBox.Text);
-        }
-        catch (SettingsException settingsException)
-        {
-            UiUtils.ShowError(settingsException.Message);
-        }
-
-        Global.AppSettings.LevelEditor.CheckTopologyWhenSaving = CheckTopologyWhenSavingBox.Checked;
-        Global.AppSettings.LevelEditor.CheckTopologyDynamically = DynamicCheckTopologyBox.Checked;
-        Global.AppSettings.LevelEditor.UseFilenameSuggestion = FilenameSuggestionBox.Checked;
-        Global.AppSettings.LevelEditor.UseFilenameForTitle = SameAsFilenameBox.Checked;
-        Global.AppSettings.LevelEditor.BaseFilename = baseFilenameBox.Text;
-        Global.AppSettings.LevelEditor.NumberFormat = numberFormatBox.Text;
-        Global.AppSettings.LevelEditor.DefaultTitle = DefaultTitleBox.Text;
         Global.AppSettings.General.CheckForUpdatesOnStartup = CheckForUpdatesBox.Checked;
-        Global.AppSettings.LevelEditor.CapturePicturesAndTexturesFromBordersOnly =
-            capturePicTextFromBordersCheckBox.Checked;
-        if (DisableFrameBufferUsageCheckBox.CheckState != CheckState.Indeterminate)
-        {
-            Global.AppSettings.LevelEditor.RenderingSettings.DisableFrameBuffer =
-                DisableFrameBufferUsageCheckBox.Checked;
-            Global.AppSettings.ReplayViewer.RenderingSettings.DisableFrameBuffer =
-                DisableFrameBufferUsageCheckBox.Checked;
-        }
-
-        Global.AppSettings.LevelEditor.AlwaysSetDefaultsInPictureTool = alwaysSetDefaultsInPictureTool.Checked;
-        Global.AppSettings.LevelEditor.EnableStartPositionFeature = startPositionFeatureCheckBox.Checked;
-        try
-        {
-            Global.AppSettings.LevelEditor.CaptureRadius = int.Parse(CaptureRadiusBox.Text);
-        }
-        catch (FormatException)
-        {
-            UiUtils.ShowError("Capture radius value was in an incorrect format!");
-        }
+        Global.AppSettings.ReplayViewer.RenderingSettings.DisableFrameBuffer =
+            DisableFrameBufferUsageCheckBox.Checked;
 
         if (_levelDirectoryChanged)
             Global.ResetLevelFiles();
-    }
-
-    private void browseButton_Click(object sender, EventArgs e)
-    {
-        OpenFileDialog1.Filter = "Elasto Mania levels|*.lev";
-        OpenFileDialog1.CheckFileExists = true;
-        if (OpenFileDialog1.ShowDialog() == DialogResult.OK)
-        {
-            LevelTemplateBox.Text = OpenFileDialog1.FileName;
-        }
     }
 
     private async void checkForUpdatesButton_Click(object sender, EventArgs e)

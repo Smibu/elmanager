@@ -12,7 +12,6 @@ using BrightIdeasSoftware;
 using Elmanager.Application;
 using Elmanager.IO;
 using Elmanager.Lev;
-using Elmanager.LevelEditor;
 using Elmanager.Rec;
 using Elmanager.ReplayViewer;
 using Elmanager.Searching;
@@ -26,7 +25,6 @@ internal partial class LevelManagerForm : FormMod, IManagerGui
     private readonly TypedObjectListView<Top10EntrySingle> _singleList;
     private readonly TypedObjectListView<Top10EntryMulti> _multiList;
     private readonly MaybeOpened<ReplayViewerForm> _viewer = new();
-    private readonly MaybeOpened<LevelEditorForm> _editor = new();
     private Dictionary<string, List<ElmaFileObject<Replay>>> _recsByLevel = new();
     protected override Size DefaultSize => new(600, 400);
     private readonly Manager<LevelItem> _manager;
@@ -316,11 +314,6 @@ internal partial class LevelManagerForm : FormMod, IManagerGui
             UpdateViewer(v);
         }
 
-        var editor = _editor.ExistingInstance;
-        if (editor != null && TypedList.SelectedObject != null && !editor.Modified)
-        {
-            editor.SetLevel(TypedList.SelectedObject.Efo);
-        }
     }
 
     private void RefreshTop10Lists()
@@ -416,18 +409,6 @@ internal partial class LevelManagerForm : FormMod, IManagerGui
     private void levelList_DoubleClick(object sender, EventArgs e)
     {
         OpenViewer();
-    }
-
-    private async void OpenInLevelEditor(object sender, EventArgs e)
-    {
-        if (TypedList.SelectedObject is not null)
-        {
-            Cursor = Cursors.WaitCursor;
-            _editor.Instance.Show();
-            await _editor.Instance.WaitInit();
-            _editor.Instance.SetLevel(TypedList.SelectedObject.Efo);
-            Cursor = Cursors.Default;
-        }
     }
 
     private void selectAllToolStripMenuItem_Click(object sender, EventArgs e)

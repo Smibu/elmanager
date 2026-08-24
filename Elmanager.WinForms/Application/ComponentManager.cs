@@ -1,5 +1,4 @@
 using Elmanager.IO;
-using Elmanager.LevelEditor;
 using Elmanager.LevelManager;
 using Elmanager.Rec;
 using Elmanager.ReplayManager;
@@ -14,12 +13,6 @@ internal static class ComponentManager
     private static bool _config;
 
     public static AppContext AppCtx { get; } = new();
-
-    internal static void LaunchLevelEditor(string? levPath = null)
-    {
-        var le = new LevelEditorForm(levPath);
-        AppCtx.AddAndShow(le);
-    }
 
     internal static void LaunchMainForm()
     {

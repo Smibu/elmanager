@@ -43,7 +43,6 @@ namespace Elmanager.LevelManager
             this.olvColumn8 = ((BrightIdeasSoftware.OLVColumn)(new BrightIdeasSoftware.OLVColumn()));
             this.olvColumn9 = ((BrightIdeasSoftware.OLVColumn)(new BrightIdeasSoftware.OLVColumn()));
             this.levelListMenuStrip = new System.Windows.Forms.ContextMenuStrip(this.components);
-            this.toolStripMenuItem1 = new System.Windows.Forms.ToolStripMenuItem();
             this.openViewerToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.deleteToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.selectAllToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
@@ -289,7 +288,6 @@ namespace Elmanager.LevelManager
             // levelListMenuStrip
             // 
             this.levelListMenuStrip.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
-            this.toolStripMenuItem1,
             this.openViewerToolStripMenuItem,
             this.deleteToolStripMenuItem,
             this.selectAllToolStripMenuItem,
@@ -297,14 +295,7 @@ namespace Elmanager.LevelManager
             this.clearTop10ToolStripMenuItem,
             this.autoresizeColumnsToolStripMenuItem});
             this.levelListMenuStrip.Name = "contextMenuStrip2";
-            this.levelListMenuStrip.Size = new System.Drawing.Size(194, 158);
-            // 
-            // toolStripMenuItem1
-            // 
-            this.toolStripMenuItem1.Name = "toolStripMenuItem1";
-            this.toolStripMenuItem1.Size = new System.Drawing.Size(193, 22);
-            this.toolStripMenuItem1.Text = "Open in SLE";
-            this.toolStripMenuItem1.Click += new System.EventHandler(this.OpenInLevelEditor);
+            this.levelListMenuStrip.Size = new System.Drawing.Size(194, 136);
             // 
             // openViewerToolStripMenuItem
             // 
@@ -1958,7 +1949,6 @@ namespace Elmanager.LevelManager
         private NumericTextBox maxNormApplesBox;
         private System.Windows.Forms.Label label51;
         private System.Windows.Forms.ToolStripMenuItem autoresizeColumnsToolStripMenuItem;
-        private System.Windows.Forms.ToolStripMenuItem toolStripMenuItem1;
         private System.Windows.Forms.Label label52;
     }
 }

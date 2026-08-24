@@ -37,7 +37,6 @@ namespace Elmanager.Settings
             LevTextBox = new TextBox();
             Label2 = new Label();
             Label3 = new Label();
-            OpenFileDialog1 = new OpenFileDialog();
             TabControl1 = new TabControl();
             generalTab = new TabPage();
             flowLayoutPanel1 = new FlowLayoutPanel();
@@ -66,30 +65,6 @@ namespace Elmanager.Settings
             lmSearchRecSubDirs = new CheckBox();
             lmSearchLevSubDirs = new CheckBox();
             lmShowGrid = new CheckBox();
-            sleTab = new TabPage();
-            startPositionFeatureCheckBox = new CheckBox();
-            tableLayoutPanel3 = new TableLayoutPanel();
-            Label18 = new Label();
-            Label20 = new Label();
-            baseFilenameBox = new TextBox();
-            DefaultTitleBox = new TextBox();
-            Label19 = new Label();
-            numberFormatBox = new TextBox();
-            SameAsFilenameBox = new CheckBox();
-            tableLayoutPanel2 = new TableLayoutPanel();
-            CaptureRadiusBox = new TextBox();
-            LevelTemplateBox = new TextBox();
-            browseButton = new Button();
-            Label6 = new Label();
-            Label8 = new Label();
-            alwaysSetDefaultsInPictureTool = new CheckBox();
-            capturePicTextFromBordersCheckBox = new CheckBox();
-            RenderingSettingsButton = new Button();
-            FilenameSuggestionBox = new CheckBox();
-            DynamicCheckTopologyBox = new CheckBox();
-            CheckTopologyWhenSavingBox = new CheckBox();
-            ColorDialog1 = new ColorDialog();
-            toolTip1 = new ToolTip(components);
             TabControl1.SuspendLayout();
             generalTab.SuspendLayout();
             flowLayoutPanel1.SuspendLayout();
@@ -98,9 +73,6 @@ namespace Elmanager.Settings
             panel1.SuspendLayout();
             rmTab.SuspendLayout();
             lmTab.SuspendLayout();
-            sleTab.SuspendLayout();
-            tableLayoutPanel3.SuspendLayout();
-            tableLayoutPanel2.SuspendLayout();
             SuspendLayout();
             // 
             // RecDirButton
@@ -166,20 +138,11 @@ namespace Elmanager.Settings
             Label3.Size = new System.Drawing.Size(175, 32);
             Label3.TabIndex = 47;
             Label3.Text = "Level directory:";
-            // 
-            // OpenFileDialog1
-            // 
-            OpenFileDialog1.CheckFileExists = false;
-            OpenFileDialog1.CheckPathExists = false;
-            OpenFileDialog1.Filter = "Uncompressed replay databases|*.db|Compressed replay databases|*.cdb|All replay databases (*.db), (*.cdb)|*.db;*.cdb";
-            OpenFileDialog1.SupportMultiDottedExtensions = true;
-            // 
             // TabControl1
             // 
             TabControl1.Controls.Add(generalTab);
             TabControl1.Controls.Add(rmTab);
             TabControl1.Controls.Add(lmTab);
-            TabControl1.Controls.Add(sleTab);
             TabControl1.Dock = DockStyle.Fill;
             TabControl1.Location = new System.Drawing.Point(0, 0);
             TabControl1.Margin = new Padding(6);
@@ -519,286 +482,6 @@ namespace Elmanager.Settings
             lmShowGrid.Text = "Show grid in level list";
             lmShowGrid.UseVisualStyleBackColor = true;
             // 
-            // sleTab
-            // 
-            sleTab.Controls.Add(startPositionFeatureCheckBox);
-            sleTab.Controls.Add(tableLayoutPanel3);
-            sleTab.Controls.Add(tableLayoutPanel2);
-            sleTab.Controls.Add(alwaysSetDefaultsInPictureTool);
-            sleTab.Controls.Add(capturePicTextFromBordersCheckBox);
-            sleTab.Controls.Add(RenderingSettingsButton);
-            sleTab.Controls.Add(FilenameSuggestionBox);
-            sleTab.Controls.Add(DynamicCheckTopologyBox);
-            sleTab.Controls.Add(CheckTopologyWhenSavingBox);
-            sleTab.Location = new System.Drawing.Point(8, 46);
-            sleTab.Margin = new Padding(6);
-            sleTab.Name = "sleTab";
-            sleTab.Size = new System.Drawing.Size(1155, 723);
-            sleTab.TabIndex = 4;
-            sleTab.Text = "SLE";
-            sleTab.UseVisualStyleBackColor = true;
-            // 
-            // startPositionFeatureCheckBox
-            // 
-            startPositionFeatureCheckBox.AutoSize = true;
-            startPositionFeatureCheckBox.Location = new System.Drawing.Point(22, 371);
-            startPositionFeatureCheckBox.Margin = new Padding(6);
-            startPositionFeatureCheckBox.Name = "startPositionFeatureCheckBox";
-            startPositionFeatureCheckBox.Size = new System.Drawing.Size(509, 36);
-            startPositionFeatureCheckBox.TabIndex = 34;
-            startPositionFeatureCheckBox.Text = "Enable \"Save/Restore start position\" feature";
-            startPositionFeatureCheckBox.UseVisualStyleBackColor = true;
-            // 
-            // tableLayoutPanel3
-            // 
-            tableLayoutPanel3.AutoSize = true;
-            tableLayoutPanel3.AutoSizeMode = AutoSizeMode.GrowAndShrink;
-            tableLayoutPanel3.ColumnCount = 4;
-            tableLayoutPanel3.ColumnStyles.Add(new ColumnStyle());
-            tableLayoutPanel3.ColumnStyles.Add(new ColumnStyle());
-            tableLayoutPanel3.ColumnStyles.Add(new ColumnStyle());
-            tableLayoutPanel3.ColumnStyles.Add(new ColumnStyle());
-            tableLayoutPanel3.Controls.Add(Label18, 0, 0);
-            tableLayoutPanel3.Controls.Add(Label20, 0, 1);
-            tableLayoutPanel3.Controls.Add(baseFilenameBox, 1, 0);
-            tableLayoutPanel3.Controls.Add(DefaultTitleBox, 1, 1);
-            tableLayoutPanel3.Controls.Add(Label19, 2, 0);
-            tableLayoutPanel3.Controls.Add(numberFormatBox, 3, 0);
-            tableLayoutPanel3.Controls.Add(SameAsFilenameBox, 2, 1);
-            tableLayoutPanel3.Location = new System.Drawing.Point(16, 503);
-            tableLayoutPanel3.Margin = new Padding(6);
-            tableLayoutPanel3.Name = "tableLayoutPanel3";
-            tableLayoutPanel3.RowCount = 2;
-            tableLayoutPanel3.RowStyles.Add(new RowStyle());
-            tableLayoutPanel3.RowStyles.Add(new RowStyle());
-            tableLayoutPanel3.Size = new System.Drawing.Size(894, 102);
-            tableLayoutPanel3.TabIndex = 33;
-            // 
-            // Label18
-            // 
-            Label18.Anchor = AnchorStyles.Right;
-            Label18.AutoSize = true;
-            Label18.Location = new System.Drawing.Point(47, 9);
-            Label18.Margin = new Padding(6, 0, 6, 0);
-            Label18.Name = "Label18";
-            Label18.Size = new System.Drawing.Size(161, 32);
-            Label18.TabIndex = 13;
-            Label18.Text = "Basefilename:";
-            // 
-            // Label20
-            // 
-            Label20.Anchor = AnchorStyles.Right;
-            Label20.AutoSize = true;
-            Label20.Location = new System.Drawing.Point(6, 60);
-            Label20.Margin = new Padding(6, 0, 6, 0);
-            Label20.Name = "Label20";
-            Label20.Size = new System.Drawing.Size(202, 32);
-            Label20.TabIndex = 17;
-            Label20.Text = "Default level title:";
-            // 
-            // baseFilenameBox
-            // 
-            baseFilenameBox.Anchor = AnchorStyles.None;
-            baseFilenameBox.Location = new System.Drawing.Point(220, 6);
-            baseFilenameBox.Margin = new Padding(6);
-            baseFilenameBox.Name = "baseFilenameBox";
-            baseFilenameBox.Size = new System.Drawing.Size(196, 39);
-            baseFilenameBox.TabIndex = 15;
-            baseFilenameBox.Text = "MyLev";
-            // 
-            // DefaultTitleBox
-            // 
-            DefaultTitleBox.Anchor = AnchorStyles.None;
-            DefaultTitleBox.Location = new System.Drawing.Point(220, 57);
-            DefaultTitleBox.Margin = new Padding(6);
-            DefaultTitleBox.MaxLength = 50;
-            DefaultTitleBox.Name = "DefaultTitleBox";
-            DefaultTitleBox.Size = new System.Drawing.Size(196, 39);
-            DefaultTitleBox.TabIndex = 18;
-            DefaultTitleBox.Text = "New level";
-            // 
-            // Label19
-            // 
-            Label19.Anchor = AnchorStyles.Right;
-            Label19.AutoSize = true;
-            Label19.Location = new System.Drawing.Point(428, 9);
-            Label19.Margin = new Padding(6, 0, 6, 0);
-            Label19.Name = "Label19";
-            Label19.Size = new System.Drawing.Size(252, 32);
-            Label19.TabIndex = 14;
-            Label19.Text = "Number format string:";
-            // 
-            // numberFormatBox
-            // 
-            numberFormatBox.Anchor = AnchorStyles.None;
-            numberFormatBox.Location = new System.Drawing.Point(692, 6);
-            numberFormatBox.Margin = new Padding(6);
-            numberFormatBox.Name = "numberFormatBox";
-            numberFormatBox.Size = new System.Drawing.Size(196, 39);
-            numberFormatBox.TabIndex = 28;
-            // 
-            // SameAsFilenameBox
-            // 
-            SameAsFilenameBox.Anchor = AnchorStyles.Left;
-            SameAsFilenameBox.AutoSize = true;
-            SameAsFilenameBox.Location = new System.Drawing.Point(428, 58);
-            SameAsFilenameBox.Margin = new Padding(6);
-            SameAsFilenameBox.Name = "SameAsFilenameBox";
-            SameAsFilenameBox.Size = new System.Drawing.Size(234, 36);
-            SameAsFilenameBox.TabIndex = 19;
-            SameAsFilenameBox.Text = "Same as filename";
-            SameAsFilenameBox.UseVisualStyleBackColor = true;
-            SameAsFilenameBox.CheckedChanged += SameAsFilenameBoxCheckedChanged;
-            // 
-            // tableLayoutPanel2
-            // 
-            tableLayoutPanel2.AutoSize = true;
-            tableLayoutPanel2.AutoSizeMode = AutoSizeMode.GrowAndShrink;
-            tableLayoutPanel2.ColumnCount = 3;
-            tableLayoutPanel2.ColumnStyles.Add(new ColumnStyle());
-            tableLayoutPanel2.ColumnStyles.Add(new ColumnStyle());
-            tableLayoutPanel2.ColumnStyles.Add(new ColumnStyle());
-            tableLayoutPanel2.Controls.Add(CaptureRadiusBox, 1, 1);
-            tableLayoutPanel2.Controls.Add(LevelTemplateBox, 1, 0);
-            tableLayoutPanel2.Controls.Add(browseButton, 2, 0);
-            tableLayoutPanel2.Controls.Add(Label6, 0, 0);
-            tableLayoutPanel2.Controls.Add(Label8, 0, 1);
-            tableLayoutPanel2.Location = new System.Drawing.Point(22, 6);
-            tableLayoutPanel2.Margin = new Padding(6);
-            tableLayoutPanel2.Name = "tableLayoutPanel2";
-            tableLayoutPanel2.RowCount = 2;
-            tableLayoutPanel2.RowStyles.Add(new RowStyle());
-            tableLayoutPanel2.RowStyles.Add(new RowStyle());
-            tableLayoutPanel2.Size = new System.Drawing.Size(832, 113);
-            tableLayoutPanel2.TabIndex = 32;
-            // 
-            // CaptureRadiusBox
-            // 
-            CaptureRadiusBox.Anchor = AnchorStyles.Left;
-            CaptureRadiusBox.Location = new System.Drawing.Point(268, 68);
-            CaptureRadiusBox.Margin = new Padding(6);
-            CaptureRadiusBox.Name = "CaptureRadiusBox";
-            CaptureRadiusBox.Size = new System.Drawing.Size(96, 39);
-            CaptureRadiusBox.TabIndex = 5;
-            CaptureRadiusBox.Text = "100";
-            // 
-            // LevelTemplateBox
-            // 
-            LevelTemplateBox.Anchor = AnchorStyles.None;
-            LevelTemplateBox.Location = new System.Drawing.Point(268, 11);
-            LevelTemplateBox.Margin = new Padding(6);
-            LevelTemplateBox.Name = "LevelTemplateBox";
-            LevelTemplateBox.Size = new System.Drawing.Size(396, 39);
-            LevelTemplateBox.TabIndex = 2;
-            LevelTemplateBox.Text = "50,50";
-            toolTip1.SetToolTip(LevelTemplateBox, "width,height or browse for a level template");
-            // 
-            // browseButton
-            // 
-            browseButton.Anchor = AnchorStyles.Left;
-            browseButton.Location = new System.Drawing.Point(676, 6);
-            browseButton.Margin = new Padding(6);
-            browseButton.Name = "browseButton";
-            browseButton.Size = new System.Drawing.Size(150, 50);
-            browseButton.TabIndex = 29;
-            browseButton.Text = "Browse...";
-            browseButton.UseVisualStyleBackColor = true;
-            browseButton.Click += browseButton_Click;
-            // 
-            // Label6
-            // 
-            Label6.Anchor = AnchorStyles.Right;
-            Label6.AutoSize = true;
-            Label6.Location = new System.Drawing.Point(30, 15);
-            Label6.Margin = new Padding(6, 0, 6, 0);
-            Label6.Name = "Label6";
-            Label6.Size = new System.Drawing.Size(226, 32);
-            Label6.TabIndex = 0;
-            Label6.Text = "New level template:";
-            // 
-            // Label8
-            // 
-            Label8.Anchor = AnchorStyles.Right;
-            Label8.AutoSize = true;
-            Label8.Location = new System.Drawing.Point(6, 71);
-            Label8.Margin = new Padding(6, 0, 6, 0);
-            Label8.Name = "Label8";
-            Label8.Size = new System.Drawing.Size(250, 32);
-            Label8.TabIndex = 4;
-            Label8.Text = "Mouse capture radius:";
-            // 
-            // alwaysSetDefaultsInPictureTool
-            // 
-            alwaysSetDefaultsInPictureTool.AutoSize = true;
-            alwaysSetDefaultsInPictureTool.Location = new System.Drawing.Point(22, 323);
-            alwaysSetDefaultsInPictureTool.Margin = new Padding(6);
-            alwaysSetDefaultsInPictureTool.Name = "alwaysSetDefaultsInPictureTool";
-            alwaysSetDefaultsInPictureTool.Size = new System.Drawing.Size(847, 36);
-            alwaysSetDefaultsInPictureTool.TabIndex = 31;
-            alwaysSetDefaultsInPictureTool.Text = "Always set distance and clipping to defaults when changing picture/texture";
-            alwaysSetDefaultsInPictureTool.UseVisualStyleBackColor = true;
-            // 
-            // capturePicTextFromBordersCheckBox
-            // 
-            capturePicTextFromBordersCheckBox.AutoSize = true;
-            capturePicTextFromBordersCheckBox.Location = new System.Drawing.Point(22, 179);
-            capturePicTextFromBordersCheckBox.Margin = new Padding(6);
-            capturePicTextFromBordersCheckBox.Name = "capturePicTextFromBordersCheckBox";
-            capturePicTextFromBordersCheckBox.Size = new System.Drawing.Size(559, 36);
-            capturePicTextFromBordersCheckBox.TabIndex = 30;
-            capturePicTextFromBordersCheckBox.Text = "Capture pictures and textures from borders only";
-            capturePicTextFromBordersCheckBox.UseVisualStyleBackColor = true;
-            // 
-            // RenderingSettingsButton
-            // 
-            RenderingSettingsButton.Anchor = AnchorStyles.Bottom | AnchorStyles.Left;
-            RenderingSettingsButton.Location = new System.Drawing.Point(16, 666);
-            RenderingSettingsButton.Margin = new Padding(6);
-            RenderingSettingsButton.Name = "RenderingSettingsButton";
-            RenderingSettingsButton.Size = new System.Drawing.Size(230, 50);
-            RenderingSettingsButton.TabIndex = 27;
-            RenderingSettingsButton.Text = "Rendering settings";
-            RenderingSettingsButton.UseVisualStyleBackColor = true;
-            RenderingSettingsButton.Click += RenderingSettingsButtonClick;
-            // 
-            // FilenameSuggestionBox
-            // 
-            FilenameSuggestionBox.AutoSize = true;
-            FilenameSuggestionBox.Location = new System.Drawing.Point(22, 419);
-            FilenameSuggestionBox.Margin = new Padding(6);
-            FilenameSuggestionBox.Name = "FilenameSuggestionBox";
-            FilenameSuggestionBox.Size = new System.Drawing.Size(309, 36);
-            FilenameSuggestionBox.TabIndex = 12;
-            FilenameSuggestionBox.Text = "Use filename suggestion";
-            FilenameSuggestionBox.UseVisualStyleBackColor = true;
-            FilenameSuggestionBox.CheckedChanged += FilenameSuggestionBoxCheckedChanged;
-            // 
-            // DynamicCheckTopologyBox
-            // 
-            DynamicCheckTopologyBox.AutoSize = true;
-            DynamicCheckTopologyBox.Location = new System.Drawing.Point(22, 227);
-            DynamicCheckTopologyBox.Margin = new Padding(6);
-            DynamicCheckTopologyBox.Name = "DynamicCheckTopologyBox";
-            DynamicCheckTopologyBox.Size = new System.Drawing.Size(347, 36);
-            DynamicCheckTopologyBox.TabIndex = 7;
-            DynamicCheckTopologyBox.Text = "Check topology dynamically";
-            DynamicCheckTopologyBox.UseVisualStyleBackColor = true;
-            // 
-            // CheckTopologyWhenSavingBox
-            // 
-            CheckTopologyWhenSavingBox.AutoSize = true;
-            CheckTopologyWhenSavingBox.Location = new System.Drawing.Point(22, 275);
-            CheckTopologyWhenSavingBox.Margin = new Padding(6);
-            CheckTopologyWhenSavingBox.Name = "CheckTopologyWhenSavingBox";
-            CheckTopologyWhenSavingBox.Size = new System.Drawing.Size(411, 36);
-            CheckTopologyWhenSavingBox.TabIndex = 6;
-            CheckTopologyWhenSavingBox.Text = "Check topology when saving level";
-            CheckTopologyWhenSavingBox.UseVisualStyleBackColor = true;
-            // 
-            // ColorDialog1
-            // 
-            ColorDialog1.FullOpen = true;
-            // 
             // ConfigForm
             // 
             AutoScaleDimensions = new System.Drawing.SizeF(192F, 192F);
@@ -826,12 +509,6 @@ namespace Elmanager.Settings
             rmTab.PerformLayout();
             lmTab.ResumeLayout(false);
             lmTab.PerformLayout();
-            sleTab.ResumeLayout(false);
-            sleTab.PerformLayout();
-            tableLayoutPanel3.ResumeLayout(false);
-            tableLayoutPanel3.PerformLayout();
-            tableLayoutPanel2.ResumeLayout(false);
-            tableLayoutPanel2.PerformLayout();
             ResumeLayout(false);
         }
 
@@ -842,7 +519,6 @@ namespace Elmanager.Settings
         internal System.Windows.Forms.TextBox LevTextBox;
         internal System.Windows.Forms.Label Label2;
         internal System.Windows.Forms.Label Label3;
-        internal System.Windows.Forms.OpenFileDialog OpenFileDialog1;
         internal System.Windows.Forms.TabControl TabControl1;
         internal System.Windows.Forms.TabPage generalTab;
         internal System.Windows.Forms.TabPage rmTab;
@@ -851,36 +527,15 @@ namespace Elmanager.Settings
         internal System.Windows.Forms.CheckBox NitroBox;
         internal System.Windows.Forms.CheckBox SearchLevSubDirsBox;
         internal System.Windows.Forms.CheckBox ShowReplayListGridBox;
-        internal System.Windows.Forms.TabPage sleTab;
-        internal System.Windows.Forms.TextBox LevelTemplateBox;
-        internal System.Windows.Forms.Label Label6;
-        internal System.Windows.Forms.TextBox CaptureRadiusBox;
-        internal System.Windows.Forms.Label Label8;
-        internal System.Windows.Forms.CheckBox CheckTopologyWhenSavingBox;
-        internal System.Windows.Forms.CheckBox DynamicCheckTopologyBox;
-        internal System.Windows.Forms.ColorDialog ColorDialog1;
-        internal System.Windows.Forms.TextBox baseFilenameBox;
-        internal System.Windows.Forms.Label Label19;
-        internal System.Windows.Forms.Label Label18;
-        internal System.Windows.Forms.CheckBox FilenameSuggestionBox;
-        internal System.Windows.Forms.CheckBox SameAsFilenameBox;
-        internal System.Windows.Forms.TextBox DefaultTitleBox;
-        internal System.Windows.Forms.Label Label20;
         internal System.Windows.Forms.CheckBox CheckForUpdatesBox;
-        internal System.Windows.Forms.Button RenderingSettingsButton;
         internal System.Windows.Forms.Button LGRDirButton;
         internal System.Windows.Forms.TextBox LGRTextBox;
         internal System.Windows.Forms.Label Label5;
         internal System.Windows.Forms.Button ElmaDirButton;
         private Button resetButton;
-        private TextBox numberFormatBox;
-        private Button browseButton;
-        private ToolTip toolTip1;
-        internal CheckBox capturePicTextFromBordersCheckBox;
         private GroupBox groupBox2;
         private CheckBox DisableFrameBufferUsageCheckBox;
         internal CheckBox showTooltipForReplaysCheckBox;
-        internal CheckBox alwaysSetDefaultsInPictureTool;
         private TabPage lmTab;
         internal CheckBox lmShowTooltip;
         internal CheckBox lmConfirmDeletion;
@@ -889,9 +544,6 @@ namespace Elmanager.Settings
         internal CheckBox lmShowGrid;
         private TableLayoutPanel tableLayoutPanel1;
         private Panel panel1;
-        private TableLayoutPanel tableLayoutPanel2;
-        private TableLayoutPanel tableLayoutPanel3;
-        internal CheckBox startPositionFeatureCheckBox;
         private FlowLayoutPanel flowLayoutPanel1;
         private Button checkForUpdatesButton;
         private Label updateInfoLabel;

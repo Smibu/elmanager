@@ -12,7 +12,6 @@ using System.Windows.Forms;
 using BrightIdeasSoftware;
 using Elmanager.Application;
 using Elmanager.IO;
-using Elmanager.LevelEditor;
 using Elmanager.Rec;
 using Elmanager.ReplayViewer;
 using Elmanager.Searching;
@@ -30,7 +29,6 @@ internal partial class ReplayManagerForm : FormMod, IManagerGui
     private ObjectListView list = null!;
     private bool _cellEditing;
     private readonly MaybeOpened<ReplayViewerForm> _currentViewer = new();
-    private readonly MaybeOpened<LevelEditorForm> _editor = new();
     private readonly Manager<ReplayItem> _manager;
     private CancellationTokenSource? _searchCancelToken;
     protected override Size DefaultSize => new(600, 400);
@@ -333,45 +331,6 @@ internal partial class ReplayManagerForm : FormMod, IManagerGui
                 UiUtils.ShowError(ex.Message);
             }
         }
-    }
-
-    private async void OpenLevelMenuItemClick(object sender, EventArgs e)
-    {
-        if (ObjectList.SelectedObjects.Count <= 0)
-        {
-            UiUtils.ShowError("No replay is selected!");
-            return;
-        }
-
-        var selectedReplay = GetSelectedReplay();
-        if (selectedReplay.Obj.IsInternal)
-        {
-            await OpenEditor(new EditorLev(selectedReplay.Obj.GetLevel(), null));
-            return;
-        }
-
-        var levelFile = selectedReplay.Obj.LevelFilename;
-
-        if (!selectedReplay.Obj.LevelExists)
-        {
-            UiUtils.ShowError("Level file doesn\'t exist!");
-            return;
-        }
-
-        var file = Global.GetLevelFiles().FirstOrDefault(t => Path.GetFileName(t).EqualsIgnoreCase(levelFile));
-        if (file != null)
-        {
-            await OpenEditor(_editor.Instance.TryLoadLevel(file));
-        }
-    }
-
-    private async Task OpenEditor(EditorLev editorLev)
-    {
-        Cursor = Cursors.WaitCursor;
-        _editor.Instance.Show();
-        await _editor.Instance.WaitInit();
-        _editor.Instance.InitializeLevelButPromptIfModified(editorLev);
-        Cursor = Cursors.Default;
     }
 
     private async void OpenViewer(object sender, EventArgs e)
