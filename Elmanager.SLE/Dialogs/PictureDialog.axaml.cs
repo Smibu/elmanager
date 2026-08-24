@@ -1,10 +1,11 @@
 using System;
 using System.Collections.Generic;
-using System.IO;
 using System.Linq;
+using Avalonia;
 using Avalonia.Controls;
 using Avalonia.Interactivity;
 using Avalonia.Media.Imaging;
+using Avalonia.Platform;
 using AvaloniaDialogs.Views;
 using Elmanager.LevelEditor.Tools;
 using Elmanager.Lgr;
@@ -27,12 +28,13 @@ internal sealed record ImageChoice(LgrImage? Image, Bitmap? Preview)
         new(image, SkBitmapToAvaloniaBitmap(image.Bmp));
 
     private static Bitmap SkBitmapToAvaloniaBitmap(SKBitmap skBitmap)
-    {
-        using var image = SKImage.FromBitmap(skBitmap);
-        using var data = image.Encode(SKEncodedImageFormat.Png, 100);
-        using var stream = new MemoryStream(data.ToArray());
-        return new Bitmap(stream);
-    }
+        => new(
+            PixelFormat.Rgba8888,
+            AlphaFormat.Unpremul,
+            skBitmap.GetPixels(),
+            new PixelSize(skBitmap.Width, skBitmap.Height),
+            new Vector(96, 96),
+            skBitmap.RowBytes);
 }
 
 internal partial class PictureDialog : BaseDialog<ImageSelection>
