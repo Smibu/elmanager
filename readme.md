@@ -23,7 +23,7 @@ Level manager:
 
 ## System requirements
 
-Windows 10/11. The in-development version is cross-platform.
+Windows 10/11. The in-development version of SLE is cross-platform.
 
 ## Installation
 
