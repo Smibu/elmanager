@@ -23,7 +23,7 @@
         <ProjectReference Include="..\Elmanager.Core\Elmanager.Core.csproj" />
     </ItemGroup>
     <ItemGroup>
-        <PackageReference Include="ObjectListView.Repack.Core3" Version="2.9.3" />
+        <PackageReference Include="ObjectListView.Repack.NET6Plus" Version="2.9.5" />
         <PackageReference Include="OpenTK.GLControl" Version="4.0.2" />
         <PackageReference Include="Silk.NET.OpenGL" Version="2.23.0" />
     </ItemGroup>
