@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Numerics;
 using Elmanager.Lgr;
 using Elmanager.Rendering.OpenGL;
@@ -108,12 +109,16 @@ internal class Pictures : IDisposable
     {
         var instances = new Dictionary<(string Text, ClippingType Clip), List<Vector3>>();
 
-        foreach (var ge in state.GetGraphicElements())
+        foreach (var (idx, ge) in state.GetGraphicElements().Select((ge, index) => (index, ge)))
         {
             if (ge is GraphicElement.Picture p)
             {
                 var key = (p.PictureInfo.Name, p.Clipping);
-                instances.GetOrCreate(key).Add(new Vector3((float)p.Position.X, (float)p.Position.Y, p.Distance));
+                instances.GetOrCreate(key).Add(new Vector3(
+                    (float)p.Position.X,
+                    (float)p.Position.Y,
+                    p.Distance + (idx + 1) * 0.0002f
+                ));
             }
         }
 
