@@ -11,4 +11,5 @@ internal struct CameraUniforms(Matrix4x4 projection, Vector2 cameraPosition, flo
     public float GrassZoom = grassZoom;
     public float Zoom = zoom;
     public float PointSize = pointSize;
+    private Vector3 _padding; // struct size must be a multiple of 16 bytes
 }
