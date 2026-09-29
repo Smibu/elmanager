@@ -13,6 +13,7 @@ internal static class Program
         => AppBuilder.Configure<App>()
             .UsePlatformDetect()
             .With(new Win32PlatformOptions { RenderingMode = [Win32RenderingMode.Wgl] })
+            .With(new AvaloniaNativePlatformOptions { RenderingMode = [AvaloniaNativeRenderingMode.OpenGl] })
             .WithInterFont()
             .LogToTrace();
 }

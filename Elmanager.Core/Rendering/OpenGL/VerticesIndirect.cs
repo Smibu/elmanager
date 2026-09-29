@@ -8,7 +8,8 @@ internal class VerticesIndirect : IDisposable
 {
     private static GL GL => GlProvider.GL;
     public BoundVertexArray VertexArray { get; }
-    private Buffer? IndirectBuffer { get; } = GlProvider.IsOpenGLES ? null : new(BufferTargetARB.DrawIndirectBuffer);
+    private Buffer? IndirectBuffer { get; } =
+        GlProvider.SupportsMultiDrawIndirect ? new(BufferTargetARB.DrawIndirectBuffer) : null;
     private int CommandCount { get; set; }
     private int[] Firsts { get; set; } = [];
     private int[] Counts { get; set; } = [];
@@ -44,7 +45,7 @@ internal class VerticesIndirect : IDisposable
 
     public void Draw(PrimitiveType primitiveType)
     {
-        if (GlProvider.IsOpenGLES)
+        if (!GlProvider.SupportsMultiDrawIndirect)
         {
             for (var i = 0; i < CommandCount; i++)
                 GL.DrawArrays(primitiveType, Firsts[i], (uint)Counts[i]);

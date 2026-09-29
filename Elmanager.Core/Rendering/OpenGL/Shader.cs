@@ -5,17 +5,20 @@ namespace Elmanager.Rendering.OpenGL;
 
 internal class Shader : IDisposable
 {
+    private const string EsVersionDirective = "#version 300 es";
+    private const string DesktopVersionDirective = "#version 330 core";
+
     private static GL GL => GlProvider.GL;
     public uint Handle { get; }
 
     public Shader(string vertexSource, string fragmentSource)
     {
         var vertexShader = GL.CreateShader(ShaderType.VertexShader);
-        GL.ShaderSource(vertexShader, vertexSource.Trim());
+        GL.ShaderSource(vertexShader, PrepareSource(vertexSource));
         CompileShader(vertexShader);
 
         var fragmentShader = GL.CreateShader(ShaderType.FragmentShader);
-        GL.ShaderSource(fragmentShader, fragmentSource.Trim());
+        GL.ShaderSource(fragmentShader, PrepareSource(fragmentSource));
         CompileShader(fragmentShader);
 
         Handle = GL.CreateProgram();
@@ -28,6 +31,14 @@ internal class Shader : IDisposable
         GL.DetachShader(Handle, fragmentShader);
         GL.DeleteShader(vertexShader);
         GL.DeleteShader(fragmentShader);
+    }
+
+    private static string PrepareSource(string source)
+    {
+        source = source.Trim();
+        return !GlProvider.SupportsEsShaders && source.StartsWith(EsVersionDirective, StringComparison.Ordinal)
+            ? DesktopVersionDirective + source[EsVersionDirective.Length..]
+            : source;
     }
 
     private static void CompileShader(uint shader)
