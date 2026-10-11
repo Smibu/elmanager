@@ -3,7 +3,8 @@
              xmlns:dialogHostAvalonia="using:DialogHostAvalonia"
              xmlns:dialogs="using:AvaloniaDialogs.Views"
              xmlns:local="using:Elmanager.SLE.Dialogs"
-             x:Class="Elmanager.SLE.App">
+             x:Class="Elmanager.SLE.App"
+             Name="SLE">
   <Application.Styles>
     <FluentTheme>
       <FluentTheme.Palettes>
