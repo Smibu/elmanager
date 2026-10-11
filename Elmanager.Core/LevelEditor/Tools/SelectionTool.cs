@@ -360,14 +360,14 @@ public class SelectionTool : ToolBase, IEditorTool
             {
                 ChangeCursorToHand();
                 if (Lev.Objects[nearestObject].Mark == VectorMark.None)
-                    highlight = new HighlightTarget.ObjectTarget(nearestObject);
+                    highlight = new HighlightTarget.ObjectTarget(Lev.Objects[nearestObject]);
                 ShowObjectInfo(nearestObject);
             }
             else if (nearestTextureIndex >= 0)
             {
                 ChangeCursorToHand();
                 if (Lev.GraphicElements[nearestTextureIndex].Mark == VectorMark.None)
-                    highlight = new HighlightTarget.GraphicElementTarget(nearestTextureIndex);
+                    highlight = new HighlightTarget.GraphicElementTarget(Lev.GraphicElements[nearestTextureIndex]);
                 ShowTextureInfo(nearestTextureIndex);
             }
             else if (nearestBodyPart is { })

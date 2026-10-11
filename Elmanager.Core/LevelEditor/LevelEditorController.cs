@@ -66,6 +66,12 @@ public class LevelEditorController<TEditorLev>(ILevelEditor levelEditor, TEditor
         levelEditor.HighlightText = string.Empty;
     }
 
+    private void ClearHighlightIfRemoved()
+    {
+        if (levelEditor.CurrentHighlight is { } hl && !hl.ExistsIn(Lev))
+            ClearHighlight();
+    }
+
     private void ReplaceLevel(Level lev)
     {
         ClearHighlight();
@@ -89,6 +95,7 @@ public class LevelEditorController<TEditorLev>(ILevelEditor levelEditor, TEditor
         _modified = wasModified || _modified;
         if (wasModified)
         {
+            ClearHighlightIfRemoved();
             Lev.UpdateBounds();
             if (updateHistory)
                 AddToHistory();
@@ -1049,10 +1056,10 @@ public class LevelEditorController<TEditorLev>(ILevelEditor levelEditor, TEditor
                     renderer.DrawPoint(vt.Polygon.Vertices[vt.VertexIndex], settings.RenderingSettings.HighlightColor);
                     break;
                 case HighlightTarget.ObjectTarget ot:
-                    renderer.DrawPoint(Lev.Objects[ot.ObjectIndex].Position, settings.RenderingSettings.HighlightColor);
+                    renderer.DrawPoint(ot.Object.Position, settings.RenderingSettings.HighlightColor);
                     break;
                 case HighlightTarget.GraphicElementTarget gt:
-                    renderer.DrawGraphicElementFrame(Lev.GraphicElements[gt.GraphicElementIndex], settings.RenderingSettings, settings.RenderingSettings.HighlightColor);
+                    renderer.DrawGraphicElementFrame(gt.GraphicElement, settings.RenderingSettings, settings.RenderingSettings.HighlightColor);
                     break;
                 case HighlightTarget.PlayerTarget when playController.PlayingOrPaused:
                     renderer.DrawPoint(playController.Driver!.Body.Location, settings.RenderingSettings.HighlightColor);
