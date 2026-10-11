@@ -81,8 +81,40 @@ jobs:
 
       - name: Publish SLE Desktop
         run: |
-          dotnet publish Elmanager.SLE.Desktop/Elmanager.SLE.Desktop.csproj -c Release --runtime osx-arm64 --output "$RUNNER_TEMP/SLE" -p:StripSymbols=false
-          strip -no_code_signature_warning -x "$RUNNER_TEMP/SLE/sle"
+          dotnet publish Elmanager.SLE.Desktop/Elmanager.SLE.Desktop.csproj -c Release --runtime osx-arm64 --output "$RUNNER_TEMP/SLE/SLE.app/Contents/MacOS" -p:StripSymbols=false
+          strip -no_code_signature_warning -x "$RUNNER_TEMP/SLE/SLE.app/Contents/MacOS/sle"
+
+      - name: Assemble app bundle
+        run: |
+          APP="$RUNNER_TEMP/SLE/SLE.app"
+          ICONSET="$RUNNER_TEMP/sle.iconset"
+          mkdir -p "$APP/Contents/Resources" "$ICONSET"
+          for size in 16 32 128 256 512; do
+            sips -s format png -z "$size" "$size" Elmanager.SLE.Browser/wwwroot/favicon.svg --out "$ICONSET/icon_${size}x${size}.png" > /dev/null
+            sips -s format png -z "$((size * 2))" "$((size * 2))" Elmanager.SLE.Browser/wwwroot/favicon.svg --out "$ICONSET/icon_${size}x${size}@2x.png" > /dev/null
+          done
+          iconutil -c icns "$ICONSET" -o "$APP/Contents/Resources/sle.icns"
+          cat > "$APP/Contents/Info.plist" <<'EOF'
+          <?xml version="1.0" encoding="UTF-8"?>
+          <!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+          <plist version="1.0">
+          <dict>
+            <key>CFBundleExecutable</key>
+            <string>sle</string>
+            <key>CFBundleIconFile</key>
+            <string>sle.icns</string>
+            <key>CFBundleIdentifier</key>
+            <string>fi.m-l.sle</string>
+            <key>CFBundleName</key>
+            <string>SLE</string>
+            <key>CFBundlePackageType</key>
+            <string>APPL</string>
+            <key>NSHighResolutionCapable</key>
+            <true/>
+          </dict>
+          </plist>
+          EOF
+          codesign --force --sign - "$APP"
 
       - name: Create DMG
         run: |
