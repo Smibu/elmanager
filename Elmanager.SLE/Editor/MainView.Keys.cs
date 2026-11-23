@@ -16,14 +16,15 @@ public partial class MainView
 
     private void RegisterHotkeys()
     {
-        AddHotkey(new KeyGesture(Key.N, KeyModifiers.Control), OnNewClick);
-        AddHotkey(new KeyGesture(Key.O, KeyModifiers.Control), OnOpenClick);
-        AddHotkey(new KeyGesture(Key.S, KeyModifiers.Control), OnSaveClick);
-        AddHotkey(new KeyGesture(Key.P, KeyModifiers.Control), OnSaveAsPictureClick);
-        AddHotkey(new KeyGesture(Key.G, KeyModifiers.Control), OnQuickGrassClick);
-        AddHotkey(new KeyGesture(Key.D, KeyModifiers.Control), OnDeleteAllGrassClick);
-        AddHotkey(new KeyGesture(Key.Z, KeyModifiers.Control), OnUndoClick);
-        AddHotkey(new KeyGesture(Key.Y, KeyModifiers.Control), OnRedoClick);
+        var cmd = PlatformHotkeys.Command;
+        AddHotkey(new KeyGesture(Key.N, cmd), OnNewClick);
+        AddHotkey(new KeyGesture(Key.O, cmd), OnOpenClick);
+        AddHotkey(new KeyGesture(Key.S, cmd), OnSaveClick);
+        AddHotkey(new KeyGesture(Key.P, cmd), OnSaveAsPictureClick);
+        AddHotkey(new KeyGesture(Key.G, cmd), OnQuickGrassClick);
+        AddHotkey(new KeyGesture(Key.D, cmd), OnDeleteAllGrassClick);
+        AddHotkey(new KeyGesture(Key.Z, cmd), OnUndoClick);
+        AddHotkey(PlatformHotkeys.Redo, OnRedoClick);
         AddHotkey(new KeyGesture(Key.F2), () => _ = NavigateLevel(true));
         AddHotkey(new KeyGesture(Key.F3), () => _ = NavigateLevel(false));
         AddHotkey(new KeyGesture(Key.F4), OnLevelPropertiesClick);
@@ -33,9 +34,9 @@ public partial class MainView
         AddHotkey(new KeyGesture(Key.F9), OnFixSelfIntClick);
         AddHotkey(new KeyGesture(Key.F11), ToggleFullscreen);
         AddHotkey(new KeyGesture(Key.Escape), ExitFullscreen, () => _fullscreenController.IsFullscreen);
-        AddHotkey(new KeyGesture(Key.C, KeyModifiers.Control | KeyModifiers.Shift), OnCopyClick);
-        AddHotkey(new KeyGesture(Key.M, KeyModifiers.Control), OnMirrorHClick);
-        AddHotkey(new KeyGesture(Key.M, KeyModifiers.Control | KeyModifiers.Shift), OnMirrorVClick);
+        AddHotkey(new KeyGesture(Key.C, cmd | KeyModifiers.Shift), OnCopyClick);
+        AddHotkey(new KeyGesture(Key.M, cmd), OnMirrorHClick);
+        AddHotkey(new KeyGesture(Key.M, cmd | KeyModifiers.Shift), OnMirrorVClick);
 
         var notInTitleBox = () => !TitleBox.IsFocused;
         AddHotkey(new KeyGesture(Key.S), () => ActivateTool(SelectButton), notInTitleBox);
@@ -52,9 +53,9 @@ public partial class MainView
         AddHotkey(new KeyGesture(Key.I), () => ActivateTool(PictureButton), notInTitleBox);
         AddHotkey(new KeyGesture(Key.T), () => ActivateTool(TextButton), notInTitleBox);
         AddHotkey(new KeyGesture(Key.H), () => ActivateTool(CustomShapeButton), notInTitleBox);
-        AddHotkey(new KeyGesture(Key.A, KeyModifiers.Control), OnSelectAllClick, notInTitleBox);
-        AddHotkey(new KeyGesture(Key.C, KeyModifiers.Control), OnCopyClick, notInTitleBox);
-        AddHotkey(new KeyGesture(Key.V, KeyModifiers.Control), OnImportLevelsClick, notInTitleBox);
+        AddHotkey(new KeyGesture(Key.A, cmd), OnSelectAllClick, notInTitleBox);
+        AddHotkey(new KeyGesture(Key.C, cmd), OnCopyClick, notInTitleBox);
+        AddHotkey(new KeyGesture(Key.V, cmd), OnImportLevelsClick, notInTitleBox);
         AddHotkey(new KeyGesture(Key.Delete), OnDeleteSelectedClick, notInTitleBox);
         AddHotkey(new KeyGesture(Key.OemComma), OnUnionClick, notInTitleBox);
         AddHotkey(new KeyGesture(Key.OemPeriod), OnDifferenceClick, notInTitleBox);

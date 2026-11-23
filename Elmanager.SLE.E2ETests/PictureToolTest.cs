@@ -50,7 +50,7 @@ public class PictureToolTest : SleTest
         await MoveLevelViewportPointer(0.34, 0.70);
         await MoveLevelViewportPointer(0.34, 0.29);
         await Page.Mouse.UpAsync();
-        await Page.Keyboard.PressAsync("Control+A");
+        await Page.Keyboard.PressAsync("ControlOrMeta+A");
 
         await ClickBrowserViewport(0, 0, 145, 15);
         await Page.WaitForTimeoutAsync(200);

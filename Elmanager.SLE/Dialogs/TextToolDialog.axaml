@@ -48,7 +48,7 @@
     </DockPanel>
 
     <StackPanel Orientation="Horizontal" Spacing="8" HorizontalAlignment="Right">
-      <Button Content="OK" Click="OkButton_Click" Width="80" HotKey="Ctrl+Enter" />
+      <Button x:Name="OkButton" Content="OK" Click="OkButton_Click" Width="80" />
       <Button Content="Cancel" Click="CancelButton_Click" Width="80" />
     </StackPanel>
   </StackPanel>

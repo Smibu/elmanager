@@ -2,9 +2,11 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using Avalonia.Input;
 using Avalonia.Interactivity;
 using AvaloniaDialogs.Views;
 using Elmanager.SLE.Editor.Tools;
+using Elmanager.SLE.Platform;
 
 namespace Elmanager.SLE.Dialogs;
 
@@ -17,6 +19,7 @@ internal partial class TextToolDialog : BaseDialog<TextToolOptions>
     public TextToolDialog()
     {
         InitializeComponent();
+        OkButton.HotKey = new KeyGesture(Key.Enter, PlatformHotkeys.Command);
         PopulateFonts();
         WireEvents();
         ApplyOptions(TextToolOptions.Default);
@@ -25,6 +28,7 @@ internal partial class TextToolDialog : BaseDialog<TextToolOptions>
     public TextToolDialog(TextToolOptions options)
     {
         InitializeComponent();
+        OkButton.HotKey = new KeyGesture(Key.Enter, PlatformHotkeys.Command);
         PopulateFonts();
         WireEvents();
         ApplyOptions(options);

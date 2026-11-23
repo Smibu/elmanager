@@ -3,6 +3,7 @@
              xmlns:dialogs="using:AvaloniaDialogs.Views"
              xmlns:lgrUtil="using:Elmanager.SLE.LgrUtil"
              xmlns:local="using:Elmanager.SLE.Editor"
+             xmlns:platform="using:Elmanager.SLE.Platform"
              xmlns:ui="using:Elmanager.SLE.UI"
              x:Class="Elmanager.SLE.Editor.MainView"
              Loaded="Control_OnLoaded"
@@ -89,24 +90,24 @@
       <DockPanel>
         <Menu x:Name="EditorMenu" DockPanel.Dock="Top">
           <MenuItem Header="_File">
-            <MenuItem x:Name="NewMenuItem" Header="_New" InputGesture="Ctrl+N" Click="OnNewClick" />
-            <MenuItem x:Name="OpenMenuItem" Header="_Open" InputGesture="Ctrl+O" Click="OnOpenClick" />
+            <MenuItem x:Name="NewMenuItem" Header="_New" InputGesture="{platform:Cmd N}" Click="OnNewClick" />
+            <MenuItem x:Name="OpenMenuItem" Header="_Open" InputGesture="{platform:Cmd O}" Click="OnOpenClick" />
             <MenuItem Header="Open _internal">
               <MenuItem x:Name="OpenInternal1MenuItem" Header="1 - 28" />
               <MenuItem x:Name="OpenInternal2MenuItem" Header="29 - 55" />
             </MenuItem>
-            <MenuItem x:Name="SaveMenuItem" Header="_Save" InputGesture="Ctrl+S" Click="OnSaveClick" IsEnabled="False" />
+            <MenuItem x:Name="SaveMenuItem" Header="_Save" InputGesture="{platform:Cmd S}" Click="OnSaveClick" IsEnabled="False" />
             <MenuItem x:Name="SaveAsMenuItem" Header="Save _as..." Click="OnSaveAsClick" />
-            <MenuItem x:Name="SaveAsPictureMenuItem" Header="Save as _picture..." InputGesture="Ctrl+P" Click="OnSaveAsPictureClick" />
+            <MenuItem x:Name="SaveAsPictureMenuItem" Header="Save as _picture..." InputGesture="{platform:Cmd P}" Click="OnSaveAsPictureClick" />
             <MenuItem x:Name="DeleteLevMenuItem" Header="_Delete" Click="OnDeleteLevClick" IsEnabled="False" />
             <Separator x:Name="ExitSeparator" />
             <MenuItem x:Name="ExitMenuItem" Header="E_xit" Click="OnExitClick" />
           </MenuItem>
           <MenuItem Header="_Tools">
-            <MenuItem x:Name="QuickGrassMenuItem" Header="_QuickGrass" InputGesture="Ctrl+G" Click="OnQuickGrassClick" />
-            <MenuItem x:Name="DeleteAllGrassMenuItem" Header="Delete all _grass" InputGesture="Ctrl+D" Click="OnDeleteAllGrassClick" />
-            <MenuItem x:Name="UndoMenuItem" Header="_Undo" InputGesture="Ctrl+Z" Click="OnUndoClick" />
-            <MenuItem x:Name="RedoMenuItem" Header="_Redo" InputGesture="Ctrl+Y" Click="OnRedoClick" />
+            <MenuItem x:Name="QuickGrassMenuItem" Header="_QuickGrass" InputGesture="{platform:Cmd G}" Click="OnQuickGrassClick" />
+            <MenuItem x:Name="DeleteAllGrassMenuItem" Header="Delete all _grass" InputGesture="{platform:Cmd D}" Click="OnDeleteAllGrassClick" />
+            <MenuItem x:Name="UndoMenuItem" Header="_Undo" InputGesture="{platform:Cmd Z}" Click="OnUndoClick" />
+            <MenuItem x:Name="RedoMenuItem" Header="_Redo" InputGesture="{platform:Redo}" Click="OnRedoClick" />
             <Separator />
             <MenuItem x:Name="ZoomFillMenuItem" Header="Zoom _fill" InputGesture="F5" Click="OnZoomFillClick" />
             <MenuItem x:Name="CheckTopologyMenuItem" Header="_Check topology" InputGesture="F6" Click="OnCheckTopologyClick" />
@@ -115,17 +116,17 @@
             <MenuItem x:Name="PreviousLevelMenuItem" Header="_Previous level" InputGesture="F2" Click="OnPrevNextClick" />
             <MenuItem x:Name="NextLevelMenuItem" Header="_Next level" InputGesture="F3" Click="OnPrevNextClick" />
             <Separator />
-            <MenuItem x:Name="SelectAllMenuItem" Header="Select _all" InputGesture="Ctrl+A" Click="OnSelectAllClick" />
-            <MenuItem x:Name="ImportLevelsMenuItem" Header="_Import level(s)/image(s)..." InputGesture="Ctrl+V" Click="OnImportLevelsClick" />
+            <MenuItem x:Name="SelectAllMenuItem" Header="Select _all" InputGesture="{platform:Cmd A}" Click="OnSelectAllClick" />
+            <MenuItem x:Name="ImportLevelsMenuItem" Header="_Import level(s)/image(s)..." InputGesture="{platform:Cmd V}" Click="OnImportLevelsClick" />
             <Separator />
             <MenuItem Header="_Settings..." InputGesture="F7" Click="OnSettingsClick" />
           </MenuItem>
           <MenuItem Header="_Selection">
-            <MenuItem Header="_Copy" InputGesture="Ctrl+C" Click="OnCopyClick" />
-            <MenuItem Header="Copy and snap to _grid" InputGesture="Ctrl+Shift+C" Click="OnCopyClick" />
+            <MenuItem Header="_Copy" InputGesture="{platform:Cmd C}" Click="OnCopyClick" />
+            <MenuItem Header="Copy and snap to _grid" InputGesture="{platform:Cmd C, Shift=True}" Click="OnCopyClick" />
             <MenuItem Header="Save as s_hape..." Click="OnSaveShapeClick" />
-            <MenuItem x:Name="MirrorHMenuItem" Header="Mirror _horizontally" InputGesture="Ctrl+M" Click="OnMirrorHClick" />
-            <MenuItem x:Name="MirrorVMenuItem" Header="Mirror _vertically" InputGesture="Ctrl+Shift+M" Click="OnMirrorVClick" />
+            <MenuItem x:Name="MirrorHMenuItem" Header="Mirror _horizontally" InputGesture="{platform:Cmd M}" Click="OnMirrorHClick" />
+            <MenuItem x:Name="MirrorVMenuItem" Header="Mirror _vertically" InputGesture="{platform:Cmd M, Shift=True}" Click="OnMirrorVClick" />
             <MenuItem x:Name="DeleteSelectedMenuItem" Header="_Delete" Click="OnDeleteSelectedClick" />
             <Separator />
             <MenuItem x:Name="UnionMenuItem" Header="_Union" InputGesture="," Click="OnUnionClick" />

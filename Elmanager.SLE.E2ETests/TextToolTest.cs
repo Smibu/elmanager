@@ -48,7 +48,7 @@ public class TextToolTest : SleTest
             await Page.Keyboard.PressAsync("PageUp");
         }
 
-        await Page.Keyboard.PressAsync("Control+Enter");
+        await Page.Keyboard.PressAsync("ControlOrMeta+Enter");
 
         await ClickSelectTool();
         await ClickLevelViewport(0.68, 0.76);
