@@ -14,19 +14,19 @@ public class TextToolTest : SleTest
         await ClickTextTool();
         await ClickLevelViewport(0.45, 0.40);
         await Page.WaitForTimeoutAsync(200);
-        await Page.Keyboard.PressAsync("Control+A");
+        await Page.Keyboard.PressAsync("ControlOrMeta+A");
         await Page.Keyboard.TypeAsync("First line");
         await Page.Keyboard.PressAsync("Enter");
         await Page.Keyboard.TypeAsync("Second line");
 
         await Page.Keyboard.PressAsync("Tab");
-        await Page.Keyboard.PressAsync("Control+A");
+        await Page.Keyboard.PressAsync("ControlOrMeta+A");
         await Page.Keyboard.TypeAsync("Roboto");
         await Page.Keyboard.PressAsync("Enter");
         await Page.WaitForTimeoutAsync(3000);
 
         await Page.Keyboard.PressAsync("Tab");
-        await Page.Keyboard.PressAsync("Control+A");
+        await Page.Keyboard.PressAsync("ControlOrMeta+A");
         await Page.Keyboard.TypeAsync("24");
         await Page.Keyboard.PressAsync("Enter");
 

@@ -58,7 +58,7 @@ public class PictureToolTest : SleTest
         await Page.WaitForTimeoutAsync(500);
 
         await ClickBrowserViewport(0.5, 0.5, -100, 200);
-        await Page.Keyboard.PressAsync("Control+A");
+        await Page.Keyboard.PressAsync("ControlOrMeta+A");
         await Page.Keyboard.TypeAsync("100");
         await ClickBrowserViewport(0.5, 0.5, 84, 238);
         await Page.WaitForTimeoutAsync(100);
