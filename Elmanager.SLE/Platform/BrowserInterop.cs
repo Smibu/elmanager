@@ -1,11 +1,13 @@
 using System;
 using System.Runtime.InteropServices.JavaScript;
+using System.Runtime.Versioning;
 using System.Threading.Tasks;
 
 namespace Elmanager.SLE.Platform;
 
 internal static partial class BrowserInterop
 {
+    [SupportedOSPlatform("browser")]
     internal static async Task<string[]> GetBookmarkedFolderFileNames(string bookmark)
     {
         using var fileNames = await GetBookmarkedFolderFileNamesAsObject(bookmark);
@@ -17,6 +19,7 @@ internal static partial class BrowserInterop
         return ToStringArray(fileNames);
     }
 
+    [SupportedOSPlatform("browser")]
     internal static Task RenameBookmarkedFile(string bookmark, string newName) =>
         RenameBookmarkedFileCore(bookmark, newName);
 

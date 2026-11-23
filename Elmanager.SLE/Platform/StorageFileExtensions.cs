@@ -1,5 +1,6 @@
 using System;
 using System.IO;
+using System.Runtime.Versioning;
 using System.Threading.Tasks;
 using Avalonia.Platform.Storage;
 
@@ -94,6 +95,7 @@ internal static class StorageFileExtensions
         }
     }
 
+    [SupportedOSPlatform("browser")]
     private static async Task<IStorageFile> RenameBrowserFile(
         IStorageFile file,
         string newName,

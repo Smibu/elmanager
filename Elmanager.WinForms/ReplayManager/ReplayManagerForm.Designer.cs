@@ -1435,6 +1435,7 @@ namespace Elmanager.ReplayManager
         private ToolStripMenuItem autoresizeColumnsToolStripMenuItem;
         private TableLayoutPanel tableLayoutPanel3;
         private TableLayoutPanel tableLayoutPanel4;
+        private BrightIdeasSoftware.ObjectListView list = null!;
     }
 	
 }

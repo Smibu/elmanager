@@ -26,7 +26,6 @@ namespace Elmanager.ReplayManager;
 internal partial class ReplayManagerForm : FormMod, IManagerGui
 {
     private const string NoReplaysSelected = "No replays are selected!";
-    private ObjectListView list = null!;
     private bool _cellEditing;
     private readonly MaybeOpened<ReplayViewerForm> _currentViewer = new();
     private readonly Manager<ReplayItem> _manager;

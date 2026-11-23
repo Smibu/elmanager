@@ -1,4 +1,5 @@
 using System;
+using System.Runtime.Versioning;
 using Avalonia.Controls;
 
 namespace Elmanager.SLE.Platform;
@@ -65,6 +66,7 @@ internal sealed class FullscreenController
         }
     }
 
+    [SupportedOSPlatform("browser")]
     private sealed class BrowserFullscreenHandler : IFullscreenHandler
     {
         private readonly Action<Exception> _errorHandler;
