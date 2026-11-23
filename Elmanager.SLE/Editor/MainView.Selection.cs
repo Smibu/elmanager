@@ -51,13 +51,13 @@ public partial class MainView
 
     private void OnDeselectPicturesClick(object? sender, RoutedEventArgs e)
     {
-        _controller.DeselectGraphicElementsWith(ge => ge is GraphicElement.Picture);
+        _controller.DeselectGraphicElementsWith(ge => ge.Kind is GraphicElement.Picture);
         RedrawScene();
     }
 
     private void OnDeselectTexturesClick(object? sender, RoutedEventArgs e)
     {
-        _controller.DeselectGraphicElementsWith(ge => ge is GraphicElement.Texture);
+        _controller.DeselectGraphicElementsWith(ge => ge.Kind is GraphicElement.Texture);
         RedrawScene();
     }
 

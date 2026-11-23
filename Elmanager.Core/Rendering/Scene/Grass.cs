@@ -141,7 +141,11 @@ internal class Grass : IDisposable
             {
                 foreach (var pic in p.SlopeInfo!.GetGrassPics(grassData.GrassPics))
                 {
-                    var tex = pic.PictureInfo.Texture;
+                    if (pic.Kind is not GraphicElement.Picture { PictureInfo.Texture: var tex })
+                    {
+                        continue;
+                    }
+
                     var list = groups.GetOrCreate(tex);
                     list.Add((float)pic.Position.X);
                     list.Add((float)pic.Position.Y);

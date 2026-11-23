@@ -85,8 +85,8 @@ internal partial class
             .FirstOrDefault(choice => choice.Name.Equals(
                 opts.Texture.Txt.Name,
                 StringComparison.OrdinalIgnoreCase));
-        DistanceBox.Text = (opts.Texture.Distance ?? 500).ToString();
-        ClippingComboBox.SelectedIndex = (int)(opts.Texture.Clipping ?? ClippingType.Unclipped);
+        DistanceBox.Text = opts.Distance.ToString();
+        ClippingComboBox.SelectedIndex = (int)opts.Clipping;
 
         MaskListBox.Selection.Clear();
         for (var i = 0; i < _maskNames.Length; i++)
@@ -164,8 +164,8 @@ internal partial class
         }
 
         var clipping = (ClippingType)ClippingComboBox.SelectedIndex;
-        var selection = ImageSelection.Texture(texture, mask, clipping, distance);
-        var options = new TexturizationOptions(selection, minCover, iterations, selectedMasks);
+        var selection = new ImageSelection.TextureSelection(texture, mask);
+        var options = new TexturizationOptions(selection, clipping, distance, minCover, iterations, selectedMasks);
         Close((selection, options));
     }
 

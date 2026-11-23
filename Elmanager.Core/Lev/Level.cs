@@ -390,7 +390,7 @@ public class Level
         get
         {
             var padding = 11.898;
-            return GraphicElements.Where(p => p is GraphicElement.Texture).Any(p =>
+            return GraphicElements.Where(p => p.Kind is GraphicElement.Texture).Any(p =>
                 p.Position.X < _polygonBounds.XMin - padding ||
                 p.Position.X > _polygonBounds.XMax + padding ||
                 p.Position.Y < _polygonBounds.YMin - padding ||
@@ -402,9 +402,9 @@ public class Level
 
     public double Height => Bounds.YMax - Bounds.YMin;
 
-    public int TextureCount => GraphicElements.Count(texture => texture is GraphicElement.Texture or GraphicElement.MissingTexture);
+    public int TextureCount => GraphicElements.Count(texture => texture.IsTexture);
 
-    public int PictureCount => GraphicElements.Count(texture => texture is GraphicElement.Picture or GraphicElement.MissingPicture);
+    public int PictureCount => GraphicElements.Count(texture => texture.IsPicture);
 
     public int PictureTextureCount => GraphicElements.Count;
 
@@ -662,7 +662,7 @@ public class Level
         levelFile.AddRange(BitConverter.GetBytes(GraphicElements.Count + MagicDouble2));
         foreach (var x in GraphicElements)
         {
-            switch (x)
+            switch (x.Kind)
             {
                 case GraphicElement.Picture p:
                     levelFile.AddRange(GetByteArrayFromString(p.PictureInfo.Name, 10));
@@ -849,7 +849,7 @@ public class Level
         GraphicElements = new List<GraphicElement>();
         foreach (var fileItem in oldElements)
         {
-            if (fileItem is GraphicElementFileItem.PictureFileItem pItem)
+            if (fileItem.Kind is GraphicElementFileItem.PictureFileItem pItem)
             {
                 if (lgrImages.TryGetValue(pItem.PictureName.ToLower(), out var p) && p.Type == ImageType.Picture)
                 {
@@ -860,7 +860,7 @@ public class Level
                     GraphicElements.Add(GraphicElement.MissingPic(pItem.PictureName, fileItem.Clipping, fileItem.Distance, fileItem.Position));
                 }
             }
-            else if (fileItem is GraphicElementFileItem.TextureFileItem tItem)
+            else if (fileItem.Kind is GraphicElementFileItem.TextureFileItem tItem)
             {
                 if (lgrImages.TryGetValue(tItem.TextureName.ToLower(), out var t) && t.Type == ImageType.Texture)
                 {

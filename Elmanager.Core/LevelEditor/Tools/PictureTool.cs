@@ -68,7 +68,7 @@ public class PictureTool : ToolBase, IEditorTool
                 {
                     Lev.GraphicElements.Add(_currentElem);
                     _currentElem = _currentElem with { };
-                    LevEditor.SetModified(_currentElem is GraphicElement.Picture ? LevModification.Pictures : LevModification.Textures);
+                    LevEditor.SetModified(_currentElem.Kind is GraphicElement.Picture ? LevModification.Pictures : LevModification.Textures);
                 }
                 else
                     _ = OpenDialogAndRedraw();

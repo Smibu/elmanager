@@ -98,7 +98,7 @@ internal sealed class ShapePreview : Control
                 element.Position.Y - element.Height));
             var rect = new Rect(topLeft, bottomRight);
             context.DrawRectangle(null,
-                element is GraphicElement.Picture or GraphicElement.MissingPicture ? picturePen : texturePen,
+                element.IsPicture ? picturePen : texturePen,
                 rect);
         }
 

@@ -300,7 +300,7 @@ public class SelectionTool : ToolBase, IEditorTool
             foreach (GraphicElement z in Lev.GraphicElements.Where(z => z.Position.Mark == VectorMark.Selected))
             {
                 z.Position += delta;
-                anythingMoved |= z is GraphicElement.Picture or GraphicElement.MissingPicture ? LevModification.Pictures : LevModification.Textures;
+                anythingMoved |= z.IsPicture ? LevModification.Pictures : LevModification.Textures;
             }
 
             _currLevModification = anythingMoved;
@@ -461,8 +461,8 @@ public class SelectionTool : ToolBase, IEditorTool
             foreach (var z in Lev.GraphicElements)
             {
                 var x = z;
-                if ((z is GraphicElement.Picture or GraphicElement.MissingPicture && pictureFilter) ||
-                    (z is GraphicElement.Texture or GraphicElement.MissingTexture && textureFilter))
+                if ((z.IsPicture && pictureFilter) ||
+                    (z.IsTexture && textureFilter))
                     if (_selectionPoly is null)
                         MarkSelectedInArea(ref x, selectionxMin, selectionxMax, selectionyMin, selectionyMax);
                     else
@@ -611,7 +611,7 @@ public class SelectionTool : ToolBase, IEditorTool
     private void ShowTextureInfo(int index)
     {
         var graphicElement = Lev.GraphicElements[index];
-        LevEditor.HighlightText = graphicElement switch
+        LevEditor.HighlightText = graphicElement.Kind switch
         {
             GraphicElement.Picture p =>
                 $"Picture: {p.PictureInfo.Name}, distance: {graphicElement.Distance}, clipping: {graphicElement.Clipping}",

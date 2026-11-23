@@ -13,7 +13,7 @@ public class GrassSlopeInfo
     private int _polygonXMin = -1;
     private readonly double _zoom;
     private readonly Bounds _bounds;
-    private List<GraphicElement.Picture>? _placed;
+    private List<GraphicElement>? _placed;
 
     private double Factor => 48.0 * _zoom;
 
@@ -98,13 +98,13 @@ public class GrassSlopeInfo
         return result;
     }
 
-    public List<GraphicElement.Picture> GetGrassPics(List<GrassPic> pics)
+    public List<GraphicElement> GetGrassPics(List<GrassPic> pics)
     {
         if (_placed != null)
         {
             return _placed;
         }
-        _placed = new List<GraphicElement.Picture>();
+        _placed = new List<GraphicElement>();
         if (pics.Count == 0)
         {
             return _placed;
@@ -137,8 +137,8 @@ public class GrassSlopeInfo
             if (bestPic is not { } best)
                 throw new Exception("Did not find any grass pic?");
             var finalY = (best.Delta >= 0 ? currY - 20 : currY + 21 - best.Height) + best.Height;
-            _placed.Add(new GraphicElement.Picture(ClippingType.Ground, 600,
-                new Vector(_bounds.XMin + currX / Factor, _bounds.YMin + finalY / Factor), best.Image));
+            _placed.Add(GraphicElement.Pic(best.Image,
+                new Vector(_bounds.XMin + currX / Factor, _bounds.YMin + finalY / Factor), 600, ClippingType.Ground));
             currX += best.Width;
             currY += best.Delta;
         }

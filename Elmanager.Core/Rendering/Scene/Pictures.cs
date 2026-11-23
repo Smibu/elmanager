@@ -111,13 +111,13 @@ internal class Pictures : IDisposable
 
         foreach (var (idx, ge) in state.GetGraphicElements().Select((ge, index) => (index, ge)))
         {
-            if (ge is GraphicElement.Picture p)
+            if (ge.Kind is GraphicElement.Picture p)
             {
-                var key = (p.PictureInfo.Name, p.Clipping);
+                var key = (p.PictureInfo.Name, ge.Clipping);
                 instances.GetOrCreate(key).Add(new Vector3(
-                    (float)p.Position.X,
-                    (float)p.Position.Y,
-                    p.Distance + (idx + 1) * 0.0002f
+                    (float)ge.Position.X,
+                    (float)ge.Position.Y,
+                    ge.Distance + (idx + 1) * 0.0002f
                 ));
             }
         }

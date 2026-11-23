@@ -41,7 +41,7 @@ internal class AvaloniaPictureDialogService : IPictureDialogService
         var sel = result.Value;
         var clipping = sel.Clipping!.Value;
         var distance = sel.Distance!.Value;
-        return sel switch
+        return sel.Kind switch
         {
             ImageSelection.TextureSelection t => GraphicElement.Text(clipping, distance,
                 currentPos, _renderer.OpenGlLgr.DrawableImageFromLgrImage(t.Txt),

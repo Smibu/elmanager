@@ -84,8 +84,8 @@ public abstract class ToolBase : IEditorToolBase
             for (int j = 0; j < Lev.GraphicElements.Count; j++)
             {
                 GraphicElement z = Lev.GraphicElements[j];
-                if ((z is GraphicElement.Picture or GraphicElement.MissingPicture && pictureFilter) ||
-                    (z is GraphicElement.Texture or GraphicElement.MissingTexture && textureFilter))
+                if ((z.IsPicture && pictureFilter) ||
+                    (z.IsTexture && textureFilter))
                 {
                     if (GeometryUtils.DistanceFromSegment(z.Position.X, z.Position.Y, z.Position.X + z.Width,
                             z.Position.Y, p.X, p.Y) < limit
@@ -110,8 +110,8 @@ public abstract class ToolBase : IEditorToolBase
             for (int j = 0; j < Lev.GraphicElements.Count; j++)
             {
                 GraphicElement z = Lev.GraphicElements[j];
-                if ((z is GraphicElement.Picture or GraphicElement.MissingPicture && pictureFilter) ||
-                    (z is GraphicElement.Texture or GraphicElement.MissingTexture && textureFilter))
+                if ((z.IsPicture && pictureFilter) ||
+                    (z.IsTexture && textureFilter))
                 {
                     if (p.X > z.Position.X && p.X < z.Position.X + z.Width && p.Y < z.Position.Y &&
                         p.Y > z.Position.Y - z.Height)

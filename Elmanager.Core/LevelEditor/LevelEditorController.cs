@@ -138,7 +138,7 @@ public class LevelEditorController<TEditorLev>(ILevelEditor levelEditor, TEditor
                 _selectedObjectCount++;
         foreach (GraphicElement x in Lev.GraphicElements)
             if (x.Position.Mark == VectorMark.Selected)
-                if (x is GraphicElement.Picture or GraphicElement.MissingPicture)
+                if (x.IsPicture)
                     _selectedPictureCount++;
                 else
                     _selectedTextureCount++;
@@ -282,7 +282,7 @@ public class LevelEditorController<TEditorLev>(ILevelEditor levelEditor, TEditor
             if (x.Position.Mark == VectorMark.Selected)
             {
                 Lev.GraphicElements.Remove(x);
-                mod |= x is GraphicElement.Picture or GraphicElement.MissingPicture
+                mod |= x.IsPicture
                     ? LevModification.Pictures
                     : LevModification.Textures;
             }
@@ -367,7 +367,7 @@ public class LevelEditorController<TEditorLev>(ILevelEditor levelEditor, TEditor
         if (copiedPolygons.Count > 0)
             mod |= LevModification.Ground;
         foreach (var tex in copiedTextures)
-            mod |= tex is GraphicElement.Picture or GraphicElement.MissingPicture
+            mod |= tex.IsPicture
                 ? LevModification.Pictures
                 : LevModification.Textures;
         editor.SetModified(mod);
@@ -429,7 +429,7 @@ public class LevelEditorController<TEditorLev>(ILevelEditor levelEditor, TEditor
             items.Add("Some polygon edges are too short.");
         }
 
-        var missingNames = Lev.GraphicElements.Select(e => e switch
+        var missingNames = Lev.GraphicElements.Select(e => e.Kind switch
         {
             GraphicElement.MissingPicture missingPicture => missingPicture.Name,
             GraphicElement.MissingTexture missingTexture => missingTexture.TextureName,
@@ -470,7 +470,7 @@ public class LevelEditorController<TEditorLev>(ILevelEditor levelEditor, TEditor
             var obj = Lev.GraphicElements[_selectedPictureIndex];
             Lev.GraphicElements.RemoveAt(_selectedPictureIndex);
             Lev.GraphicElements.Insert(0, obj);
-            mod = obj is GraphicElement.Picture or GraphicElement.MissingPicture
+            mod = obj.IsPicture
                 ? LevModification.Pictures
                 : LevModification.Textures;
         }
@@ -505,7 +505,7 @@ public class LevelEditorController<TEditorLev>(ILevelEditor levelEditor, TEditor
             var obj = Lev.GraphicElements[_selectedPictureIndex];
             Lev.GraphicElements.RemoveAt(_selectedPictureIndex);
             Lev.GraphicElements.Add(obj);
-            mod |= obj is GraphicElement.Picture or GraphicElement.MissingPicture
+            mod |= obj.IsPicture
                 ? LevModification.Pictures
                 : LevModification.Textures;
         }
@@ -628,8 +628,8 @@ public class LevelEditorController<TEditorLev>(ILevelEditor levelEditor, TEditor
 
         foreach (var ge in Lev.GraphicElements)
         {
-            if ((filter.EffectiveTextureFilter && ge is GraphicElement.Texture) ||
-                (filter.EffectivePictureFilter && ge is GraphicElement.Picture))
+            if ((filter.EffectiveTextureFilter && ge.Kind is GraphicElement.Texture) ||
+                (filter.EffectivePictureFilter && ge.Kind is GraphicElement.Picture))
                 ge.Mark = VectorMark.Selected;
         }
 
@@ -922,27 +922,27 @@ public class LevelEditorController<TEditorLev>(ILevelEditor levelEditor, TEditor
             var distance = sel.Distance ?? curr.Distance;
             var position = curr.Position;
 
-            return sel switch
+            return sel.Kind switch
             {
                 ImageSelection.MixedSelection => curr with { Distance = distance, Clipping = clipping },
-                ImageSelection.PictureSelection(var pic, _, _) => GraphicElement.Pic(
+                ImageSelection.PictureSelection(var pic) => GraphicElement.Pic(
                     openGlLgr.DrawableImageFromLgrImage(pic), position, distance, clipping),
-                ImageSelection.TextureSelection(var txt, var mask, _, _) => GraphicElement.Text(clipping, distance,
+                ImageSelection.TextureSelection(var txt, var mask) => GraphicElement.Text(clipping, distance,
                     position,
                     openGlLgr.DrawableImageFromLgrImage(txt),
                     openGlLgr.DrawableImageFromLgrImage(mask)),
-                ImageSelection.TextureSelectionMultipleMasks(var txt, _, _) when
-                    curr is GraphicElement.Texture t =>
+                ImageSelection.TextureSelectionMultipleMasks(var txt) when
+                    curr.Kind is GraphicElement.Texture t =>
                     GraphicElement.Text(clipping, distance, position, openGlLgr.DrawableImageFromLgrImage(txt), t.MaskInfo),
-                ImageSelection.TextureSelectionMultipleMasks(var txt, _, _) when curr is GraphicElement.Picture
+                ImageSelection.TextureSelectionMultipleMasks(var txt) when curr.Kind is GraphicElement.Picture
                     =>
                     GraphicElement.Text(clipping, distance, position, openGlLgr.DrawableImageFromLgrImage(txt),
                         openGlLgr.DrawableImageFromLgrImage(openGlLgr.CurrentLgr.LgrImages.Values.First(i => i.Type == Lgr.ImageType.Mask))),
-                ImageSelection.TextureSelectionMultipleTextures(var mask, _, _) when
-                    curr is GraphicElement.Texture t => GraphicElement.Text(clipping,
+                ImageSelection.TextureSelectionMultipleTextures(var mask) when
+                    curr.Kind is GraphicElement.Texture t => GraphicElement.Text(clipping,
                         distance, position, t.TextureInfo, openGlLgr.DrawableImageFromLgrImage(mask)),
                 ImageSelection.TextureSelectionMultipleTextures when
-                    curr is GraphicElement.Picture => curr with { Distance = distance, Clipping = clipping },
+                    curr.Kind is GraphicElement.Picture => curr with { Distance = distance, Clipping = clipping },
                 _ => throw new ArgumentOutOfRangeException(nameof(sel))
             };
         }).ToList();
@@ -1095,7 +1095,7 @@ public class LevelEditorController<TEditorLev>(ILevelEditor levelEditor, TEditor
             var distance = sel.Distance!.Value;
             foreach (var selectedVertex in selectedVertices)
             {
-                GraphicElement g = sel switch
+                GraphicElement g = sel.Kind switch
                 {
                     ImageSelection.TextureSelection t => GraphicElement.Text(clipping, distance, selectedVertex,
                         editor.Renderer.OpenGlLgr.DrawableImageFromLgrImage(t.Txt),
@@ -1190,7 +1190,7 @@ public class LevelEditorController<TEditorLev>(ILevelEditor levelEditor, TEditor
                 masks.First(m => Math.Abs(m.WidthMinusMargin * m.HeightMinusMargin - env.Area) < 0.001));
         var pics = selmasks.Zip(covering,
             (m, c) =>
-                GraphicElement.Text(sel.Clipping!.Value, sel.Distance!.Value,
+                GraphicElement.Text(opts.Clipping, opts.Distance,
                     new Vector(c.MinX - m.EmptyPixelXMargin, c.MaxY + m.EmptyPixelYMargin), texture, m));
         Lev.GraphicElements.AddRange(pics);
         editor.SetModified(LevModification.Textures);

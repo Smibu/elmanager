@@ -132,7 +132,7 @@ internal partial class PictureDialog : BaseDialog<ImageSelection>
 
     public void SelectElement(GraphicElement element)
     {
-        switch (element)
+        switch (element.Kind)
         {
             case GraphicElement.Picture p:
                 PictureRadio.IsChecked = true;
@@ -158,10 +158,11 @@ internal partial class PictureDialog : BaseDialog<ImageSelection>
 
         EnableMultipleValues();
 
-        if (elements.All(element => element is GraphicElement.Picture))
+        var pictures = elements.Select(element => element.Kind.Value).OfType<GraphicElement.Picture>().ToList();
+        var textures = elements.Select(element => element.Kind.Value).OfType<GraphicElement.Texture>().ToList();
+        if (pictures.Count == elements.Count)
         {
             PictureRadio.IsChecked = true;
-            var pictures = elements.Cast<GraphicElement.Picture>().ToList();
             if (pictures.All(picture => picture.PictureInfo.Name == pictures[0].PictureInfo.Name))
             {
                 SelectImage(PictureComboBox, pictures[0].PictureInfo.Name);
@@ -171,10 +172,9 @@ internal partial class PictureDialog : BaseDialog<ImageSelection>
                 PictureComboBox.SelectedItem = ImageChoice.Multiple;
             }
         }
-        else if (elements.All(element => element is GraphicElement.Texture))
+        else if (textures.Count == elements.Count)
         {
             TextureRadio.IsChecked = true;
-            var textures = elements.Cast<GraphicElement.Texture>().ToList();
             if (textures.All(texture => texture.TextureInfo.Name == textures[0].TextureInfo.Name))
             {
                 SelectImage(TextureComboBox, textures[0].TextureInfo.Name);

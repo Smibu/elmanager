@@ -3,18 +3,23 @@ using Elmanager.Rendering;
 
 namespace Elmanager.LevelEditor;
 
-public abstract record HighlightTarget
+public union HighlightTarget(
+    HighlightTarget.PolygonTarget,
+    HighlightTarget.VertexTarget,
+    HighlightTarget.ObjectTarget,
+    HighlightTarget.GraphicElementTarget,
+    HighlightTarget.PlayerTarget)
 {
-    public record PolygonTarget(Polygon Polygon) : HighlightTarget;
+    public record PolygonTarget(Polygon Polygon);
 
-    public record VertexTarget(Polygon Polygon, int VertexIndex) : HighlightTarget
+    public record VertexTarget(Polygon Polygon, int VertexIndex)
     {
         public int PolygonVertexCount { get; } = Polygon.Vertices.Count;
     }
 
-    public record ObjectTarget(LevObject Object) : HighlightTarget;
-    public record GraphicElementTarget(GraphicElement GraphicElement) : HighlightTarget;
-    public record PlayerTarget : HighlightTarget;
+    public record ObjectTarget(LevObject Object);
+    public record GraphicElementTarget(GraphicElement GraphicElement);
+    public record PlayerTarget;
 
     public bool ExistsIn(Level lev) => this switch
     {
@@ -23,6 +28,6 @@ public abstract record HighlightTarget
                            vt.Polygon.Vertices.Count == vt.PolygonVertexCount,
         ObjectTarget ot => lev.Objects.Contains(ot.Object),
         GraphicElementTarget gt => lev.GraphicElements.Contains(gt.GraphicElement),
-        _ => true
+        PlayerTarget => true
     };
 }

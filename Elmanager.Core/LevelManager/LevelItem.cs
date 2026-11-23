@@ -32,9 +32,9 @@ public record LevelItem(
     [Description("Grav.")]
     public int GravApples => Lev.Objects.Count(x => x.Type == ObjectType.Apple && x.AppleType != AppleType.Normal);
 
-    [Description("Textures")] public int TextureCount => Lev.GraphicElements.Count(e => e is GraphicElement.Texture or GraphicElement.MissingTexture);
+    [Description("Textures")] public int TextureCount => Lev.GraphicElements.Count(e => e.IsTexture);
 
-    [Description("Pictures")] public int PictureCount => Lev.GraphicElements.Count(e => e is GraphicElement.Picture or GraphicElement.MissingPicture);
+    [Description("Pictures")] public int PictureCount => Lev.GraphicElements.Count(e => e.IsPicture);
 
     [Description("Apples")] public int AppleObjectCount => Lev.AppleObjectCount;
 

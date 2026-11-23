@@ -131,10 +131,10 @@ internal class Textures : IDisposable
 
         foreach (var ge in state.GetGraphicElements())
         {
-            if (ge is GraphicElement.Texture t)
+            if (ge.Kind is GraphicElement.Texture t)
             {
-                var key = (t.TextureInfo.Name, t.MaskInfo.Name, t.Clipping);
-                instances.GetOrCreate(key).Add(new Vector3((float)t.Position.X, (float)t.Position.Y, t.Distance));
+                var key = (t.TextureInfo.Name, t.MaskInfo.Name, ge.Clipping);
+                instances.GetOrCreate(key).Add(new Vector3((float)ge.Position.X, (float)ge.Position.Y, ge.Distance));
             }
         }
 

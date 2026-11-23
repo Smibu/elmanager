@@ -193,25 +193,25 @@ internal class GraphicElementFrames : IDisposable
 
         foreach (var ge in state.GetGraphicElements())
         {
-            switch (ge)
+            switch (ge.Kind)
             {
                 case GraphicElement.Picture p:
                     {
                         var info = p.PictureInfo;
-                        picInstances.Add(new((float)p.Position.X, (float)p.Position.Y, (float)info.Width, (float)info.Height));
+                        picInstances.Add(new((float)ge.Position.X, (float)ge.Position.Y, (float)info.Width, (float)info.Height));
                         break;
                     }
                 case GraphicElement.Texture t:
                     {
                         var info = t.MaskInfo;
-                        texInstances.Add(new((float)t.Position.X, (float)t.Position.Y, (float)info.Width, (float)info.Height));
+                        texInstances.Add(new((float)ge.Position.X, (float)ge.Position.Y, (float)info.Width, (float)info.Height));
                         break;
                     }
                 case GraphicElement.MissingPicture mp:
-                    missingPicInstances.Add(new((float)mp.Position.X, (float)mp.Position.Y, (float)mp.Width, (float)mp.Height));
+                    missingPicInstances.Add(new((float)ge.Position.X, (float)ge.Position.Y, (float)mp.Width, (float)mp.Height));
                     break;
                 case GraphicElement.MissingTexture mt:
-                    missingTexInstances.Add(new((float)mt.Position.X, (float)mt.Position.Y, (float)mt.Width, (float)mt.Height));
+                    missingTexInstances.Add(new((float)ge.Position.X, (float)ge.Position.Y, (float)mt.Width, (float)mt.Height));
                     break;
             }
         }

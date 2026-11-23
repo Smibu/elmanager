@@ -410,7 +410,7 @@ public class ElmaRenderer : IDisposable
     public void DrawGraphicElementFrame(GraphicElement e, RenderingSettings settings, Color color)
     {
         bool dashed;
-        switch (e)
+        switch (e.Kind)
         {
             case GraphicElement.Picture when settings.ShowPictureFrames || settings.ShowPictures:
             case GraphicElement.Texture when settings.ShowTextureFrames || settings.ShowTextures:

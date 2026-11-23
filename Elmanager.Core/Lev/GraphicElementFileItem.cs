@@ -3,21 +3,18 @@ using Elmanager.Lgr;
 
 namespace Elmanager.Lev;
 
-internal abstract record GraphicElementFileItem(Vector Position, int Distance, ClippingType Clipping)
+internal record GraphicElementFileItem(Vector Position, int Distance, ClippingType Clipping, GraphicElementFileItemKind Kind)
 {
-    internal record PictureFileItem
-        (string PictureName, Vector Position, int Distance, ClippingType Clipping) : GraphicElementFileItem(Position,
-            Distance, Clipping);
+    internal record PictureFileItem(string PictureName);
 
-    internal record TextureFileItem
-        (string TextureName, string MaskName, Vector Position, int Distance, ClippingType Clipping) :
-            GraphicElementFileItem(Position,
-                Distance, Clipping);
+    internal record TextureFileItem(string TextureName, string MaskName);
 
-    internal static PictureFileItem Picture(string pictureName, Vector position, int distance, ClippingType clipping) =>
-        new(pictureName, position, distance, clipping);
+    internal static GraphicElementFileItem Picture(string pictureName, Vector position, int distance, ClippingType clipping) =>
+        new(position, distance, clipping, new PictureFileItem(pictureName));
 
-    internal static TextureFileItem Texture(string textureName, string maskName, Vector position, int distance,
+    internal static GraphicElementFileItem Texture(string textureName, string maskName, Vector position, int distance,
         ClippingType clipping) =>
-        new(textureName, maskName, position, distance, clipping);
+        new(position, distance, clipping, new TextureFileItem(textureName, maskName));
 }
+
+internal union GraphicElementFileItemKind(GraphicElementFileItem.PictureFileItem, GraphicElementFileItem.TextureFileItem);
