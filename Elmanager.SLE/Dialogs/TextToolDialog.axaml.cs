@@ -12,7 +12,6 @@ internal partial class TextToolDialog : BaseDialog<TextToolOptions>
 {
     private const double LineHeightFactor = 500.0;
     private const double SmoothnessBase = 1.1;
-    private int _styleLoadVersion;
     private bool _suppressEvents;
 
     public TextToolDialog()
@@ -132,27 +131,9 @@ internal partial class TextToolDialog : BaseDialog<TextToolOptions>
             return;
         }
 
-        var version = ++_styleLoadVersion;
-        LoadingPanel.IsVisible = true;
-        try
-        {
-            var styles = await SleTypefaceProvider.GetSupportedStylesAsync(family);
-            if (version != _styleLoadVersion || family != SelectedFamily)
-            {
-                return;
-            }
-
-            _suppressEvents = true;
-            SetStyleItems(styles, preferredBold, preferredItalic);
-            _suppressEvents = false;
-        }
-        finally
-        {
-            if (version == _styleLoadVersion && family == SelectedFamily)
-            {
-                LoadingPanel.IsVisible = false;
-            }
-        }
+        _suppressEvents = true;
+        SetStyleItems(SleTypefaceProvider.GetSupportedStyles(family), preferredBold, preferredItalic);
+        _suppressEvents = false;
 
         await LoadFontAndRaiseChangedAsync(SelectedFamily, Bold, Italic);
     }

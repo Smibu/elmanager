@@ -20,7 +20,7 @@
 
   <ItemGroup>
     <AvaloniaResource Include="Resources\Icons.axaml" />
-    <AvaloniaResource Include="Resources\googlefonts.txt" />
+    <AvaloniaResource Include="Resources\googlefonts.tsv" />
     <AvaloniaResource Include="Resources\lgrs.json" />
   </ItemGroup>
 

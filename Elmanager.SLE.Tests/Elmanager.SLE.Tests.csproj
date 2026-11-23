@@ -18,6 +18,7 @@
 
   <ItemGroup>
     <None Update="TestData\SvgImporter\*.svg" CopyToOutputDirectory="PreserveNewest" />
+    <None Include="..\Elmanager.SLE\Resources\googlefonts.tsv" Link="TestData\googlefonts.tsv" CopyToOutputDirectory="PreserveNewest" />
   </ItemGroup>
 
 </Project>

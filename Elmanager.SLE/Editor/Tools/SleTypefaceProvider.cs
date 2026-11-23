@@ -1,9 +1,8 @@
 using System;
 using System.Collections.Generic;
 using System.IO;
-using System.Net;
+using System.Linq;
 using System.Net.Http;
-using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using Avalonia.Platform;
 using SkiaSharp;
@@ -14,7 +13,14 @@ internal readonly record struct TypefaceStyle(string Name, bool Bold, bool Itali
 
 internal static class SleTypefaceProvider
 {
-    public static readonly IReadOnlyList<string> FontFamilies = LoadFontFamilies();
+    private const string FontUrlPrefix = "https://fonts.gstatic.com/s/";
+
+    private static readonly IReadOnlyList<GoogleFont> FontList = LoadFontList();
+
+    public static readonly IReadOnlyList<string> FontFamilies = FontList.Select(f => f.Family).ToList();
+
+    private static readonly Dictionary<string, GoogleFont> FontsByFamily =
+        FontList.ToDictionary(f => f.Family, StringComparer.OrdinalIgnoreCase);
 
     private static readonly IReadOnlyList<TypefaceStyle> AllStyles =
     [
@@ -31,19 +37,30 @@ internal static class SleTypefaceProvider
     private static readonly Dictionary<string, IReadOnlyList<TypefaceStyle>> SupportedStyleCache =
         new(StringComparer.OrdinalIgnoreCase);
 
-    private static readonly Dictionary<TypefaceKey, string> CssCache = new();
     private static readonly HttpClient Http = new();
 
-    private static IReadOnlyList<string> LoadFontFamilies()
+    private static IReadOnlyList<GoogleFont> LoadFontList()
     {
-        using var stream = AssetLoader.Open(new Uri("avares://Elmanager.SLE/Resources/googlefonts.txt"));
+        using var stream = AssetLoader.Open(new Uri("avares://Elmanager.SLE/Resources/googlefonts.tsv"));
         using var reader = new StreamReader(stream);
-
-        return reader.ReadToEnd()
-            .Split(['\r', '\n'], StringSplitOptions.RemoveEmptyEntries | StringSplitOptions.TrimEntries);
+        return ParseFontList(reader.ReadToEnd());
     }
 
-    public static async Task<IReadOnlyList<TypefaceStyle>> GetSupportedStylesAsync(string family)
+    internal static IReadOnlyList<GoogleFont> ParseFontList(string text) =>
+        text.Split('\n')
+            .Select(line => line.TrimEnd('\r'))
+            .Where(line => line.Length > 0)
+            .Select(line =>
+            {
+                var columns = line.Split('\t');
+                var paths = Enumerable.Range(1, 4)
+                    .Select(i => i < columns.Length && columns[i].Length > 0 ? columns[i] : null)
+                    .ToArray();
+                return new GoogleFont(columns[0], paths);
+            })
+            .ToList();
+
+    public static IReadOnlyList<TypefaceStyle> GetSupportedStyles(string family)
     {
         lock (InFlight)
         {
@@ -57,7 +74,7 @@ internal static class SleTypefaceProvider
         foreach (var style in AllStyles)
         {
             if (IsStyleAvailableLocally(family, style.Bold, style.Italic) ||
-                await IsStyleAvailableFromGoogleFontsAsync(family, style.Bold, style.Italic))
+                IsStyleAvailableFromGoogleFonts(family, style.Bold, style.Italic))
             {
                 result.Add(style);
             }
@@ -243,33 +260,21 @@ internal static class SleTypefaceProvider
         return available;
     }
 
-    private static async Task<bool> IsStyleAvailableFromGoogleFontsAsync(string family, bool bold, bool italic)
+    private static bool IsStyleAvailableFromGoogleFonts(string family, bool bold, bool italic)
     {
-        var key = new TypefaceKey(family, bold, italic);
         lock (InFlight)
         {
-            if (FailedDownloads.Contains(key))
+            if (FailedDownloads.Contains(new TypefaceKey(family, bold, italic)))
             {
                 return false;
             }
         }
 
-        try
-        {
-            var css = await GetGoogleFontsCssAsync(family, bold, italic);
-            return GetBestFontUrlMatch(css).Success;
-        }
-        catch (HttpRequestException ex) when (ex.StatusCode == HttpStatusCode.BadRequest)
-        {
-            MarkFailed(key);
-            return false;
-        }
-        catch (Exception ex)
-        {
-            Console.WriteLine($"SleTypefaceProvider: CSS probe failed for '{family}': {ex.Message}");
-            return false;
-        }
+        return GetFontPath(family, bold, italic) != null;
     }
+
+    private static string? GetFontPath(string family, bool bold, bool italic) =>
+        FontsByFamily.TryGetValue(family, out var font) ? font.Paths[(bold ? 1 : 0) + (italic ? 2 : 0)] : null;
 
     private static SKTypeface? GetSystemTypeface(string family, bool bold, bool italic)
     {
@@ -299,33 +304,16 @@ internal static class SleTypefaceProvider
 
     private static async Task<SKTypeface?> DownloadFromGoogleFonts(string family, bool bold, bool italic)
     {
-        string css;
-        try
-        {
-            css = await GetGoogleFontsCssAsync(family, bold, italic);
-        }
-        catch (Exception ex)
-        {
-            Console.WriteLine($"SleTypefaceProvider: CSS fetch failed for '{family}': {ex.Message}");
-            if (ex is HttpRequestException { StatusCode: HttpStatusCode.BadRequest } && (bold || italic))
-            {
-                return await DownloadFromGoogleFonts(family, false, false);
-            }
-
-            return null;
-        }
-
-        var match = GetBestFontUrlMatch(css);
-        if (!match.Success)
+        var path = GetFontPath(family, bold, italic) ?? GetFontPath(family, false, false);
+        if (path == null)
         {
             return null;
         }
 
-        var fontUrl = match.Groups[1].Value.Trim('\'', '"');
         byte[] fontBytes;
         try
         {
-            fontBytes = await Http.GetByteArrayAsync(fontUrl);
+            fontBytes = await Http.GetByteArrayAsync(FontUrlPrefix + path);
         }
         catch (Exception ex)
         {
@@ -336,91 +324,7 @@ internal static class SleTypefaceProvider
         return SKTypeface.FromData(SKData.CreateCopy(fontBytes));
     }
 
-    private static async Task<string> GetGoogleFontsCssAsync(string family, bool bold, bool italic)
-    {
-        var key = new TypefaceKey(family, bold, italic);
-        lock (InFlight)
-        {
-            if (CssCache.TryGetValue(key, out var cachedCss))
-            {
-                return cachedCss;
-            }
-        }
-
-        using var req = new HttpRequestMessage(HttpMethod.Get, BuildGoogleFontsCssUrl(family, bold, italic));
-        req.Headers.UserAgent.ParseAdd("Mozilla/5.0 (compatible; Elmanager)");
-        using var resp = await Http.SendAsync(req);
-        resp.EnsureSuccessStatusCode();
-        var css = await resp.Content.ReadAsStringAsync();
-
-        lock (InFlight)
-        {
-            CssCache[key] = css;
-        }
-
-        return css;
-    }
-
-    private static string BuildGoogleFontsCssUrl(string family, bool bold, bool italic)
-    {
-        var style = (bold, italic) switch
-        {
-            (true, true) => ":bolditalic",
-            (false, true) => ":italic",
-            (true, false) => ":bold",
-            _ => ""
-        };
-        var encodedFamily = family.Replace(' ', '+');
-        return $"https://fonts.googleapis.com/css?family={encodedFamily}{style}";
-    }
-
-    private static Match GetBestFontUrlMatch(string css)
-    {
-        var best = Match.Empty;
-        var blocks = Regex.Matches(css, @"@font-face\s*\{(?<block>.*?)\}",
-            RegexOptions.IgnoreCase | RegexOptions.Singleline);
-        foreach (Match blockMatch in blocks)
-        {
-            var block = blockMatch.Groups["block"].Value;
-            var urlMatch = Regex.Match(block, @"src:\s*url\(([^)]+)\)", RegexOptions.IgnoreCase);
-            if (!urlMatch.Success)
-            {
-                continue;
-            }
-
-            best = urlMatch;
-            if (ContainsBasicLatin(block))
-            {
-                return urlMatch;
-            }
-        }
-
-        return best.Success
-            ? best
-            : Regex.Match(css, @"src:\s*url\(([^)]+)\)", RegexOptions.IgnoreCase);
-    }
-
-    private static bool ContainsBasicLatin(string fontFaceBlock)
-    {
-        var rangeMatch = Regex.Match(fontFaceBlock, @"unicode-range:\s*([^;]+)", RegexOptions.IgnoreCase);
-        if (!rangeMatch.Success)
-        {
-            return true;
-        }
-
-        foreach (Match part in Regex.Matches(rangeMatch.Groups[1].Value, @"U\+([0-9A-F]{1,6})(?:-([0-9A-F]{1,6}))?",
-                     RegexOptions.IgnoreCase))
-        {
-            var start = Convert.ToInt32(part.Groups[1].Value, 16);
-            var end = part.Groups[2].Success ? Convert.ToInt32(part.Groups[2].Value, 16) : start;
-            if (start <= 0x7E && end >= 0x20)
-            {
-                return true;
-            }
-        }
-
-        return false;
-    }
-
     private record TypefaceKey(string Family, bool Bold, bool Italic);
+
+    internal sealed record GoogleFont(string Family, string?[] Paths);
 }
