@@ -29,7 +29,7 @@ jobs:
       - name: Setup .NET
         uses: actions/setup-dotnet@a98b56852c35b8e3190ac28c8c2271da59106c68 # v6.0.0
         with:
-          dotnet-version: 10.0.x
+          dotnet-version: 11.0.x
           workloads: wasm-tools
 
       - name: Check formatting
@@ -39,7 +39,7 @@ jobs:
         run: dotnet build
 
       - name: Install Playwright browser
-        run: pwsh Elmanager.SLE.E2ETests/bin/Debug/net10.0/playwright.ps1 install chromium --no-progress
+        run: pwsh Elmanager.SLE.E2ETests/bin/Debug/net11.0/playwright.ps1 install chromium --no-progress
 
       - name: Run unit tests
         run: dotnet test Elmanager.SLE.Tests/Elmanager.SLE.Tests.csproj
@@ -59,7 +59,7 @@ jobs:
       - name: Setup .NET
         uses: actions/setup-dotnet@a98b56852c35b8e3190ac28c8c2271da59106c68 # v6.0.0
         with:
-          dotnet-version: 10.0.x
+          dotnet-version: 11.0.x
           workloads: wasm-tools
 
       - name: Publish with Cloudflare profile
@@ -72,4 +72,4 @@ jobs:
           apiToken: ${{ secrets.CLOUDFLARE_API_TOKEN }}
           accountId: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
           gitHubToken: ${{ secrets.GITHUB_TOKEN }}
-          command: pages deploy Elmanager.SLE.Browser/bin/Release/net10.0-browser/cloudflare/wwwroot --project-name=${{ vars.CLOUDFLARE_PAGES_PROJECT_NAME }} --branch=${{ github.ref_name }}
+          command: pages deploy Elmanager.SLE.Browser/bin/Release/net11.0-browser/cloudflare/wwwroot --project-name=${{ vars.CLOUDFLARE_PAGES_PROJECT_NAME }} --branch=${{ github.ref_name }}
