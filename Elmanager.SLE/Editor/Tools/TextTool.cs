@@ -316,24 +316,18 @@ internal class TextTool : ToolBase, IEditorTool
         }
     }
 
-    // The SkiaSharp docs recommend using typeface stuff from SKFont instead of SKPaint, but it causes buggy results
-    // (wrong character spacing and random overlapping characters).
-    // So disable "Type or member is obsolete" warning.
-#pragma warning disable CS0618
     private static SKPath BuildTextPath(TextToolOptions options)
     {
         var typeface = SleTypefaceProvider.GetCached(options.FontFamily, options.Bold, options.Italic)
                        ?? SKTypeface.Default;
 
         var size = (float)(options.FontSize * SizeFactor);
-        using var paint = new SKPaint();
-        paint.Typeface = typeface;
-        paint.TextSize = size;
-        paint.IsAntialias = true;
-        paint.FakeBoldText = options.Bold && !IsBold(typeface);
-        paint.TextSkewX = options.Italic && !IsItalic(typeface) ? -0.25f : 0;
+        using var font = new SKFont(typeface, size);
+        font.LinearMetrics = true;
+        font.Embolden = options.Bold && !IsBold(typeface);
+        font.SkewX = options.Italic && !IsItalic(typeface) ? -0.25f : 0;
 
-        var metrics = paint.FontMetrics;
+        var metrics = font.Metrics;
         var lineSpacing = (float)(options.LineHeight * options.FontSize * SizeFactor);
 
         var fullPath = new SKPath { FillType = SKPathFillType.Winding };
@@ -341,7 +335,7 @@ internal class TextTool : ToolBase, IEditorTool
         for (var lineIndex = 0; lineIndex < lines.Length; lineIndex++)
         {
             var baseline = -metrics.Ascent + (lineIndex * lineSpacing);
-            AppendLine(fullPath, paint, metrics, lines[lineIndex], baseline, options, size);
+            AppendLine(fullPath, font, metrics, lines[lineIndex], baseline, options, size);
         }
 
         return fullPath;
@@ -353,19 +347,19 @@ internal class TextTool : ToolBase, IEditorTool
     private static bool IsItalic(SKTypeface typeface) =>
         typeface.FontStyle.Slant == SKFontStyleSlant.Italic;
 
-    private static void AppendLine(SKPath fullPath, SKPaint paint, SKFontMetrics metrics, string line,
+    private static void AppendLine(SKPath fullPath, SKFont font, SKFontMetrics metrics, string line,
         float baseline, TextToolOptions options, float size)
     {
         if (line.Length > 0)
         {
-            using var linePath = paint.GetTextPath(line, 0, baseline);
+            using var linePath = font.GetTextPath(line, new SKPoint(0, baseline));
             if (linePath is { IsEmpty: false })
             {
                 fullPath.AddPath(linePath);
             }
         }
 
-        var width = paint.MeasureText(line);
+        var width = font.MeasureText(line);
         if (width <= 0)
         {
             return;
@@ -385,5 +379,4 @@ internal class TextTool : ToolBase, IEditorTool
             fullPath.AddRect(SKRect.Create(0, pos, width, thickness));
         }
     }
-#pragma warning restore CS0618
 }
