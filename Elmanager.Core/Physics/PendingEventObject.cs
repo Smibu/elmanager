@@ -1,6 +1,6 @@
 namespace Elmanager.Physics;
 
-internal class PendingEventObject : PendingEvent
+internal class PendingEventObject
 {
     public IndexedObject Obj;
 

@@ -129,19 +129,18 @@ public abstract class ToolBase : IEditorToolBase
         return found;
     }
 
-    public record NearestVertexInfo
+    public union NearestVertexInfo(NearestVertexInfo.VertexInfo, NearestVertexInfo.EdgeInfo)
     {
-        internal record VertexInfo(int Index, Polygon P) : NearestVertexInfo;
-        internal record EdgeInfo(int StartIndex, int EndIndex, Polygon P) : NearestVertexInfo;
+        public record VertexInfo(int Index, Polygon Polygon);
+        public record EdgeInfo(int StartIndex, int EndIndex, Polygon Polygon);
 
         internal static VertexInfo Vertex(int index, Polygon p) => new(index, p);
         internal static EdgeInfo Edge(int start, int end, Polygon p) => new(start, end, p);
 
         public Polygon Polygon => this switch
         {
-            EdgeInfo edgeInfo => edgeInfo.P,
-            VertexInfo vertexInfo => vertexInfo.P,
-            _ => throw new ArgumentOutOfRangeException()
+            EdgeInfo edgeInfo => edgeInfo.Polygon,
+            VertexInfo vertexInfo => vertexInfo.Polygon
         };
     }
 
@@ -191,7 +190,12 @@ public abstract class ToolBase : IEditorToolBase
             return NearestVertexInfo.Vertex(nearestIndex, nearestPolygon);
         }
 
-        return GetNearestSegmentInfo(p);
+        if (GetNearestSegmentInfo(p) is { } edge)
+        {
+            return edge;
+        }
+
+        return null;
     }
 
     internal NearestVertexInfo.EdgeInfo? GetNearestSegmentInfo(Vector p)

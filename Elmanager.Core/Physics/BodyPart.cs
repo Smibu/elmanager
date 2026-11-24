@@ -76,7 +76,7 @@ public class BodyPart
         }
     }
 
-    public void ApplyGroundTouch(Queue<PendingEvent> evs, Vector v, double a)
+    internal void ApplyGroundTouch(Queue<PendingEvent> evs, Vector v, double a)
     {
         var tmp1 = v * a;
         Velocity -= tmp1;

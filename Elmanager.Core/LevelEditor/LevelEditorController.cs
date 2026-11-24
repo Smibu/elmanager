@@ -474,10 +474,10 @@ public class LevelEditorController<TEditorLev>(ILevelEditor levelEditor, TEditor
                 ? LevModification.Pictures
                 : LevModification.Textures;
         }
-        else if (_grassInfo is not null)
+        else if (_grassInfo is { } grassInfo)
         {
-            Lev.Polygons.Remove(_grassInfo.Polygon);
-            Lev.Polygons.Insert(0, _grassInfo.Polygon);
+            Lev.Polygons.Remove(grassInfo.Polygon);
+            Lev.Polygons.Insert(0, grassInfo.Polygon);
         }
 
         editor.SetModified(mod);
@@ -509,10 +509,10 @@ public class LevelEditorController<TEditorLev>(ILevelEditor levelEditor, TEditor
                 ? LevModification.Pictures
                 : LevModification.Textures;
         }
-        else if (_grassInfo is not null)
+        else if (_grassInfo is { } grassInfo)
         {
-            Lev.Polygons.Remove(_grassInfo.Polygon);
-            Lev.Polygons.Add(_grassInfo.Polygon);
+            Lev.Polygons.Remove(grassInfo.Polygon);
+            Lev.Polygons.Add(grassInfo.Polygon);
         }
 
         editor.SetModified(mod);
@@ -546,15 +546,15 @@ public class LevelEditorController<TEditorLev>(ILevelEditor levelEditor, TEditor
     {
         var polys = new List<Polygon>();
         var selectedPolygons = Lev.Polygons.GetSelectedPolygons(includeGrass: true).ToList();
-        if (_grassInfo is not null)
+        if (_grassInfo is { } grassInfo)
         {
-            if (selectedPolygons.Contains(_grassInfo.Polygon))
+            if (selectedPolygons.Contains(grassInfo.Polygon))
             {
                 polys.AddRange(selectedPolygons);
             }
             else
             {
-                polys.Add(_grassInfo.Polygon);
+                polys.Add(grassInfo.Polygon);
             }
         }
         else

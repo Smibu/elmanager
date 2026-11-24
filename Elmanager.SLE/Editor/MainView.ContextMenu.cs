@@ -114,11 +114,11 @@ public partial class MainView
             }
         }
 
-        if (info is not null)
+        if (info is { } nearest)
         {
             CtxGrassMenuItem.IsVisible = true;
-            _controller.GrassInfo = info;
-            if (info.Polygon.IsGrass)
+            _controller.GrassInfo = nearest;
+            if (nearest.Polygon.IsGrass)
             {
                 CtxBringToFrontMenuItem.IsVisible = true;
                 CtxSendToBackMenuItem.IsVisible = true;

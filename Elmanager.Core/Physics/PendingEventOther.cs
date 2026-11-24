@@ -1,6 +1,6 @@
 namespace Elmanager.Physics;
 
-internal class PendingEventOther : PendingEvent
+internal class PendingEventOther
 {
     public EventType EventType;
 

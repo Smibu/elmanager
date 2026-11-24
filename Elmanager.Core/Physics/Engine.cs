@@ -186,20 +186,18 @@ public class Engine
         recorder.SaveFrame(time, driver);
         while (_pendingEvents.Count > 0 && driver.Condition == DriverCondition.Alive)
         {
-            var e = _pendingEvents.Dequeue();
-            var evt = e switch
+            (EventType Event, LevObject? TouchedObject) pending = _pendingEvents.Dequeue() switch
             {
-                PendingEventObject io => new EventTypeObjectTouch(io.Obj.Index),
-                PendingEventOther ev => ev.EventType,
-                _ => throw new ArgumentOutOfRangeException()
+                PendingEventObject io => (new EventTypeObjectTouch(io.Obj.Index), io.Obj.Obj),
+                PendingEventOther ev => (ev.EventType, null)
             };
 
-            if (e is PendingEventObject xx)
+            if (pending.TouchedObject is { } touchedObject)
             {
-                driver.Condition = TakeLevelObject(xx.Obj.Obj, driver);
+                driver.Condition = TakeLevelObject(touchedObject, driver);
             }
 
-            recorder.SaveEvent(new Event(time.Value, evt));
+            recorder.SaveEvent(new Event(time.Value, pending.Event));
         }
     }
 
