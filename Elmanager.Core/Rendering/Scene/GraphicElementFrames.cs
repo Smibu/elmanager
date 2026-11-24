@@ -193,27 +193,14 @@ internal class GraphicElementFrames : IDisposable
 
         foreach (var ge in state.GetGraphicElements())
         {
-            switch (ge.Kind)
+            var instances = ge.Kind switch
             {
-                case GraphicElement.Picture p:
-                    {
-                        var info = p.PictureInfo;
-                        picInstances.Add(new((float)ge.Position.X, (float)ge.Position.Y, (float)info.Width, (float)info.Height));
-                        break;
-                    }
-                case GraphicElement.Texture t:
-                    {
-                        var info = t.MaskInfo;
-                        texInstances.Add(new((float)ge.Position.X, (float)ge.Position.Y, (float)info.Width, (float)info.Height));
-                        break;
-                    }
-                case GraphicElement.MissingPicture mp:
-                    missingPicInstances.Add(new((float)ge.Position.X, (float)ge.Position.Y, (float)mp.Width, (float)mp.Height));
-                    break;
-                case GraphicElement.MissingTexture mt:
-                    missingTexInstances.Add(new((float)ge.Position.X, (float)ge.Position.Y, (float)mt.Width, (float)mt.Height));
-                    break;
-            }
+                GraphicElement.Picture => picInstances,
+                GraphicElement.Texture => texInstances,
+                GraphicElement.MissingPicture => missingPicInstances,
+                GraphicElement.MissingTexture => missingTexInstances
+            };
+            instances.Add(new((float)ge.Position.X, (float)ge.Position.Y, (float)ge.Width, (float)ge.Height));
         }
 
         PicBuffer.SetData(picInstances.ToArray());

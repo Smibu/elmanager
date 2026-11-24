@@ -662,27 +662,16 @@ public class Level
         levelFile.AddRange(BitConverter.GetBytes(GraphicElements.Count + MagicDouble2));
         foreach (var x in GraphicElements)
         {
-            switch (x.Kind)
+            var (pictureName, textureName, maskName) = x.Kind switch
             {
-                case GraphicElement.Picture p:
-                    levelFile.AddRange(GetByteArrayFromString(p.PictureInfo.Name, 10));
-                    levelFile.AddRange(Enumerable.Repeat<byte>(0, 20));
-                    break;
-                case GraphicElement.MissingPicture p:
-                    levelFile.AddRange(GetByteArrayFromString(p.Name, 10));
-                    levelFile.AddRange(Enumerable.Repeat<byte>(0, 20));
-                    break;
-                case GraphicElement.Texture t:
-                    levelFile.AddRange(Enumerable.Repeat<byte>(0, 10));
-                    levelFile.AddRange(GetByteArrayFromString(t.TextureInfo.Name, 10));
-                    levelFile.AddRange(GetByteArrayFromString(t.MaskInfo.Name, 10));
-                    break;
-                case GraphicElement.MissingTexture t:
-                    levelFile.AddRange(Enumerable.Repeat<byte>(0, 10));
-                    levelFile.AddRange(GetByteArrayFromString(t.TextureName, 10));
-                    levelFile.AddRange(GetByteArrayFromString(t.MaskName, 10));
-                    break;
-            }
+                GraphicElement.Picture p => (p.PictureInfo.Name, "", ""),
+                GraphicElement.MissingPicture p => (p.Name, "", ""),
+                GraphicElement.Texture t => ("", t.TextureInfo.Name, t.MaskInfo.Name),
+                GraphicElement.MissingTexture t => ("", t.TextureName, t.MaskName)
+            };
+            levelFile.AddRange(GetByteArrayFromString(pictureName, 10));
+            levelFile.AddRange(GetByteArrayFromString(textureName, 10));
+            levelFile.AddRange(GetByteArrayFromString(maskName, 10));
 
             levelFile.AddRange(BitConverter.GetBytes(x.Position.X));
             levelFile.AddRange(BitConverter.GetBytes(-x.Position.Y));

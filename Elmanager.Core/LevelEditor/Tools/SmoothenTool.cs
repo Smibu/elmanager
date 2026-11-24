@@ -141,17 +141,13 @@ public class SmoothenTool : ToolBase, IEditorTool
         switch (mouseData.Button)
         {
             case EditorMouseButton.Left:
-                if (Smoothing is { })
+                if (Smoothing is { } smoothing)
                 {
-                    switch (Smoothing)
+                    Lev.Polygons.RemoveAll(smoothing switch
                     {
-                        case SmoothState.AllSmooth:
-                            Lev.Polygons.RemoveAll(IsSmoothable);
-                            break;
-                        case SmoothState.PolygonSmooth p:
-                            Lev.Polygons.Remove(p.P);
-                            break;
-                    }
+                        SmoothState.AllSmooth => IsSmoothable,
+                        SmoothState.PolygonSmooth p => polygon => polygon == p.P
+                    });
 
                     Lev.Polygons.AddRange(_smoothPolys);
                     Smoothing = null;

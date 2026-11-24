@@ -409,19 +409,18 @@ public class ElmaRenderer : IDisposable
     }
     public void DrawGraphicElementFrame(GraphicElement e, RenderingSettings settings, Color color)
     {
-        bool dashed;
-        switch (e.Kind)
+        var showPictures = settings.ShowPictureFrames || settings.ShowPictures;
+        var showTextures = settings.ShowTextureFrames || settings.ShowTextures;
+        var (visible, dashed) = e.Kind switch
         {
-            case GraphicElement.Picture when settings.ShowPictureFrames || settings.ShowPictures:
-            case GraphicElement.Texture when settings.ShowTextureFrames || settings.ShowTextures:
-                dashed = false;
-                break;
-            case GraphicElement.MissingPicture when settings.ShowPictureFrames || settings.ShowPictures:
-            case GraphicElement.MissingTexture when settings.ShowTextureFrames || settings.ShowTextures:
-                dashed = true;
-                break;
-            default:
-                return;
+            GraphicElement.Picture => (showPictures, false),
+            GraphicElement.Texture => (showTextures, false),
+            GraphicElement.MissingPicture => (showPictures, true),
+            GraphicElement.MissingTexture => (showTextures, true)
+        };
+        if (!visible)
+        {
+            return;
         }
 
         _graphics?.Lines.DrawRectangle(
