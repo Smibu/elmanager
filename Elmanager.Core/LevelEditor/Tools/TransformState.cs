@@ -10,7 +10,7 @@ public class TransformState
     public readonly List<LevObject> OriginalTransformObjects;
     public readonly List<Polygon> OriginalTransformPolygons;
     public readonly List<GraphicElement> OriginalTransformTextures;
-    public int? TransformPolygonIndex;
+    public TransformHandle? ActiveHandle;
     public Polygon TransformRectangle;
 
     public TransformState(List<LevObject> originalTransformObjects, List<Polygon> originalTransformPolygons, List<GraphicElement> originalTransformTextures, Polygon transformRectangle)
@@ -21,4 +21,11 @@ public class TransformState
         TransformRectangle = transformRectangle;
         OriginalRectangle = transformRectangle.Clone();
     }
+}
+
+public union TransformHandle(TransformHandle.Corner, TransformHandle.EdgeMidpoint, TransformHandle.Center)
+{
+    public record Corner(int Index);
+    public record EdgeMidpoint(int StartIndex);
+    public record Center;
 }

@@ -8,9 +8,15 @@ namespace Elmanager.LevelEditor.Tools;
 
 public class VertexTool : ToolBase, IEditorTool
 {
-    private Polygon? _currentPolygon;
-    private NearestVertexInfo.EdgeInfo? _nearestVertexInfo;
-    private Vector? _rectangleStart;
+    private VertexToolState _state = new Idle(null);
+
+    private union VertexToolState(Idle, Drawing, DrawingRectangle);
+
+    private record Idle(NearestVertexInfo.EdgeInfo? HoveredEdge);
+
+    private record Drawing(Polygon Polygon);
+
+    private record DrawingRectangle(Vector Start);
 
     public VertexTool(ILevelEditor editor)
         : base(editor)
@@ -24,10 +30,10 @@ public class VertexTool : ToolBase, IEditorTool
     public string GetHelp()
     {
         var text = "LMouse: create vertex. Click near an edge of a polygon to add vertices to it. LShift + click: create rectangle.";
-        if (_currentPolygon is { })
+        if (_state is Drawing { Polygon: var currentPolygon })
         {
-            var lngth = (_currentPolygon.Vertices[^1] -
-                         _currentPolygon.Vertices[^2]).Length;
+            var lngth = (currentPolygon.Vertices[^1] -
+                         currentPolygon.Vertices[^2]).Length;
             text += $" Edge length: {lngth:F3}";
         }
         return text;
@@ -35,14 +41,14 @@ public class VertexTool : ToolBase, IEditorTool
 
     public void ExtraRendering()
     {
-        if (_currentPolygon is { })
-            Renderer.DrawLine(_currentPolygon.GetLastVertex(), _currentPolygon.Vertices[0], Color.Red);
-        else if (_rectangleStart is { } r)
+        if (_state is Drawing { Polygon: var currentPolygon })
+            Renderer.DrawLine(currentPolygon.GetLastVertex(), currentPolygon.Vertices[0], Color.Red);
+        else if (_state is DrawingRectangle { Start: var r })
         {
             AdjustForGrid(ref CurrentPos);
             Renderer.DrawRectangle(r, CurrentPos, Color.Blue);
         }
-        else if (_nearestVertexInfo is { } v)
+        else if (_state is Idle { HoveredEdge: { } v })
         {
             Renderer.DrawLine(v.Polygon[v.StartIndex], v.Polygon[v.EndIndex],
                 Color.Yellow);
@@ -57,12 +63,12 @@ public class VertexTool : ToolBase, IEditorTool
 
     public LevVisualChange KeyDown(EditorKeyEventArgs key)
     {
-        if (key.KeyCode == EditorKey.Space && _currentPolygon is not null)
+        if (key.KeyCode == EditorKey.Space && _state is Drawing { Polygon: var currentPolygon })
         {
-            _currentPolygon.RemoveLastVertex();
-            _currentPolygon.ChangeOrientation();
-            _currentPolygon.Add(CurrentPos);
-            _currentPolygon.UpdateGrassSlopeInfo(Lev.GroundBounds, LevEditor.RenderingSettings.GrassZoom);
+            currentPolygon.RemoveLastVertex();
+            currentPolygon.ChangeOrientation();
+            currentPolygon.Add(CurrentPos);
+            currentPolygon.UpdateGrassSlopeInfo(Lev.GroundBounds, LevEditor.RenderingSettings.GrassZoom);
         }
 
         return LevVisualChange.Nothing;
@@ -75,43 +81,42 @@ public class VertexTool : ToolBase, IEditorTool
             case EditorMouseButton.Left:
                 var nearestIndex = GetNearestSegmentInfo(CurrentPos);
                 AdjustForGrid(ref CurrentPos);
-                if (_rectangleStart is { } r)
+                if (_state is DrawingRectangle { Start: var r })
                 {
                     var rect = Polygon.Rectangle(r, CurrentPos);
                     Lev.Polygons.Add(rect);
                     rect.UpdateGrassSlopeInfo(Lev.GroundBounds, LevEditor.RenderingSettings.GrassZoom);
                     LevEditor.SetModified(LevModification.Ground);
-                    _rectangleStart = null;
+                    _state = new Idle(null);
                     return LevVisualChange.Nothing;
                 }
 
-                if (_currentPolygon is null)
+                if (_state is not Drawing { Polygon: var currentPolygon })
                 {
                     if (Keyboard.IsKeyDown(ModifierKey.LeftShift))
                     {
-                        _rectangleStart = CurrentPos;
+                        _state = new DrawingRectangle(CurrentPos);
                     }
                     else
                     {
                         if (nearestIndex is { } v)
                         {
-                            _nearestVertexInfo = nearestIndex;
-                            _currentPolygon = v.Polygon;
-                            _currentPolygon.SetBeginPoint(nearestIndex.EndIndex);
-                            _currentPolygon.Add(CurrentPos);
+                            v.Polygon.SetBeginPoint(v.EndIndex);
+                            v.Polygon.Add(CurrentPos);
+                            _state = new Drawing(v.Polygon);
                             ChangeToDefaultCursorIfHand();
                         }
                         else
-                            _currentPolygon = new Polygon(CurrentPos, CurrentPos);
+                            _state = new Drawing(new Polygon(CurrentPos, CurrentPos));
                     }
                 }
                 else
                 {
-                    _currentPolygon.Add(CurrentPos);
-                    if (_currentPolygon.Vertices.Count == 3)
+                    currentPolygon.Add(CurrentPos);
+                    if (currentPolygon.Vertices.Count == 3)
                     {
-                        Lev.Polygons.Add(_currentPolygon);
-                        _currentPolygon.UpdateGrassSlopeInfo(Lev.GroundBounds, LevEditor.RenderingSettings.GrassZoom);
+                        Lev.Polygons.Add(currentPolygon);
+                        currentPolygon.UpdateGrassSlopeInfo(Lev.GroundBounds, LevEditor.RenderingSettings.GrassZoom);
                     }
                 }
 
@@ -125,21 +130,21 @@ public class VertexTool : ToolBase, IEditorTool
     public LevVisualChange MouseMove(Vector p)
     {
         CurrentPos = p;
-        if (_currentPolygon is { })
+        if (_state is Drawing { Polygon: var currentPolygon })
         {
             AdjustForGrid(ref CurrentPos);
-            _currentPolygon.Vertices[^1] = CurrentPos;
-            if (_currentPolygon.Vertices.Count > 2)
+            currentPolygon.Vertices[^1] = CurrentPos;
+            if (currentPolygon.Vertices.Count > 2)
             {
-                _currentPolygon.UpdateGrassSlopeInfo(Lev.GroundBounds, LevEditor.RenderingSettings.GrassZoom);
-                return _currentPolygon.IsGrass ? LevVisualChange.Grass : LevVisualChange.Ground;
+                currentPolygon.UpdateGrassSlopeInfo(Lev.GroundBounds, LevEditor.RenderingSettings.GrassZoom);
+                return currentPolygon.IsGrass ? LevVisualChange.Grass : LevVisualChange.Ground;
             }
         }
-        else if (_rectangleStart is null)
+        else if (_state is Idle)
         {
             ResetHighlight();
             var nearestVertex = GetNearestSegmentInfo(CurrentPos);
-            _nearestVertexInfo = nearestVertex;
+            _state = new Idle(nearestVertex);
             if (nearestVertex is { })
             {
                 ChangeCursorToHand();
@@ -165,9 +170,9 @@ public class VertexTool : ToolBase, IEditorTool
 
     private LevVisualChange FinishVertexCreation()
     {
-        if (_currentPolygon is { } poly)
+        if (_state is Drawing { Polygon: var poly })
         {
-            _currentPolygon = null;
+            _state = new Idle(null);
             poly.RemoveLastVertex();
             if (poly.Vertices.Count > 2)
             {
@@ -180,13 +185,13 @@ public class VertexTool : ToolBase, IEditorTool
                 return LevVisualChange.Ground;
             }
         }
-        else if (_rectangleStart is { })
+        else if (_state is DrawingRectangle)
         {
-            _rectangleStart = null;
+            _state = new Idle(null);
         }
 
         return LevVisualChange.Nothing;
     }
 
-    public override bool Busy => _currentPolygon is { } || _rectangleStart is { };
+    public override bool Busy => _state is not Idle;
 }

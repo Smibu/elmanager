@@ -21,7 +21,7 @@ public class TransformTool : ToolBase, IEditorTool
 
     private bool DisableScaling => Keyboard.IsKeyDown(ModifierKey.LeftCtrl);
 
-    private bool Transforming => _transformState?.TransformPolygonIndex is { };
+    private bool Transforming => _transformState?.ActiveHandle is { };
 
     public void Activate()
     {
@@ -167,14 +167,14 @@ public class TransformTool : ToolBase, IEditorTool
             if ((transformRectangle[i] - CurrentPos).Length <
                 CaptureRadiusScaled)
             {
-                _transformState.TransformPolygonIndex = i;
+                _transformState.ActiveHandle = new TransformHandle.Corner(i);
                 break;
             }
 
             if (((transformRectangle[i] + transformRectangle[i + 1]) / 2 - CurrentPos).Length <
                 CaptureRadiusScaled)
             {
-                _transformState.TransformPolygonIndex = i + 4;
+                _transformState.ActiveHandle = new TransformHandle.EdgeMidpoint(i);
                 break;
             }
         }
@@ -182,7 +182,7 @@ public class TransformTool : ToolBase, IEditorTool
         if (((transformRectangle[0] + transformRectangle[2]) / 2 - CurrentPos).Length <
             CaptureRadiusScaled)
         {
-            _transformState.TransformPolygonIndex = 8;
+            _transformState.ActiveHandle = new TransformHandle.Center();
         }
         return LevVisualChange.Nothing;
     }
@@ -190,51 +190,19 @@ public class TransformTool : ToolBase, IEditorTool
     public LevVisualChange MouseMove(Vector p)
     {
         CurrentPos = p;
-        if (_transformState?.TransformPolygonIndex is not { } pi) return LevVisualChange.Nothing;
+        if (_transformState?.ActiveHandle is not { } handle) return LevVisualChange.Nothing;
         var originalRectangle = _transformState.OriginalRectangle;
         Vector center = (originalRectangle.Vertices[0] + originalRectangle.Vertices[2]) / 2;
         Matrix transformMatrix = Matrix.Identity;
         transformMatrix.Translate(-center.X, -center.Y);
-        Vector z;
-        double scaleFactor;
-        if (pi < 4)
+        transformMatrix = handle switch
         {
-            z = originalRectangle.Vertices[pi];
-            if (!DisableScaling)
-            {
-                scaleFactor = (p - center).Length / (z - center).Length;
-                transformMatrix.Scale(scaleFactor, scaleFactor);
-            }
-
-            if (!DisableRotation)
-                transformMatrix.Rotate(-(p - center).AngleBetween(z - center));
-        }
-        else if (_transformState.TransformPolygonIndex != 8)
-        {
-            z = (originalRectangle[pi - 4] +
-                 originalRectangle[pi - 3]) / 2;
-            double rotated =
-                (originalRectangle.Vertices[1] - originalRectangle.Vertices[0]).Angle;
-            if (!DisableScaling)
-            {
-                scaleFactor = (p - center).Length / (z - center).Length;
-                transformMatrix.Rotate(rotated);
-                if (pi % 2 == 0)
-                    transformMatrix.Scale(1, scaleFactor);
-                else
-                    transformMatrix.Scale(scaleFactor, 1);
-                transformMatrix.Rotate(-rotated);
-            }
-
-            if (!DisableRotation)
-                transformMatrix.Rotate(-(p - center).AngleBetween(z - center));
-        }
-        else
-        {
-            var v = p - center;
-            transformMatrix.Translate(v.X, v.Y);
-        }
-
+            TransformHandle.Corner corner =>
+                DragCorner(transformMatrix, center, originalRectangle.Vertices[corner.Index], p),
+            TransformHandle.EdgeMidpoint edge =>
+                DragEdgeMidpoint(transformMatrix, center, originalRectangle, edge.StartIndex, p),
+            TransformHandle.Center => DragCenter(transformMatrix, center, p)
+        };
         transformMatrix.Translate(center.X, center.Y);
         _transformState.TransformRectangle = originalRectangle.ApplyTransformation(transformMatrix);
 
@@ -265,6 +233,47 @@ public class TransformTool : ToolBase, IEditorTool
         return modification;
     }
 
+    private Matrix DragCorner(Matrix transformMatrix, Vector center, Vector z, Vector p)
+    {
+        if (!DisableScaling)
+        {
+            var scaleFactor = (p - center).Length / (z - center).Length;
+            transformMatrix.Scale(scaleFactor, scaleFactor);
+        }
+
+        if (!DisableRotation)
+            transformMatrix.Rotate(-(p - center).AngleBetween(z - center));
+        return transformMatrix;
+    }
+
+    private Matrix DragEdgeMidpoint(Matrix transformMatrix, Vector center, Polygon originalRectangle, int startIndex,
+        Vector p)
+    {
+        var z = (originalRectangle[startIndex] + originalRectangle[startIndex + 1]) / 2;
+        double rotated = (originalRectangle.Vertices[1] - originalRectangle.Vertices[0]).Angle;
+        if (!DisableScaling)
+        {
+            var scaleFactor = (p - center).Length / (z - center).Length;
+            transformMatrix.Rotate(rotated);
+            if (startIndex % 2 == 0)
+                transformMatrix.Scale(1, scaleFactor);
+            else
+                transformMatrix.Scale(scaleFactor, 1);
+            transformMatrix.Rotate(-rotated);
+        }
+
+        if (!DisableRotation)
+            transformMatrix.Rotate(-(p - center).AngleBetween(z - center));
+        return transformMatrix;
+    }
+
+    private static Matrix DragCenter(Matrix transformMatrix, Vector center, Vector p)
+    {
+        var v = p - center;
+        transformMatrix.Translate(v.X, v.Y);
+        return transformMatrix;
+    }
+
     public LevVisualChange MouseOutOfEditor()
     {
         return LevVisualChange.Nothing;
@@ -280,8 +289,8 @@ public class TransformTool : ToolBase, IEditorTool
 
     private void EndTransforming()
     {
-        if (_transformState?.TransformPolygonIndex is null) return;
-        _transformState.TransformPolygonIndex = null;
+        if (_transformState?.ActiveHandle is null) return;
+        _transformState.ActiveHandle = null;
         for (int i = 0; i < _transformState.OriginalTransformPolygons.Count; i++)
             _transformState.OriginalTransformPolygons[^(i + 1)] = new Polygon(Lev.Polygons[^(i + 1)]);
         for (int i = 0; i < _transformState.OriginalTransformObjects.Count; i++)

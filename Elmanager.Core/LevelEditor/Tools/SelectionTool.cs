@@ -11,27 +11,24 @@ namespace Elmanager.LevelEditor.Tools;
 public class SelectionTool : ToolBase, IEditorTool
 {
     private LevModification _currLevModification;
-    private Vector _lockCenter; //for lock lines -mode
-    private Vector _lockNext; //for lock lines -mode
-    private Vector _lockPrev; //for lock lines -mode
-    private bool _lockingLines;
-    private Vector _moveStartPosition;
-    private Polygon? _selectionPoly;
+    private SelectionState _state = new Idle();
 
-    private bool FreeSelecting => _selectionPoly is { };
+    private union SelectionState(Idle, Moving, RectSelecting, FreeSelecting);
 
-    private Vector _selectionStartPoint;
-    private double _mouseTrip;
-    private Vector _lastMousePosition;
+    private record Idle;
+
+    private record Moving(Vector Start, LockLines? Lock);
+
+    private record LockLines(Vector Center, Vector Prev, Vector Next);
+
+    private record RectSelecting(Vector Start);
+
+    private record FreeSelecting(Polygon Poly, double MouseTrip, Vector LastPosition);
 
     public SelectionTool(ILevelEditor editor)
         : base(editor)
     {
     }
-
-    private bool Moving { get; set; }
-
-    private bool RectSelecting { get; set; }
 
     public void Activate()
     {
@@ -39,16 +36,15 @@ public class SelectionTool : ToolBase, IEditorTool
 
     public void ExtraRendering()
     {
-        if (RectSelecting)
-            Renderer.DrawRectangle(_selectionStartPoint, CurrentPos, Color.Blue);
-        else if (_selectionPoly is { })
-            Renderer.DrawPolygon(_selectionPoly, Color.Blue);
+        if (_state is RectSelecting rect)
+            Renderer.DrawRectangle(rect.Start, CurrentPos, Color.Blue);
+        else if (_state is FreeSelecting free)
+            Renderer.DrawPolygon(free.Poly, Color.Blue);
     }
 
     public LevVisualChange InActivate()
     {
-        Moving = false;
-        RectSelecting = false;
+        _state = new Idle();
         return LevVisualChange.Nothing;
     }
 
@@ -155,11 +151,8 @@ public class SelectionTool : ToolBase, IEditorTool
                     vi.Polygon.Vertices[vi.Index] = HandleMark(v);
                     if (Keyboard.IsKeyDown(ModifierKey.LeftShift))
                     {
-                        _lockCenter = vi.Polygon[vi.Index];
-                        _lockPrev = vi.Polygon[vi.Index - 1];
-                        _lockNext = vi.Polygon[vi.Index + 1];
-                        _lockingLines = true;
-                        _moveStartPosition = _lockCenter;
+                        var center = vi.Polygon[vi.Index];
+                        _state = new Moving(center, new LockLines(center, vi.Polygon[vi.Index - 1], vi.Polygon[vi.Index + 1]));
                     }
                 }
                 else if (nearestVertexIndex is NearestVertexInfo.EdgeInfo ei)
@@ -218,15 +211,13 @@ public class SelectionTool : ToolBase, IEditorTool
 
                     if (Keyboard.IsKeyDown(ModifierKey.LeftShift))
                     {
-                        _selectionPoly = new Polygon();
-                        _selectionPoly.Add(CurrentPos);
-                        _mouseTrip = 0;
-                        _lastMousePosition = CurrentPos;
+                        var poly = new Polygon();
+                        poly.Add(CurrentPos);
+                        _state = new FreeSelecting(poly, 0, CurrentPos);
                     }
                     else
                     {
-                        _selectionStartPoint = p;
-                        RectSelecting = true;
+                        _state = new RectSelecting(p);
                     }
                 }
 
@@ -249,22 +240,22 @@ public class SelectionTool : ToolBase, IEditorTool
     public LevVisualChange MouseMove(Vector p)
     {
         CurrentPos = p;
-        if (Moving)
+        if (_state is Moving moving)
         {
             AdjustForGrid(ref p);
-            if (_lockingLines)
+            if (moving.Lock is { } lockLines)
             {
-                p = GeometryUtils.OrthogonalProjection(_lockCenter,
-                    GeometryUtils.DistanceFromLine(_lockCenter, _lockNext, p) <
-                    GeometryUtils.DistanceFromLine(_lockCenter, _lockPrev, p)
-                        ? _lockNext
-                        : _lockPrev, p);
+                p = GeometryUtils.OrthogonalProjection(lockLines.Center,
+                    GeometryUtils.DistanceFromLine(lockLines.Center, lockLines.Next, p) <
+                    GeometryUtils.DistanceFromLine(lockLines.Center, lockLines.Prev, p)
+                        ? lockLines.Next
+                        : lockLines.Prev, p);
             }
-            if (Equals(p, _moveStartPosition))
+            if (Equals(p, moving.Start))
             {
                 return LevVisualChange.Nothing;
             }
-            Vector delta = p - _moveStartPosition;
+            Vector delta = p - moving.Start;
             Vector.MarkDefault = VectorMark.Selected;
             var anythingMoved = LevModification.Nothing;
             foreach (Polygon x in Lev.Polygons)
@@ -316,20 +307,21 @@ public class SelectionTool : ToolBase, IEditorTool
             }
 
             Vector.MarkDefault = VectorMark.None;
-            _moveStartPosition = p;
+            _state = moving with { Start = p };
             return (LevVisualChange)anythingMoved;
         }
-        else if (_selectionPoly is { })
+        else if (_state is FreeSelecting free)
         {
-            _mouseTrip += (p - _lastMousePosition).Length;
-            _lastMousePosition = p;
+            var mouseTrip = free.MouseTrip + (p - free.LastPosition).Length;
             double step = 0.02 * ZoomCtrl.ZoomLevel;
-            if (_mouseTrip > step)
+            if (mouseTrip > step)
             {
-                while (!(_mouseTrip < step))
-                    _mouseTrip -= step;
-                _selectionPoly.Add(p);
+                while (!(mouseTrip < step))
+                    mouseTrip -= step;
+                free.Poly.Add(p);
             }
+
+            _state = free with { MouseTrip = mouseTrip, LastPosition = p };
         }
         else if (!Busy)
         {
@@ -399,19 +391,21 @@ public class SelectionTool : ToolBase, IEditorTool
 
     public void MouseUp()
     {
-        if (RectSelecting || FreeSelecting)
+        if (_state is RectSelecting or FreeSelecting)
         {
             double selectionxMin = 0;
             double selectionxMax = 0;
             double selectionyMax = 0;
             double selectionyMin = 0;
-            if (RectSelecting)
+            if (_state is RectSelecting rect)
             {
-                selectionxMin = Math.Min(CurrentPos.X, _selectionStartPoint.X);
-                selectionxMax = Math.Max(CurrentPos.X, _selectionStartPoint.X);
-                selectionyMax = Math.Max(CurrentPos.Y, _selectionStartPoint.Y);
-                selectionyMin = Math.Min(CurrentPos.Y, _selectionStartPoint.Y);
+                selectionxMin = Math.Min(CurrentPos.X, rect.Start.X);
+                selectionxMax = Math.Max(CurrentPos.X, rect.Start.X);
+                selectionyMax = Math.Max(CurrentPos.Y, rect.Start.Y);
+                selectionyMin = Math.Min(CurrentPos.Y, rect.Start.Y);
             }
+
+            var selectionPoly = _state is FreeSelecting free ? free.Poly : null;
 
             var grassFilter = LevEditor.SelectionFilter.EffectiveGrassFilter;
             var groundFilter = LevEditor.SelectionFilter.EffectiveGroundFilter;
@@ -428,11 +422,11 @@ public class SelectionTool : ToolBase, IEditorTool
                     for (var index = 0; index < x.Vertices.Count; index++)
                     {
                         Vector t = x.Vertices[index];
-                        if (_selectionPoly is null)
+                        if (selectionPoly is null)
                             MarkSelectedInArea(ref t, selectionxMin, selectionxMax, selectionyMin, selectionyMax);
                         else
                         {
-                            MarkSelectedInArea(ref t, _selectionPoly);
+                            MarkSelectedInArea(ref t, selectionPoly);
                         }
 
                         x.Vertices[index] = t;
@@ -448,13 +442,13 @@ public class SelectionTool : ToolBase, IEditorTool
                     (type == ObjectType.Apple && appleFilter) ||
                     (type == ObjectType.Killer && killerFilter) ||
                     (type == ObjectType.Flower && flowerFilter))
-                    if (_selectionPoly is null)
+                    if (selectionPoly is null)
 
                         MarkSelectedInArea(ref x, selectionxMin, selectionxMax, selectionyMin,
                             selectionyMax);
                     else
                     {
-                        MarkSelectedInArea(ref x, _selectionPoly);
+                        MarkSelectedInArea(ref x, selectionPoly);
                     }
             }
 
@@ -463,11 +457,11 @@ public class SelectionTool : ToolBase, IEditorTool
                 var x = z;
                 if ((z.IsPicture && pictureFilter) ||
                     (z.IsTexture && textureFilter))
-                    if (_selectionPoly is null)
+                    if (selectionPoly is null)
                         MarkSelectedInArea(ref x, selectionxMin, selectionxMax, selectionyMin, selectionyMax);
                     else
                     {
-                        MarkSelectedInArea(ref x, _selectionPoly);
+                        MarkSelectedInArea(ref x, selectionPoly);
                     }
             }
 
@@ -475,13 +469,13 @@ public class SelectionTool : ToolBase, IEditorTool
             {
                 var x = LevEditor.PlayController.Driver!.Body.Location;
                 x.Mark = LevEditor.PlayController.PlayerSelection;
-                if (_selectionPoly is null)
+                if (selectionPoly is null)
                 {
                     MarkSelectedInArea(ref x, selectionxMin, selectionxMax, selectionyMin, selectionyMax);
                 }
                 else
                 {
-                    MarkSelectedInArea(ref x, _selectionPoly);
+                    MarkSelectedInArea(ref x, selectionPoly);
                 }
 
                 LevEditor.PlayController.PlayerSelection = x.Mark;
@@ -489,13 +483,11 @@ public class SelectionTool : ToolBase, IEditorTool
 
             LevEditor.UpdateSelectionInfo();
             LevEditor.PreserveSelection();
-            RectSelecting = false;
-            _selectionPoly = null;
+            _state = new Idle();
         }
-        else if (Moving)
+        else if (_state is Moving)
         {
-            Moving = false;
-            _lockingLines = false;
+            _state = new Idle();
             LevEditor.PlayController.CurrentBodyPart = null;
             LevEditor.SetModified(_currLevModification);
         }
@@ -557,10 +549,9 @@ public class SelectionTool : ToolBase, IEditorTool
 
     private void EndSelectionHandling()
     {
-        Moving = true;
         LevEditor.PreserveSelection();
         AdjustForGrid(ref CurrentPos);
-        _moveStartPosition = CurrentPos;
+        _state = new Moving(CurrentPos, null);
     }
 
     private void ShowObjectInfo(int currentObjectIndex)
@@ -623,5 +614,5 @@ public class SelectionTool : ToolBase, IEditorTool
         };
     }
 
-    public override bool Busy => RectSelecting || FreeSelecting || Moving;
+    public override bool Busy => _state is not Idle;
 }
