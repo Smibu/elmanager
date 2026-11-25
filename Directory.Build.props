@@ -1,6 +1,6 @@
 <Project>
   <PropertyGroup>
-    <WarningsAsErrors>$(WarningsAsErrors);CS8509</WarningsAsErrors>
+    <WarningsAsErrors>$(WarningsAsErrors);CS8509;nullable</WarningsAsErrors>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)' == 'Release'">
     <DebugSymbols>false</DebugSymbols>
