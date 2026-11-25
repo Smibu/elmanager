@@ -6,18 +6,23 @@ public enum LgrSource
     Dropped
 }
 
-public enum LgrAvailability
+public union LgrAvailability(LgrAvailability.Found, LgrAvailability.NotFound)
 {
-    Found,
-    NotFound
+    public record Found(string KnownName);
+    public record NotFound;
 }
 
 public sealed record LgrDropdownItem(
     string Filename,
-    string KnownName,
     LgrSource Source,
     LgrAvailability Availability)
 {
     public bool IsDropped => Source == LgrSource.Dropped;
-    public bool IsFound => Availability == LgrAvailability.Found;
+    public bool IsFound => Availability is LgrAvailability.Found;
+
+    public string KnownName => Availability switch
+    {
+        LgrAvailability.Found found => found.KnownName,
+        LgrAvailability.NotFound => KnownLgrs.UnknownName
+    };
 }

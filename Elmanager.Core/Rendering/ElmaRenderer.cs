@@ -497,9 +497,8 @@ public class ElmaRenderer : IDisposable
         var currentLgr = OpenGlLgr?.CurrentLgr.Name;
         var resolved = ResolveLgr(lev, newSettings);
         var newLgr = resolved?.Name;
-        var lgrUpdated = false;
+        RendererSettingsChangeResult result = new RendererSettingsChangeResult.LgrUnchanged();
         var lgr = OpenGlLgr;
-        Exception? lgrLoadException = null;
         if (!currentLgr.EqualsIgnoreCase(newLgr))
         {
             if (resolved != null)
@@ -511,12 +510,12 @@ public class ElmaRenderer : IDisposable
                     lev.UpdateImages(lgr.DrawableImages);
                     lev.UpdateGrass(newSettings.GrassZoom);
                     old?.Dispose();
-                    lgrUpdated = true;
+                    result = new RendererSettingsChangeResult.LgrUpdated();
                 }
                 catch (Exception e)
                 {
                     Console.WriteLine(e);
-                    lgrLoadException = e;
+                    result = new RendererSettingsChangeResult.LgrLoadFailed(e);
                 }
             }
         }
@@ -527,7 +526,7 @@ public class ElmaRenderer : IDisposable
         }
         GL.ClearColor(newSettings.SkyFillColor.R / 255f, newSettings.SkyFillColor.G / 255f, newSettings.SkyFillColor.B / 255f, newSettings.SkyFillColor.A / 255f);
         InitializeBuffers(lev, lgr, newSettings);
-        return new RendererSettingsChangeResult(lgrUpdated, lgrLoadException);
+        return result;
     }
 
     private Lgr.Lgr? ResolveLgr(Level lev, RenderingSettings settings)

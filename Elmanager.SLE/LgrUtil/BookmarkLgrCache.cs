@@ -87,17 +87,10 @@ internal class BookmarkLgrCache : ILgrCache
 
     public bool IsDropped(string lgrName) => _droppedBookmarks.ContainsKey(lgrName);
 
-    public bool TryGetLoadedKnownName(string lgrName, out string knownName)
-    {
-        if (_loadedKnownNames.TryGetValue(lgrName, out var loadedKnownName))
-        {
-            knownName = loadedKnownName;
-            return true;
-        }
-
-        knownName = KnownLgrs.UnknownName;
-        return false;
-    }
+    public LgrAvailability GetLoadedAvailability(string lgrName) =>
+        _loadedKnownNames.TryGetValue(lgrName, out var knownName)
+            ? new LgrAvailability.Found(knownName)
+            : new LgrAvailability.NotFound();
 
     public async Task<List<LgrDropdownItem>> ListLgrs()
     {
@@ -194,12 +187,12 @@ internal class BookmarkLgrCache : ILgrCache
     {
         if (_loadedKnownNames.TryGetValue(name, out var knownName))
         {
-            return new LgrDropdownItem(name, knownName, LgrSource.Dropped, LgrAvailability.Found);
+            return new LgrDropdownItem(name, LgrSource.Dropped, new LgrAvailability.Found(knownName));
         }
 
         using var file = await OpenFileBookmark(bookmark.Id);
         return file == null
-            ? new LgrDropdownItem(name, KnownLgrs.UnknownName, LgrSource.Dropped, LgrAvailability.NotFound)
+            ? new LgrDropdownItem(name, LgrSource.Dropped, new LgrAvailability.NotFound())
             : await CreateEntry(file, name, LgrSource.Dropped);
     }
 
@@ -214,12 +207,12 @@ internal class BookmarkLgrCache : ILgrCache
         try
         {
             var knownName = KnownLgrs.ResolveName(await ReadAll(file));
-            return new LgrDropdownItem(name, knownName, source, LgrAvailability.Found);
+            return new LgrDropdownItem(name, source, new LgrAvailability.Found(knownName));
         }
         catch (Exception ex)
         {
             Console.WriteLine($"Failed to read LGR '{name}': {ex.Message}");
-            return new LgrDropdownItem(name, KnownLgrs.UnknownName, source, LgrAvailability.NotFound);
+            return new LgrDropdownItem(name, source, new LgrAvailability.NotFound());
         }
     }
 

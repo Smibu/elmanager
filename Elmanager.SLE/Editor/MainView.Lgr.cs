@@ -144,10 +144,8 @@ public partial class MainView
 
     private LgrDropdownItem CreateLgrDropdownItem(string filename)
     {
-        var isFound = _lgrCache.TryGetLoadedKnownName(filename, out var knownName);
         var source = _lgrCache.IsDropped(filename) ? LgrSource.Dropped : LgrSource.Folder;
-        var availability = isFound ? LgrAvailability.Found : LgrAvailability.NotFound;
-        return new LgrDropdownItem(filename, knownName, source, availability);
+        return new LgrDropdownItem(filename, source, _lgrCache.GetLoadedAvailability(filename));
     }
 
     private void PopulateLgrBox(IReadOnlyList<LgrDropdownItem> entries)

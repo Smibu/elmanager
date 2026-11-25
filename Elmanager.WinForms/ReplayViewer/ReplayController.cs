@@ -414,8 +414,8 @@ internal class ReplayController : IDisposable
         CurrentTime = 0.0;
         Lev = lev;
         var updateResult = Renderer.UpdateSettings(lev, _settings);
-        if (updateResult.LgrLoadException != null)
-            UiUtils.ShowError("Error occurred when loading LGR file! Reason:\r\n\r\n" + updateResult.LgrLoadException.Message);
+        if (updateResult is RendererSettingsChangeResult.LgrLoadFailed failed)
+            UiUtils.ShowError("Error occurred when loading LGR file! Reason:\r\n\r\n" + failed.Exception.Message);
         _activePlayerIndices = new List<int>();
         _visiblePlayerIndices = new List<int>();
         _lastHiddenAppleCount = 0;

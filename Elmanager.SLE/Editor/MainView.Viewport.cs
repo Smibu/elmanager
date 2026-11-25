@@ -266,17 +266,17 @@ public partial class MainView
                         DispatcherPriority.Background);
                 }
 
-                if (settingsChange?.LgrUpdated == true)
+                Action? reportLgrChange = settingsChange switch
                 {
-                    Dispatcher.UIThread.Post(() => Console.WriteLine("LGR load ready"), DispatcherPriority.Background);
-                }
-
-                if (settingsChange?.LgrLoadException is { } lgrLoadException)
+                    null or RendererSettingsChangeResult.LgrUnchanged => null,
+                    RendererSettingsChangeResult.LgrUpdated => () => Console.WriteLine("LGR load ready"),
+                    RendererSettingsChangeResult.LgrLoadFailed failed => () => LogException(
+                        failed.Exception,
+                        "Could not load the selected LGR.")
+                };
+                if (reportLgrChange is not null)
                 {
-                    Dispatcher.UIThread.Post(() => LogException(
-                            lgrLoadException,
-                            "Could not load the selected LGR."),
-                        DispatcherPriority.Background);
+                    Dispatcher.UIThread.Post(reportLgrChange, DispatcherPriority.Background);
                 }
 
                 return requestNextFrame;
