@@ -72,6 +72,18 @@ public class SleTest : PageTest
     protected Task MovePointerAway() =>
         MoveBrowserViewportPointer(0, 1, ToolButtonX, -100);
 
+    protected async Task DragLevelViewport(params (double X, double Y)[] path)
+    {
+        await MoveLevelViewportPointer(path[0].X, path[0].Y);
+        await Page.Mouse.DownAsync();
+        foreach (var (x, y) in path[1..])
+        {
+            await MoveLevelViewportPointer(x, y);
+        }
+
+        await Page.Mouse.UpAsync();
+    }
+
     protected Task ClickLevelViewport(double x, double y) =>
         ClickLevelViewport(x, y, MouseButton.Left);
 
