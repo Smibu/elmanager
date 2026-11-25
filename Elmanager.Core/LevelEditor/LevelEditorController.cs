@@ -374,59 +374,66 @@ public class LevelEditorController<TEditorLev>(ILevelEditor levelEditor, TEditor
         editor.RedrawScene();
     }
 
-    public List<string> CheckTopologyErrors(IEditorTool currentTool)
+    public List<TopologyIssue> CheckTopologyErrors(IEditorTool currentTool)
     {
-        var items = new List<string>();
+        var items = new List<TopologyIssue>();
         if (currentTool.Busy)
             return items;
 
         _errorPoints.Clear();
         if (Lev.TooWide)
-            items.Add("Level is too wide. Current width: " + Lev.Width + ", maximum width: " + Level.MaximumSize);
+            items.Add(new TopologyIssue.Error(
+                "Level is too wide. Current width: " + Lev.Width + ", maximum width: " + Level.MaximumSize));
         if (Lev.TooTall)
-            items.Add("Level is too tall. Current height: " + Lev.Height + ", maximum height: " + Level.MaximumSize);
+            items.Add(new TopologyIssue.Error(
+                "Level is too tall. Current height: " + Lev.Height + ", maximum height: " + Level.MaximumSize));
         if (Lev.HasTooLargePolygons)
-            items.Add("There are polygons with too many vertices in the level.");
+            items.Add(new TopologyIssue.Error("There are polygons with too many vertices in the level."));
         if (Lev.HasTooManyObjects)
-            items.Add("There are too many objects in the level. Current: " + Lev.Objects.Count + ", maximum: " +
-                      Level.MaximumObjectCount);
+            items.Add(new TopologyIssue.Error(
+                "There are too many objects in the level. Current: " + Lev.Objects.Count + ", maximum: " +
+                Level.MaximumObjectCount));
         if (Lev.HasTooFewObjects)
-            items.Add("There must be at least one object in the level (in addition to the start object).");
+            items.Add(new TopologyIssue.Error(
+                "There must be at least one object in the level (in addition to the start object)."));
         if (Lev.HasTooManyPolygons)
-            items.Add("There are too many polygons in the level. Current: " + Lev.Polygons.Count + ", maximum: " +
-                      Level.MaximumPolygonCount);
+            items.Add(new TopologyIssue.Error(
+                "There are too many polygons in the level. Current: " + Lev.Polygons.Count + ", maximum: " +
+                Level.MaximumPolygonCount));
         if (Lev.HasTooManyVertices)
-            items.Add("There are too many ground vertices in the level. Current: " + Lev.GroundVertexCount +
-                      ", maximum: " + Level.MaximumGroundVertexCount);
+            items.Add(new TopologyIssue.Error(
+                "There are too many ground vertices in the level. Current: " + Lev.GroundVertexCount +
+                ", maximum: " + Level.MaximumGroundVertexCount));
         if (Lev.HasTooManyPictures)
-            items.Add("There are too many pictures and textures in the level. Current: " +
-                      Lev.PictureTextureCount + ", maximum: " + Level.MaximumPictureTextureCount);
+            items.Add(new TopologyIssue.Error(
+                "There are too many pictures and textures in the level. Current: " +
+                Lev.PictureTextureCount + ", maximum: " + Level.MaximumPictureTextureCount));
         if (Lev.HeadTouchesGround)
-            items.Add("The driver's head is touching ground.");
+            items.Add(new TopologyIssue.Error("The driver's head is touching ground."));
         if (Lev.WheelLiesOnEdge)
-            items.Add("The driver's wheel is lying on an edge.");
+            items.Add(new TopologyIssue.Error("The driver's wheel is lying on an edge."));
         if (Lev.HasTexturesOutOfBounds)
-            items.Add("Some textures are too far outside of the level polygons.");
+            items.Add(new TopologyIssue.Error("Some textures are too far outside of the level polygons."));
 
         var intersectionPoint = Lev.GetIntersectionPoint();
         if (intersectionPoint is { } point)
         {
             _errorPoints.Add(point);
-            items.Add("There are intersections in the level.");
+            items.Add(new TopologyIssue.Error("There are intersections in the level."));
         }
 
         var errorPositions = Lev.GetApplesAndFlowersInsideGround();
         if (errorPositions.Count > 0)
         {
             _errorPoints.AddRange(errorPositions);
-            items.Add("Some apples and/or flowers are inside ground.");
+            items.Add(new TopologyIssue.Error("Some apples and/or flowers are inside ground."));
         }
 
         var shortEdges = Lev.GetTooShortEdges();
         if (shortEdges.Count > 0)
         {
             _errorPoints.AddRange(shortEdges);
-            items.Add("Some polygon edges are too short.");
+            items.Add(new TopologyIssue.Error("Some polygon edges are too short."));
         }
 
         var missingNames = Lev.GraphicElements.Select(e => e.Kind switch
@@ -437,7 +444,8 @@ public class LevelEditorController<TEditorLev>(ILevelEditor levelEditor, TEditor
         }).Where(name => name != null).Distinct().ToList();
         if (missingNames.Any())
         {
-            items.Add($"Level has pictures that the LGR is missing: {string.Join(", ", missingNames)}");
+            items.Add(new TopologyIssue.Warning(
+                $"Level has pictures that the LGR is missing: {string.Join(", ", missingNames)}"));
         }
 
         return items;
@@ -1095,20 +1103,9 @@ public class LevelEditorController<TEditorLev>(ILevelEditor levelEditor, TEditor
         if (sel is { } && editor.Renderer.OpenGlLgr is not null)
         {
             RemoveSelected();
-            var clipping = sel.Clipping!.Value;
-            var distance = sel.Distance!.Value;
             foreach (var selectedVertex in selectedVertices)
             {
-                GraphicElement g = sel.Kind switch
-                {
-                    ImageSelection.TextureSelection t => GraphicElement.Text(clipping, distance, selectedVertex,
-                        editor.Renderer.OpenGlLgr.DrawableImageFromLgrImage(t.Txt),
-                        editor.Renderer.OpenGlLgr.DrawableImageFromLgrImage(t.Mask)),
-                    ImageSelection.PictureSelection p => GraphicElement.Pic(
-                        editor.Renderer.OpenGlLgr.DrawableImageFromLgrImage(p.Pic), selectedVertex, distance, clipping),
-                    _ => throw new Exception("Unexpected")
-                };
-                Lev.GraphicElements.Add(g);
+                Lev.GraphicElements.Add(sel.ToGraphicElement(editor.Renderer.OpenGlLgr, selectedVertex));
             }
         }
 

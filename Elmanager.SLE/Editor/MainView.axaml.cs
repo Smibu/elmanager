@@ -339,21 +339,20 @@ public partial class MainView : UserControl, ILevelEditor
     private async void OnCheckTopologyClick(object? sender, RoutedEventArgs e)
     {
         var checkVersion = ++_topologyCheckVersion;
-        var topologyErrors = _controller.CheckTopologyErrors(_currentTool);
-        TopologyErrorList.ItemsSource = topologyErrors.Count == 0
+        var topologyIssues = _controller.CheckTopologyErrors(_currentTool);
+        TopologyErrorList.ItemsSource = topologyIssues.Count == 0
             ? new[] { "No problems." }
-            : topologyErrors;
-        var hasErrors = topologyErrors.Exists(msg =>
-            !msg.StartsWith("Level has pictures that the LGR is missing"));
+            : topologyIssues.ConvertAll(issue => issue.Message);
+        var hasErrors = topologyIssues.Exists(issue => issue is TopologyIssue.Error);
         TopologyCheckmark.Stroke = hasErrors
             ? Brushes.Red
-            : topologyErrors.Count > 0
+            : topologyIssues.Count > 0
                 ? Brushes.DarkOrange
                 : TopologyOkBrush;
         FlyoutBase.ShowAttachedFlyout(CheckTopologyButton);
         RedrawScene();
 
-        if (topologyErrors.Count == 0)
+        if (topologyIssues.Count == 0)
         {
             await Task.Delay(500);
             if (checkVersion == _topologyCheckVersion)

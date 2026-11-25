@@ -1,4 +1,3 @@
-using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using Elmanager.Geometry;
@@ -33,24 +32,9 @@ internal class AvaloniaPictureDialogService : IPictureDialogService
         }
 
         var result = await dialog.ShowAsync();
-        if (!result.HasValue)
-        {
-            return null;
-        }
-
-        var sel = result.Value;
-        var clipping = sel.Clipping!.Value;
-        var distance = sel.Distance!.Value;
-        return sel.Kind switch
-        {
-            ImageSelection.TextureSelection t => GraphicElement.Text(clipping, distance,
-                currentPos, _renderer.OpenGlLgr.DrawableImageFromLgrImage(t.Txt),
-                _renderer.OpenGlLgr.DrawableImageFromLgrImage(t.Mask)),
-            ImageSelection.PictureSelection p => GraphicElement.Pic(
-                _renderer.OpenGlLgr.DrawableImageFromLgrImage(p.Pic),
-                currentPos, distance, clipping),
-            _ => throw new Exception("Unexpected")
-        };
+        return result.HasValue
+            ? result.Value.AsSingle()?.ToGraphicElement(_renderer.OpenGlLgr, currentPos)
+            : null;
     }
 
     public async Task<(ImageSelection.TextureSelection Selection, TexturizationOptions Options)?> ShowTexturizeDialog(
@@ -92,6 +76,6 @@ internal class AvaloniaPictureDialogService : IPictureDialogService
         return result.HasValue ? result.Value : null;
     }
 
-    public async Task<ImageSelection?> ShowConvertToPictureDialog(LgrFile? lgr) =>
-        await ShowPicturePropertiesDialog(lgr, new List<GraphicElement>(), true);
+    public async Task<SingleImageSelection?> ShowConvertToPictureDialog(LgrFile? lgr) =>
+        (await ShowPicturePropertiesDialog(lgr, new List<GraphicElement>(), true))?.AsSingle();
 }

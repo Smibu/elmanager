@@ -24,5 +24,5 @@ public interface IPictureDialogService
         bool setDefaultsAutomatically,
         Vector? currentPos = null);
 
-    Task<ImageSelection?> ShowConvertToPictureDialog(LgrFile? lgr);
+    Task<SingleImageSelection?> ShowConvertToPictureDialog(LgrFile? lgr);
 }
