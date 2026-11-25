@@ -281,7 +281,7 @@ public class LevelEditorController<TEditorLev>(ILevelEditor levelEditor, TEditor
             GraphicElement x = Lev.GraphicElements[i];
             if (x.Position.Mark == VectorMark.Selected)
             {
-                Lev.GraphicElements.Remove(x);
+                Lev.GraphicElements.RemoveAt(i);
                 mod |= x.IsPicture
                     ? LevModification.Pictures
                     : LevModification.Textures;
