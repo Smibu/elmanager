@@ -21,8 +21,9 @@ public partial class MainView
         408, 412, 24, 416, 415, 95, 29, 33, 46, 21, 52, 257, 135, 133, 413, 17, 39
     ];
 
-    private List<LevelFileEntry>? _levelFiles;
-    private string? _levelFilesFolderBookmark;
+    private LevelFileCache? _levelFileCache;
+
+    private sealed record LevelFileCache(string FolderBookmark, List<LevelFileEntry> Files);
 
     private bool _levelNavigationInProgress;
 
@@ -124,10 +125,10 @@ public partial class MainView
             return null;
         }
 
-        if (_levelFiles != null &&
-            string.Equals(_levelFilesFolderBookmark, bookmarkId, StringComparison.Ordinal))
+        if (_levelFileCache is { } cache &&
+            string.Equals(cache.FolderBookmark, bookmarkId, StringComparison.Ordinal))
         {
-            return _levelFiles;
+            return cache.Files;
         }
 
         InvalidateLevelFileCache();
@@ -145,17 +146,17 @@ public partial class MainView
             return null;
         }
 
-        _levelFiles = await ReadLevelFiles(folder, bookmarkId);
-        _levelFilesFolderBookmark = bookmarkId;
-        return _levelFiles;
+        var levelFiles = await ReadLevelFiles(folder, bookmarkId);
+        _levelFileCache = new LevelFileCache(bookmarkId, levelFiles);
+        return levelFiles;
     }
 
     private void InvalidateLevelFileCache()
     {
         var currentFile = _controller.EditorLev.StorageFile;
-        if (_levelFiles != null)
+        if (_levelFileCache is { } cache)
         {
-            foreach (var level in _levelFiles)
+            foreach (var level in cache.Files)
             {
                 if (level.StorageFile != null &&
                     !ReferenceEquals(level.StorageFile, currentFile))
@@ -165,8 +166,7 @@ public partial class MainView
             }
         }
 
-        _levelFiles = null;
-        _levelFilesFolderBookmark = null;
+        _levelFileCache = null;
     }
 
     private static async Task<List<LevelFileEntry>> ReadLevelFiles(

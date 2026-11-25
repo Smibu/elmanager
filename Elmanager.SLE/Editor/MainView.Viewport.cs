@@ -4,6 +4,7 @@ using Avalonia;
 using Avalonia.Input;
 using Avalonia.Rendering.Composition;
 using Avalonia.Threading;
+using Elmanager.LevelEditor;
 using Elmanager.LevelEditor.Input;
 using Elmanager.Rendering;
 using Elmanager.SLE.Platform;
@@ -46,15 +47,13 @@ public partial class MainView
         {
             if (_keyboardState.IsKeyDown(ModifierKey.LeftCtrl))
             {
-                _draggingGrid = true;
-                _gridStartOffset = _sceneSettings.GridOffset;
+                _viewportDrag = new ViewportDrag.DraggingGrid(p, _sceneSettings.GridOffset);
             }
             else
             {
-                _draggingScreen = true;
+                _viewportDrag = new ViewportDrag.PanningScreen(p);
             }
 
-            _moveStartPosition = p;
             e.Handled = true;
             return;
         }
@@ -85,10 +84,9 @@ public partial class MainView
         MouseXLabel.Text = $"X: {p.X:F3}";
         MouseYLabel.Text = $"Y: {p.Y:F3}";
 
-        if (_draggingScreen || _draggingGrid)
+        if (_viewportDrag is { } drag)
         {
-            _controller.HandleDragMove(p, _moveStartPosition, _draggingGrid,
-                _sceneSettings, _gridStartOffset, Settings.LockGrid, _zoomCtrl);
+            _controller.HandleDragMove(p, drag, _sceneSettings, Settings.LockGrid, _zoomCtrl);
         }
 
         lock (_levelModificationLock)
@@ -104,8 +102,7 @@ public partial class MainView
     {
         _currentTool.MouseUp();
         UpdateToolHelp();
-        _draggingScreen = false;
-        _draggingGrid = false;
+        _viewportDrag = null;
         RedrawScene();
     }
 

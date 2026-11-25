@@ -826,18 +826,22 @@ public class LevelEditorController<TEditorLev>(ILevelEditor levelEditor, TEditor
         settings.GridSize = newSize;
     }
 
-    public void HandleDragMove(Vector currentMouse, Vector moveStartPosition, bool draggingGrid,
-        SceneSettings sceneSettings, Vector gridStartOffset, bool lockGrid, ZoomController zoomCtrl)
+    public void HandleDragMove(Vector currentMouse, ViewportDrag drag, SceneSettings sceneSettings, bool lockGrid,
+        ZoomController zoomCtrl)
     {
-        if (!lockGrid && draggingGrid)
+        if (drag is ViewportDrag.DraggingGrid grid && !lockGrid)
         {
-            sceneSettings.GridOffset = gridStartOffset + moveStartPosition - currentMouse;
+            sceneSettings.GridOffset = grid.GridStartOffset + grid.Start - currentMouse;
+            return;
         }
-        else
+
+        var start = drag switch
         {
-            zoomCtrl.CenterX = zoomCtrl.CenterX - (currentMouse.X - moveStartPosition.X);
-            zoomCtrl.CenterY = zoomCtrl.CenterY - (currentMouse.Y - moveStartPosition.Y);
-        }
+            ViewportDrag.PanningScreen screen => screen.Start,
+            ViewportDrag.DraggingGrid gridDrag => gridDrag.Start
+        };
+        zoomCtrl.CenterX = zoomCtrl.CenterX - (currentMouse.X - start.X);
+        zoomCtrl.CenterY = zoomCtrl.CenterY - (currentMouse.Y - start.Y);
     }
 
     public string GetFilenameSuggestion(IEnumerable<string> levelFiles, string baseFilename, string numberFormat)

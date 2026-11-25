@@ -6,63 +6,56 @@ namespace Elmanager.SLE.Platform;
 
 internal sealed class AvaloniaGameLoopRunner(Action requestNextFrame) : IGameLoopRunner
 {
-    private TaskCompletionSource? _completion;
-    private Func<bool>? _shouldStop;
-    private Action? _tick;
+    private RunningLoop? _loop;
+
+    private sealed record RunningLoop(TaskCompletionSource Completion, Func<bool> ShouldStop, Action Tick);
 
     public Task Run(Func<bool> shouldStop, Action tick)
     {
-        if (_completion is not null)
+        if (_loop is not null)
         {
             throw new InvalidOperationException("The game loop is already running.");
         }
 
-        _shouldStop = shouldStop;
-        _tick = tick;
-        _completion = new TaskCompletionSource(TaskCreationOptions.RunContinuationsAsynchronously);
+        var loop = new RunningLoop(
+            new TaskCompletionSource(TaskCreationOptions.RunContinuationsAsynchronously), shouldStop, tick);
+        _loop = loop;
         requestNextFrame();
-        return _completion.Task;
+        return loop.Completion.Task;
     }
 
     public bool RunFrame()
     {
-        if (_completion is not { } completion)
+        if (_loop is not { } loop)
         {
             return false;
         }
 
-        if (_shouldStop!())
+        if (loop.ShouldStop())
         {
-            Clear();
-            completion.TrySetResult();
+            _loop = null;
+            loop.Completion.TrySetResult();
             return false;
         }
 
         try
         {
-            _tick!();
+            loop.Tick();
         }
         catch (Exception ex)
         {
-            Clear();
-            completion.TrySetException(ex);
+            _loop = null;
+            loop.Completion.TrySetException(ex);
             return false;
         }
 
-        if (!_shouldStop!())
+        if (!loop.ShouldStop())
         {
             return true;
         }
 
-        Clear();
-        completion.TrySetResult();
+        _loop = null;
+        loop.Completion.TrySetResult();
         return false;
-    }
-
-    private void Clear()
-    {
-        _shouldStop = null;
-        _tick = null;
-        _completion = null;
     }
 }

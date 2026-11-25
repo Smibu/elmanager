@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading.Tasks;
 using Avalonia.Controls;
 using Avalonia.Input;
 using Avalonia.Platform.Storage;
@@ -20,7 +21,7 @@ public partial class MainView
         }
 
         var files = GetDroppedFiles(e);
-        var mode = GetFileDropMode(files);
+        var mode = GetFileDropMode(GetFileDrop(files));
         var browserFileCount = 0;
         if (mode == FileDropMode.None && files.Count == 0)
         {
@@ -54,52 +55,60 @@ public partial class MainView
 
     private async void OnDrop(object? _, DragEventArgs e)
     {
-        var files = GetDroppedFiles(e);
-        var mode = GetFileDropMode(files);
-        var open = mode == FileDropMode.OpenOrImport && IsOpenDropPosition(e);
+        var drop = GetFileDrop(GetDroppedFiles(e));
+        var open = drop is FileDrop.LevelFile && IsOpenDropPosition(e);
 
         HideDropOverlay();
         e.Handled = true;
 
-        switch (mode)
+        await (drop switch
         {
-            case FileDropMode.OpenOrImport when open:
-                if (await ConfirmDiscardUnsavedChanges())
-                {
-                    await OpenLevelFromStorageFile(files[0]);
-                }
+            null => Task.CompletedTask,
+            FileDrop.LevelFile level when open => OpenDroppedLevel(level.Lev),
+            FileDrop.LevelFile level => ImportFiles([level.Lev]),
+            FileDrop.ImportFiles import => ImportFiles(import.Files),
+            FileDrop.LgrFile lgr => AddDroppedLgr(lgr.Lgr)
+        });
+    }
 
-                break;
-            case FileDropMode.OpenOrImport:
-            case FileDropMode.Import:
-                await ImportFiles(files);
-                break;
-            case FileDropMode.UseLgr:
-                await AddDroppedLgr(files.First(file =>
-                    file.Name.EndsWith(".lgr", StringComparison.OrdinalIgnoreCase)));
-                break;
+    private async Task OpenDroppedLevel(IStorageFile lev)
+    {
+        if (await ConfirmDiscardUnsavedChanges())
+        {
+            await OpenLevelFromStorageFile(lev);
         }
     }
 
     private static List<IStorageFile> GetDroppedFiles(DragEventArgs e) =>
         e.DataTransfer.TryGetFiles()?.OfType<IStorageFile>().ToList() ?? [];
 
-    private static FileDropMode GetFileDropMode(IReadOnlyList<IStorageFile> files)
+    private static FileDrop? GetFileDrop(IReadOnlyList<IStorageFile> files)
     {
-        if (files.Any(file => file.Name.EndsWith(".lgr", StringComparison.OrdinalIgnoreCase)))
+        if (files.FirstOrDefault(file => file.Name.EndsWith(".lgr", StringComparison.OrdinalIgnoreCase)) is { } lgr)
         {
-            return FileDropMode.UseLgr;
+            return new FileDrop.LgrFile(lgr);
         }
 
         if (files.Count == 1 && files[0].Name.EndsWith(".lev", StringComparison.OrdinalIgnoreCase))
         {
-            return FileDropMode.OpenOrImport;
+            return new FileDrop.LevelFile(files[0]);
         }
 
-        return files.Count > 0 && files.All(IsImportable)
-            ? FileDropMode.Import
-            : FileDropMode.None;
+        if (files.Count > 0 && files.All(IsImportable))
+        {
+            return new FileDrop.ImportFiles(files);
+        }
+
+        return null;
     }
+
+    private static FileDropMode GetFileDropMode(FileDrop? drop) => drop switch
+    {
+        null => FileDropMode.None,
+        FileDrop.LevelFile => FileDropMode.OpenOrImport,
+        FileDrop.ImportFiles => FileDropMode.Import,
+        FileDrop.LgrFile => FileDropMode.UseLgr
+    };
 
     private bool IsOpenDropPosition(DragEventArgs e) =>
         e.GetPosition(ViewportDropTarget).X < ViewportDropTarget.Bounds.Width / 2;
@@ -133,6 +142,15 @@ public partial class MainView
     }
 
     private void HideDropOverlay() => DropOverlay.IsVisible = false;
+
+    private union FileDrop(FileDrop.LevelFile, FileDrop.ImportFiles, FileDrop.LgrFile)
+    {
+        public record LevelFile(IStorageFile Lev);
+
+        public record ImportFiles(IReadOnlyList<IStorageFile> Files);
+
+        public record LgrFile(IStorageFile Lgr);
+    }
 
     private enum FileDropMode
     {

@@ -45,12 +45,9 @@ public partial class MainView : UserControl, ILevelEditor
     private readonly ZoomController _zoomCtrl;
     private HighlightTarget? _currentHighlight;
     private IEditorTool _currentTool;
-    private bool _draggingGrid;
-    private bool _draggingScreen;
-    private Vector _gridStartOffset;
     private bool _hasFocus;
     private Vector _lastMouseCoords;
-    private Vector _moveStartPosition;
+    private ViewportDrag? _viewportDrag;
     private LevVisualChange? _pendingModification;
     private bool _pendingSettingsUpdate;
     private bool _pendingZoomFill;
